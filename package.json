@@ -3,9 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "create-react-class": "^15.6.3",
+    "prop-types": "^15.6.2",
+    "ra-data-simple-rest": "^2.4.2",
     "react": "^16.6.3",
+    "react-admin": "^2.4.2",
     "react-dom": "^16.6.3",
-    "react-scripts": "2.1.1"
+    "react-json-view": "^1.19.1",
+    "react-loading": "^2.0.3",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.1.1",
+    "recharts": "^1.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
