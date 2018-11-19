@@ -11,7 +11,7 @@ const App = () => (
     <div>
       <ul>
         <li>
-          <Link to="/signature-commons-ui/">Home</Link>
+          <Link to="/signature-commons-ui">Home</Link>
         </li>
         <li>
           <Link to="/signature-commons-ui/query">Query</Link>
