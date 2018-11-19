@@ -11,27 +11,27 @@ const App = () => (
     <div>
       <ul>
         <li>
-          <Link to="/">Home</Link>
+          <Link to="/signature-commons-ui/">Home</Link>
         </li>
         <li>
-          <Link to="/query">Query</Link>
+          <Link to="/signature-commons-ui/query">Query</Link>
         </li>
         <li>
-          <Link to="/stats">Stats</Link>
+          <Link to="/signature-commons-ui/stats">Stats</Link>
         </li>
         <li>
-          <Link to="/dbck">Database Check</Link>
+          <Link to="/signature-commons-ui/dbck">Database Check</Link>
         </li>
         <li>
-          <Link to="/admin">Admin</Link>
+          <Link to="/signature-commons-ui/admin">Admin</Link>
         </li>
       </ul>
 
-      <Route exact path="/" component={Home} />
-      <Route exact path="/query" component={Query} />
-      <Route exact path="/stats" component={Stats} />
-      <Route exact path="/dbck" component={DBCK} />
-      <Route exact path="/admin" component={Admin} />
+      <Route exact path="/signature-commons-ui/" component={Home} />
+      <Route exact path="/signature-commons-ui/query" component={Query} />
+      <Route exact path="/signature-commons-ui/stats" component={Stats} />
+      <Route exact path="/signature-commons-ui/dbck" component={DBCK} />
+      <Route exact path="/signature-commons-ui/admin" component={Admin} />
     </div>
   </Router>
 )
