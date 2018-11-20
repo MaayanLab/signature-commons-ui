@@ -131,7 +131,7 @@ export default class Query extends React.Component {
             Submit
           </button>
           <textarea
-            readonly
+            readOnly
             value={this.state.status}
             style={{float: 'left', width: '49%', height: '150px'}}
           ></textarea>
