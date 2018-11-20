@@ -9,7 +9,8 @@ export default class Query extends React.Component {
     super(props)
     this.state = {
       term: 'breast cancer',
-      term_results: '{}',
+      term_results: {},
+      enrichr_results: {},
       status: 'ready',
     }
     this.log = this.log.bind(this)
@@ -26,21 +27,41 @@ export default class Query extends React.Component {
   async sendToEnrichr() {
     try {
       const background_library = 'KEGG_2015'
-      const gene_list = []
+      const gene_list = [
+        'PHF14',
+        'RBM3',
+        'MSL1',
+        'PHF21A',
+        'ARL10',
+        'INSR',
+        'JADE2',
+      ]
       this.log('Fetching API spec...')
-      const client = await Swagger('https://github.com/MaayanLab/smartAPIs/blob/master/enrichr_smartapi.yml')
+      const client = await Swagger('https://raw.githubusercontent.com/MaayanLab/smartAPIs/master/enrichr_smartapi.yml')
+      console.log(client)
       this.log('Uploading gene list to enrichr...')
-      const resp = await client.apis.addList({
-        list: gene_list, // TODO: get gene_list
+      const resp = await client.apis.default.addList({}, {
+        requestBody: {
+          description: 'signature-commons-ui gene list',
+          list: gene_list.join('\n'), // TODO: get gene_list
+        },
+        requestContentType: 'multipart/form-data',
+        responseContentType: 'application/json',
       })
       this.log('Fetching enrichment results...')
-      const results = client.apis.enrich({
-        userListId: resp.userListId,
+      const results = await client.apis.default.enrich({
+        userListId: resp.body.userListId,
         backgroundType: background_library, // TODO: background library, e.g. KEGG_2015
+      })
+      this.setState({
+        enrichr_results: results.body,
       })
       this.log('ready')
     } catch(e) {
       this.log('Error: ' + e)
+      this.setState({
+        enrichr_results: {},
+      })
     }
   }
 
@@ -102,19 +123,29 @@ export default class Query extends React.Component {
             Submit
           </button>
           <textarea
-            readonly
+            readOnly
             value={this.state.status}
             style={{float: 'left', width: '49%', height: '150px'}}
           ></textarea>
         </fieldset>
         <fieldset>
-          <legend>Send results to...</legend>
+          <legend>Send results to Enrichr</legend>
           <button
             onClick={this.sendToEnrichr}
             style={{float: 'left', width: '49%', height: '150px'}}
           >
             Send to Enrichr
           </button>
+          <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            {this.state.enrichr_results === null ? (
+              <ReactLoading type="spokes"  color="#000" />
+            ) : (
+              <ReactJson
+                src={this.state.enrichr_results}
+                collapsed={2}
+              />
+            )}
+          </div>
         </fieldset>
       </div>
     );
