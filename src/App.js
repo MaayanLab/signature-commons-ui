@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Link, Route } from "react-router-dom";
 import Admin from './Admin';
 import DBCK from './DBCK';
 import Home from './Home';
-import Query from './Query';
+import TermQuery from './TermQuery';
+import ArbitraryQuery from './ArbitraryQuery';
 import Stats from './Stats';
 
 const App = () => (
@@ -14,7 +15,10 @@ const App = () => (
           <Link to="/signature-commons-ui">Home</Link>
         </li>
         <li>
-          <Link to="/signature-commons-ui/query">Query</Link>
+          <Link to="/signature-commons-ui/term-query">Term Query</Link>
+        </li>
+        <li>
+          <Link to="/signature-commons-ui/arbitrary-query">Arbitrary Query</Link>
         </li>
         <li>
           <Link to="/signature-commons-ui/stats">Stats</Link>
@@ -28,7 +32,8 @@ const App = () => (
       </ul>
 
       <Route exact path="/signature-commons-ui/" component={Home} />
-      <Route exact path="/signature-commons-ui/query" component={Query} />
+      <Route exact path="/signature-commons-ui/term-query" component={TermQuery} />
+      <Route exact path="/signature-commons-ui/arbitrary-query" component={ArbitraryQuery} />
       <Route exact path="/signature-commons-ui/stats" component={Stats} />
       <Route exact path="/signature-commons-ui/dbck" component={DBCK} />
       <Route exact path="/signature-commons-ui/admin" component={Admin} />
