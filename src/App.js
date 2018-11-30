@@ -9,39 +9,39 @@ import Stats from './Stats';
 import Values from './Values';
 
 const App = () => (
-  <Router>
+  <Router basename={process.env.PUBLIC_URL}>
     <div className="root">
       {/* <ul>
         <li>
-          <Link to="/signature-commons-ui">Home</Link>
+          <Link to="">Home</Link>
         </li>
         <li>
-          <Link to="/signature-commons-ui/term-query">Term Query</Link>
+          <Link to="/term-query">Term Query</Link>
         </li>
         <li>
-          <Link to="/signature-commons-ui/arbitrary-query">Arbitrary Query</Link>
+          <Link to="/arbitrary-query">Arbitrary Query</Link>
         </li>
         <li>
-          <Link to="/signature-commons-ui/stats">Stats</Link>
+          <Link to="/stats">Stats</Link>
         </li>
         <li>
-          <Link to="/signature-commons-ui/values">Values</Link>
+          <Link to="/values">Values</Link>
         </li>
         <li>
-          <Link to="/signature-commons-ui/dbck">Database Check</Link>
+          <Link to="/dbck">Database Check</Link>
         </li>
         <li>
-          <Link to="/signature-commons-ui/admin">Admin</Link>
+          <Link to="/admin">Admin</Link>
         </li>
       </ul> */}
 
-      <Route exact path="/signature-commons-ui/" component={Home} />
-      <Route exact path="/signature-commons-ui/term-query" component={TermQuery} />
-      <Route exact path="/signature-commons-ui/arbitrary-query" component={ArbitraryQuery} />
-      <Route exact path="/signature-commons-ui/stats" component={Stats} />
-      <Route exact path="/signature-commons-ui/values" component={Values} />
-      <Route exact path="/signature-commons-ui/dbck" component={DBCK} />
-      <Route exact path="/signature-commons-ui/admin" component={Admin} />
+      <Route exact path="/" component={Home} />
+      <Route exact path="/term-query" component={TermQuery} />
+      <Route exact path="/arbitrary-query" component={ArbitraryQuery} />
+      <Route exact path="/stats" component={Stats} />
+      <Route exact path="/values" component={Values} />
+      <Route exact path="/dbck" component={DBCK} />
+      <Route exact path="/admin" component={Admin} />
     </div>
   </Router>
 )
