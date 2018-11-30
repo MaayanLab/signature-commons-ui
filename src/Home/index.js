@@ -112,18 +112,6 @@ class Home extends React.Component {
       }, controller.signal)
       this.setState({
         results,
-      })
-
-      const count = (await fetch_meta('/signatures/count', {
-        filter: {
-          where,
-        },
-      }, controller.signal)).count
-      this.setState({
-        count,
-      })
-
-      this.setState({
         status: '',
         controller: null,
       })
@@ -201,9 +189,6 @@ class Home extends React.Component {
               </form>
             </div>
             <div className="col s4"></div>
-            <div className="col s12">
-            Found {this.state.count} results
-            </div>
             <div className="col s12">
               {this.state.status !== '' ? this.state.status : (
                 this.state.results.length <= 0 ? (
