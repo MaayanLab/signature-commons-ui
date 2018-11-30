@@ -1,10 +1,10 @@
 import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
-import { fetch_enrich } from '../../util/fetch/enrich';
-import { fetch_meta } from '../../util/fetch/meta';
-import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
+import { Header } from "../../components/Header";
+import { fetch_enrich } from '../../util/fetch/data';
+import { fetch_meta } from '../../util/fetch/meta';
 
 export default class Query extends React.Component {
   constructor(props) {

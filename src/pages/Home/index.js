@@ -1,14 +1,16 @@
-import React from "react";
+import fileDownload from 'js-file-download';
 import M from "materialize-css";
-import { fetch_meta } from "../../util/fetch/meta";
-import { strToRGB } from '../../util/colors';
-import { ShowMeta } from '../../components/ShowMeta';
-import { Header } from '../../components/Header';
+import React from "react";
 import { Footer } from '../../components/Footer';
+import { Header } from '../../components/Header';
+import { ShowMeta } from '../../components/ShowMeta';
+import { strToRGB } from '../../util/colors';
+import { fetch_data } from "../../util/fetch/data";
+import { fetch_meta } from "../../util/fetch/meta";
 
 const count = 'half a million'
 
-class Home extends React.Component {
+export default class Home extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -89,6 +91,32 @@ class Home extends React.Component {
         })
       }
     }
+  }
+
+  async download(id) {
+    const signature_data = await fetch_data(id)
+    const signature_metadata = await fetch_meta('/signatures', {
+      filter: {
+        where: {
+          id: id,
+        }
+      }
+    })
+    const entity_metadata = await fetch_meta('/entites', {
+      filter: {
+        where: {
+          id: {
+            inq: signature_data.entities,
+          }
+        }
+      }
+    })
+    const data = {
+      signature: signature_metadata,
+      entites: entity_metadata,
+      values: signature_data.values,
+    }
+    fileDownload(data, 'data.json');
   }
 
   render() {
@@ -228,7 +256,10 @@ class Home extends React.Component {
                           flexDirection: "row",
                         }}>
                           <a href="#"><i className="material-icons prefix">shopping_cart</i></a>
-                          <a href="#"><i className="material-icons prefix">file_download</i></a>
+                          <a
+                            href="#"
+                            onClick={() => this.fileDownload(signature.id)}
+                          ><i className="material-icons prefix">file_download</i></a>
                           <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                           <i className="material-icons prefix" style={{ marginRight: '24px' }}>send</i>
                           <a href="#"><img
@@ -260,13 +291,13 @@ class Home extends React.Component {
               )}
             </div>
             {this.state.results.length <= 0 || this.state.status !== '' ? null : (
-              <div class="col s12 center">
-                <ul class="pagination">
-                  <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
-                  <li class="active teal"><a href="#!">1</a></li>
-                  <li class="waves-effect"><a href="#!">2</a></li>
-                  <li class="waves-effect"><a href="#!">3</a></li>
-                  <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+              <div className="col s12 center">
+                <ul className="pagination">
+                  <li className="disabled"><a href="#!"><i className="material-icons">chevron_left</i></a></li>
+                  <li className="active teal"><a href="#!">1</a></li>
+                  <li className="waves-effect"><a href="#!">2</a></li>
+                  <li className="waves-effect"><a href="#!">3</a></li>
+                  <li className="waves-effect"><a href="#!"><i className="material-icons">chevron_right</i></a></li>
                 </ul>
               </div>
             )}
@@ -277,4 +308,3 @@ class Home extends React.Component {
     );
   }
 }
-export default Home
