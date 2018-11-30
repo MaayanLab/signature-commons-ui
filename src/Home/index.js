@@ -72,7 +72,7 @@ class Home extends React.Component {
       time: 0,
       count: 0,
       key_count: {},
-      status: '',
+      status: null,
       controller: null,
     }
 
@@ -94,7 +94,7 @@ class Home extends React.Component {
     try {
       const controller = new AbortController()
       this.setState({
-        status: 'searching...',
+        status: 'Searching...',
         controller: controller,
       })
 
@@ -232,17 +232,23 @@ class Home extends React.Component {
               </form>
             </div>
             <div className="col s2"></div>
-            <div className="col s12">
-              <span className="grey-text">
-                About {this.state.count} results ({this.state.time/1000} seconds)
-              </span>
+            <div className="col s12 center">
+              {this.state.status === null ? null : (
+                <span className="grey-text">
+                  About {this.state.count} results ({this.state.time/1000} seconds)
+                </span>
+              )}
             </div>
             <div className="col s12">
-              {this.state.status !== '' ? this.state.status : (
+              {this.state.status !== '' ? (
+                  <div className="center">
+                    {this.state.status}
+                  </div>
+                ) : (
                 this.state.results.length <= 0 ? (
-                  <span>
-                    No results.
-                  </span>
+                  <div className="center">
+                    {this.state.status === null ? null : 'No results.'}
+                  </div>
                 ) : (
                   this.state.results.map((signature) => (
                     <div
@@ -315,6 +321,17 @@ class Home extends React.Component {
                 )
               )}
             </div>
+            {this.state.results.length <= 0 || this.state.status !== '' ? null : (
+              <div class="col s12 center">
+                <ul class="pagination">
+                  <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+                  <li class="active teal"><a href="#!">1</a></li>
+                  <li class="waves-effect"><a href="#!">2</a></li>
+                  <li class="waves-effect"><a href="#!">3</a></li>
+                  <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+                </ul>
+              </div>
+            )}
           </div>
         </main>
         <footer className="page-footer teal">
