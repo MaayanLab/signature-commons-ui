@@ -1,8 +1,10 @@
 import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
-import { fetch_meta } from '../fetch/meta';
+import { fetch_meta } from '../../util/fetch/meta';
 import Swagger from 'swagger-client'
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
 
 export default class Query extends React.Component {
   constructor(props) {
@@ -95,58 +97,62 @@ export default class Query extends React.Component {
   }
   render() {
     return (
-      <div>
-        <fieldset>
-          <legend>Term</legend>
-          <input
-            onChange={(e) => this.setState({term: e.target.value})}
-            value={this.state.term}
-            style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}
-          />
-          <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
-            {this.state.term_results === null ? (
-              <ReactLoading type="spokes"  color="#000" />
-            ) : (
-              <ReactJson
-                src={this.state.term_results}
-                collapsed={2}
-              />
-            )}
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Process</legend>
-          <button
-            onClick={this.submit}
-            style={{float: 'left', width: '49%', height: '150px'}}
-          >
-            Submit
-          </button>
-          <textarea
-            readOnly
-            value={this.state.status}
-            style={{float: 'left', width: '49%', height: '150px'}}
-          ></textarea>
-        </fieldset>
-        <fieldset>
-          <legend>Send results to Enrichr</legend>
-          <button
-            onClick={this.sendToEnrichr}
-            style={{float: 'left', width: '49%', height: '150px'}}
-          >
-            Send to Enrichr
-          </button>
-          <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
-            {this.state.enrichr_results === null ? (
-              <ReactLoading type="spokes"  color="#000" />
-            ) : (
-              <ReactJson
-                src={this.state.enrichr_results}
-                collapsed={2}
-              />
-            )}
-          </div>
-        </fieldset>
+      <div className="root">
+        <Header />
+        <main>
+          <fieldset>
+            <legend>Term</legend>
+            <input
+              onChange={(e) => this.setState({term: e.target.value})}
+              value={this.state.term}
+              style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}
+            />
+            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+              {this.state.term_results === null ? (
+                <ReactLoading type="spokes"  color="#000" />
+              ) : (
+                <ReactJson
+                  src={this.state.term_results}
+                  collapsed={2}
+                />
+              )}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Process</legend>
+            <button
+              onClick={this.submit}
+              style={{float: 'left', width: '49%', height: '150px'}}
+            >
+              Submit
+            </button>
+            <textarea
+              readOnly
+              value={this.state.status}
+              style={{float: 'left', width: '49%', height: '150px'}}
+            ></textarea>
+          </fieldset>
+          <fieldset>
+            <legend>Send results to Enrichr</legend>
+            <button
+              onClick={this.sendToEnrichr}
+              style={{float: 'left', width: '49%', height: '150px'}}
+            >
+              Send to Enrichr
+            </button>
+            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+              {this.state.enrichr_results === null ? (
+                <ReactLoading type="spokes"  color="#000" />
+              ) : (
+                <ReactJson
+                  src={this.state.enrichr_results}
+                  collapsed={2}
+                />
+              )}
+            </div>
+          </fieldset>
+        </main>
+        <Footer />
       </div>
     );
   }

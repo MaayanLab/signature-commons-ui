@@ -1,67 +1,12 @@
 import React from "react";
 import M from "materialize-css";
-import { fetch_meta } from "../fetch/meta";
+import { fetch_meta } from "../../util/fetch/meta";
+import { strToRGB } from '../../util/colors';
+import { ShowMeta } from '../../components/ShowMeta';
+import { Header } from '../../components/Header';
+import { Footer } from '../../components/Footer';
 
-const count = '1 million'
-
-function hashCode(str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-     hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return hash;
-} 
-
-function intToRGB(i){
-  var c = (i & 0x00FFFFFF)
-      .toString(16)
-      .toUpperCase();
-
-  return "00000".substring(0, 6 - c.length) + c;
-}
-
-function range(n) {
-  function *_range(n) {
-    for(var i = 0; i < n; i++) {
-      yield n
-    }
-  }
-  return [..._range(n)]
-}
-
-const ShowMeta = (props) => {
-  if(typeof(props.value) === 'string' || typeof(props.value) === 'number' || typeof(props.value) === 'boolean') {
-    return (
-      <span>{props.value + ''}</span>
-    )
-  } else if(Array.isArray(props.value)) {
-    return (
-      <ul>
-        {props.value.map((value, ind) => (
-          <li key={ind}>
-            <ShowMeta value={value} />
-          </li>
-        ))}
-      </ul>
-    )
-  } else if(typeof props.value === 'object') {
-    return (
-      <ul>
-        {Object.keys(props.value).filter((key) => !key.startsWith('$')).map((key, ind) => (
-          <li key={key}>
-            <b>{key}:</b>
-            <div style={{ marginLeft: '5px' }}>
-              <ShowMeta value={props.value[key]} />
-            </div>
-          </li>
-        ))}
-      </ul>
-    )
-  } else {
-    console.error(props.value)
-    return null
-  }
-}
+const count = 'half a million'
 
 class Home extends React.Component {
   constructor(props) {
@@ -149,14 +94,7 @@ class Home extends React.Component {
   render() {
     return (
       <div className="root">
-        <header>
-          <nav>
-            <div className="nav-wrapper teal">
-              <a href="#!" className="brand-logo">Signature Commons UI</a>
-              <a href="#" data-target="slide-out" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-            </div>
-          </nav>
-        </header>
+        <Header />
 
         <ul id="slide-out" className="sidenav sidenav-fixed">
           {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
@@ -265,7 +203,7 @@ class Home extends React.Component {
                               <div style={{
                                 height: '20px',
                                 flex: '1 0 auto',
-                                backgroundColor: '#' + intToRGB(hashCode(part)),
+                                backgroundColor: strToRGB(part),
                               }}>
                                 &nbsp;
                               </div>
@@ -334,10 +272,7 @@ class Home extends React.Component {
             )}
           </div>
         </main>
-        <footer className="page-footer teal">
-          <div className="container">
-          </div>
-        </footer>
+        <Footer />
       </div>
     );
   }
