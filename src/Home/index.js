@@ -1,17 +1,9 @@
 import React from "react";
 import M from "materialize-css";
 import { fetch_meta } from "../fetch/meta";
-import ReactJson from 'react-json-view';
 import randomColor from 'randomcolor';
 
 const count = '1 million'
-
-// const ShowMeta = (props) => (
-//   <ReactJson
-//     src={props.value}
-//     collapsed={2}
-//   />
-// )
 
 function range(n) {
   function *_range(n) {
@@ -62,6 +54,7 @@ class Home extends React.Component {
     this.state = {
       search: '',
       results: [],
+      time: 0,
       count: 0,
       status: '',
       controller: null,
@@ -87,7 +80,6 @@ class Home extends React.Component {
     }
     try {
       const controller = new AbortController()
-
       this.setState({
         status: 'searching...',
         controller: controller,
@@ -106,6 +98,7 @@ class Home extends React.Component {
           }
         }
       }
+      const start = Date.now()
       const results = await fetch_meta('/signatures', {
         filter: {
           where,
@@ -114,6 +107,7 @@ class Home extends React.Component {
       }, controller.signal)
       this.setState({
         results,
+        time: Date.now() - start,
         status: '',
         controller: null,
       })
@@ -129,68 +123,73 @@ class Home extends React.Component {
   render() {
     return (
       <div className="root">
-        <nav>
-          <div className="nav-wrapper teal">
-            <a href="#!" className="brand-logo">Signature Commons UI</a>
-            <a href="#" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-            <ul className="right hide-on-med-and-down">
-              <li><a href="sass.html">Sass</a></li>
-              <li><a href="badges.html">Components</a></li>
-              <li><a href="collapsible.html">Javascript</a></li>
-              <li><a href="mobile.html">Mobile</a></li>
-            </ul>
-          </div>
-        </nav>
+        <header>
+          <nav>
+            <div className="nav-wrapper teal">
+              <a href="#!" className="brand-logo">Signature Commons UI</a>
+              <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+              <ul className="right hide-on-med-and-down">
+                {/* <li><a href="sass.html">Sass</a></li>
+                <li><a href="badges.html">Components</a></li>
+                <li><a href="collapsible.html">Javascript</a></li>
+                <li><a href="mobile.html">Mobile</a></li> */}
+              </ul>
+            </div>
+          </nav>
+        </header>
 
-        <ul className="sidenav" id="mobile-demo">
-          <li><a href="sass.html">Sass</a></li>
-          <li><a href="badges.html">Components</a></li>
-          <li><a href="collapsible.html">Javascript</a></li>
-          <li><a href="mobile.html">Mobile</a></li>
+        <ul id="slide-out" className="sidenav sidenav-fixed">
+          <li><a href="#!">Filters</a></li>
+          <li><a href="#!">Go</a></li>
+          <li><a href="#!">Here</a></li>
         </ul>
 
         <main>
           <div className="row">
-            <div className="col s4"></div>
-            <div className="col s6">
+            <div className="col s12 center">
               <form action="javascript:void(0);" onSubmit={this.submit}>
-              <div className="input-field">
-                <i className="material-icons prefix">search</i>
-                <input
-                  id="searchBox"
-                  type="text"
-                  onChange={(e) => this.setState({search: e.target.value})}
-                  value={this.state.search}
-                  className="active"
-                  style={{
-                    fontWeight: 500,
-                    color: 'rgba(0, 0, 0, 0.54)',
-                    borderRadius: '2px',
-                    border: 0,
-                    height: '36px',
-                    padding: '8px 8px 8px 60px',
-                    width: '200px',
-                    background: '#f7f7f7',
-                  }}
-                />
-                <label for="searchBox">Search over {count} signatures</label>
-                <span>&nbsp;&nbsp;</span>
-                <button className="btn waves-effect waves-light" type="submit" name="action">Search
-                  <i className="material-icons right">send</i>
-                </button>
-              </div>
-              {['MCF10A', 'Cell Line.Name:MCF-7 cell', 'L1000', 'Assay:RNA-seq', 'Imatinib',].map((example) => (
-                <div
-                  key={example}
-                  className="chip"
-                  onClick={() => this.setState({
-                    search: example,
-                  }, () => this.submit())}
-                >{example}</div>
-              ))}
+                <div className="input-field">
+                  <i className="material-icons prefix">search</i>
+                  <input
+                    id="searchBox"
+                    type="text"
+                    onChange={(e) => this.setState({search: e.target.value})}
+                    value={this.state.search}
+                    className="active"
+                    placeholder={'Search over '+count+' signatures'}
+                    style={{
+                      fontWeight: 500,
+                      color: 'rgba(0, 0, 0, 0.54)',
+                      borderRadius: '2px',
+                      border: 0,
+                      height: '36px',
+                      width: '250px',
+                      padding: '8px 8px 8px 60px',
+                      background: '#f7f7f7',
+                    }}
+                  />
+                  <span>&nbsp;&nbsp;</span>
+                  <button className="btn waves-effect waves-light" type="submit" name="action">Search
+                    <i className="material-icons right">send</i>
+                  </button>
+                </div>
+                {['MCF10A', 'Cell Line.Name:MCF-7 cell', 'L1000', 'Assay:RNA-seq', 'Imatinib',].map((example) => (
+                  <div
+                    key={example}
+                    className="chip waves-effect waves-light"
+                    onClick={() => this.setState({
+                      search: example,
+                    }, () => this.submit())}
+                  >{example}</div>
+                ))}
               </form>
             </div>
-            <div className="col s4"></div>
+            <div className="col s2"></div>
+            <div className="col s12">
+              <span className="grey-text">
+                About {this.state.count} results ({this.state.time/1000} seconds)
+              </span>
+            </div>
             <div className="col s12">
               {this.state.status !== '' ? this.state.status : (
                 this.state.results.length <= 0 ? (
