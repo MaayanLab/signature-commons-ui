@@ -73,14 +73,14 @@ export default class Query extends React.Component {
 
       this.log('fetching signatures...')
       const term_results = await fetch_meta('/signatures', {
-        filter: JSON.stringify({
+        filter: {
           where: {
             meta: {
               fullTextSearch: this.state.term,
             }
           },
           limit: 100,
-        })
+        }
       })
       this.log('ready')
       this.setState({

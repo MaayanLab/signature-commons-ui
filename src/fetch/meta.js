@@ -5,7 +5,7 @@ const base_url = 'http://amp.pharm.mssm.edu/signature-commons-metadata-api'
 //   + process.env['ADMIN_PASSWORD']
 // ).toString('base64')
 
-export async function fetch_meta(endpoint, body) {
+export async function fetch_meta(endpoint, body, signal) {
   return await (
     await fetch(
       base_url
@@ -18,7 +18,7 @@ export async function fetch_meta(endpoint, body) {
               ...params,
               encodeURIComponent(param)
                 + '='
-                + encodeURIComponent(body[param])
+                + encodeURIComponent(JSON.stringify(body[param]))
             ]), []
           ).join('&')
         )
@@ -30,6 +30,7 @@ export async function fetch_meta(endpoint, body) {
           'Content-Type': 'application/json',
           // 'Authorization': auth,
         },
+        signal: signal,
       }
     )
   ).json()

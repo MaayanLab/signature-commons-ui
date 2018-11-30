@@ -32,14 +32,14 @@ export default class Query extends React.Component {
         status: this.state.status + '\nfetching entities...',
       })
       const entities_meta = await fetch_meta('/entities', {
-        filter: this.state.entities
+        filter: JSON.parse(this.state.entities)
       })
       this.setState({
         status: this.state.status + '\nfetching signatures...',
         entities_results: entities_meta,
       })
       const signatures_meta = await fetch_meta('/signatures', {
-        filter: this.state.signatures
+        filter: JSON.parse(this.state.signatures)
       })
       this.setState({
         status: this.state.status + '\nenriching signatures...',
