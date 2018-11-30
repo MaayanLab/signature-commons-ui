@@ -1,9 +1,24 @@
 import React from "react";
 import M from "materialize-css";
 import { fetch_meta } from "../fetch/meta";
-import randomColor from 'randomcolor';
 
 const count = '1 million'
+
+function hashCode(str) {
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+     hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return hash;
+} 
+
+function intToRGB(i){
+  var c = (i & 0x00FFFFFF)
+      .toString(16)
+      .toUpperCase();
+
+  return "00000".substring(0, 6 - c.length) + c;
+}
 
 function range(n) {
   function *_range(n) {
@@ -56,6 +71,7 @@ class Home extends React.Component {
       results: [],
       time: 0,
       count: 0,
+      key_count: {},
       status: '',
       controller: null,
     }
@@ -64,10 +80,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    M.Sidenav.init(
-      document.querySelectorAll('.sidenav'),
-      {}
-    )
+    M.AutoInit();
   }
 
   componentDidUpdate() {
@@ -98,6 +111,7 @@ class Home extends React.Component {
           }
         }
       }
+
       const start = Date.now()
       const results = await fetch_meta('/signatures', {
         filter: {
@@ -105,12 +119,24 @@ class Home extends React.Component {
           limit: 9,
         },
       }, controller.signal)
+
       this.setState({
         results,
-        time: Date.now() - start,
         status: '',
-        controller: null,
+        time: Date.now() - start,
       })
+
+      const key_count = await fetch_meta('/signatures/key_count', {
+        filter: {
+          where,
+        },
+      }, controller.signal)
+
+      this.setState({
+        key_count,
+        count: key_count['$validator'],
+        controller: null,
+      }, () => M.AutoInit())
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
@@ -127,21 +153,42 @@ class Home extends React.Component {
           <nav>
             <div className="nav-wrapper teal">
               <a href="#!" className="brand-logo">Signature Commons UI</a>
-              <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-              <ul className="right hide-on-med-and-down">
-                {/* <li><a href="sass.html">Sass</a></li>
-                <li><a href="badges.html">Components</a></li>
-                <li><a href="collapsible.html">Javascript</a></li>
-                <li><a href="mobile.html">Mobile</a></li> */}
-              </ul>
+              <a href="#" data-target="slide-out" className="sidenav-trigger"><i className="material-icons">menu</i></a>
             </div>
           </nav>
         </header>
 
         <ul id="slide-out" className="sidenav sidenav-fixed">
-          <li><a href="#!">Filters</a></li>
-          <li><a href="#!">Go</a></li>
-          <li><a href="#!">Here</a></li>
+          {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
+            <li key={key} className="no-padding">
+              <ul className="collapsible collapsible-accordion">
+                <li>
+                  <a href="#!" className="collapsible-header">
+                    <label>
+                      <input type="checkbox" />
+                      <span>
+                        {key} ({this.state.key_count[key]})
+                      </span>
+                    </label>
+                  </a>
+                  <div className="collapsible-body">
+                    <ul>
+                      <li>
+                        <a href="#!">
+                          <label>
+                            <input type="checkbox" />
+                            <span>
+                              todo (0)
+                            </span>
+                          </label>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </li>
+          ))}
         </ul>
 
         <main>
@@ -208,17 +255,17 @@ class Home extends React.Component {
                             display: 'flex',
                             flexDirection: "row",
                           }}>
-                            {range(4).map(() => (
+                            {signature.id.split('-').map((part) => (
                               <div style={{
                                 height: '20px',
                                 flex: '1 0 auto',
-                                backgroundColor: randomColor(),
+                                backgroundColor: '#' + intToRGB(hashCode(part)),
                               }}>
                                 &nbsp;
                               </div>
                             ))}
                             <div style={{
-                              flex: '4 0 auto',
+                              flex: '3 0 auto',
                             }}>
                               &nbsp;
                             </div>

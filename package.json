@@ -12,7 +12,6 @@
     "materialize-css": "^1.0.0-rc.2",
     "prop-types": "^15.6.2",
     "ra-data-simple-rest": "^2.4.2",
-    "randomcolor": "^0.5.3",
     "react": "^16.6.3",
     "react-admin": "^2.4.2",
     "react-dom": "^16.6.3",
