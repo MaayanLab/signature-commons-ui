@@ -23,10 +23,9 @@ function range(n) {
 }
 
 const ShowMeta = (props) => {
-  console.log(props)
-  if(typeof(props.value) === 'string' || typeof(props.value) === 'number') {
+  if(typeof(props.value) === 'string' || typeof(props.value) === 'number' || typeof(props.value) === 'boolean') {
     return (
-      <span>{props.value}</span>
+      <span>{props.value + ''}</span>
     )
   } else if(Array.isArray(props.value)) {
     return (
@@ -51,6 +50,9 @@ const ShowMeta = (props) => {
         ))}
       </ul>
     )
+  } else {
+    console.error(props.value)
+    return null
   }
 }
 
