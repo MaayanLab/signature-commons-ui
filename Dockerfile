@@ -1,10 +1,4 @@
-FROM node
-
-ADD . /app
-WORKDIR /app
-RUN npm install
-RUN npm install react-scripts -g
-
-ENV NODE_ENV development
-
-CMD [ "npm", "start" ]
+FROM nginx:1.12-alpine
+COPY ./build /usr/share/nginx/html/signature-commons-ui/
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
