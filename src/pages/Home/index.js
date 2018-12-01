@@ -176,7 +176,7 @@ export default class Home extends React.Component {
                       borderRadius: '2px',
                       border: 0,
                       height: '36px',
-                      width: '250px',
+                      width: '350px',
                       padding: '8px 8px 8px 60px',
                       background: '#f7f7f7',
                     }}
