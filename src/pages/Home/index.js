@@ -19,11 +19,14 @@ export default class Home extends React.Component {
       time: 0,
       count: 0,
       key_count: {},
+      value_count: {},
       status: null,
       controller: null,
     }
 
     this.submit = this.submit.bind(this)
+    this.build_where = this.build_where.bind(this)
+    this.fetch_values = this.fetch_values.bind(this)
   }
 
   componentDidMount() {
@@ -32,6 +35,21 @@ export default class Home extends React.Component {
 
   componentDidUpdate() {
     M.updateTextFields();
+  }
+
+  build_where() {
+    if (this.state.search.indexOf(':') !== -1) {
+      const [key, ...value] = this.state.search.split(':')
+      return {
+        ['meta.' + key]: value.join(':')
+      }
+    } else {
+      return {
+        meta: {
+          fullTextSearch: this.state.search
+        }
+      }
+    }
   }
 
   async submit() {
@@ -45,19 +63,7 @@ export default class Home extends React.Component {
         controller: controller,
       })
 
-      let where
-      if(this.state.search.indexOf(':') !== -1) {
-        const [key, ...value] = this.state.search.split(':')
-        where = {
-          ['meta.' + key]: value.join(':')
-        }
-      } else {
-        where = {
-          meta: {
-            fullTextSearch: this.state.search
-          }
-        }
-      }
+      const where = this.build_where()
 
       const start = Date.now()
       const results = await fetch_meta('/signatures', {
@@ -91,6 +97,25 @@ export default class Home extends React.Component {
         })
       }
     }
+  }
+
+  async fetch_values(key) {
+    this.setState({
+      value_count: {},
+    })
+    const where = this.build_where()
+    const value_count = await fetch_meta('/signatures/value_count', {
+      filter: {
+        where,
+        fields: [
+          key,
+        ]
+      },
+      depth: 2,
+    })
+    this.setState({
+      value_count,
+    })
   }
 
   async download(id) {
@@ -129,27 +154,29 @@ export default class Home extends React.Component {
             <li key={key} className="no-padding">
               <ul className="collapsible collapsible-accordion">
                 <li>
-                  <a href="#!" className="collapsible-header">
-                    <label>
-                      <input type="checkbox" />
-                      <span>
-                        {key} ({this.state.key_count[key]})
-                      </span>
-                    </label>
+                  <a
+                    href="#!"
+                    className="collapsible-header"
+                  >
+                    {key} ({this.state.key_count[key]})
                   </a>
                   <div className="collapsible-body">
-                    <ul>
-                      <li>
-                        <a href="#!">
-                          <label>
-                            <input type="checkbox" />
-                            <span>
-                              todo (0)
-                            </span>
-                          </label>
-                        </a>
-                      </li>
-                    </ul>
+                    {this.state.value_count[key] === undefined ? null : (
+                      <ul>
+                        {Object.keys(this.state.value_count[key]).map((k) => (
+                          <li key={key + '.' + k}>
+                            <a href="#!">
+                              <label>
+                                <input type="checkbox" />
+                                <span>
+                                  {k} ({this.state.value_count[key][k]})
+                                </span>
+                              </label>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </li>
               </ul>
