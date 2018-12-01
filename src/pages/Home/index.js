@@ -124,7 +124,7 @@ export default class Home extends React.Component {
       <div className="root">
         <Header />
 
-        <ul id="slide-out" className="sidenav sidenav-fixed">
+        <ul id="slide-out" className="sidenav">
           {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
             <li key={key} className="no-padding">
               <ul className="collapsible collapsible-accordion">
