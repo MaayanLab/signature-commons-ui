@@ -3,7 +3,7 @@ import React from "react";
 export class Footer extends React.Component {
   render() {
     return (
-    <footer className="page-footer grey lighten-5 black-text">
+    <footer className="page-footer grey lighten-3 black-text">
       <div className="container">
         <div className="row">
           <div className="col m5 s12">
