@@ -1,7 +1,7 @@
 export function range(n) {
   function *_range(n) {
-    for(var i = 0; i < n; i++) {
-      yield n
+    for(let i = 0; i < n; i++) {
+      yield i
     }
   }
   return [..._range(n)]

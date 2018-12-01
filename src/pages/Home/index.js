@@ -4,11 +4,21 @@ import React from "react";
 import { Footer } from '../../components/Footer';
 import { Header } from '../../components/Header';
 import { ShowMeta } from '../../components/ShowMeta';
+import { range } from '../../util/range';
 import { strToRGB } from '../../util/colors';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta } from "../../util/fetch/meta";
 
 const count = 'half a million'
+const n_rows = 4
+const sigToIcon = (sig) => {
+  console.log(sig.$validator)
+  return {
+    '/@dcic/signature-commons-schema/meta/signature/draft-1.json': 'http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png',
+    '/@dcic/signature-commons-schema/meta/signature/clue-io.json': 'http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png',
+    '/@dcic/signature-commons-schema/meta/signature/creeds.json': 'http://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
+  }[sig.meta.$validator]
+}
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -30,10 +40,10 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-    M.AutoInit();
   }
 
   componentDidUpdate() {
+    M.AutoInit();
     M.updateTextFields();
   }
 
@@ -71,7 +81,7 @@ export default class Home extends React.Component {
       const results = await fetch_meta('/signatures', {
         filter: {
           where,
-          limit: 9,
+          limit: 3*8,
         },
       }, controller.signal)
 
@@ -236,84 +246,101 @@ export default class Home extends React.Component {
             </div>
             <div className="col s12">
               {this.state.status !== '' ? (
-                  <div className="center">
-                    {this.state.status}
-                  </div>
-                ) : (
+                <div className="center">
+                  {this.state.status}
+                </div>
+              ) : (
                 this.state.results.length <= 0 ? (
                   <div className="center">
                     {this.state.status === null ? null : 'No results.'}
                   </div>
                 ) : (
-                  this.state.results.map((signature) => (
+                  range(n_rows).map((n) => (
                     <div
-                      key={signature.id}
-                      className="col s12 m6 l4"
+                      key={n}
+                      className={"col s" + (12/n_rows)}
                     >
-                      <div className="card">
-                        <div className="card-content">
-                          <span className="card-title" style={{
-                            display: 'flex',
-                            flexDirection: "row",
-                          }}>
-                            {signature.id.split('-').map((part) => (
-                              <div style={{
-                                height: '20px',
-                                flex: '1 0 auto',
-                                backgroundColor: strToRGB(part),
+                      <ul
+                        class="collapsible popout"
+                      >
+                        {this.state.results.filter((_, ind) => (ind % n_rows) === n).map((signature, ind) => (
+                          <li
+                            key={signature.id}
+                          >
+                            <div
+                              className="collapsible-header"
+                              style={{
+                                display: 'flex',
+                                flexDirection: "row",
                               }}>
-                                &nbsp;
-                              </div>
-                            ))}
-                            <div style={{
-                              flex: '3 0 auto',
-                            }}>
-                              &nbsp;
+                                <img
+                                  style={{
+                                    maxWidth: 24,
+                                    maxHeight: 24,
+                                  }}
+                                  src={sigToIcon(signature)}
+                                />
+                                <div style={{
+                                  width: '20px'
+                                }}>&nbsp;</div>
+                                {signature.id.split('-').map((part) => (
+                                  <div style={{
+                                    height: '15px',
+                                    width: '10px',
+                                    backgroundColor: strToRGB(part),
+                                  }}>&nbsp;</div>
+                                ))}
                             </div>
-                          </span>
-                          <div style={{
-                            height: '200px',
-                            overflow: 'auto',
-                          }}>
-                            <ShowMeta
-                              value={{ID: signature.id, ...signature.meta}}
-                            />
-                          </div>
-                        </div>
-                        <div className="card-action" style={{
-                          display: 'flex',
-                          flexDirection: "row",
-                        }}>
-                          <a href="#"><i className="material-icons prefix">shopping_cart</i></a>
-                          <a
-                            href="#"
-                            onClick={() => this.fileDownload(signature.id)}
-                          ><i className="material-icons prefix">file_download</i></a>
-                          <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                          <i className="material-icons prefix" style={{ marginRight: '24px' }}>send</i>
-                          <a href="#"><img
-                            style={{
-                              maxWidth: 24,
-                              maxHeight: 24,
-                            }}
-                            src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-                          ></img></a>
-                          <a href="#"><img
-                            style={{
-                              maxWidth: 24,
-                              maxHeight: 24,
-                            }}
-                            src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
-                          ></img></a>
-                          <a href="#"><img
-                            style={{
-                              maxWidth: 24,
-                              maxHeight: 24,
-                            }}
-                            src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
-                          ></img></a>
-                        </div>
-                      </div>
+                            <div
+                              className="collapsible-body"
+                            >
+                              <div 
+                                style={{
+                                  height: '300px',
+                                  overflow: 'auto',
+                                }}
+                              >
+                                <ShowMeta
+                                  value={{ID: signature.id, ...signature.meta}}
+                                />
+                              </div>
+                              <div style={{
+                                display: 'flex',
+                                flexDirection: "row",
+                              }}>
+                                <a href="#"><i className="material-icons prefix">shopping_cart</i></a>
+                                <a
+                                  href="#"
+                                  onClick={() => this.fileDownload(signature.id)}
+                                ><i className="material-icons prefix">file_download</i></a>
+                                <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                                <i className="material-icons prefix" style={{ marginRight: '24px' }}>send</i>
+                                <a href="#"><img
+                                  style={{
+                                    maxWidth: 48,
+                                    maxHeight: 24,
+                                  }}
+                                  src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
+                                ></img></a>
+                                <a href="#"><img
+                                  style={{
+                                    maxWidth: 48,
+                                    maxHeight: 24,
+                                  }}
+                                  src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
+                                ></img></a>
+                                <a href="#"><img
+                                  style={{
+                                    maxWidth: 48,
+                                    maxHeight: 24,
+                                  }}
+                                  src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
+                                ></img></a>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))
                 )
