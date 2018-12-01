@@ -11,7 +11,7 @@ export class Header extends React.Component {
       <header>
         <nav>
           <div className="nav-wrapper teal">
-            <a href="/" className="brand-logo">Signature Commons UI</a>
+            <a href="/" className="brand-logo">Signature Commons Metadata Search</a>
             <a href="#" data-target="slide-out" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           </div>
         </nav>
