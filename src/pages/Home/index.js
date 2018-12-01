@@ -41,7 +41,9 @@ export default class Home extends React.Component {
     if (this.state.search.indexOf(':') !== -1) {
       const [key, ...value] = this.state.search.split(':')
       return {
-        ['meta.' + key]: value.join(':')
+        ['meta.' + key]: {
+          ilike: '%' + value.join(':') + '%'
+        }
       }
     } else {
       return {
@@ -213,7 +215,7 @@ export default class Home extends React.Component {
                     <i className="material-icons right">send</i>
                   </button>
                 </div>
-                {['MCF10A', 'Cell Line.Name:MCF-7 cell', 'L1000', 'Assay:RNA-seq', 'Imatinib',].map((example) => (
+                {['MCF10A', 'Imatinib', 'ZNF830', 'STAT3', 'Neuropathy'].map((example) => (
                   <div
                     key={example}
                     className="chip waves-effect waves-light"
