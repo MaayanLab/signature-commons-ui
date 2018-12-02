@@ -27,10 +27,6 @@ const buildTitle = (sig) => {
       <div>
         <div className="chip">
           <img
-            style={{
-              maxWidth: 24,
-              maxHeight: 24,
-            }}
             alt="Enrichr"
             src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
           />
@@ -50,10 +46,6 @@ const buildTitle = (sig) => {
       <div>
         <div className="chip">
           <img
-            style={{
-              maxWidth: 24,
-              maxHeight: 24,
-            }}
             alt="ConnectivityMap"
             src="http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
           />
@@ -74,10 +66,6 @@ const buildTitle = (sig) => {
       <div>
         <div className="chip">
           <img
-            style={{
-              maxWidth: 24,
-              maxHeight: 24,
-            }}
             alt="CREEDS"
             src="http://amp.pharm.mssm.edu/CREEDS/img/creeds.png"
           />
