@@ -5,19 +5,90 @@ import { Footer } from '../../components/Footer';
 import { Header } from '../../components/Header';
 import { ShowMeta } from '../../components/ShowMeta';
 import { range } from '../../util/range';
-import { strToRGB } from '../../util/colors';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta } from "../../util/fetch/meta";
 
 const count = 'half a million'
-const n_rows = 4
-const sigToIcon = (sig) => {
-  console.log(sig.$validator)
-  return {
-    '/@dcic/signature-commons-schema/meta/signature/draft-1.json': 'http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png',
-    '/@dcic/signature-commons-schema/meta/signature/clue-io.json': 'http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png',
-    '/@dcic/signature-commons-schema/meta/signature/creeds.json': 'http://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
-  }[sig.meta.$validator]
+const n_rows = 1
+
+const buildTitle = (sig) => {
+  const buildLabels = (labels) => (
+    <span>
+      {Object.keys(labels).map((key) => labels[key] === undefined || labels[key] == '-666' ? null : (
+        <div className="chip">{key}: {labels[key]}</div>
+      ))}
+    </span>
+  )
+  
+  if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/draft-1.json') {
+    return (
+      <div>
+        <div class="chip">
+          <img
+            style={{
+              maxWidth: 24,
+              maxHeight: 24,
+            }}
+            src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
+          />
+          Enrichr
+        </div>
+        {buildLabels({
+          'Resource': sig.meta.Resource,
+          'Assay': sig.meta.Assay,
+          'Organism': sig.meta.Organism,
+          'Description': sig.meta['Original String'],
+        })}
+      </div>
+    )
+  }
+  else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/clue-io.json') {
+    return (
+      <div>
+        <div class="chip">
+          <img
+            style={{
+              maxWidth: 24,
+              maxHeight: 24,
+            }}
+            src = "http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
+          />
+          ClueIO
+        </div>
+        {buildLabels({
+          'Assay': 'L1000',
+          'Batch': sig.meta.pert_mfc_id,
+          'Cell-line': sig.meta.cell_id,
+          'Time point': sig.meta.pert_time + ' ' + sig.meta.pert_time_unit,
+          'Perturbation': sig.meta.pert_desc,
+          'Concentration': sig.meta.pert_dose,
+        })}
+      </div>
+    )
+  } else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/creeds.json') {
+    return (
+      <div>
+        <div class="chip">
+          <img
+            style={{
+              maxWidth: 24,
+              maxHeight: 24,
+            }}
+            src="http://amp.pharm.mssm.edu/CREEDS/img/creeds.png"
+          />
+          CREEDS
+        </div>
+        {buildLabels({
+          'Assay': 'Microarray',
+          'Drug': sig.meta.drug_name,
+          'DrugBank': sig.meta.drugbank_id,
+          'Organism': sig.meta.organism,
+          'GEO Accession': sig.meta.geo_id,
+          'CREEDS ID': sig.meta.id,
+        })}
+      </div>
+    )
+  }
 }
 
 export default class Home extends React.Component {
@@ -81,7 +152,7 @@ export default class Home extends React.Component {
       const results = await fetch_meta('/signatures', {
         filter: {
           where,
-          limit: 3*8,
+          limit: 20,
         },
       }, controller.signal)
 
@@ -273,23 +344,7 @@ export default class Home extends React.Component {
                                 display: 'flex',
                                 flexDirection: "row",
                               }}>
-                                <img
-                                  style={{
-                                    maxWidth: 24,
-                                    maxHeight: 24,
-                                  }}
-                                  src={sigToIcon(signature)}
-                                />
-                                <div style={{
-                                  width: '20px'
-                                }}>&nbsp;</div>
-                                {signature.id.split('-').map((part) => (
-                                  <div style={{
-                                    height: '15px',
-                                    width: '10px',
-                                    backgroundColor: strToRGB(part),
-                                  }}>&nbsp;</div>
-                                ))}
+                                {buildTitle(signature)}
                             </div>
                             <div
                               className="collapsible-body"
