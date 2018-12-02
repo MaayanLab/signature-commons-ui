@@ -54,10 +54,10 @@ const buildTitle = (sig) => {
               maxWidth: 24,
               maxHeight: 24,
             }}
-            alt="ClueIO"
+            alt="ConnectivityMap"
             src="http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
           />
-          ClueIO
+          ConnectivityMap
         </div>
         {buildLabels({
           'Assay': 'L1000',
