@@ -9,6 +9,7 @@
     "highcharts": "^6.2.0",
     "highcharts-more": "^0.1.7",
     "highcharts-react-official": "^2.0.0",
+    "immutable": "^4.0.0-rc.12",
     "js-file-download": "^0.4.4",
     "materialize-css": "^1.0.0-rc.2",
     "prop-types": "^15.6.2",
