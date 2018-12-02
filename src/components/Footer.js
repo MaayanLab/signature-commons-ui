@@ -19,6 +19,10 @@ export class Footer extends React.Component {
               <li class="fl"><a href="https://commonfund.nih.gov/idg/index" target="_blank">NIH Illuminating the Druggable Genome (IDG) Program</a></li>
               <li class="fl"><a href="http://icahn.mssm.edu/" target="_blank">Icahn School of Medicine at Mount Sinai</a></li>
             </ul>
+            <ul style={{paddingLeft: '30px', listStyle: 'none', textAlign: 'left'}}>
+              <li class="fl"><a href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json" target="_blank">Metadata API Documentation</a></li>
+              {/* <li class="fl"><a href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/enrichmentapi/swagger.json" target="_blank">Data API Documentation</a></li> */}
+            </ul>
           </div>
           <div className="col m2 s12">
             <img src="https://amp.pharm.mssm.edu/enrichmentapi/images/dcic.png" height="130" /><br />
