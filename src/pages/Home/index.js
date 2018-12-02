@@ -14,7 +14,7 @@ const n_rows = 1
 const buildTitle = (sig) => {
   const buildLabels = (labels) => (
     <span>
-      {Object.keys(labels).map((key) => labels[key] === undefined || labels[key] == '-666' ? null : (
+      {Object.keys(labels).map((key) => labels[key] === undefined || ((labels[key]+'') === '-666') ? null : (
         <div className="chip">{key}: {labels[key]}</div>
       ))}
     </span>
@@ -23,12 +23,13 @@ const buildTitle = (sig) => {
   if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/draft-1.json') {
     return (
       <div>
-        <div class="chip">
+        <div className="chip">
           <img
             style={{
               maxWidth: 24,
               maxHeight: 24,
             }}
+            alt="Enrichr"
             src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
           />
           Enrichr
@@ -45,13 +46,14 @@ const buildTitle = (sig) => {
   else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/clue-io.json') {
     return (
       <div>
-        <div class="chip">
+        <div className="chip">
           <img
             style={{
               maxWidth: 24,
               maxHeight: 24,
             }}
-            src = "http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
+            alt="ClueIO"
+            src="http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
           />
           ClueIO
         </div>
@@ -68,12 +70,13 @@ const buildTitle = (sig) => {
   } else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/creeds.json') {
     return (
       <div>
-        <div class="chip">
+        <div className="chip">
           <img
             style={{
               maxWidth: 24,
               maxHeight: 24,
             }}
+            alt="CREEDS"
             src="http://amp.pharm.mssm.edu/CREEDS/img/creeds.png"
           />
           CREEDS
@@ -273,9 +276,12 @@ export default class Home extends React.Component {
         </ul>
 
         {this.state.cart.length <= 0 ? null : (
-          <div class="fixed-action-btn">
-            <a class="btn-floating btn-large teal">
-              <i class="large material-icons">shopping_cart</i>
+          <div className="fixed-action-btn">
+            <a
+              href="#!"
+              className="btn-floating btn-large teal"
+            >
+              <i className="large material-icons">shopping_cart</i>
             </a>
             <span style={{
               position: 'absolute',
@@ -294,9 +300,9 @@ export default class Home extends React.Component {
               {this.state.cart.length}
             </span>
             <ul>
-              <li><a class="btn-floating red"><i class="material-icons">file_download</i></a></li>
-              <li><a class="btn-floating green"><i class="material-icons">functions</i></a></li>
-              <li><a class="btn-floating grey"><i class="material-icons">send</i></a></li>
+              <li><a href="#!" className="btn-floating red"><i className="material-icons">file_download</i></a></li>
+              <li><a href="#!" className="btn-floating green"><i className="material-icons">functions</i></a></li>
+              <li><a href="#!" className="btn-floating grey"><i className="material-icons">send</i></a></li>
             </ul>
           </div>
         )}
@@ -366,7 +372,7 @@ export default class Home extends React.Component {
                       className={"col s" + (12/n_rows)}
                     >
                       <ul
-                        class="collapsible popout"
+                        className="collapsible popout"
                       >
                         {this.state.results.filter((_, ind) => (ind % n_rows) === n).map((signature, ind) => (
                           <li
@@ -398,7 +404,8 @@ export default class Home extends React.Component {
                                 flexDirection: "row",
                               }}>
                                 <a
-                                  class="waves-effect waves-light btn"
+                                  href="#!"
+                                  className="waves-effect waves-light btn"
                                   onClick={() => {
                                     if(this.state.cart.indexOf(signature.id) === -1) {
                                       this.setState({
@@ -406,53 +413,58 @@ export default class Home extends React.Component {
                                       })
                                     }
                                   }}
-                                ><i class="material-icons left">add_shopping_cart</i> Add to Cart</a>
+                                ><i className="material-icons left">add_shopping_cart</i> Add to Cart</a>
 
                                 <a
-                                  class="waves-effect waves-light btn"
+                                  href="#!"
+                                  className="waves-effect waves-light btn"
                                   onClick={() => this.download(signature.id)}
                                 ><i className="material-icons prefix">file_download</i> Download</a>
 
                                 <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
 
                                 <a
-                                  class="waves-effect waves-light btn"
+                                  href="#!"
+                                  className="waves-effect waves-light btn"
                                   disabled
                                 >
                                   <i className="material-icons prefix" style={{ marginRight: '24px' }}>send</i>
                                 </a>
 
                                 <a
-                                  href="#"
-                                  class="waves-effect waves-light btn"
+                                  href="#!"
+                                  className="waves-effect waves-light btn"
                                 ><img
                                   style={{
                                     maxWidth: 48,
                                     maxHeight: 24,
                                     top: 5,
                                   }}
+                                  alt="Enrichr"
                                   src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
                                 ></img> Enrichr</a>
                                 <a
-                                  href="#"
-                                  class="waves-effect waves-light btn"
+                                  href="#!"
+                                  className="waves-effect waves-light btn"
                                 ><img
                                   style={{
                                     maxWidth: 48,
                                     maxHeight: 24,
                                     top: 5,
                                   }}
+                                  alt="GeneShot"
                                   src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
                                 ></img> GeneShot</a>
                                 <a
-                                  href="#"
-                                  class="waves-effect waves-light btn"
+                                  href="#!"
+                                  className="waves-effect waves-light btn"
                                 ><img
                                   style={{
                                     maxWidth: 48,
                                     maxHeight: 24,
                                     top: 5,
                                   }}
+                                  alt="ARCHS4"
                                   src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
                                 ></img> ARCHS4</a>
                               </div>
