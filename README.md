@@ -1,6 +1,17 @@
 # signature-commons-ui
 A front-end UI for demoing API integration. Currently available at: http://amp.pharm.mssm.edu/signature-commons-ui/
 
+## Development
+
+Before starting, install the project dependencies:
+
+```bash
+# Install project dependency
+npm install
+# Install react development dependency globally
+npm install -g react-scripts
+```
+
 ### `npm start`
 
 Runs the app in the development mode.<br>
