@@ -9,7 +9,7 @@ export class Footer extends React.Component {
           <div className="col m5 s12">
             <img src="https://amp.pharm.mssm.edu/enrichmentapi/images/mountsinai.png" alt="Icahn School of Medicine at Mount Sinai, Center for Bioinformatics" height="130" />
           </div>
-          <div className="col m5 s12">
+          <div className="col l5 m7 s12">
             <ul style={{paddingLeft: '30px', listStyle: 'none', textAlign: 'left'}}>
               <li className="fl"><a href="http://icahn.mssm.edu/research/labs/maayan-laboratory" target="_blank" rel="noopener noreferrer">The Ma'ayan Lab</a></li>
               <li className="fl"><a href="http://www.lincs-dcic.org/" target="_blank" rel="noopener noreferrer">BD2K-LINCS Data Coordination and Integration Center (DCIC)</a></li>
@@ -24,7 +24,7 @@ export class Footer extends React.Component {
               {/* <li className="fl"><a href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/enrichmentapi/swagger.json" target="_blank" rel="noopener noreferrer">Data API Documentation</a></li> */}
             </ul>
           </div>
-          <div className="col m2 s12">
+          <div className="col l2 m6 s12">
             <img src="https://amp.pharm.mssm.edu/enrichmentapi/images/dcic.png" alt="BD2K-LINCS Data Coordination and Integration Center" height="130" /><br />
             © Ma'ayan Lab.
           </div>

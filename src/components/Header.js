@@ -9,7 +9,7 @@ export class Header extends React.Component {
   render() {
     return (
       <header>
-        <nav>
+        <nav className="nav-extended">
           <div className="nav-wrapper teal">
             <a
               href="/"
@@ -19,6 +19,14 @@ export class Header extends React.Component {
               }}
             >Signature Commons Metadata Search</a>
             <a href="#!" data-target="slide-out" className="sidenav-trigger show-on-large"><i className="material-icons">menu</i></a>
+          </div>
+          <div className="nav-content teal">
+            <ul className="tabs tabs-transparent">
+              <li className="tab"><a className="active" href="/">Metadata Search</a></li>
+              <li className="tab"><a href="/signature-search">Signature Search</a></li>
+              <li className="tab"><a href="/collections">Collections of Signatures</a></li>
+              <li className="tab"><a href="/upload_collection">Upload a Collection</a></li>
+            </ul>
           </div>
         </nav>
       </header>
