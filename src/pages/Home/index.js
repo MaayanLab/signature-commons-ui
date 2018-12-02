@@ -97,6 +97,7 @@ export default class Home extends React.Component {
     this.state = {
       search: '',
       results: [],
+      cart: [],
       time: 0,
       count: 0,
       key_count: {},
@@ -202,29 +203,33 @@ export default class Home extends React.Component {
   }
 
   async download(id) {
-    const signature_data = await fetch_data(id)
-    const signature_metadata = await fetch_meta('/signatures', {
-      filter: {
-        where: {
-          id: id,
-        }
-      }
-    })
-    const entity_metadata = await fetch_meta('/entites', {
-      filter: {
-        where: {
-          id: {
-            inq: signature_data.entities,
+    try {
+      const signature_data = await fetch_data(id)
+      const signature_metadata = await fetch_meta('/signatures', {
+        filter: {
+          where: {
+            id: id,
           }
         }
+      })
+      const entity_metadata = await fetch_meta('/entites', {
+        filter: {
+          where: {
+            id: {
+              inq: signature_data.entities,
+            }
+          }
+        }
+      })
+      const data = {
+        signature: signature_metadata,
+        entites: entity_metadata,
+        values: signature_data.values,
       }
-    })
-    const data = {
-      signature: signature_metadata,
-      entites: entity_metadata,
-      values: signature_data.values,
+      fileDownload(data, 'data.json');
+    } catch(e) {
+      console.error(e)
     }
-    fileDownload(data, 'data.json');
   }
 
   render() {
@@ -266,6 +271,35 @@ export default class Home extends React.Component {
             </li>
           ))}
         </ul>
+
+        {this.state.cart.length <= 0 ? null : (
+          <div class="fixed-action-btn">
+            <a class="btn-floating btn-large teal">
+              <i class="large material-icons">shopping_cart</i>
+            </a>
+            <span style={{
+              position: 'absolute',
+              top: '-0.1em',
+              fontSize: '150%',
+              left: '1.4em',
+              zIndex: 1,
+              color: 'white',
+              backgroundColor: 'blue',
+              borderRadius: '50%',
+              width: '35px',
+              height: '35px',
+              textAlign: 'center',
+              verticalAlign: 'middle',
+            }}>
+              {this.state.cart.length}
+            </span>
+            <ul>
+              <li><a class="btn-floating red"><i class="material-icons">file_download</i></a></li>
+              <li><a class="btn-floating green"><i class="material-icons">functions</i></a></li>
+              <li><a class="btn-floating grey"><i class="material-icons">send</i></a></li>
+            </ul>
+          </div>
+        )}
 
         <main>
           <div className="row">
@@ -363,34 +397,64 @@ export default class Home extends React.Component {
                                 display: 'flex',
                                 flexDirection: "row",
                               }}>
-                                <a href="#"><i className="material-icons prefix">shopping_cart</i></a>
+                                <a
+                                  class="waves-effect waves-light btn"
+                                  onClick={() => {
+                                    if(this.state.cart.indexOf(signature.id) === -1) {
+                                      this.setState({
+                                        cart: this.state.cart.concat(signature.id)
+                                      })
+                                    }
+                                  }}
+                                ><i class="material-icons left">add_shopping_cart</i> Add to Cart</a>
+
+                                <a
+                                  class="waves-effect waves-light btn"
+                                  onClick={() => this.download(signature.id)}
+                                ><i className="material-icons prefix">file_download</i> Download</a>
+
+                                <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+
+                                <a
+                                  class="waves-effect waves-light btn"
+                                  disabled
+                                >
+                                  <i className="material-icons prefix" style={{ marginRight: '24px' }}>send</i>
+                                </a>
+
                                 <a
                                   href="#"
-                                  onClick={() => this.fileDownload(signature.id)}
-                                ><i className="material-icons prefix">file_download</i></a>
-                                <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                                <i className="material-icons prefix" style={{ marginRight: '24px' }}>send</i>
-                                <a href="#"><img
+                                  class="waves-effect waves-light btn"
+                                ><img
                                   style={{
                                     maxWidth: 48,
                                     maxHeight: 24,
+                                    top: 5,
                                   }}
                                   src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-                                ></img></a>
-                                <a href="#"><img
+                                ></img> Enrichr</a>
+                                <a
+                                  href="#"
+                                  class="waves-effect waves-light btn"
+                                ><img
                                   style={{
                                     maxWidth: 48,
                                     maxHeight: 24,
+                                    top: 5,
                                   }}
                                   src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
-                                ></img></a>
-                                <a href="#"><img
+                                ></img> GeneShot</a>
+                                <a
+                                  href="#"
+                                  class="waves-effect waves-light btn"
+                                ><img
                                   style={{
                                     maxWidth: 48,
                                     maxHeight: 24,
+                                    top: 5,
                                   }}
                                   src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
-                                ></img></a>
+                                ></img> ARCHS4</a>
                               </div>
                             </div>
                           </li>
