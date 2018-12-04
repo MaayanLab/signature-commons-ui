@@ -22,10 +22,28 @@ export class Header extends React.Component {
           </div>
           <div className="nav-content teal">
             <ul className="tabs tabs-transparent">
-              <li className="tab"><a className="active" href="/">Metadata Search</a></li>
-              <li className="tab"><a href="/signature-search">Signature Search</a></li>
-              <li className="tab"><a href="/collections">Collections of Signatures</a></li>
-              <li className="tab"><a href="/upload_collection">Upload a Collection</a></li>
+              <li className="tab">
+                <a
+                  className={this.props.page === 'Home' ? 'active' : ''}
+                  href="/"
+                >
+                  Metadata Search
+                </a>
+              </li>
+              <li className="tab">
+                <a href="/signature-search">Signature Search</a>
+              </li>
+              <li className="tab">
+                <a
+                  className={this.props.page === 'Collections' ? 'active' : ''}
+                  href="/collections"
+                >
+                  Collections of Signatures
+                </a>
+              </li>
+              <li className="tab">
+                <a href="/upload_collection">Upload a Collection</a>
+              </li>
             </ul>
           </div>
         </nav>

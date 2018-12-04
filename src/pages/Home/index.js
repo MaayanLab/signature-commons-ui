@@ -385,7 +385,9 @@ export default class Home extends React.Component {
   render() {
     return (
       <div className="root">
-        <Header />
+        <Header
+          page="Home"
+        />
 
         <ul id="slide-out" className="sidenav">
           {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
