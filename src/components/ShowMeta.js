@@ -1,35 +1,45 @@
 import React from 'react';
+import { Highlight } from './Highlight';
 
-export function ShowMeta(props) {
-  if(typeof(props.value) === 'string' || typeof(props.value) === 'number' || typeof(props.value) === 'boolean') {
+export function ShowMeta({value, highlight}) {
+  if(typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
     return (
-      <span>{props.value + ''}</span>
+      <Highlight
+        Component={(props) => <span {...props}>{props.children}</span>}
+        text={value+''}
+        highlight={highlight}
+      />
     )
-  } else if(Array.isArray(props.value)) {
+  } else if(Array.isArray(value)) {
     return (
       <ul>
-        {props.value.map((value, ind) => (
+        {value.map((value, ind) => (
           <li key={ind}>
-            <ShowMeta value={value} />
+            <ShowMeta value={value} highlight={highlight} />
           </li>
         ))}
       </ul>
     )
-  } else if(typeof props.value === 'object') {
+  } else if(typeof value === 'object') {
     return (
       <ul>
-        {Object.keys(props.value).filter((key) => !key.startsWith('$')).map((key, ind) => (
+        {Object.keys(value).filter((key) => !key.startsWith('$')).map((key, ind) => (
           <li key={key}>
-            <b>{key}:</b>
+            <Highlight
+              Component={(props) => <b {...props}>{props.children}</b>}
+              HighlightComponent={(props) => <i {...props}>{props.children}</i>}
+              text={key+':'}
+              highlight={highlight}
+            />
             <div style={{ marginLeft: '5px' }}>
-              <ShowMeta value={props.value[key]} />
+              <ShowMeta value={value[key]} highlight={highlight} />
             </div>
           </li>
         ))}
       </ul>
     )
   } else {
-    console.error(props.value)
+    console.error(value)
     return null
   }
 }
