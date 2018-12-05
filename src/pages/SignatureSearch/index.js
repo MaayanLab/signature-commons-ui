@@ -211,6 +211,15 @@ export default class Home extends React.Component {
             },
           }
         ]), []
+      ).sort(
+        (a, b) => {
+          if(a.meta['p-value'] < b.meta['p-value'])
+            return -1
+          else if(a.meta['p-value'] > b.meta['p-value'])
+            return 1
+          else
+            return 0
+        }
       )
 
       this.setState({
