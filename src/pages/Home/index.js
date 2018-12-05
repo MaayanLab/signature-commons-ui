@@ -270,26 +270,20 @@ export default class Home extends React.Component {
                 key={signature.id}
               >
                 <div
-                  className="collapsible-header"
+                  className="page-header"
                   style={{
+                    padding: 10,
                     display: 'flex',
-                    flexDirection: "row",
+                    flexDirection: "column",
+                    backgroundColor: 'rgba(255,255,255,1)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
                   }}>
                     {buildTitle(signature, this.state.search)}
-                </div>
-                <div
-                  className="collapsible-body"
-                >
-                  <div 
-                    style={{
-                      height: '300px',
-                      overflow: 'auto',
-                    }}
-                  >
-                    <ShowMeta
-                      value={{ID: signature.id, ...signature.meta}}
-                      highlight={this.state.search}
-                    />
                   </div>
                   <div style={{
                     display: 'flex',
@@ -326,25 +320,18 @@ export default class Home extends React.Component {
                       className="waves-effect waves-light btn"
                       onClick={() => this.download(signature.id)}
                     ><i className="material-icons prefix">file_download</i> Download</a>
-
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
-                      disabled={this.state.cart.count() <= 0 || this.state.cart.has(signature.id)}
-                      onClick={() => this.submit_enrich(signature.id)}
-                    >
-                      <i className="material-icons">functions</i> Enrich
-                    </a>
-                    <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                      disabled
-                    >
-                      <i className="material-icons prefix" style={{ marginRight: '24px' }}>send</i>
-                    </a>
-
+                    ><img
+                      style={{
+                        maxWidth: 48,
+                        maxHeight: 24,
+                        top: 5,
+                      }}
+                      alt="Signature Commons"
+                      src="favicon.ico"
+                    ></img> Signature Commons</a>
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
@@ -380,7 +367,31 @@ export default class Home extends React.Component {
                       }}
                       alt="ARCHS4"
                       src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
-                    ></img> ARCHS4</a>
+                    ></img> ARCHS4
+                    </a>
+                    <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                    <a
+                      href="#!"
+                      className="collapsible-header"
+                      style={{ border: 0 }}
+                    >
+                      <i className="material-icons">expand_more</i>
+                    </a>
+                  </div>
+                </div>
+                <div
+                  className="collapsible-body"
+                >
+                  <div 
+                    style={{
+                      height: '300px',
+                      overflow: 'auto',
+                    }}
+                  >
+                    <ShowMeta
+                      value={{ID: signature.id, ...signature.meta}}
+                      highlight={this.state.search}
+                    />
                   </div>
                 </div>
               </li>
