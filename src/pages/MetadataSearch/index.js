@@ -29,7 +29,7 @@ const buildTitle = (sig, highlight) => {
       ))}
     </span>
   )
-  
+
   if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/draft-1.json') {
     return (
       <div>
@@ -107,10 +107,8 @@ export default class Home extends React.Component {
     }
 
     this.submit = this.submit.bind(this)
-    this.submit_enrich = this.submit_enrich.bind(this)
     this.build_where = this.build_where.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
-    this.download = this.download.bind(this)
   }
 
   componentDidMount() {
@@ -205,51 +203,6 @@ export default class Home extends React.Component {
     })
   }
 
-  async submit_enrich(id) {
-    // TODO: perform enrichment
-    // id contains entities
-    // cart contains signatures
-  }
-
-  async download(id) {
-    try {
-      let ids
-      if(id === undefined) {
-        ids = this.props.cart.toArray()
-      } else {
-        ids = [id]
-      }
-
-      const signature_data = await fetch_data(ids)
-      const signature_metadata = await fetch_meta('/signatures', {
-        filter: {
-          where: {
-            id: {
-              inq: ids,
-            }
-          }
-        }
-      })
-      const entity_metadata = await fetch_meta('/entites', {
-        filter: {
-          where: {
-            id: {
-              inq: signature_data.entities,
-            }
-          }
-        }
-      })
-      const data = {
-        entites: entity_metadata,
-        signatures: signature_metadata,
-        values: signature_data.values,
-      }
-      fileDownload(data, 'data.json');
-    } catch(e) {
-      console.error(e)
-    }
-  }
-
   render_signatures(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
@@ -317,7 +270,7 @@ export default class Home extends React.Component {
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
-                      onClick={() => this.download(signature.id)}
+                      onClick={() => this.props.download(signature.id)}
                     ><i className="material-icons prefix">file_download</i> Download</a>
                     <a
                       href="#!"
@@ -438,62 +391,6 @@ export default class Home extends React.Component {
             </li>
           ))}
         </ul>
-
-        {this.props.cart.count() <= 0 ? null : (
-          <div className="fixed-action-btn">
-            <a
-              href="#!"
-              className="btn-floating btn-large teal"
-            >
-              <i className="large material-icons">shopping_cart</i>
-            </a>
-            <span style={{
-              position: 'absolute',
-              top: '-0.1em',
-              fontSize: '150%',
-              left: '1.4em',
-              zIndex: 1,
-              color: 'white',
-              backgroundColor: 'blue',
-              borderRadius: '50%',
-              width: '35px',
-              height: '35px',
-              textAlign: 'center',
-              verticalAlign: 'middle',
-            }}>
-              {this.props.cart.count()}
-            </span>
-            <ul>
-              <li>
-                <a
-                  href="#!"
-                  className="btn-floating red"
-                  onClick={this.download}
-                >
-                  <i className="material-icons">file_download</i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#!"
-                  className="btn-floating green"
-                  onClick={this.submit_enrich}
-                >
-                  <i className="material-icons">functions</i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#!"
-                  className="btn-floating grey"
-                  onClick={() => alert('Comming soon')}
-                >
-                  <i className="material-icons">send</i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        )}
 
         <div className="row">
           <div className="col s12 center">

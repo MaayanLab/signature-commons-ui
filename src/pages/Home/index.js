@@ -101,7 +101,7 @@ export default class Home extends React.Component {
     this.state = {
       search: '',
       results: [],
-      cart: new Set(),
+      cart: Set(),
       time: 0,
       count: 0,
       key_count: {},
@@ -111,7 +111,6 @@ export default class Home extends React.Component {
     }
 
     this.submit = this.submit.bind(this)
-    this.submit_enrich = this.submit_enrich.bind(this)
     this.build_where = this.build_where.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
     this.download = this.download.bind(this)
@@ -209,14 +208,10 @@ export default class Home extends React.Component {
     })
   }
 
-  async submit_enrich(id) {
-    // TODO: perform enrichment
-    // id contains entities
-    // cart contains signatures
-  }
-
   async download(id) {
     try {
+      const controller = new AbortController()
+
       let ids
       if(id === undefined) {
         ids = this.state.cart.toArray()
@@ -224,7 +219,10 @@ export default class Home extends React.Component {
         ids = [id]
       }
 
-      const signature_data = await fetch_data(ids)
+      const signature_data = await fetch_data('/fetch/set', {
+        entities: [],
+        signatures: ids,
+      }, controller.signal)
       const signature_metadata = await fetch_meta('/signatures', {
         filter: {
           where: {
@@ -233,7 +231,7 @@ export default class Home extends React.Component {
             }
           }
         }
-      })
+      }, controller.signal)
       const entity_metadata = await fetch_meta('/entites', {
         filter: {
           where: {
@@ -242,7 +240,7 @@ export default class Home extends React.Component {
             }
           }
         }
-      })
+      }, controller.signal)
       const data = {
         entites: entity_metadata,
         signatures: signature_metadata,
@@ -253,6 +251,7 @@ export default class Home extends React.Component {
       console.error(e)
     }
   }
+
 
   render_signatures(results) {
     return results === undefined || results.length <= 0 ? (
@@ -481,9 +480,8 @@ export default class Home extends React.Component {
               </li>
               <li>
                 <a
-                  href="#!"
+                  href="#SignatureSearch"
                   className="btn-floating green"
-                  onClick={this.submit_enrich}
                 >
                   <i className="material-icons">functions</i>
                 </a>
@@ -505,16 +503,19 @@ export default class Home extends React.Component {
           id="MetadataSearch"
           cart={this.state.cart}
           updateCart={(cart) => this.setState({cart})}
+          download={this.download}
         />
         <SignatureSearch
           id="SignatureSearch"
           cart={this.state.cart}
           updateCart={(cart) => this.setState({cart})}
+          download={this.download}
         />
         <Collections
           id="Collections"
           cart={this.state.cart}
           updateCart={(cart) => this.setState({cart})}
+          download={this.download}
         />
 
         <Footer />

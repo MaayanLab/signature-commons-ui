@@ -3,7 +3,7 @@ import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
 import { Footer } from "../../components/Footer";
 import { Header } from "../../components/Header";
-import { fetch_enrich } from '../../util/fetch/data';
+import { fetch_data } from '../../util/fetch/data';
 import { fetch_meta } from '../../util/fetch/meta';
 
 export default class Query extends React.Component {
@@ -47,7 +47,7 @@ export default class Query extends React.Component {
         status: this.state.status + '\nenriching signatures...',
         signatures_results: signatures_meta,
       })
-      const enriched = await fetch_enrich({
+      const enriched = await fetch_data({
         entities: entities_meta.map((entity) => entity.id),
         signatures: signatures_meta.map((signature) => signature.id),
       })

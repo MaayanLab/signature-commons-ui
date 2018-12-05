@@ -5,7 +5,7 @@ import { Footer } from '../../components/Footer';
 import { Header } from '../../components/Header';
 import { ShowMeta } from '../../components/ShowMeta';
 import { range } from '../../util/range';
-import { fetch_data, fetch_enrich } from "../../util/fetch/data";
+import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta } from "../../util/fetch/meta";
 import { Set } from 'immutable'
 import { Highlight } from '../../components/Highlight'
@@ -120,7 +120,6 @@ export default class Home extends React.Component {
 
     this.submit = this.submit.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
-    this.download = this.download.bind(this)
   }
 
   componentDidMount() {
@@ -143,8 +142,8 @@ export default class Home extends React.Component {
         controller: controller,
       })
 
-      let entities = new Set(this.state.geneset.split(/[ \n,;]+/))
-      let entity_ids = new Set()
+      let entities = Set(this.state.geneset.split(/[ \n,;]+/))
+      let entity_ids = Set()
 
       const start = Date.now()
 
@@ -164,7 +163,7 @@ export default class Home extends React.Component {
       
       for(const entity of entity_meta) {
         const matched_entities = Set.intersect(
-          new Set([entity.meta.Name]),
+          Set([entity.meta.Name]),
           entities,
         )
 
@@ -178,7 +177,7 @@ export default class Home extends React.Component {
         mismatched_entities: entities,
       })
 
-      const enriched = await fetch_enrich('/enrich/overlap', {
+      const enriched = await fetch_data('/enrich/overlap', {
         entities: entity_ids,
         signatures: this.props.cart,
         database: 'enrichr',
@@ -255,45 +254,6 @@ export default class Home extends React.Component {
     })
   }
 
-  async download(id) {
-    try {
-      let ids
-      if(id === undefined) {
-        ids = this.props.cart.toArray()
-      } else {
-        ids = [id]
-      }
-
-      const signature_data = await fetch_data(ids)
-      const signature_metadata = await fetch_meta('/signatures', {
-        filter: {
-          where: {
-            id: {
-              inq: ids,
-            }
-          }
-        }
-      })
-      const entity_metadata = await fetch_meta('/entites', {
-        filter: {
-          where: {
-            id: {
-              inq: signature_data.entities,
-            }
-          }
-        }
-      })
-      const data = {
-        entites: entity_metadata,
-        signatures: signature_metadata,
-        values: signature_data.values,
-      }
-      fileDownload(data, 'data.json');
-    } catch(e) {
-      console.error(e)
-    }
-  }
-
   render_signatures(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
@@ -361,7 +321,7 @@ export default class Home extends React.Component {
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
-                      onClick={() => this.download(signature.id)}
+                      onClick={() => this.props.download(signature.id)}
                     ><i className="material-icons prefix">file_download</i> Download</a>
                     <a
                       href="#!"
