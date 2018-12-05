@@ -1,10 +1,10 @@
 const base_url = 'https://amp.pharm.mssm.edu/enrichmentapi/api'
 
-export async function fetch_enrich(body, signal) {
+export async function fetch_enrich(endpoint, body, signal) {
   return JSON.parse(
     await (
       await fetch(
-        base_url + '/enrich',
+        base_url + endpoint,
         {
           method: 'POST',
           body: JSON.stringify(body),

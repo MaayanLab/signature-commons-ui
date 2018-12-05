@@ -170,76 +170,70 @@ export default class Collections extends React.Component {
 
   render() {
     return (
-      <div className="root">
-        <Header
-          page="Collections"
-        />
-        <main>
-          <div className="row">
-            {Object.keys(this.state.collections).map((collection) => (
-              <a
-                key={collection}
-                href="#!"
-                onClick={() => this.get_libraries(this.state.collections[collection])}
-                style={{
-                  color: 'black',
-                }}
-              >
-                <div className="card col s4">
-                  <div className="card-image" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 150}}>
-                      {buildImage(collection)}
+      <main id={this.props.id}>
+        <div className="row">
+          {Object.keys(this.state.collections).map((collection) => (
+            <a
+              key={collection}
+              href="#!"
+              onClick={() => this.get_libraries(this.state.collections[collection])}
+              style={{
+                color: 'black',
+              }}
+            >
+              <div className="card col s4">
+                <div className="card-image" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 150}}>
+                    {buildImage(collection)}
+                </div>
+                <div className="card-content">
+                  <div className="chip">
+                    Libraries: {collection_library_counts[collection]}
                   </div>
-                  <div className="card-content">
                     <div className="chip">
-                      Libraries: {collection_library_counts[collection]}
-                    </div>
-                      <div className="chip">
-                      Signatures: {collection_signature_counts[collection]}
-                    </div>
+                    Signatures: {collection_signature_counts[collection]}
                   </div>
                 </div>
-              </a>
-            ))}
-            <div className="col s12">
-              {this.state.libraries === undefined ? null : (
-                <ul
-                  className="collapsible popout"
-                >
-                  {this.state.libraries.map((library) => (
-                    <li
-                      key={library.id}
+              </div>
+            </a>
+          ))}
+          <div className="col s12">
+            {this.state.libraries === undefined ? null : (
+              <ul
+                className="collapsible popout"
+              >
+                {this.state.libraries.map((library) => (
+                  <li
+                    key={library.id}
+                  >
+                    <div
+                      className="collapsible-header"
+                      style={{
+                        display: 'flex',
+                        flexDirection: "row",
+                      }}>
+                        {buildTitle(library)}
+                    </div>
+                    <div
+                      className="collapsible-body"
                     >
-                      <div
-                        className="collapsible-header"
+                      <div 
                         style={{
-                          display: 'flex',
-                          flexDirection: "row",
-                        }}>
-                          {buildTitle(library)}
-                      </div>
-                      <div
-                        className="collapsible-body"
+                          height: '300px',
+                          overflow: 'auto',
+                        }}
                       >
-                        <div 
-                          style={{
-                            height: '300px',
-                            overflow: 'auto',
-                          }}
-                        >
-                          <ShowMeta
-                            value={{ID: library.id, ...library.meta}}
-                          />
-                        </div>
+                        <ShowMeta
+                          value={{ID: library.id, ...library.meta}}
+                        />
                       </div>
-                    </li>
-                  ))}
-              </ul>
-              )}
-            </div>
+                    </div>
+                  </li>
+                ))}
+            </ul>
+            )}
           </div>
-        </main>
-        <Footer />
-      </div>
+        </div>
+      </main>
     )
   }
 }

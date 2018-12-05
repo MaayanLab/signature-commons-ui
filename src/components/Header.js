@@ -24,25 +24,27 @@ export class Header extends React.Component {
             <ul className="tabs tabs-transparent">
               <li className="tab">
                 <a
-                  className={this.props.page === 'Home' ? 'active' : ''}
-                  href="/"
+                  href="#MetadataSearch"
                 >
                   Metadata Search
                 </a>
               </li>
               <li className="tab">
-                <a href="/signature-search">Signature Search</a>
+                <a
+                  href="#SignatureSearch"
+                >
+                  Signature Search
+                </a>
               </li>
               <li className="tab">
                 <a
-                  className={this.props.page === 'Collections' ? 'active' : ''}
-                  href="/collections"
+                  href="#Collections"
                 >
                   Collections of Signatures
                 </a>
               </li>
               <li className="tab">
-                <a href="/upload_collection">Upload a Collection</a>
+                <a href="#UploadCollection">Upload a Collection</a>
               </li>
             </ul>
           </div>
