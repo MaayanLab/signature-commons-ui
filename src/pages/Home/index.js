@@ -219,34 +219,39 @@ export default class Home extends React.Component {
         ids = [id]
       }
 
-      const signature_data = await fetch_data('/fetch/set', {
+      const signature_data = (await fetch_data('/fetch/set', {
         entities: [],
         signatures: ids,
-      }, controller.signal)
+        database: 'enrichr',
+      }, controller.signal)).signatures
+      
+      const signatures = signature_data.map((sig) => sig.uid)
+      const entities = signature_data.reduce((all, sig) => [...all, sig.entities], [])
+
       const signature_metadata = await fetch_meta('/signatures', {
         filter: {
           where: {
             id: {
-              inq: ids,
+              inq: signatures,
             }
           }
         }
       }, controller.signal)
-      const entity_metadata = await fetch_meta('/entites', {
+      const entity_metadata = await fetch_meta('/entities', {
         filter: {
           where: {
             id: {
-              inq: signature_data.entities,
+              inq: entities,
             }
           }
         }
       }, controller.signal)
       const data = {
-        entites: entity_metadata,
+        entities: entity_metadata,
         signatures: signature_metadata,
-        values: signature_data.values,
+        values: signature_data,
       }
-      fileDownload(data, 'data.json');
+      fileDownload(JSON.stringify(data), 'data.json');
     } catch(e) {
       console.error(e)
     }
