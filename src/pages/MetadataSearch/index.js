@@ -549,7 +549,7 @@ export default class Home extends React.Component {
               </div>
             ) : this.render_signatures(this.state.results)}
           </div>
-          {this.state.results.length <= 0 || this.state.status !== '' ? null : (
+          {this.state.results.length <= 20 || this.state.status !== '' ? null : (
             <div className="col s12 center">
               <ul className="pagination">
                 <li className="disabled"><a href="#!"><i className="material-icons">chevron_left</i></a></li>
