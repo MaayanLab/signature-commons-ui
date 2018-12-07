@@ -11,7 +11,7 @@ import { Set } from 'immutable'
 import { Highlight } from '../../components/Highlight'
 
 const count = 'half a million'
-const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'
+const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 const n_rows = 1
 
 const buildTitle = (sig, highlight) => {
@@ -188,13 +188,23 @@ export default class Home extends React.Component {
       this.setState({
         status: 'Resolving signatures...',
         controller: controller,
+        count: Object.keys(enriched.results).length,
       })
 
       const enriched_signatures_meta = await fetch_meta('/signatures', {
         filter: {
           where: {
             id: {
-              inq: Object.keys(enriched.results)
+              inq: Object.keys(enriched.results).map((k) => ({...enriched.results[k], id: k})).sort(
+                (a, b) => {
+                  if (a['p-value'] < b['p-value'])
+                    return -1
+                  else if (a['p-value'] > b['p-value'])
+                    return 1
+                  else
+                    return 0
+                }
+              ).slice(1, 10).map((k) => k.id)
             }
           }
         }
