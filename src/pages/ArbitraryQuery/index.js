@@ -4,7 +4,7 @@ import ReactLoading from 'react-loading';
 import { Footer } from "../../components/Footer";
 import { Header } from "../../components/Header";
 import { fetch_data } from '../../util/fetch/data';
-import { fetch_meta } from '../../util/fetch/meta';
+import { fetch_meta_post } from '../../util/fetch/meta';
 
 export default class Query extends React.Component {
   constructor(props) {
@@ -33,16 +33,16 @@ export default class Query extends React.Component {
       this.setState({
         status: this.state.status + '\nfetching entities...',
       })
-      const entities_meta = await fetch_meta('/entities', {
+      const entities_meta = await fetch_meta_post('/entities/find', {
         filter: JSON.parse(this.state.entities)
-      })
+      }, undefined)
       this.setState({
         status: this.state.status + '\nfetching signatures...',
         entities_results: entities_meta,
       })
-      const signatures_meta = await fetch_meta('/signatures', {
+      const signatures_meta = await fetch_meta_post('/signatures/find', {
         filter: JSON.parse(this.state.signatures)
-      })
+      }, undefined)
       this.setState({
         status: this.state.status + '\nenriching signatures...',
         signatures_results: signatures_meta,
@@ -55,7 +55,7 @@ export default class Query extends React.Component {
         status: this.state.status + '\nfetching enriched signatures...',
         enrich_results: enriched,
       })
-      const enriched_signatures_meta = await fetch_meta('/signatures', {
+      const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {

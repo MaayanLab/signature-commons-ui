@@ -1,9 +1,6 @@
-import React from 'react'
-import { Header } from '../../components/Header'
-import { Footer } from '../../components/Footer'
-import { fetch_meta } from '../../util/fetch/meta'
-import { ShowMeta } from '../../components/ShowMeta'
-import { Map } from 'immutable'
+import React from 'react';
+import { ShowMeta } from '../../components/ShowMeta';
+import { fetch_meta, fetch_meta_post } from '../../util/fetch/meta';
 
 const buildTitle = (library) => {
   const buildLabels = (labels) => (
@@ -124,7 +121,7 @@ export default class Collections extends React.Component {
     })
 
     for(const validator of Object.keys(collection_count['$validator'])) {
-      const libraries = await fetch_meta('/libraries', {
+      const libraries = await fetch_meta_post('/libraries/find', {
         filter: {
           where: {
             'meta.$validator': validator,
@@ -157,7 +154,7 @@ export default class Collections extends React.Component {
   }
 
   async get_libraries(collection) {
-    const libraries = await fetch_meta('/libraries', {
+    const libraries = await fetch_meta_post('/libraries/find', {
       filter: {
         where: {
           // TODO: change this to a collection attribute

@@ -1,16 +1,12 @@
-import fileDownload from 'js-file-download';
+import { Set } from 'immutable';
 import M from "materialize-css";
 import React from "react";
-import { Footer } from '../../components/Footer';
-import { Header } from '../../components/Header';
+import { Highlight } from '../../components/Highlight';
 import { ShowMeta } from '../../components/ShowMeta';
-import { range } from '../../util/range';
 import { fetch_data } from "../../util/fetch/data";
-import { fetch_meta } from "../../util/fetch/meta";
-import { Set } from 'immutable'
-import { Highlight } from '../../components/Highlight'
+import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
+import { range } from '../../util/range';
 
-const count = 'half a million'
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 const n_rows = 1
 
@@ -147,7 +143,7 @@ export default class Home extends React.Component {
 
       const start = Date.now()
 
-      const entity_meta = await fetch_meta('/entities', {
+      const entity_meta = await fetch_meta_post('/entities/find', {
         filter: {
           where: {
             'meta.Name': {
@@ -191,7 +187,7 @@ export default class Home extends React.Component {
         count: Object.keys(enriched.results).length,
       })
 
-      const enriched_signatures_meta = await fetch_meta('/signatures', {
+      const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {

@@ -35,3 +35,21 @@ export async function fetch_meta(endpoint, body, signal) {
     )
   ).json()
 }
+
+export async function fetch_meta_post(endpoint, body, signal) {
+  return await (
+    await fetch(
+      base_url + endpoint,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          // 'Authorization': auth,
+        },
+        signal: signal,
+      }
+    )
+  ).json()
+}

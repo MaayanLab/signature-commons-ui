@@ -4,7 +4,7 @@ import ReactLoading from 'react-loading';
 import Swagger from 'swagger-client';
 import { Footer } from "../../components/Footer";
 import { Header } from "../../components/Header";
-import { fetch_meta } from '../../util/fetch/meta';
+import { fetch_meta_post } from '../../util/fetch/meta';
 
 export default class Query extends React.Component {
   constructor(props) {
@@ -74,7 +74,7 @@ export default class Query extends React.Component {
       })
 
       this.log('fetching signatures...')
-      const term_results = await fetch_meta('/signatures', {
+      const term_results = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             meta: {
