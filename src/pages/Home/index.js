@@ -232,7 +232,7 @@ export default class Home extends React.Component {
         filter: {
           where: {
             id: {
-          PINA inq: signatures,
+              inq: signatures,
             }
           }
         }
