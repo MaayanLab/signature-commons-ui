@@ -2,8 +2,8 @@ import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
 import Swagger from 'swagger-client';
-import { Footer } from "../../components/Footer";
-import { Header } from "../../components/Header";
+import { Footer } from "../Home/Footer";
+import { Header } from "../Home/Header";
 import { fetch_meta_post } from '../../util/fetch/meta';
 
 export default class Query extends React.Component {

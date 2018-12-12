@@ -1,8 +1,8 @@
 import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
-import { Footer } from "../../components/Footer";
-import { Header } from "../../components/Header";
+import { Footer } from "../Home/Footer";
+import { Header } from "../Home/Header";
 import { fetch_meta } from '../../util/fetch/meta';
 import RadarHighchart from './RadarHighchart';
 

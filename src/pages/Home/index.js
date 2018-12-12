@@ -2,18 +2,15 @@ import { Set } from 'immutable';
 import fileDownload from 'js-file-download';
 import M from "materialize-css";
 import React from "react";
-import { Footer } from '../../components/Footer';
-import { Header } from '../../components/Header';
 import { Highlight } from '../../components/Highlight';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
-import { range } from '../../util/range';
 import Collections from '../Collections';
 import MetadataSearch from '../MetadataSearch';
 import SignatureSearch from '../SignatureSearch';
-
-const n_rows = 1
+import { Footer } from './Footer';
+import { Header } from './Header';
 
 const buildTitle = (sig, highlight) => {
   const buildLabels = (labels) => (
@@ -262,148 +259,145 @@ export default class Home extends React.Component {
         {this.state.status === null ? null : 'No results.'}
       </div>
     ) : (
-      range(n_rows).map((n) => (
-        <div
-          key={n}
-          className={"col s" + (12/n_rows)}
+      <div
+        className="col s12"
+      >
+        <ul
+          className="collapsible popout"
         >
-          <ul
-            className="collapsible popout"
-          >
-            {results.filter((_, ind) => (ind % n_rows) === n).map((signature, ind) => (
-              <li
-                key={signature.id}
+          {results.map((signature, ind) => (
+            <li
+              key={signature.id}
+            >
+              <div
+                className="page-header"
+                style={{
+                  padding: 10,
+                  display: 'flex',
+                  flexDirection: "column",
+                  backgroundColor: 'rgba(255,255,255,1)',
+                }}
               >
                 <div
-                  className="page-header"
                   style={{
-                    padding: 10,
                     display: 'flex',
-                    flexDirection: "column",
-                    backgroundColor: 'rgba(255,255,255,1)',
+                    flexDirection: 'row',
+                }}>
+                  {buildTitle(signature, this.state.search)}
+                </div>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: "row",
+                }}>
+                  {this.state.cart.has(signature.id) ? (
+                    <a
+                      href="#!"
+                      className="waves-effect waves-light btn"
+                      onClick={() => {
+                        this.setState({
+                          cart: this.state.cart.delete(signature.id)
+                        })
+                      }}
+                    >
+                      <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
+                    </a>
+                  ) : (
+                    <a
+                      href="#!"
+                      className="waves-effect waves-light btn"
+                      onClick={() => {
+                        this.setState({
+                          cart: this.state.cart.add(signature.id)
+                        })
+                      }}
+                    >
+                      <i className="material-icons left">add_shopping_cart</i> Add to Cart
+                    </a>
+                  )}
+
+                  <a
+                    href="#!"
+                    className="waves-effect waves-light btn"
+                    onClick={() => this.download(signature.id)}
+                  ><i className="material-icons prefix">file_download</i> Download</a>
+                  <a
+                    href="#!"
+                    className="waves-effect waves-light btn"
+                  ><img
+                    style={{
+                      maxWidth: 48,
+                      maxHeight: 24,
+                      top: 5,
+                    }}
+                    alt="Signature Commons"
+                    src="favicon.ico"
+                  ></img> Signature Commons</a>
+                  <a
+                    href="#!"
+                    className="waves-effect waves-light btn"
+                  ><img
+                    style={{
+                      maxWidth: 48,
+                      maxHeight: 24,
+                      top: 5,
+                    }}
+                    alt="Enrichr"
+                    src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
+                  ></img> Enrichr</a>
+                  <a
+                    href="#!"
+                    className="waves-effect waves-light btn"
+                  ><img
+                    style={{
+                      maxWidth: 48,
+                      maxHeight: 24,
+                      top: 5,
+                    }}
+                    alt="GeneShot"
+                    src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
+                  ></img> GeneShot</a>
+                  <a
+                    href="#!"
+                    className="waves-effect waves-light btn"
+                  ><img
+                    style={{
+                      maxWidth: 48,
+                      maxHeight: 24,
+                      top: 5,
+                    }}
+                    alt="ARCHS4"
+                    src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
+                  ></img> ARCHS4
+                  </a>
+                  <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                  <a
+                    href="#!"
+                    className="collapsible-header"
+                    style={{ border: 0 }}
+                  >
+                    <i className="material-icons">expand_more</i>
+                  </a>
+                </div>
+              </div>
+              <div
+                className="collapsible-body"
+              >
+                <div 
+                  style={{
+                    height: '300px',
+                    overflow: 'auto',
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                  }}>
-                    {buildTitle(signature, this.state.search)}
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: "row",
-                  }}>
-                    {this.state.cart.has(signature.id) ? (
-                      <a
-                        href="#!"
-                        className="waves-effect waves-light btn"
-                        onClick={() => {
-                          this.setState({
-                            cart: this.state.cart.delete(signature.id)
-                          })
-                        }}
-                      >
-                        <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
-                      </a>
-                    ) : (
-                      <a
-                        href="#!"
-                        className="waves-effect waves-light btn"
-                        onClick={() => {
-                          this.setState({
-                            cart: this.state.cart.add(signature.id)
-                          })
-                        }}
-                      >
-                        <i className="material-icons left">add_shopping_cart</i> Add to Cart
-                      </a>
-                    )}
-
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                      onClick={() => this.download(signature.id)}
-                    ><i className="material-icons prefix">file_download</i> Download</a>
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                    ><img
-                      style={{
-                        maxWidth: 48,
-                        maxHeight: 24,
-                        top: 5,
-                      }}
-                      alt="Signature Commons"
-                      src="favicon.ico"
-                    ></img> Signature Commons</a>
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                    ><img
-                      style={{
-                        maxWidth: 48,
-                        maxHeight: 24,
-                        top: 5,
-                      }}
-                      alt="Enrichr"
-                      src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-                    ></img> Enrichr</a>
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                    ><img
-                      style={{
-                        maxWidth: 48,
-                        maxHeight: 24,
-                        top: 5,
-                      }}
-                      alt="GeneShot"
-                      src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
-                    ></img> GeneShot</a>
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                    ><img
-                      style={{
-                        maxWidth: 48,
-                        maxHeight: 24,
-                        top: 5,
-                      }}
-                      alt="ARCHS4"
-                      src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
-                    ></img> ARCHS4
-                    </a>
-                    <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                    <a
-                      href="#!"
-                      className="collapsible-header"
-                      style={{ border: 0 }}
-                    >
-                      <i className="material-icons">expand_more</i>
-                    </a>
-                  </div>
+                  <ShowMeta
+                    value={{ID: signature.id, ...signature.meta}}
+                    highlight={this.state.search}
+                  />
                 </div>
-                <div
-                  className="collapsible-body"
-                >
-                  <div 
-                    style={{
-                      height: '300px',
-                      overflow: 'auto',
-                    }}
-                  >
-                    <ShowMeta
-                      value={{ID: signature.id, ...signature.meta}}
-                      highlight={this.state.search}
-                    />
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     )
   }
 
