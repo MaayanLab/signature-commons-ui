@@ -16,7 +16,7 @@ export function Highlight({
   if(TextComponent === undefined) TextComponent = (props) => <span {...props}>{props.children}</span>
   if(HighlightComponent === undefined) HighlightComponent = (props) => <b {...props}>{props.children}</b>
 
-  const highlight_re = escapedVariableRegExp(highlight, 'ig')
+  const highlight_re = escapedVariableRegExp(highlight || '', 'ig')
   const matches = text.match(highlight_re)
   let n = 0
 
