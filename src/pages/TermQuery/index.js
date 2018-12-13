@@ -2,8 +2,6 @@ import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
 import Swagger from 'swagger-client';
-import { Footer } from "../Home/Footer";
-import { Header } from "../Home/Header";
 import { fetch_meta_post } from '../../util/fetch/meta';
 
 export default class Query extends React.Component {
@@ -98,7 +96,6 @@ export default class Query extends React.Component {
   render() {
     return (
       <div className="root">
-        <Header />
         <main>
           <fieldset>
             <legend>Term</legend>
@@ -152,7 +149,6 @@ export default class Query extends React.Component {
             </div>
           </fieldset>
         </main>
-        <Footer />
       </div>
     );
   }

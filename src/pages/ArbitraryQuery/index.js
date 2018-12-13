@@ -1,8 +1,6 @@
 import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
-import { Footer } from "../Home/Footer";
-import { Header } from "../Home/Header";
 import { fetch_data } from '../../util/fetch/data';
 import { fetch_meta_post } from '../../util/fetch/meta';
 
@@ -88,7 +86,6 @@ export default class Query extends React.Component {
   render() {
     return (
       <div className="root">
-        <Header />
         <main>
           <fieldset>
             <legend>Entities</legend>
@@ -164,7 +161,6 @@ export default class Query extends React.Component {
             </div>
           </fieldset>
         </main>
-        <Footer />
       </div>
     );
   }

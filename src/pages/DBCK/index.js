@@ -1,8 +1,6 @@
 import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
-import { Footer } from "../Home/Footer";
-import { Header } from "../Home/Header";
 import { fetch_meta } from '../../util/fetch/meta';
 
 export default class DBCK extends React.Component {
@@ -34,7 +32,6 @@ export default class DBCK extends React.Component {
   render() {
     return (
       <div className="root">
-        <Header />
         <main>
           <fieldset>
             <legend>
@@ -82,7 +79,6 @@ export default class DBCK extends React.Component {
             </div>
           </fieldset>
         </main>
-        <Footer />
       </div>
     )
   }

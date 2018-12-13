@@ -1,8 +1,6 @@
 import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
-import { Footer } from "../Home/Footer";
-import { Header } from "../Home/Header";
 import { fetch_meta } from '../../util/fetch/meta';
 
 export default class Query extends React.Component {
@@ -44,7 +42,6 @@ export default class Query extends React.Component {
   render() {
     return (
       <div className="root">
-        <Header />
         <main>
           <select
             onChange={(e) => this.setState({endpoint: e.target.value})}
@@ -85,7 +82,6 @@ export default class Query extends React.Component {
             )}
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
