@@ -11,6 +11,7 @@ import MetadataSearch from '../MetadataSearch';
 import SignatureSearch from '../SignatureSearch';
 import { Footer } from './Footer';
 import { Header } from './Header';
+import Upload from '../Upload';
 
 const buildTitle = (sig, highlight) => {
   const buildLabels = (labels) => (
@@ -510,6 +511,12 @@ export default class Home extends React.Component {
         />
         <Collections
           id="Collections"
+          cart={this.state.cart}
+          updateCart={(cart) => this.setState({cart})}
+          download={this.download}
+        />
+        <Upload
+          id="UploadCollection"
           cart={this.state.cart}
           updateCart={(cart) => this.setState({cart})}
           download={this.download}
