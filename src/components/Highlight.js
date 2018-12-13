@@ -1,5 +1,9 @@
 import React from 'react';
 
+function escapedVariableRegExp(str, flags) {
+  return new RegExp(str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), flags)
+}
+
 export function Highlight({
   Component,
   TextComponent,
@@ -12,13 +16,17 @@ export function Highlight({
   if(TextComponent === undefined) TextComponent = (props) => <span {...props}>{props.children}</span>
   if(HighlightComponent === undefined) HighlightComponent = (props) => <b {...props}>{props.children}</b>
 
+  const highlight_re = escapedVariableRegExp(highlight, 'ig')
+  const matches = text.match(highlight_re)
+  let n = 0
+
   return (
     <Component
       {...props}
     >
       {
-        text.split(
-          highlight
+         text.split(
+          highlight_re
         ).map((s, ind) =>
           <TextComponent key={ind}>{s}</TextComponent>
         ).reduce(
@@ -26,7 +34,7 @@ export function Highlight({
             [
               prev,
               <HighlightComponent key={ind + '.5'}>
-                {highlight}
+                {matches[n++]}
               </HighlightComponent>,
               cur,
             ]
