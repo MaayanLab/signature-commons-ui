@@ -6,7 +6,12 @@ const buildTitle = (library) => {
   const buildLabels = (labels) => (
     <span>
       {Object.keys(labels).map((key) => labels[key] === undefined || ((labels[key]+'') === '-666') ? null : (
-        <div className="chip">{key}: {labels[key]}</div>
+        <div
+          key={key}
+          className="chip"
+        >
+          {key}: {labels[key]}
+        </div>
       ))}
     </span>
   )
