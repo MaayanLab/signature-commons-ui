@@ -1,7 +1,7 @@
 import React from 'react';
 
 function escapedVariableRegExp(str, flags) {
-  return new RegExp(str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), flags)
+  return new RegExp(str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), flags)
 }
 
 export function Highlight({

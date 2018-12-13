@@ -23,7 +23,7 @@ export default class Upload extends React.Component {
     try {
       const loader = new FileReader()
       loader.onload = (evt) => {
-        if(evt.target.readyState != 2) return
+        if(evt.target.readyState !== 2) return
         if(evt.target.error) throw new Error(evt.target.error)
         this.setState({
           file: evt.target.result
@@ -71,16 +71,19 @@ export default class Upload extends React.Component {
             <div className="col s12">
               <textarea
                 value={this.state.file}
+                readOnly
               />
             </div>
             <div className="col s6">
               <textarea
                 value={this.state.value_sets}
+                readOnly
               />
             </div>
             <div className="col s6">
               <textarea
                 value={this.state.type_sets}
+                readOnly
               />
             </div>
           </div>
