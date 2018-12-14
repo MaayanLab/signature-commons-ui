@@ -16,14 +16,20 @@ export function Highlight({
   if(TextComponent === undefined) TextComponent = (props) => <span {...props}>{props.children}</span>
   if(HighlightComponent === undefined) HighlightComponent = (props) => <b {...props}>{props.children}</b>
 
-  const highlight_re = escapedVariableRegExp(highlight || '', 'ig')
+  if(highlight === undefined) {
+    return (
+      <Component {...props}>
+        <TextComponent>{text}</TextComponent>
+      </Component>
+    )
+  }
+
+  const highlight_re = escapedVariableRegExp(highlight, 'ig')
   const matches = text.match(highlight_re)
   let n = 0
 
   return (
-    <Component
-      {...props}
-    >
+    <Component {...props}>
       {
          text.split(
           highlight_re
