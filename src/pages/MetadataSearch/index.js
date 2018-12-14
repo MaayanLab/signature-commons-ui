@@ -1,88 +1,10 @@
 import M from "materialize-css";
 import React from "react";
-import { Highlight } from '../../components/Highlight';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
+import { Label } from '../../components/Label';
 
 const count = 'half a million'
-
-const buildTitle = (sig, highlight) => {
-  const buildLabels = (labels) => (
-    <span>
-      {Object.keys(labels).map((key) => labels[key] === undefined || ((labels[key]+'') === '-666') ? null : (
-        <Highlight
-          key={key}
-          text={key + ': ' + labels[key]+''}
-          highlight={highlight}
-          props={{
-            className: "chip"
-          }}
-        />
-      ))}
-    </span>
-  )
-
-  if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/draft-1.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="Enrichr"
-            src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-          />
-          Enrichr
-        </div>
-        {buildLabels({
-          'Resource': sig.meta.Resource,
-          'Assay': sig.meta.Assay,
-          'Organism': sig.meta.Organism,
-          'Description': sig.meta['Original String'],
-        })}
-      </div>
-    )
-  }
-  else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/clue-io.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="ConnectivityMap"
-            src="http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
-          />
-          ConnectivityMap
-        </div>
-        {buildLabels({
-          'Assay': 'L1000',
-          'Batch': sig.meta.pert_mfc_id,
-          'Cell-line': sig.meta.cell_id,
-          'Time point': sig.meta.pert_time + ' ' + sig.meta.pert_time_unit,
-          'Perturbation': sig.meta.pert_desc,
-          'Concentration': sig.meta.pert_dose,
-        })}
-      </div>
-    )
-  } else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/creeds.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="CREEDS"
-            src="http://amp.pharm.mssm.edu/CREEDS/img/creeds.png"
-          />
-          CREEDS
-        </div>
-        {buildLabels({
-          'Assay': 'Microarray',
-          'Drug': sig.meta.drug_name,
-          'DrugBank': sig.meta.drugbank_id,
-          'Organism': sig.meta.organism,
-          'GEO Accession': sig.meta.geo_id,
-          'CREEDS ID': sig.meta.id,
-        })}
-      </div>
-    )
-  }
-}
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -223,7 +145,11 @@ export default class Home extends React.Component {
                     display: 'flex',
                     flexDirection: 'row',
                 }}>
-                  {buildTitle(signature, this.state.search)}
+                  <Label
+                    item={signature}
+                    highlight={this.state.search}
+                    visibility={1}
+                  />
                 </div>
                 <div style={{
                   display: 'flex',

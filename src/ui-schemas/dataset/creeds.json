@@ -1,0 +1,24 @@
+{
+  "match": {
+    "$validator": "/@dcic/signature-commons-schema/core/dataset.json",
+    "dataset": "CREEDS"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/creeds.png",
+      "alt": "CREEDS"
+    },
+    "Libraries": {
+      "visibility": 1,
+      "type": "text",
+      "text": "3"
+    },
+    "Signatures": {
+      "visibility": 1,
+      "type": "text",
+      "text": "7758"
+    }
+  }
+}

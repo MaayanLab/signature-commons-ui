@@ -1,0 +1,24 @@
+{
+  "match": {
+    "$validator": "/@dcic/signature-commons-schema/core/library.json",
+    "dataset": "CREEDS"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/creeds.png",
+      "alt": "CREEDS"
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "Microarray"
+    },
+    "Name": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.file}"
+    }
+  }
+}

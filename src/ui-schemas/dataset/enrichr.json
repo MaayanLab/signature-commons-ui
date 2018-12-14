@@ -1,0 +1,24 @@
+{
+  "match": {
+    "$validator": "/@dcic/signature-commons-schema/core/dataset.json",
+    "dataset": "Enrichr"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/enrichr.png",
+      "alt": "Enrichr"
+    },
+    "Libraries": {
+      "visibility": 1,
+      "type": "text",
+      "text": "128"
+    },
+    "Signatures": {
+      "visibility": 1,
+      "type": "text",
+      "text": "234846"
+    }
+  }
+}

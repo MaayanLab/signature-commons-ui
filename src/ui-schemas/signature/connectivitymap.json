@@ -1,0 +1,74 @@
+{
+  "match": {
+    "$validator": "/@dcic/signature-commons-schema/core/signature.json",
+    "dataset": "clue-io"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png",
+      "alt": "ConnectivityMap"
+    },
+    "P-Value": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-value']}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta['p-value']}"
+    },
+    "Odds Ratio": {
+      "visibility": 1,
+      "condition": {
+        "${meta.oddsratio}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.oddsratio}"
+    },
+    "Set Size": {
+      "visibility": 1,
+      "condition": {
+        "${meta.setsize}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.setsize}"
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "L1000"
+    },
+    "Batch": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.pert_mfc_id}"
+    },
+    "Cell-line": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.cell_id}"
+    },
+    "Time point": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.pert_time} ${meta.pert_time_unit}"
+    },
+    "Perturbation": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.pert_desc}"
+    },
+    "Concentration": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.pert_dose}"
+    }
+  }
+}
