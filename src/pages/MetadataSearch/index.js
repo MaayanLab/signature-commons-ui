@@ -104,26 +104,26 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-    M.AutoInit();
+    // M.AutoInit();
   }
 
   componentDidUpdate() {
-    M.AutoInit();
+    // M.AutoInit();
     M.updateTextFields();
   }
 
   build_where() {
-    if (this.state.search.indexOf(':') !== -1) {
-      const [key, ...value] = this.state.search.split(':')
+    const search = this.state.search.match(/(?<value>.+)(?<key>\[.+\])?/).groups
+    if(search.key !== undefined) {
       return {
-        ['meta.' + key]: {
-          ilike: '%' + value.join(':') + '%'
+        ['meta.' + search.key]: {
+          ilike: '%' + search.value + '%'
         }
       }
     } else {
       return {
         meta: {
-          fullTextSearch: this.state.search
+          fullTextSearch: search.value
         }
       }
     }
@@ -381,7 +381,7 @@ export default class Home extends React.Component {
 
         <div className="row">
           <div className="col s12 center">
-            <form action="javascript:void(0);" onSubmit={this.submit}>
+            <form action="javascript:void(0);" onSubmit={this.submit} autoComplete="off">
               <div className="input-field">
                 <i className="material-icons prefix">search</i>
                 <input
@@ -389,7 +389,7 @@ export default class Home extends React.Component {
                   type="text"
                   onChange={(e) => this.setState({search: e.target.value})}
                   value={this.state.search}
-                  className="active"
+                  className="autocomplete"
                   placeholder={'Search over '+count+' signatures'}
                   style={{
                     fontWeight: 500,
@@ -400,6 +400,19 @@ export default class Home extends React.Component {
                     width: '350px',
                     padding: '8px 8px 8px 60px',
                     background: '#f7f7f7',
+                  }}
+                  ref={(ref) => {
+                    M.Autocomplete.init(ref, {
+                      data: {
+                        'L1000[Assay]': null,
+                        'MCF10A[Cell Line]': null,
+                        'Enrichr[Dataset]': null,
+                        'STAT3[Gene]': null,
+                        'Mus musculus[Organism]': null,
+                        'ZNF830[Perturbation]': null,
+                      },
+                      onAutocomplete: (val) => this.setState({search: val}, () => this.submit()),
+                    })
                   }}
                 />
                 <span>&nbsp;&nbsp;</span>

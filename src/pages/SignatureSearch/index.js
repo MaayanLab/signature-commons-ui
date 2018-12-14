@@ -117,7 +117,7 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-    M.AutoInit();
+     M.AutoInit();
   }
 
   componentDidUpdate() {
