@@ -31,9 +31,14 @@ export function ShowMeta({value, highlight}) {
               text={key+':'}
               highlight={highlight}
             />
-            <div style={{ marginLeft: '5px' }}>
+            &nbsp;
+            {typeof value[key] === 'object' ? (
+	      <div style={{ marginLeft: '5px' }}>
+                <ShowMeta value={value[key]} highlight={highlight} />
+              </div>
+            ) : (
               <ShowMeta value={value[key]} highlight={highlight} />
-            </div>
+            )}
           </li>
         ))}
       </ul>
