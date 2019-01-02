@@ -4,7 +4,7 @@ import ReactLoading from 'react-loading';
 import Swagger from 'swagger-client';
 import { fetch_meta_post } from '../../util/fetch/meta';
 
-export default class Query extends React.Component {
+export default class Query extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -13,9 +13,11 @@ export default class Query extends React.Component {
       enrichr_results: {},
       status: 'ready',
     }
+
     this.log = this.log.bind(this)
     this.submit = this.submit.bind(this)
     this.sendToEnrichr = this.sendToEnrichr.bind(this)
+    this.setTerm = this.setTerm.bind(this)
   }
 
   log(msg) {
@@ -93,6 +95,11 @@ export default class Query extends React.Component {
       })
     }
   }
+
+  setTerm(e) {
+    this.setState({term: e.target.value})
+  }
+
   render() {
     return (
       <div className="root">
@@ -100,7 +107,7 @@ export default class Query extends React.Component {
           <fieldset>
             <legend>Term</legend>
             <input
-              onChange={(e) => this.setState({term: e.target.value})}
+              onChange={this.setTerm}
               value={this.state.term}
               style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}
             />

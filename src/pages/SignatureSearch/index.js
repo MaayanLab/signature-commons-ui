@@ -5,6 +5,7 @@ import { Highlight } from '../../components/Highlight';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
+import { call } from '../../util/call';
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
@@ -95,7 +96,7 @@ const buildTitle = (sig, highlight) => {
   }
 }
 
-export default class Home extends React.Component {
+export default class Home extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -114,6 +115,10 @@ export default class Home extends React.Component {
 
     this.submit = this.submit.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
+    this.addToCart = this.addToCart.bind(this)
+    this.removeFromCart = this.removeFromCart.bind(this)
+    this.setGeneset = this.setGeneset.bind(this)
+    this.setAndSubmit = this.setAndSubmit.bind(this)
   }
 
   componentDidMount() {
@@ -258,6 +263,32 @@ export default class Home extends React.Component {
     })
   }
 
+  addToCart(id) {
+    this.props.updateCart(
+      this.props.cart.add(id)
+    )
+  }
+
+  removeFromCart(id) {
+    this.props.updateCart(
+      this.props.cart.delete(id)
+    )
+  }
+
+  setGeneset(e) {
+    this.setState({search: e.target.value})
+  }
+
+  setAndSubmit(example) {
+    this.setState(
+      {
+        geneset: example,
+      },
+      () => this.submit()
+    )
+  }
+  
+
   render_signatures(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
@@ -296,11 +327,7 @@ export default class Home extends React.Component {
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
-                      onClick={() => {
-                        this.props.updateCart(
-                          this.props.cart.delete(signature.id)
-                        )
-                      }}
+                      onClick={call(this.removeFromCart, signature.id)}
                     >
                       <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
                     </a>
@@ -308,11 +335,7 @@ export default class Home extends React.Component {
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
-                      onClick={() => {
-                        this.props.updateCart(
-                          this.props.cart.add(signature.id)
-                        )
-                      }}
+                      onClick={call(this.addtoCart, signature.id)}
                     >
                       <i className="material-icons left">add_shopping_cart</i> Add to Cart
                     </a>
@@ -321,7 +344,7 @@ export default class Home extends React.Component {
                   <a
                     href="#!"
                     className="waves-effect waves-light btn"
-                    onClick={() => this.props.download(signature.id)}
+                    onClick={call(this.props.download, signature.id)}
                   ><i className="material-icons prefix">file_download</i> Download</a>
                   <a
                     href="#!"
@@ -424,7 +447,7 @@ export default class Home extends React.Component {
                       overflow: 'auto',
                     }}
                     value={this.state.geneset}
-                    onChange={(e) => this.setState({geneset: e.target.value})}
+                    onChange={this.setGeneset}
                   ></textarea>
                 </div>
               </div>
@@ -433,9 +456,7 @@ export default class Home extends React.Component {
                 <div className="input-field">
                   <div
                     className="chip waves-effect waves-light"
-                    onClick={() => this.setState({
-                      geneset: example_geneset,
-                    }, () => this.submit())}
+                    onClick={call(this.setAndSubmit, example_geneset)}
                   >Example Geneset</div>
                 </div>
                 <button className="btn waves-effect waves-light" type="submit" name="action">Search

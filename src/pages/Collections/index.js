@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_meta, fetch_meta_post } from '../../util/fetch/meta';
+import { call } from '../../util/call';
 
 const buildTitle = (library) => {
   const buildLabels = (labels) => (
@@ -94,7 +95,7 @@ const collection_signature_counts = {
   'ClueIO': 411643,
 }
 
-export default class Collections extends React.Component {
+export default class Collections extends React.PureComponent {
   constructor(props) {
     super(props)
 
@@ -178,7 +179,7 @@ export default class Collections extends React.Component {
             <a
               key={collection}
               href="#!"
-              onClick={() => this.get_libraries(this.state.collections[collection])}
+              onClick={call(this.get_libraries, this.state.collections[collection])}
               style={{
                 color: 'black',
               }}

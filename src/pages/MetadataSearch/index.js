@@ -3,6 +3,7 @@ import React from "react";
 import { Highlight } from '../../components/Highlight';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
+import { call } from '../../util/call';
 
 const count = 'half a million'
 
@@ -84,7 +85,7 @@ const buildTitle = (sig, highlight) => {
   }
 }
 
-export default class Home extends React.Component {
+export default class Home extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -101,6 +102,10 @@ export default class Home extends React.Component {
     this.submit = this.submit.bind(this)
     this.build_where = this.build_where.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
+    this.searchChange = this.searchChange.bind(this)
+    this.addToCart = this.addToCart.bind(this)
+    this.removeFromCart = this.removeFromCart.bind(this)
+    this.searchAndSubmit = this.searchAndSubmit.bind(this)
   }
 
   componentDidMount() {
@@ -195,6 +200,31 @@ export default class Home extends React.Component {
     })
   }
 
+  addToCart(id) {
+    this.props.updateCart(
+      this.props.cart.add(id)
+    )
+  }
+
+  removeFromCart(id) {
+    this.props.updateCart(
+      this.props.cart.delete(id)
+    )
+  }
+
+  searchChange(e) {
+    this.setState({search: e.target.value})
+  }
+
+  searchAndSubmit(example) {
+    this.setState(
+      {
+        search: example,
+      },
+      () => this.submit()
+    )
+  }
+
   render_signatures(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
@@ -233,11 +263,7 @@ export default class Home extends React.Component {
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
-                      onClick={() => {
-                        this.props.updateCart(
-                          this.props.cart.delete(signature.id)
-                        )
-                      }}
+                      onClick={call(this.removeFromCart, signature.id)}
                     >
                       <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
                     </a>
@@ -245,11 +271,7 @@ export default class Home extends React.Component {
                     <a
                       href="#!"
                       className="waves-effect waves-light btn"
-                      onClick={() => {
-                        this.props.updateCart(
-                          this.props.cart.add(signature.id)
-                        )
-                      }}
+                      onClick={call(this.addToCart, signature.id)}
                     >
                       <i className="material-icons left">add_shopping_cart</i> Add to Cart
                     </a>
@@ -258,7 +280,7 @@ export default class Home extends React.Component {
                   <a
                     href="#!"
                     className="waves-effect waves-light btn"
-                    onClick={() => this.props.download(signature.id)}
+                    onClick={call(this.props.download, signature.id)}
                   ><i className="material-icons prefix">file_download</i> Download</a>
                   <a
                     href="#!"
@@ -387,7 +409,7 @@ export default class Home extends React.Component {
                 <input
                   id="searchBox"
                   type="text"
-                  onChange={(e) => this.setState({search: e.target.value})}
+                  onChange={this.searchChange}
                   value={this.state.search}
                   className="active"
                   placeholder={'Search over '+count+' signatures'}
@@ -411,9 +433,7 @@ export default class Home extends React.Component {
                 <div
                   key={example}
                   className="chip waves-effect waves-light"
-                  onClick={() => this.setState({
-                    search: example,
-                  }, () => this.submit())}
+                  onClick={call(this.searchAndSubmit, example)}
                 >{example}</div>
               ))}
             </form>
