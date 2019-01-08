@@ -63,7 +63,7 @@
     "Concentration": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.pert_dose}"
+      "text": "${meta.pert_dose} ${meta.pert_dose_unit}"
     }
   }
 }

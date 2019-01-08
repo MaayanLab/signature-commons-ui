@@ -25,12 +25,27 @@ const labels = {
     />
   ),
   'header-img': ({label, prop, data, highlight}) => (
-    <div className="card-title">
-      <img
-        alt={prop.alt}
-        src={prop.src}
-        style={prop.style}
-      />
+    <div
+      className="card-title"
+    >
+      <div
+        className="card-image"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '150px',
+        }}
+      >
+        <img
+          alt={prop.alt}
+          src={prop.src}
+          style={{
+            maxWidth: '100px',
+            maxHeight: '150px',
+          }}
+        />
+      </div>
       <Highlight
         Component={(props) => <span {...props}>{props.children}</span>}
         text={prop.alt}
@@ -43,7 +58,6 @@ const labels = {
       <img
         alt={prop.alt}
         src={prop.src}
-        style={prop.style}
       />
       <Highlight
         Component={(props) => <span {...props}>{props.children}</span>}

@@ -37,18 +37,13 @@ const Header = () => (
             </a>
           </li>
           <li className="tab">
-            <a href="#Enrichment">
-              Enrichment Search
-            </a>
-          </li>
-          <li className="tab">
             <a href="#Collections">
-              Collections of Signatures
+              Collections
             </a>
           </li>
           <li className="tab">
             <a href="#UploadCollection">
-              Upload a Collection
+              Upload
             </a>
           </li>
         </ul>
@@ -356,14 +351,8 @@ export default class Home extends React.PureComponent {
           updateCart={this.updateCart}
           download={this.download}
         />
-        <SignatureSearch
-          id="SignatureSearch"
-          cart={this.state.cart}
-          updateCart={this.updateCart}
-          download={this.download}
-        />
         <Enrichment
-          id="Enrichment"
+          id="SignatureSearch"
           cart={this.state.cart}
           updateCart={this.updateCart}
           download={this.download}

@@ -6,6 +6,7 @@ import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
 import { BarGraph } from './BarGraph'
 import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 import { Label } from '../../components/Label';
+import { call } from '../../util/call'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
@@ -24,11 +25,13 @@ export default class Home extends React.Component {
       mismatched_entities: [],
       status: null,
       controller: null,
+      library: null,
     }
 
     this.submit = this.submit.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
     this.render_libraries = this.render_libraries.bind(this)
+    this.set_library = this.set_library.bind(this)
   }
 
   componentDidMount() {
@@ -214,6 +217,12 @@ export default class Home extends React.Component {
     })
   }
 
+  set_library(library) {
+    this.setState({
+      library
+    })
+  }
+
   render_libraries(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
@@ -223,15 +232,20 @@ export default class Home extends React.Component {
       <div className="col s12">
         <div className="row">
           {Object.keys(results).map((key) => (
-            <div key={key} className="card col m6 s12">
+            <div key={key} className="card col l6 s12">
               <div className="card-content">
-                <div className="card-title" style={{ whiteSpace: 'nowrap' }}>
-                  <Label
-                    item={results[key].library}
-                    highlight={this.state.search}
-                    visibility={1}
-                  />
-                </div>
+                <a
+                  onClick={call(this.set_library, results[key].library)}
+                  href="#!"
+                >
+                  <div className="card-title" style={{ whiteSpace: 'nowrap' }}>
+                    <Label
+                      item={results[key].library}
+                      highlight={this.state.search}
+                      visibility={1}
+                    />
+                  </div>
+                </a>
               </div>
               <div className="card-content">
                 <BarGraph

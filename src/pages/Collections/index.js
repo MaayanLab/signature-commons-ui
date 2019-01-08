@@ -101,21 +101,25 @@ export default class Collections extends React.PureComponent {
       <main id={this.props.id}>
         <div className="row">
           {this.state.collections.map((collection) => (
-            <a
+            <div
               key={collection.dataset}
-              href="#!"
-              onClick={call(this.get_libraries, collection.dataset)}
-              style={{
-                color: 'black',
-              }}
+              className="card col s4 center"
             >
-              <div className="card col s4">
-                <Label
-                  item={collection}
-                  visibility={1}
-                />
+              <div className="card-content">
+                <a
+                  href="#!"
+                  onClick={call(this.get_libraries, collection.dataset)}
+                  style={{
+                    color: 'black',
+                  }}
+                >
+                  <Label
+                    item={collection}
+                    visibility={1}
+                  />
+                </a>
               </div>
-            </a>
+            </div>
           ))}
           <div className="col s12">
             {this.state.libraries === undefined ? null : (
