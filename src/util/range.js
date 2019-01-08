@@ -1,8 +1,13 @@
-export function range(n) {
-  function *_range(n) {
-    for(let i = 0; i < n; i++) {
+export function range(start, end) {
+  if (end === undefined) {
+    end = start
+    start = 0
+  }
+
+  function *_range() {
+    for(let i = start; i < end; i++) {
       yield i
     }
   }
-  return [..._range(n)]
+  return [..._range()]
 }

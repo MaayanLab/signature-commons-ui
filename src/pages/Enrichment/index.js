@@ -1,11 +1,11 @@
-import { Set } from 'immutable';
+import { Map, Set } from 'immutable';
 import M from "materialize-css";
 import React from "react";
 import { Highlight } from '../../components/Highlight';
-import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
-import { call } from '../../util/call';
+import { BarGraph } from './BarGraph'
+import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
@@ -95,12 +95,12 @@ const buildTitle = (sig, highlight) => {
   }
 }
 
-export default class Home extends React.PureComponent {
+export default class Home extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       search: '',
-      results: [],
+      results: Map(),
       geneset: '',
       time: 0,
       count: 0,
@@ -114,14 +114,11 @@ export default class Home extends React.PureComponent {
 
     this.submit = this.submit.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
-    this.addToCart = this.addToCart.bind(this)
-    this.removeFromCart = this.removeFromCart.bind(this)
-    this.setGeneset = this.setGeneset.bind(this)
-    this.setAndSubmit = this.setAndSubmit.bind(this)
+    this.render_libraries = this.render_libraries.bind(this)
   }
 
   componentDidMount() {
-    M.AutoInit();
+     M.AutoInit();
   }
 
   componentDidUpdate() {
@@ -177,9 +174,11 @@ export default class Home extends React.PureComponent {
 
       const enriched = await fetch_data('/enrich/overlap', {
         entities: entity_ids,
-        signatures: this.props.cart,
+        signatures: [],
         database: 'enrichr',
       }, controller.signal)
+
+      // TODO: process other databases
 
       this.setState({
         status: 'Resolving signatures...',
@@ -191,20 +190,14 @@ export default class Home extends React.PureComponent {
         filter: {
           where: {
             id: {
-              inq: Object.keys(enriched.results).map((k) => ({...enriched.results[k], id: k})).sort(
-                (a, b) => {
-                  if (a['p-value'] < b['p-value'])
-                    return -1
-                  else if (a['p-value'] > b['p-value'])
-                    return 1
-                  else
-                    return 0
-                }
-              ).slice(1, 10).map((k) => k.id)
+              inq: maybe_fix_obj(enriched.results).reduce(
+                (K, k) => k['p-value'] < 0.05 ? [...K, k.id] : K, []
+              )
             }
           }
         }
       }, controller.signal)
+
       const enriched_signatures = enriched_signatures_meta.reduce(
         (full, signature) => ([
           ...full,
@@ -227,10 +220,19 @@ export default class Home extends React.PureComponent {
         }
       )
 
+      const grouped_signatures = enriched_signatures.reduce(
+        (groups, sig) => {
+          if(groups[sig.library] === undefined)
+            groups[sig.library] = []
+          groups[sig.library].push(sig)
+          return groups
+        }, {}
+      )
+
       this.setState({
+        results: grouped_signatures,
         status: '',
         time: Date.now() - start,
-        results: enriched_signatures,
       })
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
@@ -260,166 +262,29 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  addToCart(id) {
-    this.props.updateCart(
-      this.props.cart.add(id)
-    )
-  }
-
-  removeFromCart(id) {
-    this.props.updateCart(
-      this.props.cart.delete(id)
-    )
-  }
-
-  setGeneset(e) {
-    this.setState({search: e.target.value})
-  }
-
-  setAndSubmit(example) {
-    this.setState(
-      {
-        geneset: example,
-      },
-      () => this.submit()
-    )
-  }
-  
-
-  render_signatures(results) {
+  render_libraries(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
         {this.state.status === null ? null : 'No results.'}
       </div>
     ) : (
       <div className="col s12">
-        <ul
-          className="collapsible popout"
-        >
-          {results.map((signature) => (
-            <li
-              key={signature.id}
-            >
-              <div
-                className="page-header"
-                style={{
-                  padding: 10,
-                  display: 'flex',
-                  flexDirection: "column",
-                  backgroundColor: 'rgba(255,255,255,1)',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                }}>
-                  {buildTitle(signature, this.state.search)}
-                </div>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: "row",
-                }}>
-                  {this.props.cart.has(signature.id) ? (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                      onClick={call(this.removeFromCart, signature.id)}
-                    >
-                      <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
-                    </a>
-                  ) : (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                      onClick={call(this.addtoCart, signature.id)}
-                    >
-                      <i className="material-icons left">add_shopping_cart</i> Add to Cart
-                    </a>
-                  )}
-
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn"
-                    onClick={call(this.props.download, signature.id)}
-                  ><i className="material-icons prefix">file_download</i> Download</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="Signature Commons"
-                    src="favicon.ico"
-                  ></img> Signature Commons</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="Enrichr"
-                    src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-                  ></img> Enrichr</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="GeneShot"
-                    src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
-                  ></img> GeneShot</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="ARCHS4"
-                    src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
-                  ></img> ARCHS4
-                  </a>
-                  <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                  <a
-                    href="#!"
-                    className="collapsible-header"
-                    style={{ border: 0 }}
-                  >
-                    <i className="material-icons">expand_more</i>
-                  </a>
+        <div className="row">
+          {Object.keys(results).map((key) => (
+            <div key={key} className="card col l4 m6 s12">
+              <div className="card-content">
+                <div className="card-title">
+                  {key}
                 </div>
               </div>
-              <div
-                className="collapsible-body"
-              >
-                <div 
-                  style={{
-                    height: '300px',
-                    overflow: 'auto',
-                  }}
-                >
-                  <ShowMeta
-                    value={{ID: signature.id, ...signature.meta}}
-                    highlight={this.state.search}
-                  />
-                </div>
+              <div className="card-content">
+                <BarGraph
+                  data={results[key]}
+                />
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     )
   }
@@ -444,7 +309,7 @@ export default class Home extends React.PureComponent {
                       overflow: 'auto',
                     }}
                     value={this.state.geneset}
-                    onChange={this.setGeneset}
+                    onChange={(e) => this.setState({geneset: e.target.value})}
                   ></textarea>
                 </div>
               </div>
@@ -453,7 +318,9 @@ export default class Home extends React.PureComponent {
                 <div className="input-field">
                   <div
                     className="chip waves-effect waves-light"
-                    onClick={call(this.setAndSubmit, example_geneset)}
+                    onClick={() => this.setState({
+                      geneset: example_geneset,
+                    }, () => this.submit())}
                   >Example Geneset</div>
                 </div>
                 <button className="btn waves-effect waves-light" type="submit" name="action">Search
@@ -495,7 +362,7 @@ export default class Home extends React.PureComponent {
               <div className="center">
                 {this.state.status}
               </div>
-            ) : this.render_signatures(this.state.results)}
+            ) : this.render_libraries(this.state.results)}
           </div>
           {this.state.results.length < 10 || this.state.status !== '' ? null : (
             <div className="col s12 center">
