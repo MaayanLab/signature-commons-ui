@@ -11,15 +11,15 @@ export default class Collections extends React.Component {
       collections: [
         {
           "$validator": "/@dcic/signature-commons-schema/core/dataset.json",
-          "dataset": "ConnectivityMap"
+          "dataset": "lincs"
         },
         {
           "$validator": "/@dcic/signature-commons-schema/core/dataset.json",
-          "dataset": "CREEDS"
+          "dataset": "creeds"
         },
         {
           "$validator": "/@dcic/signature-commons-schema/core/dataset.json",
-          "dataset": "Enrichr"
+          "dataset": "enrichr"
         },
       ],
       libraries: [],

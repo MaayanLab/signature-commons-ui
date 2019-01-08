@@ -1,7 +1,7 @@
 {
   "match": {
-    "$validator": "/@dcic/signature-commons-schema/core/library.json",
-    "dataset": "ConnectivityMap"
+    "${$validator}": "/@dcic/signature-commons-schema/core/library.json",
+    "${dataset}": "lincs"
   },
   "properties": {
     "Image": {

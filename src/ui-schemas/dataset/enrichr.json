@@ -1,7 +1,7 @@
 {
   "match": {
-    "$validator": "/@dcic/signature-commons-schema/core/dataset.json",
-    "dataset": "Enrichr"
+    "${$validator}": "/@dcic/signature-commons-schema/core/dataset.json",
+    "${dataset}": "enrichr"
   },
   "properties": {
     "Image": {

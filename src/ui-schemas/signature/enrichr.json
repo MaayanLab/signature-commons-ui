@@ -1,7 +1,7 @@
 {
   "match": {
-    "$validator": "/@dcic/signature-commons-schema/core/signature.json",
-    "dataset": "Enrichr"
+    "${$validator}": "/@dcic/signature-commons-schema/core/signature.json",
+    "${library.dataset}": "enrichr"
   },
   "properties": {
     "Image": {
@@ -42,23 +42,38 @@
     },
     "Resource": {
       "visibility": 1,
+      "condition": {
+        "${meta.Resource}": {
+          "ne": null
+        }
+      },
       "type": "text",
       "text": "${meta.Resource}"
     },
     "Assay": {
       "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
       "type": "text",
       "text": "${meta.Assay}"
     },
     "Organism": {
       "visibility": 1,
+      "condition": {
+        "${meta.Organism}": {
+          "ne": null
+        }
+      },
       "type": "text",
       "text": "${meta.Organism}"
     },
     "Description": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.Original String}"
+      "text": "${meta['Original String']}"
     }
   }
 }

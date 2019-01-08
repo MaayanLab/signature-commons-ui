@@ -65,15 +65,30 @@ export default class Home extends React.Component {
       const where = this.build_where()
 
       const start = Date.now()
-      const results = await fetch_meta_post('/signatures/find', {
+      const signatures = await fetch_meta_post('/signatures/find', {
         filter: {
           where,
           limit: 20,
         },
       }, controller.signal)
 
+      const library_ids = [...new Set(signatures.map((result) => result.library))]
+      const libraries = await fetch_meta_post('/libraries/find', {
+        filter: {
+          where: {
+            id: {
+              inq: library_ids
+            }
+          },
+        },
+      }, controller.signal)
+      const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
+      
+      for(const signature of signatures)
+        signature.library = library_dict[signature.library]
+
       this.setState({
-        results,
+        results: signatures,
         status: '',
         time: Date.now() - start,
       })
