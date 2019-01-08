@@ -4,7 +4,6 @@ import React from 'react'
 import * as d3 from 'd3'
 
 function drawBargraph(chart, bargraph_data) {
-  console.log(bargraph_data)
   bargraph_data = bargraph_data.slice(0, 20).map((data) => data.meta);
 
   function sortByScore(data, score, dir) {

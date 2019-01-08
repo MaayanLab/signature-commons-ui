@@ -141,6 +141,21 @@ export default class Home extends React.PureComponent {
         }
       )
 
+      const library_ids = [...new Set(enriched_signatures.map((sig) => sig.library))]
+      const libraries = await fetch_meta_post('/libraries/find', {
+        filter: {
+          where: {
+            id: {
+              inq: library_ids
+            }
+          },
+        },
+      }, controller.signal)
+      const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
+
+      for(const signature of enriched_signatures)
+        signature.library = library_dict[signature.library]
+
       this.setState({
         status: '',
         time: Date.now() - start,

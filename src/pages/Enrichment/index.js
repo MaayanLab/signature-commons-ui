@@ -86,25 +86,47 @@ export default class Home extends React.Component {
         mismatched_entities: entities,
       })
 
-      const enriched = await fetch_data('/enrich/overlap', {
-        entities: entity_ids,
-        signatures: [],
-        database: 'enrichr',
-      }, controller.signal)
-
-      // TODO: process other databases
+      const enriched_results = (await Promise.all([
+        fetch_data('/enrich/overlap', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'enrichr',
+        }, controller.signal),
+        fetch_data('/enrich/overlap', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'creeds',
+        }, controller.signal),
+        // fetch_data('/enrich/rank', {
+        //   entities: entity_ids,
+        //   signatures: [],
+        //   database: 'lincs',
+        // }, controller.signal),
+        // fetch_data('/enrich/rank', {
+        //   entities: entity_ids,
+        //   signatures: [],
+        //   database: 'lincsfwd',
+        // }, controller.signal),
+      ])).reduce(
+        (results, result) => {
+          return ({
+            ...results,
+            ...maybe_fix_obj(result.results),
+          })
+        }, {}
+      )
 
       this.setState({
         status: 'Resolving signatures...',
         controller: controller,
-        count: Object.keys(enriched.results).length,
+        count: Object.keys(enriched_results).length,
       })
 
       const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {
-              inq: maybe_fix_obj(enriched.results).reduce(
+              inq: Object.values(enriched_results).reduce(
                 (K, k) => k['p-value'] < 0.05 ? [...K, k.id] : K, []
               )
             }
@@ -119,7 +141,7 @@ export default class Home extends React.Component {
             ...signature,
             meta: {
               ...signature.meta,
-              ...enriched.results[signature.id],
+              ...enriched_results[signature.id],
             },
           }
         ]), []
@@ -154,7 +176,7 @@ export default class Home extends React.Component {
               signatures: []
             }
           }
-          groups[sig.library].signatures.push(sig)
+          groups[sig.library].signatures.push({...sig, library: groups[sig.library].library})
           return groups
         }, {}
       )
@@ -203,7 +225,7 @@ export default class Home extends React.Component {
           {Object.keys(results).map((key) => (
             <div key={key} className="card col m6 s12">
               <div className="card-content">
-                <div className="card-title">
+                <div className="card-title" style={{ whiteSpace: 'nowrap' }}>
                   <Label
                     item={results[key].library}
                     highlight={this.state.search}

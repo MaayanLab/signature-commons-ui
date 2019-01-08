@@ -70,8 +70,6 @@ export default class Collections extends React.PureComponent {
         })).count
 
         this.setState(({signature_collection_counts, signature_library_counts}) => {
-          console.log(signature_collection_counts)
-          
           return {
             signature_collection_counts: signature_collection_counts.set(
               dataset,
