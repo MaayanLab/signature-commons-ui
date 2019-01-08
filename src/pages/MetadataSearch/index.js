@@ -77,7 +77,7 @@ export default class Home extends React.Component {
         },
       }, controller.signal)
 
-      const library_ids = [...new Set(signatures.map((result) => result.library))]
+      const library_ids = [...new Set(signatures.map((sig) => sig.library))]
       const libraries = await fetch_meta_post('/libraries/find', {
         filter: {
           where: {

@@ -1,99 +1,13 @@
 import { Set } from 'immutable';
 import M from "materialize-css";
 import React from "react";
-import { Highlight } from '../../components/Highlight';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
 import { call } from '../../util/call';
+import { Label } from '../../components/Label';
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
-
-const buildTitle = (sig, highlight) => {
-  const buildLabels = (labels) => (
-    <span>
-      {Object.keys(labels).map((key) => labels[key] === undefined || ((labels[key]+'') === '-666') ? null : (
-        <Highlight
-          key={key}
-          text={key + ': ' + labels[key]+''}
-          highlight={highlight}
-          props={{
-            className: "chip"
-          }}
-        />
-      ))}
-    </span>
-  )
-  
-  if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/draft-1.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="Enrichr"
-            src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-          />
-          Enrichr
-        </div>
-        {buildLabels({
-          'P-Value': sig.meta['p-value'],
-          'Odds Ratio': sig.meta.oddsratio,
-          'Set Size': sig.meta.setsize,
-          'Resource': sig.meta.Resource,
-          'Assay': sig.meta.Assay,
-          'Organism': sig.meta.Organism,
-          'Description': sig.meta['Original String'],
-        })}
-      </div>
-    )
-  }
-  else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/clue-io.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="ConnectivityMap"
-            src="http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
-          />
-          ConnectivityMap
-        </div>
-        {buildLabels({
-          'P-Value': sig.meta['p-value'],
-          'Odds Ratio': sig.meta.oddsratio,
-          'Set Size': sig.meta.setsize,
-          'Assay': 'L1000',
-          'Cell-line': sig.meta.cell_id,
-          'Time point': sig.meta.pert_time + ' ' + sig.meta.pert_time_unit,
-          'Perturbation': sig.meta.pert_desc,
-          'Concentration': sig.meta.pert_dose,
-        })}
-      </div>
-    )
-  } else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/creeds.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="CREEDS"
-            src="http://amp.pharm.mssm.edu/CREEDS/img/creeds.png"
-          />
-          CREEDS
-        </div>
-        {buildLabels({
-          'P-Value': sig.meta['p-value'],
-          'Odds Ratio': sig.meta.oddsratio,
-          'Set Size': sig.meta.setsize,
-          'Assay': 'Microarray',
-          'Drug': sig.meta.drug_name,
-          'DrugBank': sig.meta.drugbank_id,
-          'Organism': sig.meta.organism,
-          'GEO Accession': sig.meta.geo_id,
-          'CREEDS ID': sig.meta.id,
-        })}
-      </div>
-    )
-  }
-}
 
 export default class Home extends React.PureComponent {
   constructor(props) {
@@ -314,7 +228,11 @@ export default class Home extends React.PureComponent {
                     display: 'flex',
                     flexDirection: 'row',
                 }}>
-                  {buildTitle(signature, this.state.search)}
+                  <Label
+                    item={signature}
+                    highlight={this.state.search}
+                    visibility={1}
+                  />
                 </div>
                 <div style={{
                   display: 'flex',
