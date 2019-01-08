@@ -17,6 +17,11 @@
     },
     "Database": {
       "visibility": 1,
+      "condition": {
+        "${meta.Database}": {
+          "ne": null
+        }
+      },
       "type": "text",
       "text": "${meta.Database}"
     },
@@ -27,6 +32,11 @@
     },
     "Measurement": {
       "visibility": 1,
+      "condition": {
+        "${meta.Measurement}": {
+          "ne": null
+        }
+      },
       "type": "text",
       "text": "${meta.Measurement}"
     },
