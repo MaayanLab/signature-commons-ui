@@ -2,7 +2,7 @@
   "name": "signature-commons-ui",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://amp.pharm.mssm.edu/signature-commons-ui/",
+  "homepage": "http://amp.pharm.mssm.edu/sigcomm/",
   "dependencies": {
     "@dcic/signature-commons-schema": "^1.1.1",
     "abort-controller": "^1.1.0",
