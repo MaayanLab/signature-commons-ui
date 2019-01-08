@@ -40,7 +40,6 @@ export default class Query extends React.PureComponent {
       ]
       this.log('Fetching API spec...')
       const client = await Swagger('https://raw.githubusercontent.com/MaayanLab/smartAPIs/master/enrichr_smartapi.yml')
-      console.log(client)
       this.log('Uploading gene list to enrichr...')
       const resp = await client.apis.default.addList({}, {
         requestBody: {

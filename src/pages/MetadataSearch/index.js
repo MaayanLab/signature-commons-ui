@@ -1,91 +1,13 @@
 import M from "materialize-css";
 import React from "react";
-import { Highlight } from '../../components/Highlight';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
 import { call } from '../../util/call';
+import { Label } from '../../components/Label';
 
 const count = 'half a million'
 
-const buildTitle = (sig, highlight) => {
-  const buildLabels = (labels) => (
-    <span>
-      {Object.keys(labels).map((key) => labels[key] === undefined || ((labels[key]+'') === '-666') ? null : (
-        <Highlight
-          key={key}
-          text={key + ': ' + labels[key]+''}
-          highlight={highlight}
-          props={{
-            className: "chip"
-          }}
-        />
-      ))}
-    </span>
-  )
-
-  if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/draft-1.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="Enrichr"
-            src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-          />
-          Enrichr
-        </div>
-        {buildLabels({
-          'Resource': sig.meta.Resource,
-          'Assay': sig.meta.Assay,
-          'Organism': sig.meta.Organism,
-          'Description': sig.meta['Original String'],
-        })}
-      </div>
-    )
-  }
-  else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/clue-io.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="ConnectivityMap"
-            src="http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png"
-          />
-          ConnectivityMap
-        </div>
-        {buildLabels({
-          'Assay': 'L1000',
-          'Batch': sig.meta.pert_mfc_id,
-          'Cell-line': sig.meta.cell_id,
-          'Time point': sig.meta.pert_time + ' ' + sig.meta.pert_time_unit,
-          'Perturbation': sig.meta.pert_desc,
-          'Concentration': sig.meta.pert_dose,
-        })}
-      </div>
-    )
-  } else if (sig.meta.$validator === '/@dcic/signature-commons-schema/meta/signature/creeds.json') {
-    return (
-      <div>
-        <div className="chip">
-          <img
-            alt="CREEDS"
-            src="http://amp.pharm.mssm.edu/CREEDS/img/creeds.png"
-          />
-          CREEDS
-        </div>
-        {buildLabels({
-          'Assay': 'Microarray',
-          'Drug': sig.meta.drug_name,
-          'DrugBank': sig.meta.drugbank_id,
-          'Organism': sig.meta.organism,
-          'GEO Accession': sig.meta.geo_id,
-          'CREEDS ID': sig.meta.id,
-        })}
-      </div>
-    )
-  }
-}
-
-export default class Home extends React.PureComponent {
+export default class Home extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -148,15 +70,30 @@ export default class Home extends React.PureComponent {
       const where = this.build_where()
 
       const start = Date.now()
-      const results = await fetch_meta_post('/signatures/find', {
+      const signatures = await fetch_meta_post('/signatures/find', {
         filter: {
           where,
           limit: 20,
         },
       }, controller.signal)
 
+      const library_ids = [...new Set(signatures.map((result) => result.library))]
+      const libraries = await fetch_meta_post('/libraries/find', {
+        filter: {
+          where: {
+            id: {
+              inq: library_ids
+            }
+          },
+        },
+      }, controller.signal)
+      const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
+      
+      for(const signature of signatures)
+        signature.library = library_dict[signature.library]
+
       this.setState({
-        results,
+        results: signatures,
         status: '',
         time: Date.now() - start,
       })
@@ -253,7 +190,11 @@ export default class Home extends React.PureComponent {
                     display: 'flex',
                     flexDirection: 'row',
                 }}>
-                  {buildTitle(signature, this.state.search)}
+                  <Label
+                    item={signature}
+                    highlight={this.state.search}
+                    visibility={1}
+                  />
                 </div>
                 <div style={{
                   display: 'flex',
