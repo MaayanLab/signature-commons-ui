@@ -54,7 +54,6 @@ const buildTitle = (sig, highlight) => {
         </div>
         {buildLabels({
           'Assay': 'L1000',
-          'Batch': sig.meta.pert_mfc_id,
           'Cell-line': sig.meta.cell_id,
           'Time point': sig.meta.pert_time + ' ' + sig.meta.pert_time_unit,
           'Perturbation': sig.meta.pert_desc,

@@ -4,6 +4,8 @@ import React from "react";
 import { Highlight } from '../../components/Highlight';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
+import { BarGraph } from './BarGraph'
+import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
@@ -60,7 +62,6 @@ const buildTitle = (sig, highlight) => {
           'Odds Ratio': sig.meta.oddsratio,
           'Set Size': sig.meta.setsize,
           'Assay': 'L1000',
-          'Batch': sig.meta.pert_mfc_id,
           'Cell-line': sig.meta.cell_id,
           'Time point': sig.meta.pert_time + ' ' + sig.meta.pert_time_unit,
           'Perturbation': sig.meta.pert_desc,
@@ -113,6 +114,7 @@ export default class Home extends React.Component {
 
     this.submit = this.submit.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
+    this.render_libraries = this.render_libraries.bind(this)
   }
 
   componentDidMount() {
@@ -165,79 +167,70 @@ export default class Home extends React.Component {
       }
 
       this.setState({
-        status: 'Gathering libraries...',
+        status: 'Enriching...',
         matched_entities: entity_ids,
         mismatched_entities: entities,
       })
 
-      const libraries = await fetch_meta_post('/libraries/find', {}, controller.signal)
+      const enriched = await fetch_data('/enrich/overlap', {
+        entities: entity_ids,
+        signatures: [],
+        database: 'enrichr',
+      }, controller.signal)
+
+      // TODO: process other databases
 
       this.setState({
-        status: 'Enriching...',
-        libraries: libraries,
+        status: 'Resolving signatures...',
+        controller: controller,
+        count: Object.keys(enriched.results).length,
       })
 
-      for(const library of libraries) {
-        const enriched = await fetch_data('/enrich/overlap', {
-          entities: entity_ids,
-          signatures: this.props.cart,
-          database: library.database || 'enrichr', // TODO: ensure this is present in the metadata
-          // database: 'enrichr',
-          // database: 'creeds'
-          // database: 'lincs' (rank)
-        }, controller.signal)
+      const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
+        filter: {
+          where: {
+            id: {
+              inq: maybe_fix_obj(enriched.results).reduce(
+                (K, k) => k['p-value'] < 0.05 ? [...K, k.id] : K, []
+              )
+            }
+          }
+        }
+      }, controller.signal)
 
-        const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
-          filter: {
-            where: {
-              id: {
-                inq: Object.keys(enriched.results).map((k) => ({...enriched.results[k], id: k})).sort(
-                  (a, b) => {
-                    if (a['p-value'] < b['p-value'])
-                      return -1
-                    else if (a['p-value'] > b['p-value'])
-                      return 1
-                    else
-                      return 0
-                  }
-                ).slice(1, 10).map((k) => k.id)
-              }
-            }
+      const enriched_signatures = enriched_signatures_meta.reduce(
+        (full, signature) => ([
+          ...full,
+          {
+            ...signature,
+            meta: {
+              ...signature.meta,
+              ...enriched.results[signature.id],
+            },
           }
-        }, controller.signal)
-        const enriched_signatures = enriched_signatures_meta.reduce(
-          (full, signature) => ([
-            ...full,
-            {
-              ...signature,
-              meta: {
-                ...signature.meta,
-                ...enriched.results[signature.id],
-              },
-            }
-          ]), []
-        ).sort(
-          (a, b) => {
-            if(a.meta['p-value'] < b.meta['p-value'])
-              return -1
-            else if(a.meta['p-value'] > b.meta['p-value'])
-              return 1
-            else
-              return 0
-          }
-        )
-        this.setState((prevState) => ({
-          results: prevState.results.set(
-            library.id,
-            {
-              library: library,
-              signatures: enriched_signatures,
-            }
-          )
-        }))
-      }
+        ]), []
+      ).sort(
+        (a, b) => {
+          if(a.meta['p-value'] < b.meta['p-value'])
+            return -1
+          else if(a.meta['p-value'] > b.meta['p-value'])
+            return 1
+          else
+            return 0
+        }
+      )
+
+      const grouped_signatures = enriched_signatures.reduce(
+        (groups, sig) => {
+          if(groups[sig.library] === undefined)
+            groups[sig.library] = []
+          groups[sig.library].push(sig)
+          return groups
+        }, {}
+      )
 
       this.setState({
+        results: grouped_signatures,
         status: '',
         time: Date.now() - start,
       })
@@ -270,35 +263,28 @@ export default class Home extends React.Component {
   }
 
   render_libraries(results) {
-    return results === undefined || results.count() <= 0 ? (
-      <div className="center">
-        {this.state.status === null ? null : 'No results.'}
-      </div>
-    ) : (
-      <div className="col s12">
-        {results.toSeq().map((result) => (
-          <div className="card">
-            <div className="card-title">
-              {result.library.meta.name}
-            </div>
-            <div className="card-content">
-              {this.render_signatures(result.signatures)}
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  render_signatures(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
         {this.state.status === null ? null : 'No results.'}
       </div>
     ) : (
       <div className="col s12">
-        TODO: Bar Graph
-        {results}
+        <div className="row">
+          {Object.keys(results).map((key) => (
+            <div key={key} className="card col l4 m6 s12">
+              <div className="card-content">
+                <div className="card-title">
+                  {key}
+                </div>
+              </div>
+              <div className="card-content">
+                <BarGraph
+                  data={results[key]}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }

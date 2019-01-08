@@ -62,7 +62,6 @@ const buildTitle = (sig, highlight) => {
           'Odds Ratio': sig.meta.oddsratio,
           'Set Size': sig.meta.setsize,
           'Assay': 'L1000',
-          'Batch': sig.meta.pert_mfc_id,
           'Cell-line': sig.meta.cell_id,
           'Time point': sig.meta.pert_time + ' ' + sig.meta.pert_time_unit,
           'Perturbation': sig.meta.pert_desc,
@@ -180,8 +179,6 @@ export default class Home extends React.PureComponent {
         entities: entity_ids,
         signatures: this.props.cart,
         database: 'enrichr',
-        // database: 'creeds'
-        // database: 'lincs' (rank)
       }, controller.signal)
 
       this.setState({
