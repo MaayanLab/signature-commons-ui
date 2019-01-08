@@ -100,16 +100,16 @@ export default class Home extends React.Component {
           signatures: [],
           database: 'creeds',
         }, controller.signal),
-        // fetch_data('/enrich/rank', {
-        //   entities: entity_ids,
-        //   signatures: [],
-        //   database: 'lincs',
-        // }, controller.signal),
-        // fetch_data('/enrich/rank', {
-        //   entities: entity_ids,
-        //   signatures: [],
-        //   database: 'lincsfwd',
-        // }, controller.signal),
+        fetch_data('/enrich/rank', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'lincs',
+        }, controller.signal),
+        fetch_data('/enrich/rank', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'lincsfwd',
+        }, controller.signal),
       ])).reduce(
         (results, result) => {
           return ({
@@ -291,7 +291,7 @@ export default class Home extends React.Component {
                     onClick={() => this.setState({
                       geneset: example_geneset,
                     }, () => this.submit())}
-                  >Example Geneset</div>
+                  >Example Gene Set</div>
                 </div>
                 <button className="btn waves-effect waves-light blue" type="submit" name="action">Search
                   <i className="material-icons right">send</i>
