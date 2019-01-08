@@ -45,7 +45,7 @@ export default class Upload extends React.Component {
           <div className="col s12">
             <form action="#">
               <div className="file-field input-field">
-                <div className="btn">
+                <div className="btn blue">
                   <span>CSV</span>
                   <input
                     type="file"

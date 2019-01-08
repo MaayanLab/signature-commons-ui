@@ -389,7 +389,7 @@ export default class Home extends React.PureComponent {
                     onClick={call(this.setAndSubmit, example_geneset)}
                   >Example Geneset</div>
                 </div>
-                <button className="btn waves-effect waves-light" type="submit" name="action">Search
+                <button className="btn waves-effect waves-light blue" type="submit" name="action">Search
                   <i className="material-icons right">send</i>
                 </button>
               </div>
@@ -434,7 +434,7 @@ export default class Home extends React.PureComponent {
             <div className="col s12 center">
               <ul className="pagination">
                 <li className="disabled"><a href="#!"><i className="material-icons">chevron_left</i></a></li>
-                <li className="active teal"><a href="#!">1</a></li>
+                <li className="active blue"><a href="#!">1</a></li>
                 <li className="waves-effect"><a href="#!">2</a></li>
                 <li className="waves-effect"><a href="#!">3</a></li>
                 <li className="waves-effect"><a href="#!"><i className="material-icons">chevron_right</i></a></li>
