@@ -6,7 +6,7 @@
   "properties": {
     "Image": {
       "visibility": 1,
-      "type": "img",
+      "type": "header-img",
       "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/creeds.png",
       "alt": "CREEDS"
     },

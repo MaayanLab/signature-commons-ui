@@ -6,8 +6,8 @@
   "properties": {
     "Image": {
       "visibility": 1,
-      "type": "img",
-      "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/enrichr.png",
+      "type": "header-img",
+      "src": "http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png",
       "alt": "Enrichr"
     },
     "Libraries": {

@@ -24,6 +24,20 @@ const labels = {
       }}
     />
   ),
+  'header-img': ({label, prop, data, highlight}) => (
+    <div className="card-title">
+      <img
+        alt={prop.alt}
+        src={prop.src}
+        style={prop.style}
+      />
+      <Highlight
+        Component={(props) => <span {...props}>{props.children}</span>}
+        text={prop.alt}
+        highlight={highlight}
+      />
+    </div>
+  ),
   'img': ({label, prop, data, highlight}) => (
     <div className="chip">
       <img
