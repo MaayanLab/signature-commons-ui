@@ -10,40 +10,10 @@
       "src": "http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png",
       "alt": "Enrichr"
     },
-    "Assay": {
+    "Library Name": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.Assay}"
-    },
-    "Database": {
-      "visibility": 1,
-      "condition": {
-        "${meta.Database}": {
-          "ne": null
-        }
-      },
-      "type": "text",
-      "text": "${meta.Database}"
-    },
-    "Organism": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.Organism}"
-    },
-    "Measurement": {
-      "visibility": 1,
-      "condition": {
-        "${meta.Measurement}": {
-          "ne": null
-        }
-      },
-      "type": "text",
-      "text": "${meta.Measurement}"
-    },
-    "Primary Resource": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta['Primary Resource']}"
+      "text": "${meta['Library name']}"
     }
   }
 }

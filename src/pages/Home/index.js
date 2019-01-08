@@ -66,7 +66,6 @@ const Footer = () => (
         </div>
         <div className="col l2 m6 s12">
           <img src="https://amp.pharm.mssm.edu/enrichmentapi/images/dcic.png" alt="BD2K-LINCS Data Coordination and Integration Center" height="130" /><br />
-          © Ma'ayan Lab.
         </div>
       </div>
     </div>

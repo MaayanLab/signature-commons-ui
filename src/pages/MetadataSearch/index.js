@@ -200,44 +200,9 @@ export default class Home extends React.Component {
                   display: 'flex',
                   flexDirection: "row",
                 }}>
-                  {this.props.cart.has(signature.id) ? (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                      onClick={call(this.removeFromCart, signature.id)}
-                    >
-                      <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
-                    </a>
-                  ) : (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn"
-                      onClick={call(this.addToCart, signature.id)}
-                    >
-                      <i className="material-icons left">add_shopping_cart</i> Add to Cart
-                    </a>
-                  )}
-
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn"
-                    onClick={call(this.props.download, signature.id)}
-                  ><i className="material-icons prefix">file_download</i> Download</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="Signature Commons"
-                    src="favicon.ico"
-                  ></img> Signature Commons</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn"
+                    className="waves-effect waves-light btn blue"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -247,9 +212,10 @@ export default class Home extends React.Component {
                     alt="Enrichr"
                     src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
                   ></img> Enrichr</a>
+                  &nbsp;
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn"
+                    className="waves-effect waves-light btn blue"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -259,9 +225,10 @@ export default class Home extends React.Component {
                     alt="GeneShot"
                     src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
                   ></img> GeneShot</a>
+                  &nbsp;
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn"
+                    className="waves-effect waves-light btn blue"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -272,6 +239,43 @@ export default class Home extends React.Component {
                     src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
                   ></img> ARCHS4
                   </a>
+                  &nbsp;
+                  <a
+                    href="#!"
+                    className="waves-effect waves-light btn blue"
+                  ><img
+                    style={{
+                      maxWidth: 48,
+                      maxHeight: 24,
+                      top: 5,
+                    }}
+                    alt="Signature Commons"
+                    src="favicon.ico"
+                  ></img> Signature Commons</a>
+                  &nbsp;
+                  <a
+                    href="#!"
+                    className="waves-effect waves-light btn blue"
+                    onClick={call(this.props.download, signature.id)}
+                  ><i className="material-icons left">file_download</i> Download</a>
+                  &nbsp;
+                  {this.props.cart.has(signature.id) ? (
+                    <a
+                      href="#!"
+                      className="waves-effect waves-light btn blue"
+                      onClick={call(this.removeFromCart, signature.id)}
+                    >
+                      <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
+                    </a>
+                  ) : (
+                    <a
+                      href="#!"
+                      className="waves-effect waves-light btn blue"
+                      onClick={call(this.addToCart, signature.id)}
+                    >
+                      <i className="material-icons left">add_shopping_cart</i> Add to Cart
+                    </a>
+                  )}
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                   <a
                     href="#!"
