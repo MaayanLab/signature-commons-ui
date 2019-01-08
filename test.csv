@@ -1,4 +1,8 @@
-,Cell Type,MCF10
-,Drug,mydrug
-Gene,Cell Line,
-STAT3,mycellline,0.4
+,Cell Type,MCF10,MCF10
+,Drug,celastrol,vorinostat
+,Concentration,1 µM,10 µM
+,Time point,12h,6h
+,Assay,L1000,L1000
+Gene,NCBI Gene ID,,
+STAT3,6774,0.4,0.2
+MAPK3,5595,0.9,1
