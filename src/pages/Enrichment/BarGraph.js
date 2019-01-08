@@ -141,7 +141,7 @@ export class BarGraph extends React.PureComponent {
         ref={this.renderBargraph}
         className="main"
         preserveAspectRatio="xMinYMin"
-        viewBox="-18 -18 918 558"
+        viewBox="-50 -50 1200 650"
       />
     )
   }
