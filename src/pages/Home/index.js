@@ -309,7 +309,7 @@ export default class Home extends React.PureComponent {
                 <a
                   href="#!"
                   className="btn-floating red"
-                  onClick={this.download}
+                  onClick={call(this.download, undefined)}
                 >
                   <i className="material-icons">file_download</i>
                 </a>
