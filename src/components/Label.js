@@ -41,8 +41,11 @@ const labels = {
           alt={prop.alt}
           src={prop.src}
           style={{
-            maxWidth: '100px',
-            maxHeight: '150px',
+            ...{
+              maxWidth: '100px',
+              maxHeight: '150px',
+            },
+            ...prop.style
           }}
         />
       </div>

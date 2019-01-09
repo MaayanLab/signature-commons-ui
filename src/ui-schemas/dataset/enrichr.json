@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "header-img",
-      "src": "http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png",
+      "src": "https://amp.pharm.mssm.edu/modEnrichr/images/enrichr.png",
       "alt": "Enrichr"
     },
     "Libraries": {

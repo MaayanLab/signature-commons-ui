@@ -8,7 +8,11 @@
       "visibility": 1,
       "type": "header-img",
       "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/creeds.png",
-      "alt": "CREEDS"
+      "alt": "CREEDS",
+      "style": {
+        "maxHeight": "70px",
+        "maxWidth": "70px"
+      }
     },
     "Libraries": {
       "visibility": 1,

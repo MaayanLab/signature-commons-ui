@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/clue.png",
+      "src": "https://assets.clue.io/clue/public/img/favicon.ico",
       "alt": "ConnectivityMap"
     },
     "Assay": {
