@@ -296,7 +296,7 @@ export default class Home extends React.Component {
                   }}
                 >
                   <ShowMeta
-                    value={{ID: signature.id, ...signature.meta}}
+                    value={signature}
                     highlight={this.state.search}
                   />
                 </div>

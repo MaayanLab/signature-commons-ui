@@ -143,7 +143,7 @@ export default class Collections extends React.PureComponent {
                         }}
                       >
                         <ShowMeta
-                          value={{ID: library.id, ...library.meta}}
+                          value={library}
                         />
                       </div>
                     </div>
