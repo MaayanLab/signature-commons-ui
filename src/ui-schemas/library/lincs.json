@@ -14,31 +14,6 @@
       "visibility": 1,
       "type": "text",
       "text": "L1000"
-    },
-    "Database": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.Database}"
-    },
-    "Organism": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.Organism}"
-    },
-    "Measurement": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.Measurement}"
-    },
-    "Primary Resource": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta['Primary Resource']}"
-    },
-    "Name": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.name}"
     }
   }
 }

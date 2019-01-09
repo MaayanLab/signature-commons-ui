@@ -10,15 +10,15 @@
       "src": "http://amp.pharm.mssm.edu/enrichmentapi/images/creeds.png",
       "alt": "CREEDS"
     },
+    "Name": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.name}"
+    },
     "Assay": {
       "visibility": 1,
       "type": "text",
       "text": "Microarray"
-    },
-    "Name": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.file}"
     }
   }
 }
