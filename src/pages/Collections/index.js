@@ -9,16 +9,6 @@ export default class Collections extends React.PureComponent {
     super(props)
 
     this.state = {
-      collection_library_counts: {
-        'enrichr': 128,
-        'creeds': 3,
-        'lincs': 1,
-      },
-      collection_signature_counts: {
-        'enrichr': 234846,
-        'creeds': 7758,
-        'lincs': 411643,
-      },
       collections: [
         {
           "$validator": "/@dcic/signature-commons-schema/core/dataset.json",
