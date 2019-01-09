@@ -11,6 +11,8 @@ import MetadataSearch from '../MetadataSearch';
 import SignatureSearch from '../SignatureSearch';
 import Upload from '../Upload';
 
+const redirect = (url) => window.location = url
+
 const Header = () => (
   <header>
     <nav className="nav-extended">
@@ -46,6 +48,13 @@ const Header = () => (
               Upload
             </a>
           </li>
+          <li className="tab">
+            <a
+              href="javascript:void(0);"
+              onClick={call(redirect, "http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json")}>
+              API
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -56,15 +65,7 @@ const Footer = () => (
   <footer className="page-footer grey lighten-3 black-text">
     <div className="container">
       <div className="row">
-        <div className="col m5 s12">
-          <ul style={{paddingLeft: '30px', listStyle: 'none', textAlign: 'left'}}>
-            <li className="fl"><a href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json" target="_blank" rel="noopener noreferrer">Metadata API Documentation</a></li>
-            {/* <li className="fl"><a href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/enrichmentapi/swagger.json" target="_blank" rel="noopener noreferrer">Data API Documentation</a></li> */}
-          </ul>
-        </div>
-        <div className="col l5 m7 s12">
-        </div>
-        <div className="col l2 m6 s12">
+        <div className="col offset-l10 offset-m6 l2 m6 s12">
           <img src="https://amp.pharm.mssm.edu/enrichmentapi/images/dcic.png" alt="BD2K-LINCS Data Coordination and Integration Center" height="130" /><br />
         </div>
       </div>
