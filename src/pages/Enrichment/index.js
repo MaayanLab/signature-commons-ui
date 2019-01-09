@@ -84,7 +84,7 @@ export default class Home extends React.Component {
       }
 
       this.setState({
-        status: 'Enriching...',
+        status: 'Searching...',
         matched_entities: entity_ids,
         mismatched_entities: entities,
       })
