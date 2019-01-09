@@ -54,7 +54,7 @@ export default class Home extends React.PureComponent {
         controller: controller,
       })
 
-      let entities = Set(this.state.geneset.split(/[ \n,;]+/))
+      let entities = Set(this.state.geneset.split(/[ \t\n,;]+/))
       let entity_ids = Set()
 
       const start = Date.now()
