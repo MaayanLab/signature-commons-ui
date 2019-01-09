@@ -40,8 +40,10 @@ export default class Collections extends React.PureComponent {
     this.get_libraries = this.get_libraries.bind(this)
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     // this.get_counts()
+    const libraries = await fetch_meta_post('/libraries/find', {})
+    this.setState({libraries})
   }
 
   async get_counts() {
