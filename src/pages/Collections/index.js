@@ -2,6 +2,7 @@ import React from 'react';
 import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_meta, fetch_meta_post } from '../../util/fetch/meta';
 import { Label } from '../../components/Label';
+import { Table } from '../../components/Table';
 import { call } from '../../util/call';
 
 export default class Collections extends React.PureComponent {
@@ -115,41 +116,10 @@ export default class Collections extends React.PureComponent {
           ))}
           <div className="col s12">
             {this.state.libraries === undefined ? null : (
-              <ul
-                className="collapsible popout"
-              >
-                {this.state.libraries.map((library) => (
-                  <li
-                    key={library.id}
-                  >
-                    <div
-                      className="collapsible-header"
-                      style={{
-                        display: 'flex',
-                        flexDirection: "row",
-                      }}>
-                        <Label
-                          item={library}
-                          visibility={1}
-                        />
-                    </div>
-                    <div
-                      className="collapsible-body"
-                    >
-                      <div 
-                        style={{
-                          height: '300px',
-                          overflow: 'auto',
-                        }}
-                      >
-                        <ShowMeta
-                          value={{ID: library.id, ...library.meta}}
-                        />
-                      </div>
-                    </div>
-                  </li>
-                ))}
-            </ul>
+              <Table
+                items={this.state.libraries}
+                visibility={1}
+              />
             )}
           </div>
         </div>
