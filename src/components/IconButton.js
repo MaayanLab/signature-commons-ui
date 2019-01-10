@@ -8,11 +8,12 @@ const IconButton = (props) => Style.it(`
     justify-content: space-around;
     align-items: center;
     border-radius: 15px;
-    width: 150px;
-    height: 100px;
+    width: 100px;
+    min-height: 100px;
   }
   .icon-btn > span {
     line-height: 12px;
+    text-align: center;
   }
   .icon-btn > a > img {
     position: relative;
@@ -26,7 +27,7 @@ const IconButton = (props) => Style.it(`
   }
   `, (
   <div
-    className="icon-btn waves-effect waves-light"
+    className="left icon-btn waves-effect waves-light"
     onClick={props.onClick}
   >
     <a
