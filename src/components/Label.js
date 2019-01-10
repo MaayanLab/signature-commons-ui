@@ -2,7 +2,7 @@ import React from 'react'
 import { Highlight } from './Highlight'
 import { makeTemplate } from '../util/makeTemplate'
 
-const schemas = [
+export const schemas = [
   require('../ui-schemas/dataset/lincs.json'),
   require('../ui-schemas/dataset/creeds.json'),
   require('../ui-schemas/dataset/enrichr.json'),
@@ -14,7 +14,7 @@ const schemas = [
   require('../ui-schemas/signature/enrichr.json'),
 ]
 
-const labels = {
+export const labels = {
   'text': ({label, prop, data, highlight}) => (
     <Highlight
       text={label + ': ' + makeTemplate(prop.text, data)}
@@ -71,7 +71,7 @@ const labels = {
   ),
 }
 
-function objectMatch(m, o) {
+export function objectMatch(m, o) {
   if(m === undefined)
     return true
     

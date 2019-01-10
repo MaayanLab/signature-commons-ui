@@ -4,6 +4,7 @@ import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
 import { call } from '../../util/call';
 import { Label } from '../../components/Label';
+import IconButton from '../../components/IconButton';
 
 const count = 'half a million'
 
@@ -200,81 +201,44 @@ export default class Home extends React.Component {
                   display: 'flex',
                   flexDirection: "row",
                 }}>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
+                  <IconButton
                     alt="Enrichr"
-                    src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-                  ></img> Enrichr</a>
+                    img="http://amp.pharm.mssm.edu/Enrichr/favicon.ico"
+                  />
                   &nbsp;
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="GeneShot"
-                    src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
-                  ></img> GeneShot</a>
+                  <IconButton
+                    alt="Geneshot"
+                    img="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
+                  />
                   &nbsp;
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
+                  <IconButton
                     alt="ARCHS4"
-                    src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
-                  ></img> ARCHS4
-                  </a>
+                    img="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
+                  />
                   &nbsp;
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
+                  <IconButton
                     alt="Signature Commons"
-                    src="favicon.ico"
-                  ></img> Signature Commons</a>
+                    img="favicon.ico"
+                  />
                   &nbsp;
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
+                  <IconButton
+                    alt="Download"
+                    icon="file_download"
                     onClick={call(this.props.download, signature.id)}
-                  ><i className="material-icons left">file_download</i> Download</a>
+                  />
                   &nbsp;
                   {this.props.cart.has(signature.id) ? (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
+                    <IconButton
+                      alt="Remove from Cart"
+                      icon="remove_shopping_cart"
                       onClick={call(this.removeFromCart, signature.id)}
-                    >
-                      <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
-                    </a>
+                    />
                   ) : (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
+                    <IconButton
+                      alt="Add to Cart"
+                      icon="add_shopping_cart"
                       onClick={call(this.addToCart, signature.id)}
-                    >
-                      <i className="material-icons left">add_shopping_cart</i> Add to Cart
-                    </a>
+                    />
                   )}
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                   <a

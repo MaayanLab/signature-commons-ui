@@ -6,10 +6,10 @@ import { call } from '../../util/call';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
 import Collections from '../Collections';
-import Enrichment from '../Enrichment';
 import MetadataSearch from '../MetadataSearch';
 import SignatureSearch from '../SignatureSearch';
 import Upload from '../Upload';
+import Resources from '../Resources';
 
 const redirect = (url) => window.location = url
 
@@ -41,6 +41,11 @@ const Header = () => (
           <li className="tab">
             <a href="#Collections">
               Collections
+            </a>
+          </li>
+          <li className="tab">
+            <a href="#Resources">
+              Resources
             </a>
           </li>
           <li className="tab">
@@ -341,7 +346,7 @@ export default class Home extends React.PureComponent {
           updateCart={this.updateCart}
           download={this.download}
         />
-        <Enrichment
+        <SignatureSearch
           id="SignatureSearch"
           cart={this.state.cart}
           updateCart={this.updateCart}
@@ -349,6 +354,12 @@ export default class Home extends React.PureComponent {
         />
         <Collections
           id="Collections"
+          cart={this.state.cart}
+          updateCart={this.updateCart}
+          download={this.download}
+        />
+        <Resources
+          id="Resources"
           cart={this.state.cart}
           updateCart={this.updateCart}
           download={this.download}

@@ -1,20 +1,57 @@
-import { Set } from 'immutable';
+import { Map, Set } from 'immutable';
 import M from "materialize-css";
 import React from "react";
-import { ShowMeta } from '../../components/ShowMeta';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
-import { call } from '../../util/call';
+import { BarGraph } from './BarGraph'
+import { ShowMeta } from '../../components/ShowMeta'
+import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 import { Label } from '../../components/Label';
+import { call } from '../../util/call'
+import IconButton from '../../components/IconButton';
+import scrollToComponent from 'react-scroll-to-component';
+import MUIDataTable from "mui-datatables";
+import { makeTemplate } from '../../util/makeTemplate'
+import { schemas, objectMatch } from '../../components/Label'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
-export default class Home extends React.PureComponent {
+const primary_resources = [
+  'CREEDS',
+  'ARCHS4',
+  'KEGG',
+  'GTEx',
+  'ENCODE',
+  'HPO',
+  'CCLE',
+  'Allen Brain Atlas',
+  'Achilles',
+]
+
+const renamed = {
+  'Human Phenotype Ontology': 'HPO',
+  'MGI Mammalian Phenotype': 'MGIMP',
+  'Cancer Cell Line Encyclopedia': 'CCLE',
+  'NCI': 'NCI Pathways',
+  'Disease Signatures': 'CREEDS',
+  'Single Drug Perturbations': 'CREEDS',
+  'Single Gene Perturbations': 'CREEDS',
+  'clueio': 'Connectivity Map',
+  'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
+  'ENCODE/ChEA': 'ENCODE',
+}
+
+const iconOf = {
+  'CREEDS': 'http://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
+  'Connectivity Map': 'https://assets.clue.io/clue/public/img/favicon.ico',
+}
+
+export default class Home extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       search: '',
-      results: [],
+      results: Map(),
       geneset: '',
       time: 0,
       count: 0,
@@ -24,14 +61,17 @@ export default class Home extends React.PureComponent {
       mismatched_entities: [],
       status: null,
       controller: null,
+      library: null,
+      resourceAnchor: null,
+      resources: [],
+      libraries: {},
+      resource_filter: null,
     }
 
     this.submit = this.submit.bind(this)
     this.fetch_values = this.fetch_values.bind(this)
-    this.addToCart = this.addToCart.bind(this)
-    this.removeFromCart = this.removeFromCart.bind(this)
-    this.setGeneset = this.setGeneset.bind(this)
-    this.setAndSubmit = this.setAndSubmit.bind(this)
+    this.render_libraries = this.render_libraries.bind(this)
+    this.set_library = this.set_library.bind(this)
   }
 
   componentDidMount() {
@@ -89,36 +129,54 @@ export default class Home extends React.PureComponent {
         mismatched_entities: entities,
       })
 
-      const enriched = await fetch_data('/enrich/overlap', {
-        entities: entity_ids,
-        signatures: this.props.cart,
-        database: 'enrichr',
-      }, controller.signal)
+      const enriched_results = (await Promise.all([
+        fetch_data('/enrich/overlap', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'enrichr',
+        }, controller.signal),
+        fetch_data('/enrich/overlap', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'creeds',
+        }, controller.signal),
+        fetch_data('/enrich/rank', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'lincs',
+        }, controller.signal),
+        fetch_data('/enrich/rank', {
+          entities: entity_ids,
+          signatures: [],
+          database: 'lincsfwd',
+        }, controller.signal),
+      ])).reduce(
+        (results, result) => {
+          return ({
+            ...results,
+            ...maybe_fix_obj(result.results),
+          })
+        }, {}
+      )
 
       this.setState({
         status: 'Resolving signatures...',
         controller: controller,
-        count: Object.keys(enriched.results).length,
+        count: Object.keys(enriched_results).length,
       })
 
       const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {
-              inq: Object.keys(enriched.results).map((k) => ({...enriched.results[k], id: k})).sort(
-                (a, b) => {
-                  if (a['p-value'] < b['p-value'])
-                    return -1
-                  else if (a['p-value'] > b['p-value'])
-                    return 1
-                  else
-                    return 0
-                }
-              ).slice(1, 10).map((k) => k.id)
+              inq: Object.values(enriched_results).reduce(
+                (K, k) => k['p-value'] < 0.05 ? [...K, k.id] : K, []
+              )
             }
           }
         }
       }, controller.signal)
+
       const enriched_signatures = enriched_signatures_meta.reduce(
         (full, signature) => ([
           ...full,
@@ -126,7 +184,7 @@ export default class Home extends React.PureComponent {
             ...signature,
             meta: {
               ...signature.meta,
-              ...enriched.results[signature.id],
+              ...enriched_results[signature.id],
             },
           }
         ]), []
@@ -141,25 +199,46 @@ export default class Home extends React.PureComponent {
         }
       )
 
-      const library_ids = [...new Set(enriched_signatures.map((sig) => sig.library))]
-      const libraries = await fetch_meta_post('/libraries/find', {
-        filter: {
-          where: {
-            id: {
-              inq: library_ids
-            }
-          },
-        },
-      }, controller.signal)
+      const libraries = await fetch_meta_post('/libraries/find', {})
       const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
+      const library_ids = new Set(enriched_signatures.map((sig) => sig.library))
+      const resources = libraries.reduce((groups, lib) => {
+        let resource = renamed[lib.meta['Primary Resource'] || lib.meta['name']] || lib.meta['Primary Resource'] || lib.meta['name']
+        if ((lib.meta['Library name'] || '').indexOf('ARCHS4') !== -1)
+          resource = 'ARCHS4'
+  
+        if (groups[resource] === undefined) {
+          groups[resource] = {
+            name: resource,
+            icon: iconOf[resource] || lib.meta['Icon'],
+            libraries: []
+          }
+        }
+        groups[resource].libraries.push({...lib})
+        return groups
+      }, {})
 
-      for(const signature of enriched_signatures)
-        signature.library = library_dict[signature.library]
-
+      const grouped_signatures = enriched_signatures.reduce(
+        (groups, sig) => {
+          if(groups[sig.library] === undefined) {
+            groups[sig.library] = {
+              library: library_dict[sig.library],
+              signatures: []
+            }
+          }
+          groups[sig.library].signatures.push({...sig, library: groups[sig.library].library})
+          return groups
+        }, {}
+      )
+  
       this.setState({
+        libraries: library_dict,
+        resources: Object.values(resources).filter(
+          (r) => r.libraries.filter((lib) => library_ids.has(lib.id)).length > 0
+        ),
+        results: grouped_signatures,
         status: '',
         time: Date.now() - start,
-        results: enriched_signatures,
       })
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
@@ -189,165 +268,87 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  addToCart(id) {
-    this.props.updateCart(
-      this.props.cart.add(id)
-    )
+  set_library(library) {
+    this.setState({
+      library
+    })
   }
 
-  removeFromCart(id) {
-    this.props.updateCart(
-      this.props.cart.delete(id)
-    )
-  }
-
-  setGeneset(e) {
-    this.setState({search: e.target.value})
-  }
-
-  setAndSubmit(example) {
-    this.setState(
-      {
-        geneset: example,
-      },
-      () => this.submit()
-    )
-  }
-  
-
-  render_signatures(results) {
+  render_libraries(results) {
     return results === undefined || results.length <= 0 ? (
       <div className="center">
         {this.state.status === null ? null : 'No results.'}
       </div>
     ) : (
-      <div className="col s12">
+      <div className="col offset-s2 s8">
         <ul
           className="collapsible popout"
         >
-          {results.map((signature) => (
+          {Object.keys(results).filter(
+            (result) =>
+              this.state.resource_filter === null
+              || this.state.resource_filter.libraries.map(
+                  (lib) => lib.id
+                ).indexOf(results[result].library.id) !== -1
+          ).map((key, ind) => (
             <li
-              key={signature.id}
+              key={key}
             >
               <div
                 className="page-header"
                 style={{
                   padding: 10,
                   display: 'flex',
-                  flexDirection: "column",
+                  flexDirection: 'row',
                   backgroundColor: 'rgba(255,255,255,1)',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                }}>
-                  <Label
-                    item={signature}
-                    highlight={this.state.search}
-                    visibility={1}
-                  />
-                </div>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                }}>
-                  {this.props.cart.has(signature.id) ? (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                      onClick={call(this.removeFromCart, signature.id)}
-                    >
-                      <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
-                    </a>
-                  ) : (
-                    <a
-                      href="#!"
-                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                      onClick={call(this.addtoCart, signature.id)}
-                    >
-                      <i className="material-icons left">add_shopping_cart</i> Add to Cart
-                    </a>
-                  )}
-
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                    onClick={call(this.props.download, signature.id)}
-                  ><i className="material-icons prefix">file_download</i> Download</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="Signature Commons"
-                    src="favicon.ico"
-                  ></img> Signature Commons</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="Enrichr"
-                    src="http://amp.pharm.mssm.edu/Enrichr/images/enrichr-icon.png"
-                  ></img> Enrichr</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="GeneShot"
-                    src="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
-                  ></img> GeneShot</a>
-                  <a
-                    href="#!"
-                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
-                  ><img
-                    style={{
-                      maxWidth: 48,
-                      maxHeight: 24,
-                      top: 5,
-                    }}
-                    alt="ARCHS4"
-                    src="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
-                  ></img> ARCHS4
-                  </a>
-                  <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                  <a
-                    href="#!"
-                    className="collapsible-header"
-                    style={{ border: 0 }}
-                  >
-                    <i className="material-icons">expand_more</i>
-                  </a>
-                </div>
+                <Label
+                  item={results[key].library}
+                  highlight={this.state.search}
+                  visibility={1}
+                />
+                <a
+                  href="#!"
+                  className="collapsible-header"
+                  style={{ border: 0 }}
+                >
+                  <i className="material-icons">expand_more</i>
+                </a>
               </div>
               <div
                 className="collapsible-body"
               >
                 <div 
                   style={{
-                    height: '300px',
-                    overflow: 'auto',
+                    height: '500px',
+                    overflowY: 'auto',
+                    paddingTop: 0,
                   }}
                 >
-                  <ShowMeta
-                    value={signature}
-                    highlight={this.state.search}
-                  />
+                  {(() => {
+                    const sigs = results[key].signatures
+                    const schema = schemas.filter(
+                      (schema) => objectMatch(schema.match, sigs[0])
+                    )[0]
+                    const cols = Object.keys(schema.properties).filter(
+                      (prop) => schema.properties[prop].type === 'text'
+                    )
+                    
+                    return (
+                      <MUIDataTable
+                        options={{
+                          responsive: 'scroll',
+                        }}
+                        columns={cols.map((col) => ({ name: col }))}
+                        data={sigs.map((sig) =>
+                          cols.map((col) =>
+                            makeTemplate(schema.properties[col].text, sig)
+                          )
+                        )}
+                      />
+                    )
+                  })()}
                 </div>
               </div>
             </li>
@@ -377,7 +378,7 @@ export default class Home extends React.PureComponent {
                       overflow: 'auto',
                     }}
                     value={this.state.geneset}
-                    onChange={this.setGeneset}
+                    onChange={(e) => this.setState({geneset: e.target.value})}
                   ></textarea>
                 </div>
               </div>
@@ -386,10 +387,12 @@ export default class Home extends React.PureComponent {
                 <div className="input-field">
                   <div
                     className="chip grey darken-2 white-text waves-effect waves-light"
-                    onClick={call(this.setAndSubmit, example_geneset)}
+                    onClick={() => this.setState({
+                      geneset: example_geneset,
+                    }, () => this.submit())}
                   >Example Gene Set</div>
                 </div>
-                <button className="btn grey lighten-2 black-text waves-effect waves-light blue" type="submit" name="action">Search
+                <button className="btn waves-effect waves-light blue" type="submit" name="action">Search
                   <i className="material-icons right">send</i>
                 </button>
               </div>
@@ -423,24 +426,54 @@ export default class Home extends React.PureComponent {
             </div>
           )}
           */}
+
           <div className="col s12">
             {this.state.status !== '' ? (
               <div className="center">
                 {this.state.status}
               </div>
-            ) : this.render_signatures(this.state.results)}
+            ) : null}
           </div>
-          {this.state.results.length < 10 || this.state.status !== '' ? null : (
-            <div className="col s12 center">
-              <ul className="pagination">
-                <li className="disabled"><a href="#!"><i className="material-icons">chevron_left</i></a></li>
-                <li className="active blue"><a href="#!">1</a></li>
-                <li className="waves-effect"><a href="#!">2</a></li>
-                <li className="waves-effect"><a href="#!">3</a></li>
-                <li className="waves-effect"><a href="#!"><i className="material-icons">chevron_right</i></a></li>
-              </ul>
+
+          {this.state.resources.length <= 0 ? null : (
+            <div ref={(ref) => {
+              if (!this.state.resourceAnchor) {
+                this.setState({ resourceAnchor: ref }, () =>
+                  scrollToComponent(ref, { align: 'top', })
+                )
+              }
+            }} className="col offset-s2 s8 center">
+              {this.state.resources.filter(
+                (resource) => primary_resources.indexOf(resource.name) !== -1
+              ).map((resource) => (
+                <IconButton
+                  key={resource.name}
+                  alt={resource.name}
+                  img={resource.icon}
+                  onClick={() => this.setState({ resource_filter: resource })}
+                />
+              ))}
+              <IconButton
+                alt={this.state.show_all ? "Less": "More"}
+                icon={'more_horiz'}
+                onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
+              />
+              {!this.state.show_all ? null : this.state.resources.filter(
+                (resource) => primary_resources.indexOf(resource.name) === -1
+              ).map((resource) => (
+                <IconButton
+                  key={resource.name}
+                  alt={resource.name}
+                  img={resource.icon}
+                  onClick={() => this.setState({ resource_filter: resource })}
+                />
+              ))}
             </div>
           )}
+
+          <div className="col s12">
+            {this.state.status !== '' ? null : this.render_libraries(this.state.results)}
+          </div>
         </div>
       </main>
     );
