@@ -62,6 +62,11 @@
     },
     "Concentration": {
       "visibility": 1,
+      "condition": {
+        "${meta.pert_dose}": {
+          "ne": "-666"
+        }
+      },
       "type": "text",
       "text": "${meta.pert_dose} ${meta.pert_dose_unit}"
     }

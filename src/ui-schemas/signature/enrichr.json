@@ -73,7 +73,7 @@
     "Description": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Original String'].split('=')[1]}"
+      "text": "${meta['Original String']}"
     }
   }
 }
