@@ -14,27 +14,29 @@ const IconButton = (props) => Style.it(`
   .icon-btn > span {
     line-height: 12px;
   }
+  .icon-btn > a > img {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%); 
+    height: 24px;
+    max-width: 48px;
+  }
   .icon-btn:hover {
     background-color: #eee;
   }
   `, (
-  <div className="icon-btn waves-effect waves-light">
+  <div
+    className="icon-btn waves-effect waves-light"
+    onClick={props.onClick}
+  >
     <a
       href="#!"
       className="btn btn-floating waves-effect waves-light grey lighten-3 center valign-wrapper"
-      onClick={props.onClick}
     >
       {props.img !== undefined ? (
         <img
           alt={props.alt}
           src={props.img}
-          style={{
-            position: 'relative',
-            top: '50%',
-            transform: 'translateY(-50%)', 
-            maxWidth: 48,
-            maxHeight: 24,
-          }}
         />
       ) : (
         <i className="material-icons left black-text">{props.icon}</i>
