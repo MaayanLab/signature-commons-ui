@@ -15,6 +15,8 @@ import { makeTemplate } from '../../util/makeTemplate'
 import { schemas, objectMatch } from '../../components/Label'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
+const example_geneset_up = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15'.split(' ').join('\n')
+const example_geneset_down = 'RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
 const primary_resources = [
   'CREEDS',
@@ -55,6 +57,7 @@ export default class Home extends React.Component {
       geneset: '',
       time: 0,
       count: 0,
+      up_down: false,
       key_count: {},
       value_count: {},
       matched_entities: [],
@@ -94,8 +97,17 @@ export default class Home extends React.Component {
         controller: controller,
       })
 
-      let entities = Set(this.state.geneset.split(/[ \t\n,;]+/))
+      let entities, up_entities, down_entities
+      if (this.state.up_down) {
+        up_entities = Set(this.state.up_geneset.split(/[ \t\n,;]+/))
+        down_entities = Set(this.state.down_geneset.split(/[ \t\n,;]+/))
+        entities = Set([...up_entities, ...down_entities])
+      } else {
+        entities = Set(this.state.geneset.split(/[ \t\n,;]+/))
+      }
       let entity_ids = Set()
+      let up_entity_ids = Set()
+      let down_entity_ids = Set()
 
       const start = Date.now()
 
@@ -114,13 +126,33 @@ export default class Home extends React.Component {
       }, controller.signal)
       
       for(const entity of entity_meta) {
-        const matched_entities = Set.intersect(
-          Set([entity.meta.Name]),
-          entities,
-        )
+        if (this.state.up_down) {
+          const matched_up_entities = Set.intersect(
+            Set([entity.meta.Name]),
+            up_entities,
+          )
+          if (matched_up_entities.count() >= 0) {
+            up_entities = up_entities.subtract(matched_up_entities)
+            up_entity_ids = up_entity_ids.add(entity.id)
+          }
 
-        entities = entities.subtract(matched_entities)
-        entity_ids = entity_ids.add(entity.id)
+          const matched_down_entities = Set.intersect(
+            Set([entity.meta.Name]),
+            down_entities,
+          )
+          if (matched_down_entities.count() >= 0) {
+            down_entities = down_entities.subtract(matched_down_entities)
+            down_entity_ids = down_entity_ids.add(entity.id)
+          }
+        } else {
+          const matched_entities = Set.intersect(
+            Set([entity.meta.Name]),
+            entities,
+          )
+
+          entities = entities.subtract(matched_entities)
+          entity_ids = entity_ids.add(entity.id)
+        }
       }
 
       this.setState({
@@ -129,35 +161,60 @@ export default class Home extends React.Component {
         mismatched_entities: entities,
       })
 
-      const enriched_results = (await Promise.all([
-        fetch_data('/enrich/overlap', {
-          entities: entity_ids,
-          signatures: [],
-          database: 'enrichr',
-        }, controller.signal),
-        fetch_data('/enrich/overlap', {
-          entities: entity_ids,
-          signatures: [],
-          database: 'creeds',
-        }, controller.signal),
-        fetch_data('/enrich/rank', {
-          entities: entity_ids,
-          signatures: [],
-          database: 'lincs',
-        }, controller.signal),
-        fetch_data('/enrich/rank', {
-          entities: entity_ids,
-          signatures: [],
-          database: 'lincsfwd',
-        }, controller.signal),
-      ])).reduce(
-        (results, result) => {
-          return ({
-            ...results,
-            ...maybe_fix_obj(result.results),
-          })
-        }, {}
-      )
+      let enriched_results
+      if (this.state.up_down) {
+        enriched_results = (await Promise.all([
+          fetch_data('/enrich/ranktwosided', {
+            up_entities: up_entity_ids,
+            down_entities: down_entity_ids,
+            signatures: [],
+            database: 'lincs',
+          }, controller.signal),
+          fetch_data('/enrich/ranktwosided', {
+            up_entities: up_entity_ids,
+            down_entities: down_entity_ids,
+            signatures: [],
+            database: 'lincsfwd',
+          }, controller.signal),
+        ])).reduce(
+          (results, result) => {
+            return ({
+              ...results,
+              ...maybe_fix_obj(result.results.map((result) => ({...result, id: result.signature}))),
+            })
+          }, {}
+        )
+      } else {
+        enriched_results = (await Promise.all([
+          fetch_data('/enrich/overlap', {
+            entities: entity_ids,
+            signatures: [],
+            database: 'enrichr',
+          }, controller.signal),
+          fetch_data('/enrich/overlap', {
+            entities: entity_ids,
+            signatures: [],
+            database: 'creeds',
+          }, controller.signal),
+          fetch_data('/enrich/rank', {
+            entities: entity_ids,
+            signatures: [],
+            database: 'lincs',
+          }, controller.signal),
+          fetch_data('/enrich/rank', {
+            entities: entity_ids,
+            signatures: [],
+            database: 'lincsfwd',
+          }, controller.signal),
+        ])).reduce(
+          (results, result) => {
+            return ({
+              ...results,
+              ...maybe_fix_obj(result.results),
+            })
+          }, {}
+        )
+      }
 
       this.setState({
         status: 'Resolving signatures...',
@@ -367,29 +424,93 @@ export default class Home extends React.Component {
               action="javascript:void(0);"
               onSubmit={this.submit}
             >
-              <div className="col s2">&nbsp;</div>
-              <div className="col s8">
-                <div className="input-field">
-                  <textarea
-                    id="geneset"
-                    placeholder="Genes that are up-regulated in signature or overlap with gene-set."
-                    style={{
-                      height: 200,
-                      overflow: 'auto',
-                    }}
-                    value={this.state.geneset}
-                    onChange={(e) => this.setState({geneset: e.target.value})}
-                  ></textarea>
+
+              <div className="col s12">
+                <div className="switch">
+                  <label>
+                    One Tailed
+                    <input
+                      type="checkbox"
+                      value={this.state.up_down}
+                      onChange={() => this.setState(({ up_down }) => ({ up_down: !up_down }))}
+                    />
+                    <span className="lever"></span>
+                    Two Tailed*
+                  </label>
                 </div>
+                {this.state.up_down ? (
+                  <span>
+                    Note: Will limit results to full signatures.
+                  </span>
+                ) : null}
               </div>
+
               <div className="col s2">&nbsp;</div>
+              {this.state.up_down ? (
+                <div>
+                  <div className="col s4">
+                    <div className="input-field">
+                      <textarea
+                        id="up_geneset"
+                        placeholder="Genes that are up-regulated in signature or overlap with gene-set."
+                        style={{
+                          height: 200,
+                          overflow: 'auto',
+                        }}
+                        value={this.state.up_geneset}
+                        onChange={(e) => this.setState({up_geneset: e.target.value})}
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div className="col s4">
+                    <div className="input-field">
+                      <textarea
+                        id="down_geneset"
+                        placeholder="Genes that are up-regulated in signature or overlap with gene-set."
+                        style={{
+                          height: 200,
+                          overflow: 'auto',
+                        }}
+                        value={this.state.down_geneset}
+                        onChange={(e) => this.setState({down_geneset: e.target.value})}
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="col s8">
+                  <div className="input-field">
+                    <textarea
+                      id="geneset"
+                      placeholder="Genes that are up-regulated in signature or overlap with gene-set."
+                      style={{
+                        height: 200,
+                        overflow: 'auto',
+                      }}
+                      value={this.state.geneset}
+                      onChange={(e) => this.setState({geneset: e.target.value})}
+                    ></textarea>
+                  </div>
+                </div>
+              )}
+              <div className="col s2">&nbsp;</div>
+
               <div className="col s12">
                 <div className="input-field">
                   <div
                     className="chip grey darken-2 white-text waves-effect waves-light"
-                    onClick={() => this.setState({
-                      geneset: example_geneset,
-                    }, () => this.submit())}
+                    onClick={() => {
+                      if (this.state.up_down) {
+                        this.setState({
+                          up_geneset: example_geneset_up,
+                          down_geneset: example_geneset_down,
+                        }, () => this.submit())
+                      } else {
+                        this.setState({
+                          geneset: example_geneset,
+                        }, () => this.submit())
+                      }
+                    }}
                   >Example Gene Set</div>
                 </div>
                 <button className="btn waves-effect waves-light blue" type="submit" name="action">Search
@@ -406,6 +527,7 @@ export default class Home extends React.Component {
               </span>
             )}
           </div>
+
           {/*
           {this.state.mismatched_entities.length <= 0 ? null : (
             <div className="col s12 center">
