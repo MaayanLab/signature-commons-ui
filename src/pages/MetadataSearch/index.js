@@ -202,7 +202,7 @@ export default class Home extends React.Component {
                 }}>
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -215,7 +215,7 @@ export default class Home extends React.Component {
                   &nbsp;
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -228,7 +228,7 @@ export default class Home extends React.Component {
                   &nbsp;
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -242,7 +242,7 @@ export default class Home extends React.Component {
                   &nbsp;
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -255,14 +255,14 @@ export default class Home extends React.Component {
                   &nbsp;
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                     onClick={call(this.props.download, signature.id)}
                   ><i className="material-icons left">file_download</i> Download</a>
                   &nbsp;
                   {this.props.cart.has(signature.id) ? (
                     <a
                       href="#!"
-                      className="waves-effect waves-light btn blue"
+                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
                       onClick={call(this.removeFromCart, signature.id)}
                     >
                       <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
@@ -270,7 +270,7 @@ export default class Home extends React.Component {
                   ) : (
                     <a
                       href="#!"
-                      className="waves-effect waves-light btn blue"
+                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
                       onClick={call(this.addToCart, signature.id)}
                     >
                       <i className="material-icons left">add_shopping_cart</i> Add to Cart
@@ -377,7 +377,7 @@ export default class Home extends React.Component {
               {['MCF10A', 'Imatinib', 'ZNF830', 'STAT3', 'Neuropathy'].map((example) => (
                 <div
                   key={example}
-                  className="chip waves-effect waves-light"
+                  className="chip grey darken-2 white-text waves-effect waves-light"
                   onClick={call(this.searchAndSubmit, example)}
                 >{example}</div>
               ))}

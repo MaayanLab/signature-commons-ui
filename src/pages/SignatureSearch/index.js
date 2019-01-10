@@ -256,7 +256,7 @@ export default class Home extends React.PureComponent {
                   {this.props.cart.has(signature.id) ? (
                     <a
                       href="#!"
-                      className="waves-effect waves-light btn blue"
+                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
                       onClick={call(this.removeFromCart, signature.id)}
                     >
                       <i className="material-icons left">remove_shopping_cart</i> Remove from Cart
@@ -264,7 +264,7 @@ export default class Home extends React.PureComponent {
                   ) : (
                     <a
                       href="#!"
-                      className="waves-effect waves-light btn blue"
+                      className="waves-effect waves-light btn-small grey lighten-2 black-text"
                       onClick={call(this.addtoCart, signature.id)}
                     >
                       <i className="material-icons left">add_shopping_cart</i> Add to Cart
@@ -273,12 +273,12 @@ export default class Home extends React.PureComponent {
 
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                     onClick={call(this.props.download, signature.id)}
                   ><i className="material-icons prefix">file_download</i> Download</a>
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -290,7 +290,7 @@ export default class Home extends React.PureComponent {
                   ></img> Signature Commons</a>
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -302,7 +302,7 @@ export default class Home extends React.PureComponent {
                   ></img> Enrichr</a>
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -314,7 +314,7 @@ export default class Home extends React.PureComponent {
                   ></img> GeneShot</a>
                   <a
                     href="#!"
-                    className="waves-effect waves-light btn blue"
+                    className="waves-effect waves-light btn-small grey lighten-2 black-text"
                   ><img
                     style={{
                       maxWidth: 48,
@@ -385,11 +385,11 @@ export default class Home extends React.PureComponent {
               <div className="col s12">
                 <div className="input-field">
                   <div
-                    className="chip waves-effect waves-light"
+                    className="chip grey darken-2 white-text waves-effect waves-light"
                     onClick={call(this.setAndSubmit, example_geneset)}
                   >Example Gene Set</div>
                 </div>
-                <button className="btn blue waves-effect waves-light blue" type="submit" name="action">Search
+                <button className="btn grey lighten-2 black-text waves-effect waves-light blue" type="submit" name="action">Search
                   <i className="material-icons right">send</i>
                 </button>
               </div>

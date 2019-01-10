@@ -287,7 +287,7 @@ export default class Home extends React.Component {
               <div className="col s12">
                 <div className="input-field">
                   <div
-                    className="chip waves-effect waves-light"
+                    className="chip grey darken-2 white-text waves-effect waves-light"
                     onClick={() => this.setState({
                       geneset: example_geneset,
                     }, () => this.submit())}
