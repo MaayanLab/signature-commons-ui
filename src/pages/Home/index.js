@@ -28,13 +28,13 @@ const Header = () => (
       <div className="nav-content blue">
         <ul className="tabs tabs-transparent">
           <li className="tab">
-            <a href="#MetadataSearch">
-              Metadata Search
+            <a href="#SignatureSearch">
+              Signature Search
             </a>
           </li>
           <li className="tab">
-            <a href="#SignatureSearch">
-              Signature Search
+            <a href="#MetadataSearch">
+              Metadata Search
             </a>
           </li>
           <li className="tab">
@@ -334,14 +334,14 @@ export default class Home extends React.PureComponent {
           </div>
         )}
 
-        <MetadataSearch
-          id="MetadataSearch"
+        <SignatureSearch
+          id="SignatureSearch"
           cart={this.state.cart}
           updateCart={this.updateCart}
           download={this.download}
         />
-        <SignatureSearch
-          id="SignatureSearch"
+        <MetadataSearch
+          id="MetadataSearch"
           cart={this.state.cart}
           updateCart={this.updateCart}
           download={this.download}
