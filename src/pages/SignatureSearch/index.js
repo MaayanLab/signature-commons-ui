@@ -13,14 +13,11 @@ import scrollToComponent from 'react-scroll-to-component';
 import MUIDataTable from "mui-datatables";
 import { makeTemplate } from '../../util/makeTemplate'
 import { schemas, objectMatch } from '../../components/Label'
-import { renamed, iconsOf, primary_resources } from '../pages/Resources'
+import { renamed, iconOf, primary_resources } from '../Resources'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 const example_geneset_up = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15'.split(' ').join('\n')
 const example_geneset_down = 'RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
-
-
-
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -49,10 +46,35 @@ export default class Home extends React.Component {
     this.fetch_values = this.fetch_values.bind(this)
     this.render_libraries = this.render_libraries.bind(this)
     this.set_library = this.set_library.bind(this)
+    this.count_results = this.count_results.bind(this)
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     M.AutoInit();
+
+
+    const libraries = await fetch_meta_post('/libraries/find', {})
+    const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
+    const resources = libraries.reduce((groups, lib) => {
+      let resource = renamed[lib.meta['Primary Resource'] || lib.meta['name']] || lib.meta['Primary Resource'] || lib.meta['name']
+      if ((lib.meta['Library name'] || '').indexOf('ARCHS4') !== -1)
+        resource = 'ARCHS4'
+
+      if (groups[resource] === undefined) {
+        groups[resource] = {
+          name: resource,
+          icon: iconOf[resource] || lib.meta['Icon'],
+          libraries: []
+        }
+      }
+      groups[resource].libraries.push({...lib})
+      return groups
+    }, {})
+
+    this.setState({
+      libraries: library_dict,
+      resources: Object.values(resources),
+    })
   }
 
   componentDidUpdate() {
@@ -60,10 +82,35 @@ export default class Home extends React.Component {
     M.updateTextFields();
   }
 
+  count_results() {
+    this.setState({
+      count: Object.keys(this.state.results).filter(
+        (result) =>
+          this.state.resource_filter === null
+          || this.state.resource_filter.libraries.map(
+              (lib) => lib.id
+            ).indexOf(this.state.results[result].library.id) !== -1
+      ).reduce((sum, lib) => sum + this.state.results[lib].signatures.length, 0)
+    })
+  }
+
   async submit() {
     if(this.state.controller !== null) {
       this.state.controller.abort()
     }
+
+    if (this.state.up_down) {
+      if (this.state.last_up_geneset === this.state.up_geneset && this.state.last_down_geneset === this.state.down_geneset) {
+        this.count_results()
+        return
+      }
+    } else {
+      if (this.state.last_geneset === this.state.geneset) {
+        this.count_results()
+        return
+      }
+    }
+
     try {
       const controller = new AbortController()
       this.setState({
@@ -230,30 +277,11 @@ export default class Home extends React.Component {
         }
       )
 
-      const libraries = await fetch_meta_post('/libraries/find', {})
-      const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
-      const library_ids = new Set(enriched_signatures.map((sig) => sig.library))
-      const resources = libraries.reduce((groups, lib) => {
-        let resource = renamed[lib.meta['Primary Resource'] || lib.meta['name']] || lib.meta['Primary Resource'] || lib.meta['name']
-        if ((lib.meta['Library name'] || '').indexOf('ARCHS4') !== -1)
-          resource = 'ARCHS4'
-  
-        if (groups[resource] === undefined) {
-          groups[resource] = {
-            name: resource,
-            icon: iconOf[resource] || lib.meta['Icon'],
-            libraries: []
-          }
-        }
-        groups[resource].libraries.push({...lib})
-        return groups
-      }, {})
-
       const grouped_signatures = enriched_signatures.reduce(
         (groups, sig) => {
           if(groups[sig.library] === undefined) {
             groups[sig.library] = {
-              library: library_dict[sig.library],
+              library: this.state.libraries[sig.library],
               signatures: []
             }
           }
@@ -263,14 +291,13 @@ export default class Home extends React.Component {
       )
   
       this.setState({
-        libraries: library_dict,
-        resources: Object.values(resources).filter(
-          (r) => r.libraries.filter((lib) => library_ids.has(lib.id)).length > 0
-        ),
         results: grouped_signatures,
+        last_geneset: this.state.geneset,
+        last_up_geneset: this.state.up_geneset,
+        last_down_geneset: this.state.up_geneset,
         status: '',
         time: Date.now() - start,
-      })
+      }, () => this.count_results())
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
@@ -475,21 +502,51 @@ export default class Home extends React.Component {
                     className="chip grey darken-2 white-text waves-effect waves-light"
                     onClick={() => {
                       if (this.state.up_down) {
-                        this.setState({
+                        this.setState({                          
                           up_geneset: example_geneset_up,
                           down_geneset: example_geneset_down,
-                        }, () => this.submit())
+                        })
                       } else {
                         this.setState({
                           geneset: example_geneset,
-                        }, () => this.submit())
+                        })
                       }
                     }}
                   >Example Gene Set</div>
                 </div>
-                <button className="btn waves-effect waves-light blue" type="submit" name="action">Search
-                  <i className="material-icons right">send</i>
-                </button>
+
+                {this.state.resources.length <= 0 ? null : (
+                  <div ref={(ref) => {
+                    if (!this.state.resourceAnchor)
+                      this.setState({ resourceAnchor: ref })
+                  }} className="col offset-s2 s8 center">
+                    {this.state.resources.filter(
+                      (resource) => primary_resources.indexOf(resource.name) !== -1
+                    ).map((resource) => (
+                      <IconButton
+                        key={resource.name}
+                        alt={resource.name}
+                        img={resource.icon}
+                        onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
+                      />
+                    ))}
+                    <IconButton
+                      alt={this.state.show_all ? "Less": "More"}
+                      icon={'more_horiz'}
+                      onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
+                    />
+                    {!this.state.show_all ? null : this.state.resources.filter(
+                      (resource) => primary_resources.indexOf(resource.name) === -1
+                    ).map((resource) => (
+                      <IconButton
+                        key={resource.name}
+                        alt={resource.name}
+                        img={resource.icon}
+                        onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </form>
           </div>
@@ -497,7 +554,7 @@ export default class Home extends React.Component {
           <div className="col s12 center">
             {this.state.status === null ? null : (
               <span className="grey-text">
-                About {this.state.count} results ({this.state.time/1000} seconds)
+                {this.state.count} results ({this.state.time/1000} seconds)
               </span>
             )}
           </div>
@@ -530,42 +587,6 @@ export default class Home extends React.Component {
               </div>
             ) : null}
           </div>
-
-          {this.state.resources.length <= 0 ? null : (
-            <div ref={(ref) => {
-              if (!this.state.resourceAnchor) {
-                this.setState({ resourceAnchor: ref }, () =>
-                  scrollToComponent(ref, { align: 'top', })
-                )
-              }
-            }} className="col offset-s2 s8 center">
-              {this.state.resources.filter(
-                (resource) => primary_resources.indexOf(resource.name) !== -1
-              ).map((resource) => (
-                <IconButton
-                  key={resource.name}
-                  alt={resource.name}
-                  img={resource.icon}
-                  onClick={() => this.setState({ resource_filter: resource })}
-                />
-              ))}
-              <IconButton
-                alt={this.state.show_all ? "Less": "More"}
-                icon={'more_horiz'}
-                onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
-              />
-              {!this.state.show_all ? null : this.state.resources.filter(
-                (resource) => primary_resources.indexOf(resource.name) === -1
-              ).map((resource) => (
-                <IconButton
-                  key={resource.name}
-                  alt={resource.name}
-                  img={resource.icon}
-                  onClick={() => this.setState({ resource_filter: resource })}
-                />
-              ))}
-            </div>
-          )}
 
           <div className="col s12">
             {this.state.status !== '' ? null : this.render_libraries(this.state.results)}
