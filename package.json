@@ -28,7 +28,8 @@
     "react-scroll-to-component": "^1.0.2",
     "recharts": "^1.4.2",
     "style-it": "^2.1.2",
-    "swagger-client": "^3.8.22"
+    "swagger-client": "^3.8.22",
+    "tween": "^0.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
