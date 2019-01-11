@@ -338,7 +338,7 @@ export default class Home extends React.Component {
         {this.state.status === null ? null : 'No results.'}
       </div>
     ) : (
-      <div className="col offset-s2 s8">
+      <div className="col s12">
         <ul
           className="collapsible popout"
         >
@@ -353,7 +353,7 @@ export default class Home extends React.Component {
               key={key}
             >
               <div
-                className="page-header"
+                className="page-header collapsible-header"
                 style={{
                   padding: 10,
                   display: 'flex',
@@ -366,9 +366,9 @@ export default class Home extends React.Component {
                   highlight={this.state.search}
                   visibility={1}
                 />
+                <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                 <a
                   href="#!"
-                  className="collapsible-header"
                   style={{ border: 0 }}
                 >
                   <i className="material-icons">expand_more</i>
@@ -379,9 +379,8 @@ export default class Home extends React.Component {
               >
                 <div 
                   style={{
-                    height: '500px',
-                    overflowY: 'auto',
                     paddingTop: 0,
+                    marginTop: '-25px',
                   }}
                 >
                   {(() => {
@@ -397,6 +396,7 @@ export default class Home extends React.Component {
                       <MUIDataTable
                         options={{
                           responsive: 'scroll',
+                          selectableRows: false,
                         }}
                         columns={cols.map((col) => ({ name: col }))}
                         data={sigs.map((sig) =>
