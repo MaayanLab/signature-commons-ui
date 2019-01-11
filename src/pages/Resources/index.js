@@ -22,7 +22,7 @@ export const renamed = {
   'Disease Signatures': 'CREEDS',
   'Single Drug Perturbations': 'CREEDS',
   'Single Gene Perturbations': 'CREEDS',
-  'clueio': 'Connectivity Map',
+  'clueio': 'CMAP',
   'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
   'ENCODE/ChEA': 'ENCODE',
   'Gene Ontology Consortium': 'Gene Ontology',
@@ -30,7 +30,7 @@ export const renamed = {
 
 export const iconOf = {
   'CREEDS': 'http://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
-  'Connectivity Map': 'https://assets.clue.io/clue/public/img/favicon.ico',
+  'CMAP': 'https://assets.clue.io/clue/public/img/favicon.ico',
 }
 
 export default class Test extends React.PureComponent {
