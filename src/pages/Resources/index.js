@@ -25,6 +25,7 @@ export const renamed = {
   'clueio': 'Connectivity Map',
   'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
   'ENCODE/ChEA': 'ENCODE',
+  'Gene Ontology Consortium': 'Gene Ontology',
 }
 
 export const iconOf = {
