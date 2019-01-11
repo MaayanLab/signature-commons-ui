@@ -13,11 +13,24 @@ import scrollToComponent from 'react-scroll-to-component';
 import MUIDataTable from "mui-datatables";
 import { makeTemplate } from '../../util/makeTemplate'
 import { schemas, objectMatch } from '../../components/Label'
-import { renamed, iconOf, primary_resources } from '../Resources'
+import { renamed, iconOf, primary_resources, primary_two_tailed_resources } from '../Resources'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 const example_geneset_up = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15'.split(' ').join('\n')
 const example_geneset_down = 'RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
+
+
+const one_tailed_columns = [
+  'P-Value',
+  'Odds Ratio',
+  'Set Size',
+]
+const two_tailed_columns = [
+  'P-Up',
+  'P-Down',
+  'Z-Up',
+  'Z-Down',
+]
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -247,9 +260,7 @@ export default class Home extends React.Component {
         filter: {
           where: {
             id: {
-              inq: Object.values(enriched_results).reduce(
-                (K, k) => k['p-value'] < 0.05 ? [...K, k.id] : K, []
-              )
+              inq: Object.values(enriched_results).map((k) => k.id)
             }
           }
         }
@@ -266,15 +277,6 @@ export default class Home extends React.Component {
             },
           }
         ]), []
-      ).sort(
-        (a, b) => {
-          if(a.meta['p-value'] < b.meta['p-value'])
-            return -1
-          else if(a.meta['p-value'] > b.meta['p-value'])
-            return 1
-          else
-            return 0
-        }
       )
 
       const grouped_signatures = enriched_signatures.reduce(
@@ -289,15 +291,24 @@ export default class Home extends React.Component {
           return groups
         }, {}
       )
-  
+
       this.setState({
         results: grouped_signatures,
-        last_geneset: this.state.geneset,
-        last_up_geneset: this.state.up_geneset,
-        last_down_geneset: this.state.up_geneset,
         status: '',
         time: Date.now() - start,
       }, () => this.count_results())
+
+      if(this.state.up_down) {
+        this.setState({
+          last_up_geneset: this.state.up_geneset,
+          last_down_geneset: this.state.up_geneset,
+        })
+      } else {
+        this.setState({
+          last_geneset: this.state.geneset,
+        })
+      }
+  
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
@@ -389,7 +400,18 @@ export default class Home extends React.Component {
                       (schema) => objectMatch(schema.match, sigs[0])
                     )[0]
                     const cols = Object.keys(schema.properties).filter(
-                      (prop) => schema.properties[prop].type === 'text'
+                      (prop) => {
+                        if(schema.properties[prop].type === 'text') {
+                          if(this.state.up_down) {
+                            if(one_tailed_columns.indexOf(prop) === -1)
+                              return true
+                          } else {
+                            if(two_tailed_columns.indexOf(prop) === -1)
+                              return true
+                          }
+                        }
+                        return false
+                      }
                     )
                     
                     return (
@@ -400,9 +422,12 @@ export default class Home extends React.Component {
                         }}
                         columns={cols.map((col) => ({ name: col }))}
                         data={sigs.map((sig) =>
-                          cols.map((col) =>
-                            makeTemplate(schema.properties[col].text, sig)
-                          )
+                          cols.map((col) => {
+                            const val = makeTemplate(schema.properties[col].text, sig)
+                            if (val === 'undefined')
+                              return ''
+                            return val
+                          })
                         )}
                       />
                     )
@@ -521,7 +546,12 @@ export default class Home extends React.Component {
                       this.setState({ resourceAnchor: ref })
                   }} className="col offset-s2 s8 center">
                     {this.state.resources.filter(
-                      (resource) => primary_resources.indexOf(resource.name) !== -1
+                      (resource) => {
+                        if (this.state.up_down)
+                          return primary_two_tailed_resources.indexOf(resource.name) !== -1
+                        else
+                          return primary_resources.indexOf(resource.name) !== -1
+                      }
                     ).map((resource) => (
                       <IconButton
                         key={resource.name}

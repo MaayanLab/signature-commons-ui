@@ -69,6 +69,46 @@
       },
       "type": "text",
       "text": "${meta.setsize}"
+    },
+    "P-Up": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-up']}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta['p-up']}"
+    },
+    "P-Down": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-down']}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta['p-down']}"
+    },
+    "Z-Up": {
+      "visibility": 1,
+      "condition": {
+        "${meta['z-up']}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta['z-up']}"
+    },
+    "Z-Down": {
+      "visibility": 1,
+      "condition": {
+        "${meta['z-down']}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta['z-down']}"
     }
   }
 }

@@ -17,6 +17,10 @@ export const primary_resources = [
   'Achilles',
 ]
 
+export const primary_two_tailed_resources = [
+  'CMAP'
+]
+
 export const renamed = {
   'Human Phenotype Ontology': 'HPO',
   'MGI Mammalian Phenotype': 'MGI-MP',
