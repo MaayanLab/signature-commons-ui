@@ -10,8 +10,6 @@ import SignatureSearch from '../SignatureSearch';
 import Upload from '../Upload';
 import Resources from '../Resources';
 
-const redirect = (url) => window.location = url
-
 const Header = () => (
   <header>
     <nav className="nav-extended">
@@ -49,8 +47,9 @@ const Header = () => (
           </li>
           <li className="tab">
             <a
-              href="javascript:void(0);"
-              onClick={call(redirect, "http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json")}>
+              target="_blank"
+              href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json"
+            >
               API
             </a>
           </li>
