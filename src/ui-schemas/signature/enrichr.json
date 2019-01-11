@@ -8,27 +8,12 @@
       "visibility": 1,
       "type": "img",
       "src": "${library.meta['Icon']}",
-      "alt": "${library.meta['Primary Resource']}"
-    },
-    "Library": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${library.meta['Library name']}"
+      "alt": "${library.meta['Library name']}"
     },
     "Description": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['Original String']}"
-    },
-    "Resource": {
-      "visibility": 1,
-      "condition": {
-        "${meta.Resource}": {
-          "ne": null
-        }
-      },
-      "type": "text",
-      "text": "${meta.Resource}"
     },
     "Assay": {
       "visibility": 1,
