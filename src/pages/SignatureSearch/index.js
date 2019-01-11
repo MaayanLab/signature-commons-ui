@@ -214,7 +214,21 @@ export default class Home extends React.Component {
           (results, result) => {
             return ({
               ...results,
-              ...maybe_fix_obj(result.results.map((result) => ({...result, id: result.signature}))),
+              ...maybe_fix_obj(
+                result.results.reduce(
+                  (results, result) =>
+                    result['p-up'] < 0.05 && result['p-down'] <= 0.05 ? [
+                      ...results,
+                      ({
+                        ...result,
+                        id: result.signature
+                      }),
+                    ] : results,
+                  []
+                ).sort(
+                  (a, b) => (a['p-up'] - b['p-up']) + (a['p-down'] - b['p-down'])
+                ).slice(0, 1000)
+              ),
             })
           }, {}
         )
