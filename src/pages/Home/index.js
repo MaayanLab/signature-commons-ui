@@ -5,7 +5,6 @@ import React from "react";
 import { call } from '../../util/call';
 import { fetch_data } from "../../util/fetch/data";
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
-import Collections from '../Collections';
 import MetadataSearch from '../MetadataSearch';
 import SignatureSearch from '../SignatureSearch';
 import Upload from '../Upload';
@@ -36,11 +35,6 @@ const Header = () => (
           <li className="tab">
             <a href="#SignatureSearch">
               Signature Search
-            </a>
-          </li>
-          <li className="tab">
-            <a href="#Collections">
-              Collections
             </a>
           </li>
           <li className="tab">
@@ -348,12 +342,6 @@ export default class Home extends React.PureComponent {
         />
         <SignatureSearch
           id="SignatureSearch"
-          cart={this.state.cart}
-          updateCart={this.updateCart}
-          download={this.download}
-        />
-        <Collections
-          id="Collections"
           cart={this.state.cart}
           updateCart={this.updateCart}
           download={this.download}
