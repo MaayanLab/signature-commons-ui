@@ -2,7 +2,19 @@ import React from 'react'
 import IconButton from '../../components/IconButton';
 import { fetch_meta_post } from '../../util/fetch/meta';
 
-const renamed = {
+export const primary_resources = [
+  'CREEDS',
+  'ARCHS4',
+  'KEGG',
+  'GTEx',
+  'ENCODE',
+  'HPO',
+  'CCLE',
+  'Allen Brain Atlas',
+  'Achilles',
+]
+
+export const renamed = {
   'Human Phenotype Ontology': 'HPO',
   'MGI Mammalian Phenotype': 'MGIMP',
   'Cancer Cell Line Encyclopedia': 'CCLE',
@@ -15,7 +27,7 @@ const renamed = {
   'ENCODE/ChEA': 'ENCODE',
 }
 
-const iconOf = {
+export const iconOf = {
   'CREEDS': 'http://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
   'Connectivity Map': 'https://assets.clue.io/clue/public/img/favicon.ico',
 }

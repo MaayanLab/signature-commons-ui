@@ -13,40 +13,14 @@ import scrollToComponent from 'react-scroll-to-component';
 import MUIDataTable from "mui-datatables";
 import { makeTemplate } from '../../util/makeTemplate'
 import { schemas, objectMatch } from '../../components/Label'
+import { renamed, iconsOf, primary_resources } from '../pages/Resources'
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 const example_geneset_up = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15'.split(' ').join('\n')
 const example_geneset_down = 'RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
-const primary_resources = [
-  'CREEDS',
-  'ARCHS4',
-  'KEGG',
-  'GTEx',
-  'ENCODE',
-  'HPO',
-  'CCLE',
-  'Allen Brain Atlas',
-  'Achilles',
-]
 
-const renamed = {
-  'Human Phenotype Ontology': 'HPO',
-  'MGI Mammalian Phenotype': 'MGIMP',
-  'Cancer Cell Line Encyclopedia': 'CCLE',
-  'NCI': 'NCI Pathways',
-  'Disease Signatures': 'CREEDS',
-  'Single Drug Perturbations': 'CREEDS',
-  'Single Gene Perturbations': 'CREEDS',
-  'clueio': 'Connectivity Map',
-  'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
-  'ENCODE/ChEA': 'ENCODE',
-}
 
-const iconOf = {
-  'CREEDS': 'http://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
-  'Connectivity Map': 'https://assets.clue.io/clue/public/img/favicon.ico',
-}
 
 export default class Home extends React.Component {
   constructor(props) {
