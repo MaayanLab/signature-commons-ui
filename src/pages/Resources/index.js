@@ -16,7 +16,7 @@ export const primary_resources = [
 
 export const renamed = {
   'Human Phenotype Ontology': 'HPO',
-  'MGI Mammalian Phenotype': 'MGIMP',
+  'MGI Mammalian Phenotype': 'MGI-MP',
   'Cancer Cell Line Encyclopedia': 'CCLE',
   'NCI': 'NCI Pathways',
   'Disease Signatures': 'CREEDS',
