@@ -10,6 +10,31 @@
       "src": "http://amp.pharm.mssm.edu/CREEDS/img/creeds.png",
       "alt": "CREEDS"
     },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "Microarray"
+    },
+    "Drug": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.drug_name}"
+    },
+    "DrugBank": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.drugbank_id}"
+    },
+    "Organism": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.organism}"
+    },
+    "GEO Accession": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.geo_id}"
+    },
     "P-Value": {
       "visibility": 1,
       "condition": {
@@ -39,36 +64,6 @@
       },
       "type": "text",
       "text": "${meta.setsize}"
-    },
-    "Assay": {
-      "visibility": 1,
-      "type": "text",
-      "text": "Microarray"
-    },
-    "Drug": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.drug_name}"
-    },
-    "DrugBank": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.drugbank_id}"
-    },
-    "Organism": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.organism}"
-    },
-    "GEO Accession": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.geo_id}"
-    },
-    "CREEDS ID": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.id}"
     }
   }
 }

@@ -10,35 +10,10 @@
       "src": "http://amp.pharm.mssm.edu/Enrichr/favicon.ico",
       "alt": "Enrichr"
     },
-    "P-Value": {
+    "Description": {
       "visibility": 1,
-      "condition": {
-        "${meta['p-value']}": {
-          "ne": null
-        }
-      },
       "type": "text",
-      "text": "${meta['p-value']}"
-    },
-    "Odds Ratio": {
-      "visibility": 1,
-      "condition": {
-        "${meta.oddsratio}": {
-          "ne": null
-        }
-      },
-      "type": "text",
-      "text": "${meta.oddsratio}"
-    },
-    "Set Size": {
-      "visibility": 1,
-      "condition": {
-        "${meta.setsize}": {
-          "ne": null
-        }
-      },
-      "type": "text",
-      "text": "${meta.setsize}"
+      "text": "${meta['Original String']}"
     },
     "Resource": {
       "visibility": 1,
@@ -70,10 +45,35 @@
       "type": "text",
       "text": "${meta.Organism}"
     },
-    "Description": {
+    "P-Value": {
       "visibility": 1,
+      "condition": {
+        "${meta['p-value']}": {
+          "ne": null
+        }
+      },
       "type": "text",
-      "text": "${meta['Original String']}"
+      "text": "${meta['p-value']}"
+    },
+    "Odds Ratio": {
+      "visibility": 1,
+      "condition": {
+        "${meta.oddsratio}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.oddsratio}"
+    },
+    "Set Size": {
+      "visibility": 1,
+      "condition": {
+        "${meta.setsize}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.setsize}"
     }
   }
 }
