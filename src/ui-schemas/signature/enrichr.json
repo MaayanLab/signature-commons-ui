@@ -8,7 +8,12 @@
       "visibility": 1,
       "type": "img",
       "src": "${library.meta['Icon']}",
-      "alt": "${library.meta['Library name']}"
+      "alt": "${library.meta['Primary Resource']}"
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${library.meta['Library name']}"
     },
     "Description": {
       "visibility": 1,
