@@ -14,6 +14,9 @@ import MUIDataTable from "mui-datatables";
 import { makeTemplate } from '../../util/makeTemplate'
 import { schemas, objectMatch } from '../../components/Label'
 import { renamed, iconOf, primary_resources, primary_two_tailed_resources } from '../Resources'
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 const example_geneset_up = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15'.split(' ').join('\n')
@@ -31,6 +34,16 @@ const two_tailed_columns = [
   'Z-Up',
   'Z-Down',
 ]
+
+const theme = createMuiTheme({
+  overrides: {
+    MuiCheckbox: {
+      root: {
+        display: 'none'
+      }
+    }
+  }
+})
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -64,7 +77,6 @@ export default class Home extends React.Component {
 
   async componentDidMount() {
     M.AutoInit();
-
 
     const libraries = await fetch_meta_post('/libraries/find', {})
     const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
@@ -112,14 +124,19 @@ export default class Home extends React.Component {
       this.state.controller.abort()
     }
 
+
     if (this.state.up_down) {
       if (this.state.last_up_geneset === this.state.up_geneset && this.state.last_down_geneset === this.state.down_geneset) {
         this.count_results()
+        return
+      } else if (this.state.up_geneset === '' || this.state.down_geneset === '') {
         return
       }
     } else {
       if (this.state.last_geneset === this.state.geneset) {
         this.count_results()
+        return
+      } else if (this.state.geneset === '') {
         return
       }
     }
@@ -429,21 +446,33 @@ export default class Home extends React.Component {
                     )
                     
                     return (
-                      <MUIDataTable
-                        options={{
-                          responsive: 'scroll',
-                          selectableRows: false,
-                        }}
-                        columns={cols.map((col) => ({ name: col }))}
-                        data={sigs.map((sig) =>
-                          cols.map((col) => {
-                            const val = makeTemplate(schema.properties[col].text, sig)
-                            if (val === 'undefined')
-                              return ''
-                            return val
-                          })
-                        )}
-                      />
+                      <MuiThemeProvider theme={theme}>
+                        <MUIDataTable
+                          options={{
+                            responsive: 'scroll',
+                            selectableRows: true,
+                            expandableRows: true,
+                            renderExpandableRow: (rowData, rowMeta) => (
+                              <TableRow>
+                                <TableCell colSpan={rowData.length}>
+                                  <ShowMeta
+                                    value={sigs[rowMeta.dataIndex]}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            )
+                          }}
+                          columns={cols.map((col) => ({ name: col }))}
+                          data={sigs.map((sig) =>
+                            cols.map((col) => {
+                              const val = makeTemplate(schema.properties[col].text, sig)
+                              if (val === 'undefined')
+                                return ''
+                              return val
+                            })
+                          )}
+                        />
+                      </MuiThemeProvider>
                     )
                   })()}
                 </div>
@@ -506,7 +535,7 @@ export default class Home extends React.Component {
                     <div className="input-field">
                       <textarea
                         id="down_geneset"
-                        placeholder="Genes that are up-regulated in signature or overlap with gene-set."
+                        placeholder="Genes that are down-regulated in signature or overlap with gene-set."
                         style={{
                           height: 200,
                           overflow: 'auto',
@@ -522,7 +551,7 @@ export default class Home extends React.Component {
                   <div className="input-field">
                     <textarea
                       id="geneset"
-                      placeholder="Genes that are up-regulated in signature or overlap with gene-set."
+                      placeholder="Genes that are down-regulated in signature or overlap with gene-set."
                       style={{
                         height: 200,
                         overflow: 'auto',
