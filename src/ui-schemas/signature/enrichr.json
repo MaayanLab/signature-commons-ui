@@ -7,8 +7,8 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "http://amp.pharm.mssm.edu/Enrichr/favicon.ico",
-      "alt": "Enrichr"
+      "src": "${library.meta['Icon']}",
+      "alt": "${library.meta['Library name']}"
     },
     "Description": {
       "visibility": 1,

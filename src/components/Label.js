@@ -38,8 +38,8 @@ export const labels = {
         }}
       >
         <img
-          alt={prop.alt}
-          src={prop.src}
+          alt={makeTemplate(prop.alt, data)}
+          src={makeTemplate(prop.src, data)}
           style={{
             ...{
               maxWidth: '100px',
@@ -51,7 +51,7 @@ export const labels = {
       </div>
       <Highlight
         Component={(props) => <span {...props}>{props.children}</span>}
-        text={prop.alt}
+        text={makeTemplate(prop.alt, data)}
         highlight={highlight}
       />
     </div>
@@ -59,12 +59,12 @@ export const labels = {
   'img': ({label, prop, data, highlight}) => (
     <div className="chip grey darken-2 white-text">
       <img
-        alt={prop.alt}
-        src={prop.src}
+        alt={makeTemplate(prop.alt, data)}
+        src={makeTemplate(prop.src, data)}
       />
       <Highlight
         Component={(props) => <span {...props}>{props.children}</span>}
-        text={prop.alt}
+        text={makeTemplate(prop.alt, data)}
         highlight={highlight}
       />
     </div>
