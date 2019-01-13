@@ -19,6 +19,7 @@ import TableCell from "@material-ui/core/TableCell";
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 
 const example_geneset = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15 RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
+const example_geneset_weighted = 'SERPINA3,1.0 CFL1,-1.0 FTH1,0.5 GJA1,-0.5 HADHB,0.25 LDHB,-0.25 MT1X,0.4 RPL21,0.3 RPL34,0.2 RPL39,0.1 RPS15,-0.1 RPS24,-0.2 RPS27,-0.3 RPS29,-0.4 TMSB4XP8,-0.6 TTR,-0.7 TUBA1B,-0.8 ANP32B,-0.9 DDAH1,0.9 HNRNPA1P10,0.8'.split(' ').join('\n')
 const example_geneset_up = 'SERPINA3 CFL1 FTH1 GJA1 HADHB LDHB MT1X RPL21 RPL34 RPL39 RPS15'.split(' ').join('\n')
 const example_geneset_down = 'RPS24 RPS27 RPS29 TMSB4XP8 TTR TUBA1B ANP32B DDAH1 HNRNPA1P10'.split(' ').join('\n')
 
@@ -150,11 +151,11 @@ export default class Home extends React.Component {
 
       let entities, up_entities, down_entities
       if (this.state.up_down) {
-        up_entities = Set(this.state.up_geneset.split(/[ \t\n,;]+/))
-        down_entities = Set(this.state.down_geneset.split(/[ \t\n,;]+/))
+        up_entities = Set(this.state.up_geneset.split(/[ \t\n;]+/).map((line) => /^(?<entity>.+?)(,(?<weight>.+))?$/.exec(line).groups.entity)) // TODO: handle weights
+        down_entities = Set(this.state.down_geneset.split(/[ \t\n;]+/).map((line) => /^(?<entity>.+?)(,(?<weight>.+))?$/.exec(line).groups.entity)) // TODO: handle weights
         entities = Set([...up_entities, ...down_entities])
       } else {
-        entities = Set(this.state.geneset.split(/[ \t\n,;]+/))
+        entities = Set(this.state.geneset.split(/[ \t\n;]+/).map((line) => /^(?<entity>.+?)(,(?<weight>.+))?$/.exec(line).groups.entity)) // TODO: handle weights
       }
       let entity_ids = Set()
       let up_entity_ids = Set()
@@ -500,7 +501,7 @@ export default class Home extends React.Component {
                     One Tailed
                     <input
                       type="checkbox"
-                      value={this.state.up_down}
+                      checked={this.state.up_down}
                       onChange={() => this.setState(({ up_down }) => ({ up_down: !up_down }))}
                     />
                     <span className="lever"></span>
@@ -569,18 +570,33 @@ export default class Home extends React.Component {
                   <div
                     className="chip grey darken-2 white-text waves-effect waves-light"
                     onClick={() => {
-                      if (this.state.up_down) {
-                        this.setState({                          
-                          up_geneset: example_geneset_up,
-                          down_geneset: example_geneset_down,
-                        })
-                      } else {
-                        this.setState({
-                          geneset: example_geneset,
-                        })
-                      }
+                      this.setState({
+                        up_down: false,
+                        geneset: example_geneset,
+                      })
                     }}
-                  >Example Gene Set</div>
+                  >Example Crisp Gene Set</div>
+
+                  <div
+                    className="chip grey darken-2 white-text waves-effect waves-light"
+                    onClick={() => {
+                      this.setState({
+                        up_down: false,
+                        geneset: example_geneset_weighted,
+                      })
+                    }}
+                  >Example Weighted Signature</div>
+
+                  <div
+                    className="chip grey darken-2 white-text waves-effect waves-light"
+                    onClick={() => {    
+                      this.setState({
+                        up_down: true,
+                        up_geneset: example_geneset_up,
+                        down_geneset: example_geneset_down,
+                      })
+                    }}
+                  >Example Up and Down Sets</div>
                 </div>
 
                 {this.state.resources.length <= 0 ? null : (
