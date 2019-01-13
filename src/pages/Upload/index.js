@@ -55,7 +55,7 @@ export default class Upload extends React.Component {
           <div className="col offset-s2 s8">
             <ul className="collapsible popout">
               <li className="active white">
-                <h4 className="collapsible-header">Upload Background</h4>
+                <h4 className="collapsible-header">Upload New Library of Signatures</h4>
                 <form action="#" className="collapsible-body">
                   <div className="col s6">
                     <p>
@@ -110,7 +110,7 @@ export default class Upload extends React.Component {
                 </form>
               </li>
               <li className="white">
-                <h4 className="collapsible-header">Upload New Library of Signatures</h4>
+                <h4 className="collapsible-header">Upload Background</h4>
                 <form action="#" className="collapsible-body">
                   Coming soon...
                 </form>
