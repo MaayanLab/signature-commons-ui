@@ -33,6 +33,7 @@ export const renamed = {
   'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
   'ENCODE/ChEA': 'ENCODE',
   'Gene Ontology Consortium': 'Gene Ontology',
+  'PubMed': 'Enrichr',
 }
 
 export const iconOf = {
