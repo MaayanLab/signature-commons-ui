@@ -163,21 +163,23 @@ export default class Home extends React.Component {
 
       const start = Date.now()
 
-      const entity_meta = await fetch_meta_post('/entities/find', {
-        filter: {
-          where: {
-            'meta.Name': {
-              inq: entities.toArray(),
-            }
-          },
-          fields: [
-            'id',
-            'meta.Name',
-          ]
-        }
-      }, controller.signal)
+      const entity_meta = maybe_fix_obj(
+        await fetch_meta_post('/entities/find', {
+          filter: {
+            where: {
+              'meta.Name': {
+                inq: entities.toArray(),
+              }
+            },
+            fields: [
+              'id',
+              'meta.Name',
+            ]
+          }
+        }, controller.signal)
+      )
 
-      for(const entity of entity_meta) {
+      for(const entity of Object.values(entity_meta)) {
         if (this.state.up_down) {
           const matched_up_entities = up_entities.intersect(
             Set([entity.meta.Name])
@@ -307,7 +309,12 @@ export default class Home extends React.Component {
             ...signature,
             meta: {
               ...signature.meta,
-              ...enriched_results[signature.id],
+              ...{
+                ...enriched_results[signature.id],
+                ...(enriched_results[signature.id].overlap === undefined ? {} : {
+                  overlap: enriched_results[signature.id].overlap.map((id) => ({ Entity: entity_meta[id]})),
+                }),
+              },
             },
           }
         ]), []
@@ -459,7 +466,7 @@ export default class Home extends React.Component {
                               <TableRow>
                                 <TableCell colSpan={rowData.length}>
                                   <ShowMeta
-                                    value={sigs[rowMeta.dataIndex]}
+                                    value={{ Signature: sigs[rowMeta.dataIndex] }}
                                   />
                                 </TableCell>
                               </TableRow>
