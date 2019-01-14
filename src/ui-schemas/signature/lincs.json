@@ -47,6 +47,11 @@
           "ne": null
         }
       },
+      "columnType": "number",
+      "columnOptions": {
+        "sort": true,
+        "sortDirection": "asc"
+      },
       "type": "text",
       "text": "${meta['p-value']}"
     },
@@ -57,6 +62,7 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}"
     },
@@ -67,6 +73,7 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta.setsize}"
     },
@@ -77,6 +84,7 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta['p-up']}"
     },
@@ -87,6 +95,7 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta['p-down']}"
     },
@@ -97,6 +106,7 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta['z-up']}"
     },
@@ -107,8 +117,45 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta['z-down']}"
+    },
+    "Log(p) Fisher": {
+      "visibility": 1,
+      "condition": {
+        "${meta['logp-fisher']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "columnOptions": {
+        "sort": true,
+        "sortDirection": "desc"
+      },
+      "type": "text",
+      "text": "${meta['logp-fisher']}"
+    },
+    "Log(p) Average":{
+      "visibility": 1,
+      "condition": {
+        "${meta['logp-avg']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta['logp-avg']}"
+    },
+    "Direction": {
+      "visibility": 1,
+      "condition": {
+        "${meta['logp-fisher']}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta['direction'] === 1 ? 'up' : 'down'}"
     }
   }
 }

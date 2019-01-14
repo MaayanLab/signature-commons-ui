@@ -42,6 +42,11 @@
           "ne": null
         }
       },
+      "columnType": "number",
+      "columnOptions": {
+        "sort": true,
+        "sortDirection": "asc"
+      },
       "type": "text",
       "text": "${meta['p-value']}"
     },
@@ -52,6 +57,7 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}"
     },
@@ -62,6 +68,7 @@
           "ne": null
         }
       },
+      "columnType": "number",
       "type": "text",
       "text": "${meta.setsize}"
     }

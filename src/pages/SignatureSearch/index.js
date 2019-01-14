@@ -466,26 +466,21 @@ export default class Home extends React.Component {
                             )
                           }}
                           columns={cols.map((col) => {
-                            if (['P-Value', 'P-Up', 'P-Down', 'Z-Up', 'Z-Down'].indexOf(col) !== -1) {
-                              return {
-                                name: col,
-                                options: {
-                                  sort: true,
-                                  sortDirection: 'asc',
-                                  customBodyRender: (val, tableMeta, updateValue) => {
-                                    if (typeof val === 'number') {
-                                      return val.toPrecision(3)
-                                    } else {
-                                      return val
-                                    }
-                                  }
+                            let opts = {
+                              name: col,
+                              options: schema.properties[col].columnOptions || {},
+                            }
+
+                            if (schema.properties[col].columnType === 'number') {
+                              opts.options.customBodyRender = (val, tableMeta, updateValue) => {
+                                if (typeof val === 'number') {
+                                  return val.toPrecision(3)
+                                } else {
+                                  return val
                                 }
                               }
-                            } else {
-                              return {
-                                name: col,
-                              }
                             }
+                            return opts
                           })}
                           data={sigs.map((sig) =>
                             cols.map((col) => {
