@@ -463,13 +463,31 @@ export default class Home extends React.Component {
                               </TableRow>
                             )
                           }}
-                          columns={cols.map((col) => ({ name: col }))}
+                          columns={cols.map((col) => {
+                            if (['P-Value', 'P-Up'].indexOf(col) !== -1) {
+                              return {
+                                name: col,
+                                options: {
+                                  sort: true,
+                                  sortDirection: 'asc',
+                                }
+                              }
+                            } else {
+                              return {
+                                name: col,
+                              }
+                            }
+                          })}
                           data={sigs.map((sig) =>
                             cols.map((col) => {
                               const val = makeTemplate(schema.properties[col].text, sig)
                               if (val === 'undefined')
                                 return ''
-                              return val
+                              try {
+                                return JSON.parse(val)
+                              } catch(e) {
+                                return val
+                              }
                             })
                           )}
                         />
