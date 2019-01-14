@@ -179,33 +179,35 @@ export default class Home extends React.Component {
 
       for(const entity of entity_meta) {
         if (this.state.up_down) {
-          const matched_up_entities = Set.intersect(
-            Set([entity.meta.Name]),
-            up_entities,
+          const matched_up_entities = up_entities.intersect(
+            Set([entity.meta.Name])
           )
-          if (matched_up_entities.count() >= 0) {
+          if (matched_up_entities.count() > 0) {
             up_entities = up_entities.subtract(matched_up_entities)
             up_entity_ids = up_entity_ids.add(entity.id)
           }
 
-          const matched_down_entities = Set.intersect(
-            Set([entity.meta.Name]),
-            down_entities,
+          const matched_down_entities = down_entities.intersect(
+            Set([entity.meta.Name])
           )
-          if (matched_down_entities.count() >= 0) {
+          if (matched_down_entities.count() > 0) {
             down_entities = down_entities.subtract(matched_down_entities)
             down_entity_ids = down_entity_ids.add(entity.id)
           }
         } else {
-          const matched_entities = Set.intersect(
-            Set([entity.meta.Name]),
-            entities,
+          const matched_entities = entities.intersect(
+            Set([entity.meta.Name])
           )
 
-          entities = entities.subtract(matched_entities)
-          entity_ids = entity_ids.add(entity.id)
+          if (matched_entities.count() > 0) {
+            entities = entities.subtract(matched_entities)
+            entity_ids = entity_ids.add(entity.id)
+          }
         }
       }
+
+      console.log('matched:', this.state.up_down ? up_entity_ids.count() + down_entity_ids.count() : entity_ids.count())
+      console.log('mismatched:', this.state.up_down ? up_entities.count() + down_entities.count() : entities.count())
 
       this.setState({
         status: 'Searching...',
