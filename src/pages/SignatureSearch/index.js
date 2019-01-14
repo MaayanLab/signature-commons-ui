@@ -176,7 +176,7 @@ export default class Home extends React.Component {
           ]
         }
       }, controller.signal)
-      
+
       for(const entity of entity_meta) {
         if (this.state.up_down) {
           const matched_up_entities = Set.intersect(
@@ -464,12 +464,19 @@ export default class Home extends React.Component {
                             )
                           }}
                           columns={cols.map((col) => {
-                            if (['P-Value', 'P-Up'].indexOf(col) !== -1) {
+                            if (['P-Value', 'P-Up', 'P-Down', 'Z-Up', 'Z-Down'].indexOf(col) !== -1) {
                               return {
                                 name: col,
                                 options: {
                                   sort: true,
                                   sortDirection: 'asc',
+                                  customBodyRender: (val, tableMeta, updateValue) => {
+                                    if (typeof val === 'number') {
+                                      return val.toPrecision(3)
+                                    } else {
+                                      return val
+                                    }
+                                  }
                                 }
                               }
                             } else {
