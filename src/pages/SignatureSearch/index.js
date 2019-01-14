@@ -151,11 +151,11 @@ export default class Home extends React.Component {
 
       let entities, up_entities, down_entities
       if (this.state.up_down) {
-        up_entities = Set(this.state.up_geneset.split(/[ \t\n;]+/).map((line) => /^(.+?)(,(.+))?$/.exec(line).groups[0])) // TODO: handle weights
-        down_entities = Set(this.state.down_geneset.split(/[ \t\n;]+/).map((line) => /^(.+?)(,(.+))?$/.exec(line).groups[0])) // TODO: handle weights
+        up_entities = Set(this.state.up_geneset.split(/[ \t\n;]+/).map((line) => /^(.+?)(,(.+))?$/.exec(line)[0])) // TODO: handle weights
+        down_entities = Set(this.state.down_geneset.split(/[ \t\n;]+/).map((line) => /^(.+?)(,(.+))?$/.exec(line)[0])) // TODO: handle weights
         entities = Set([...up_entities, ...down_entities])
       } else {
-        entities = Set(this.state.geneset.split(/[ \t\n;]+/).map((line) => /^(.+?)(,(.+))?$/.exec(line).groups[0])) // TODO: handle weights
+        entities = Set(this.state.geneset.split(/[ \t\n;]+/).map((line) => /^(.+?)(,(.+))?$/.exec(line)[0])) // TODO: handle weights
       }
       let entity_ids = Set()
       let up_entity_ids = Set()
