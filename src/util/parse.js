@@ -51,7 +51,7 @@ export function parse_csv(data) {
 
   function *parse_line(line) {
     let m
-    while (m = line_re.exec(line)) {
+    while ((m = line_re.exec(line))) {
       let r =
            m[2] || m[7] || m[12]
       try {

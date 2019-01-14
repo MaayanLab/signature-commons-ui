@@ -65,12 +65,14 @@ export default class Upload extends React.Component {
                   </div>
                   <div className="col s6">
                     <table>
-                      <tr><td>&nbsp;</td>       <td>&nbsp;</td>       <td>Column Label 1</td>  <td>Col Value 1  </td><td>...   </td></tr>
-                      <tr><td>&nbsp;</td>       <td>&nbsp;</td>       <td>Column Label 2</td>  <td>Col Value 2  </td><td>...   </td></tr>
-                      <tr><td>&nbsp;</td>       <td>&nbsp;</td>       <td>Column Label ...</td><td>Col Value ...</td><td>...   </td></tr>
-                      <tr><td>Row Label 1</td>  <td>Row Label 2</td>  <td>Row Label ...</td>   <td>&nbsp;       </td><td>&nbsp;</td></tr>
-                      <tr><td>Row Value 1</td>  <td>Row Value 2</td>  <td>Row Value ...</td>   <td>1            </td><td>-1    </td></tr>
-                      <tr><td>Row Value ...</td><td>Row Value ...</td><td>Row Value ...</td>   <td>0.2          </td><td>...   </td></tr>
+                      <tbody>
+                      <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label 1  </td><td>Col Value 1  </td><td>...   </td></tr>
+                      <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label 2  </td><td>Col Value 2  </td><td>...   </td></tr>
+                      <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label ...</td><td>Col Value ...</td><td>...   </td></tr>
+                      <tr><td>Row Label 1  </td><td>Row Label 2  </td><td>Row Label ...   </td><td>&nbsp;       </td><td>&nbsp;</td></tr>
+                      <tr><td>Row Value 1  </td><td>Row Value 2  </td><td>Row Value ...   </td><td>1            </td><td>-1    </td></tr>
+                      <tr><td>Row Value ...</td><td>Row Value ...</td><td>Row Value ...   </td><td>0.2          </td><td>...   </td></tr>
+                      </tbody>
                     </table>
                   </div>
                   <div className="file-field input-field">

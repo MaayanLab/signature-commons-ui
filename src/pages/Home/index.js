@@ -48,6 +48,7 @@ const Header = () => (
           <li className="tab">
             <a
               target="_blank"
+              rel="noopener noreferrer"
               href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json"
             >
               API
