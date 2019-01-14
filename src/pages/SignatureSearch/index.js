@@ -30,6 +30,9 @@ const two_tailed_columns = [
   'P-Down',
   'Z-Up',
   'Z-Down',
+  'Log(p) Fisher',
+  'Log(p) Average',
+  'Direction',
 ]
 
 const theme = createMuiTheme({
