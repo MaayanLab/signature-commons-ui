@@ -619,21 +619,25 @@ export default class Home extends React.Component {
                         onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
                       />
                     ))}
-                    <IconButton
-                      alt={this.state.show_all ? "Less": "More"}
-                      icon={'more_horiz'}
-                      onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
-                    />
-                    {!this.state.show_all ? null : this.state.resources.filter(
-                      (resource) => primary_resources.indexOf(resource.name) === -1
-                    ).map((resource) => (
-                      <IconButton
-                        key={resource.name}
-                        alt={resource.name}
-                        img={resource.icon}
-                        onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
-                      />
-                    ))}
+                    {this.state.up_down ? null : (
+                      <div>
+                        <IconButton
+                          alt={this.state.show_all ? "Less": "More"}
+                          icon={'more_horiz'}
+                          onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
+                        />
+                        {!this.state.show_all ? null : this.state.resources.filter(
+                          (resource) => primary_resources.indexOf(resource.name) === -1
+                        ).map((resource) => (
+                          <IconButton
+                            key={resource.name}
+                            alt={resource.name}
+                            img={resource.icon}
+                            onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
