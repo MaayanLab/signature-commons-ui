@@ -37,7 +37,7 @@ export const renamed = {
 }
 
 export const iconOf = {
-  'CREEDS': 'http://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
+  'CREEDS': 'https://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
   'CMAP': 'https://assets.clue.io/clue/public/img/favicon.ico',
 }
 

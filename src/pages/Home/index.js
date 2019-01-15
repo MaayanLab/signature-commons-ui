@@ -49,7 +49,7 @@ const Header = () => (
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="http://petstore.swagger.io/?url=http://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json"
+              href="https://petstore.swagger.io/?url=https://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json"
             >
               API
             </a>

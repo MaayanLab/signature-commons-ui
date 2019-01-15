@@ -1,4 +1,4 @@
-const base_url = 'http://amp.pharm.mssm.edu/signature-commons-metadata-api'
+const base_url = 'https://amp.pharm.mssm.edu/signature-commons-metadata-api'
 // const auth = 'Basic ' + Buffer.from(
 //   process.env['ADMIN_USERNAME']
 //   + ':'

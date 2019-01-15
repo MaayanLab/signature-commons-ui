@@ -203,7 +203,7 @@ export default class Home extends React.Component {
                 }}>
                   <IconButton
                     alt="Enrichr"
-                    img="http://amp.pharm.mssm.edu/Enrichr/favicon.ico"
+                    img="https://amp.pharm.mssm.edu/Enrichr/favicon.ico"
                   />
                   &nbsp;
                   <IconButton
