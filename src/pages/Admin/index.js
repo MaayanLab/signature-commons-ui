@@ -1,9 +1,8 @@
 import React from "react";
 import { Admin, Datagrid, List, Resource, TextField } from 'react-admin';
-import { fetch_meta } from '../../util/fetch/meta';
+import { base_url, fetch_meta } from '../../util/fetch/meta';
 import loopbackProvider from './loopback-provider';
 
-const base_url = 'https://amp.pharm.mssm.edu/signature-commons-metadata-api';
 const dataProvider = loopbackProvider(base_url);
 
 class AdminView extends React.Component {

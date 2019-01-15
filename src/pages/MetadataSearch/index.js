@@ -203,17 +203,17 @@ export default class Home extends React.Component {
                 }}>
                   <IconButton
                     alt="Enrichr"
-                    img="https://amp.pharm.mssm.edu/Enrichr/favicon.ico"
+                    img="static/images/enrichr.ico"
                   />
                   &nbsp;
                   <IconButton
                     alt="Geneshot"
-                    img="https://amp.pharm.mssm.edu/geneshot/images/targetArrow.png"
+                    img="static/images/geneshot.png"
                   />
                   &nbsp;
                   <IconButton
                     alt="ARCHS4"
-                    img="https://amp.pharm.mssm.edu/archs4/images/archs-icon.png?v=2"
+                    img="static/images/archs4.ico"
                   />
                   &nbsp;
                   <IconButton

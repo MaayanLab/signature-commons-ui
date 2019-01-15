@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "https://amp.pharm.mssm.edu/CREEDS/img/creeds.png",
+      "src": "static/images/creeds.png",
       "alt": "CREEDS"
     },
     "Assay": {

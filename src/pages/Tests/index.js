@@ -28,8 +28,8 @@ const renamed = {
 }
 
 const iconOf = {
-  'CREEDS': 'https://amp.pharm.mssm.edu/CREEDS/img/creeds.png',
-  'Connectivity Map': 'https://assets.clue.io/clue/public/img/favicon.ico',
+  'CREEDS': 'static/images/creeds.png',
+  'Connectivity Map': 'static/images/clueio.ico',
 }
 
 export default class Test extends React.PureComponent {

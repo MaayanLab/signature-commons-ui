@@ -1,4 +1,4 @@
-const base_url = 'https://amp.pharm.mssm.edu/enrichmentapi/api'
+const base_url = process.env.REACT_APP_DATA_API || '/enrichmentapi/api'
 
 export async function fetch_data(endpoint, body, signal) {
   try {

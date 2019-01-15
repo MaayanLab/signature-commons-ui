@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "https://assets.clue.io/clue/public/img/favicon.ico",
+      "src": "static/images/clueio.ico",
       "alt": "ConnectivityMap"
     },
     "Assay": {

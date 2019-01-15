@@ -2,13 +2,14 @@ import { Set } from 'immutable';
 import fileDownload from 'js-file-download';
 import M from "materialize-css";
 import React from "react";
+import Style from 'style-it';
 import { call } from '../../util/call';
 import { fetch_data } from "../../util/fetch/data";
-import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
+import { base_url as meta_base_url, fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
 import MetadataSearch from '../MetadataSearch';
+import Resources from '../Resources';
 import SignatureSearch from '../SignatureSearch';
 import Upload from '../Upload';
-import Resources from '../Resources';
 
 const Header = () => (
   <header>
@@ -49,7 +50,7 @@ const Header = () => (
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://petstore.swagger.io/?url=https://amp.pharm.mssm.edu/signature-commons-metadata-api/openapi.json"
+              href={`https://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}
             >
               API
             </a>
@@ -70,7 +71,7 @@ const Footer = () => (
         </div>
 
         <div className="col offset-l6 l2 m6 s12">
-          <img src="https://amp.pharm.mssm.edu/enrichmentapi/images/dcic.png" alt="BD2K-LINCS Data Coordination and Integration Center" height="130" /><br />
+          <img src="static/images/dcic.png" alt="BD2K-LINCS Data Coordination and Integration Center" height="130" /><br />
         </div>
       </div>
     </div>
@@ -245,127 +246,135 @@ export default class Home extends React.PureComponent {
   }
 
   render() {
-    return (
-      <div className="root">
-        <Header />
+    return Style.it(`
+      #Home {
+        background-image: url('static/images/arrowbackground.png');
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: left bottom;
+      }
+      `, (
+        <div id="Home" className="root">
+          <Header />
 
-        <ul id="slide-out" className="sidenav">
-          {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
-            <li key={key} className="no-padding">
-              <ul className="collapsible collapsible-accordion">
+          <ul id="slide-out" className="sidenav">
+            {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
+              <li key={key} className="no-padding">
+                <ul className="collapsible collapsible-accordion">
+                  <li>
+                    <a
+                      href="#!"
+                      className="collapsible-header"
+                    >
+                      {key} ({this.state.key_count[key]})
+                    </a>
+                    <div className="collapsible-body">
+                      {this.state.value_count[key] === undefined ? null : (
+                        <ul>
+                          {Object.keys(this.state.value_count[key]).map((k) => (
+                            <li key={key + '.' + k}>
+                              <a href="#!">
+                                <label>
+                                  <input type="checkbox" />
+                                  <span>
+                                    {k} ({this.state.value_count[key][k]})
+                                  </span>
+                                </label>
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            ))}
+          </ul>
+
+          {this.state.cart.count() <= 0 ? null : (
+            <div className="fixed-action-btn">
+              <a
+                href="#!"
+                className="btn-floating btn-large blue"
+              >
+                <i className="large material-icons">shopping_cart</i>
+              </a>
+              <span style={{
+                position: 'absolute',
+                top: '-0.1em',
+                fontSize: '150%',
+                left: '1.4em',
+                zIndex: 1,
+                color: 'white',
+                backgroundColor: 'blue',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                textAlign: 'center',
+                verticalAlign: 'middle',
+              }}>
+                {this.state.cart.count()}
+              </span>
+              <ul>
                 <li>
                   <a
                     href="#!"
-                    className="collapsible-header"
+                    className="btn-floating red"
+                    onClick={call(this.download, undefined)}
                   >
-                    {key} ({this.state.key_count[key]})
+                    <i className="material-icons">file_download</i>
                   </a>
-                  <div className="collapsible-body">
-                    {this.state.value_count[key] === undefined ? null : (
-                      <ul>
-                        {Object.keys(this.state.value_count[key]).map((k) => (
-                          <li key={key + '.' + k}>
-                            <a href="#!">
-                              <label>
-                                <input type="checkbox" />
-                                <span>
-                                  {k} ({this.state.value_count[key][k]})
-                                </span>
-                              </label>
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
+                </li>
+                <li>
+                  <a
+                    href="#SignatureSearch"
+                    className="btn-floating green"
+                  >
+                    <i className="material-icons">functions</i>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#!"
+                    className="btn-floating grey"
+                    onClick={call(alert, 'Comming soon')}
+                  >
+                    <i className="material-icons">send</i>
+                  </a>
                 </li>
               </ul>
-            </li>
-          ))}
-        </ul>
+            </div>
+          )}
 
-        {this.state.cart.count() <= 0 ? null : (
-          <div className="fixed-action-btn">
-            <a
-              href="#!"
-              className="btn-floating btn-large blue"
-            >
-              <i className="large material-icons">shopping_cart</i>
-            </a>
-            <span style={{
-              position: 'absolute',
-              top: '-0.1em',
-              fontSize: '150%',
-              left: '1.4em',
-              zIndex: 1,
-              color: 'white',
-              backgroundColor: 'blue',
-              borderRadius: '50%',
-              width: '35px',
-              height: '35px',
-              textAlign: 'center',
-              verticalAlign: 'middle',
-            }}>
-              {this.state.cart.count()}
-            </span>
-            <ul>
-              <li>
-                <a
-                  href="#!"
-                  className="btn-floating red"
-                  onClick={call(this.download, undefined)}
-                >
-                  <i className="material-icons">file_download</i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#SignatureSearch"
-                  className="btn-floating green"
-                >
-                  <i className="material-icons">functions</i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#!"
-                  className="btn-floating grey"
-                  onClick={call(alert, 'Comming soon')}
-                >
-                  <i className="material-icons">send</i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        )}
+          <SignatureSearch
+            id="SignatureSearch"
+            cart={this.state.cart}
+            updateCart={this.updateCart}
+            download={this.download}
+          />
+          <MetadataSearch
+            id="MetadataSearch"
+            cart={this.state.cart}
+            updateCart={this.updateCart}
+            download={this.download}
+          />
+          <Resources
+            id="Resources"
+            cart={this.state.cart}
+            updateCart={this.updateCart}
+            download={this.download}
+          />
+          <Upload
+            id="UploadCollection"
+            cart={this.state.cart}
+            updateCart={this.updateCart}
+            download={this.download}
+        />
 
-        <SignatureSearch
-          id="SignatureSearch"
-          cart={this.state.cart}
-          updateCart={this.updateCart}
-          download={this.download}
-        />
-        <MetadataSearch
-          id="MetadataSearch"
-          cart={this.state.cart}
-          updateCart={this.updateCart}
-          download={this.download}
-        />
-        <Resources
-          id="Resources"
-          cart={this.state.cart}
-          updateCart={this.updateCart}
-          download={this.download}
-        />
-        <Upload
-          id="UploadCollection"
-          cart={this.state.cart}
-          updateCart={this.updateCart}
-          download={this.download}
-      />
-
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      )
     );
   }
 }

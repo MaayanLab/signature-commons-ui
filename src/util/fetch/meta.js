@@ -1,9 +1,4 @@
-const base_url = 'https://amp.pharm.mssm.edu/signature-commons-metadata-api'
-// const auth = 'Basic ' + Buffer.from(
-//   process.env['ADMIN_USERNAME']
-//   + ':'
-//   + process.env['ADMIN_PASSWORD']
-// ).toString('base64')
+export const base_url = process.env.REACT_APP_METADATA_API || '/signature-commons-metadata-api'
 
 export async function fetch_meta(endpoint, body, signal) {
   return await (

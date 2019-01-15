@@ -10,10 +10,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url('https://amp.pharm.mssm.edu/enrichmentapi/images/arrowbackground.png');
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-position: left bottom;
 }
 
 code {
@@ -29,7 +25,7 @@ code {
 
 main {
   flex: 1 0 auto;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .collapsible-body {
