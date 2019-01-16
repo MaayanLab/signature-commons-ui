@@ -15,6 +15,8 @@ export default class Query extends React.Component {
       enrich_results: '{}',
       results: '[]',
       status: 'ready',
+      meta_duration: 0,
+      data_duration: 0,
     }
     this.submit = this.submit.bind(this)
   }
@@ -31,21 +33,21 @@ export default class Query extends React.Component {
       this.setState({
         status: this.state.status + '\nfetching entities...',
       })
-      const entities_meta = await fetch_meta_post('/entities/find', {
+      const {duration: duration_meta_1, response: entities_meta} = await fetch_meta_post('/entities/find', {
         filter: JSON.parse(this.state.entities)
       }, undefined)
       this.setState({
         status: this.state.status + '\nfetching signatures...',
         entities_results: entities_meta,
       })
-      const signatures_meta = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_2, response: signatures_meta} = await fetch_meta_post('/signatures/find', {
         filter: JSON.parse(this.state.signatures)
       }, undefined)
       this.setState({
         status: this.state.status + '\nenriching signatures...',
         signatures_results: signatures_meta,
       })
-      const enriched = await fetch_data({
+      const {duration: duration_data_1, response: enriched} = await fetch_data({
         entities: entities_meta.map((entity) => entity.id),
         signatures: signatures_meta.map((signature) => signature.id),
       })
@@ -53,7 +55,7 @@ export default class Query extends React.Component {
         status: this.state.status + '\nfetching enriched signatures...',
         enrich_results: enriched,
       })
-      const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_3, response: enriched_signatures_meta} = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {
@@ -72,6 +74,8 @@ export default class Query extends React.Component {
       this.setState({
         status: this.state.status + '\nready',
         results: enriched_signatures,
+        meta_duration: duration_meta_1 + duration_meta_2 + duration_meta_3,
+        data_duration: duration_data_1,
       })
     } catch(e) {
       this.setState({

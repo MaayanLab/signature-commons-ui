@@ -14,8 +14,9 @@ export default class Home extends React.Component {
     this.state = {
       search: '',
       results: [],
-      time: 0,
+      duration: 0,
       count: 0,
+      duration_meta: 0,
       key_count: {},
       value_count: {},
       status: null,
@@ -71,7 +72,7 @@ export default class Home extends React.Component {
       const where = this.build_where()
 
       const start = Date.now()
-      const signatures = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_1, response: signatures} = await fetch_meta_post('/signatures/find', {
         filter: {
           where,
           limit: 20,
@@ -79,7 +80,7 @@ export default class Home extends React.Component {
       }, controller.signal)
 
       const library_ids = [...new Set(signatures.map((sig) => sig.library))]
-      const libraries = await fetch_meta_post('/libraries/find', {
+      const {duration: duration_meta_2, response: libraries} = await fetch_meta_post('/libraries/find', {
         filter: {
           where: {
             id: {
@@ -88,6 +89,10 @@ export default class Home extends React.Component {
           },
         },
       }, controller.signal)
+      this.setState({
+        duration_meta: duration_meta_1 + duration_meta_2,
+      })
+
       const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
       
       for(const signature of signatures)
@@ -96,10 +101,10 @@ export default class Home extends React.Component {
       this.setState({
         results: signatures,
         status: '',
-        time: Date.now() - start,
+        duration: (Date.now() - start) / 1000,
       })
 
-      const key_count = await fetch_meta('/signatures/key_count', {
+      const {duration: duration_meta_3, response: key_count} = await fetch_meta('/signatures/key_count', {
         filter: {
           where,
         },
@@ -351,7 +356,7 @@ export default class Home extends React.Component {
           <div className="col s12 center">
             {this.state.status === null ? null : (
               <span className="grey-text">
-                {this.state.count} results of 654247 ({this.state.time/1000} seconds)
+                {this.state.count} results of 654247 ({this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata)
               </span>
             )}
           </div>

@@ -51,8 +51,10 @@ export default class Home extends React.Component {
       search: '',
       results: Map(),
       geneset: '',
-      time: 0,
+      duration: 0,
       count: 0,
+      duration_meta: 0,
+      duration_data: 0,
       up_down: false,
       key_count: {},
       value_count: {},
@@ -77,7 +79,7 @@ export default class Home extends React.Component {
   async componentDidMount() {
     M.AutoInit();
 
-    const libraries = await fetch_meta_post('/libraries/find', {})
+    const {duration: duration_meta_1, response: libraries} = await fetch_meta_post('/libraries/find', {})
     const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
     const resources = libraries.reduce((groups, lib) => {
       let resource = renamed[lib.meta['Primary Resource'] || lib.meta['name']] || lib.meta['Primary Resource'] || lib.meta['name']
@@ -161,21 +163,20 @@ export default class Home extends React.Component {
 
       const start = Date.now()
 
-      const entity_meta = maybe_fix_obj(
-        await fetch_meta_post('/entities/find', {
-          filter: {
-            where: {
-              'meta.Name': {
-                inq: entities.toArray(),
-              }
-            },
-            fields: [
-              'id',
-              'meta.Name',
-            ]
-          }
-        }, controller.signal)
-      )
+      const {duration: duration_meta_1, response: entity_meta_pre} = await fetch_meta_post('/entities/find', {
+        filter: {
+          where: {
+            'meta.Name': {
+              inq: entities.toArray(),
+            }
+          },
+          fields: [
+            'id',
+            'meta.Name',
+          ]
+        }
+      }, controller.signal)
+      const entity_meta = maybe_fix_obj(entity_meta_pre)
 
       for(const entity of Object.values(entity_meta)) {
         if (this.state.up_down) {
@@ -215,7 +216,9 @@ export default class Home extends React.Component {
         mismatched_entities: entities,
       })
 
+      let duration_data = 0
       let enriched_results
+
       if (this.state.up_down) {
         enriched_results = (await Promise.all([
           fetch_data('/enrich/ranktwosided', {
@@ -231,7 +234,8 @@ export default class Home extends React.Component {
             database: 'lincsfwd',
           }, controller.signal),
         ])).reduce(
-          (results, result) => {
+          (results, {duration: duration_data_n, response: result}) => {
+            duration_data += duration_data_n
             return ({
               ...results,
               ...maybe_fix_obj(
@@ -275,7 +279,8 @@ export default class Home extends React.Component {
             database: 'lincsfwd',
           }, controller.signal),
         ])).reduce(
-          (results, result) => {
+          (results, {duration: duration_data_n, response: result}) => {
+            duration_data += duration_data_n
             return ({
               ...results,
               ...maybe_fix_obj(result.results),
@@ -288,9 +293,10 @@ export default class Home extends React.Component {
         status: 'Resolving signatures...',
         controller: controller,
         count: Object.keys(enriched_results).length,
+        duration_data: duration_data,
       })
 
-      const enriched_signatures_meta = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_2, response: enriched_signatures_meta} = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {
@@ -299,6 +305,10 @@ export default class Home extends React.Component {
           }
         }
       }, controller.signal)
+
+      this.setState({
+        duration_meta: duration_meta_1 + duration_meta_2,
+      })
 
       const enriched_signatures = enriched_signatures_meta.reduce(
         (full, signature) => ([
@@ -334,7 +344,7 @@ export default class Home extends React.Component {
       this.setState({
         results: grouped_signatures,
         status: '',
-        time: Date.now() - start,
+        duration: (Date.now() - start)/1000,
       }, () => this.count_results())
 
       if(this.state.up_down) {
@@ -674,7 +684,7 @@ export default class Home extends React.Component {
           <div className="col s12 center">
             {this.state.status === null ? null : (
               <span className="grey-text">
-                {this.state.count} results of 654247 ({this.state.time/1000} seconds)
+                {this.state.count} results of 654247 ({this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata, {this.state.duration_data.toPrecision(3)} on data)
               </span>
             )}
           </div>

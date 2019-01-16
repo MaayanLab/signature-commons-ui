@@ -140,7 +140,7 @@ export default class Home extends React.PureComponent {
       const where = this.build_where()
 
       const start = Date.now()
-      const results = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_1, response: results} = await fetch_meta_post('/signatures/find', {
         filter: {
           where,
           limit: 20,
@@ -151,6 +151,7 @@ export default class Home extends React.PureComponent {
         results,
         status: '',
         time: Date.now() - start,
+        duration_meta: duration_meta_1,
       })
 
       const key_count = await fetch_meta('/signatures/key_count', {
@@ -178,7 +179,7 @@ export default class Home extends React.PureComponent {
       value_count: {},
     })
     const where = this.build_where()
-    const value_count = await fetch_meta('/signatures/value_count', {
+    const {duration: duration_meta_1, response: value_count} = await fetch_meta('/signatures/value_count', {
       filter: {
         where,
         fields: [
@@ -212,7 +213,7 @@ export default class Home extends React.PureComponent {
       const signatures = signature_data.map((sig) => sig.uid)
       const entities = signature_data.reduce((all, sig) => [...all, ...sig.entities], [])
 
-      const signature_metadata = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_1, response: signature_metadata} = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {
@@ -221,7 +222,7 @@ export default class Home extends React.PureComponent {
           }
         }
       }, controller.signal)
-      const entity_metadata = await fetch_meta_post('/entities/find', {
+      const {duration: duration_meta_2, response: entity_metadata} = await fetch_meta_post('/entities/find', {
         filter: {
           where: {
             id: {
