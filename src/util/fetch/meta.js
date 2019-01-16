@@ -2,6 +2,7 @@ export const base_url = process.env.REACT_APP_METADATA_API || '/signature-common
 
 export async function fetch_meta(endpoint, body, signal) {
   const start = new Date()
+
   const request = await fetch(
     base_url
     + endpoint
@@ -29,10 +30,28 @@ export async function fetch_meta(endpoint, body, signal) {
     }
   )
   const response = await request.json()
-  // NOTE: Currently the headers are not accessible
+
+  let contentRange = request.headers.get('Content-Range')
+  if (contentRange !== null) {
+    const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)
+    contentRange = {
+      start: Number(contentRangeMatch[1]),
+      end: Number(contentRangeMatch[2]),
+      count: Number(contentRangeMatch[3]),
+    }
+  }
+
+  let duration = request.headers.get('X-Duration')
+  if (duration !== null) {
+    duration = Number(request.headers.get('X-Duration'))
+  } else {
+    duration = (new Date() - start) / 1000
+  }
+
   return {
     response,
-    duration: request.headers['X-Duration'] || ((new Date() - start)/1000),
+    contentRange,
+    duration,
   }
 }
 
@@ -52,9 +71,27 @@ export async function fetch_meta_post(endpoint, body, signal) {
     }
   )
   const response = await request.json()
-  // NOTE: Currently the headers are not accessible
+
+  let contentRange = request.headers.get('Content-Range')
+  if (contentRange !== null) {
+    const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)
+    contentRange = {
+      start: Number(contentRangeMatch[1]),
+      end: Number(contentRangeMatch[2]),
+      count: Number(contentRangeMatch[3]),
+    }
+  }
+
+  let duration = request.headers.get('X-Duration')
+  if (duration !== null) {
+    duration = Number(request.headers.get('X-Duration'))
+  } else {
+    duration = (new Date() - start) / 1000
+  }
+
   return {
     response,
-    duration: request.headers['X-Duration'] || ((new Date() - start)/1000),
+    contentRange,
+    duration,
   }
 }

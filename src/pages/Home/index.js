@@ -140,7 +140,7 @@ export default class Home extends React.PureComponent {
       const where = this.build_where()
 
       const start = Date.now()
-      const {duration: duration_meta_1, response: results} = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_1, contentRange, response: results} = await fetch_meta_post('/signatures/find', {
         filter: {
           where,
           limit: 20,
@@ -151,20 +151,9 @@ export default class Home extends React.PureComponent {
         results,
         status: '',
         time: Date.now() - start,
+        count: contentRange.count,
         duration_meta: duration_meta_1,
       })
-
-      const key_count = await fetch_meta('/signatures/key_count', {
-        filter: {
-          where,
-        },
-      }, controller.signal)
-
-      this.setState({
-        key_count,
-        count: key_count['$validator'],
-        controller: null,
-      }, () => M.AutoInit())
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({

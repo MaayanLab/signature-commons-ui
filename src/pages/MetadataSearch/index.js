@@ -25,7 +25,6 @@ export default class Home extends React.Component {
 
     this.submit = this.submit.bind(this)
     this.build_where = this.build_where.bind(this)
-    this.fetch_values = this.fetch_values.bind(this)
     this.searchChange = this.searchChange.bind(this)
     this.addToCart = this.addToCart.bind(this)
     this.removeFromCart = this.removeFromCart.bind(this)
@@ -72,7 +71,7 @@ export default class Home extends React.Component {
       const where = this.build_where()
 
       const start = Date.now()
-      const {duration: duration_meta_1, response: signatures} = await fetch_meta_post('/signatures/find', {
+      const {duration: duration_meta_1, contentRange, response: signatures} = await fetch_meta_post('/signatures/find', {
         filter: {
           where,
           limit: 20,
@@ -102,19 +101,8 @@ export default class Home extends React.Component {
         results: signatures,
         status: '',
         duration: (Date.now() - start) / 1000,
+        count: contentRange.count,
       })
-
-      const {duration: duration_meta_3, response: key_count} = await fetch_meta('/signatures/key_count', {
-        filter: {
-          where,
-        },
-      }, controller.signal)
-
-      this.setState({
-        key_count,
-        count: key_count['$validator'],
-        controller: null,
-      }, () => M.AutoInit())
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
@@ -122,25 +110,6 @@ export default class Home extends React.Component {
         })
       }
     }
-  }
-
-  async fetch_values(key) {
-    this.setState({
-      value_count: {},
-    })
-    const where = this.build_where()
-    const value_count = await fetch_meta('/signatures/value_count', {
-      filter: {
-        where,
-        fields: [
-          key,
-        ]
-      },
-      depth: 2,
-    })
-    this.setState({
-      value_count,
-    })
   }
 
   addToCart(id) {
