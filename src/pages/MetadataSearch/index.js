@@ -213,7 +213,7 @@ export default class Home extends React.Component {
                   &nbsp;
                   <IconButton
                     alt="ARCHS4"
-                    img="static/images/archs4.ico"
+                    img="static/images/archs4.png"
                   />
                   &nbsp;
                   <IconButton
