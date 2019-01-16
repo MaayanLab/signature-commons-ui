@@ -674,7 +674,7 @@ export default class Home extends React.Component {
           <div className="col s12 center">
             {this.state.status === null ? null : (
               <span className="grey-text">
-                {this.state.count} results ({this.state.time/1000} seconds)
+                {this.state.count} results of 654247 ({this.state.time/1000} seconds)
               </span>
             )}
           </div>
