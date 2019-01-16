@@ -372,7 +372,7 @@ export default class Home extends React.Component {
       value_count: {},
     })
     const where = this.build_where()
-    const value_count = await fetch_meta('/signatures/value_count', {
+    const { response: value_count } = await fetch_meta('/signatures/value_count', {
       filter: {
         where,
         fields: [

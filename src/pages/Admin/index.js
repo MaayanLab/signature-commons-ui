@@ -18,7 +18,7 @@ class AdminView extends React.Component {
 
   componentDidMount() {
     (async () => {
-      const library_stats = await fetch_meta('/libraries/key_count')
+      const { response: library_stats } = await fetch_meta('/libraries/key_count')
       this.setState({
         LibraryList: (props) => (
           <List {...props}>
@@ -38,7 +38,7 @@ class AdminView extends React.Component {
       })
     })();
     (async () => {
-      const signature_stats = await fetch_meta('/signatures/key_count')
+      const { response: signature_stats } = await fetch_meta('/signatures/key_count')
       this.setState({
         SignatureList: (props) => (
           <List {...props}>
@@ -58,7 +58,7 @@ class AdminView extends React.Component {
       })
     })();
     (async () => {
-      const entity_stats = await fetch_meta('/entities/key_count')
+      const { response: entity_stats } = await fetch_meta('/entities/key_count')
       this.setState({
         EntityList: (props) => (
           <List {...props}>

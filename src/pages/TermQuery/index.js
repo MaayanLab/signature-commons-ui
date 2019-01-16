@@ -73,7 +73,7 @@ export default class Query extends React.PureComponent {
       })
 
       this.log('fetching signatures...')
-      const term_results = await fetch_meta_post('/signatures/find', {
+      const { response: term_results } = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             meta: {

@@ -24,7 +24,7 @@ export default class Query extends React.Component {
       this.setState({
         status: this.state.status + '\nfetching ' + this.state.endpoint + '...',
       })
-      const results = await fetch_meta(
+      const { response: results } = await fetch_meta(
         '/' + this.state.endpoint + '/key_count', 
         JSON.parse(this.state.query)
       )

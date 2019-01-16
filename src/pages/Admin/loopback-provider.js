@@ -112,13 +112,13 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
      */
     const convertHTTPResponse = (response, type, resource, params) => {
         const { headers, json } = response;
-        const contentRange = headers.get('content-range')
+        const contentRange = headers.get('Content-Range')
         switch (type) {
             case GET_LIST:
             case GET_MANY_REFERENCE:
                 return {
                     data: json,
-                    total: contentRange !== null ? parseInt(contentRange.split('/')[0]) : Infinity,
+                    total: contentRange !== null ? parseInt(contentRange.split('/')[1]) : Infinity,
                 };
             case CREATE:
                 return { data: { ...params.data, id: json.id } };
