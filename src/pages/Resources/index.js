@@ -51,7 +51,7 @@ export default class Test extends React.PureComponent {
     }
   }
   async componentDidMount() {
-    const {duration: duration_meta_1, response: libraries} = await fetch_meta_post('/libraries/find', {})
+    const {response: libraries} = await fetch_meta_post('/libraries/find', {})
     const resources = libraries.reduce((groups, lib) => {
       let resource = renamed[lib.meta['Primary Resource'] || lib.meta['name']] || lib.meta['Primary Resource'] || lib.meta['name']
       if ((lib.meta['Library name'] || '').indexOf('ARCHS4') !== -1)

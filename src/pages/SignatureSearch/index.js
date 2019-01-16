@@ -79,7 +79,7 @@ export default class Home extends React.Component {
   async componentDidMount() {
     M.AutoInit();
 
-    const {duration: duration_meta_1, response: libraries} = await fetch_meta_post('/libraries/find', {})
+    const { response: libraries } = await fetch_meta_post('/libraries/find', {})
     const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
     const resources = libraries.reduce((groups, lib) => {
       let resource = renamed[lib.meta['Primary Resource'] || lib.meta['name']] || lib.meta['Primary Resource'] || lib.meta['name']

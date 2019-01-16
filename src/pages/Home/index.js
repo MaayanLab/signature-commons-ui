@@ -5,7 +5,7 @@ import React from "react";
 import Style from 'style-it';
 import { call } from '../../util/call';
 import { fetch_data } from "../../util/fetch/data";
-import { base_url as meta_base_url, fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
+import { base_url as meta_base_url, fetch_meta_post } from "../../util/fetch/meta";
 import MetadataSearch from '../MetadataSearch';
 import Resources from '../Resources';
 import SignatureSearch from '../SignatureSearch';
@@ -82,20 +82,9 @@ export default class Home extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      search: '',
-      results: [],
       cart: Set(),
-      time: 0,
-      count: 0,
-      key_count: {},
-      value_count: {},
-      status: null,
-      controller: null,
     }
 
-    this.submit = this.submit.bind(this)
-    this.build_where = this.build_where.bind(this)
-    this.fetch_values = this.fetch_values.bind(this)
     this.download = this.download.bind(this)
     this.updateCart = this.updateCart.bind(this)
   }
@@ -107,79 +96,6 @@ export default class Home extends React.PureComponent {
   componentDidUpdate() {
     M.AutoInit();
     M.updateTextFields();
-  }
-
-  build_where() {
-    if (this.state.search.indexOf(':') !== -1) {
-      const [key, ...value] = this.state.search.split(':')
-      return {
-        ['meta.' + key]: {
-          ilike: '%' + value.join(':') + '%'
-        }
-      }
-    } else {
-      return {
-        meta: {
-          fullTextSearch: this.state.search
-        }
-      }
-    }
-  }
-
-  async submit() {
-    if(this.state.controller !== null) {
-      this.state.controller.abort()
-    }
-    try {
-      const controller = new AbortController()
-      this.setState({
-        status: 'Searching...',
-        controller: controller,
-      })
-
-      const where = this.build_where()
-
-      const start = Date.now()
-      const {duration: duration_meta_1, contentRange, response: results} = await fetch_meta_post('/signatures/find', {
-        filter: {
-          where,
-          limit: 20,
-        },
-      }, controller.signal)
-
-      this.setState({
-        results,
-        status: '',
-        time: Date.now() - start,
-        count: contentRange.count,
-        duration_meta: duration_meta_1,
-      })
-    } catch(e) {
-      if(e.code !== DOMException.ABORT_ERR) {
-        this.setState({
-          status: e + ''
-        })
-      }
-    }
-  }
-
-  async fetch_values(key) {
-    this.setState({
-      value_count: {},
-    })
-    const where = this.build_where()
-    const {duration: duration_meta_1, response: value_count} = await fetch_meta('/signatures/value_count', {
-      filter: {
-        where,
-        fields: [
-          key,
-        ]
-      },
-      depth: 2,
-    })
-    this.setState({
-      value_count,
-    })
   }
 
   async download(id) {
@@ -202,7 +118,7 @@ export default class Home extends React.PureComponent {
       const signatures = signature_data.map((sig) => sig.uid)
       const entities = signature_data.reduce((all, sig) => [...all, ...sig.entities], [])
 
-      const {duration: duration_meta_1, response: signature_metadata} = await fetch_meta_post('/signatures/find', {
+      const {response: signature_metadata} = await fetch_meta_post('/signatures/find', {
         filter: {
           where: {
             id: {
@@ -211,7 +127,7 @@ export default class Home extends React.PureComponent {
           }
         }
       }, controller.signal)
-      const {duration: duration_meta_2, response: entity_metadata} = await fetch_meta_post('/entities/find', {
+      const {response: entity_metadata} = await fetch_meta_post('/entities/find', {
         filter: {
           where: {
             id: {
@@ -246,41 +162,6 @@ export default class Home extends React.PureComponent {
       `, (
         <div id="Home" className="root">
           <Header />
-
-          <ul id="slide-out" className="sidenav">
-            {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
-              <li key={key} className="no-padding">
-                <ul className="collapsible collapsible-accordion">
-                  <li>
-                    <a
-                      href="#!"
-                      className="collapsible-header"
-                    >
-                      {key} ({this.state.key_count[key]})
-                    </a>
-                    <div className="collapsible-body">
-                      {this.state.value_count[key] === undefined ? null : (
-                        <ul>
-                          {Object.keys(this.state.value_count[key]).map((k) => (
-                            <li key={key + '.' + k}>
-                              <a href="#!">
-                                <label>
-                                  <input type="checkbox" />
-                                  <span>
-                                    {k} ({this.state.value_count[key][k]})
-                                  </span>
-                                </label>
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                </ul>
-              </li>
-            ))}
-          </ul>
 
           {this.state.cart.count() <= 0 ? null : (
             <div className="fixed-action-btn">
