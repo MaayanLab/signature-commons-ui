@@ -2,7 +2,7 @@ import React from "react";
 import ReactJson from 'react-json-view';
 import ReactLoading from 'react-loading';
 import { fetch_meta } from '../../util/fetch/meta';
-import RadarHighchart from './RadarHighchart';
+import RadarChart from './RadarChart';
 
 export default class Stats extends React.Component {
   constructor(props) {
@@ -15,18 +15,21 @@ export default class Stats extends React.Component {
   }
   componentDidMount() {
     (async () => {
+      const { response: library_stats } = await fetch_meta('/libraries/key_count')
       this.setState({
-        library_stats: await fetch_meta('/libraries/key_count'),
+        library_stats,
       })
     })();
     (async () => {
+      const { response: signature_stats } = await fetch_meta('/signatures/key_count')
       this.setState({
-        signature_stats: await fetch_meta('/signatures/key_count'),
+        signature_stats,
       })
     })();
     (async () => {
+      const { response: entity_stats } = await fetch_meta('/entities/key_count')
       this.setState({
-        entity_stats: await fetch_meta('/entities/key_count'),
+        entity_stats,
       })
     })();
   }
@@ -42,7 +45,7 @@ export default class Stats extends React.Component {
               <ReactLoading type="spokes"  color="#000" />
             ) : (
               <div>
-                <RadarHighchart
+                <RadarChart
                   data={this.state.library_stats}
                 />
                 <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
@@ -62,7 +65,7 @@ export default class Stats extends React.Component {
               <ReactLoading type="spokes"  color="#000" />
             ) : (
               <div>
-                <RadarHighchart
+                <RadarChart
                   data={this.state.signature_stats}
                 />
                 <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
@@ -82,7 +85,7 @@ export default class Stats extends React.Component {
               <ReactLoading type="spokes"  color="#000" />
             ) : (
               <div>
-                <RadarHighchart
+                <RadarChart
                   data={this.state.entity_stats}
                 />
                 <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
