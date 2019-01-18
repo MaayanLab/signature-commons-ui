@@ -5,6 +5,7 @@ import ArbitraryQuery from './pages/ArbitraryQuery';
 import DBCK from './pages/DBCK';
 import Home from './pages/Home';
 import MetadataSearch from './pages/MetadataSearch';
+import Metatron from './pages/Metatron';
 import Resources from './pages/Resources';
 import SignatureSearch from './pages/SignatureSearch';
 import Stats from './pages/Stats';
@@ -21,6 +22,7 @@ const App = () => (
       <Route exact path="/arbitrary-query" component={ArbitraryQuery} />
       <Route exact path="/dbck" component={DBCK} />
       <Route exact path="/metadata-search" component={MetadataSearch} />
+      <Route exact path="/metatron" component={Metatron} />
       <Route exact path="/resources" component={Resources} />
       <Route exact path="/signature-search" component={SignatureSearch} />
       <Route exact path="/stats" component={Stats} />
