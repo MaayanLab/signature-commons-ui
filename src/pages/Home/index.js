@@ -14,7 +14,7 @@ import Upload from '../Upload';
 const Header = () => (
   <header>
     <nav className="nav-extended">
-      <div className="nav-wrapper blue">
+      <div className="nav-wrapper">
         <a
           href="/"
           className="brand-logo center"
@@ -24,7 +24,7 @@ const Header = () => (
         >Signature Commons</a>
         {/* <a href="#!" data-target="slide-out" className="sidenav-trigger show-on-large"><i className="material-icons">menu</i></a> */}
       </div>
-      <div className="nav-content blue">
+      <div className="nav-content">
         <ul className="tabs tabs-transparent">
           <li className="tab">
             <a href="#SignatureSearch">
@@ -167,7 +167,7 @@ export default class Home extends React.PureComponent {
             <div className="fixed-action-btn">
               <a
                 href="#!"
-                className="btn-floating btn-large blue"
+                className="btn-floating btn-large"
               >
                 <i className="large material-icons">shopping_cart</i>
               </a>

@@ -76,7 +76,7 @@ export default class Upload extends React.Component {
                     </table>
                   </div>
                   <div className="file-field input-field">
-                    <div className="btn blue">
+                    <div className="btn">
                       <span>CSV</span>
                       <input
                         type="file"
