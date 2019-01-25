@@ -13,6 +13,8 @@ import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta"
 import { makeTemplate } from '../../util/makeTemplate'
 import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 import { iconOf, primary_resources, primary_two_tailed_resources, renamed } from '../Resources'
+import Style from 'style-it'
+import Plot from 'react-plotly.js';
 
 const example_geneset = 'UTP14A S100A6 SCAND1 RRP12 CIAPIN1 ADH5 MTERF3 SPR CHMP4A UFM1 VAT1 HACD3 RFC5 COTL1 NPRL2 TRIB3 PCCB TLE1 CD58 BACE2 KDM3A TARBP1 RNH1 CHAC1 MBNL2 VDAC1 TES OXA1L NOP56 HAT1 CPNE3 DNMT1 ARHGAP1 VPS28 EIF2S2 BAG3 CDCA4 NPDC1 RPS6KA1 FIS1 SYPL1 SARS CDC45 CANT1 HERPUD1 SORBS3 MRPS2 TOR1A TNIP1 SLC25A46 MAL EPCAM HDAC6 CAPN1 TNRC6B PKD1 RRS1 HP ANO10 CEP170B IDE DENND2D CAMK2B ZNF358 RPP38 MRPL19 NUCB2 GNAI1 LSR ADGRE2 PKMYT1 CDK5R1 ABL1 PILRB AXIN1 FBXL8 MCF2L DBNDD1 IGHMBP2 WIPF2 WFS1 OGFOD2 MAPK1IP1L COL11A1 REG3A SERPINA1 MYCBP2 PIGK TCAP CRADD ELK1 DNAJB2 ZBTB16 DAZAP1 MAPKAPK2 EDRF1 CRIP1 UCP3 AGR2 P4HA2'.split(' ').join('\n')
 const example_geneset_weighted = 'SERPINA3,1.0 CFL1,-1.0 FTH1,0.5 GJA1,-0.5 HADHB,0.25 LDHB,-0.25 MT1X,0.4 RPL21,0.3 RPL34,0.2 RPL39,0.1 RPS15,-0.1 RPS24,-0.2 RPS27,-0.3 RPS29,-0.4 TMSB4XP8,-0.6 TTR,-0.7 TUBA1B,-0.8 ANP32B,-0.9 DDAH1,0.9 HNRNPA1P10,0.8'.split(' ').join('\n')
@@ -77,7 +79,7 @@ export default class Home extends React.Component {
   }
 
   async componentDidMount() {
-    M.AutoInit();
+    // M.AutoInit();
 
     const { response: libraries } = await fetch_meta_post('/libraries/find', {})
     const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
@@ -104,7 +106,7 @@ export default class Home extends React.Component {
   }
 
   componentDidUpdate() {
-    M.AutoInit();
+    // M.AutoInit();
     M.updateTextFields();
   }
 
@@ -351,9 +353,12 @@ export default class Home extends React.Component {
         this.setState({
           last_up_geneset: this.state.up_geneset,
           last_down_geneset: this.state.up_geneset,
+          last_geneset: null,
         })
       } else {
         this.setState({
+          last_up_geneset: null,
+          last_down_geneset: null,
           last_geneset: this.state.geneset,
         })
       }
@@ -401,6 +406,10 @@ export default class Home extends React.Component {
       <div className="col s12">
         <ul
           className="collapsible popout"
+          ref={(ref) => M.Collapsible.init(ref, {
+            onOpenStart: () => window.dispatchEvent(new Event('resize')),
+            onOpenEnd: () => window.dispatchEvent(new Event('resize')),
+          })}
         >
           {Object.keys(results).filter(
             (result) =>
@@ -437,83 +446,140 @@ export default class Home extends React.Component {
               <div
                 className="collapsible-body"
               >
-                <div 
-                  style={{
-                    paddingTop: 0,
-                    marginTop: '-25px',
-                  }}
-                >
-                  {(() => {
-                    const sigs = results[key].signatures
-                    const schema = schemas.filter(
-                      (schema) => objectMatch(schema.match, sigs[0])
-                    )[0]
-                    const cols = Object.keys(schema.properties).filter(
-                      (prop) => {
-                        if(schema.properties[prop].type === 'text') {
-                          if(this.state.up_down) {
-                            if(one_tailed_columns.indexOf(prop) === -1)
-                              return true
-                          } else {
-                            if(two_tailed_columns.indexOf(prop) === -1)
-                              return true
+              {Style.it(`
+                .tab-content {
+                  height: 600px;
+                }
+                `, (
+                  <div 
+                    style={{
+                      paddingTop: 0,
+                      marginTop: '-25px',
+                    }}
+                  >
+                    <ul
+                      className="tabs"
+                      ref={(ref) => M.Tabs.init(ref, {
+                        onShow: () => window.dispatchEvent(new Event('resize'))
+                      })}
+                    >
+                      <li className="tab col s3"><a className="active" href={"#bargraph-" + key }>Bar Graph</a></li>
+                      <li className="tab col s3"><a href={"#table-" + key }>Table</a></li>
+                    </ul>
+                    <div id={"bargraph-" + key } className="tab-content">
+                      {(() => {
+                        let signatures = [...results[key].signatures].sort(
+                          (a, b) => b.meta['p-value'] - a.meta['p-value']
+                        ).slice(0, 10).map((signature, ind) => ({
+                          y: ind,
+                          text: signature.meta['Original String'],
+                          x: -Math.log10(signature.meta['p-value']),
+                        }))
+                        const data = [{
+                          name: '-log(p-value)',
+                          orientation: 'h',
+                          type: 'bar',
+                          textposition: 'auto',
+                          align: 'left',
+                          y: signatures.map((s) => s.y),
+                          x: signatures.map((s) => s.x),
+                          text: signatures.map((s) => s.text),
+                        }]
+                        return (
+                          <Plot
+                            layout={{
+                              barmode: 'stack',
+                              yaxis: {
+                                ticktext: signatures.map((s) => s.x.toPrecision(3)),
+                                tickvals: signatures.map((s) => s.y),
+                              },
+                            }}
+                            config={{
+                              displayModeBar: false
+                            }}
+                            useResizeHandler={true}
+                            style={{width: '100%', height: '100%'}}
+                            data={data}
+                          />
+                        )
+                      })()}
+                    </div>
+                    <div id={"table-" + key } className="tab-content">
+                      {(() => {
+                        const sigs = results[key].signatures
+                        const schema = schemas.filter(
+                          (schema) => objectMatch(schema.match, sigs[0])
+                        )[0]
+                        const cols = Object.keys(schema.properties).filter(
+                          (prop) => {
+                            if(schema.properties[prop].type === 'text') {
+                              if(this.state.up_down) {
+                                if(one_tailed_columns.indexOf(prop) === -1)
+                                  return true
+                              } else {
+                                if(two_tailed_columns.indexOf(prop) === -1)
+                                  return true
+                              }
+                            }
+                            return false
                           }
-                        }
-                        return false
-                      }
-                    )
-                    
-                    return (
-                      <MuiThemeProvider theme={theme}>
-                        <MUIDataTable
-                          options={{
-                            responsive: 'scroll',
-                            selectableRows: true,
-                            expandableRows: true,
-                            renderExpandableRow: (rowData, rowMeta) => (
-                              <TableRow>
-                                <TableCell colSpan={rowData.length}>
-                                  <ShowMeta
-                                    value={{ Signature: sigs[rowMeta.dataIndex] }}
-                                  />
-                                </TableCell>
-                              </TableRow>
-                            )
-                          }}
-                          columns={cols.map((col) => {
-                            let opts = {
-                              name: col,
-                              options: schema.properties[col].columnOptions || {},
-                            }
-
-                            if (schema.properties[col].columnType === 'number') {
-                              opts.options.customBodyRender = (val, tableMeta, updateValue) => {
-                                if (typeof val === 'number') {
-                                  return val.toPrecision(3)
-                                } else {
-                                  return val
+                        )
+                        
+                        return (
+                          <MuiThemeProvider theme={theme}>
+                            <MUIDataTable
+                              options={{
+                                elevation: 0,
+                                responsive: 'scroll',
+                                selectableRows: true,
+                                expandableRows: true,
+                                renderExpandableRow: (rowData, rowMeta) => (
+                                  <TableRow>
+                                    <TableCell colSpan={rowData.length}>
+                                      <ShowMeta
+                                        value={{ Signature: sigs[rowMeta.dataIndex] }}
+                                      />
+                                    </TableCell>
+                                  </TableRow>
+                                )
+                              }}
+                              columns={cols.map((col) => {
+                                let opts = {
+                                  name: col,
+                                  options: schema.properties[col].columnOptions || {},
                                 }
-                              }
-                            }
-                            return opts
-                          })}
-                          data={sigs.map((sig) =>
-                            cols.map((col) => {
-                              const val = makeTemplate(schema.properties[col].text, sig)
-                              if (val === 'undefined')
-                                return ''
-                              try {
-                                return JSON.parse(val)
-                              } catch(e) {
-                                return val
-                              }
-                            })
-                          )}
-                        />
-                      </MuiThemeProvider>
-                    )
-                  })()}
-                </div>
+
+                                if (schema.properties[col].columnType === 'number') {
+                                  opts.options.customBodyRender = (val, tableMeta, updateValue) => {
+                                    if (typeof val === 'number') {
+                                      return val.toPrecision(3)
+                                    } else {
+                                      return val
+                                    }
+                                  }
+                                }
+                                return opts
+                              })}
+                              data={sigs.map((sig) =>
+                                cols.map((col) => {
+                                  const val = makeTemplate(schema.properties[col].text, sig)
+                                  if (val === 'undefined')
+                                    return ''
+                                  try {
+                                    return JSON.parse(val)
+                                  } catch(e) {
+                                    return val
+                                  }
+                                })
+                              )}
+                            />
+                          </MuiThemeProvider>
+                        )
+                      })()}
+                    </div>
+                  </div>
+                )
+              )}
               </div>
             </li>
           ))}
