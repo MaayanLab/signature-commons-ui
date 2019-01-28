@@ -5,7 +5,7 @@ import Plot from 'react-plotly.js';
 import { Map } from 'immutable'
 import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 
-export default class Test extends React.PureComponent {
+export default class Tests extends React.PureComponent {
   constructor(props) {
     super(props)
 

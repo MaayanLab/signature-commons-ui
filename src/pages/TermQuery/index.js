@@ -4,7 +4,7 @@ import ReactLoading from 'react-loading';
 import Swagger from 'swagger-client';
 import { fetch_meta_post } from '../../util/fetch/meta';
 
-export default class Query extends React.PureComponent {
+export default class TermQuery extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {

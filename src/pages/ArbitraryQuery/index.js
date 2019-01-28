@@ -4,7 +4,7 @@ import ReactLoading from 'react-loading';
 import { fetch_data } from '../../util/fetch/data';
 import { fetch_meta_post } from '../../util/fetch/meta';
 
-export default class Query extends React.Component {
+export default class ArbitraryQuery extends React.Component {
   constructor(props) {
     super(props)
     this.state = {

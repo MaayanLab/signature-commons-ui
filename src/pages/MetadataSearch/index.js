@@ -8,7 +8,7 @@ import IconButton from '../../components/IconButton';
 
 const count = 'half a million'
 
-export default class Home extends React.Component {
+export default class MetadataSearch extends React.Component {
   constructor(props) {
     super(props)
     this.state = {

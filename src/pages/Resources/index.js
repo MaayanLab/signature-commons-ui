@@ -42,7 +42,7 @@ export const iconOf = {
   'CMAP': 'static/images/clueio.ico',
 }
 
-export default class Test extends React.PureComponent {
+export default class Resources extends React.PureComponent {
   constructor(props) {
     super(props)
 
@@ -101,7 +101,6 @@ export default class Test extends React.PureComponent {
             <div className="col s12">
               <div className="col s2">
                 <IconButton
-                  key={this.state.selected.name}
                   alt={this.state.selected.name}
                   img={this.state.selected.icon}
                   onClick={() => this.setState({ selected: null })}
