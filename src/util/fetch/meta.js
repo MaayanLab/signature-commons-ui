@@ -1,4 +1,4 @@
-export const base_url = process.env.REACT_APP_METADATA_API || '/signature-commons-metadata-api'
+export const base_url = process.env.REACT_APP_METADATA_API || (window.location.orign + '/signature-commons-metadata-api')
 
 export async function fetch_meta(endpoint, body, signal) {
   const start = new Date()
