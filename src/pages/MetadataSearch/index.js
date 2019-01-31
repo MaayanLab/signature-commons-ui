@@ -234,7 +234,18 @@ export default class MetadataSearch extends React.Component {
                   }}
                 >
                   <ShowMeta
-                    value={signature}
+                    value={[
+                      {
+                        '@id': signature.id,
+                        '@type': 'Signature',
+                        'meta': signature.meta,
+                      },
+                      {
+                        '@id': signature.library.id,
+                        '@type': 'Library',
+                        'meta': signature.library.meta,
+                      }
+                    ]}
                     highlight={this.state.search}
                   />
                 </div>

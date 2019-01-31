@@ -21,6 +21,14 @@ export function ShowMeta({value, highlight}) {
       </ul>
     )
   } else if(typeof value === 'object') {
+    if (value['@id'] !== undefined && value['@type'] !== undefined && value.meta !== undefined) {
+      return ShowMeta({
+        value: {
+          [value['@type'] + ' (' + value['@id'] + ')']: value.meta,
+        },
+        highlight,
+      })
+    }
     return (
       <ul>
         {Object.keys(value).filter((key) => !key.startsWith('$')).map((key, ind) => (
@@ -33,7 +41,7 @@ export function ShowMeta({value, highlight}) {
             />
             &nbsp;
             {typeof value[key] === 'object' ? (
-	      <div style={{ marginLeft: '5px' }}>
+	            <div style={{ marginLeft: '5px' }}>
                 <ShowMeta value={value[key]} highlight={highlight} />
               </div>
             ) : (

@@ -175,7 +175,11 @@ export default class Resources extends React.PureComponent {
                         className="collapsible-body"
                       >
                         <ShowMeta
-                          value={library}
+                          value={{
+                            '@id': library.id,
+                            '@type': 'Library',
+                            'meta': library.meta,
+                          }}
                         />
                       </div>
                     </li>

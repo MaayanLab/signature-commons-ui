@@ -322,7 +322,11 @@ export default class SignatureSearch extends React.Component {
               ...{
                 ...enriched_results[signature.id],
                 ...(enriched_results[signature.id].overlap === undefined ? {} : {
-                  overlap: enriched_results[signature.id].overlap.map((id) => ({ Entity: entity_meta[id]})),
+                  overlap: enriched_results[signature.id].overlap.map((id) => ({
+                    '@id': id,
+                    '@type': 'Entity',
+                    'meta': entity_meta[id].meta
+                  })),
                 }),
               },
             },
@@ -537,7 +541,18 @@ export default class SignatureSearch extends React.Component {
                                   <TableRow>
                                     <TableCell colSpan={rowData.length}>
                                       <ShowMeta
-                                        value={{ Signature: sigs[rowMeta.dataIndex] }}
+                                        value={[
+                                          {
+                                            '@id': sigs[rowMeta.dataIndex].id,
+                                            '@type': 'Signature',
+                                            'meta': sigs[rowMeta.dataIndex].meta,
+                                          },
+                                          {
+                                            '@id': sigs[rowMeta.dataIndex].library.id,
+                                            '@type': 'Library',
+                                            'meta': sigs[rowMeta.dataIndex].library.meta,
+                                          }
+                                        ]}
                                       />
                                     </TableCell>
                                   </TableRow>
