@@ -33,8 +33,15 @@ export default class Home extends React.PureComponent {
   }
 
   async download(id) {
+    if(this.state.controller !== null) {
+      this.state.controller.abort()
+    }
+
     try {
       const controller = new AbortController()
+      this.setState({
+        controller,
+      })
 
       let ids
       if(id === undefined) {
@@ -74,10 +81,14 @@ export default class Home extends React.PureComponent {
         entities: entity_metadata,
         signatures: signature_metadata,
         values: signature_data,
+        controller: null,
       }
       fileDownload(JSON.stringify(data), 'data.json');
     } catch(e) {
       console.error(e)
+      this.setState({
+        controller: null,
+      })
     }
   }
 

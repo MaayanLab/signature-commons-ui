@@ -127,7 +127,6 @@ export default class SignatureSearch extends React.Component {
       this.state.controller.abort()
     }
 
-
     if (this.state.up_down) {
       if (this.state.last_up_geneset === this.state.up_geneset && this.state.last_down_geneset === this.state.down_geneset) {
         this.count_results()
@@ -148,7 +147,7 @@ export default class SignatureSearch extends React.Component {
       const controller = new AbortController()
       this.setState({
         status: 'Fetching entities...',
-        controller: controller,
+        controller,
       })
 
       let entities, up_entities, down_entities
@@ -293,7 +292,6 @@ export default class SignatureSearch extends React.Component {
 
       this.setState({
         status: 'Resolving signatures...',
-        controller: controller,
         count: Object.keys(enriched_results).length,
         duration_data: duration_data,
       })
@@ -351,6 +349,7 @@ export default class SignatureSearch extends React.Component {
         results: grouped_signatures,
         status: '',
         duration: (Date.now() - start)/1000,
+        controller: null,
       }, () => this.count_results())
 
       if(this.state.up_down) {
@@ -366,13 +365,16 @@ export default class SignatureSearch extends React.Component {
           last_geneset: this.state.geneset,
         })
       }
-  
+
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
-          status: e + ''
+          status: e + '',
         })
       }
+      this.setState({
+        controller: null,
+      })
     }
   }
 

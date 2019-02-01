@@ -65,7 +65,7 @@ export default class MetadataSearch extends React.Component {
       const controller = new AbortController()
       this.setState({
         status: 'Searching...',
-        controller: controller,
+        controller,
       })
 
       const where = this.build_where()
@@ -102,13 +102,17 @@ export default class MetadataSearch extends React.Component {
         status: '',
         duration: (Date.now() - start) / 1000,
         count: contentRange.count,
+        controller: null,
       })
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
-          status: e + ''
+          status: e + '',
         })
       }
+      this.setState({
+        controller: null,
+      })
     }
   }
 
