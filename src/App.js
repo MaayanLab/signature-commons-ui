@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Admin from './pages/Admin';
 import ArbitraryQuery from './pages/ArbitraryQuery';
 import DBCK from './pages/DBCK';
+import EntityPage from "./pages/EntityPage";
 import Home from './pages/Home';
 import MetadataSearch from './pages/MetadataSearch';
 import Resources from './pages/Resources';
@@ -20,6 +21,7 @@ const App = () => (
       <Route exact path="/admin" component={Admin} />
       <Route exact path="/arbitrary-query" component={ArbitraryQuery} />
       <Route exact path="/dbck" component={DBCK} />
+      <Route exact path="/entity-page" component={EntityPage} />
       <Route exact path="/metadata-search" component={MetadataSearch} />
       <Route exact path="/resources" component={Resources} />
       <Route exact path="/signature-search" component={SignatureSearch} />
