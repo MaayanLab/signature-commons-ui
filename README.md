@@ -1,5 +1,5 @@
 # signature-commons-ui
-A front-end UI for demoing API integration. Currently available at: http://amp.pharm.mssm.edu/sigcomm/
+A front-end UI for demoing API integration. Currently available at: http://amp.pharm.mssm.edu/sigcom/
 
 ## Development
 
