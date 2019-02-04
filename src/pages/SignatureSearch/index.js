@@ -618,14 +618,14 @@ export default class SignatureSearch extends React.Component {
               <div className="col s12">
                 <div className="switch">
                   <label>
-                    One Tailed
+                    Gene Set or Full Signature
                     <input
                       type="checkbox"
                       checked={this.state.up_down}
                       onChange={() => this.setState(({ up_down }) => ({ up_down: !up_down }))}
                     />
                     <span className="lever"></span>
-                    Two Tailed*
+                    Up and Down Gene Sets
                   </label>
                 </div>
                 {this.state.up_down ? (
