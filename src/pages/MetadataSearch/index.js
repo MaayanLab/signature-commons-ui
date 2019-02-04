@@ -340,7 +340,7 @@ export default class MetadataSearch extends React.Component {
           <div className="col s12 center">
             {this.state.status === null ? null : (
               <span className="grey-text">
-                {this.state.count} results of 654247 ({this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata)
+                Found {this.state.count} matches out of 654247 signatures in {this.state.duration_meta.toPrecision(3)} seconds
               </span>
             )}
           </div>
