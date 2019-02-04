@@ -71,7 +71,7 @@ class Metatron extends React.PureComponent {
           <ReferenceField source="library" reference="libraries">
             <TextField source="meta.Library name" />
           </ReferenceField>
-          {Object.keys(this.state.signature_stats).map((k) => (
+          {this.state.signature_stats.map((k) => (
             <TextField
               key={k}
               label={k}
@@ -133,10 +133,10 @@ class Metatron extends React.PureComponent {
       //   this.get_signatures(signature_stats)
       // });
       const uid = Object.values(e).slice(0,36).join('')
-      const { response: signature_stats} = await fetch_meta('/signatures/key_count?filter={"where":{"library":"'+uid+'"}}')
+      const { response: signature_stats} = await fetch_meta('/libraries?filter={"where":{"id":"'+uid+'"}}')
       this.setState({
         // signature_stats: signature_stats,
-        signature_stats: signature_stats,
+        signature_stats: signature_stats[0].meta.Keys,
       });
   }
 
@@ -151,11 +151,11 @@ class Metatron extends React.PureComponent {
     })();
     (async () => {
       const uid = "308de661-d3e2-11e8-8fe6-787b8ad942f3"
-      const { response: signature_stats} = await fetch_meta('/signatures/key_count?filter={"where":{"library":"'+uid+'"}}')
+      const { response: signature_stats} = await fetch_meta('/libraries?filter={"where":{"id":"'+uid+'"}}')
       const SigList = this.SigList
       this.setState({
         // SignatureList: (props) => <SigList {...props} signature_stats={signature_stats} />,
-        signature_stats: signature_stats,
+        signature_stats: signature_stats[0].meta.Keys,
       })
       // this.get_signatures(signature_stats)
     })();
