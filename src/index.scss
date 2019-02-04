@@ -7,6 +7,7 @@ $secondary-color: color("blue", "lighten-1") !default;
 $success-color: color("green", "base") !default;
 $error-color: color("red", "base") !default;
 $link-color: color("light-blue", "darken-1") !default;
+$switch-checked-lever-bg: color("grey", "lighten-1") !default;
 @import '~materialize-css/sass/materialize';
 
 body {
