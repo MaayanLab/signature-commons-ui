@@ -372,9 +372,6 @@ export default class SignatureSearch extends React.Component {
           status: e + '',
         })
       }
-      this.setState({
-        controller: null,
-      })
     }
   }
 

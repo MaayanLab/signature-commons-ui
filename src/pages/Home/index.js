@@ -86,9 +86,6 @@ export default class Home extends React.PureComponent {
       fileDownload(JSON.stringify(data), 'data.json');
     } catch(e) {
       console.error(e)
-      this.setState({
-        controller: null,
-      })
     }
   }
 

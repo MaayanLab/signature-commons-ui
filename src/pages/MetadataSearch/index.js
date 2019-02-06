@@ -110,9 +110,6 @@ export default class MetadataSearch extends React.Component {
           status: e + '',
         })
       }
-      this.setState({
-        controller: null,
-      })
     }
   }
 
