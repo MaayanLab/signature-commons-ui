@@ -8,12 +8,12 @@
       "visibility": 1,
       "type": "img",
       "src": "${meta['Icon']}",
-      "alt": "${meta['Primary Resource']}"
+      "alt": "${meta['Primary_Resource']}"
     },
     "Library": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Library name']}"
+      "text": "${meta['Library_name']}"
     }
   }
 }

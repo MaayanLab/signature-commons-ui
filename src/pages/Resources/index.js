@@ -58,8 +58,8 @@ export default class Resources extends React.PureComponent {
   async componentDidMount() {
     const {response: libraries} = await fetch_meta_post('/libraries/find', {})
     const resources = libraries.reduce((groups, lib) => {
-      let resource = renamed[lib.meta['Primary Resource'] || lib.meta['name']] || lib.meta['Primary Resource'] || lib.meta['name']
-      if ((lib.meta['Library name'] || '').indexOf('ARCHS4') !== -1)
+      let resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name']
+      if ((lib.meta['Library_name'] || '').indexOf('ARCHS4') !== -1)
         resource = 'ARCHS4'
 
       if (groups[resource] === undefined) {

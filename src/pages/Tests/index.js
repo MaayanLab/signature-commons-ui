@@ -74,7 +74,7 @@ export default class Tests extends React.PureComponent {
                 if (value_counts === undefined) return {}
 
                 const data = {
-                  name: library.meta['Library name'],
+                  name: library.meta['Library_name'],
                   orientation: 'h',
                   type: 'bar',
                   y: Object.keys(value_counts),

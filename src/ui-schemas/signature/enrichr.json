@@ -8,12 +8,12 @@
       "visibility": 1,
       "type": "img",
       "src": "${library.meta['Icon']}",
-      "alt": "${library.meta['Library name']}"
+      "alt": "${library.meta['Library_name']}"
     },
     "Description": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Original String']}"
+      "text": "${meta['Original_String']}"
     },
     "Assay": {
       "visibility": 1,
