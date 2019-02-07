@@ -475,7 +475,7 @@ export default class SignatureSearch extends React.Component {
                           (a, b) => b.meta['p-value'] - a.meta['p-value']
                         ).slice(0, 10).map((signature, ind) => ({
                           y: ind,
-                          text: signature.meta['Original String'],
+                          text: signature.meta['Original_String'],
                           x: -Math.log10(signature.meta['p-value']),
                         }))
                         const data = [{
