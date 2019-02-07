@@ -36,7 +36,7 @@ export function ShowMeta({value, highlight}) {
             <Highlight
               Component={(props) => <b {...props}>{props.children}</b>}
               HighlightComponent={(props) => <i {...props}>{props.children}</i>}
-              text={key.replace('_', ' ')+':'}
+              text={key.replace(/_/g, ' ')+':'}
               highlight={highlight}
             />
             &nbsp;
