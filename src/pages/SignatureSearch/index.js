@@ -98,10 +98,16 @@ export default class SignatureSearch extends React.Component {
       groups[resource].libraries.push({...lib})
       return groups
     }, {})
+    const library_resource = Object.keys(resources).reduce((groups, resource) => {
+      for (const library of resources[resource].libraries)
+        groups[library.id] = resource
+      return groups
+    }, {})
 
     this.setState({
       libraries: library_dict,
       resources: Object.values(resources),
+      library_resource,
     })
   }
 
@@ -112,13 +118,7 @@ export default class SignatureSearch extends React.Component {
 
   count_results() {
     this.setState({
-      count: Object.keys(this.state.results).filter(
-        (result) =>
-          this.state.resource_filter === null
-          || this.state.resource_filter.libraries.map(
-              (lib) => lib.id
-            ).indexOf(this.state.results[result].library.id) !== -1
-      ).reduce((sum, lib) => sum + this.state.results[lib].signatures.length, 0)
+      count: ((this.state.resource_signatures || {})[this.state.resource_filter.name] || {}).count,
     })
   }
 
@@ -332,21 +332,37 @@ export default class SignatureSearch extends React.Component {
         ]), []
       )
 
-      const grouped_signatures = enriched_signatures.reduce(
-        (groups, sig) => {
-          if(groups[sig.library] === undefined) {
-            groups[sig.library] = {
-              library: this.state.libraries[sig.library],
-              signatures: []
-            }
+      const resource_signatures = {}
+      const library_signatures = {}
+      for (const sig of enriched_signatures) {
+        if (library_signatures[sig.library] === undefined) {
+          library_signatures[sig.library] = {
+            library: this.state.libraries[sig.library],
+            signatures: [],
           }
-          groups[sig.library].signatures.push({...sig, library: groups[sig.library].library})
-          return groups
-        }, {}
-      )
+        }
+        library_signatures[sig.library].signatures.push({
+          ...sig,
+          library: this.state.libraries[sig.library],
+        })
+
+        const resource = this.state.library_resource[sig.library]
+        if (resource_signatures[resource] === undefined) {
+          resource_signatures[resource] = {
+            libraries: Set(),
+            count: 0
+          }
+        }
+        resource_signatures[resource] = {
+          ...resource_signatures[resource],
+          libraries: resource_signatures[resource].libraries.add(sig.library),
+          count: resource_signatures[resource].count + 1,
+        }
+      }
 
       this.setState({
-        results: grouped_signatures,
+        library_signatures,
+        resource_signatures,
         status: '',
         duration: (Date.now() - start)/1000,
         controller: null,
@@ -401,6 +417,7 @@ export default class SignatureSearch extends React.Component {
   }
 
   render_libraries(results) {
+    console.log(results)
     return results === undefined || results.length <= 0 ? (
       <div className="center">
         {this.state.status === null ? null : 'No results.'}
@@ -414,15 +431,9 @@ export default class SignatureSearch extends React.Component {
             onOpenEnd: () => window.dispatchEvent(new Event('resize')),
           })}
         >
-          {Object.keys(results).filter(
-            (result) =>
-              this.state.resource_filter === null
-              || this.state.resource_filter.libraries.map(
-                  (lib) => lib.id
-                ).indexOf(results[result].library.id) !== -1
-          ).map((key, ind) => (
+          {results.map((result) => (
             <li
-              key={key}
+              key={result.library.id}
             >
               <div
                 className="page-header collapsible-header"
@@ -434,7 +445,7 @@ export default class SignatureSearch extends React.Component {
                 }}
               >
                 <Label
-                  item={results[key].library}
+                  item={result.library}
                   highlight={this.state.search}
                   visibility={1}
                 />
@@ -466,12 +477,12 @@ export default class SignatureSearch extends React.Component {
                         onShow: () => window.dispatchEvent(new Event('resize'))
                       })}
                     >
-                      <li className="tab col s3"><a className="active" href={"#bargraph-" + key }>Bar Graph</a></li>
-                      <li className="tab col s3"><a href={"#table-" + key }>Table</a></li>
+                      <li className="tab col s3"><a className="active" href={"#bargraph-" + result.library.id }>Bar Graph</a></li>
+                      <li className="tab col s3"><a href={"#table-" + result.library.id }>Table</a></li>
                     </ul>
-                    <div id={"bargraph-" + key } className="tab-content">
+                    <div id={"bargraph-" + result.library.id } className="tab-content">
                       {(() => {
-                        let signatures = [...results[key].signatures].sort(
+                        let signatures = [...result.signatures].sort(
                           (a, b) => b.meta['p-value'] - a.meta['p-value']
                         ).slice(0, 10).map((signature, ind) => ({
                           y: ind,
@@ -507,9 +518,9 @@ export default class SignatureSearch extends React.Component {
                         )
                       })()}
                     </div>
-                    <div id={"table-" + key } className="tab-content">
+                    <div id={"table-" + result.library.id } className="tab-content">
                       {(() => {
-                        const sigs = results[key].signatures
+                        const sigs = result.signatures
                         const schema = schemas.filter(
                           (schema) => objectMatch(schema.match, sigs[0])
                         )[0]
@@ -729,12 +740,16 @@ export default class SignatureSearch extends React.Component {
                           return primary_resources.indexOf(resource.name) !== -1
                       }
                     ).map((resource) => (
-                      <IconButton
+                      <div
                         key={resource.name}
-                        alt={resource.name}
-                        img={resource.icon}
-                        onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
-                      />
+                      >
+                        <IconButton
+                          alt={resource.name}
+                          img={resource.icon}
+                          onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
+                          counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
+                        />
+                      </div>
                     ))}
                     {this.state.up_down ? null : (
                       <div>
@@ -751,6 +766,7 @@ export default class SignatureSearch extends React.Component {
                             alt={resource.name}
                             img={resource.icon}
                             onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
+                            counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
                           />
                         ))}
                       </div>
@@ -799,7 +815,11 @@ export default class SignatureSearch extends React.Component {
           </div>
 
           <div className="col s12">
-            {this.state.status !== '' ? null : this.render_libraries(this.state.results)}
+            {this.state.status !== '' ? null : this.render_libraries(
+              (((this.state.resource_signatures || {})[this.state.resource_filter.name] || {}).libraries || []).map((lib) =>
+                this.state.library_signatures[lib]
+              )
+            )}
           </div>
         </div>
       </main>

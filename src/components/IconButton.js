@@ -10,6 +10,7 @@ const IconButton = (props) => Style.it(`
     border-radius: 15px;
     width: 100px;
     min-height: 100px;
+    overflow: visible;
   }
   .icon-btn > span {
     line-height: 12px;
@@ -24,6 +25,20 @@ const IconButton = (props) => Style.it(`
   }
   .icon-btn:hover {
     background-color: #eee;
+  }
+  .icon-btn > .counter {
+    position: absolute;
+    top: -0.3em;
+    font-size: 75%;
+    left: 5em;
+    line-height: 2.2em;
+    z-index: 100;
+    color: white;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    vertical-align: middle;
   }
   `, (
   <div
@@ -46,6 +61,11 @@ const IconButton = (props) => Style.it(`
     <span>
       {props.alt}
     </span>
+    {props.counter === undefined ? null : (
+      <div className="counter red lighten-1">
+        {props.counter}
+      </div>
+    )}
   </div>
 ))
 
