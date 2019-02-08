@@ -15,7 +15,7 @@ export const PostFilter = (props) => (
                         allowEmpty={false}
                         alwaysOn
                         >
-          <SelectInput optionText="meta.Library name"/>
+          <SelectInput optionText="meta.Library_name"/>
         </ReferenceInput>
       </Filter>
   )
