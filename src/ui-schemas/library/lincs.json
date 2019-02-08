@@ -7,13 +7,13 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "static/images/clueio.ico",
-      "alt": "ConnectivityMap"
+      "src": "${meta['Icon']}",
+      "alt": "${meta['Primary_Resource']}"
     },
-    "Assay": {
+    "Library": {
       "visibility": 1,
       "type": "text",
-      "text": "L1000"
+      "text": "${meta['Library_name']}"
     }
   }
 }
