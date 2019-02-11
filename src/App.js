@@ -11,7 +11,7 @@ import Tests from './pages/Tests';
 import Values from './pages/Values';
 
 const App = () => (
-  <Router basename={process.env.PUBLIC_URL}>
+  <Router>
     <div className="root">
       <Route path="/" component={Home} />
       <Route exact path="/admin" component={Admin} />
