@@ -28,7 +28,7 @@
     "Perturbation": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.pert_desc}"
+      "text": "${meta.pert_desc === '-666' ? meta.pert_id : meta.pert_desc}"
     },
     "Concentration": {
       "visibility": 1,
