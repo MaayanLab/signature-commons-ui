@@ -13,7 +13,7 @@ const IconButton = (props) => Style.it(`
     overflow: visible;
   }
   .icon-btn > span {
-    line-height: 12px;
+    line-height: 16px;
     text-align: center;
   }
   .icon-btn > a > img {

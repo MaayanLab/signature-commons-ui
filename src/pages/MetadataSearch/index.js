@@ -327,7 +327,7 @@ export default class MetadataSearch extends React.Component {
               {['MCF10A', 'Imatinib', 'ZNF830', 'STAT3', 'Neuropathy'].map((example) => (
                 <div
                   key={example}
-                  className="chip grey darken-2 white-text waves-effect waves-light"
+                  className="chip grey white-text waves-effect waves-light"
                   onClick={call(this.searchAndSubmit, example)}
                 >{example}</div>
               ))}

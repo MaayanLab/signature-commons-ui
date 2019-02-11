@@ -31,6 +31,7 @@ export const renamed = {
   'Single Drug Perturbations': 'CREEDS',
   'Single Gene Perturbations': 'CREEDS',
   'clueio': 'CMAP',
+  'GEO': 'CREEDS',
   'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
   'ENCODE/ChEA': 'ENCODE',
   'Gene Ontology Consortium': 'Gene Ontology',

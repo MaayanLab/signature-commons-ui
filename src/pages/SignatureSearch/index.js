@@ -696,7 +696,7 @@ export default class SignatureSearch extends React.Component {
               <div className="col s12">
                 <div className="input-field">
                   <div
-                    className="chip grey darken-2 white-text waves-effect waves-light"
+                    className="chip grey white-text waves-effect waves-light"
                     onClick={() => {
                       this.setState({
                         up_down: false,
@@ -706,7 +706,7 @@ export default class SignatureSearch extends React.Component {
                   >Example Crisp Gene Set</div>
 
                   <div
-                    className="chip grey darken-2 white-text waves-effect waves-light"
+                    className="chip grey white-text waves-effect waves-light"
                     onClick={() => {
                       this.setState({
                         up_down: false,
@@ -716,7 +716,7 @@ export default class SignatureSearch extends React.Component {
                   >Example Weighted Signature</div>
 
                   <div
-                    className="chip grey darken-2 white-text waves-effect waves-light"
+                    className="chip grey white-text waves-effect waves-light"
                     onClick={() => {    
                       this.setState({
                         up_down: true,

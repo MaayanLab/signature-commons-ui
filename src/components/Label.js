@@ -20,7 +20,7 @@ export const labels = {
       text={label + ': ' + makeTemplate(prop.text, data)}
       highlight={highlight}
       props={{
-        className: "chip grey darken-2 white-text"
+        className: "chip grey white-text"
       }}
     />
   ),
@@ -57,7 +57,7 @@ export const labels = {
     </div>
   ),
   'img': ({label, prop, data, highlight}) => (
-    <div className="chip grey darken-2 white-text">
+    <div className="chip grey white-text">
       <img
         alt={makeTemplate(prop.alt, data)}
         src={makeTemplate(prop.src, data)}
