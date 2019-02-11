@@ -146,20 +146,24 @@ export default class Home extends React.PureComponent {
       <header>
         <nav className="nav-extended">
           <div className="nav-wrapper">
-            <a
-              href="/"
+            <Link
+              to="/"
               className="brand-logo left hide-on-med-and-down"
               style={{
                 whiteSpace: 'nowrap',
               }}
-            >&nbsp;&nbsp; <img src="favicon.ico" width={22} />&nbsp; Signature Commons</a>
-            <a
-              href="/"
+            >
+              &nbsp;&nbsp; <img src="favicon.ico" width={22} />&nbsp; Signature Commons
+            </Link>
+            <Link
+              to="/"
               className="brand-logo center hide-on-large-only"
               style={{
                 whiteSpace: 'nowrap',
               }}
-            > Signature Commons</a>
+            >
+              &nbsp;&nbsp; <img src="favicon.ico" width={22} />&nbsp; Signature Commons
+            </Link>
             <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
             <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
           </div>
