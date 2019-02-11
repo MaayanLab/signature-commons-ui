@@ -2,6 +2,7 @@ import { Set } from 'immutable';
 import fileDownload from 'js-file-download';
 import M from "materialize-css";
 import React from "react";
+import { Link, Route, Switch } from 'react-router-dom';
 import Style from 'style-it';
 import { call } from '../../util/call';
 import { fetch_data } from "../../util/fetch/data";
@@ -21,6 +22,8 @@ export default class Home extends React.PureComponent {
     this.download = this.download.bind(this)
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
+    this.Header = this.Header.bind(this)
+    this.Nav = this.Nav.bind(this)
   }
 
   componentDidMount() {
@@ -93,53 +96,74 @@ export default class Home extends React.PureComponent {
     this.setState({cart})
   }
 
-  Header() {
+  Nav(props) {
+    return (
+      <ul {...props}>
+        <li
+          className={this.props.location.pathname === '/SignatureSearch' ? 'active' : ''}
+        >
+          <Link to="/SignatureSearch">
+            Signature Search
+          </Link>
+        </li>
+        <li
+          className={this.props.location.pathname === '/MetadataSearch' ? 'active' : ''}
+        >
+          <Link to="/MetadataSearch">
+            Metadata Search
+          </Link>
+        </li>
+        <li
+          className={this.props.location.pathname === '/Resources' ? 'active' : ''}
+        >
+          <Link to="/Resources">
+            Resources
+          </Link>
+        </li>
+        <li
+          className={this.props.location.pathname === '/UploadCollection' ? 'active' : ''}
+        >
+          <Link to="/UploadCollection">
+            Upload
+          </Link>
+        </li>
+        <li>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}
+          >
+            API
+          </a>
+        </li>
+      </ul>
+    )
+  }
+
+  Header(props) {
+    const Nav = this.Nav
     return (
       <header>
         <nav className="nav-extended">
           <div className="nav-wrapper">
             <a
               href="/"
-              className="brand-logo center"
+              className="brand-logo left hide-on-med-and-down"
               style={{
                 whiteSpace: 'nowrap',
               }}
-            >Signature Commons</a>
-            {/* <a href="#!" data-target="slide-out" className="sidenav-trigger show-on-large"><i className="material-icons">menu</i></a> */}
+            >&nbsp;&nbsp; <img src="favicon.ico" width={22} />&nbsp; Signature Commons</a>
+            <a
+              href="/"
+              className="brand-logo center hide-on-large-only"
+              style={{
+                whiteSpace: 'nowrap',
+              }}
+            > Signature Commons</a>
+            <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
+            <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
           </div>
-          <div className="nav-content">
-            <ul className="tabs tabs-transparent">
-              <li className="tab">
-                <a href="#SignatureSearch">
-                  Signature Search
-                </a>
-              </li>
-              <li className="tab">
-                <a href="#MetadataSearch">
-                  Metadata Search
-                </a>
-              </li>
-              <li className="tab">
-                <a href="#Resources">
-                  Resources
-                </a>
-              </li>
-              <li className="tab">
-                <a href="#UploadCollection">
-                  Upload
-                </a>
-              </li>
-              <li className="tab">
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}
-                >
-                  API
-                </a>
-              </li>
-            </ul>
-          </div>
+          <Nav className="sidenav" id="mobile-menu" location={props.location} />
         </nav>
       </header>
     )
@@ -168,7 +192,7 @@ export default class Home extends React.PureComponent {
     return this.state.cart.count() <= 0 ? null : (
       <div className="fixed-action-btn">
         <a
-          href="#!"
+          href="javascript:void(0);"
           className="btn-floating btn-large"
         >
           <i className="large material-icons">shopping_cart</i>
@@ -192,7 +216,7 @@ export default class Home extends React.PureComponent {
         <ul>
           <li>
             <a
-              href="#!"
+              href="javascript:void(0);"
               className="btn-floating red"
               onClick={call(this.download, undefined)}
             >
@@ -209,7 +233,7 @@ export default class Home extends React.PureComponent {
           </li>
           <li>
             <a
-              href="#!"
+              href="javascript:void(0);"
               className="btn-floating grey"
               onClick={call(alert, 'Comming soon')}
             >
@@ -239,30 +263,67 @@ export default class Home extends React.PureComponent {
 
           <CartActions />
 
-          <SignatureSearch
-            id="SignatureSearch"
-            cart={this.state.cart}
-            updateCart={this.updateCart}
-            download={this.download}
-          />
-          <MetadataSearch
-            id="MetadataSearch"
-            cart={this.state.cart}
-            updateCart={this.updateCart}
-            download={this.download}
-          />
-          <Resources
-            id="Resources"
-            cart={this.state.cart}
-            updateCart={this.updateCart}
-            download={this.download}
-          />
-          <Upload
-            id="UploadCollection"
-            cart={this.state.cart}
-            updateCart={this.updateCart}
-            download={this.download}
-          />
+          <main>
+            <div className="container">
+              <Switch>
+                <Route
+                  exact path="/"
+                  component={(props) =>
+                    <SignatureSearch
+                      cart={this.state.cart}
+                      updateCart={this.updateCart}
+                      download={this.download}
+                      {...props}
+                    />
+                  }
+                />
+                <Route
+                  exact path="/SignatureSearch"
+                  component={(props) =>
+                    <SignatureSearch
+                      cart={this.state.cart}
+                      updateCart={this.updateCart}
+                      download={this.download}
+                      {...props}
+                    />
+                  }
+                />
+                <Route
+                  exact path="/MetadataSearch"
+                  component={(props) =>
+                    <MetadataSearch
+                      cart={this.state.cart}
+                      updateCart={this.updateCart}
+                      download={this.download}
+                      {...props}
+                    />
+                  }
+                />
+                <Route
+                  exact path="/Resources"
+                  component={(props) =>
+                    <Resources
+                      cart={this.state.cart}
+                      updateCart={this.updateCart}
+                      download={this.download}
+                      {...props}
+                    />
+                  }
+                />
+                <Route
+                  exact path="/UploadCollection"
+                  component={(props) =>
+                    <Upload
+                      cart={this.state.cart}
+                      updateCart={this.updateCart}
+                      download={this.download}
+                      {...props}
+                    />
+                  }
+                />
+              </Switch>
+            </div>
+          </main>
 
           <Footer />
         </div>

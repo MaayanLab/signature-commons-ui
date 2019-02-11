@@ -46,7 +46,7 @@ const IconButton = (props) => Style.it(`
     onClick={props.onClick}
   >
     <a
-      href="#!"
+      href="javascript:void(0);"
       className="btn btn-floating waves-effect waves-light grey lighten-3 center valign-wrapper"
     >
       {props.img !== undefined ? (

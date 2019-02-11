@@ -217,7 +217,7 @@ export default class MetadataSearch extends React.Component {
                   )}
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                   <a
-                    href="#!"
+                    href="javascript:void(0);"
                     className="collapsible-header"
                     style={{ border: 0 }}
                   >
@@ -260,14 +260,14 @@ export default class MetadataSearch extends React.Component {
 
   render() {
     return (
-      <main id={this.props.id}>
+      <div>
         <ul id="slide-out" className="sidenav">
           {Object.keys(this.state.key_count).filter((key) => !key.startsWith('$')).map((key) => (
             <li key={key} className="no-padding">
               <ul className="collapsible collapsible-accordion">
                 <li>
                   <a
-                    href="#!"
+                    href="javascript:void(0);"
                     className="collapsible-header"
                   >
                     {key} ({this.state.key_count[key]})
@@ -277,7 +277,7 @@ export default class MetadataSearch extends React.Component {
                       <ul>
                         {Object.keys(this.state.value_count[key]).map((k) => (
                           <li key={key + '.' + k}>
-                            <a href="#!">
+                            <a href="javascript:void(0);">
                               <label>
                                 <input type="checkbox" />
                                 <span>
@@ -298,7 +298,7 @@ export default class MetadataSearch extends React.Component {
 
         <div className="row">
           <div className="col s12 center">
-            <form action="javascript:void(0);" onSubmit={this.submit}>
+            <form action="javascript:void(0);(0);" onSubmit={this.submit}>
               <div className="input-field">
                 <i className="material-icons prefix">search</i>
                 <input
@@ -351,16 +351,16 @@ export default class MetadataSearch extends React.Component {
           {this.state.results.length <= 20 || this.state.status !== '' ? null : (
             <div className="col s12 center">
               <ul className="pagination">
-                <li className="disabled"><a href="#!"><i className="material-icons">chevron_left</i></a></li>
-                <li className="active"><a href="#!">1</a></li>
-                <li className="waves-effect"><a href="#!">2</a></li>
-                <li className="waves-effect"><a href="#!">3</a></li>
-                <li className="waves-effect"><a href="#!"><i className="material-icons">chevron_right</i></a></li>
+                <li className="disabled"><a href="javascript:void(0);"><i className="material-icons">chevron_left</i></a></li>
+                <li className="active"><a href="javascript:void(0);">1</a></li>
+                <li className="waves-effect"><a href="javascript:void(0);">2</a></li>
+                <li className="waves-effect"><a href="javascript:void(0);">3</a></li>
+                <li className="waves-effect"><a href="javascript:void(0);"><i className="material-icons">chevron_right</i></a></li>
               </ul>
             </div>
           )}
         </div>
-      </main>
+      </div>
     );
   }
 }

@@ -451,7 +451,7 @@ export default class SignatureSearch extends React.Component {
                 />
                 <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                 <a
-                  href="#!"
+                  href="javascript:void(0);"
                   style={{ border: 0 }}
                 >
                   <i className="material-icons">expand_more</i>
@@ -615,214 +615,207 @@ export default class SignatureSearch extends React.Component {
 
   render() {
     return (
-      <main id={this.props.id}>
-        <div className="row">
-          <div className="col s12 center">
-            <form
-              action="javascript:void(0);"
-              onSubmit={this.submit}
-            >
+      <div className="row">
+        <div className="col s12 center">
+          <form
+            action="javascript:void(0);(0);"
+            onSubmit={this.submit}
+          >
+            <div className="switch">
+              <label>
+                Gene Set or Full Signature
+                <input
+                  type="checkbox"
+                  checked={this.state.up_down}
+                  onChange={() => this.setState(({ up_down }) => ({ up_down: !up_down }))}
+                />
+                <span className="lever"></span>
+                Up and Down Gene Sets
+              </label>
+            </div>
+            {this.state.up_down ? (
+              <span>
+                Note: Will limit results to full signatures.
+              </span>
+            ) : null}
 
-              <div className="col s12">
-                <div className="switch">
-                  <label>
-                    Gene Set or Full Signature
-                    <input
-                      type="checkbox"
-                      checked={this.state.up_down}
-                      onChange={() => this.setState(({ up_down }) => ({ up_down: !up_down }))}
-                    />
-                    <span className="lever"></span>
-                    Up and Down Gene Sets
-                  </label>
-                </div>
-                {this.state.up_down ? (
-                  <span>
-                    Note: Will limit results to full signatures.
-                  </span>
-                ) : null}
-              </div>
-
-              <div className="col s2">&nbsp;</div>
-              {this.state.up_down ? (
-                <div>
-                  <div className="col s4">
-                    <div className="input-field">
-                      <textarea
-                        id="up_geneset"
-                        placeholder="Genes that are up-regulated in signature or overlap with gene-set."
-                        style={{
-                          height: 200,
-                          overflow: 'auto',
-                        }}
-                        value={this.state.up_geneset}
-                        onChange={(e) => this.setState({up_geneset: e.target.value})}
-                      ></textarea>
-                    </div>
-                  </div>
-                  <div className="col s4">
-                    <div className="input-field">
-                      <textarea
-                        id="down_geneset"
-                        placeholder="Genes that are down-regulated in signature or overlap with gene-set."
-                        style={{
-                          height: 200,
-                          overflow: 'auto',
-                        }}
-                        value={this.state.down_geneset}
-                        onChange={(e) => this.setState({down_geneset: e.target.value})}
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="col s8">
+            {this.state.up_down ? (
+              <div>
+                <div className="col s6">
                   <div className="input-field">
                     <textarea
-                      id="geneset"
+                      id="up_geneset"
+                      placeholder="Genes that are up-regulated in signature or overlap with gene-set."
+                      style={{
+                        height: 200,
+                        overflow: 'auto',
+                      }}
+                      value={this.state.up_geneset}
+                      onChange={(e) => this.setState({up_geneset: e.target.value})}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="col s6">
+                  <div className="input-field">
+                    <textarea
+                      id="down_geneset"
                       placeholder="Genes that are down-regulated in signature or overlap with gene-set."
                       style={{
                         height: 200,
                         overflow: 'auto',
                       }}
-                      value={this.state.geneset}
-                      onChange={(e) => this.setState({geneset: e.target.value})}
+                      value={this.state.down_geneset}
+                      onChange={(e) => this.setState({down_geneset: e.target.value})}
                     ></textarea>
                   </div>
                 </div>
-              )}
-              <div className="col s2">&nbsp;</div>
-
+              </div>
+            ) : (
               <div className="col s12">
                 <div className="input-field">
-                  <div
-                    className="chip grey white-text waves-effect waves-light"
-                    onClick={() => {
-                      this.setState({
-                        up_down: false,
-                        geneset: example_geneset,
-                      })
+                  <textarea
+                    id="geneset"
+                    placeholder="Genes that are down-regulated in signature or overlap with gene-set."
+                    style={{
+                      height: 200,
+                      overflow: 'auto',
                     }}
-                  >Example Crisp Gene Set</div>
-
-                  <div
-                    className="chip grey white-text waves-effect waves-light"
-                    onClick={() => {
-                      this.setState({
-                        up_down: false,
-                        geneset: example_geneset_weighted,
-                      })
-                    }}
-                  >Example Weighted Signature</div>
-
-                  <div
-                    className="chip grey white-text waves-effect waves-light"
-                    onClick={() => {    
-                      this.setState({
-                        up_down: true,
-                        up_geneset: example_geneset_up,
-                        down_geneset: example_geneset_down,
-                      })
-                    }}
-                  >Example Up and Down Sets</div>
+                    value={this.state.geneset}
+                    onChange={(e) => this.setState({geneset: e.target.value})}
+                  ></textarea>
                 </div>
+              </div>
+            )}
 
-                {this.state.resources.length <= 0 ? null : (
-                  <div ref={(ref) => {
-                    if (!this.state.resourceAnchor)
-                      this.setState({ resourceAnchor: ref })
-                  }} className="col offset-s2 s8 center">
-                    {this.state.resources.filter(
-                      (resource) => {
-                        if (this.state.up_down)
-                          return primary_two_tailed_resources.indexOf(resource.name) !== -1
-                        else
-                          return primary_resources.indexOf(resource.name) !== -1
-                      }
-                    ).map((resource) => (
-                      <div
-                        key={resource.name}
-                      >
+            <div className="col s12">
+              <div className="input-field">
+                <div
+                  className="chip grey white-text waves-effect waves-light"
+                  onClick={() => {
+                    this.setState({
+                      up_down: false,
+                      geneset: example_geneset,
+                    })
+                  }}
+                >Example Crisp Gene Set</div>
+
+                <div
+                  className="chip grey white-text waves-effect waves-light"
+                  onClick={() => {
+                    this.setState({
+                      up_down: false,
+                      geneset: example_geneset_weighted,
+                    })
+                  }}
+                >Example Weighted Signature</div>
+
+                <div
+                  className="chip grey white-text waves-effect waves-light"
+                  onClick={() => {    
+                    this.setState({
+                      up_down: true,
+                      up_geneset: example_geneset_up,
+                      down_geneset: example_geneset_down,
+                    })
+                  }}
+                >Example Up and Down Sets</div>
+              </div>
+
+              {this.state.resources.length <= 0 ? null : (
+                <div ref={(ref) => {
+                  if (!this.state.resourceAnchor)
+                    this.setState({ resourceAnchor: ref })
+                }} className="col s12 center">
+                  {this.state.resources.filter(
+                    (resource) => {
+                      if (this.state.up_down)
+                        return primary_two_tailed_resources.indexOf(resource.name) !== -1
+                      else
+                        return primary_resources.indexOf(resource.name) !== -1
+                    }
+                  ).map((resource) => (
+                    <div
+                      key={resource.name}
+                    >
+                      <IconButton
+                        alt={resource.name}
+                        img={resource.icon}
+                        onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
+                        counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
+                      />
+                    </div>
+                  ))}
+                  {this.state.up_down ? null : (
+                    <div>
+                      <IconButton
+                        alt={this.state.show_all ? "Less": "More"}
+                        icon={'more_horiz'}
+                        onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
+                      />
+                      {!this.state.show_all ? null : this.state.resources.filter(
+                        (resource) => primary_resources.indexOf(resource.name) === -1
+                      ).map((resource) => (
                         <IconButton
+                          key={resource.name}
                           alt={resource.name}
                           img={resource.icon}
                           onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
                           counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
                         />
-                      </div>
-                    ))}
-                    {this.state.up_down ? null : (
-                      <div>
-                        <IconButton
-                          alt={this.state.show_all ? "Less": "More"}
-                          icon={'more_horiz'}
-                          onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
-                        />
-                        {!this.state.show_all ? null : this.state.resources.filter(
-                          (resource) => primary_resources.indexOf(resource.name) === -1
-                        ).map((resource) => (
-                          <IconButton
-                            key={resource.name}
-                            alt={resource.name}
-                            img={resource.icon}
-                            onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
-                            counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </form>
-          </div>
-
-          <div className="col s12 center">
-            {this.state.status === null ? null : (
-              <span className="grey-text">
-                {this.state.count} results of 654247 ({this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata, {this.state.duration_data.toPrecision(3)} on data)
-              </span>
-            )}
-          </div>
-
-          {/*
-          {this.state.mismatched_entities.length <= 0 ? null : (
-            <div className="col s12 center">
-              The following entities could not be identified!
-              <textarea
-                readOnly
-                value={this.state.mismatched_entities.join(' ')}
-              ></textarea>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          )}
-          {this.state.matched_entities.length <= 0 ? null : (
-            <div className="col s12 center">
-              The following entities were identified
-              <textarea
-                readOnly
-                value={this.state.matched_entities.join(' ')}
-              ></textarea>
-            </div>
-          )}
-          */}
-
-          <div className="col s12">
-            {this.state.status !== '' ? (
-              <div className="center">
-                {this.state.status}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="col s12">
-            {this.state.status !== '' ? null : this.render_libraries(
-              (((this.state.resource_signatures || {})[this.state.resource_filter.name] || {}).libraries || []).map((lib) =>
-                this.state.library_signatures[lib]
-              )
-            )}
-          </div>
+          </form>
         </div>
-      </main>
+
+        <div className="col s12 center">
+          {this.state.status === null ? null : (
+            <span className="grey-text">
+              {this.state.count} results of 654247 ({this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata, {this.state.duration_data.toPrecision(3)} on data)
+            </span>
+          )}
+        </div>
+
+        {/*
+        {this.state.mismatched_entities.length <= 0 ? null : (
+          <div className="col s12 center">
+            The following entities could not be identified!
+            <textarea
+              readOnly
+              value={this.state.mismatched_entities.join(' ')}
+            ></textarea>
+          </div>
+        )}
+        {this.state.matched_entities.length <= 0 ? null : (
+          <div className="col s12 center">
+            The following entities were identified
+            <textarea
+              readOnly
+              value={this.state.matched_entities.join(' ')}
+            ></textarea>
+          </div>
+        )}
+        */}
+
+        <div className="col s12">
+          {this.state.status !== '' ? (
+            <div className="center">
+              {this.state.status}
+            </div>
+          ) : null}
+        </div>
+
+        <div className="col s12">
+          {this.state.status !== '' ? null : this.render_libraries(
+            (((this.state.resource_signatures || {})[this.state.resource_filter.name] || {}).libraries || []).map((lib) =>
+              this.state.library_signatures[lib]
+            )
+          )}
+        </div>
+      </div>
     );
   }
 }

@@ -52,7 +52,7 @@ export default class Upload extends React.Component {
       `, (
       <main id={this.props.id}>
         <div className="row">
-          <div className="col offset-s2 s8">
+          <div className="col s12">
             <ul className="collapsible popout">
               <li className="active white">
                 <h4 className="collapsible-header">Upload New Library of Signatures</h4>
