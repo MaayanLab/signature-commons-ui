@@ -87,6 +87,8 @@ export default class SignatureSearch extends React.Component {
       let resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name']
       if ((lib.meta['Library_name'] || '').indexOf('ARCHS4') !== -1)
         resource = 'ARCHS4'
+      if (resource === 'Enrichr')
+        return groups
 
       if (groups[resource] === undefined) {
         groups[resource] = {
