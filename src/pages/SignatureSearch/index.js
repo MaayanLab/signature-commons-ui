@@ -481,6 +481,7 @@ export default class SignatureSearch extends React.Component {
                       marginTop: '-25px',
                     }}
                   >
+                  {/*
                     <ul
                       className="tabs"
                       ref={(ref) => M.Tabs.init(ref, {
@@ -528,6 +529,7 @@ export default class SignatureSearch extends React.Component {
                         )
                       })()}
                     </div>
+                    */}
                     <div id={"table-" + result.library.id } className="tab-content">
                       {(() => {
                         const sigs = result.signatures
