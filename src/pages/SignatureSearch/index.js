@@ -614,6 +614,7 @@ export default class SignatureSearch extends React.Component {
   }
 
   render() {
+    const sorted_resources = [...this.state.resources].sort((r1, r2) => r1.name.localeCompare(r2.name))
     return (
       <div className="row">
         <div className="col s12 center">
@@ -726,7 +727,7 @@ export default class SignatureSearch extends React.Component {
                   if (!this.state.resourceAnchor)
                     this.setState({ resourceAnchor: ref })
                 }} className="col s12 center">
-                  {this.state.resources.filter(
+                  {sorted_resources.filter(
                     (resource) => {
                       if (this.state.up_down)
                         return primary_two_tailed_resources.indexOf(resource.name) !== -1
@@ -752,7 +753,7 @@ export default class SignatureSearch extends React.Component {
                         icon={'more_horiz'}
                         onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
                       />
-                      {!this.state.show_all ? null : this.state.resources.filter(
+                      {!this.state.show_all ? null : sorted_resources.filter(
                         (resource) => primary_resources.indexOf(resource.name) === -1
                       ).map((resource) => (
                         <IconButton

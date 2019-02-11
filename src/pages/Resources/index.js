@@ -95,6 +95,7 @@ export default class Resources extends React.PureComponent {
   }
 
   render() {
+    const sorted_resources = [...this.state.resources].sort((r1, r2) => r1.name.localeCompare(r2.name))
     return this.state.selected ? (
       <div className="row">
         <div className="col s12">
@@ -190,7 +191,7 @@ export default class Resources extends React.PureComponent {
     ) : (
       <div className="row">
         <div className="col offset-s2 s8">
-          {this.state.resources.map((resource) => (
+          {sorted_resources.map((resource) => (
             <IconButton
               key={resource.name}
               alt={resource.name}
