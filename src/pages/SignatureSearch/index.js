@@ -118,7 +118,7 @@ export default class SignatureSearch extends React.Component {
 
   count_results() {
     this.setState({
-      count: ((this.state.resource_signatures || {})[this.state.resource_filter.name] || {}).count,
+      count: ((this.state.resource_signatures || {})[this.state.resource_filter.name] || {}).count || 0,
     })
   }
 
@@ -218,6 +218,7 @@ export default class SignatureSearch extends React.Component {
       })
 
       let duration_data = 0
+      let count_data = 0
       let enriched_results
 
       if (this.state.up_down) {
@@ -226,17 +227,20 @@ export default class SignatureSearch extends React.Component {
             up_entities: up_entity_ids,
             down_entities: down_entity_ids,
             signatures: [],
-            database: 'lincs',
+            database: 'lincs_clue',
+            limit: 500,
           }, controller.signal),
           fetch_data('/enrich/ranktwosided', {
             up_entities: up_entity_ids,
             down_entities: down_entity_ids,
             signatures: [],
-            database: 'lincsfwd',
+            database: 'lincs_fwd',
+            limit: 500,
           }, controller.signal),
         ])).reduce(
-          (results, {duration: duration_data_n, response: result}) => {
+          (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
             duration_data += duration_data_n
+            count_data += contentRange_data_n.count
             return ({
               ...results,
               ...maybe_fix_obj(
@@ -262,26 +266,31 @@ export default class SignatureSearch extends React.Component {
           fetch_data('/enrich/overlap', {
             entities: entity_ids,
             signatures: [],
-            database: 'enrichr',
+            database: 'enrichr_geneset',
+            limit: 500,
           }, controller.signal),
           fetch_data('/enrich/overlap', {
             entities: entity_ids,
             signatures: [],
-            database: 'creeds',
+            database: 'creeds_geneset',
+            limit: 500,
           }, controller.signal),
           fetch_data('/enrich/rank', {
             entities: entity_ids,
             signatures: [],
-            database: 'lincs',
+            database: 'lincs_clue',
+            limit: 500,
           }, controller.signal),
           fetch_data('/enrich/rank', {
             entities: entity_ids,
             signatures: [],
-            database: 'lincsfwd',
+            database: 'lincs_fwd',
+            limit: 500,
           }, controller.signal),
         ])).reduce(
-          (results, {duration: duration_data_n, response: result}) => {
+          (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
             duration_data += duration_data_n
+            count_data += contentRange_data_n.count
             return ({
               ...results,
               ...maybe_fix_obj(result.results),
@@ -293,6 +302,7 @@ export default class SignatureSearch extends React.Component {
       this.setState({
         status: 'Resolving signatures...',
         count: Object.keys(enriched_results).length,
+        count_data,
         duration_data: duration_data,
       })
 
@@ -775,7 +785,7 @@ export default class SignatureSearch extends React.Component {
         <div className="col s12 center">
           {this.state.status === null ? null : (
             <span className="grey-text">
-              {this.state.count} results of 654247 ({this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata, {this.state.duration_data.toPrecision(3)} on data)
+              {this.state.count} results of {this.state.count_data} ({this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata, {this.state.duration_data.toPrecision(3)} on data)
             </span>
           )}
         </div>

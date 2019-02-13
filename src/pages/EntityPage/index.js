@@ -55,25 +55,25 @@ export default class EntityPage extends React.PureComponent {
         fetch_data('/enrich/overlap', {
           entities: [entity.id],
           signatures: [],
-          database: 'enrichr',
+          database: 'enrichr_geneset',
           limit: 10,
         }, controller.signal),
         fetch_data('/enrich/overlap', {
           entities: [entity.id],
           signatures: [],
-          database: 'creeds',
+          database: 'creeds_geneset',
           limit: 10,
         }, controller.signal),
         fetch_data('/enrich/rank', {
           entities: [entity.id],
           signatures: [],
-          database: 'lincs',
+          database: 'lincs_clue',
           limit: 10,
         }, controller.signal),
         fetch_data('/enrich/rank', {
           entities: [entity.id],
           signatures: [],
-          database: 'lincsfwd',
+          database: 'lincs_fwd',
           limit: 10,
         }, controller.signal),
       ])).reduce(
