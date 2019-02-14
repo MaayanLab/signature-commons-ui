@@ -25,9 +25,9 @@ class Metatron extends React.PureComponent {
     super(props)
 
     this.state = {
-      library_stats: [],
-      entity_stats: [],
-      signature_stats: [],
+      library_stats: null,
+      entity_stats: null,
+      signature_stats: null,
       LibNum: 140,
       status: null,
       controller: null,
@@ -220,36 +220,57 @@ class Metatron extends React.PureComponent {
       }
   }
 
+  async fetch_libstats() {
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: library_stats } = await fetch_meta('/libraries/key_count',
+                                                          undefined,
+                                                          undefined,
+                                                          headers)
+    this.setState({
+      LibNum: library_stats.$validator,
+      library_stats: library_stats,
+    })
+  }
+
+  async fetch_sigstats() {
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: signature_stats} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}',
+                                                          undefined,
+                                                          undefined,
+                                                          headers)
+    this.setState({
+      signature_stats: signature_stats[0]["Signature_keys"],
+    })
+  }
+
+  async fetch_entitystats(){
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: entity_stats } = await fetch_meta('/entities/key_count',
+                                                        undefined,
+                                                        undefined,
+                                                        headers)
+    this.setState({
+      entity_stats: entity_stats,
+    })
+  }
+
   componentDidMount() {
     (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      const { response: library_stats } = await fetch_meta('/libraries/key_count')
-      this.setState({
-        LibNum: library_stats.$validator,
-        library_stats: library_stats,
-      })
+      if (this.state.token){
+        this.fetch_libstats()
+      }
       // this.get_libraries(library_stats)
     })();
     (async () => {
       // const headers = {'Authorization': `Basic ${this.state.token}`}
-      const { response: signature_stats} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}')
-      // console.log(signature_stats)
-      // if("error" in signature_stats){
-      //   const err = new Error(signature_stats["error"]["name"]);
-      //   return err
-      // }
-      this.setState({
-        signature_stats: signature_stats[0]["Signature_keys"],
-      })
-      // this.get_signatures(signature_stats)
+      if (this.state.token){
+        this.fetch_sigstats()
+      }
     })();
     (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      const { response: entity_stats } = await fetch_meta('/entities/key_count')
-      this.setState({
-        entity_stats: entity_stats,
-      })
-      // this.get_entities(entity_stats)
+      if (this.state.token){
+        this.fetch_entitystats()
+      }
     })();
   }
   httpClient(url, options = {}) {
@@ -270,11 +291,20 @@ class Metatron extends React.PureComponent {
       const headers = {'Authorization': `Basic ${token}`}
       const { response: auth_res} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}',
                                                      undefined, undefined, headers)
-      console.log(auth_res)
       if (("error" in auth_res) && (auth_res.error.statusCode >= 400 && auth_res.error.statusCode < 500)){
         return Promise.reject()
       }else{
         this.setState({ token: token })
+        // Load column names
+        if(this.state.library_stats===null){
+          this.fetch_libstats()
+        }
+        if(this.state.signature_stats===null){
+          this.fetch_sigstats()
+        }
+        if(this.state.entity_stats===null){
+          this.fetch_entitystats()
+        }
         return Promise.resolve();
       }
     }else if (type === AUTH_LOGOUT) {
