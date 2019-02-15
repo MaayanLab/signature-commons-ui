@@ -43,7 +43,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
                     filter: JSON.stringify({
                       where: params.filter,
                       skip: (page - 1) * perPage,
-                      limit: perPage - 1,
+                      limit: perPage,
                       order: [
                         field+" "+order,
                       ]
