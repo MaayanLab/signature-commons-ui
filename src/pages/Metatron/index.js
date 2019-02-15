@@ -23,7 +23,6 @@ import CardHeader from '@material-ui/core/CardHeader';
 class Metatron extends React.PureComponent {
   constructor(props) {
     super(props)
-
     this.state = {
       library_stats: null,
       entity_stats: null,
@@ -33,8 +32,12 @@ class Metatron extends React.PureComponent {
       controller: null,
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
+      hash: window.location.hash,
+      apipage: 1,
+      urlpage: 1,
     }
     this.filterHandler = this.filterHandler.bind(this);
+    this.hashChangeHandler = this.hashChangeHandler.bind(this);
     this.LibraryList = this.LibraryList.bind(this);
     this.EntityList = this.EntityList.bind(this);
     this.SignatureList = this.SignatureList.bind(this);
@@ -159,28 +162,6 @@ class Metatron extends React.PureComponent {
     }
   }
 
-  // get_signatures(signature_stats) {
-  //   if(this.state.LibNum){
-  //     this.setState({
-  //         SignatureList:<Datagrid>
-  //                         <TextField
-  //                           source="id"
-  //                         />
-  //                         <ReferenceField source="library" reference="libraries">
-  //                           <TextField source="meta.Library name" />
-  //                         </ReferenceField>
-  //                         {Object.keys(signature_stats).map((k) => (
-  //                           <TextField
-  //                             key={k}
-  //                             label={k}
-  //                             source={"meta." + k}
-  //                           />
-  //                         ))}
-  //                       </Datagrid>
-  //       })
-  //   }
-  // }
-
   async filterHandler(e){
       // console.log(e)
       // this.setState({
@@ -190,7 +171,13 @@ class Metatron extends React.PureComponent {
       //   const { response: signature_stats} = await fetch_meta('/signatures/key_count?filter={"where":{"library":"'+uid+'"}}')
       //   this.get_signatures(signature_stats)
       // });
-      if(this.state.controller !== null) {
+      // console.log(window.location.hash)
+      // console.log(this.state.hash)
+      if(this.state.controller !== null && decodeURI(window.location.hash) !== this.state.hash) {
+        if(this.state.hash.includes("/signatures")){}
+        this.setState({
+          hash: decodeURI(window.location.hash)
+        })
         this.state.controller.abort()
       }
       try {
@@ -199,13 +186,17 @@ class Metatron extends React.PureComponent {
           status: 'Searching...',
           controller: controller,
         })
-        const uid = Object.values(e).slice(0,36).join('')
+        let uid = ""
+        if(e.hasOwnProperty("uid")){
+          uid = e.uid
+        }else{
+          uid = Object.values(e).slice(0,36).join('')
+        }
         const headers = {'Authorization': `Basic ${this.state.token}`}
         const { response: signature_stats} = await fetch_meta('/libraries?filter={"where":{"id":"'+uid+'"}}',
                                                               undefined,
                                                               controller.signal,
                                                               headers)
-        console.log(signature_stats)
         this.setState({
           // signature_stats: signature_stats,
           signature_stats: signature_stats[0]["Signature_keys"],
@@ -218,6 +209,25 @@ class Metatron extends React.PureComponent {
           })
         }
       }
+  }
+
+  hashChangeHandler(){
+    const hash = decodeURI(window.location.hash)
+    this.setState({
+      hash: hash
+    })
+    if (hash.includes('/signatures?filter={"library"')){
+      const hashparts = hash.split('"')
+      if(hashparts.length > 4){
+        const uid = hashparts[3]
+        const params = hashparts[4].split("&")
+        const page = params.filter((l)=>(l.includes("page")))[0].split("=")[1]
+        this.setState({
+          urlpage: page
+        })
+        this.filterHandler(uid)
+      }
+    }
   }
 
   async fetch_libstats() {
@@ -255,6 +265,7 @@ class Metatron extends React.PureComponent {
   }
 
   componentDidMount() {
+    window.addEventListener("hashchange", this.hashChangeHandler);
     (async () => {
       if (this.state.token){
         this.fetch_libstats()
@@ -274,6 +285,18 @@ class Metatron extends React.PureComponent {
     })();
   }
   httpClient(url, options = {}) {
+    if(!(options.hasOwnProperty("method"))){
+      console.log(url)
+      const link = decodeURI(url).split("%2C")
+      const url_params = link.filter((l)=> (l.includes("skip")||l.includes("limit")))
+                             .map((l)=>(l.split("%3A")[1]));
+      const page = (url_params[0]/url_params[1]) + 1
+      this.setState({
+        apipage: page
+      })
+    }
+
+    console.log(options)
     if (this.state.controller!== null)
       options["signal"] = this.state.controller.signal
 
@@ -291,7 +314,7 @@ class Metatron extends React.PureComponent {
       const headers = {'Authorization': `Basic ${token}`}
       const { response: auth_res} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}',
                                                      undefined, undefined, headers)
-      if (("error" in auth_res) && (auth_res.error.statusCode >= 400 && auth_res.error.statusCode < 500)){
+      if ((auth_res.hasOwnProperty("error")) && (auth_res.error.statusCode >= 400 && auth_res.error.statusCode < 500)){
         return Promise.reject()
       }else{
         this.setState({ token: token })
@@ -330,18 +353,24 @@ class Metatron extends React.PureComponent {
                dashboard={this.Dashboard}
                catchAll={this.NotFound}
         >
+          {this.state.library_stats===null ? <div/>:
             <Resource
               name="libraries"
               list={this.LibraryList}
             />
+          }
+          {this.state.signature_stats===null ? <div/>:
             <Resource
               name="signatures"
               list={this.SignatureList}
             />
+          }
+          {this.state.entity_stats===null ? <div/>:
             <Resource
               name="entities"
               list={this.EntityList}
             />
+          }
         </Admin>
       )
   }
