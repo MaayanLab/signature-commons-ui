@@ -113,7 +113,8 @@ export default class Resources extends React.PureComponent {
   }
 
   redirectLink(e){
-    window.location = "https://portals.broadinstitute.org/achilles";
+    console.log(e)
+    window.location = this.state.selected.URL;
   }
 
   render() {
@@ -123,17 +124,17 @@ export default class Resources extends React.PureComponent {
         <div className="col s12">
           
           <div className="row">
-            <div class="col s12">
-              <div class="card">
+            <div className="col s12">
+              <div className="card">
                 <div className="row">
-                  <div class="col s12">
-                    <div class="card-image col s1">
+                  <div className="col s12">
+                    <div className="card-image col s1">
                       <IconButton
                       img={this.state.selected.icon}
                       onClick={this.redirectLink}
                       />
                     </div>
-                    <div class="card-content col s11">
+                    <div className="card-content col s11">
                       <div>
                         <span className="card-title">{this.state.selected.name}</span>
                       </div>
@@ -163,7 +164,7 @@ export default class Resources extends React.PureComponent {
                     </div>
                   </div>
                 </div>
-                <div class="card-action">
+                <div className="card-action">
                   <a
                     className="waves-effect waves-teal btn-flat" 
                     onClick={() => this.setState({ selected: null })}
