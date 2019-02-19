@@ -113,8 +113,7 @@ export default class Resources extends React.PureComponent {
   }
 
   redirectLink(e){
-    console.log(e)
-    window.location = this.state.selected.URL;
+    window.open(this.state.selected.URL, '_blank').focus();
   }
 
   render() {
