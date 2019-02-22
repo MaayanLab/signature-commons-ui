@@ -1,23 +1,29 @@
 import React from "react";
 import { Redirect } from 'react-router';
 import { Admin,
+         ChipField,
          Datagrid,
          fetchUtils,
-         ImageField,
          List,
          ReferenceField,
          Resource,
          TextField,
+         UrlField,
          AUTH_LOGIN,
          AUTH_LOGOUT,
          AUTH_ERROR,
          AUTH_CHECK } from 'react-admin';
 import { base_url, fetch_meta } from '../../util/fetch/meta';
 import loopbackProvider from '../Admin/loopback-provider';
-import { PostFilter } from './signaturehelper';
+import { BooleanField,
+         PostFilter,
+         LibraryAvatar,
+         Description,
+         SplitChip } from './signaturehelper';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+
 
 
 class Metatron extends React.PureComponent {
@@ -33,8 +39,6 @@ class Metatron extends React.PureComponent {
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
       hash: window.location.hash,
-      apipage: 1,
-      urlpage: 1,
     }
     this.filterHandler = this.filterHandler.bind(this);
     this.hashChangeHandler = this.hashChangeHandler.bind(this);
@@ -42,6 +46,7 @@ class Metatron extends React.PureComponent {
     this.EntityList = this.EntityList.bind(this);
     this.SignatureList = this.SignatureList.bind(this);
     this.httpClient = this.httpClient.bind(this);
+    this.filterForm = this.filterForm.bind(this);
     this.authProvider = this.authProvider.bind(this);
     this.Dashboard = this.Dashboard.bind(this);
     this.NotFound = this.NotFound.bind(this);
@@ -58,24 +63,72 @@ class Metatron extends React.PureComponent {
   //   return fetchUtils.fetchJson(url, options);
   // }
 
+  filterForm(props){
+    if(this.state.token===null){
+      return false
+    }else{
+      return(
+        <PostFilter
+          libnum={this.state.LibNum}
+          filterhandler={this.filterHandler}
+        />
+      )
+    }
+  }
+
+
   LibraryList(props) {
     return (
       <List {...props}>
         <Datagrid>
+          <LibraryAvatar
+            source={"meta.Library_name"}
+            title={"Library"}
+            label={"Library"}
+            textAlign="center"
+          />
           <TextField
             source="id"
           />
           {Object.keys(this.state.library_stats).map(function(k){
-            if (k==="Icon"){
+            if (k.includes("Link") || k.includes("URL")){
               return(
-                <ImageField
+                <UrlField key={k}
+                  label={k.replace(/_/g," ")}
                   source={"meta." + k}
-                  title={k}
-                  label={k}
                 />
               )
             }
-            else{
+            else if(k==="Readout" || k==="Assay"){
+              return(
+                <ChipField
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                />
+              )
+            }
+            else if(k==="Weighted"){
+              return(
+                <BooleanField
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  field={k}
+                  TrueValue={"True"}
+                />
+              )
+            }
+            else if (k=="Perturbation_Type" || k=="Organism"){
+              return(
+                <SplitChip
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                  field={k}
+                />
+              )
+            }
+            else if (k!=="Icon" && k!=="Library_name" && k!=="Description" && k!=="Spec" && k!=="$validator"){
               return(
                 <TextField
                   key={k}
@@ -85,28 +138,28 @@ class Metatron extends React.PureComponent {
               )
             }
           })}
+          <Description
+            source={"meta.Description"}
+            title={"Description"}
+            label={"Description"}
+          />
         </Datagrid>
       </List>
     )
   }
 
   SignatureList(props){
-    const filterForm = this.state.token===null ? false: 
-          <PostFilter
-            libnum={this.state.LibNum}
-            filterhandler={this.filterHandler}
-          />
     return(
       <List
         {...props}
-        filters={filterForm}
+        filters={this.filterForm(props)}
         filterDefaultValues={{"library": this.state.uid}}
       > 
         <Datagrid>
           <TextField
             source="id"
           />
-          <ReferenceField source="library" reference="libraries">
+          <ReferenceField source="library" reference="libraries" linkType={false}>
             <TextField source="meta.Library_name" />
           </ReferenceField>
           {this.state.signature_stats.map((k) => (
@@ -212,6 +265,7 @@ class Metatron extends React.PureComponent {
   }
 
   hashChangeHandler(){
+    console.log(decodeURI(window.location.hash))
     const hash = decodeURI(window.location.hash)
     this.setState({
       hash: hash
@@ -220,11 +274,11 @@ class Metatron extends React.PureComponent {
       const hashparts = hash.split('"')
       if(hashparts.length > 4){
         const uid = hashparts[3]
-        const params = hashparts[4].split("&")
-        const page = params.filter((l)=>(l.includes("page")))[0].split("=")[1]
-        this.setState({
-          urlpage: page
-        })
+        // const params = hashparts[4].split("&")
+        // const page = params.filter((l)=>(l.includes("page")))[0].split("=")[1]
+        // this.setState({
+        //   urlpage: page
+        // })
         this.filterHandler(uid)
       }
     }
