@@ -1,11 +1,9 @@
 import React from "react";
 import { Filter,
-         List,
          ReferenceInput,
          SelectInput } from 'react-admin';
-import { withStyles, spacing } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
@@ -65,19 +63,16 @@ export const Description = withStyles(styles)(({ classes, record={}, ...props })
 ))
 Description.defaultProps = { label: 'Description' };
 
-function Chips(classes, record,  props){
-  const chips = record.meta[props.field].split(";").map((val)=>(
+export const SplitChip = withStyles(styles)( function({ classes, record={}, ...props }){
+  const chips = record.meta[props.field].split(";").map((val, index)=>(
     <Chip
+        key={index}
         label={val}
         className={classes.chip}
     />
   ))
   return chips
-}
-
-export const SplitChip = withStyles(styles)(({ classes, record={}, ...props }) => (
-  Chips(classes, record, props)
-))
+})
 
 export const BooleanField = withStyles(styles)( function({ classes, record={}, ...props }){
   if(record.meta[props.field] === props.TrueValue){
