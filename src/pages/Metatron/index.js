@@ -3,11 +3,17 @@ import { Redirect } from 'react-router';
 import { Admin,
          ChipField,
          Datagrid,
+         DisabledInput,
+         Edit,
+         EditButton,
          fetchUtils,
          List,
+         LongTextInput,
          ReferenceField,
          Resource,
+         SimpleForm,
          TextField,
+         TextInput,
          UrlField,
          AUTH_LOGIN,
          AUTH_LOGOUT,
@@ -36,15 +42,18 @@ class Metatron extends React.PureComponent {
       LibNum: 140,
       status: null,
       controller: null,
-      token: null,
+      token: "YWRtaW46YWRtaW4=",
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
       hash: window.location.hash,
     }
     this.filterHandler = this.filterHandler.bind(this);
     this.hashChangeHandler = this.hashChangeHandler.bind(this);
     this.LibraryList = this.LibraryList.bind(this);
+    this.LibraryEdit = this.LibraryEdit.bind(this);
     this.EntityList = this.EntityList.bind(this);
+    this.EntityEdit = this.EntityEdit.bind(this);
     this.SignatureList = this.SignatureList.bind(this);
+    this.SignatureEdit = this.SignatureEdit.bind(this);
     this.httpClient = this.httpClient.bind(this);
     this.filterForm = this.filterForm.bind(this);
     this.authProvider = this.authProvider.bind(this);
@@ -143,8 +152,35 @@ class Metatron extends React.PureComponent {
             title={"Description"}
             label={"Description"}
           />
+          <EditButton />
         </Datagrid>
       </List>
+    )
+  }
+
+  LibraryEdit(props){
+    return(
+      <Edit {...props}>
+        <SimpleForm>
+          <DisabledInput source="id" />
+          {Object.keys(this.state.library_stats).map(function(k){
+            if(k!=="Description"){
+              return(
+                <TextInput
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                />
+              )
+            }
+          })}
+          <LongTextInput
+            key={"Description"}
+            label={"Description"}
+            source={"meta.Description"}
+          />
+        </SimpleForm>
+      </Edit>
     )
   }
 
@@ -169,8 +205,30 @@ class Metatron extends React.PureComponent {
               source={"meta." + k}
             />
           ))}
+          <EditButton />
         </Datagrid> 
       </List>
+    )
+  }
+
+  SignatureEdit(props){
+    return(
+      <Edit {...props}>
+        <SimpleForm>
+          <DisabledInput source="id" />
+          {this.state.signature_stats.map(function(k){
+            if(k!=="Description"){
+              return(
+                <TextInput
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                />
+              )
+            }
+          })}
+        </SimpleForm>
+      </Edit>
     )
   }
 
@@ -188,8 +246,30 @@ class Metatron extends React.PureComponent {
               label={k.replace(/_/g," ")}
             />
           ))}
+          <EditButton />
         </Datagrid>
       </List>
+    )
+  }
+
+  EntityEdit(props){
+    return(
+      <Edit {...props}>
+        <SimpleForm>
+          <DisabledInput source="id" />
+          {Object.keys(this.state.entity_stats).map(function(k){
+            if(k!=="Description"){
+              return(
+                <TextInput
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                />
+              )
+            }
+          })}
+        </SimpleForm>
+      </Edit>
     )
   }
 
@@ -411,17 +491,20 @@ class Metatron extends React.PureComponent {
             <Resource
               name="libraries"
               list={this.LibraryList}
+              edit={this.LibraryEdit}
             />
           }
           {this.state.signature_stats===null ? <div/>:
             <Resource
               name="signatures"
+              edit={this.SignatureEdit}
               list={this.SignatureList}
             />
           }
           {this.state.entity_stats===null ? <div/>:
             <Resource
               name="entities"
+              edit={this.EntityEdit}
               list={this.EntityList}
             />
           }
