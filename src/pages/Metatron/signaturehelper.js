@@ -68,6 +68,7 @@ Description.defaultProps = { label: 'Description' };
 function Chips(classes, record,  props){
   const chips = record.meta[props.field].split(";").map((val)=>(
     <Chip
+        key={val}
         label={val}
         className={classes.chip}
     />
