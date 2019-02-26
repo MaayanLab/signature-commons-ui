@@ -19,6 +19,10 @@ import { Admin,
          AUTH_LOGOUT,
          AUTH_ERROR,
          AUTH_CHECK } from 'react-admin';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
+
 import { base_url, fetch_meta } from '../../util/fetch/meta';
 import loopbackProvider from '../Admin/loopback-provider';
 import { BooleanField,
@@ -26,20 +30,21 @@ import { BooleanField,
          LibraryAvatar,
          Description,
          SplitChip } from './signaturehelper';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-
+import { Dashboard } from './dashboard';
 
 
 class Metatron extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      library_stats: null,
-      entity_stats: null,
-      signature_stats: null,
+      library_fields: null,
+      entity_fields: null,
+      signature_fields: null,
       LibNum: 140,
+      LibraryNumber: "Loading...",
+      SignatureNumber: "Loading...",
+      EntityNumber: "Loading...",
+      signature_stats: null,
       status: null,
       controller: null,
       token: null,
@@ -57,7 +62,6 @@ class Metatron extends React.PureComponent {
     this.httpClient = this.httpClient.bind(this);
     this.filterForm = this.filterForm.bind(this);
     this.authProvider = this.authProvider.bind(this);
-    this.Dashboard = this.Dashboard.bind(this);
     this.NotFound = this.NotFound.bind(this);
     this.dataProvider = loopbackProvider(base_url, this.httpClient);
 
@@ -99,7 +103,7 @@ class Metatron extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.state.library_stats).map(function(k){
+          {Object.keys(this.state.library_fields).map(function(k){
             if (k.includes("Link") || k.includes("URL")){
               return(
                 <UrlField key={k}
@@ -163,7 +167,7 @@ class Metatron extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {Object.keys(this.state.library_stats).map(function(k){
+          {Object.keys(this.state.library_fields).map(function(k){
             if(k!=="Description"){
               return(
                 <TextInput
@@ -198,7 +202,7 @@ class Metatron extends React.PureComponent {
           <ReferenceField source="library" reference="libraries" linkType={false}>
             <TextField source="meta.Library_name" />
           </ReferenceField>
-          {this.state.signature_stats.map((k) => (
+          {this.state.signature_fields.map((k) => (
             <TextField
               key={k}
               label={k.replace(/_/g," ")}
@@ -216,7 +220,7 @@ class Metatron extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {this.state.signature_stats.map(function(k){
+          {this.state.signature_fields.map(function(k){
             if(k!=="Description"){
               return(
                 <TextInput
@@ -239,7 +243,7 @@ class Metatron extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.state.entity_stats).map((k) => (
+          {Object.keys(this.state.entity_fields).map((k) => (
             <TextField
               key={k}
               source={"meta." + k}
@@ -257,7 +261,7 @@ class Metatron extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {Object.keys(this.state.entity_stats).map(function(k){
+          {Object.keys(this.state.entity_fields).map(function(k){
             if(k!=="Description"){
               return(
                 <TextInput
@@ -270,15 +274,6 @@ class Metatron extends React.PureComponent {
           })}
         </SimpleForm>
       </Edit>
-    )
-  }
-
-  Dashboard(props) {
-    return(
-      <Card>
-        <CardHeader title="Welcome to the administration" />
-        <CardContent>Let's start exploring</CardContent>
-      </Card>
     )
   }
 
@@ -301,8 +296,8 @@ class Metatron extends React.PureComponent {
       //   SignatureList: <LinearProgress />
       // }, async () =>{
       //   const uid = Object.values(e).slice(0,36).join('')
-      //   const { response: signature_stats} = await fetch_meta('/signatures/key_count?filter={"where":{"library":"'+uid+'"}}')
-      //   this.get_signatures(signature_stats)
+      //   const { response: signature_fields} = await fetch_meta('/signatures/key_count?filter={"where":{"library":"'+uid+'"}}')
+      //   this.get_signatures(signature_fields)
       // });
       // console.log(window.location.hash)
       // console.log(this.state.hash)
@@ -326,13 +321,13 @@ class Metatron extends React.PureComponent {
           uid = Object.values(e).slice(0,36).join('')
         }
         const headers = {'Authorization': `Basic ${this.state.token}`}
-        const { response: signature_stats} = await fetch_meta('/libraries?filter={"where":{"id":"'+uid+'"}}',
+        const { response: signature_fields} = await fetch_meta('/libraries?filter={"where":{"id":"'+uid+'"}}',
                                                               undefined,
                                                               controller.signal,
                                                               headers)
         this.setState({
-          // signature_stats: signature_stats,
-          signature_stats: signature_stats[0]["Signature_keys"],
+          // signature_fields: signature_fields,
+          signature_fields: signature_fields[0]["Signature_keys"],
           uid: uid
         });
       } catch(e) {
@@ -364,37 +359,64 @@ class Metatron extends React.PureComponent {
     }
   }
 
-  async fetch_libstats() {
+  async fetch_libfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: library_stats } = await fetch_meta('/libraries/key_count',
+    const { response: library_fields } = await fetch_meta('/libraries/key_count',
                                                           undefined,
                                                           undefined,
                                                           headers)
     this.setState({
-      LibNum: library_stats.$validator,
-      library_stats: library_stats,
+      LibNum: library_fields.$validator,
+      library_fields: library_fields,
+    })
+    const { response: LibraryNumber } = await fetch_meta('/libraries/count')
+    this.setState({
+      LibraryNumber: LibraryNumber.count,
+    })
+  }
+
+  async fetch_sigfields() {
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: signature_fields} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}',
+                                                          undefined,
+                                                          undefined,
+                                                          headers)
+    this.setState({
+      signature_fields: signature_fields[0]["Signature_keys"],
+    })
+    const { response: SignatureNumber } = await fetch_meta('/signatures/count')
+    this.setState({
+      SignatureNumber: SignatureNumber.count,
+    })
+  }
+
+  async fetch_entityfields(){
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: entity_fields } = await fetch_meta('/entities/key_count',
+                                                        undefined,
+                                                        undefined,
+                                                        headers)
+    this.setState({
+      entity_fields: entity_fields,
+    })
+    const { response: EntityNumber } = await fetch_meta('/entities/count')
+    this.setState({
+      EntityNumber: EntityNumber.count,
     })
   }
 
   async fetch_sigstats() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_stats} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}',
+    const { response: signature_stats} = await fetch_meta('/signatures/value_count?depth=0&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
                                                           undefined,
                                                           undefined,
                                                           headers)
     this.setState({
-      signature_stats: signature_stats[0]["Signature_keys"],
+      signature_stats: signature_stats,
     })
-  }
-
-  async fetch_entitystats(){
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: entity_stats } = await fetch_meta('/entities/key_count',
-                                                        undefined,
-                                                        undefined,
-                                                        headers)
+    const { response: SignatureNumber } = await fetch_meta('/signatures/count')
     this.setState({
-      entity_stats: entity_stats,
+      SignatureNumber: SignatureNumber.count,
     })
   }
 
@@ -402,9 +424,15 @@ class Metatron extends React.PureComponent {
     window.addEventListener("hashchange", this.hashChangeHandler);
     (async () => {
       if (this.state.token){
-        this.fetch_libstats()
+        this.fetch_libfields()
       }
-      // this.get_libraries(library_stats)
+      // this.get_libraries(library_fields)
+    })();
+    (async () => {
+      // const headers = {'Authorization': `Basic ${this.state.token}`}
+      if (this.state.token){
+        this.fetch_sigfields()
+      }
     })();
     (async () => {
       // const headers = {'Authorization': `Basic ${this.state.token}`}
@@ -414,7 +442,7 @@ class Metatron extends React.PureComponent {
     })();
     (async () => {
       if (this.state.token){
-        this.fetch_entitystats()
+        this.fetch_entityfields()
       }
     })();
   }
@@ -453,14 +481,17 @@ class Metatron extends React.PureComponent {
       }else{
         this.setState({ token: token })
         // Load column names
-        if(this.state.library_stats===null){
-          this.fetch_libstats()
+        if(this.state.library_fields===null){
+          this.fetch_libfields()
         }
-        if(this.state.signature_stats===null){
+        if(this.state.signature_fields===null){
+          this.fetch_sigfields()
+        }
+        if(this.state.entity_fields===null){
+          this.fetch_entityfields()
+        }
+        if(this.state.signature_fields===null){
           this.fetch_sigstats()
-        }
-        if(this.state.entity_stats===null){
-          this.fetch_entitystats()
         }
         return Promise.resolve();
       }
@@ -484,24 +515,29 @@ class Metatron extends React.PureComponent {
       return (
         <Admin dataProvider={this.dataProvider}
                authProvider={this.authProvider}
-               dashboard={this.Dashboard}
+               dashboard={(props) => <Dashboard 
+                                        LibraryNumber={this.state.LibraryNumber}
+                                        SignatureNumber={this.state.SignatureNumber}
+                                        EntityNumber={this.state.EntityNumber}
+                                        signature_stats={this.state.signature_stats}
+                                        {...props}/>}
                catchAll={this.NotFound}
         >
-          {this.state.library_stats===null ? <div/>:
+          {this.state.library_fields===null ? <div/>:
             <Resource
               name="libraries"
               list={this.LibraryList}
               edit={this.LibraryEdit}
             />
           }
-          {this.state.signature_stats===null ? <div/>:
+          {this.state.signature_fields===null ? <div/>:
             <Resource
               name="signatures"
               edit={this.SignatureEdit}
               list={this.SignatureList}
             />
           }
-          {this.state.entity_stats===null ? <div/>:
+          {this.state.entity_fields===null ? <div/>:
             <Resource
               name="entities"
               edit={this.EntityEdit}

@@ -5,7 +5,6 @@ import { Filter,
          SelectInput } from 'react-admin';
 import { withStyles, spacing } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
