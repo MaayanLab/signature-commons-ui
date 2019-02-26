@@ -79,6 +79,18 @@ export const SplitChip = withStyles(styles)(({ classes, record={}, ...props }) =
   Chips(classes, record, props)
 ))
 
+export const TagsField = withStyles(styles)(function({ classes, record={}, ...props }){
+    const chips = props.field in record.meta ? record.meta[props.field].map((val)=>(
+      <Chip
+          key={val}
+          label={val}
+          className={classes.chip}
+      />
+    )) : null
+    return chips
+})
+TagsField.defaultProps = { addLabel: true };
+
 export const BooleanField = withStyles(styles)( function({ classes, record={}, ...props }){
   if(record.meta[props.field] === props.TrueValue){
     return(<CheckIcon className={classes.icon}/>)

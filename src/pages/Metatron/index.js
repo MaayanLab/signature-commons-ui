@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect } from 'react-router';
 import { Admin,
+         ArrayField,
          ChipField,
          Datagrid,
          DisabledInput,
@@ -12,6 +13,7 @@ import { Admin,
          ReferenceField,
          Resource,
          SimpleForm,
+         SingleFieldList,
          TextField,
          TextInput,
          UrlField,
@@ -29,7 +31,8 @@ import { BooleanField,
          PostFilter,
          LibraryAvatar,
          Description,
-         SplitChip } from './signaturehelper';
+         SplitChip,
+         TagsField } from './signaturehelper';
 import { Dashboard } from './dashboard';
 
 
@@ -112,7 +115,7 @@ class Metatron extends React.PureComponent {
                 />
               )
             }
-            else if(k==="Readout" || k==="Assay"){
+            else if(["Readout","Assay"].includes(k)){
               return(
                 <ChipField
                   key={k}
@@ -131,7 +134,7 @@ class Metatron extends React.PureComponent {
                 />
               )
             }
-            else if (k=="Perturbation_Type" || k=="Organism"){
+            else if (["Perturbation_Type","Organism"].includes(k)){
               return(
                 <SplitChip
                   key={k}
@@ -141,7 +144,7 @@ class Metatron extends React.PureComponent {
                 />
               )
             }
-            else if (k!=="Icon" && k!=="Library_name" && k!=="Description" && k!=="Spec" && k!=="$validator"){
+            else if (!["Icon","Library_name","Description","Spec","$validator"].includes(k)){
               return(
                 <TextField
                   key={k}
@@ -202,13 +205,51 @@ class Metatron extends React.PureComponent {
           <ReferenceField source="library" reference="libraries" linkType={false}>
             <TextField source="meta.Library_name" />
           </ReferenceField>
-          {this.state.signature_fields.map((k) => (
-            <TextField
-              key={k}
-              label={k.replace(/_/g," ")}
-              source={"meta." + k}
-            />
-          ))}
+          {this.state.signature_fields.map(function(k){
+            if(["Gene", "Disease", "Cell_Line", "Tissue", "Small_Molecule"].includes(k)){
+              return(
+                <ArrayField 
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                >
+                  <SingleFieldList>
+                    <ChipField source="Name" />
+                  </SingleFieldList>
+                </ArrayField>
+              )
+            }else if (["distil_id", "qc_tag", "pert_ids", "ctrl_ids"].includes(k)){
+              return(
+                <TagsField
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                  field={k}
+                />
+              )
+            }else if(k==="Accession"){
+              return(
+                <ArrayField 
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                >
+                  <SingleFieldList>
+                    <ChipField source="ID" />
+                  </SingleFieldList>
+                </ArrayField>
+              )
+            }
+            else{
+              return(
+                <TextField
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                />
+              )
+            }
+          })}
           <EditButton />
         </Datagrid> 
       </List>
@@ -243,13 +284,27 @@ class Metatron extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.state.entity_fields).map((k) => (
-            <TextField
-              key={k}
-              source={"meta." + k}
-              label={k.replace(/_/g," ")}
-            />
-          ))}
+          {Object.keys(this.state.entity_fields).map(function(k){
+            if (k==="Synonyms"){
+              return(
+                <TagsField
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                  field={k}
+                />
+              )
+            }
+            else{
+              return(
+                <TextField
+                  key={k}
+                  source={"meta." + k}
+                  label={k.replace(/_/g," ")}
+                />
+              )
+            }
+          })}
           <EditButton />
         </Datagrid>
       </List>
