@@ -262,7 +262,20 @@ class Metatron extends React.PureComponent {
         <SimpleForm>
           <DisabledInput source="id" />
           {this.state.signature_fields.map(function(k){
-            if(k!=="Description"){
+            if(["distil_id", "qc_tag", "pert_ids", "ctrl_ids",
+                "Gene", "Disease", "Cell_Line", "Tissue",
+                "Small_Molecule", "Accession"].includes(k)){
+              return(
+                <LongTextInput
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                  format={v=>JSON.stringify(v, null, 2)}
+                  parse={v=>JSON.parse(v)}
+                />
+              )
+            }
+            else{
               return(
                 <TextInput
                   key={k}
@@ -317,7 +330,18 @@ class Metatron extends React.PureComponent {
         <SimpleForm>
           <DisabledInput source="id" />
           {Object.keys(this.state.entity_fields).map(function(k){
-            if(k!=="Description"){
+            if (k==="Synonyms"){
+              return(
+                <LongTextInput
+                  key={k}
+                  label={k.replace(/_/g," ")}
+                  source={"meta." + k}
+                  format={v=>JSON.stringify(v, null, 2)}
+                  parse={v=>JSON.parse(v)}
+                />
+              )
+            }
+            else{
               return(
                 <TextInput
                   key={k}
@@ -395,7 +419,6 @@ class Metatron extends React.PureComponent {
   }
 
   hashChangeHandler(){
-    console.log(decodeURI(window.location.hash))
     const hash = decodeURI(window.location.hash)
     this.setState({
       hash: hash
@@ -503,7 +526,6 @@ class Metatron extends React.PureComponent {
   }
   httpClient(url, options = {}) {
     if(!(options.hasOwnProperty("method"))){
-      console.log(url)
       const link = decodeURI(url).split("%2C")
       const url_params = link.filter((l)=> (l.includes("skip")||l.includes("limit")))
                              .map((l)=>(l.split("%3A")[1]));
@@ -513,7 +535,6 @@ class Metatron extends React.PureComponent {
       })
     }
 
-    console.log(options)
     if (this.state.controller!== null)
       options["signal"] = this.state.controller.signal
 
