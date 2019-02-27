@@ -748,11 +748,6 @@ export default class SignatureSearch extends React.Component {
                   ))}
                   {this.state.up_down ? null : (
                     <div>
-                      <IconButton
-                        alt={this.state.show_all ? "Less": "More"}
-                        icon={'more_horiz'}
-                        onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
-                      />
                       {!this.state.show_all ? null : sorted_resources.filter(
                         (resource) => primary_resources.indexOf(resource.name) === -1
                       ).map((resource) => (
@@ -764,6 +759,11 @@ export default class SignatureSearch extends React.Component {
                           counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
                         />
                       ))}
+                      <IconButton
+                        alt={this.state.show_all ? "Less": "More"}
+                        icon={'more_horiz'}
+                        onClick={() => this.setState(({show_all}) => ({ show_all: !show_all }))}
+                      />
                     </div>
                   )}
                 </div>
