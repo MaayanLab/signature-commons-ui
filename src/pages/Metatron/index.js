@@ -24,6 +24,9 @@ import { Admin,
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import BlurOn from '@material-ui/icons/BlurOn';
+import Fingerprint from '@material-ui/icons/Fingerprint';
+import LibraryBooks from '@material-ui/icons/LibraryBooks';
 
 import { base_url, fetch_meta } from '../../util/fetch/meta';
 import loopbackProvider from '../Admin/loopback-provider';
@@ -94,8 +97,11 @@ class Metatron extends React.PureComponent {
 
 
   LibraryList(props) {
+    console.log(props)
     return (
-      <List {...props}>
+      <List 
+        title="Libraries"
+        {...props}>
         <Datagrid>
           <LibraryAvatar
             source={"meta.Library_name"}
@@ -150,6 +156,7 @@ class Metatron extends React.PureComponent {
                   key={k}
                   label={k.replace(/_/g," ")}
                   source={"meta." + k}
+                  style={{width: 100}}
                 />
               )
             }
@@ -197,13 +204,20 @@ class Metatron extends React.PureComponent {
         {...props}
         filters={this.filterForm(props)}
         filterDefaultValues={{"library": this.state.uid}}
+        title="Signatures"
       > 
         <Datagrid>
           <TextField
             source="id"
           />
-          <ReferenceField source="library" reference="libraries" linkType={false}>
-            <TextField source="meta.Library_name" />
+          <ReferenceField
+            source="library"
+            reference="libraries"
+            linkType={false}
+          >
+            <TextField 
+              source="meta.Library_name" 
+              style={{width: 150}}/>
           </ReferenceField>
           {this.state.signature_fields.map(function(k){
             if(["Gene", "Disease", "Cell_Line", "Tissue", "Small_Molecule"].includes(k)){
@@ -240,12 +254,22 @@ class Metatron extends React.PureComponent {
                 </ArrayField>
               )
             }
-            else{
+            else if(k=="Description"){
+              return(
+                <Description
+                  source={"meta.Description"}
+                  title={"Description"}
+                  label={"Description"}
+                />
+              )
+            }
+            else if(k!=="$validator"){
               return(
                 <TextField
                   key={k}
                   label={k.replace(/_/g," ")}
                   source={"meta." + k}
+                  style={{width: 100}}
                 />
               )
             }
@@ -292,7 +316,9 @@ class Metatron extends React.PureComponent {
 
   EntityList(props) {
     return (
-      <List {...props}>
+      <List 
+        title="Entities"
+        {...props}>
         <Datagrid>
           <TextField
             source="id"
@@ -308,7 +334,7 @@ class Metatron extends React.PureComponent {
                 />
               )
             }
-            else{
+            else if(k!=="$validator"){
               return(
                 <TextField
                   key={k}
@@ -589,7 +615,8 @@ class Metatron extends React.PureComponent {
 
   render() {
       return (
-        <Admin dataProvider={this.dataProvider}
+        <Admin title="Signature Commons Admin Page"
+               dataProvider={this.dataProvider}
                authProvider={this.authProvider}
                dashboard={(props) => <Dashboard 
                                         LibraryNumber={this.state.LibraryNumber}
@@ -604,6 +631,7 @@ class Metatron extends React.PureComponent {
               name="libraries"
               list={this.LibraryList}
               edit={this.LibraryEdit}
+              icon={LibraryBooks}
             />
           }
           {this.state.signature_fields===null ? <div/>:
@@ -611,6 +639,7 @@ class Metatron extends React.PureComponent {
               name="signatures"
               edit={this.SignatureEdit}
               list={this.SignatureList}
+              icon={Fingerprint}
             />
           }
           {this.state.entity_fields===null ? <div/>:
@@ -618,6 +647,7 @@ class Metatron extends React.PureComponent {
               name="entities"
               edit={this.EntityEdit}
               list={this.EntityList}
+              icon={BlurOn}
             />
           }
         </Admin>

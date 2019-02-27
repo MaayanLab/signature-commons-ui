@@ -4,8 +4,9 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import { withStyles } from '@material-ui/core/styles';
 import BlurOn from '@material-ui/icons/BlurOn';
-import Gesture from '@material-ui/icons/Gesture';
+import Fingerprint from '@material-ui/icons/Fingerprint';
 import LibraryBooks from '@material-ui/icons/LibraryBooks';
+import Grade from '@material-ui/icons/Grade';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -70,7 +71,7 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
         background = "#ff9800";
         break;
       case "Signatures":
-        icon = Gesture;
+        icon = Fingerprint;
         num = props.SignatureNumber;
         background = "#4caf50";
         break;
@@ -131,6 +132,28 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
     }
   })
 
+const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props }){
+  return(
+    <div className={classes.main}>
+      <CardIcon Icon={Grade} bgColor={"#31708f"} />
+      <Card className={classes.card}>
+          <Typography variant="headline" component="h2">
+              Popular Genes
+          </Typography>
+          <Divider />
+            <List>
+              <ListItem>
+                <ListItemText
+                  primary={"Coming Soon"}
+                  secondary={"12345"}
+                  style={{ paddingRight: 0 }}
+                />
+              </ListItem>
+            </List>
+      </Card>
+    </div>
+  )
+})
 
 export const Dashboard = withStyles(styles)( function({ classes, record={}, ...props }){
   return(
@@ -154,9 +177,12 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
           </Grid>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Grid container spacing={24} direction={"column"}>
+          <Grid container spacing={24}>
             <Grid item xs={6}>
               <Stat type={"Signatures"} {...props} />
+            </Grid>
+            <Grid item xs={6}>
+              <PopularGenes type={"Signatures"} {...props} />
             </Grid>
           </Grid>
         </Grid>
