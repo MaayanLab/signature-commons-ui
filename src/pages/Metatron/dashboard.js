@@ -213,7 +213,6 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     stats.sort(function(x, y){
        return d3.descending(x.y, y.y);
     })
-    console.log(stats)
     var included = stats.slice(0,14)
     const included_sum = included.sum("value")
     const other = stats.slice(14,).sum("value")

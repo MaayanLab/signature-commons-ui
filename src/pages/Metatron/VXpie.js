@@ -96,9 +96,7 @@ export default ({ width, height, margin, data }) => {
           </svg>
         </Grid>
         <Grid item xs={5}>
-          <div className="col-sm-4">
-            <LegendOrdinal scale={ordinalColorScale} direction="column" labelMargin="0 15px 0 0"/>
-          </div>
+          <LegendOrdinal scale={ordinalColorScale} direction="column" labelMargin="0 15px 0 0"/>
         </Grid>
       </Grid>
     </div>
