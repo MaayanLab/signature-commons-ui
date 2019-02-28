@@ -30,7 +30,6 @@
     "react-loading": "^2.0.3",
     "react-plotly.js": "^2.2.0",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.5",
     "react-scroll-to-component": "^1.0.2",
     "style-it": "^2.1.2",
     "swagger-client": "^3.8.22",
