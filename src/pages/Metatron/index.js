@@ -457,7 +457,7 @@ class Metatron extends React.PureComponent {
       console.log(stats)
       console.log(stats[this.state.selected_field + ".Name"])
       let stat_vals = undefined
-      if(["Cell_Line", "Disease", "Gene", "Small_Molecule", "Tissue", "Virus"].includes(this.state.selected_field)){
+      if(["Cell_Line", "Disease", "Gene", "Phenotype", "Small_Molecule", "Tissue", "Virus"].includes(this.state.selected_field)){
         stat_vals = stats[this.state.selected_field + ".Name"]
       }else if(this.state.handleSelectField === "Accession"){
         stat_vals = stats[this.state.selected_field + ".ID"]

@@ -247,27 +247,39 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
               Stats
           </Typography>
           <Divider />
-          <Selections
-            value={props.selected_db}
-            values={["Libraries","Signatures","Entities"]}
-            onChange={props.handleSelectDB}
-          />
-          {fields===null ?
-            <Typography variant="headline" component="h4">
-              {"Loading..."}
-            </Typography>:
-            <Selections
-              value={props.selected_field === null ? fields[0]: props.selected_field}
-              values={Object.keys(fields).sort()}
-              onChange={props.handleSelectField}
-            />
-          }
-          {props.stats===null ?
-            <Typography variant="headline" component="h4">
-              {"Loading..."}
-            </Typography>:
-            <PieChart {...props}/>
-          }
+          <Grid container spacing={24} container={"column"}>
+            <Grid item xs={12}>
+              <Grid container spacing={24}>
+                <Grid item xs={6}>
+                  <Selections
+                    value={props.selected_db}
+                    values={["Libraries","Signatures","Entities"]}
+                    onChange={props.handleSelectDB}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  {fields===null ?
+                    <Typography variant="headline" component="h4">
+                      {"Loading..."}
+                    </Typography>:
+                    <Selections
+                      value={props.selected_field === null ? fields[0]: props.selected_field}
+                      values={Object.keys(fields).sort()}
+                      onChange={props.handleSelectField}
+                    />
+                  }
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              {props.stats===null ?
+                <Typography variant="headline" component="h4">
+                  {"Loading..."}
+                </Typography>:
+                <PieChart {...props}/>
+              }
+            </Grid>
+          </Grid>
       </Card>
     </div>
   )
