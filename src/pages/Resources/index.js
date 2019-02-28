@@ -59,7 +59,9 @@ export default class Resources extends React.PureComponent {
   }
 
   async componentDidMount() {
-    const response = await fetch("/resources/all.json").then((res)=>res.json())
+    // const response = await fetch("/resources/all.json").then((res)=>res.json())
+    const response = (await import("../../ui-schemas/resources/all.json")).default
+    console.log(response)
     const p = "1234"
     const res_meta = response.reduce((group, data)=>{
       group[data.Resource_Name] = data
