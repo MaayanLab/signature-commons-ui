@@ -55,8 +55,18 @@ export default class Resources extends React.PureComponent {
     this.download = this.download.bind(this)
     this.addToCart = this.addToCart.bind(this)
     this.removeFromCart = this.removeFromCart.bind(this)
+    this.redirectLink = this.redirectLink.bind(this)
   }
+
   async componentDidMount() {
+    // const response = await fetch("/resources/all.json").then((res)=>res.json())
+    const response = (await import("../../ui-schemas/resources/all.json")).default
+    console.log(response)
+    const p = "1234"
+    const res_meta = response.reduce((group, data)=>{
+      group[data.Resource_Name] = data
+      return group
+    }, {})
     const {response: libraries} = await fetch_meta_post('/libraries/find', {})
     const resources = libraries.reduce((groups, lib) => {
       let resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name']
@@ -67,12 +77,22 @@ export default class Resources extends React.PureComponent {
         groups[resource] = {
           name: resource,
           icon: iconOf[resource] || lib.meta['Icon'],
+          description: res_meta[resource].Description,
+          PMID: res_meta[resource].PMID,
+          URL: res_meta[resource].URL,
           libraries: []
         }
       }
       groups[resource].libraries.push(lib)
       return groups
     }, {})
+    // .map((group)=>{
+    //   fetch("/resources/"+resource+".json").then((res)=>res.json).then((data)=>{
+    //     console.log(data)
+    //   })
+    //   return
+    // })
+
     this.setState({
       resources: Object.values(resources),
     })
@@ -94,97 +114,150 @@ export default class Resources extends React.PureComponent {
     )
   }
 
+  redirectLink(e){
+    window.open(this.state.selected.URL, '_blank').focus();
+  }
+
   render() {
     const sorted_resources = [...this.state.resources].sort((r1, r2) => r1.name.localeCompare(r2.name))
     return this.state.selected ? (
       <div className="row">
         <div className="col s12">
-          <div className="col s2">
-            <IconButton
-              alt={this.state.selected.name}
-              img={this.state.selected.icon}
-              onClick={() => this.setState({ selected: null })}
-            />
+          
+          <div className="row">
+            <div className="col s12">
+              <div className="card">
+                <div className="row">
+                  <div className="col s12">
+                    <div className="card-image col s1">
+                      <IconButton
+                      img={this.state.selected.icon}
+                      onClick={this.redirectLink}
+                      />
+                    </div>
+                    <div className="card-content col s11">
+                      <div>
+                        <span className="card-title">{this.state.selected.name}</span>
+                      </div>
+                      <div>
+                        <span>
+                          <b>PMID:</b>&nbsp;
+                          <a 
+                            href={"https://www.ncbi.nlm.nih.gov/pubmed/" + this.state.selected.PMID}
+                          >
+                            {this.state.selected.PMID}
+                          </a>
+                        </span>
+                      </div>
+                      <div>
+                        <span>
+                          <b>URL:</b>&nbsp;
+                          <a
+                            href={this.state.selected.URL}
+                          >
+                            {this.state.selected.URL}
+                          </a>
+                        </span>
+                      </div>
+                      <div>
+                        <p>{this.state.selected.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-action">
+                  <a
+                    className="waves-effect waves-teal btn-flat" 
+                    onClick={() => this.setState({ selected: null })}
+                  >
+                    BACK
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="col s10">
-            <ul
-              className="collapsible popout"
-            >
-              {this.state.selected.libraries.map((library) => (
-                <li
-                  key={library.id}
-                >
-                  <div
-                    className="page-header"
-                    style={{
-                      padding: 10,
-                      display: 'flex',
-                      flexDirection: "column",
-                      backgroundColor: 'rgba(255,255,255,1)',
-                    }}
+
+          <div className="row">
+            <div className="col s12">
+              <ul
+                className="collapsible popout"
+              >
+                {this.state.selected.libraries.map((library) => (
+                  <li
+                    key={library.id}
                   >
                     <div
+                      className="page-header"
                       style={{
+                        padding: 10,
                         display: 'flex',
-                        flexDirection: 'row',
-                    }}>
-                      <Label
-                        item={library}
-                        visibility={1}
-                      />
-                    </div>
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: "row",
-                    }}>
-                      <IconButton
-                        alt="Signature Commons"
-                        img="favicon.ico"
-                      />
-                      &nbsp;
-                      <IconButton
-                        alt="Download"
-                        icon="file_download"
-                        onClick={call(this.download, library.id)}
-                      />
-                      &nbsp;
-                      {this.props.cart.has(library.id) ? (
-                        <IconButton
-                          alt="Remove from Cart"
-                          icon="remove_shopping_cart"
-                          onClick={call(this.removeFromCart, library.id)}
-                        />
-                      ) : (
-                        <IconButton
-                          alt="Add to Cart"
-                          icon="add_shopping_cart"
-                          onClick={call(this.addToCart, library.id)}
-                        />
-                      )}
-                      <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                      <a
-                        href="javascript:void(0);"
-                        className="collapsible-header"
-                        style={{ border: 0 }}
-                      >
-                        <i className="material-icons">expand_more</i>
-                      </a>
-                    </div>
-                  </div>
-                  <div
-                    className="collapsible-body"
-                  >
-                    <ShowMeta
-                      value={{
-                        '@id': library.id,
-                        '@type': 'Library',
-                        'meta': library.meta,
+                        flexDirection: "column",
+                        backgroundColor: 'rgba(255,255,255,1)',
                       }}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                      }}>
+                        <Label
+                          item={library}
+                          visibility={1}
+                        />
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: "row",
+                      }}>
+                        <IconButton
+                          alt="Signature Commons"
+                          img="favicon.ico"
+                        />
+                        &nbsp;
+                        <IconButton
+                          alt="Download"
+                          icon="file_download"
+                          onClick={call(this.download, library.id)}
+                        />
+                        &nbsp;
+                        {this.props.cart.has(library.id) ? (
+                          <IconButton
+                            alt="Remove from Cart"
+                            icon="remove_shopping_cart"
+                            onClick={call(this.removeFromCart, library.id)}
+                          />
+                        ) : (
+                          <IconButton
+                            alt="Add to Cart"
+                            icon="add_shopping_cart"
+                            onClick={call(this.addToCart, library.id)}
+                          />
+                        )}
+                        <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                        <a
+                          href="javascript:void(0);"
+                          className="collapsible-header"
+                          style={{ border: 0 }}
+                        >
+                          <i className="material-icons">expand_more</i>
+                        </a>
+                      </div>
+                    </div>
+                    <div
+                      className="collapsible-body"
+                    >
+                      <ShowMeta
+                        value={{
+                          '@id': library.id,
+                          '@type': 'Library',
+                          'meta': library.meta,
+                        }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
