@@ -33,6 +33,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
      * @returns {Object} { url, options } The HTTP request parameters
      */
     const convertDataRequestToHTTP = (type, resource, params) => {
+        console.log(params)
         let url = '';
         const options = {};
         switch (type) {
@@ -85,7 +86,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             }
             case UPDATE:
                 url = `${apiUrl}/${resource}/${params.id}`;
-                options.method = 'PUT';
+                options.method = 'PATCH';
                 options.body = JSON.stringify(params.data);
                 break;
             case CREATE:
@@ -139,7 +140,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             return Promise.all(
                 params.ids.map(id =>
                     httpClient(`${apiUrl}/${resource}/${id}`, {
-                        method: 'PUT',
+                        method: 'PATCH',
                         body: JSON.stringify(params.data),
                     })
                 )
