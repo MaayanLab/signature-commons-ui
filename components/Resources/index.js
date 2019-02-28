@@ -211,7 +211,7 @@ export default class Resources extends React.PureComponent {
                       }}>
                         <IconButton
                           alt="Signature Commons"
-                          img="favicon.ico"
+                          img="static/favicon.ico"
                         />
                         &nbsp;
                         <IconButton

@@ -153,7 +153,7 @@ export default class Home extends React.PureComponent {
                 whiteSpace: 'nowrap',
               }}
             >
-              &nbsp;&nbsp; <img src="favicon.ico" width={22} />&nbsp; Signature Commons
+              &nbsp;&nbsp; <img src="static/favicon.ico" width={22} />&nbsp; Signature Commons
             </Link>
             <Link
               to="/"
@@ -162,7 +162,7 @@ export default class Home extends React.PureComponent {
                 whiteSpace: 'nowrap',
               }}
             >
-              &nbsp;&nbsp; <img src="favicon.ico" width={22} />&nbsp; Signature Commons
+              &nbsp;&nbsp; <img src="static/favicon.ico" width={22} />&nbsp; Signature Commons
             </Link>
             <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
             <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
