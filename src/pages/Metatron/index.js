@@ -37,6 +37,7 @@ import { BooleanField,
          SplitChip,
          TagsField } from './signaturehelper';
 import { Dashboard } from './dashboard';
+import { fetchJson } from './fetch'
 
 
 class Metatron extends React.PureComponent {
@@ -447,15 +448,10 @@ class Metatron extends React.PureComponent {
       const url = '/' + this.state.selected_db.toLowerCase() +
                   '/value_count?depth=2&filter={"fields":["' +
                   this.state.selected_field +'"]}'
-      console.log("fetching...")
-      console.log(stat_controller)
       const { response: stats} = await fetch_meta(url,
                                                   undefined,
                                                   stat_controller.signal,
                                                   headers)
-      console.log("fetching donE")
-      console.log(stats)
-      console.log(stats[this.state.selected_field + ".Name"])
       let stat_vals = undefined
       if(["Cell_Line", "Disease", "Gene", "Phenotype", "Small_Molecule", "Tissue", "Virus"].includes(this.state.selected_field)){
         stat_vals = stats[this.state.selected_field + ".Name"]
@@ -665,7 +661,7 @@ class Metatron extends React.PureComponent {
     
     options.headers.set('Authorization', `Basic ${this.state.token}`);
     
-    return fetchUtils.fetchJson(url, options);
+    return fetchJson(url, options);
   }
 
   async authProvider(type, params) {
