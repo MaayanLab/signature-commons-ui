@@ -29,7 +29,7 @@ code {
     monospace;
 }
 
-.root {
+#__next, .root {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
