@@ -13,9 +13,13 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import * as d3 from "d3";
+import sampPie from "./VXpie.js"
 
 
-const styles = {
+const styles = theme => ({
     root: {
       flexGrow: 1,
     },
@@ -25,25 +29,42 @@ const styles = {
         marginTop: 20,
     },
     card: {
-        overflow: 'inherit',
-        textAlign: 'right',
-        padding: 16,
-        minHeight: 52,
+      overflow: 'inherit',
+      textAlign: 'right',
+      padding: 16,
+      minHeight: 52,
     },
     cardicon: {
-        float: 'left',
-        margin: '-20px 20px 0 15px',
-        zIndex: 100,
-        borderRadius: 3,
+      float: 'left',
+      margin: '-20px 20px 0 15px',
+      zIndex: 100,
+      borderRadius: 3,
     },
     icon: {
-        float: 'right',
-        width: 54,
-        height: 54,
-        padding: 14,
-        color: '#fff',
+      float: 'right',
+      width: 54,
+      height: 54,
+      padding: 14,
+      color: '#fff',
     },
-};
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width: 200,
+    },
+    menu: {
+      width: 200,
+    },
+});
+
+Array.prototype.sum = function (prop) {
+    var total = 0
+    for ( var i = 0, _len = this.length; i < _len; i++ ) {
+        total += this[i][prop]
+    }
+    return total
+}
+
 
 const CardIcon = withStyles(styles)(({ Icon, classes, bgColor }) => (
     <Card className={classes.cardicon} style={{ backgroundColor: bgColor }}>
@@ -54,7 +75,7 @@ const CardIcon = withStyles(styles)(({ Icon, classes, bgColor }) => (
 function Welcome(props){
     return(
       <Card>
-        <CardHeader title={`Welcome ${props.name}!`} />
+        <CardHeader title={`Welcome to the Signature Commons Dashboard, ${props.name}!`} />
         <CardContent>Let's start exploring</CardContent>
       </Card>
     )
@@ -107,7 +128,7 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
                   {num}
               </Typography>
               <Divider />
-              {props.signature_stats===null ?
+              {props.signature_counts===null ?
                 <div>
                 {props.SignatureNumber==="Loading..."? null: 
                   <Typography variant="headline" component="h4">
@@ -115,11 +136,11 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
                   </Typography>
                 }</div>:
                 <List>
-                  {Object.keys(props.signature_stats).map(key =>(
+                  {Object.keys(props.signature_counts).map(key =>(
                     <ListItem>
                       <ListItemText
                         primary={key.replace("_"," ")}
-                        secondary={props.signature_stats[key]["[array]"]}
+                        secondary={props.signature_counts[key]["[array]"]}
                         style={{ paddingRight: 0 }}
                       />
                     </ListItem>
@@ -155,6 +176,103 @@ const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props
   )
 })
 
+const Selections = withStyles(styles)( function({ classes, record={}, ...props }){
+  return(
+    <TextField
+      id="charts"
+      select
+      label="Select"
+      className={classes.textField}
+      value={props.value}
+      SelectProps={{
+        MenuProps: {
+          className: classes.menu,
+        },
+      }}
+      helperText="Please select a field"
+      margin="normal"
+      onChange={props.onChange}
+    >
+      {props.values.map(function(k){
+        if(!["$validator", "Original_String"].includes(k)){
+          return(
+            <MenuItem key={k} value={k}>
+              {k.replace(/_/g," ")}
+            </MenuItem>
+          )
+        }
+      })}
+    </TextField>
+  )
+})
+
+const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
+  var stats = Object.entries(props.stats).map(function(entry){
+      return({"label": entry[0], "value": entry[1]});
+    });
+    stats.sort(function(x, y){
+       return d3.descending(x.y, y.y);
+    })
+    console.log(stats)
+    var included = stats.slice(0,14)
+    const included_sum = included.sum("value")
+    const other = stats.slice(14,).sum("value")
+    const other_sum = included_sum > other ? other: included_sum*0.9
+    var others = [{"label": "others", "value":other_sum}]
+    var data = other_sum >0 ? included.concat(others): included;
+    return(
+      <div>{sampPie({"width":400,"height":400,"margin":{"top":10,"bottom":10,"left":10,"right":10}, "data": data})}</div>
+        
+    );
+})
+
+const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
+  console.log(props.selected_db)
+  let fields=undefined
+  switch (props.selected_db) {
+      case "Libraries":
+        fields=props.library_fields
+        break;
+      case "Signatures":
+        fields=props.signature_allfields
+        break;
+      case "Entities":
+        fields=props.entity_fields
+        break;
+    }
+  return(
+    <div className={classes.main}>
+      <Card className={classes.card}>
+          <Typography variant="headline" component="h2">
+              Stats
+          </Typography>
+          <Divider />
+          <Selections
+            value={props.selected_db}
+            values={["Libraries","Signatures","Entities"]}
+            onChange={props.handleSelectDB}
+          />
+          {fields===null ?
+            <Typography variant="headline" component="h4">
+              {"Loading..."}
+            </Typography>:
+            <Selections
+              value={props.selected_field === null ? fields[0]: props.selected_field}
+              values={Object.keys(fields).sort()}
+              onChange={props.handleSelectField}
+            />
+          }
+          {props.stats===null ?
+            <Typography variant="headline" component="h4">
+              {"Loading..."}
+            </Typography>:
+            <PieChart {...props}/>
+          }
+      </Card>
+    </div>
+  )
+})
+
 export const Dashboard = withStyles(styles)( function({ classes, record={}, ...props }){
   return(
     <div className={classes.root}>
@@ -173,6 +291,9 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
             </Grid>
             <Grid item xs={12}>
               <Welcome name={"Admin"} {...props} />
+            </Grid>
+            <Grid item xs={12}>
+              <Charts {...props} />
             </Grid>
           </Grid>
         </Grid>

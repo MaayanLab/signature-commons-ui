@@ -50,9 +50,14 @@ class Metatron extends React.PureComponent {
       LibraryNumber: "Loading...",
       SignatureNumber: "Loading...",
       EntityNumber: "Loading...",
-      signature_stats: null,
+      signature_counts: null,
+      selected_db: "Libraries",
+      selected_field: "Assay",
+      signature_allfields: null,
+      stats: null,
       status: null,
       controller: null,
+      stat_controller: null,
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
       hash: window.location.hash,
@@ -69,6 +74,8 @@ class Metatron extends React.PureComponent {
     this.filterForm = this.filterForm.bind(this);
     this.authProvider = this.authProvider.bind(this);
     this.NotFound = this.NotFound.bind(this);
+    this.handleSelectDB = this.handleSelectDB.bind(this);
+    this.handleSelectField = this.handleSelectField.bind(this);
     this.dataProvider = loopbackProvider(base_url, this.httpClient);
 
   }
@@ -95,6 +102,36 @@ class Metatron extends React.PureComponent {
     }
   }
 
+  handleSelectDB(e){
+    const selected = e.target.value
+    let field=undefined
+    switch (selected) {
+      case "Libraries":
+        field="Assay"
+        break;
+      case "Signatures":
+        field="Assay"
+        break;
+      case "Entities":
+        field="Taxon_ID"
+        break;
+    }
+    this.setState({
+      selected_db: selected,
+      selected_field: field
+    }, () => {
+      this.fetch_stats()
+    })
+  }
+
+  handleSelectField(e){
+    const field = e.target.value
+    this.setState({
+      selected_field: field
+    }, () => {
+      this.fetch_stats()
+    })
+  }
 
   LibraryList(props) {
     console.log(props)
@@ -156,7 +193,6 @@ class Metatron extends React.PureComponent {
                   key={k}
                   label={k.replace(/_/g," ")}
                   source={"meta." + k}
-                  style={{width: 100}}
                 />
               )
             }
@@ -269,7 +305,6 @@ class Metatron extends React.PureComponent {
                   key={k}
                   label={k.replace(/_/g," ")}
                   source={"meta." + k}
-                  style={{width: 100}}
                 />
               )
             }
@@ -395,6 +430,53 @@ class Metatron extends React.PureComponent {
     }
   }
 
+  async fetch_stats(){
+    console.log("fetching")
+    if(this.state.stat_controller !== null) {
+      console.log("Aborting")
+      console.log(this.state.stat_controller)
+      this.state.stat_controller.abort()
+      console.log(this.state.stat_controller)
+      }
+    try {
+      const stat_controller = new AbortController()
+      this.setState({
+        stat_controller: stat_controller,
+      })
+      const headers = {'Authorization': `Basic ${this.state.token}`}
+      const url = '/' + this.state.selected_db.toLowerCase() +
+                  '/value_count?depth=2&filter={"fields":["' +
+                  this.state.selected_field +'"]}'
+      console.log("fetching...")
+      console.log(stat_controller)
+      const { response: stats} = await fetch_meta(url,
+                                                  undefined,
+                                                  stat_controller.signal,
+                                                  headers)
+      console.log("fetching donE")
+      console.log(stats)
+      console.log(stats[this.state.selected_field + ".Name"])
+      let stat_vals = undefined
+      if(["Cell_Line", "Disease", "Gene", "Small_Molecule", "Tissue", "Virus"].includes(this.state.selected_field)){
+        stat_vals = stats[this.state.selected_field + ".Name"]
+      }else if(this.state.handleSelectField === "Accession"){
+        stat_vals = stats[this.state.selected_field + ".ID"]
+      }else{
+        stat_vals = stats[this.state.selected_field]
+      }
+      this.setState({
+        // signature_fields: signature_fields,
+        stats: stat_vals
+      });
+    } catch(e) {
+      if(e.code !== DOMException.ABORT_ERR) {
+        this.setState({
+          stat_status: ''
+        })
+      }
+    }
+  }
+
   async filterHandler(e){
       // console.log(e)
       // this.setState({
@@ -407,10 +489,11 @@ class Metatron extends React.PureComponent {
       // console.log(window.location.hash)
       // console.log(this.state.hash)
       if(this.state.controller !== null && decodeURI(window.location.hash) !== this.state.hash) {
-        if(this.state.hash.includes("/signatures")){}
-        this.setState({
-          hash: decodeURI(window.location.hash)
-        })
+        if(this.state.hash.includes("/signatures")){
+          this.setState({
+            hash: decodeURI(window.location.hash)
+          })
+        }
         this.state.controller.abort()
       }
       try {
@@ -492,6 +575,13 @@ class Metatron extends React.PureComponent {
     this.setState({
       SignatureNumber: SignatureNumber.count,
     })
+    const { response: signature_allfields} = await fetch_meta('/signatures/key_count',
+                                                          undefined,
+                                                          undefined,
+                                                          headers)
+    this.setState({
+      signature_allfields: signature_allfields,
+    })
   }
 
   async fetch_entityfields(){
@@ -511,12 +601,12 @@ class Metatron extends React.PureComponent {
 
   async fetch_sigstats() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_stats} = await fetch_meta('/signatures/value_count?depth=0&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
+    const { response: signature_counts} = await fetch_meta('/signatures/value_count?depth=0&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
                                                           undefined,
                                                           undefined,
                                                           headers)
     this.setState({
-      signature_stats: signature_stats,
+      signature_counts: signature_counts,
     })
     const { response: SignatureNumber } = await fetch_meta('/signatures/count')
     this.setState({
@@ -547,6 +637,12 @@ class Metatron extends React.PureComponent {
     (async () => {
       if (this.state.token){
         this.fetch_entityfields()
+      }
+    })();
+    (async () => {
+      // const headers = {'Authorization': `Basic ${this.state.token}`}
+      if (this.state.token){
+        this.fetch_stats()
       }
     })();
   }
@@ -595,6 +691,9 @@ class Metatron extends React.PureComponent {
         if(this.state.signature_fields===null){
           this.fetch_sigstats()
         }
+        if(this.state.stats===null){
+          this.fetch_stats()
+        }
         return Promise.resolve();
       }
     }else if (type === AUTH_LOGOUT) {
@@ -622,7 +721,15 @@ class Metatron extends React.PureComponent {
                                         LibraryNumber={this.state.LibraryNumber}
                                         SignatureNumber={this.state.SignatureNumber}
                                         EntityNumber={this.state.EntityNumber}
-                                        signature_stats={this.state.signature_stats}
+                                        signature_counts={this.state.signature_counts}
+                                        entity_fields={this.state.entity_fields}
+                                        library_fields={this.state.library_fields}
+                                        signature_allfields={this.state.signature_allfields}
+                                        selected_db={this.state.selected_db}
+                                        selected_field={this.state.selected_field}
+                                        handleSelectDB={this.handleSelectDB}
+                                        handleSelectField={this.handleSelectField}
+                                        stats={this.state.stats}
                                         {...props}/>}
                catchAll={this.NotFound}
         >
