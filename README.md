@@ -12,6 +12,11 @@ npm install
 npm install -g react-scripts
 ```
 
+You'll also want to configure the prefix. To just use the production API's use:
+```bash
+source .env.development
+```
+
 ### `npm start`
 
 Runs the app in the development mode.<br>
