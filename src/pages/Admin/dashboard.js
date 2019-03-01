@@ -206,20 +206,6 @@ const Selections = withStyles(styles)( function({ classes, record={}, ...props }
   )
 })
 
-function sortObj(list, key) {
-    function compare(a, b) {
-        a = a[key];
-        b = b[key];
-        var type = (typeof(a) === 'string' ||
-                    typeof(b) === 'string') ? 'string' : 'number';
-        var result;
-        if (type === 'string') result = a.localeCompare(b);
-        else result = a - b;
-        return result;
-    }
-    return list.sort(compare);
-}
-
 const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
   var stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
@@ -233,7 +219,7 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     const other_sum = included_sum > other ? other: included_sum*0.9
     var others = [{"label": "others", "value":other_sum}]
     var data = other_sum >0 ? included.concat(others): included;
-    data = sortObj(data, "value")
+    data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
     return(
       <div>{sampPie({"width":400,"height":400,"margin":{"top":10,"bottom":10,"left":10,"right":10}, "data": data})}</div>
         

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Pie } from '@vx/shape';
 import { Group } from '@vx/group';
-import { scaleOrdinal } from '@vx/scale';
-import { interpolateCool } from 'd3-scale-chromatic';
+import { scaleLinear, scaleOrdinal } from '@vx/scale';
+import { interpolateBlues } from 'd3-scale-chromatic';
 import { LegendOrdinal } from '@vx/legend';
 import Grid from '@material-ui/core/Grid';
 
@@ -32,14 +32,20 @@ export default ({ width, height, margin, data }) => {
   const centerX = width / 2;
 
 
+  const sizeColorScale = scaleLinear({
+    domain: [0, dataLabels.length],
+    range: ['#75fcfc', '#3236b8']
+  });
+
   const ordinalColorScale = scaleOrdinal({
   domain: dataLabels,
   range: dataLabels.map(function(b,i){
             return(
-              interpolateCool(1-(i/dataLabels.length))
+              sizeColorScale(i)
             )
           })
   });
+
   return (
     <div>
       <Grid container spacing={24}>
