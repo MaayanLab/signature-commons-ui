@@ -33,7 +33,6 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
      * @returns {Object} { url, options } The HTTP request parameters
      */
     const convertDataRequestToHTTP = (type, resource, params) => {
-        console.log(params)
         let url = '';
         const options = {};
         switch (type) {
