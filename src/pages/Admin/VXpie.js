@@ -2,7 +2,7 @@ import React from 'react';
 import { Pie } from '@vx/shape';
 import { Group } from '@vx/group';
 import { scaleOrdinal } from '@vx/scale';
-import { interpolateRainbow } from 'd3-scale-chromatic';
+import { interpolateCool } from 'd3-scale-chromatic';
 import { LegendOrdinal } from '@vx/legend';
 import Grid from '@material-ui/core/Grid';
 
@@ -36,7 +36,7 @@ export default ({ width, height, margin, data }) => {
   domain: dataLabels,
   range: dataLabels.map(function(b,i){
             return(
-              interpolateRainbow(i/dataLabels.length)
+              interpolateCool(i/dataLabels.length)
             )
           })
   });
