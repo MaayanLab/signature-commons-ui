@@ -49,7 +49,7 @@ export default ({ width, height, margin, data }) => {
   return (
     <div>
       <Grid container spacing={24}>
-        <Grid item xs={7}>
+        <Grid item lg={7} md={12}>
           <svg width={width} height={height}>
             <rect rx={14} width={width} height={height} fill="url('#pie-gradients')" />
             <Group top={centerY - margin.top} left={centerX}>
@@ -91,7 +91,7 @@ export default ({ width, height, margin, data }) => {
             </Group>
           </svg>
         </Grid>
-        <Grid item xs={5} style={{
+        <Grid item lg={5} md={12} style={{
             fontSize: '10px'
           }}>
           <LegendOrdinal scale={ordinalColorScale} direction="column" labelMargin="0 15px 0 0"/>
