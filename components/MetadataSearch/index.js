@@ -193,7 +193,7 @@ export default class MetadataSearch extends React.Component {
                   &nbsp;
                   <IconButton
                     alt="Signature Commons"
-                    img="favicon.ico"
+                    img="static/favicon.ico"
                   />
                   &nbsp;
                   <IconButton

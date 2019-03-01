@@ -2,7 +2,7 @@ import { HttpError } from 'react-admin';
 import { stringify } from 'query-string';
 
 
-export const fetchJson = (url, options: Options = {}) => {
+export const fetchJson = (url, options = {}) => {
     const requestHeaders = (options.headers ||
         new Headers({
             Accept: 'application/json',
