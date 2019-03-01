@@ -140,7 +140,7 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
                     <ListItem>
                       <ListItemText
                         primary={key.replace("_"," ")}
-                        secondary={props.signature_counts[key]["[array]"]}
+                        secondary={props.signature_counts[key]}
                         style={{ paddingRight: 0 }}
                       />
                     </ListItem>

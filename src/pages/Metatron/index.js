@@ -597,12 +597,19 @@ class Metatron extends React.PureComponent {
 
   async fetch_sigstats() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_counts} = await fetch_meta('/signatures/value_count?depth=0&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
+    const { response: signature_counts} = await fetch_meta('/signatures/value_count?depth=2&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
                                                           undefined,
                                                           undefined,
                                                           headers)
+    const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
+                                                    .reduce((stat_dict, k)=>{
+                                                    stat_dict[k.replace(".Name", "")] = 
+                                                    Object.keys(signature_counts[k]).length
+                                                    return stat_dict},
+                                                    {})
+    
     this.setState({
-      signature_counts: signature_counts,
+      signature_counts: sig_counts,
     })
     const { response: SignatureNumber } = await fetch_meta('/signatures/count')
     this.setState({
