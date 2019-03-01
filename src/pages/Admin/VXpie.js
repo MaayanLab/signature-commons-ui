@@ -36,7 +36,7 @@ export default ({ width, height, margin, data }) => {
   domain: dataLabels,
   range: dataLabels.map(function(b,i){
             return(
-              interpolateCool(i/dataLabels.length)
+              interpolateCool(1-(i/dataLabels.length))
             )
           })
   });
