@@ -28,7 +28,7 @@ import Fingerprint from '@material-ui/icons/Fingerprint';
 import LibraryBooks from '@material-ui/icons/LibraryBooks';
 
 import { base_url, fetch_meta } from '../../util/fetch/meta';
-import loopbackProvider from './loopback-provider';
+import loopbackProvider from '../Admin/loopback-provider';
 import { BooleanField,
          PostFilter,
          LibraryAvatar,
@@ -39,7 +39,7 @@ import { Dashboard } from './dashboard';
 import { fetchJson } from './fetch'
 
 
-class AdminView extends React.PureComponent {
+class Metatron extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -759,4 +759,4 @@ class AdminView extends React.PureComponent {
   }
 }
 
-export default AdminView
+export default Metatron

@@ -43,7 +43,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
                     filter: JSON.stringify({
                       where: params.filter,
                       skip: (page - 1) * perPage,
-                      limit: perPage - 1,
+                      limit: perPage,
                       order: [
                         field+" "+order,
                       ]
@@ -85,7 +85,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             }
             case UPDATE:
                 url = `${apiUrl}/${resource}/${params.id}`;
-                options.method = 'PUT';
+                options.method = 'PATCH';
                 options.body = JSON.stringify(params.data);
                 break;
             case CREATE:
@@ -139,7 +139,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             return Promise.all(
                 params.ids.map(id =>
                     httpClient(`${apiUrl}/${resource}/${id}`, {
-                        method: 'PUT',
+                        method: 'PATCH',
                         body: JSON.stringify(params.data),
                     })
                 )

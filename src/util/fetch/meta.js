@@ -1,6 +1,6 @@
 export const base_url = process.env.REACT_APP_METADATA_API || (window.location.origin + '/signature-commons-metadata-api')
 
-export async function fetch_meta(endpoint, body, signal) {
+export async function fetch_meta(endpoint, body, signal, headers) {
   const start = new Date()
 
   const request = await fetch(
@@ -25,6 +25,7 @@ export async function fetch_meta(endpoint, body, signal) {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         // 'Authorization': auth,
+        ...(headers || {}),
       },
       signal: signal,
     }
