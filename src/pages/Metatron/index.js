@@ -7,7 +7,6 @@ import { Admin,
          DisabledInput,
          Edit,
          EditButton,
-         fetchUtils,
          List,
          LongTextInput,
          ReferenceField,
@@ -135,7 +134,6 @@ class Metatron extends React.PureComponent {
   }
 
   LibraryList(props) {
-    console.log(props)
     return (
       <List 
         title="Libraries"
@@ -432,12 +430,8 @@ class Metatron extends React.PureComponent {
   }
 
   async fetch_stats(){
-    console.log("fetching")
     if(this.state.stat_controller !== null) {
-      console.log("Aborting")
-      console.log(this.state.stat_controller)
       this.state.stat_controller.abort()
-      console.log(this.state.stat_controller)
       }
     try {
       const stat_controller = new AbortController()

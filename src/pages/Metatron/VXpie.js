@@ -1,15 +1,9 @@
 import React from 'react';
 import { Pie } from '@vx/shape';
 import { Group } from '@vx/group';
-import { RadialGradient } from '@vx/gradient';
-import { scaleLinear, scaleOrdinal } from '@vx/scale';
-import {
-  LegendOrdinal,
-  LegendSize,
-  LegendThreshold,
-  LegendItem,
-  LegendLabel
-} from '@vx/legend';
+import { scaleOrdinal } from '@vx/scale';
+import { interpolateRainbow } from 'd3-scale-chromatic';
+import { LegendOrdinal } from '@vx/legend';
 import Grid from '@material-ui/core/Grid';
 
 
@@ -37,16 +31,12 @@ export default ({ width, height, margin, data }) => {
   const centerY = height / 2;
   const centerX = width / 2;
 
-  const sizeColorScale = scaleLinear({
-    domain: [0, dataLabels.length],
-    range: ['#75fcfc', '#3236b8']
-  });
 
   const ordinalColorScale = scaleOrdinal({
   domain: dataLabels,
   range: dataLabels.map(function(b,i){
             return(
-              sizeColorScale(i)
+              interpolateRainbow(i/dataLabels.length)
             )
           })
   });

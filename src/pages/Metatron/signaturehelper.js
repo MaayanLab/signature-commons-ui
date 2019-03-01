@@ -1,9 +1,8 @@
 import React from "react";
 import { Filter,
-         List,
          ReferenceInput,
          SelectInput } from 'react-admin';
-import { withStyles, spacing } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import CheckIcon from '@material-ui/icons/Check';
@@ -78,6 +77,7 @@ function Chips(classes, record,  props){
 export const SplitChip = withStyles(styles)(({ classes, record={}, ...props }) => (
   Chips(classes, record, props)
 ))
+
 
 export const TagsField = withStyles(styles)(function({ classes, record={}, ...props }){
     const chips = props.field in record.meta ? record.meta[props.field].map((val)=>(
