@@ -95,7 +95,9 @@ export default ({ width, height, margin, data }) => {
             </Group>
           </svg>
         </Grid>
-        <Grid item xs={5}>
+        <Grid item xs={5} style={{
+            fontSize: '10px'
+          }}>
           <LegendOrdinal scale={ordinalColorScale} direction="column" labelMargin="0 15px 0 0"/>
         </Grid>
       </Grid>
