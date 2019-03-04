@@ -120,7 +120,8 @@ class AdminView extends React.PureComponent {
     }
     this.setState({
       selected_db: selected,
-      selected_field: field
+      selected_field: field,
+      stats: null,
     }, () => {
       this.fetch_stats()
     })
@@ -129,7 +130,8 @@ class AdminView extends React.PureComponent {
   handleSelectField(e){
     const field = e.target.value
     this.setState({
-      selected_field: field
+      selected_field: field,
+      stats: null,
     }, () => {
       this.fetch_stats()
     })
@@ -432,10 +434,13 @@ class AdminView extends React.PureComponent {
   }
 
   async fetch_stats(){
+    console.log(this.state.stat_controller)
+    console.log("____")
     if(this.state.stat_controller !== null) {
       this.state.stat_controller.abort()
       }
     try {
+      console.log(this.state.stat_controller)
       const stat_controller = new AbortController()
       this.setState({
         stat_controller: stat_controller,
