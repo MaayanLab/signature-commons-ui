@@ -19,7 +19,8 @@ import { Admin,
          AUTH_LOGIN,
          AUTH_LOGOUT,
          AUTH_ERROR,
-         AUTH_CHECK } from 'react-admin';
+         AUTH_CHECK,
+         GET_ONE } from 'react-admin';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -28,6 +29,8 @@ import Fingerprint from '@material-ui/icons/Fingerprint';
 import LibraryBooks from '@material-ui/icons/LibraryBooks';
 
 import { base_url, fetch_meta } from '../../util/fetch/meta';
+import { fetchJson } from '../../util/fetch/fetch';
+
 import loopbackProvider from './loopback-provider';
 import { BooleanField,
          PostFilter,
@@ -36,7 +39,6 @@ import { BooleanField,
          SplitChip,
          TagsField } from './signaturehelper';
 import { Dashboard } from './dashboard';
-import { fetchJson } from './fetch'
 
 
 class AdminView extends React.PureComponent {
@@ -499,13 +501,14 @@ class AdminView extends React.PureComponent {
           uid = Object.values(e).slice(0,36).join('')
         }
         const headers = {'Authorization': `Basic ${this.state.token}`}
-        const { response: signature_fields} = await fetch_meta('/libraries?filter={"where":{"id":"'+uid+'"}}',
-                                                              undefined,
-                                                              controller.signal,
-                                                              headers)
+        const { data: signature_fields} = this.dataProvider(GET_ONE, "libraries", {id: uid})
+        // await fetch_meta('/libraries' + uid,
+        //                                                       undefined,
+        //                                                       controller.signal,
+        //                                                       headers)
         this.setState({
           // signature_fields: signature_fields,
-          signature_fields: signature_fields[0]["Signature_keys"],
+          signature_fields: signature_fields["Signature_keys"],
           uid: uid
         });
       } catch(e) {
@@ -554,12 +557,10 @@ class AdminView extends React.PureComponent {
 
   async fetch_sigfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_fields} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}',
-                                                          undefined,
-                                                          undefined,
-                                                          headers)
+    const { data: signature_fields} = await this.dataProvider(GET_ONE, "libraries", {id: this.state.uid})
+    console.log(signature_fields)
     this.setState({
-      signature_fields: signature_fields[0]["Signature_keys"],
+      signature_fields: signature_fields["Signature_keys"],
     })
     const { response: SignatureNumber } = await fetch_meta('/signatures/count')
     this.setState({
@@ -660,7 +661,9 @@ class AdminView extends React.PureComponent {
     if (options.headers === undefined)
       options.headers = new Headers({ Accept: 'application/json' });
     
-    options.headers.set('Authorization', `Basic ${this.state.token}`);
+    const token = (options.token || this.state.token)
+    console.log(options)
+    options.headers.set('Authorization', `Basic ${token}`);
     
     return fetchJson(url, options);
   }
@@ -669,7 +672,7 @@ class AdminView extends React.PureComponent {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
       const headers = {'Authorization': `Basic ${token}`}
-      const { response: auth_res} = await fetch_meta('/libraries?filter={"where":{"id":"'+this.state.uid+'"}}',
+      const { response: auth_res} = await fetch_meta('/libraries/'+this.state.uid,
                                                      undefined, undefined, headers)
       if ((auth_res.hasOwnProperty("error")) && (auth_res.error.statusCode >= 400 && auth_res.error.statusCode < 500)){
         return Promise.reject()
