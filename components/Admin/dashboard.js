@@ -221,7 +221,7 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     var data = other_sum >0 ? included.concat(others): included;
     data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
     return(
-      <div>{sampPie({"width":400,"height":400,"margin":{"top":10,"bottom":10,"left":10,"right":10}, "data": data})}</div>
+      <div>{sampPie({"width":350 ,"height":350,"margin":{"top":10,"bottom":10,"left":10,"right":10}, "data": data})}</div>
         
     );
 })
