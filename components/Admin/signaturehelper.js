@@ -41,6 +41,7 @@ export const PostFilter = (props) => (
       </Filter>
   )
 
+// TODO: Move this process.env.PREFIX to some ui-schema renderer--this won't work if meta.Icon had a fully-qualified url in it.
 const ImageAvatar = withStyles(styles)(({ classes, ...props }) => (
     <Avatar alt={props.record.meta.Library_name} src={`${process.env.PREFIX}/${props.record.meta.Icon}`} className={classes.avatar} mx="auto"/>
 ));

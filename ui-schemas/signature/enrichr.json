@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${library.meta['Icon']}",
+      "src": "${PREFIX}/${library.meta['Icon']}",
       "alt": "${library.meta['Library_name']}"
     },
     "Description": {

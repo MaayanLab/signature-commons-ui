@@ -93,7 +93,7 @@ export default class SignatureSearch extends React.Component {
       if (groups[resource] === undefined) {
         groups[resource] = {
           name: resource,
-          icon: iconOf[resource] || lib.meta['Icon'],
+          icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
           libraries: []
         }
       }
@@ -754,7 +754,7 @@ export default class SignatureSearch extends React.Component {
                     >
                       <IconButton
                         alt={resource.name}
-                        img={`${process.env.PREFIX}/${resource.icon}`}
+                        img={resource.icon}
                         onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
                         counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
                       />
@@ -768,7 +768,7 @@ export default class SignatureSearch extends React.Component {
                         <IconButton
                           key={resource.name}
                           alt={resource.name}
-                          img={`${process.env.PREFIX}/${resource.icon}`}
+                          img={resource.icon}
                           onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
                           counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
                         />

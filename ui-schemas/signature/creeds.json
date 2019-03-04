@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${process.env.PREFIX}/static/images/creeds.png",
+      "src": "${PREFIX}/static/images/creeds.png",
       "alt": "CREEDS"
     },
     "Assay": {

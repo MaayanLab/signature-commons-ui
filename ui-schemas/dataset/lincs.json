@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "header-img",
-      "src": "${process.env.PREFIX}/static/images/clueio.png",
+      "src": "${PREFIX}/static/images/clueio.png",
       "alt": "ConnectivityMap"
     },
     "Libraries": {

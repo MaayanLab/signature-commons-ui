@@ -11,7 +11,7 @@ module.exports = withSass({
     return fromGit.id
   },
   env: {
-    PREFIX: process.env['PREFIX'],
+    PREFIX: process.env['PREFIX'] || '',
     REACT_APP_METADATA_API: process.env.REACT_APP_METADATA_API,
     REACT_APP_DATA_API: process.env.REACT_APP_DATA_API,
   },
