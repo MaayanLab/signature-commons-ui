@@ -434,13 +434,10 @@ class AdminView extends React.PureComponent {
   }
 
   async fetch_stats(){
-    console.log(this.state.stat_controller)
-    console.log("____")
     if(this.state.stat_controller !== null) {
       this.state.stat_controller.abort()
       }
     try {
-      console.log(this.state.stat_controller)
       const stat_controller = new AbortController()
       this.setState({
         stat_controller: stat_controller,
