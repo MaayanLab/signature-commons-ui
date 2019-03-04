@@ -178,22 +178,22 @@ export default class MetadataSearch extends React.Component {
                 }}>
                   <IconButton
                     alt="Enrichr"
-                    img="static/images/enrichr.ico"
+                    img={`${process.env.PREFIX}/static/images/enrichr.ico`}
                   />
                   &nbsp;
                   <IconButton
                     alt="Geneshot"
-                    img="static/images/geneshot.png"
+                    img={`${process.env.PREFIX}/static/images/geneshot.png`}
                   />
                   &nbsp;
                   <IconButton
                     alt="ARCHS4"
-                    img="static/images/archs4.png"
+                    img={`${process.env.PREFIX}/static/images/archs4.png`}
                   />
                   &nbsp;
                   <IconButton
                     alt="Signature Commons"
-                    img="static/favicon.ico"
+                    img={`${process.env.PREFIX}/static/favicon.ico`}
                   />
                   &nbsp;
                   <IconButton

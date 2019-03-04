@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "static/images/clueio.ico",
+      "src": "${process.env.PREFIX}/static/images/clueio.ico",
       "alt": "ConnectivityMap"
     },
     "Assay": {

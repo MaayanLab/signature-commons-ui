@@ -42,7 +42,7 @@ export const PostFilter = (props) => (
   )
 
 const ImageAvatar = withStyles(styles)(({ classes, ...props }) => (
-    <Avatar alt={props.record.meta.Library_name} src={props.record.meta.Icon} className={classes.avatar} mx="auto"/>
+    <Avatar alt={props.record.meta.Library_name} src={`${process.env.PREFIX}/${props.record.meta.Icon}`} className={classes.avatar} mx="auto"/>
 ));
 
 export const LibraryAvatar = withStyles(styles)(({ classes, record={}, ...props }) => (

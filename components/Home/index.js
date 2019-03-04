@@ -153,7 +153,7 @@ export default class Home extends React.PureComponent {
                 whiteSpace: 'nowrap',
               }}
             >
-              &nbsp;&nbsp; <img src="static/favicon.ico" width={22} />&nbsp; Signature Commons
+              &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
             </Link>
             <Link
               to="/"
@@ -162,7 +162,7 @@ export default class Home extends React.PureComponent {
                 whiteSpace: 'nowrap',
               }}
             >
-              &nbsp;&nbsp; <img src="static/favicon.ico" width={22} />&nbsp; Signature Commons
+              &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
             </Link>
             <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
             <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
@@ -184,7 +184,7 @@ export default class Home extends React.PureComponent {
             </div>
     
             <div className="col offset-l6 l2 m6 s12">
-              <img src="static/images/dcic.png" alt="BD2K-LINCS Data Coordination and Integration Center" height="130" /><br />
+              <img src={`${process.env.PREFIX}/static/images/dcic.png`} alt="BD2K-LINCS Data Coordination and Integration Center" height="130" /><br />
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@ export default class Home extends React.PureComponent {
 
     return Style.it(`
       #Home {
-        background-image: url('static/images/arrowbackground.png');
+        background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
         background-attachment: fixed;
         background-repeat: no-repeat;
         background-position: left bottom;

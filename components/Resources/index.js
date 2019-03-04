@@ -39,8 +39,8 @@ export const renamed = {
 }
 
 export const iconOf = {
-  'CREEDS': 'static/images/creeds.png',
-  'CMAP': 'static/images/clueio.ico',
+  'CREEDS': `${process.env.PREFIX}/static/images/creeds.png`,
+  'CMAP': `${process.env.PREFIX}/static/images/clueio.ico`,
 }
 
 export default class Resources extends React.PureComponent {
@@ -133,7 +133,7 @@ export default class Resources extends React.PureComponent {
                   <div className="col s12">
                     <div className="card-image col s1">
                       <IconButton
-                      img={this.state.selected.icon}
+                      img={`${process.env.PREFIX}/${this.state.selected.icon}`}
                       onClick={this.redirectLink}
                       />
                     </div>
@@ -213,7 +213,7 @@ export default class Resources extends React.PureComponent {
                       }}>
                         <IconButton
                           alt="Signature Commons"
-                          img="static/favicon.ico"
+                          img={`${process.env.PREFIX}/static/favicon.ico`}
                         />
                         &nbsp;
                         <IconButton
@@ -270,7 +270,7 @@ export default class Resources extends React.PureComponent {
             <IconButton
               key={resource.name}
               alt={resource.name}
-              img={resource.icon}
+              img={`${process.env.PREFIX}/${resource.icon}`}
               onClick={() => this.setState({ selected: resource }, () => M.AutoInit())}
             />
           ))}

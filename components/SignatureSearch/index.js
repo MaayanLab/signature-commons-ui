@@ -754,7 +754,7 @@ export default class SignatureSearch extends React.Component {
                     >
                       <IconButton
                         alt={resource.name}
-                        img={resource.icon}
+                        img={`${process.env.PREFIX}/${resource.icon}`}
                         onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
                         counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
                       />
@@ -768,7 +768,7 @@ export default class SignatureSearch extends React.Component {
                         <IconButton
                           key={resource.name}
                           alt={resource.name}
-                          img={resource.icon}
+                          img={`${process.env.PREFIX}/${resource.icon}`}
                           onClick={() => this.setState({ resource_filter: resource }, () => this.submit())}
                           counter={((this.state.resource_signatures || {})[resource.name] || {}).count}
                         />

@@ -39,10 +39,10 @@
     "typescript": "^3.3.3333"
   },
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start",
-    "export": "next build && next export",
+    "dev": "cross-env PREFIX=${PREFIX} next",
+    "build": "cross-env PREFIX=${PREFIX} next build",
+    "start": "cross-env PREFIX=${PREFIX} next start",
+    "export": "cross-env PREFIX=${PREFIX} next build && cross-env PREFIX=${PREFIX} next export",
     "export:production": "cross-env PREFIX=/sigcom npm run export",
     "export:dev": "cross-env PREFIX=/sigcom-dev npm run export",
     "deploy": "cross-env PREFIX=${PREFIX} npm run export && docker build --build-arg PREFIX=${PREFIX} -t ${TAG}:${VERSION} . && docker push ${TAG}:${VERSION}",

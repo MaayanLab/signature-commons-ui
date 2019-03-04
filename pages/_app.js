@@ -32,12 +32,9 @@ export default class extends App {
       <Container className="root">
         <Head>
           <meta charSet="utf-8" />
-          <link rel="shortcut icon" href="static/favicon.ico" />
+          <link rel="shortcut icon" href={`${process.env.PREFIX}/static/favicon.ico`} />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-          {process.env.PREFIX !== undefined ? (
-            <base href={process.env.PREFIX} />
-          ) : null}
 
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>
