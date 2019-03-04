@@ -1,0 +1,76 @@
+{
+  "match": {
+    "${$validator}": "/@dcic/signature-commons-schema/core/signature.json",
+    "${library.dataset}": "enrichr"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${library.meta['Icon']}",
+      "alt": "${library.meta['Library_name']}"
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Original_String']}"
+    },
+    "Assay": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Assay}"
+    },
+    "Organism": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Organism}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Organism}"
+    },
+    "P-Value": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-value']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "columnOptions": {
+        "sort": true,
+        "sortDirection": "asc"
+      },
+      "type": "text",
+      "text": "${meta['p-value']}"
+    },
+    "Odds Ratio": {
+      "visibility": 1,
+      "condition": {
+        "${meta.oddsratio}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta.oddsratio}"
+    },
+    "Set Size": {
+      "visibility": 1,
+      "condition": {
+        "${meta.setsize}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta.setsize}"
+    }
+  }
+}

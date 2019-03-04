@@ -1,0 +1,19 @@
+{
+  "match": {
+    "${$validator}": "/@dcic/signature-commons-schema/core/library.json",
+    "${dataset}": "enrichr"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${meta['Icon']}",
+      "alt": "${meta['Primary_Resource']}"
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Library_name']}"
+    }
+  }
+}
