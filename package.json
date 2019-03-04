@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
   "dependencies": {
-    "@dcic/signature-commons-schema": "^1.1.1",
+    "@dcic/signature-commons-schema": "^1.2.1",
     "@material-ui/core": "^1.5.1",
     "@material-ui/icons": "^1.1.1",
     "@vx/vx": "0.0.186",
@@ -46,9 +46,9 @@
     "export": "cross-env PREFIX=${PREFIX} next build && cross-env PREFIX=${PREFIX} next export",
     "export:production": "cross-env PREFIX=/sigcom npm run export",
     "export:dev": "cross-env PREFIX=/sigcom-dev npm run export",
-    "deploy": "cross-env PREFIX=${PREFIX} npm run export && docker build --build-arg PREFIX=${PREFIX} -t ${TAG}:${VERSION} . && docker push ${TAG}:${VERSION}",
-    "deploy:production": "cross-env PREFIX=/sigcom TAG=maayanlab/sigcom VERSION=latest npm run deploy",
-    "deploy:dev": "cross-env PREFIX=/sigcom-dev TAG=maayanlab/sigcom-dev VERSION=latest npm run deploy"
+    "deploy": "cross-env PREFIX=${PREFIX} npm run export && docker build --build-arg PREFIX=${PREFIX} -t ${TAG}:${VERSION} . && docker push ${TAG}:${VERSION} && docker tag ${TAG}:${VERSION} ${TAG}:latest && docker push ${TAG}:latest",
+    "deploy:production": "cross-env PREFIX=/sigcom TAG=maayanlab/sigcom VERSION=${npm_package_version} npm run deploy",
+    "deploy:dev": "cross-env PREFIX=/sigcom-dev TAG=maayanlab/sigcom-dev VERSION=${npm_package_version} npm run deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
