@@ -13,6 +13,7 @@
     "acorn": "^6.1.1",
     "ajv": "^6.9.2",
     "create-react-class": "^15.6.3",
+    "cross-env": "^5.2.0",
     "d3": "^5.7.0",
     "immutable": "^4.0.0-rc.12",
     "js-file-download": "^0.4.4",
@@ -41,7 +42,12 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "export": "npm run build && next export"
+    "export": "next build && next export",
+    "export:production": "cross-env PREFIX=/sigcom npm run export",
+    "export:dev": "cross-env PREFIX=/sigcom-dev npm run export",
+    "deploy": "cross-env PREFIX=${PREFIX} npm run export && docker build --build-arg PREFIX=${PREFIX} -t ${TAG}:${VERSION} . && docker push ${TAG}:${VERSION}",
+    "deploy:production": "cross-env PREFIX=/sigcom TAG=maayanlab/sigcom VERSION=latest npm run deploy",
+    "deploy:dev": "cross-env PREFIX=/sigcom-dev TAG=maayanlab/sigcom-dev VERSION=latest npm run deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
