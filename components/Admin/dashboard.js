@@ -210,18 +210,18 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
   var stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
     });
-    stats.sort(function(x, y){
-       return d3.descending(x.y, y.y);
-    })
+    stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
     var included = stats.slice(0,14)
     const included_sum = included.sum("value")
     const other = stats.slice(14,).sum("value")
-    const other_sum = included_sum > other ? other: included_sum*0.9
+    const other_sum = included_sum > other || included_sum < included.length*10 ? other: included_sum*1.5
     var others = [{"label": "others", "value":other_sum}]
     var data = other_sum >0 ? included.concat(others): included;
     data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
+    console.log(props.stats)
+    console.log(stats)
     return(
-      <div>{sampPie({"width":400,"height":400,"margin":{"top":10,"bottom":10,"left":10,"right":10}, "data": data})}</div>
+      <div>{sampPie({"width":350 ,"height":350,"margin":{"top":10,"bottom":10,"left":10,"right":10}, "data": data})}</div>
         
     );
 })
