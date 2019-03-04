@@ -1,3 +1,4 @@
+// https://github.com/marmelab/react-admin/blob/master/packages/ra-core/src/util/fetch.ts
 import { HttpError } from 'react-admin';
 import { stringify } from 'query-string';
 
