@@ -119,3 +119,5 @@ export function Label({item, highlight, visibility}) {
     </div>
   )
 }
+
+export default Label

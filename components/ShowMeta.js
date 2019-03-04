@@ -56,3 +56,5 @@ export function ShowMeta({value, highlight}) {
     return null
   }
 }
+
+export default ShowMeta

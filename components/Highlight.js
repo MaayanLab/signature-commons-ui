@@ -49,3 +49,5 @@ export function Highlight({
     </Component>
   )
 }
+
+export default Highlight
