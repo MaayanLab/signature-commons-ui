@@ -27,6 +27,7 @@
     "react": "^16.7.0",
     "react-admin": "^2.7.2",
     "react-dom": "^16.7.0",
+    "react-ga": "^2.5.7",
     "react-highcharts": "^16.0.2",
     "react-json-view": "^1.19.1",
     "react-loading": "^2.0.3",
