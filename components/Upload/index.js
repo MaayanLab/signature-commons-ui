@@ -1,7 +1,6 @@
 import React from 'react';
 import { parse_file } from '../../util/parse'
 import M from 'materialize-css'
-import Style from 'style-it'
 
 export default class Upload extends React.Component {
   constructor(props) {
@@ -45,12 +44,13 @@ export default class Upload extends React.Component {
   }
 
   render() {
-    return Style.it(`
-      h4 {
-        margin: 0px;
-      }
-      `, (
+    return (
       <main id={this.props.id}>
+        <style jsx>{`
+        h4 {
+          margin: 0px;
+        }
+        `}</style>
         <div className="row">
           <div className="col s12">
             <ul className="collapsible popout">
@@ -121,6 +121,6 @@ export default class Upload extends React.Component {
           </div>
         </div>
       </main>
-    ))
+    )
   }
 }

@@ -3,8 +3,7 @@ import fileDownload from 'js-file-download';
 import M from "materialize-css";
 import Base from '../../components/Base';
 import React from "react";
-import { Link, Route, Switch } from 'react-router-dom';
-import Style from 'style-it';
+import { Route, Switch } from 'react-router-dom';
 import { call } from '../../util/call';
 import { fetch_data } from "../../util/fetch/data";
 import { base_url as meta_base_url, fetch_meta_post } from "../../util/fetch/meta";
@@ -155,75 +154,75 @@ export default class Home extends React.PureComponent {
   render() {
     const CartActions = this.CartActions
 
-    return Style.it(`
-      #Home {
-        background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-position: left bottom;
-      }
-      `, (
-        <Base>
-          <CartActions />
-          <Switch>
-            <Route
-              exact path="/"
-              component={(props) =>
-                <SignatureSearch
-                  cart={this.state.cart}
-                  updateCart={this.updateCart}
-                  download={this.download}
-                  {...props}
-                />
-              }
-            />
-            <Route
-              exact path="/SignatureSearch"
-              component={(props) =>
-                <SignatureSearch
-                  cart={this.state.cart}
-                  updateCart={this.updateCart}
-                  download={this.download}
-                  {...props}
-                />
-              }
-            />
-            <Route
-              exact path="/MetadataSearch"
-              component={(props) =>
-                <MetadataSearch
-                  cart={this.state.cart}
-                  updateCart={this.updateCart}
-                  download={this.download}
-                  {...props}
-                />
-              }
-            />
-            <Route
-              exact path="/Resources"
-              component={(props) =>
-                <Resources
-                  cart={this.state.cart}
-                  updateCart={this.updateCart}
-                  download={this.download}
-                  {...props}
-                />
-              }
-            />
-            <Route
-              exact path="/UploadCollection"
-              component={(props) =>
-                <Upload
-                  cart={this.state.cart}
-                  updateCart={this.updateCart}
-                  download={this.download}
-                  {...props}
-                />
-              }
-            />
-          </Switch>
-        </Base>
-      )
-    );
+    return (
+      <Base>
+        <style jsx>{`
+        #Home {
+          background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
+          background-attachment: fixed;
+          background-repeat: no-repeat;
+          background-position: left bottom;
+        }
+        `}</style>
+        <CartActions />
+        <Switch>
+          <Route
+            exact path="/"
+            component={(props) =>
+              <SignatureSearch
+                cart={this.state.cart}
+                updateCart={this.updateCart}
+                download={this.download}
+                {...props}
+              />
+            }
+          />
+          <Route
+            exact path="/SignatureSearch"
+            component={(props) =>
+              <SignatureSearch
+                cart={this.state.cart}
+                updateCart={this.updateCart}
+                download={this.download}
+                {...props}
+              />
+            }
+          />
+          <Route
+            exact path="/MetadataSearch"
+            component={(props) =>
+              <MetadataSearch
+                cart={this.state.cart}
+                updateCart={this.updateCart}
+                download={this.download}
+                {...props}
+              />
+            }
+          />
+          <Route
+            exact path="/Resources"
+            component={(props) =>
+              <Resources
+                cart={this.state.cart}
+                updateCart={this.updateCart}
+                download={this.download}
+                {...props}
+              />
+            }
+          />
+          <Route
+            exact path="/UploadCollection"
+            component={(props) =>
+              <Upload
+                cart={this.state.cart}
+                updateCart={this.updateCart}
+                download={this.download}
+                {...props}
+              />
+            }
+          />
+        </Switch>
+      </Base>
+    )
   }
 }
