@@ -21,6 +21,7 @@ export default class MetadataSearch extends React.Component {
       value_count: {},
       status: null,
       controller: null,
+      total_count: undefined,
     }
 
     this.submit = this.submit.bind(this)
@@ -38,6 +39,11 @@ export default class MetadataSearch extends React.Component {
   componentDidUpdate() {
     M.AutoInit();
     M.updateTextFields();
+
+    const { response } = await fetch_meta('/signatures/count', {})
+    this.setState({
+      total_count: response.count
+    })
   }
 
   build_where() {
@@ -337,7 +343,10 @@ export default class MetadataSearch extends React.Component {
           <div className="col s12 center">
             {this.state.status === null ? null : (
               <span className="grey-text">
-                Found {this.state.count} matches out of 654247 signatures in {this.state.duration_meta.toPrecision(3)} seconds
+                Found {this.state.count}
+                {this.state.total_count !== undefined ? ` matches out of ${this.state.total_count} ` : null}
+                signatures
+                {this.state.duration_meta !== undefined  ? ` in ${this.state.duration_meta.toPrecision(3)} seconds` : null}
               </span>
             )}
           </div>
