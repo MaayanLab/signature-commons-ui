@@ -1,7 +1,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import NProgress from 'nprogress'
-import { fetch_meta_post } from "../../util/fetch/meta";
+import { fetch_meta_post, fetch_meta } from "../../util/fetch/meta";
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 const Signatures = dynamic(() => import('../../components/MetadataSearch/Signatures'))
@@ -33,15 +33,21 @@ export default class extends React.Component {
     this.state = {
       search,
       params,
-      controller: null,
+      controller: undefined,
+      total_count: undefined,
     }
 
     this.searchChange = this.searchChange.bind(this)
     this.performSearch = this.performSearch.bind(this)
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.performSearch(this.state.params.get('q'))
+
+    const { response } = await fetch_meta('/signatures/count', {})
+    this.setState({
+      total_count: response.count
+    })
   }
 
   searchChange(e) {
@@ -49,7 +55,7 @@ export default class extends React.Component {
   }
 
   async performSearch(search) {
-    if(this.state.controller !== null) {
+    if(this.state.controller !== undefined) {
       this.state.controller.abort()
     }
     try {
@@ -116,9 +122,12 @@ export default class extends React.Component {
         </div>
 
         <div className="col s12 center">
-          {this.state.signatures !== undefined ? (
+          {this.state.signatures !== undefined && this.state.count !== undefined ? (
             <span className="grey-text">
-              Found {this.state.count} matches out of 654247 signatures in {(this.state.duration_meta || 0).toPrecision(3)} seconds
+              Found {this.state.count}
+              {this.state.total_count !== undefined ? ` matches out of ${this.state.total_count} ` : null}
+              signatures
+              {this.state.duration_meta !== undefined  ? ` in ${this.state.duration_meta.toPrecision(3)} seconds` : null}
             </span>
           ) : null}
         </div>
