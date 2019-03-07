@@ -107,15 +107,19 @@ class AdminView extends React.PureComponent {
   handleSelectDB(e){
     const selected = e.target.value
     let field=undefined
+    let fields_loaded=undefined
     switch (selected) {
       case "Libraries":
         field="Assay"
+        fields_loaded= this.state.library_fields===null? false: true
         break;
       case "Signatures":
         field="Assay"
+        fields_loaded= this.state.signature_allfields===null? false: true
         break;
       case "Entities":
         field="Taxon_ID"
+        fields_loaded= this.state.entity_fields===null? false: true
         break;
     }
     this.setState({
@@ -123,7 +127,9 @@ class AdminView extends React.PureComponent {
       selected_field: field,
       stats: null,
     }, () => {
-      this.fetch_stats()
+      if(fields_loaded){
+        this.fetch_stats()
+      }
     })
   }
 
@@ -550,10 +556,11 @@ class AdminView extends React.PureComponent {
     this.setState({
       LibNum: library_fields.$validator,
       library_fields: library_fields,
-    })
-    const { response: LibraryNumber } = await fetch_meta('/libraries/count')
-    this.setState({
-      LibraryNumber: LibraryNumber.count,
+      LibraryNumber: library_fields.$validator,
+    },()=>{
+      if(this.state.selected_db=="Libraries"){
+        this.fetch_stats()
+      }
     })
   }
 
@@ -574,6 +581,10 @@ class AdminView extends React.PureComponent {
                                                           headers)
     this.setState({
       signature_allfields: signature_allfields,
+    },()=>{
+      if(this.state.selected_db=="Signatures"){
+        this.fetch_stats()
+      }
     })
   }
 
@@ -589,6 +600,10 @@ class AdminView extends React.PureComponent {
     const { response: EntityNumber } = await fetch_meta('/entities/count')
     this.setState({
       EntityNumber: EntityNumber.count,
+    }, ()=>{
+      if(this.state.selected_db=="Entities"){
+        this.fetch_stats()
+      }
     })
   }
 
@@ -599,12 +614,13 @@ class AdminView extends React.PureComponent {
                                                           undefined,
                                                           headers)
     const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
-                                                    .reduce((stat_dict, k)=>{
-                                                    stat_dict[k.replace(".Name", "")] = 
-                                                    Object.keys(signature_counts[k]).length
-                                                    return stat_dict},
-                                                    {})
-    
+                                                    .reduce((stat_list, k)=>{
+                                                    stat_list.push({name: k.replace(".Name", ""),
+                                                                    counts:Object.keys(signature_counts[k]).length})
+                                                    return(stat_list) },
+                                                    [])
+
+    sig_counts.sort((a, b) => a.name > b.name);
     this.setState({
       signature_counts: sig_counts,
     })

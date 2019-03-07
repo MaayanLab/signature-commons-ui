@@ -6,7 +6,9 @@ import { withStyles } from '@material-ui/core/styles';
 import BlurOn from '@material-ui/icons/BlurOn';
 import Fingerprint from '@material-ui/icons/Fingerprint';
 import LibraryBooks from '@material-ui/icons/LibraryBooks';
-import Grade from '@material-ui/icons/Grade';
+import Whatshot from '@material-ui/icons/Whatshot';
+import DonutSmall from '@material-ui/icons/DonutSmall';
+import Assessment from '@material-ui/icons/Assessment';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -15,13 +17,22 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import * as d3 from "d3";
-import sampPie from "./VXpie.js"
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { DonutChart } from "./VXpie.js";
 
+
+const colors = {
+                "Libraries":"#50a050",
+                "Entities": "#a03cb4",
+                "Signatures": "#2198f3"
+               }
 
 const styles = theme => ({
     root: {
       flexGrow: 1,
+    },
+    progress: {
+      margin: theme.spacing.unit * 2,
     },
     main: {
         flex: '1',
@@ -55,6 +66,24 @@ const styles = theme => ({
     menu: {
       width: 200,
     },
+    Libraries: {
+      backgroundColor: "#50a050",
+    },
+    Entities: {
+      backgroundColor: "#a03cb4",
+    },
+    Signatures: {
+      backgroundColor: "#2198f3",
+    },
+    chartCard: {
+      backgroundColor: "#2198f3",
+    },
+    popularCard: {
+      backgroundColor: "#e63c3c",
+    },
+    StatsCard: {
+      backgroundColor: "#fa9614",
+    },
 });
 
 Array.prototype.sum = function (prop) {
@@ -66,20 +95,22 @@ Array.prototype.sum = function (prop) {
 }
 
 
-const CardIcon = withStyles(styles)(({ Icon, classes, bgColor }) => (
-    <Card className={classes.cardicon} style={{ backgroundColor: bgColor }}>
+const CardIcon = withStyles(styles)(({ Icon, classes, type }) => (
+    <Card className={`${classes.cardicon} ${classes[type]}`}>
         <Icon className={classes.icon} />
     </Card>
 ));
 
-function Welcome(props){
+const Welcome = withStyles(styles)( function({ classes, record={}, ...props }){
     return(
-      <Card>
-        <CardHeader title={`Welcome to the Signature Commons Dashboard, ${props.name}!`} />
-        <CardContent>Let's start exploring</CardContent>
-      </Card>
+      <div className={classes.main}>
+        <Card>
+          <CardHeader title={`Welcome to the Signature Commons Dashboard, ${props.name}!`} />
+          <CardContent>Let's start exploring</CardContent>
+        </Card>
+      </div>
     )
-  }
+  })
 
 const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
     let icon = undefined
@@ -89,28 +120,27 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
       case "Libraries":
         icon = LibraryBooks;
         num = props.LibraryNumber;
-        background = "#ff9800";
         break;
       case "Signatures":
         icon = Fingerprint;
         num = props.SignatureNumber;
-        background = "#4caf50";
         break;
       case "Entities":
          icon = BlurOn;
          num = props.EntityNumber;
-         background = "#f44336";
         break;
+      case "Stats":
+        icon = Assessment
     }
-    if(props.type!=="Signatures"){
+    if(props.type!=="Stats"){
       return(
         <div className={classes.main}>
-          <CardIcon Icon={icon} bgColor={background} />
+          <CardIcon Icon={icon} type={`${props.type}`} />
           <Card className={classes.card}>
               <Typography className={classes.title} color="textSecondary">
                   {props.type}
               </Typography>
-              <Typography variant="headline" component="h2">
+              <Typography variant="headline" component="h4">
                   {num}
               </Typography>
           </Card>
@@ -119,28 +149,30 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
     }else{
       return(
         <div className={classes.main}>
-          <CardIcon Icon={icon} bgColor={background} />
+          <CardIcon Icon={icon} type={`${props.type}Card`} />
           <Card className={classes.card}>
-              <Typography className={classes.title} color="textSecondary">
-                  {props.type}
-              </Typography>
-              <Typography variant="headline" component="h2">
-                  {num}
+              <Typography variant="headline" component="h4">
+                  Stats
               </Typography>
               <Divider />
               {props.signature_counts===null ?
-                <div>
-                {props.SignatureNumber==="Loading..."? null: 
-                  <Typography variant="headline" component="h4">
-                      {"Loading stats..."}
-                  </Typography>
-                }</div>:
                 <List>
-                  {Object.keys(props.signature_counts).map(key =>(
+                  {["Cell_Line", "Disease", "Gene", "Small_Molecule", "Tissue"].map(item =>(
                     <ListItem>
                       <ListItemText
-                        primary={key.replace("_"," ")}
-                        secondary={props.signature_counts[key]}
+                        primary={item.replace("_"," ")}
+                        secondary={"Loading..."}
+                        style={{ paddingRight: 0 }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>:
+                <List>
+                  {props.signature_counts.map(item =>(
+                    <ListItem>
+                      <ListItemText
+                        primary={item.name.replace("_"," ")}
+                        secondary={item.counts}
                         style={{ paddingRight: 0 }}
                       />
                     </ListItem>
@@ -156,13 +188,41 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
 const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props }){
   return(
     <div className={classes.main}>
-      <CardIcon Icon={Grade} bgColor={"#31708f"} />
+      <CardIcon Icon={Whatshot} type={"popularCard"} />
       <Card className={classes.card}>
-          <Typography variant="headline" component="h2">
-              Popular Genes
+          <Typography variant="headline" component="h4">
+              Hot Genes
           </Typography>
           <Divider />
             <List>
+              <ListItem>
+                <ListItemText
+                  primary={"Coming Soon"}
+                  secondary={"12345"}
+                  style={{ paddingRight: 0 }}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary={"Coming Soon"}
+                  secondary={"12345"}
+                  style={{ paddingRight: 0 }}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary={"Coming Soon"}
+                  secondary={"12345"}
+                  style={{ paddingRight: 0 }}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary={"Coming Soon"}
+                  secondary={"12345"}
+                  style={{ paddingRight: 0 }}
+                />
+              </ListItem>
               <ListItem>
                 <ListItemText
                   primary={"Coming Soon"}
@@ -181,7 +241,7 @@ const Selections = withStyles(styles)( function({ classes, record={}, ...props }
     <TextField
       id="charts"
       select
-      label="Select"
+      label={props.name}
       className={classes.textField}
       value={props.value}
       SelectProps={{
@@ -218,10 +278,16 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     var others = [{"label": "others", "value":other_sum}]
     var data = other_sum >0 ? included.concat(others): included;
     data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-    console.log(props.stats)
-    console.log(stats)
     return(
-      <div>{sampPie({"width":350 ,"height":350,"margin":{"top":10,"bottom":10,"left":10,"right":10}, "data": data})}</div>
+      <div><DonutChart style={{"width":350 ,
+                               "height":350,
+                               "margin":{
+                                  "top":10,
+                                  "bottom":10,
+                                  "left":10,
+                                  "right":10}}}
+                        data={data}
+                        {...props}/></div>
         
     );
 })
@@ -241,40 +307,59 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
     }
   return(
     <div className={classes.main}>
+      <CardIcon Icon={DonutSmall} type={`${props.selected_db}`} />
       <Card className={classes.card}>
-          <Typography variant="headline" component="h2">
-              Stats
+          <Typography variant="headline" component="h4">
+              Charts
           </Typography>
           <Divider />
-          <Grid container spacing={24} container={"column"}>
-            <Grid item xs={12}>
+          <Grid container 
+                spacing={24}
+                container={"column"}>
+            <Grid item sm={12}>
               <Grid container spacing={24}>
                 <Grid item xs={6}>
                   <Selections
                     value={props.selected_db}
                     values={["Libraries","Signatures","Entities"]}
                     onChange={props.handleSelectDB}
+                    name={"Database"}
                   />
                 </Grid>
                 <Grid item xs={6}>
                   {fields===null ?
-                    <Typography variant="headline" component="h4">
-                      {"Loading..."}
-                    </Typography>:
+                    <Grid container 
+                      spacing={0}
+                      align="center"
+                      justify="center">
+                      <Grid item xs={12}>
+                        <CircularProgress className={classes.progress} />
+                      </Grid>
+                    </Grid>:
                     <Selections
                       value={props.selected_field === null ? fields[0]: props.selected_field}
                       values={Object.keys(fields).sort()}
                       onChange={props.handleSelectField}
+                      name="Key"
                     />
                   }
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item sm={12}>
               {props.stats===null ?
-                <Typography variant="headline" component="h4">
-                  {"Loading..."}
-                </Typography>:
+                <div>
+                  {fields===null ? <div/> :
+                    <Grid container 
+                      spacing={0}
+                      align="center"
+                      justify="center">
+                      <Grid item xs={12}>
+                        <CircularProgress className={classes.progress} />
+                      </Grid>
+                    </Grid>
+                  }
+                </div>:
                 <PieChart {...props}/>
               }
             </Grid>
@@ -288,33 +373,37 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
   return(
     <div className={classes.root}>
       <Grid container spacing={24}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={9} lg={6}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Stat type={"Libraries"} {...props} />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
+                  <Stat type={"Signatures"} {...props} />
+                </Grid>
+                <Grid item xs={4}>
                   <Stat type={"Entities"} {...props} />
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Welcome name={"Admin"} {...props} />
             </Grid>
             <Grid item xs={12}>
               <Charts {...props} />
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Grid container spacing={24}>
-            <Grid item xs={6}>
-              <Stat type={"Signatures"} {...props} />
-            </Grid>
-            <Grid item xs={6}>
-              <PopularGenes type={"Signatures"} {...props} />
+        <Grid item xs={12} md={3} lg={6}>
+          <Grid container spacing={24} direction={"column"}>
+            <Grid item xs={12}>
+              <Grid container spacing={24}>
+                <Grid item lg={6} md={12} xs={6}>
+                  <Stat type={"Stats"} {...props} />
+                </Grid>
+                <Grid item lg={6} md={12} xs={6}>
+                  <PopularGenes {...props} />
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
