@@ -1,7 +1,7 @@
 import M from "materialize-css";
 import React from "react";
 import { ShowMeta } from '../../components/ShowMeta';
-import { fetch_meta_post } from "../../util/fetch/meta";
+import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta";
 import { call } from '../../util/call';
 import { Label } from '../../components/Label';
 import IconButton from '../../components/IconButton';
@@ -36,7 +36,7 @@ export default class MetadataSearch extends React.Component {
     M.AutoInit();
   }
 
-  componentDidUpdate() {
+  async componentDidUpdate() {
     M.AutoInit();
     M.updateTextFields();
 
