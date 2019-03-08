@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import { base_url as meta_base_url } from "../../util/fetch/meta";
+import { base_scheme as meta_base_scheme, base_url as meta_base_url } from "../../util/fetch/meta";
 
 export function Nav(props) {
   return (
@@ -37,7 +37,7 @@ export function Nav(props) {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}
+          href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}
         >
           API
         </a>

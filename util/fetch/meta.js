@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 
 export const base_url = process.env.REACT_APP_METADATA_API || (window.location.origin + '/signature-commons-metadata-api')
+export const base_scheme = /^(https?):\/\/.+/.exec(base_url)[1]
 
 export async function fetch_meta(endpoint, body, signal, headers) {
   const start = new Date()
