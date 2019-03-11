@@ -39,11 +39,17 @@ const styles = theme => ({
         marginRight: '1em',
         marginTop: 20,
     },
+    numcard: {
+      overflow: 'inherit',
+      textAlign: 'right',
+      padding: 16,
+      height: 70,
+    },
     card: {
       overflow: 'inherit',
       textAlign: 'right',
       padding: 16,
-      minHeight: 52,
+      minHeight: 80,
     },
     piecard: {
       float: 'center',
@@ -64,6 +70,15 @@ const styles = theme => ({
       height: 54,
       padding: 14,
       color: '#fff',
+    },
+    title: {
+      fontSize: '10px',
+    },
+    bigtext:{
+      fontSize: '15px',
+    },
+    statnum: {
+      fontSize: '15px',
     },
     textField: {
       marginLeft: theme.spacing.unit,
@@ -143,11 +158,11 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
       return(
         <div className={classes.main}>
           <CardIcon Icon={icon} type={`${props.type}`} />
-          <Card className={classes.card}>
+          <Card className={classes.numcard}>
               <Typography className={classes.title} color="textSecondary">
                   {props.type}
               </Typography>
-              <Typography variant="headline" component="h4">
+              <Typography variant="headline" className={classes.statnum} component="h5">
                   {num}
               </Typography>
           </Card>
@@ -158,7 +173,7 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
         <div className={classes.main}>
           <CardIcon Icon={icon} type={`${props.type}Card`} />
           <Card className={classes.card}>
-              <Typography variant="headline" component="h4">
+              <Typography variant="headline" className={classes.bigtext} component="h5">
                   Stats
               </Typography>
               <Divider />
@@ -197,7 +212,7 @@ const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props
     <div className={classes.main}>
       <CardIcon Icon={Whatshot} type={"popularCard"} />
       <Card className={classes.card}>
-          <Typography variant="headline" component="h4">
+          <Typography variant="headline" className={classes.bigtext} component="h5">
               Hot Genes
           </Typography>
           <Divider />
@@ -298,12 +313,6 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     );
 })
 
-const PieCard = withStyles(styles)(({classes, ...props }) => (
-    <Card className={classes.piecard}>
-        <PieChart {...props}/>
-    </Card>
-));
-
 const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
   let fields=undefined
   switch (props.selected_db) {
@@ -321,7 +330,7 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
     <div className={classes.main}>
       <CardIcon Icon={DonutSmall} type={`${props.selected_db}`} />
       <Card className={classes.card}>
-          <Typography variant="headline" component="h4">
+          <Typography variant="headline" className={classes.bigtext} component="h5">
               Charts
           </Typography>
           <Divider />
@@ -360,19 +369,19 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
             </Grid>
             <Grid item sm={12}>
               {props.stats===null ?
-                <div>
-                  {fields===null ? <div/> :
-                    <Grid container 
-                      spacing={0}
-                      align="center"
-                      justify="center">
-                      <Grid item xs={12}>
-                        <CircularProgress className={classes.progress} />
-                      </Grid>
+                <Card className={classes.piecard}>
+                  <Grid container 
+                    spacing={0}
+                    align="center"
+                    justify="center">
+                    <Grid item xs={12}>
+                      <CircularProgress className={classes.progress} />
                     </Grid>
-                  }
-                </div>:
-                <PieCard {...props}/>
+                  </Grid>
+                </Card>:
+                <Card className={classes.piecard}>
+                  <PieChart {...props}/>
+                </Card>
               }
             </Grid>
           </Grid>
@@ -385,7 +394,7 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
   return(
     <div className={classes.root}>
       <Grid container spacing={24}>
-        <Grid item xs={12} md={9} lg={6}>
+        <Grid item xs={12} md={9} lg={7} xl={6}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
@@ -405,7 +414,7 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={3} lg={6}>
+        <Grid item xs={12} md={3} lg={5} xl={6}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
