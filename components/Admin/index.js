@@ -707,6 +707,9 @@ class AdminView extends React.PureComponent {
         if(this.state.general_controller){
           this.state.general_controller.abort()
         }
+        if(this.state.stat_controller){
+          this.state.stat_controller.abort()
+        }
         return Promise.resolve();
     }else if (type === AUTH_ERROR) {
       if (params === 'DOMException: "The operation was aborted. "'){
@@ -714,6 +717,9 @@ class AdminView extends React.PureComponent {
         this.setState({ token: null })
         if(this.state.general_controller){
           this.state.general_controller.abort()
+        }
+        if(this.state.stat_controller){
+          this.state.stat_controller.abort()
         }
         return Promise.reject()
       }else
@@ -724,6 +730,9 @@ class AdminView extends React.PureComponent {
       }else{
         if(this.state.general_controller){
           this.state.general_controller.abort()
+        }
+        if(this.state.stat_controller){
+          this.state.stat_controller.abort()
         }
         return Promise.reject();
       }
