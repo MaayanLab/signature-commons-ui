@@ -622,35 +622,13 @@ class AdminView extends React.PureComponent {
 
   componentDidMount() {
     window.addEventListener("hashchange", this.hashChangeHandler);
-    (async () => {
-      if (this.state.token){
-        this.fetch_libfields()
-      }
-      // this.get_libraries(library_fields)
-    })();
-    (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      if (this.state.token){
-        this.fetch_sigfields()
-      }
-    })();
-    (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      if (this.state.token){
-        this.fetch_sigstats()
-      }
-    })();
-    (async () => {
-      if (this.state.token){
-        this.fetch_entityfields()
-      }
-    })();
-    (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      if (this.state.token){
-        this.fetch_stats()
-      }
-    })();
+    if (this.state.token){
+      this.fetch_libfields()
+      this.fetch_sigfields()
+      this.fetch_sigstats()
+      this.fetch_entityfields()
+      this.fetch_stats()
+    }
   }
   httpClient(url, options = {}) {
     if(!(options.hasOwnProperty("method"))){
