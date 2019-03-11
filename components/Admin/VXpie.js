@@ -16,11 +16,20 @@ function LegendDemo({ title, children }) {
   );
 }
 
+const colorrange = {
+                    "Libraries": ["#afdbaf", "#136313"],
+                    "Entities": ["#d390e1", "#720b87"],
+                    "Signatures": ["#75bef5", "#0367b4"]
+                    }
 
-export default ({ width, height, margin, data }) => {
+export const DonutChart = function({ style, data, ...props }){
   // data format {Tissue: Value}
   const white = '#ffffff';
   const black = '#000000';
+  const width = style.width
+  const height = style.height
+  const margin = style.margin
+  console.log(props.selected_db)
   const dataLabels = data.map(function(d){
     return(
       d.label
@@ -34,7 +43,7 @@ export default ({ width, height, margin, data }) => {
 
   const sizeColorScale = scaleLinear({
     domain: [0, dataLabels.length],
-    range: ['#75fcfc', '#3236b8']
+    range: colorrange[props.selected_db]
   });
 
   const ordinalColorScale = scaleOrdinal({
@@ -49,7 +58,7 @@ export default ({ width, height, margin, data }) => {
   return (
     <div>
       <Grid container spacing={24}>
-        <Grid item lg={7} md={12}>
+        <Grid item xs={7}>
           <svg width={width} height={height}>
             <rect rx={14} width={width} height={height} fill="url('#pie-gradients')" />
             <Group top={centerY - margin.top} left={centerX}>
@@ -77,7 +86,7 @@ export default ({ width, height, margin, data }) => {
                             x={centroidX}
                             y={centroidY}
                             dy=".33em"
-                            fontSize={9}
+                            fontSize={6}
                             textAnchor="middle"
                           >
                             {arc.data.label}
@@ -91,7 +100,7 @@ export default ({ width, height, margin, data }) => {
             </Group>
           </svg>
         </Grid>
-        <Grid item lg={5} md={12} style={{
+        <Grid item xs={5} style={{
             fontSize: '10px'
           }}>
           <LegendOrdinal scale={ordinalColorScale} direction="column" labelMargin="0 15px 0 0"/>

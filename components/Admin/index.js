@@ -60,6 +60,7 @@ class AdminView extends React.PureComponent {
       status: null,
       controller: null,
       stat_controller: null,
+      general_controller: null,
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
       hash: window.location.hash,
@@ -107,15 +108,19 @@ class AdminView extends React.PureComponent {
   handleSelectDB(e){
     const selected = e.target.value
     let field=undefined
+    let fields_loaded=undefined
     switch (selected) {
       case "Libraries":
         field="Assay"
+        fields_loaded= this.state.library_fields===null? false: true
         break;
       case "Signatures":
         field="Assay"
+        fields_loaded= this.state.signature_allfields===null? false: true
         break;
       case "Entities":
         field="Taxon_ID"
+        fields_loaded= this.state.entity_fields===null? false: true
         break;
     }
     this.setState({
@@ -123,7 +128,9 @@ class AdminView extends React.PureComponent {
       selected_field: field,
       stats: null,
     }, () => {
-      this.fetch_stats()
+      if(fields_loaded){
+        this.fetch_stats()
+      }
     })
   }
 
@@ -545,35 +552,44 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: library_fields } = await fetch_meta('/libraries/key_count',
                                                           undefined,
-                                                          undefined,
+                                                          this.state.general_controller.signal,
                                                           headers)
     this.setState({
       LibNum: library_fields.$validator,
       library_fields: library_fields,
-    })
-    const { response: LibraryNumber } = await fetch_meta('/libraries/count')
-    this.setState({
-      LibraryNumber: LibraryNumber.count,
+      LibraryNumber: library_fields.$validator,
+    },()=>{
+      if(this.state.selected_db=="Libraries"){
+        this.fetch_stats()
+      }
     })
   }
 
   async fetch_sigfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { data: signature_fields} = await this.dataProvider(GET_ONE, "libraries", {id: this.state.uid})
+    const { response: signature_fields} = await fetch_meta(`/libraries/${this.state.uid}`,
+                                                          undefined,
+                                                          this.state.general_controller.signal,
+                                                          headers)
     console.log(signature_fields)
     this.setState({
       signature_fields: signature_fields["Signature_keys"],
     })
-    const { response: SignatureNumber } = await fetch_meta('/signatures/count')
-    this.setState({
-      SignatureNumber: SignatureNumber.count,
-    })
+  }
+
+  async fetch_sigallfields(){
+    const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: signature_allfields} = await fetch_meta('/signatures/key_count',
                                                           undefined,
-                                                          undefined,
+                                                          this.state.general_controller.signal,
                                                           headers)
     this.setState({
       signature_allfields: signature_allfields,
+      SignatureNumber: signature_allfields.$validator,
+    },()=>{
+      if(this.state.selected_db=="Signatures"){
+        this.fetch_stats()
+      }
     })
   }
 
@@ -581,14 +597,15 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: entity_fields } = await fetch_meta('/entities/key_count',
                                                         undefined,
-                                                        undefined,
+                                                        this.state.general_controller.signal,
                                                         headers)
     this.setState({
       entity_fields: entity_fields,
-    })
-    const { response: EntityNumber } = await fetch_meta('/entities/count')
-    this.setState({
-      EntityNumber: EntityNumber.count,
+      EntityNumber: entity_fields.$validator,
+    },()=>{
+      if(this.state.selected_db=="Entities"){
+        this.fetch_stats()
+      }
     })
   }
 
@@ -596,55 +613,31 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: signature_counts} = await fetch_meta('/signatures/value_count?depth=2&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
                                                           undefined,
-                                                          undefined,
+                                                          this.state.general_controller.signal,
                                                           headers)
     const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
-                                                    .reduce((stat_dict, k)=>{
-                                                    stat_dict[k.replace(".Name", "")] = 
-                                                    Object.keys(signature_counts[k]).length
-                                                    return stat_dict},
-                                                    {})
-    
+                                                    .reduce((stat_list, k)=>{
+                                                    stat_list.push({name: k.replace(".Name", ""),
+                                                                    counts:Object.keys(signature_counts[k]).length})
+                                                    return(stat_list) },
+                                                    [])
+
+    sig_counts.sort((a, b) => a.name > b.name);
     this.setState({
       signature_counts: sig_counts,
-    })
-    const { response: SignatureNumber } = await fetch_meta('/signatures/count')
-    this.setState({
-      SignatureNumber: SignatureNumber.count,
     })
   }
 
   componentDidMount() {
     window.addEventListener("hashchange", this.hashChangeHandler);
-    (async () => {
-      if (this.state.token){
-        this.fetch_libfields()
-      }
-      // this.get_libraries(library_fields)
-    })();
-    (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      if (this.state.token){
-        this.fetch_sigfields()
-      }
-    })();
-    (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      if (this.state.token){
-        this.fetch_sigstats()
-      }
-    })();
-    (async () => {
-      if (this.state.token){
-        this.fetch_entityfields()
-      }
-    })();
-    (async () => {
-      // const headers = {'Authorization': `Basic ${this.state.token}`}
-      if (this.state.token){
-        this.fetch_stats()
-      }
-    })();
+    if (this.state.token && this.state.general_controller){
+      this.fetch_libfields()
+      this.fetch_sigfields()
+      this.fetch_sigstats()
+      this.fetch_sigallfields()
+      this.fetch_entityfields()
+      this.fetch_stats()
+    }
   }
   httpClient(url, options = {}) {
     if(!(options.hasOwnProperty("method"))){
@@ -674,12 +667,20 @@ class AdminView extends React.PureComponent {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
       const headers = {'Authorization': `Basic ${token}`}
-      const { response: auth_res} = await fetch_meta('/libraries/'+this.state.uid,
-                                                     undefined, undefined, headers)
+      const { response: auth_res} = await fetch_meta(`/libraries/${this.state.uid}`,
+                                                      undefined,
+                                                      undefined,
+                                                      headers)
       if ((auth_res.hasOwnProperty("error")) && (auth_res.error.statusCode >= 400 && auth_res.error.statusCode < 500)){
         return Promise.reject()
       }else{
         this.setState({ token: token })
+        
+        const general_controller = new AbortController()
+        this.setState({
+          general_controller: general_controller,
+        })
+
         // Load column names
         if(this.state.library_fields===null){
           this.fetch_libfields()
@@ -690,8 +691,11 @@ class AdminView extends React.PureComponent {
         if(this.state.entity_fields===null){
           this.fetch_entityfields()
         }
-        if(this.state.signature_fields===null){
+        if(this.state.signature_counts===null){
           this.fetch_sigstats()
+        }
+        if(this.state.signature_allfields===null){
+          this.fetch_sigallfields()
         }
         if(this.state.stats===null){
           this.fetch_stats()
@@ -700,16 +704,38 @@ class AdminView extends React.PureComponent {
       }
     }else if (type === AUTH_LOGOUT) {
         this.setState({ token: null })
+        if(this.state.general_controller){
+          this.state.general_controller.abort()
+        }
+        if(this.state.stat_controller){
+          this.state.stat_controller.abort()
+        }
         return Promise.resolve();
     }else if (type === AUTH_ERROR) {
       if (params === 'DOMException: "The operation was aborted. "'){
         const status  = params.status;
         this.setState({ token: null })
+        if(this.state.general_controller){
+          this.state.general_controller.abort()
+        }
+        if(this.state.stat_controller){
+          this.state.stat_controller.abort()
+        }
         return Promise.reject()
       }else
         return Promise.resolve()
     }else if (type === AUTH_CHECK) {
-      return this.state.token ? Promise.resolve() : Promise.reject();
+      if(this.state.token){
+        return Promise.resolve()
+      }else{
+        if(this.state.general_controller){
+          this.state.general_controller.abort()
+        }
+        if(this.state.stat_controller){
+          this.state.stat_controller.abort()
+        }
+        return Promise.reject();
+      }
     }
     return Promise.reject()
   }
