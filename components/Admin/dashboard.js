@@ -45,6 +45,13 @@ const styles = theme => ({
       padding: 16,
       minHeight: 52,
     },
+    piecard: {
+      float: 'center',
+      margin: '5px',
+      padding: '20px 5px 5px 5px',
+      zIndex: 100,
+      borderRadius: 3,
+    },
     cardicon: {
       float: 'left',
       margin: '-20px 20px 0 15px',
@@ -249,7 +256,6 @@ const Selections = withStyles(styles)( function({ classes, record={}, ...props }
           className: classes.menu,
         },
       }}
-      helperText="Please select a field"
       margin="normal"
       onChange={props.onChange}
     >
@@ -291,6 +297,12 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
         
     );
 })
+
+const PieCard = withStyles(styles)(({classes, ...props }) => (
+    <Card className={classes.piecard}>
+        <PieChart {...props}/>
+    </Card>
+));
 
 const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
   let fields=undefined
@@ -360,7 +372,7 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
                     </Grid>
                   }
                 </div>:
-                <PieChart {...props}/>
+                <PieCard {...props}/>
               }
             </Grid>
           </Grid>
