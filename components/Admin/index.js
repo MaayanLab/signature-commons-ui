@@ -585,6 +585,22 @@ class AdminView extends React.PureComponent {
     })
   }
 
+  async fetch_sigallfields(){
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: signature_allfields} = await fetch_meta('/signatures/key_count',
+                                                          undefined,
+                                                          undefined,
+                                                          headers)
+    this.setState({
+      signature_allfields: signature_allfields,
+      SignatureNumber: signature_allfields.$validator,
+    },()=>{
+      if(this.state.selected_db=="Signatures"){
+        this.fetch_stats()
+      }
+    })
+  }
+
   async fetch_entityfields(){
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: entity_fields } = await fetch_meta('/entities/key_count',
@@ -626,6 +642,7 @@ class AdminView extends React.PureComponent {
       this.fetch_libfields()
       this.fetch_sigfields()
       this.fetch_sigstats()
+      this.fetch_sigallfields()
       this.fetch_entityfields()
       this.fetch_stats()
     }
@@ -674,8 +691,11 @@ class AdminView extends React.PureComponent {
         if(this.state.entity_fields===null){
           this.fetch_entityfields()
         }
-        if(this.state.signature_fields===null){
+        if(this.state.signature_counts===null){
           this.fetch_sigstats()
+        }
+        if(this.state.signature_allfields===null){
+          this.fetch_sigallfields()
         }
         if(this.state.stats===null){
           this.fetch_stats()
