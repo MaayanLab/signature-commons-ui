@@ -8,7 +8,7 @@ import React from "react"
 import IconButton from '../../components/IconButton'
 import { Label, objectMatch, schemas } from '../../components/Label'
 import { ShowMeta } from '../../components/ShowMeta'
-import { fetch_data } from "../../util/fetch/data"
+import { fetch_data, fetch_data_get } from "../../util/fetch/data"
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta"
 import { makeTemplate } from '../../util/makeTemplate'
 import { maybe_fix_obj } from '../../util/maybe_fix_obj'
@@ -223,22 +223,19 @@ export default class SignatureSearch extends React.Component {
       let enriched_results
 
       if (this.state.up_down) {
-        enriched_results = (await Promise.all([
-          fetch_data('/enrich/ranktwosided', {
-            up_entities: up_entity_ids,
-            down_entities: down_entity_ids,
-            signatures: [],
-            database: 'lincs_clue',
-            limit: 500,
-          }, controller.signal),
-          fetch_data('/enrich/ranktwosided', {
-            up_entities: up_entity_ids,
-            down_entities: down_entity_ids,
-            signatures: [],
-            database: 'lincs_fwd',
-            limit: 500,
-          }, controller.signal),
-        ])).reduce(
+        const { response } = await fetch_data_get('/listdata')
+
+        enriched_results = (await Promise.all(
+          response.databases.filter((repo) => repo.datatype === 'ranklist').map((repo) =>
+            fetch_data('/enrich/ranktwosided', {
+              up_entities: up_entity_ids,
+              down_entities: down_entity_ids,
+              signatures: [],
+              database: repo.uuid,
+              limit: 500,
+            }, controller.signal)
+          )
+        )).reduce(
           (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
             duration_data += duration_data_n
             count_data += contentRange_data_n.count
@@ -263,32 +260,18 @@ export default class SignatureSearch extends React.Component {
           }, {}
         )
       } else {
-        enriched_results = (await Promise.all([
-          fetch_data('/enrich/overlap', {
-            entities: entity_ids,
-            signatures: [],
-            database: 'enrichr_geneset',
-            limit: 500,
-          }, controller.signal),
-          fetch_data('/enrich/overlap', {
-            entities: entity_ids,
-            signatures: [],
-            database: 'creeds_geneset',
-            limit: 500,
-          }, controller.signal),
-          fetch_data('/enrich/rank', {
-            entities: entity_ids,
-            signatures: [],
-            database: 'lincs_clue',
-            limit: 500,
-          }, controller.signal),
-          fetch_data('/enrich/rank', {
-            entities: entity_ids,
-            signatures: [],
-            database: 'lincs_fwd',
-            limit: 500,
-          }, controller.signal),
-        ])).reduce(
+        const { response } = await fetch_data_get('/listdata')
+
+        enriched_results = (await Promise.all(
+          response.databases.filter((repo) => repo.datatype === 'geneset').map((repo) =>
+            fetch_data('/enrich/overlap', {
+              entities: entity_ids,
+              signatures: [],
+              database: repo.uuid,
+              limit: 500,
+            }, controller.signal)
+          )
+        )).reduce(
           (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
             duration_data += duration_data_n
             count_data += contentRange_data_n.count
