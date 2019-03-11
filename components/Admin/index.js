@@ -566,22 +566,13 @@ class AdminView extends React.PureComponent {
 
   async fetch_sigfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { data: signature_fields} = await this.dataProvider(GET_ONE, "libraries", {id: this.state.uid})
-    console.log(signature_fields)
-    this.setState({
-      signature_fields: signature_fields["Signature_keys"],
-    })
-    const { response: signature_allfields} = await fetch_meta('/signatures/key_count',
+    const { response: signature_fields} = await fetch_meta(`/libraries/${this.state.uid}`,
                                                           undefined,
                                                           undefined,
                                                           headers)
+    console.log(signature_fields)
     this.setState({
-      signature_allfields: signature_allfields,
-      SignatureNumber: signature_allfields.$validator,
-    },()=>{
-      if(this.state.selected_db=="Signatures"){
-        this.fetch_stats()
-      }
+      signature_fields: signature_fields["Signature_keys"],
     })
   }
 
@@ -675,8 +666,10 @@ class AdminView extends React.PureComponent {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
       const headers = {'Authorization': `Basic ${token}`}
-      const { response: auth_res} = await fetch_meta('/libraries/'+this.state.uid,
-                                                     undefined, undefined, headers)
+      const { response: auth_res} = await fetch_meta(`/libraries/${this.state.uid}`,
+                                                      undefined,
+                                                      undefined,
+                                                      headers)
       if ((auth_res.hasOwnProperty("error")) && (auth_res.error.statusCode >= 400 && auth_res.error.statusCode < 500)){
         return Promise.reject()
       }else{
