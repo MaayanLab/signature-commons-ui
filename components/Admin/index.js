@@ -571,16 +571,13 @@ class AdminView extends React.PureComponent {
     this.setState({
       signature_fields: signature_fields["Signature_keys"],
     })
-    const { response: SignatureNumber } = await fetch_meta('/signatures/count')
-    this.setState({
-      SignatureNumber: SignatureNumber.count,
-    })
     const { response: signature_allfields} = await fetch_meta('/signatures/key_count',
                                                           undefined,
                                                           undefined,
                                                           headers)
     this.setState({
       signature_allfields: signature_allfields,
+      SignatureNumber: signature_allfields.$validator,
     },()=>{
       if(this.state.selected_db=="Signatures"){
         this.fetch_stats()
@@ -596,11 +593,8 @@ class AdminView extends React.PureComponent {
                                                         headers)
     this.setState({
       entity_fields: entity_fields,
-    })
-    const { response: EntityNumber } = await fetch_meta('/entities/count')
-    this.setState({
-      EntityNumber: EntityNumber.count,
-    }, ()=>{
+      EntityNumber: entity_fields.$validator,
+    },()=>{
       if(this.state.selected_db=="Entities"){
         this.fetch_stats()
       }
@@ -623,10 +617,6 @@ class AdminView extends React.PureComponent {
     sig_counts.sort((a, b) => a.name > b.name);
     this.setState({
       signature_counts: sig_counts,
-    })
-    const { response: SignatureNumber } = await fetch_meta('/signatures/count')
-    this.setState({
-      SignatureNumber: SignatureNumber.count,
     })
   }
 
