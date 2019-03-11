@@ -8,7 +8,7 @@ import React from "react"
 import IconButton from '../../components/IconButton'
 import { Label, objectMatch, schemas } from '../../components/Label'
 import { ShowMeta } from '../../components/ShowMeta'
-import { fetch_data, fetch_data_get } from "../../util/fetch/data"
+import { fetch_data } from "../../util/fetch/data"
 import { fetch_meta, fetch_meta_post } from "../../util/fetch/meta"
 import { makeTemplate } from '../../util/makeTemplate'
 import { maybe_fix_obj } from '../../util/maybe_fix_obj'
@@ -223,10 +223,10 @@ export default class SignatureSearch extends React.Component {
       let enriched_results
 
       if (this.state.up_down) {
-        const { response } = await fetch_data_get('/listdata')
+        const { response } = await fetch_data('/listdata')
 
         enriched_results = (await Promise.all(
-          response.databases.filter((repo) => repo.datatype === 'ranklist').map((repo) =>
+          response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map((repo) =>
             fetch_data('/enrich/ranktwosided', {
               up_entities: up_entity_ids,
               down_entities: down_entity_ids,
@@ -238,7 +238,7 @@ export default class SignatureSearch extends React.Component {
         )).reduce(
           (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
             duration_data += duration_data_n
-            count_data += contentRange_data_n.count
+            count_data += (contentRange_data_n || {}).count || 0
             return ({
               ...results,
               ...maybe_fix_obj(
@@ -260,10 +260,10 @@ export default class SignatureSearch extends React.Component {
           }, {}
         )
       } else {
-        const { response } = await fetch_data_get('/listdata')
+        const { response } = await fetch_data('/listdata')
 
         enriched_results = (await Promise.all(
-          response.databases.filter((repo) => repo.datatype === 'geneset').map((repo) =>
+          response.repositories.filter((repo) => repo.datatype === 'geneset_library').map((repo) =>
             fetch_data('/enrich/overlap', {
               entities: entity_ids,
               signatures: [],
@@ -274,7 +274,7 @@ export default class SignatureSearch extends React.Component {
         )).reduce(
           (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
             duration_data += duration_data_n
-            count_data += contentRange_data_n.count
+            count_data += (contentRange_data_n || {}).count || 0
             return ({
               ...results,
               ...maybe_fix_obj(result.results),
