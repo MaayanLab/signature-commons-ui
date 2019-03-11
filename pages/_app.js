@@ -1,7 +1,6 @@
 
 import React from 'react'
 import App, { Container } from 'next/app'
-import Head from 'next/head'
 import Router from 'next/router'
 import NProgress from 'nprogress'
 import '../styles/index.scss'
@@ -30,14 +29,6 @@ export default class extends App {
 
     return (
       <Container className="root">
-        <Head>
-          <meta charSet="utf-8" />
-          <link rel="shortcut icon" href={`${process.env.PREFIX}/static/favicon.ico`} />
-          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-          <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
-          <script async defer src="https://buttons.github.io/buttons.js"></script>
-        </Head>
         <Component {...pageProps} />
       </Container>
     )

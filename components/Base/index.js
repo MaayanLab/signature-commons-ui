@@ -1,4 +1,5 @@
 import React from 'react'
+import Head from 'next/head'
 import Header from './Header'
 import Footer from './Footer'
 import { initGA, logPageView } from '../../util/analytics'
@@ -33,6 +34,13 @@ export default class extends React.PureComponent {
   render() {
     return (
       <div className="root">
+        <Head>
+          <meta charSet="utf-8" />
+          <link rel="shortcut icon" href={`${process.env.PREFIX}/static/favicon.ico`} />
+          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+          <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+          <script async defer src="https://buttons.github.io/buttons.js"></script>
+        </Head>
         <Header />
         <main>
           <div className="container">
