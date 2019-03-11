@@ -28,7 +28,7 @@ import BlurOn from '@material-ui/icons/BlurOn';
 import Fingerprint from '@material-ui/icons/Fingerprint';
 import LibraryBooks from '@material-ui/icons/LibraryBooks';
 
-import { base_url, fetch_meta } from '../../util/fetch/meta';
+import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta';
 import { fetchJson } from '../../util/fetch/fetch';
 
 import loopbackProvider from './loopback-provider';
@@ -667,11 +667,11 @@ class AdminView extends React.PureComponent {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
       const headers = {'Authorization': `Basic ${token}`}
-      const { response: auth_res} = await fetch_meta(`/libraries/${this.state.uid}`,
-                                                      undefined,
-                                                      undefined,
-                                                      headers)
-      if ((auth_res.hasOwnProperty("error")) && (auth_res.error.statusCode >= 400 && auth_res.error.statusCode < 500)){
+      const { authenticated: auth} = await fetch_creds('/',
+                                                        undefined,
+                                                        undefined,
+                                                        headers)
+      if (!auth){
         return Promise.reject()
       }else{
         this.setState({ token: token })
