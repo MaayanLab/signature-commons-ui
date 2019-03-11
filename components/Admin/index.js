@@ -60,6 +60,7 @@ class AdminView extends React.PureComponent {
       status: null,
       controller: null,
       stat_controller: null,
+      general_controller: null,
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
       hash: window.location.hash,
@@ -551,7 +552,7 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: library_fields } = await fetch_meta('/libraries/key_count',
                                                           undefined,
-                                                          undefined,
+                                                          this.state.general_controller.signal,
                                                           headers)
     this.setState({
       LibNum: library_fields.$validator,
@@ -568,7 +569,7 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: signature_fields} = await fetch_meta(`/libraries/${this.state.uid}`,
                                                           undefined,
-                                                          undefined,
+                                                          this.state.general_controller.signal,
                                                           headers)
     console.log(signature_fields)
     this.setState({
@@ -580,7 +581,7 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: signature_allfields} = await fetch_meta('/signatures/key_count',
                                                           undefined,
-                                                          undefined,
+                                                          this.state.general_controller.signal,
                                                           headers)
     this.setState({
       signature_allfields: signature_allfields,
@@ -596,7 +597,7 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: entity_fields } = await fetch_meta('/entities/key_count',
                                                         undefined,
-                                                        undefined,
+                                                        this.state.general_controller.signal,
                                                         headers)
     this.setState({
       entity_fields: entity_fields,
@@ -612,7 +613,7 @@ class AdminView extends React.PureComponent {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: signature_counts} = await fetch_meta('/signatures/value_count?depth=2&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
                                                           undefined,
-                                                          undefined,
+                                                          this.state.general_controller.signal,
                                                           headers)
     const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
                                                     .reduce((stat_list, k)=>{
@@ -629,7 +630,7 @@ class AdminView extends React.PureComponent {
 
   componentDidMount() {
     window.addEventListener("hashchange", this.hashChangeHandler);
-    if (this.state.token){
+    if (this.state.token && this.state.general_controller){
       this.fetch_libfields()
       this.fetch_sigfields()
       this.fetch_sigstats()
@@ -674,6 +675,12 @@ class AdminView extends React.PureComponent {
         return Promise.reject()
       }else{
         this.setState({ token: token })
+        
+        const general_controller = new AbortController()
+        this.setState({
+          general_controller: general_controller,
+        })
+
         // Load column names
         if(this.state.library_fields===null){
           this.fetch_libfields()
@@ -697,16 +704,29 @@ class AdminView extends React.PureComponent {
       }
     }else if (type === AUTH_LOGOUT) {
         this.setState({ token: null })
+        if(this.state.general_controller){
+          this.state.general_controller.abort()
+        }
         return Promise.resolve();
     }else if (type === AUTH_ERROR) {
       if (params === 'DOMException: "The operation was aborted. "'){
         const status  = params.status;
         this.setState({ token: null })
+        if(this.state.general_controller){
+          this.state.general_controller.abort()
+        }
         return Promise.reject()
       }else
         return Promise.resolve()
     }else if (type === AUTH_CHECK) {
-      return this.state.token ? Promise.resolve() : Promise.reject();
+      if(this.state.token){
+        return Promise.resolve()
+      }else{
+        if(this.state.general_controller){
+          this.state.general_controller.abort()
+        }
+        return Promise.reject();
+      }
     }
     return Promise.reject()
   }
