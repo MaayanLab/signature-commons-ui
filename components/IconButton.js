@@ -12,6 +12,7 @@ const IconButton = (props) => (
       width: 100px;
       min-height: 100px;
       overflow: visible;
+      color: black;
     }
     .icon-btn > span {
       line-height: 16px;
