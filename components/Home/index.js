@@ -3,7 +3,7 @@ import fileDownload from 'js-file-download';
 import M from "materialize-css";
 import Base from '../../components/Base';
 import React from "react";
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { call } from '../../util/call';
 import { fetch_data } from "../../util/fetch/data";
 import { base_url as meta_base_url, fetch_meta_post } from "../../util/fetch/meta";
@@ -168,6 +168,12 @@ export default class Home extends React.PureComponent {
         <Switch>
           <Route
             exact path="/"
+            render={() => (
+              <Redirect to="/SignatureSearch" />
+            )}
+          />
+          <Route
+            path="/SignatureSearch"
             component={(props) =>
               <SignatureSearch
                 cart={this.state.cart}
@@ -178,18 +184,7 @@ export default class Home extends React.PureComponent {
             }
           />
           <Route
-            exact path="/SignatureSearch"
-            component={(props) =>
-              <SignatureSearch
-                cart={this.state.cart}
-                updateCart={this.updateCart}
-                download={this.download}
-                {...props}
-              />
-            }
-          />
-          <Route
-            exact path="/MetadataSearch"
+            path="/MetadataSearch"
             component={(props) =>
               <MetadataSearch
                 cart={this.state.cart}
@@ -200,7 +195,7 @@ export default class Home extends React.PureComponent {
             }
           />
           <Route
-            exact path="/Resources"
+            path="/Resources"
             component={(props) =>
               <Resources
                 cart={this.state.cart}
@@ -211,7 +206,7 @@ export default class Home extends React.PureComponent {
             }
           />
           <Route
-            exact path="/UploadCollection"
+            path="/UploadCollection"
             component={(props) =>
               <Upload
                 cart={this.state.cart}
