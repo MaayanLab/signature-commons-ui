@@ -1,47 +1,10 @@
 import React from 'react'
 import IconButton from '../../components/IconButton';
 import { ShowMeta } from '../../components/ShowMeta';
-import { fetch_meta_post } from '../../util/fetch/meta';
 import { Label } from '../../components/Label';
 import M from "materialize-css";
 import { call } from '../../util/call';
-
-export const primary_resources = [
-  'CREEDS',
-  'ARCHS4',
-  'KEGG',
-  'GTEx',
-  'ENCODE',
-  'HPO',
-  'CCLE',
-  'Allen Brain Atlas',
-  'Achilles',
-]
-
-export const primary_two_tailed_resources = [
-  'CMAP'
-]
-
-export const renamed = {
-  'Human Phenotype Ontology': 'HPO',
-  'MGI Mammalian Phenotype': 'MGI-MP',
-  'Cancer Cell Line Encyclopedia': 'CCLE',
-  'NCI': 'NCI Pathways',
-  'Disease Signatures': 'CREEDS',
-  'Single Drug Perturbations': 'CREEDS',
-  'Single Gene Perturbations': 'CREEDS',
-  'clueio': 'CMAP',
-  'GEO': 'CREEDS',
-  'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
-  'ENCODE/ChEA': 'ENCODE',
-  'Gene Ontology Consortium': 'Gene Ontology',
-  'PubMed': 'Enrichr',
-}
-
-export const iconOf = {
-  'CREEDS': `static/images/creeds.png`,
-  'CMAP': `static/images/clueio.ico`,
-}
+import { get_library_resources } from './resources';
 
 export default class Resources extends React.PureComponent {
   constructor(props) {
@@ -59,44 +22,13 @@ export default class Resources extends React.PureComponent {
   }
 
   async componentDidMount() {
-    // const response = await fetch("/resources/all.json").then((res)=>res.json())
-    const response = (await import("../../ui-schemas/resources/all.json")).default
-    console.log(response)
-    const p = "1234"
-    const res_meta = response.reduce((group, data)=>{
-      group[data.Resource_Name] = data
-      return group
-    }, {})
-    const {response: libraries} = await fetch_meta_post('/libraries/find', {})
-    const resources = libraries.reduce((groups, lib) => {
-      let resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name']
-      if ((lib.meta['Library_name'] || '').indexOf('ARCHS4') !== -1)
-        resource = 'ARCHS4'
-      if (resource === 'Enrichr')
-        return groups
-
-      if (groups[resource] === undefined) {
-        groups[resource] = {
-          name: resource,
-          icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
-          description: res_meta[resource].Description,
-          PMID: res_meta[resource].PMID,
-          URL: res_meta[resource].URL,
-          libraries: []
-        }
-      }
-      groups[resource].libraries.push(lib)
-      return groups
-    }, {})
-    // .map((group)=>{
-    //   fetch("/resources/"+resource+".json").then((res)=>res.json).then((data)=>{
-    //     console.log(data)
-    //   })
-    //   return
-    // })
-
+    const {
+      libraries, resources, library_resource
+    } = await get_library_resources()
     this.setState({
+      libraries,
       resources: Object.values(resources),
+      library_resource,
     })
   }
 
