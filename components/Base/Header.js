@@ -47,32 +47,52 @@ export function Nav(props) {
 }
 
 
-export default withRouter((props) => (
-  <header>
-    <nav className="nav-extended">
-      <div className="nav-wrapper">
-        <Link
-          to="/"
-          className="brand-logo left hide-on-med-and-down"
-          style={{
-            whiteSpace: 'nowrap',
-          }}
-        >
-          &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
-        </Link>
-        <Link
-          to="/"
-          className="brand-logo center hide-on-large-only"
-          style={{
-            whiteSpace: 'nowrap',
-          }}
-        >
-          &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
-        </Link>
-        <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-        <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
-      </div>
-      <Nav className="sidenav" id="mobile-menu" location={props.location} />
-    </nav>
-  </header>
-))
+export default withRouter((props) => {
+  const paths = props.location.pathname.split('/')
+  return (
+    <header>
+      <nav className="nav-extended">
+        <div className="nav-wrapper">
+          <Link
+            to="/"
+            className="brand-logo left hide-on-med-and-down"
+            style={{
+              whiteSpace: 'nowrap',
+            }}
+          >
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
+          </Link>
+          <Link
+            to="/"
+            className="brand-logo center hide-on-large-only"
+            style={{
+              whiteSpace: 'nowrap',
+            }}
+          >
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
+          </Link>
+          <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
+          <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
+        </div>
+        <Nav className="sidenav" id="mobile-menu" location={props.location} />
+
+        {paths.length <= 2 ? null : (
+          <div className="nav-wrapper">
+            <div className="row">
+              <div className="col s12">
+                {paths.slice(1).map((path, i) => (
+                  <Link
+                    to={paths.slice(0, i + 2).join('/')}
+                    className="breadcrumb"
+                  >
+                    {path}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
+    </header>
+  )
+})
