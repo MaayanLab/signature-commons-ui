@@ -85,7 +85,7 @@ export default withRouter((props) => {
                     to={paths.slice(0, i + 2).join('/')}
                     className="breadcrumb"
                   >
-                    {path}
+                    {path.replace(/_/g, ' ')}
                   </Link>
                 ))}
               </div>
