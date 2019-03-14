@@ -151,6 +151,42 @@ export default class Home extends React.PureComponent {
     )
   }
 
+  signature_search = (props) => (
+    <SignatureSearch
+      cart={this.state.cart}
+      updateCart={this.updateCart}
+      download={this.download}
+      {...props}
+    />
+  )
+
+  metadata_search = (props) => (
+    <MetadataSearch
+      cart={this.state.cart}
+      updateCart={this.updateCart}
+      download={this.download}
+      {...props}
+    />
+  )
+
+  resources = (props) => (
+    <Resources
+      cart={this.state.cart}
+      updateCart={this.updateCart}
+      download={this.download}
+      {...props}
+    />
+  )
+
+  upload = (props) => (
+    <Upload
+      cart={this.state.cart}
+      updateCart={this.updateCart}
+      download={this.download}
+      {...props}
+    />
+  )
+
   render() {
     const CartActions = this.CartActions
 
@@ -174,47 +210,19 @@ export default class Home extends React.PureComponent {
           />
           <Route
             path="/SignatureSearch"
-            component={(props) =>
-              <SignatureSearch
-                cart={this.state.cart}
-                updateCart={this.updateCart}
-                download={this.download}
-                {...props}
-              />
-            }
+            component={this.signature_search}
           />
           <Route
             path="/MetadataSearch"
-            component={(props) =>
-              <MetadataSearch
-                cart={this.state.cart}
-                updateCart={this.updateCart}
-                download={this.download}
-                {...props}
-              />
-            }
+            component={this.metadata_search}
           />
           <Route
             path="/Resources"
-            component={(props) =>
-              <Resources
-                cart={this.state.cart}
-                updateCart={this.updateCart}
-                download={this.download}
-                {...props}
-              />
-            }
+            component={this.resources}
           />
           <Route
             path="/UploadCollection"
-            component={(props) =>
-              <Upload
-                cart={this.state.cart}
-                updateCart={this.updateCart}
-                download={this.download}
-                {...props}
-              />
-            }
+            component={this.upload}
           />
         </Switch>
       </Base>
