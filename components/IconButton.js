@@ -18,7 +18,7 @@ const IconButton = (props) => (
       line-height: 16px;
       text-align: center;
     }
-    .icon-btn > a > img {
+    .icon-btn > div > img {
       position: relative;
       top: 50%;
       transform: translateY(-50%); 
@@ -47,8 +47,7 @@ const IconButton = (props) => (
       className="left icon-btn waves-effect waves-light"
       onClick={props.onClick}
     >
-      <a
-        href="javascript:void(0);"
+      <div
         className="btn btn-floating waves-effect waves-light grey lighten-3 center valign-wrapper"
       >
         {props.img !== undefined ? (
@@ -59,7 +58,7 @@ const IconButton = (props) => (
         ) : (
           <i className="material-icons left black-text">{props.icon}</i>
         )}
-      </a>
+      </div>
       <span>
         {props.alt}
       </span>
