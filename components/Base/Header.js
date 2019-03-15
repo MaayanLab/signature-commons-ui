@@ -77,7 +77,7 @@ export default withRouter((props) => {
         <Nav className="sidenav" id="mobile-menu" location={props.location} />
 
         {paths.length <= 2 ? null : (
-          <div className="nav-wrapper">
+          <div className="nav-wrapper grey">
             <div className="row">
               <div className="col s12">
                 {paths.slice(1).map((path, i) => {
