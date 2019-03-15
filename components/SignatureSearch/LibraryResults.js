@@ -32,6 +32,8 @@ const theme = createMuiTheme({
     }
   }
 })
+// Weird hack to remove table shadows
+theme.shadows[4] = theme.shadows[0]
 
 export default class extends React.Component {
   render() {
@@ -157,7 +159,6 @@ export default class extends React.Component {
                         <MuiThemeProvider theme={theme}>
                           <MUIDataTable
                             options={{
-                              elevation: 0,
                               responsive: 'scroll',
                               selectableRows: true,
                               expandableRows: true,
