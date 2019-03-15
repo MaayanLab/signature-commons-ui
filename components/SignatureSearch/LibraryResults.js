@@ -29,6 +29,12 @@ const theme = createMuiTheme({
       root: {
         display: 'none'
       }
+    },
+    MUIDataTable: {
+      responsiveScroll: {
+        maxHeight: '500px',
+        minHeight: '500px',
+      }
     }
   }
 })
