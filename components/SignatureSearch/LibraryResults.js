@@ -144,10 +144,10 @@ export default class extends React.Component {
                         (prop) => {
                           if(schema.properties[prop].type === 'text') {
                             if(this.props.match.params.type === 'Overlap') {
-                              if(one_tailed_columns.indexOf(prop) === -1)
-                                return true
-                            } else if(this.props.match.params.type === 'Rank') {
                               if(two_tailed_columns.indexOf(prop) === -1)
+                              return true
+                            } else if(this.props.match.params.type === 'Rank') {
+                              if(one_tailed_columns.indexOf(prop) === -1)
                                 return true
                             }
                           }
