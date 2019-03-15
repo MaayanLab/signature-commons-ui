@@ -35,7 +35,7 @@ export default class extends React.Component {
       }} className="col s12 center">
         {sorted_resources.map((resource, ind) => (
           <div key={resource.name}>
-            {this.state.show_all || ind <= 9 || sorted_resources.length < 20 ? (
+            {this.state.show_all || ind <= 48 || sorted_resources.length < 48 ? (
               <div>
                 <Link
                   to={`${this.props.match.url}/${resource.name.replace(/ /g, '_')}`}
@@ -50,7 +50,7 @@ export default class extends React.Component {
             ) : null}
           </div>
         ))}
-        {sorted_resources.length >= 20 ? (
+        {sorted_resources.length >= 48 ? (
           <IconButton
             alt={this.state.show_all ? "Less": "More"}
             icon="more_horiz"
