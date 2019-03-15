@@ -80,14 +80,18 @@ export default withRouter((props) => {
           <div className="nav-wrapper">
             <div className="row">
               <div className="col s12">
-                {paths.slice(1).map((path, i) => (
-                  <Link
-                    to={paths.slice(0, i + 2).join('/')}
-                    className="breadcrumb"
-                  >
-                    {path.replace(/_/g, ' ')}
-                  </Link>
-                ))}
+                {paths.slice(1).map((path, i) => {
+                  const href = paths.slice(0, i + 2).join('/')
+                  return (
+                    <Link
+                      key={href}
+                      to={href}
+                      className="breadcrumb"
+                    >
+                      {path.replace(/_/g, ' ')}
+                    </Link>
+                  )
+                })}
               </div>
             </div>
           </div>
