@@ -1,6 +1,6 @@
 {
   "name": "signature-commons-ui",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": true,
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
   "dependencies": {
@@ -34,7 +34,6 @@
     "react-loading": "^2.0.3",
     "react-plotly.js": "^2.2.0",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.8",
     "react-scroll-to-component": "^1.0.2",
     "swagger-client": "^3.8.22",
     "tween": "^0.9.0",
