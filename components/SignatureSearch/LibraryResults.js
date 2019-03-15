@@ -36,6 +36,95 @@ const theme = createMuiTheme({
 theme.shadows[4] = theme.shadows[0]
 
 export default class extends React.Component {
+  render_table = ({ result }) => {
+    const sigs = result.signatures
+    const schema = schemas.filter(
+      (schema) => objectMatch(schema.match, sigs[0])
+    )[0]
+    const cols = Object.keys(schema.properties).filter(
+      (prop) => {
+        if(schema.properties[prop].type === 'text') {
+          if(this.props.match.params.type === 'Overlap') {
+            if(two_tailed_columns.indexOf(prop) === -1)
+              return true
+          } else if(this.props.match.params.type === 'Rank') {
+            if(one_tailed_columns.indexOf(prop) === -1)
+              return true
+          }
+        }
+        return false
+      }
+    )
+    const options = {
+      filter: true,
+      filterType: 'dropdown',
+      responsive: 'scroll',
+      selectableRows: false,
+      expandableRows: true,
+      renderExpandableRow: (rowData, rowMeta) => (
+        <TableRow>
+          <TableCell colSpan={rowData.length}>
+            <ShowMeta
+              value={[
+                {
+                  '@id': sigs[rowMeta.dataIndex].id,
+                  '@type': 'Signature',
+                  'meta': sigs[rowMeta.dataIndex].meta,
+                },
+                {
+                  '@id': sigs[rowMeta.dataIndex].library.id,
+                  '@type': 'Library',
+                  'meta': sigs[rowMeta.dataIndex].library.meta,
+                }
+              ]}
+            />
+          </TableCell>
+        </TableRow>
+      )
+    }
+
+    const columns = cols.map((col) => {
+      let opts = {
+        name: col,
+        options: schema.properties[col].columnOptions || {},
+      }
+
+      if (schema.properties[col].columnType === 'number') {
+        opts.options.customBodyRender = (val, tableMeta, updateValue) => {
+          if (typeof val === 'number') {
+            return val.toPrecision(3)
+          } else {
+            return val
+          }
+        }
+      }
+      return opts
+    })
+
+    const data = sigs.map((sig) =>
+      cols.map((col) => {
+        const val = makeTemplate(schema.properties[col].text, sig)
+        if (val === 'undefined')
+          return ''
+        try {
+          return JSON.parse(val)
+        } catch(e) {
+          return val
+        }
+      })
+    )
+    
+    return (
+      <MuiThemeProvider theme={theme}>
+        <MUIDataTable
+          options={options}
+          columns={columns}
+          data={data}
+        />
+      </MuiThemeProvider>
+    )
+  }
+
   render() {
     return (
       <div className="col s12">
@@ -135,87 +224,7 @@ export default class extends React.Component {
                   </div>
                   */}
                   <div id={"table-" + result.library.id } className="tab-content">
-                    {(() => {
-                      const sigs = result.signatures
-                      const schema = schemas.filter(
-                        (schema) => objectMatch(schema.match, sigs[0])
-                      )[0]
-                      const cols = Object.keys(schema.properties).filter(
-                        (prop) => {
-                          if(schema.properties[prop].type === 'text') {
-                            if(this.props.match.params.type === 'Overlap') {
-                              if(two_tailed_columns.indexOf(prop) === -1)
-                              return true
-                            } else if(this.props.match.params.type === 'Rank') {
-                              if(one_tailed_columns.indexOf(prop) === -1)
-                                return true
-                            }
-                          }
-                          return false
-                        }
-                      )
-                      
-                      return (
-                        <MuiThemeProvider theme={theme}>
-                          <MUIDataTable
-                            options={{
-                              responsive: 'scroll',
-                              selectableRows: true,
-                              expandableRows: true,
-                              renderExpandableRow: (rowData, rowMeta) => (
-                                <TableRow>
-                                  <TableCell colSpan={rowData.length}>
-                                    <ShowMeta
-                                      value={[
-                                        {
-                                          '@id': sigs[rowMeta.dataIndex].id,
-                                          '@type': 'Signature',
-                                          'meta': sigs[rowMeta.dataIndex].meta,
-                                        },
-                                        {
-                                          '@id': sigs[rowMeta.dataIndex].library.id,
-                                          '@type': 'Library',
-                                          'meta': sigs[rowMeta.dataIndex].library.meta,
-                                        }
-                                      ]}
-                                    />
-                                  </TableCell>
-                                </TableRow>
-                              )
-                            }}
-                            columns={cols.map((col) => {
-                              let opts = {
-                                name: col,
-                                options: schema.properties[col].columnOptions || {},
-                              }
-
-                              if (schema.properties[col].columnType === 'number') {
-                                opts.options.customBodyRender = (val, tableMeta, updateValue) => {
-                                  if (typeof val === 'number') {
-                                    return val.toPrecision(3)
-                                  } else {
-                                    return val
-                                  }
-                                }
-                              }
-                              return opts
-                            })}
-                            data={sigs.map((sig) =>
-                              cols.map((col) => {
-                                const val = makeTemplate(schema.properties[col].text, sig)
-                                if (val === 'undefined')
-                                  return ''
-                                try {
-                                  return JSON.parse(val)
-                                } catch(e) {
-                                  return val
-                                }
-                              })
-                            )}
-                          />
-                        </MuiThemeProvider>
-                      )
-                    })()}
+                    {this.render_table({ result })}
                   </div>
                 </div>
               </div>
