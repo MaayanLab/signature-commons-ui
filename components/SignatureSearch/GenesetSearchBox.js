@@ -81,11 +81,6 @@ export default class extends React.Component {
           ></textarea>
         </div>
       </div>
-      <div className="col s12 center">
-        <p>
-          &nbsp;
-        </p>
-      </div>
     </div>
   )
 
@@ -143,11 +138,6 @@ export default class extends React.Component {
           ></textarea>
         </div>
       </div>
-      <div className="col s12 center">
-        <p>
-          Note: Will limit results to full signatures.
-        </p>
-      </div>
     </div>
   )
 
@@ -158,6 +148,16 @@ export default class extends React.Component {
           <Route path="/SignatureSearch/Overlap" component={this.geneset} />
           <Route path="/SignatureSearch/Rank" component={this.up_down_geneset} />
         </Switch>
+        <div className="col s12 center">
+          <button
+            className={"btn waves-effect waves-light" + (this.isEmpty() ? ' disabled' : '')} type="submit" name="action"
+            onClick={call(this.props.onSubmit, this.state.input)}
+          >
+            Search
+            <i className="material-icons right">send</i>
+          </button>
+          <br /><br />
+        </div>
         <div className="col s12 center">
           <div className="input-field">
             <Link
@@ -206,15 +206,6 @@ export default class extends React.Component {
               Example Up and Down Sets
             </Link>
           </div>
-        </div>
-        <div className="col s12 center">
-          <br />
-          <button
-            className={'btn btn-large' + (this.isEmpty() ? ' disabled' : '')}
-            onClick={call(this.props.onSubmit, this.state.input)}
-          >
-            Submit
-          </button>
         </div>
       </div>
     )
