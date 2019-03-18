@@ -53,13 +53,19 @@ class AdminView extends React.PureComponent {
       SignatureNumber: "Loading...",
       EntityNumber: "Loading...",
       signature_counts: null,
-      selected_db: "Libraries",
-      selected_field: "Assay",
       signature_allfields: null,
       stats: null,
+      libchart: null,
+      sigchart: null,
+      entchart:null,
+      libselected: "Assay",
+      sigselected: "Cell_Line",
+      entselected:"Taxon_ID",
       status: null,
       controller: null,
-      stat_controller: null,
+      lib_controller: null,
+      sig_controller: null,
+      ent_controller: null,
       general_controller: null,
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
@@ -77,7 +83,6 @@ class AdminView extends React.PureComponent {
     this.filterForm = this.filterForm.bind(this);
     this.authProvider = this.authProvider.bind(this);
     this.NotFound = this.NotFound.bind(this);
-    this.handleSelectDB = this.handleSelectDB.bind(this);
     this.handleSelectField = this.handleSelectField.bind(this);
     this.dataProvider = loopbackProvider(base_url, this.httpClient);
 
@@ -105,43 +110,30 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  handleSelectDB(e){
-    const selected = e.target.value
-    let field=undefined
-    let fields_loaded=undefined
-    switch (selected) {
-      case "Libraries":
-        field="Assay"
-        fields_loaded= this.state.library_fields===null? false: true
-        break;
-      case "Signatures":
-        field="Assay"
-        fields_loaded= this.state.signature_allfields===null? false: true
-        break;
-      case "Entities":
-        field="Taxon_ID"
-        fields_loaded= this.state.entity_fields===null? false: true
-        break;
-    }
-    this.setState({
-      selected_db: selected,
-      selected_field: field,
-      stats: null,
-    }, () => {
-      if(fields_loaded){
-        this.fetch_stats()
-      }
-    })
-  }
-
-  handleSelectField(e){
+  handleSelectField(e,db){
     const field = e.target.value
-    this.setState({
-      selected_field: field,
-      stats: null,
-    }, () => {
-      this.fetch_stats()
-    })
+    if(db==="Libraries"){
+      this.setState({
+        libselected: field,
+        libchart: null,
+      }, () => {
+        this.fetch_stats(db)
+      })
+    }else if(db==="Signatures"){
+      this.setState({
+        sigselected: field,
+        sigchart: null,
+      }, () => {
+        this.fetch_stats(db)
+      })
+    }else if(db==="Entities"){
+      this.setState({
+        entselected: field,
+        entchart: null,
+      }, () => {
+        this.fetch_stats(db)
+      })
+    }
   }
 
   LibraryList(props) {
@@ -440,35 +432,65 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  async fetch_stats(){
-    if(this.state.stat_controller !== null) {
-      this.state.stat_controller.abort()
-      }
+  async fetch_stats(db){
+    let selected_field  = null
     try {
       const stat_controller = new AbortController()
-      this.setState({
-        stat_controller: stat_controller,
-      })
+      if(db=="Libraries") {
+        selected_field = this.state.libselected
+        if( this.state.lib_controller !== null) {
+          this.state.lib_controller.abort()
+        }
+        this.setState({
+          lib_controller: stat_controller,
+        })
+      }else if(db=="Signatures") {
+        selected_field = this.state.sigselected
+        if (this.state.sig_controller !== null) {
+          this.state.sig_controller.abort()
+        }
+        this.setState({
+          sig_controller: stat_controller,
+        })
+      }else if(db=="Entities") {
+        selected_field = this.state.entselected
+        if(this.state.ent_controller !== null) {
+          this.state.ent_controller.abort()
+        }
+        this.setState({
+          ent_controller: stat_controller,
+        })
+      }
+      
       const headers = {'Authorization': `Basic ${this.state.token}`}
-      const url = '/' + this.state.selected_db.toLowerCase() +
+      const url = '/' + db.toLowerCase() +
                   '/value_count?depth=2&filter={"fields":["' +
-                  this.state.selected_field +'"]}'
+                  selected_field +'"]}'
       const { response: stats} = await fetch_meta(url,
                                                   undefined,
                                                   stat_controller.signal,
                                                   headers)
       let stat_vals = undefined
-      if(["Cell_Line", "Disease", "Gene", "Phenotype", "Small_Molecule", "Tissue", "Virus"].includes(this.state.selected_field)){
-        stat_vals = stats[this.state.selected_field + ".Name"]
-      }else if(this.state.handleSelectField === "Accession"){
-        stat_vals = stats[this.state.selected_field + ".ID"]
+      if(["Cell_Line", "Disease", "Gene", "GO", "Phenotype", "Small_Molecule", "Tissue", "Virus"].includes(selected_field)){
+        stat_vals = stats[selected_field + ".Name"]
+      }else if(selected_field === "Accession"){
+        stat_vals = stats[selected_field + ".ID"]
       }else{
-        stat_vals = stats[this.state.selected_field]
+        stat_vals = stats[selected_field]
       }
-      this.setState({
-        // signature_fields: signature_fields,
-        stats: stat_vals
-      });
+      if(db==="Libraries"){
+        this.setState({
+          libchart: stat_vals,
+        })
+      }else if(db==="Signatures"){
+        this.setState({
+          sigchart: stat_vals,
+        })
+      }else if(db==="Entities"){
+        this.setState({
+          entchart: stat_vals,
+        })
+      }
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
@@ -559,9 +581,7 @@ class AdminView extends React.PureComponent {
       library_fields: library_fields,
       LibraryNumber: library_fields.$validator,
     },()=>{
-      if(this.state.selected_db=="Libraries"){
-        this.fetch_stats()
-      }
+      this.fetch_stats("Libraries")
     })
   }
 
@@ -587,9 +607,7 @@ class AdminView extends React.PureComponent {
       signature_allfields: signature_allfields,
       SignatureNumber: signature_allfields.$validator,
     },()=>{
-      if(this.state.selected_db=="Signatures"){
-        this.fetch_stats()
-      }
+      this.fetch_stats("Signatures")
     })
   }
 
@@ -603,9 +621,7 @@ class AdminView extends React.PureComponent {
       entity_fields: entity_fields,
       EntityNumber: entity_fields.$validator,
     },()=>{
-      if(this.state.selected_db=="Entities"){
-        this.fetch_stats()
-      }
+      this.fetch_stats("Entities")
     })
   }
 
@@ -636,7 +652,6 @@ class AdminView extends React.PureComponent {
       this.fetch_sigstats()
       this.fetch_sigallfields()
       this.fetch_entityfields()
-      this.fetch_stats()
     }
   }
   httpClient(url, options = {}) {
@@ -697,9 +712,6 @@ class AdminView extends React.PureComponent {
         if(this.state.signature_allfields===null){
           this.fetch_sigallfields()
         }
-        if(this.state.stats===null){
-          this.fetch_stats()
-        }
         return Promise.resolve();
       }
     }else if (type === AUTH_LOGOUT) {
@@ -707,8 +719,14 @@ class AdminView extends React.PureComponent {
         if(this.state.general_controller){
           this.state.general_controller.abort()
         }
-        if(this.state.stat_controller){
-          this.state.stat_controller.abort()
+        if(this.state.lib_controller){
+          this.state.lib_controller.abort()
+        }
+        if(this.state.sig_controller){
+          this.state.sig_controller.abort()
+        }
+        if(this.state.ent_controller){
+          this.state.ent_controller.abort()
         }
         return Promise.resolve();
     }else if (type === AUTH_ERROR) {
@@ -718,8 +736,14 @@ class AdminView extends React.PureComponent {
         if(this.state.general_controller){
           this.state.general_controller.abort()
         }
-        if(this.state.stat_controller){
-          this.state.stat_controller.abort()
+        if(this.state.lib_controller){
+          this.state.lib_controller.abort()
+        }
+        if(this.state.sig_controller){
+          this.state.sig_controller.abort()
+        }
+        if(this.state.ent_controller){
+          this.state.ent_controller.abort()
         }
         return Promise.reject()
       }else
@@ -731,8 +755,14 @@ class AdminView extends React.PureComponent {
         if(this.state.general_controller){
           this.state.general_controller.abort()
         }
-        if(this.state.stat_controller){
-          this.state.stat_controller.abort()
+        if(this.state.lib_controller){
+          this.state.lib_controller.abort()
+        }
+        if(this.state.sig_controller){
+          this.state.sig_controller.abort()
+        }
+        if(this.state.ent_controller){
+          this.state.ent_controller.abort()
         }
         return Promise.reject();
       }
@@ -753,11 +783,13 @@ class AdminView extends React.PureComponent {
                                         entity_fields={this.state.entity_fields}
                                         library_fields={this.state.library_fields}
                                         signature_allfields={this.state.signature_allfields}
-                                        selected_db={this.state.selected_db}
-                                        selected_field={this.state.selected_field}
-                                        handleSelectDB={this.handleSelectDB}
                                         handleSelectField={this.handleSelectField}
-                                        stats={this.state.stats}
+                                        libselected={this.state.libselected}
+                                        sigselected={this.state.sigselected}
+                                        entselected={this.state.entselected}
+                                        libchart={this.state.libchart}
+                                        sigchart={this.state.sigchart}
+                                        entchart={this.state.entchart}
                                         {...props}/>}
                catchAll={this.NotFound}
         >

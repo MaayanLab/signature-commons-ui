@@ -4,7 +4,11 @@ import { Group } from '@vx/group';
 import { scaleLinear, scaleOrdinal } from '@vx/scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { LegendOrdinal } from '@vx/legend';
+import { withTooltip, TooltipWithBounds } from '@vx/tooltip';
+import { localPoint } from '@vx/event';
+
 import Grid from '@material-ui/core/Grid';
+
 
 
 function LegendDemo({ title, children }) {
@@ -22,23 +26,41 @@ const colorrange = {
                     "Signatures": ["#75bef5", "#0367b4"]
                     }
 
-export const DonutChart = function({ style, data, ...props }){
-  // data format {Tissue: Value}
+const handleMouseOver = (event, datum, props) => {
+  const coords = localPoint(event.target.ownerSVGElement, event);
+  props.showTooltip({
+    tooltipLeft: coords.x,
+    tooltipTop: coords.y,
+    tooltipData: datum
+  });
+};
+
   const white = '#ffffff';
   const black = '#000000';
-  const width = style.width
-  const height = style.height
-  const margin = style.margin
-  console.log(props.selected_db)
+export const DonutChart = withTooltip(function({ ...props }){
+  // data format {Tissue: Value}
+  const {
+      tooltipData,
+      tooltipLeft,
+      tooltipTop,
+      tooltipOpen,
+      hideTooltip,
+      width,
+      height,
+      margin,
+      data,
+      radius,
+      percentages
+    } = props;
+  console.log(percentages)
   const dataLabels = data.map(function(d){
     return(
       d.label
     )
   })
   const value = d => d.value;
-  const radius = Math.min(width, height) / 2;
-  const centerY = height / 2;
-  const centerX = width / 2;
+  const centerY = (height) / 2;
+  const centerX = (width) / 2;
 
 
   const sizeColorScale = scaleLinear({
@@ -55,57 +77,63 @@ export const DonutChart = function({ style, data, ...props }){
           })
   });
 
+
   return (
     <div>
-      <Grid container spacing={24}>
-        <Grid item xs={7}>
-          <svg width={width} height={height}>
-            <rect rx={14} width={width} height={height} fill="url('#pie-gradients')" />
-            <Group top={centerY - margin.top} left={centerX}>
-              <Pie
-                data={data}
-                pieValue={value}
-                outerRadius={radius - 80}
-                innerRadius={radius - 120}
-                cornerRadius={3}
-                padAngle={0}
-              >
-                {pie => {
-                  return pie.arcs.map((arc, i) => {
-                    const opacity = 1 / (i + 2);
-                    const [centroidX, centroidY] = pie.path.centroid(arc);
-                    const { startAngle, endAngle } = arc;
-                    const hasSpaceForLabel = endAngle - startAngle >= 0.3;
+      <svg width={width} height={height}>
+        <rect rx={14} width={width} height={height} fill="url('#pie-gradients')" />
+        <Group top={centerY - margin.top} left={centerX}>
+          <Pie
+            data={data}
+            pieValue={value}
+            outerRadius={radius - 80}
+            innerRadius={radius - 120}
+            cornerRadius={3}
+            padAngle={0}
+          >
+            {pie => {
+              return pie.arcs.map((arc, i) => {
+                const opacity = 1 / (i + 2);
+                const [centroidX, centroidY] = pie.path.centroid(arc);
+                const { startAngle, endAngle } = arc;
+                const hasSpaceForLabel = endAngle - startAngle >= 0.3;
 
-                    return (
-                      <g key={`browser-${arc.data.label}-${i}`}>
-                        <path d={pie.path(arc)} fill={ordinalColorScale(dataLabels[i])} />
-                        {hasSpaceForLabel && (
-                          <text
-                            fill={black}
-                            x={centroidX}
-                            y={centroidY}
-                            dy=".33em"
-                            fontSize={6}
-                            textAnchor="middle"
-                          >
-                            {arc.data.label}
-                          </text>
-                        )}
-                      </g>
-                    );
-                  });
-                }}
-              </Pie>
-            </Group>
-          </svg>
-        </Grid>
-        <Grid item xs={5} style={{
-            fontSize: '10px'
-          }}>
-          <LegendOrdinal scale={ordinalColorScale} direction="column" labelMargin="0 15px 0 0"/>
-        </Grid>
-      </Grid>
+                return (
+                  <g key={`browser-${arc.data.label}-${i}`}>
+                    <path d={pie.path(arc)}
+                          fill={ordinalColorScale(dataLabels[i])}
+                          onMouseMove={e => handleMouseOver(e, percentages[i], props)}
+                          onMouseOut={hideTooltip}/>
+                    {hasSpaceForLabel && (
+                      <text
+                        fill={black}
+                        x={centroidX}
+                        y={centroidY}
+                        dy=".33em"
+                        fontSize={6}
+                        textAnchor="middle"
+                      >
+                        {arc.data.label}
+                      </text>
+                    )}
+                  </g>
+                );
+              });
+            }}
+          </Pie>
+        </Group>
+      </svg>
+      {tooltipOpen && (
+        <TooltipWithBounds
+          // set this to random so it correctly updates with parent bounds
+          key={Math.random()}
+          top={tooltipTop}
+          left={tooltipLeft}
+          style={{fontSize: '7px'}}
+        >
+          <strong>{tooltipData.label}</strong>: {tooltipData.value}%
+        </TooltipWithBounds>
+      )}
     </div>
   );
-};
+});
