@@ -620,9 +620,13 @@ class AdminView extends React.PureComponent {
     this.setState({
       entity_fields: entity_fields,
       EntityNumber: entity_fields.$validator,
-    },()=>{
-      this.fetch_stats("Entities")
     })
+    // this.setState({
+    //   entity_fields: entity_fields,
+    //   EntityNumber: entity_fields.$validator,
+    // },()=>{
+    //   this.fetch_stats("Entities")
+    // })
   }
 
   async fetch_sigstats() {

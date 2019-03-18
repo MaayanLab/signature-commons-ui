@@ -352,7 +352,7 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
   return(
     <div className={classes.root}>
       <Grid container spacing={24}>
-        <Grid item xs={12} md={8} lg={7}>
+        <Grid item xs={12} lg={7}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
@@ -379,14 +379,14 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={4} lg={5}>
+        <Grid item xs={12} lg={5}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
-                <Grid item lg={6} md={12} sm={6} xs={12}>
+                <Grid item sm={6} xs={12}>
                   <Stat type={"Stats"} {...props} />
                 </Grid>
-                <Grid item lg={6} md={12} sm={6} xs={12}>
+                <Grid item sm={6} xs={12}>
                   <PopularGenes {...props} />
                 </Grid>
               </Grid>
