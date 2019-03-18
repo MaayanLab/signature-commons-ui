@@ -20,6 +20,7 @@ import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DonutChart } from "./VXpie.js";
+import { withScreenSize } from '@vx/responsive';
 // import DonutChart from "./Donut.js";
 
 import { cardIconStyle } from '../../style/components/CardIconStyle.js'
@@ -262,7 +263,7 @@ const Selections = withStyles(styles)( function({ classes, record={}, ...props }
   )
 })
 
-const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
+const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={}, ...props }){
   var stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
     });
@@ -280,10 +281,16 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
 
     data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
     percentages.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
+    let width = 220
+    const height = 220
+    const radius= 150
+    if(props.screenWidth<1086 && props.screenWidth>960){
+      width = 180
+    }
     return(
-      <div><DonutChart width={220}
-                       height={220}
-                       radius={150}
+      <div><DonutChart width={width}
+                       height={height}
+                       radius={radius}
                        margin={{
                           "top":10,
                           "bottom":10,
@@ -294,8 +301,8 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
                        {...props}/></div>
         
     );
-})
-cardChartStyle
+}))
+
 const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
   const {fields, stats, selected_field} = db_vals(props.selected_db, props)
   return(

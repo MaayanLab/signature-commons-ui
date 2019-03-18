@@ -9,7 +9,7 @@ export const cardChartStyle = theme => ({
     height: 220
   },
   progress: {
-    margin: 90
+    margin: '90px auto 90px auto'
   },
   card,
   main

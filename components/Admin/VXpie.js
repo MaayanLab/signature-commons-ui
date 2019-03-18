@@ -5,6 +5,7 @@ import { scaleLinear, scaleOrdinal } from '@vx/scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { LegendOrdinal } from '@vx/legend';
 import { withTooltip, TooltipWithBounds } from '@vx/tooltip';
+import { withScreenSize } from '@vx/responsive';
 import { localPoint } from '@vx/event';
 
 import Grid from '@material-ui/core/Grid';
@@ -37,7 +38,8 @@ const handleMouseOver = (event, datum, props) => {
 
   const white = '#ffffff';
   const black = '#000000';
-export const DonutChart = withTooltip(function({ ...props }){
+export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
+  console.log(props.screenWidth)
   // data format {Tissue: Value}
   const {
       tooltipData,
@@ -136,4 +138,4 @@ export const DonutChart = withTooltip(function({ ...props }){
       )}
     </div>
   );
-});
+}));
