@@ -48,14 +48,16 @@ const db_vals = (db, props) => {
       stats: props.libchart,
       selected_field: props.libselected,
       icon : LibraryBooks,
-      num : props.LibraryNumber
+      num : props.LibraryNumber,
+      title: `Library ${props.libselected}`
     },
     Signatures: {
       fields: props.signature_allfields,
       stats: props.sigchart,
       selected_field: props.sigselected,
       icon : Fingerprint,
-      num : props.SignatureNumber
+      num : props.SignatureNumber,
+      title: `Signature ${props.sigselected}`
     },
     Entities: {
       fields: props.entity_fields,
@@ -247,13 +249,18 @@ const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={
 }))
 
 const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
-  const {fields, stats, selected_field} = db_vals(props.selected_db, props)
+  const {fields, stats, selected_field, title} = db_vals(props.selected_db, props)
+  const display_title = fields === null? <div/> : title.replace(/_/g, " ")
   return(
     <Card className={classes.cardChart}>
       <Grid container 
         spacing={0}
+        direction={"column"}
         align="center"
         justify="center">
+        <Grid item xs={12}>
+          {display_title}
+        </Grid>
         <Grid item xs={12}>
           {stats===null ?
             <div className={classes.progress}>
