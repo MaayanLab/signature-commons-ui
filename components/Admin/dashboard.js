@@ -25,64 +25,7 @@ import { withScreenSize } from '@vx/responsive';
 
 import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
-
-
-const styles = theme => ({
-    root: {
-      flexGrow: 1,
-    },
-    progress: {
-      margin: theme.spacing.unit * 2,
-    },
-    ProgressContainer:{
-      marginLeft: 'auto',
-      marginRight: 0,
-      height: 30,
-      width: 120
-    },
-    main: {
-      flex: '1',
-      marginRight: '1em',
-      marginTop: 20,
-    },
-    numcard: {
-      overflow: 'inherit',
-      textAlign: 'right',
-      padding: 16,
-      height: 70,
-    },
-    card: {
-      overflow: 'inherit',
-      textAlign: 'right',
-      padding: 16,
-      minHeight: 80,
-    },
-    piecard: {
-      float: 'center',
-      margin: '5px',
-      padding: '20px 5px 5px 5px',
-      zIndex: 100,
-      borderRadius: 3,
-    },
-    title: {
-      fontSize: '10px',
-    },
-    bigtext:{
-      fontSize: '15px',
-    },
-    statnum: {
-      fontSize: '15px',
-    },
-    textField: {
-      marginLeft: theme.spacing.unit,
-      marginRight: theme.spacing.unit,
-      width: 120,
-      margin: '-20px 8px 8px 8px',
-    },
-    menu: {
-      width: 200,
-    }
-});
+import { styles } from '../../styles/jss/theme.js'
 
 Array.prototype.sum = function (prop) {
     var total = 0
@@ -274,13 +217,13 @@ const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={
     const other_sum = included_sum > other || included_sum < included.length*10 ? other: included_sum*1.5
     var others = [{"label": "others", "value":other_sum}]
     var data = other_sum >0 ? included.concat(others): included;
-    var percentages = included.map((entry)=>(
-                        {label:entry.label, value: (100*(entry.value/(included_sum+other))).toFixed(2)}
+    var true_values = included.map((entry)=>(
+                        {label:entry.label, value: entry.value}
                       ))
-    percentages = percentages.concat({label:"others",value:(100*(other/(included_sum+other))).toFixed(2)})
+    true_values = true_values.concat({label:"others",value: other})
 
     data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-    percentages.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
+    true_values.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
     let width = 220
     const height = 220
     const radius= 150
@@ -297,7 +240,7 @@ const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={
                           "left":10,
                           "right":10}}
                        data={data}
-                       percentages={percentages}
+                       true_values={true_values}
                        {...props}/></div>
         
     );

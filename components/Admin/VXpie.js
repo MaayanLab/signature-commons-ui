@@ -39,7 +39,6 @@ const handleMouseOver = (event, datum, props) => {
   const white = '#ffffff';
   const black = '#000000';
 export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
-  console.log(props.screenWidth)
   // data format {Tissue: Value}
   const {
       tooltipData,
@@ -52,9 +51,9 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
       margin,
       data,
       radius,
-      percentages
+      true_values
     } = props;
-  console.log(percentages)
+
   const dataLabels = data.map(function(d){
     return(
       d.label
@@ -104,7 +103,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
                   <g key={`browser-${arc.data.label}-${i}`}>
                     <path d={pie.path(arc)}
                           fill={ordinalColorScale(dataLabels[i])}
-                          onMouseMove={e => handleMouseOver(e, percentages[i], props)}
+                          onMouseMove={e => handleMouseOver(e, true_values[i], props)}
                           onMouseOut={hideTooltip}/>
                     {hasSpaceForLabel && (
                       <text
@@ -133,7 +132,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
           left={tooltipLeft}
           style={{fontSize: '7px'}}
         >
-          <strong>{tooltipData.label}</strong>: {tooltipData.value}%
+          <strong>{tooltipData.label}</strong>: {tooltipData.value}
         </TooltipWithBounds>
       )}
     </div>
