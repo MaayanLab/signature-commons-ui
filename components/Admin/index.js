@@ -40,6 +40,8 @@ import { BooleanField,
          TagsField } from './signaturehelper';
 import { Dashboard } from './dashboard';
 
+import { MyLogin } from './Login.js'
+
 
 class AdminView extends React.PureComponent {
   constructor(props) {
@@ -775,6 +777,7 @@ class AdminView extends React.PureComponent {
   }
 
   render() {
+    console.log(`${process.env.PREFIX}`)
       return (
         <Admin title="Signature Commons Admin Page"
                dataProvider={this.dataProvider}
@@ -796,6 +799,7 @@ class AdminView extends React.PureComponent {
                                         entchart={this.state.entchart}
                                         {...props}/>}
                catchAll={this.NotFound}
+               loginPage={MyLogin}
         >
           {this.state.library_fields===null ? <div/>:
             <Resource
