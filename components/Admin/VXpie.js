@@ -97,7 +97,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
                 const opacity = 1 / (i + 2);
                 const [centroidX, centroidY] = pie.path.centroid(arc);
                 const { startAngle, endAngle } = arc;
-                const hasSpaceForLabel = endAngle - startAngle >= 0.3;
+                const hasSpaceForLabel = endAngle - startAngle >= 0.35;
 
                 return (
                   <g key={`browser-${arc.data.label}-${i}`}>
@@ -111,7 +111,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
                         x={centroidX}
                         y={centroidY}
                         dy=".33em"
-                        fontSize={6}
+                        fontSize={7}
                         textAnchor="middle"
                       >
                         {arc.data.label}
@@ -130,7 +130,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
           key={Math.random()}
           top={tooltipTop}
           left={tooltipLeft}
-          style={{fontSize: '7px'}}
+          style={{fontSize: '10px'}}
         >
           <strong>{tooltipData.label}</strong>: {tooltipData.value}
         </TooltipWithBounds>
