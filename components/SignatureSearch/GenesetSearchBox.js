@@ -71,7 +71,7 @@ export default class extends React.Component {
         <div className="input-field">
           <textarea
             id="geneset"
-            placeholder="Genes that are regulated in signature or overlap with gene-set."
+            placeholder="Genes that are regulated in signature or overlap with gene set."
             style={{
               height: 200,
               overflow: 'auto',
@@ -114,7 +114,7 @@ export default class extends React.Component {
         <div className="input-field">
           <textarea
             id="up_geneset"
-            placeholder="Genes that are up-regulated in signature or overlap with gene-set."
+            placeholder="Genes that are up-regulated in signature or overlap with gene set."
             style={{
               height: 200,
               overflow: 'auto',
@@ -128,7 +128,7 @@ export default class extends React.Component {
         <div className="input-field">
           <textarea
             id="down_geneset"
-            placeholder="Genes that are down-regulated in signature or overlap with gene-set."
+            placeholder="Genes that are down-regulated in signature or overlap with gene set."
             style={{
               height: 200,
               overflow: 'auto',
