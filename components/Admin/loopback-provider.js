@@ -13,17 +13,20 @@ import {
 } from 'react-admin';
 
 function build_where(search) {
-    if (search.indexOf(':') !== -1) {
-      const [key, ...value] = search.split(':')
+    const search_str = search.meta.fullTextSearch
+    if (search_str.indexOf(':') !== -1) {
+      const [key, ...value] = search_str.split(':')
       return {
+        library: search.library,
         ['meta.' + key]: {
           ilike: '%' + value.join(':') + '%'
         }
       }
     } else {
       return {
+        library: search.library,
         meta: {
-          fullTextSearch: search
+          fullTextSearch: search_str
         }
       }
     }
@@ -58,7 +61,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
                 const { field, order } = params.sort;
                 let where_clause = params.filter
                 if('meta' in params.filter && 'fullTextSearch' in params.filter.meta){
-                    where_clause = build_where(params.filter.meta['fullTextSearch'])
+                    where_clause = build_where(params.filter)
                 }
                 const query = {
                     filter: JSON.stringify({
