@@ -1,0 +1,28 @@
+{
+  "match": {
+    "${$validator}": "/@dcic/signature-commons-schema/core/dataset.json",
+    "${dataset}": "creeds"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "header-img",
+      "src": "${PREFIX}/static/images/creeds.png",
+      "alt": "CREEDS",
+      "style": {
+        "maxHeight": "70px",
+        "maxWidth": "70px"
+      }
+    },
+    "Libraries": {
+      "visibility": 1,
+      "type": "text",
+      "text": "3"
+    },
+    "Signatures": {
+      "visibility": 1,
+      "type": "text",
+      "text": "7758"
+    }
+  }
+}
