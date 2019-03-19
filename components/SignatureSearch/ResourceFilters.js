@@ -1,6 +1,7 @@
 import React from 'react'
-import { Switch, Route, Redirect, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import IconButton from '../../components/IconButton'
+import config from '../../ui-schemas/SignatureSearch.json'
 
 export default class extends React.Component {
   constructor(props) {
@@ -35,7 +36,7 @@ export default class extends React.Component {
       }} className="col s12 center">
         {sorted_resources.map((resource, ind) => (
           <div key={resource.name}>
-            {this.state.show_all || ind <= 48 || sorted_resources.length < 48 ? (
+            {this.state.show_all || ind < config.maxResourcesToShow || sorted_resources.length < config.maxResourcesBeforeCollapse ? (
               <div>
                 <Link
                   to={`${this.props.match.url}/${resource.name.replace(/ /g, '_')}`}
@@ -50,7 +51,7 @@ export default class extends React.Component {
             ) : null}
           </div>
         ))}
-        {sorted_resources.length >= 48 ? (
+        {sorted_resources.length >= config.maxResourcesBeforeCollapse ? (
           <IconButton
             alt={this.state.show_all ? "Less": "More"}
             icon="more_horiz"

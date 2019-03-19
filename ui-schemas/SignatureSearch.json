@@ -1,0 +1,19 @@
+{
+  "$validator": {
+    "type": "object",
+    "properties": {
+      "maxResourcesBeforeCollapse": {
+        "type": "number",
+        "minValue": "0",
+        "description": "The number of resources triggering More/Less activation at all"
+      },
+      "maxResourcesToShow": {
+        "type": "number",
+        "minValue": "0",
+        "description": "The maximum resources to show before collapsing if More/Less is activated"
+      }
+    }
+  },
+  "maxResourcesBeforeCollapse": 60,
+  "maxResourcesToShow": 40
+}
