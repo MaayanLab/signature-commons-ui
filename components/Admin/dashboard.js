@@ -23,8 +23,8 @@ import { DonutChart } from "./VXpie.js";
 import { withScreenSize } from '@vx/responsive';
 // import DonutChart from "./Donut.js";
 
-import { cardIconStyle } from '../../style/components/CardIconStyle.js'
-import { cardChartStyle } from '../../style/components/ChartStyle.js'
+import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
+import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
 
 
 const styles = theme => ({
