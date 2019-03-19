@@ -58,7 +58,6 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
                 const { field, order } = params.sort;
                 let where_clause = params.filter
                 if('meta' in params.filter && 'fullTextSearch' in params.filter.meta){
-                    console.log(params)
                     where_clause = build_where(params.filter.meta['fullTextSearch'])
                 }
                 const query = {
@@ -180,9 +179,6 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             ).then(responses => ({
                 data: responses.map(response => response.json),
             }));
-        }
-        if (type === GET_LIST){
-            console.log(params)
         }
 
         const { url, options } = convertDataRequestToHTTP(
