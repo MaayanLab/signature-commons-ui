@@ -519,9 +519,6 @@ class AdminView extends React.PureComponent {
       // });
       // console.log(window.location.hash)
       // console.log(this.state.hash)
-      console.log("uid")
-      console.log(uid)
-      console.log("uid")
       if(this.state.controller !== null && decodeURI(window.location.hash) !== this.state.hash) {
         if(this.state.hash.includes("/signatures")){
           this.setState({
@@ -545,9 +542,7 @@ class AdminView extends React.PureComponent {
         //                                                       undefined,
         //                                                       controller.signal,
         //                                                       headers)
-        console.log("uid")
-        console.log(signature_fields)
-        console.log("uid")
+
         this.setState({
           // signature_fields: signature_fields,
           signature_fields: signature_fields["Signature_keys"],
