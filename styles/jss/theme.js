@@ -45,3 +45,53 @@ export const main = {
 
 export const black = "#000";
 export const white = "#FFF";
+
+export const styles = theme => ({
+    root: {
+      flexGrow: 1,
+    },
+    progress: {
+      margin: theme.spacing.unit * 2,
+    },
+    ProgressContainer:{
+      marginLeft: 'auto',
+      marginRight: 0,
+      height: 30,
+      width: 120
+    },
+    main: {
+      flex: '1',
+      marginRight: '1em',
+      marginTop: 20,
+    },
+    numcard: {
+      overflow: 'inherit',
+      textAlign: 'right',
+      padding: 16,
+      height: 70,
+    },
+    card: {
+      overflow: 'inherit',
+      textAlign: 'right',
+      padding: 16,
+      minHeight: 80,
+    },
+    title: {
+      fontSize: '10px',
+    },
+    bigtext:{
+      fontSize: '15px',
+    },
+    statnum: {
+      fontSize: '15px',
+    },
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width: 120,
+      margin: '-20px 8px 8px 8px',
+    },
+    menu: {
+      width: 200,
+    }
+});
