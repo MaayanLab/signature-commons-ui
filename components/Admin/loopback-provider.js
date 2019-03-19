@@ -12,6 +12,23 @@ import {
     DELETE_MANY,
 } from 'react-admin';
 
+function build_where(search) {
+    if (search.indexOf(':') !== -1) {
+      const [key, ...value] = search.split(':')
+      return {
+        ['meta.' + key]: {
+          ilike: '%' + value.join(':') + '%'
+        }
+      }
+    } else {
+      return {
+        meta: {
+          fullTextSearch: search
+        }
+      }
+    }
+  }
+
 /**
  * Maps react-admin queries to a simple REST API
  *
@@ -39,9 +56,13 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             case GET_LIST: {
                 const { page, perPage } = params.pagination;
                 const { field, order } = params.sort;
+                let where_clause = params.filter
+                if('meta' in params.filter && 'fullTextSearch' in params.filter.meta){
+                    where_clause = build_where(params.filter.meta['fullTextSearch'])
+                }
                 const query = {
                     filter: JSON.stringify({
-                      where: params.filter,
+                      where: where_clause,
                       skip: (page - 1) * perPage,
                       limit: perPage,
                       order: [
@@ -158,6 +179,9 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             ).then(responses => ({
                 data: responses.map(response => response.json),
             }));
+        }
+        if (type === GET_LIST){
+            console.log(params)
         }
 
         const { url, options } = convertDataRequestToHTTP(

@@ -1,7 +1,8 @@
 import React from "react";
 import { Filter,
          ReferenceInput,
-         SelectInput } from 'react-admin';
+         SelectInput,
+         TextInput } from 'react-admin';
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
@@ -26,20 +27,27 @@ const styles = {
     },
 };
 
-export const PostFilter = (props) => (
+export const SignaturePostFilter = (props) => (
       <Filter {...props}>
         <ReferenceInput label="Library"
                         source="library"
                         reference="libraries"
-                        perPage={props.libnum}
+                        perPage={props.LibNum}
                         sort={{ field: 'id', order: 'ASC' }}
                         allowEmpty={false}
                         alwaysOn
                         >
           <SelectInput optionText="meta.Library_name"/>
         </ReferenceInput>
+        <TextInput label="Search" source="meta.fullTextSearch" alwaysOn />
       </Filter>
   )
+
+export const FullTextFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label="Search" source="meta.fullTextSearch" alwaysOn />
+    </Filter>
+);
 
 const ImageAvatar = withStyles(styles)(({ classes, ...props }) => (
     <Avatar alt={props.record.meta.Library_name} src={`${process.env.PREFIX}/${props.record.meta.Icon}`} className={classes.avatar} mx="auto"/>

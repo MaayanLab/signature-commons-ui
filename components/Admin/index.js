@@ -33,11 +33,12 @@ import { fetchJson } from '../../util/fetch/fetch';
 
 import loopbackProvider from './loopback-provider';
 import { BooleanField,
-         PostFilter,
+         SignaturePostFilter,
+         FullTextFilter,
          LibraryAvatar,
          Description,
          SplitChip,
-         TagsField } from './signaturehelper';
+         TagsField } from './adminhelper';
 import { Dashboard } from './dashboard';
 
 import { MyLogin } from './Login.js'
@@ -104,9 +105,8 @@ class AdminView extends React.PureComponent {
       return false
     }else{
       return(
-        <PostFilter
-          libnum={this.state.LibNum}
-          filterhandler={this.filterHandler}
+        <SignaturePostFilter
+          LibNum={this.state.LibNum}
         />
       )
     }
@@ -142,6 +142,7 @@ class AdminView extends React.PureComponent {
     return (
       <List 
         title="Libraries"
+        filters={<FullTextFilter />}
         {...props}>
         <Datagrid>
           <LibraryAvatar
@@ -293,6 +294,10 @@ class AdminView extends React.PureComponent {
                   </SingleFieldList>
                 </ArrayField>
               )
+            }else if(k==="GO"){
+              return(
+                <ChipField source={"meta." + k + ".Name"} />
+              )
             }
             else if(k=="Description"){
               return(
@@ -357,6 +362,7 @@ class AdminView extends React.PureComponent {
     return (
       <List 
         title="Entities"
+        filters={<FullTextFilter />}
         {...props}>
         <Datagrid>
           <TextField
@@ -502,7 +508,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  async filterHandler(e){
+  async filterHandler(uid){
       // console.log(e)
       // this.setState({
       //   SignatureList: <LinearProgress />
@@ -513,6 +519,9 @@ class AdminView extends React.PureComponent {
       // });
       // console.log(window.location.hash)
       // console.log(this.state.hash)
+      console.log("uid")
+      console.log(uid)
+      console.log("uid")
       if(this.state.controller !== null && decodeURI(window.location.hash) !== this.state.hash) {
         if(this.state.hash.includes("/signatures")){
           this.setState({
@@ -527,18 +536,18 @@ class AdminView extends React.PureComponent {
           status: 'Searching...',
           controller: controller,
         })
-        let uid = ""
-        if(e.hasOwnProperty("uid")){
-          uid = e.uid
-        }else{
-          uid = Object.values(e).slice(0,36).join('')
-        }
         const headers = {'Authorization': `Basic ${this.state.token}`}
-        const { data: signature_fields} = this.dataProvider(GET_ONE, "libraries", {id: uid})
+        const { response: signature_fields } = await fetch_meta(`/libraries/${uid}`,
+                                                          undefined,
+                                                          controller.signal,
+                                                          headers)
         // await fetch_meta('/libraries' + uid,
         //                                                       undefined,
         //                                                       controller.signal,
         //                                                       headers)
+        console.log("uid")
+        console.log(signature_fields)
+        console.log("uid")
         this.setState({
           // signature_fields: signature_fields,
           signature_fields: signature_fields["Signature_keys"],
@@ -593,7 +602,6 @@ class AdminView extends React.PureComponent {
                                                           undefined,
                                                           this.state.general_controller.signal,
                                                           headers)
-    console.log(signature_fields)
     this.setState({
       signature_fields: signature_fields["Signature_keys"],
     })
@@ -678,7 +686,6 @@ class AdminView extends React.PureComponent {
       options.headers = new Headers({ Accept: 'application/json' });
     
     const token = (options.token || this.state.token)
-    console.log(options)
     options.headers.set('Authorization', `Basic ${token}`);
     
     return fetchJson(url, options);
@@ -777,7 +784,6 @@ class AdminView extends React.PureComponent {
   }
 
   render() {
-    console.log(`${process.env.PREFIX}`)
       return (
         <Admin title="Signature Commons Admin Page"
                dataProvider={this.dataProvider}

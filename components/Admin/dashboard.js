@@ -73,7 +73,6 @@ const db_vals = (db, props) => {
 const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
     if(props.type!=="Stats"){
       const {icon, num} = db_vals(props.type, props)
-      console.log(`${props.type}CardHeader`)
       return(
         <div className={classes.main}>
           <CardIcon Icon={icon} type={`${props.type}CardHeader`} />
