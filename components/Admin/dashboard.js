@@ -18,95 +18,14 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { DonutChart } from "./VXpie.js";
+import { withScreenSize } from '@vx/responsive';
+// import DonutChart from "./Donut.js";
 
-
-const colors = {
-                "Libraries":"#50a050",
-                "Entities": "#a03cb4",
-                "Signatures": "#2198f3"
-               }
-
-const styles = theme => ({
-    root: {
-      flexGrow: 1,
-    },
-    progress: {
-      margin: theme.spacing.unit * 2,
-    },
-    main: {
-        flex: '1',
-        marginRight: '1em',
-        marginTop: 20,
-    },
-    numcard: {
-      overflow: 'inherit',
-      textAlign: 'right',
-      padding: 16,
-      height: 70,
-    },
-    card: {
-      overflow: 'inherit',
-      textAlign: 'right',
-      padding: 16,
-      minHeight: 80,
-    },
-    piecard: {
-      float: 'center',
-      margin: '5px',
-      padding: '20px 5px 5px 5px',
-      zIndex: 100,
-      borderRadius: 3,
-    },
-    cardicon: {
-      float: 'left',
-      margin: '-20px 20px 0 15px',
-      zIndex: 100,
-      borderRadius: 3,
-    },
-    icon: {
-      float: 'right',
-      width: 54,
-      height: 54,
-      padding: 14,
-      color: '#fff',
-    },
-    title: {
-      fontSize: '10px',
-    },
-    bigtext:{
-      fontSize: '15px',
-    },
-    statnum: {
-      fontSize: '15px',
-    },
-    textField: {
-      marginLeft: theme.spacing.unit,
-      marginRight: theme.spacing.unit,
-      width: 200,
-    },
-    menu: {
-      width: 200,
-    },
-    Libraries: {
-      backgroundColor: "#50a050",
-    },
-    Entities: {
-      backgroundColor: "#a03cb4",
-    },
-    Signatures: {
-      backgroundColor: "#2198f3",
-    },
-    chartCard: {
-      backgroundColor: "#2198f3",
-    },
-    popularCard: {
-      backgroundColor: "#e63c3c",
-    },
-    StatsCard: {
-      backgroundColor: "#fa9614",
-    },
-});
+import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
+import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
+import { styles } from '../../styles/jss/theme.js'
 
 Array.prototype.sum = function (prop) {
     var total = 0
@@ -116,48 +35,47 @@ Array.prototype.sum = function (prop) {
     return total
 }
 
-
-const CardIcon = withStyles(styles)(({ Icon, classes, type }) => (
-    <Card className={`${classes.cardicon} ${classes[type]}`}>
+const CardIcon = withStyles(cardIconStyle)(({ Icon, classes, type }) => (
+    <Card className={`${classes.cardIcon} ${classes[type]}`}>
         <Icon className={classes.icon} />
     </Card>
 ));
 
-const Welcome = withStyles(styles)( function({ classes, record={}, ...props }){
-    return(
-      <div className={classes.main}>
-        <Card>
-          <CardHeader title={`Welcome to the Signature Commons Dashboard, ${props.name}!`} />
-          <CardContent>Let's start exploring</CardContent>
-        </Card>
-      </div>
-    )
-  })
+const db_vals = (db, props) => {
+  const vals = {
+    Libraries: {
+      fields: props.library_fields,
+      stats: props.libchart,
+      selected_field: props.libselected,
+      icon : LibraryBooks,
+      num : props.LibraryNumber,
+      title: `Library ${props.libselected}`
+    },
+    Signatures: {
+      fields: props.signature_allfields,
+      stats: props.sigchart,
+      selected_field: props.sigselected,
+      icon : Fingerprint,
+      num : props.SignatureNumber,
+      title: `Signature ${props.sigselected}`
+    },
+    Entities: {
+      fields: props.entity_fields,
+      stats: props.entchart,
+      selected_field: props.entselected,
+      icon: BlurOn,
+      num: props.EntityNumber
+    }
+  }
+  return(vals[db])
+}
 
 const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
-    let icon = undefined
-    let num = 0
-    let background = undefined
-    switch (props.type) {
-      case "Libraries":
-        icon = LibraryBooks;
-        num = props.LibraryNumber;
-        break;
-      case "Signatures":
-        icon = Fingerprint;
-        num = props.SignatureNumber;
-        break;
-      case "Entities":
-         icon = BlurOn;
-         num = props.EntityNumber;
-        break;
-      case "Stats":
-        icon = Assessment
-    }
     if(props.type!=="Stats"){
+      const {icon, num} = db_vals(props.type, props)
       return(
         <div className={classes.main}>
-          <CardIcon Icon={icon} type={`${props.type}`} />
+          <CardIcon Icon={icon} type={`${props.type}CardHeader`} />
           <Card className={classes.numcard}>
               <Typography className={classes.title} color="textSecondary">
                   {props.type}
@@ -169,9 +87,10 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
         </div>
       )
     }else{
+      const icon = Assessment
       return(
         <div className={classes.main}>
-          <CardIcon Icon={icon} type={`${props.type}Card`} />
+          <CardIcon Icon={icon} type={`${props.type}CardHeader`} />
           <Card className={classes.card}>
               <Typography variant="headline" className={classes.bigtext} component="h5">
                   Stats
@@ -210,7 +129,7 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
 const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props }){
   return(
     <div className={classes.main}>
-      <CardIcon Icon={Whatshot} type={"popularCard"} />
+      <CardIcon Icon={Whatshot} type={"PopularCardHeader"} />
       <Card className={classes.card}>
           <Typography variant="headline" className={classes.bigtext} component="h5">
               Hot Genes
@@ -272,6 +191,7 @@ const Selections = withStyles(styles)( function({ classes, record={}, ...props }
         },
       }}
       margin="normal"
+      variant="outlined"
       onChange={props.onChange}
     >
       {props.values.map(function(k){
@@ -287,7 +207,7 @@ const Selections = withStyles(styles)( function({ classes, record={}, ...props }
   )
 })
 
-const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
+const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={}, ...props }){
   var stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
     });
@@ -298,93 +218,80 @@ const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     const other_sum = included_sum > other || included_sum < included.length*10 ? other: included_sum*1.5
     var others = [{"label": "others", "value":other_sum}]
     var data = other_sum >0 ? included.concat(others): included;
+    var true_values = included.map((entry)=>(
+                        {label:entry.label, value: entry.value}
+                      ))
+    true_values = true_values.concat({label:"others",value: other})
+
     data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
+    true_values.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
+    let width = 220
+    const height = 220
+    const radius= 150
+    if(props.screenWidth<1086 && props.screenWidth>960){
+      width = 180
+    }
     return(
-      <div><DonutChart style={{"width":350 ,
-                               "height":350,
-                               "margin":{
-                                  "top":10,
-                                  "bottom":10,
-                                  "left":10,
-                                  "right":10}}}
-                        data={data}
-                        {...props}/></div>
+      <div><DonutChart width={width}
+                       height={height}
+                       radius={radius}
+                       margin={{
+                          "top":10,
+                          "bottom":10,
+                          "left":10,
+                          "right":10}}
+                       data={data}
+                       true_values={true_values}
+                       {...props}/></div>
         
     );
+}))
+
+const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
+  const {fields, stats, selected_field, title} = db_vals(props.selected_db, props)
+  const display_title = fields === null? <div/> : title.replace(/_/g, " ")
+  return(
+    <Card className={classes.cardChart}>
+      <Grid container 
+        spacing={0}
+        direction={"column"}
+        align="center"
+        justify="center">
+        <Grid item xs={12}>
+          {display_title}
+        </Grid>
+        <Grid item xs={12}>
+          {stats===null ?
+            <div className={classes.progress}>
+              <CircularProgress />
+            </div>:
+            <PieChart stats={stats} {...props}/>
+          }
+        </Grid>
+      </Grid>
+    </Card>
+  )
 })
 
 const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
-  let fields=undefined
-  switch (props.selected_db) {
-      case "Libraries":
-        fields=props.library_fields
-        break;
-      case "Signatures":
-        fields=props.signature_allfields
-        break;
-      case "Entities":
-        fields=props.entity_fields
-        break;
-    }
+  
+  const {fields, stats, selected_field} = db_vals(props.selected_db, props)
+  
   return(
     <div className={classes.main}>
-      <CardIcon Icon={DonutSmall} type={`${props.selected_db}`} />
-      <Card className={classes.card}>
-          <Typography variant="headline" className={classes.bigtext} component="h5">
-              Charts
-          </Typography>
-          <Divider />
-          <Grid container 
-                spacing={24}
-                container={"column"}>
-            <Grid item sm={12}>
-              <Grid container spacing={24}>
-                <Grid item xs={6}>
-                  <Selections
-                    value={props.selected_db}
-                    values={["Libraries","Signatures","Entities"]}
-                    onChange={props.handleSelectDB}
-                    name={"Database"}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  {fields===null ?
-                    <Grid container 
-                      spacing={0}
-                      align="center"
-                      justify="center">
-                      <Grid item xs={12}>
-                        <CircularProgress className={classes.progress} />
-                      </Grid>
-                    </Grid>:
-                    <Selections
-                      value={props.selected_field === null ? fields[0]: props.selected_field}
-                      values={Object.keys(fields).sort()}
-                      onChange={props.handleSelectField}
-                      name="Key"
-                    />
-                  }
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item sm={12}>
-              {props.stats===null ?
-                <Card className={classes.piecard}>
-                  <Grid container 
-                    spacing={0}
-                    align="center"
-                    justify="center">
-                    <Grid item xs={12}>
-                      <CircularProgress className={classes.progress} />
-                    </Grid>
-                  </Grid>
-                </Card>:
-                <Card className={classes.piecard}>
-                  <PieChart {...props}/>
-                </Card>
-              }
-            </Grid>
-          </Grid>
+      <CardIcon Icon={DonutSmall} type={`${props.selected_db}CardHeader`} />
+      <Card className={`${classes.card}`}>
+        {fields===null ?
+          <div className={classes.ProgressContainer}>
+            <LinearProgress/>
+          </div>:
+          <Selections
+            value={selected_field === null ? fields[0]: selected_field}
+            values={Object.keys(fields).sort()}
+            onChange={e => props.handleSelectField(e, props.selected_db)}
+          />
+        }
+        <ChartCard {...props}/>
       </Card>
     </div>
   )
@@ -394,34 +301,41 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
   return(
     <div className={classes.root}>
       <Grid container spacing={24}>
-        <Grid item xs={12} md={9} lg={7} xl={6}>
+        <Grid item xs={12} lg={7}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                   <Stat type={"Libraries"} {...props} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                   <Stat type={"Signatures"} {...props} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                   <Stat type={"Entities"} {...props} />
                 </Grid>
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Charts {...props} />
+              <Grid container spacing={24}>
+                <Grid item xs={12} sm={6}>
+                  <Charts selected_db={"Libraries"} {...props} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Charts selected_db={"Signatures"} {...props} />
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={3} lg={5} xl={6}>
+        <Grid item xs={12} lg={5}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
-                <Grid item lg={6} md={12} xs={6}>
+                <Grid item sm={6} xs={12}>
                   <Stat type={"Stats"} {...props} />
                 </Grid>
-                <Grid item lg={6} md={12} xs={6}>
+                <Grid item sm={6} xs={12}>
                   <PopularGenes {...props} />
                 </Grid>
               </Grid>
