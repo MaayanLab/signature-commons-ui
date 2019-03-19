@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
-
-const examples = ['MCF10A', 'Imatinib', 'ZNF830', 'STAT3', 'Neuropathy']
+import config from '../../ui-schemas/MetadataSearch'
 
 export default class extends React.Component {
   render() {
@@ -15,7 +14,7 @@ export default class extends React.Component {
             onChange={this.props.searchChange}
             value={this.props.search}
             className="active"
-            placeholder="Search over half a million signatures"
+            placeholder={config.placeholder}
             style={{
               fontWeight: 500,
               color: 'rgba(0, 0, 0, 0.54)',
@@ -36,7 +35,7 @@ export default class extends React.Component {
             </button>
           </Link>
         </div>
-        {examples.map((example) => (
+        {config.examples.map((example) => (
           <Link
             key={example}
             to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(example)}` }}

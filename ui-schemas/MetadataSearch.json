@@ -1,0 +1,24 @@
+{
+  "$validator": {
+    "type": "object",
+    "properties": {
+      "placeholder": {
+        "type": "string",
+        "description": "String appearing on the search box before anything is typed."
+      },
+      "examples": {
+        "type": "array",
+        "description": "Click to search examples",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "placeholder",
+      "examples"
+    ]
+  },
+  "placeholder": "Search over half a million signatures",
+  "examples": ["MCF10A", "Imatinib", "ZNF830", "STAT3", "Neuropathy"]
+}
