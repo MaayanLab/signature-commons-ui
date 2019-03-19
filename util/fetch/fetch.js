@@ -19,13 +19,11 @@ export const fetchJson = async (url, options = {}) => {
     // }
     const response = await fetch(url, { ...options, headers: requestHeaders })
     const {status, statusText, headers} = response
-    console.log(statusText)
     const body = await response.text()
     const json = JSON.parse(body)
 
     if (status < 200 || status >= 300){
         let errormessage = null
-        console.log(json)
         if(json && json.error.message.errors){
             errormessage = statusText + ": " + json.error.message.errors[0].message
         }else if(json && json.error.message){
