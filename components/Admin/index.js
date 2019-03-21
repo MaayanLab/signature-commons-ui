@@ -474,10 +474,11 @@ class AdminView extends React.PureComponent {
       const url = '/' + db.toLowerCase() +
                   '/value_count?depth=2&filter={"fields":["' +
                   selected_field +'"]}'
-      const { response: stats} = await fetch_meta(url,
-                                                  undefined,
-                                                  stat_controller.signal,
-                                                  headers)
+      const { response: stats} = await fetch_meta({
+        endpoint: url,
+        signal: stat_controller.signal,
+        headers
+      })
       let stat_vals = undefined
       if(["Cell_Line", "Disease", "Gene", "GO", "Phenotype", "Small_Molecule", "Tissue", "Virus"].includes(selected_field)){
         stat_vals = stats[selected_field + ".Name"]
@@ -514,7 +515,7 @@ class AdminView extends React.PureComponent {
       //   SignatureList: <LinearProgress />
       // }, async () =>{
       //   const uid = Object.values(e).slice(0,36).join('')
-      //   const { response: signature_fields} = await fetch_meta('/signatures/key_count?filter={"where":{"library":"'+uid+'"}}')
+      //   const { response: signature_fields} = await fetch_meta({ endpoint: '/signatures/key_count?filter={"where":{"library":"'+uid+'"}}' })
       //   this.get_signatures(signature_fields)
       // });
       // console.log(window.location.hash)
@@ -534,14 +535,16 @@ class AdminView extends React.PureComponent {
           controller: controller,
         })
         const headers = {'Authorization': `Basic ${this.state.token}`}
-        const { response: signature_fields } = await fetch_meta(`/libraries/${uid}`,
-                                                          undefined,
-                                                          controller.signal,
-                                                          headers)
-        // await fetch_meta('/libraries' + uid,
-        //                                                       undefined,
-        //                                                       controller.signal,
-        //                                                       headers)
+        const { response: signature_fields } = await fetch_meta({
+          endpoint: `/libraries/${uid}`,
+          signal: controller.signal,
+          headers
+        })
+        // await fetch_meta({
+        //   endpoint: '/libraries' + uid,
+        //   signal: controller.signal,
+        //   headers
+        // })
 
         this.setState({
           // signature_fields: signature_fields,
@@ -578,10 +581,11 @@ class AdminView extends React.PureComponent {
 
   async fetch_libfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: library_fields } = await fetch_meta('/libraries/key_count',
-                                                          undefined,
-                                                          this.state.general_controller.signal,
-                                                          headers)
+    const { response: library_fields } = await fetch_meta({
+      endpoint: '/libraries/key_count',
+      signal: this.state.general_controller.signal,
+      headers
+    })
     this.setState({
       LibNum: library_fields.$validator,
       library_fields: library_fields,
@@ -593,10 +597,11 @@ class AdminView extends React.PureComponent {
 
   async fetch_sigfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_fields} = await fetch_meta(`/libraries/${this.state.uid}`,
-                                                          undefined,
-                                                          this.state.general_controller.signal,
-                                                          headers)
+    const { response: signature_fields} = await fetch_meta({
+      endpoint: `/libraries/${this.state.uid}`,
+      signal: this.state.general_controller.signal,
+      headers
+    })
     this.setState({
       signature_fields: signature_fields["Signature_keys"],
     })
@@ -604,10 +609,11 @@ class AdminView extends React.PureComponent {
 
   async fetch_sigallfields(){
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_allfields} = await fetch_meta('/signatures/key_count',
-                                                          undefined,
-                                                          this.state.general_controller.signal,
-                                                          headers)
+    const { response: signature_allfields} = await fetch_meta({
+      endpoint: '/signatures/key_count',
+      signal: this.state.general_controller.signal,
+      headers
+    })
     this.setState({
       signature_allfields: signature_allfields,
       SignatureNumber: signature_allfields.$validator,
@@ -618,10 +624,11 @@ class AdminView extends React.PureComponent {
 
   async fetch_entityfields(){
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: entity_fields } = await fetch_meta('/entities/key_count',
-                                                        undefined,
-                                                        this.state.general_controller.signal,
-                                                        headers)
+    const { response: entity_fields } = await fetch_meta({
+      endpoint: '/entities/key_count',
+      signal: this.state.general_controller.signal,
+      headers
+    })
     this.setState({
       entity_fields: entity_fields,
       EntityNumber: entity_fields.$validator,
@@ -636,10 +643,11 @@ class AdminView extends React.PureComponent {
 
   async fetch_sigstats() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_counts} = await fetch_meta('/signatures/value_count?depth=2&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
-                                                          undefined,
-                                                          this.state.general_controller.signal,
-                                                          headers)
+    const { response: signature_counts} = await fetch_meta({
+      endpoint: '/signatures/value_count?depth=2&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
+      signal: this.state.general_controller.signal,
+      headers
+    })
     const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
                                                     .reduce((stat_list, k)=>{
                                                     stat_list.push({name: k.replace(".Name", ""),

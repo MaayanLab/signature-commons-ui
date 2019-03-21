@@ -3,7 +3,7 @@ import fetch from 'isomorphic-unfetch'
 export const base_url = process.env.REACT_APP_METADATA_API || (window.location.origin + '/signature-commons-metadata-api')
 export const base_scheme = /^(https?):\/\/.+/.exec(base_url)[1]
 
-export async function fetch_creds(endpoint, body, signal, headers) {
+export async function fetch_creds({endpoint, body, signal, headers}) {
   const start = new Date()
 
   const request = await fetch(
@@ -46,7 +46,7 @@ export async function fetch_creds(endpoint, body, signal, headers) {
 
 
 
-export async function fetch_meta(endpoint, body, signal, headers) {
+export async function fetch_meta({endpoint, body, signal, headers}) {
   const start = new Date()
 
   const request = await fetch(
@@ -102,7 +102,7 @@ export async function fetch_meta(endpoint, body, signal, headers) {
   }
 }
 
-export async function fetch_meta_post(endpoint, body, signal) {
+export async function fetch_meta_post({endpoint, body, signal}) {
   const start = new Date()
   const request = await fetch(
     base_url + endpoint,

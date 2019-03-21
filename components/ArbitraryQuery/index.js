@@ -33,16 +33,22 @@ export default class ArbitraryQuery extends React.Component {
       this.setState({
         status: this.state.status + '\nfetching entities...',
       })
-      const {duration: duration_meta_1, response: entities_meta} = await fetch_meta_post('/entities/find', {
-        filter: JSON.parse(this.state.entities)
-      }, undefined)
+      const {duration: duration_meta_1, response: entities_meta} = await fetch_meta_post({
+        endpoint: '/entities/find',
+        body: {
+          filter: JSON.parse(this.state.entities)
+        }
+      })
       this.setState({
         status: this.state.status + '\nfetching signatures...',
         entities_results: entities_meta,
       })
-      const {duration: duration_meta_2, response: signatures_meta} = await fetch_meta_post('/signatures/find', {
-        filter: JSON.parse(this.state.signatures)
-      }, undefined)
+      const {duration: duration_meta_2, response: signatures_meta} = await fetch_meta_post({
+        endpoint: '/signatures/find',
+        body: {
+          filter: JSON.parse(this.state.signatures)
+        }
+      })
       this.setState({
         status: this.state.status + '\nenriching signatures...',
         signatures_results: signatures_meta,
@@ -55,11 +61,14 @@ export default class ArbitraryQuery extends React.Component {
         status: this.state.status + '\nfetching enriched signatures...',
         enrich_results: enriched,
       })
-      const {duration: duration_meta_3, response: enriched_signatures_meta} = await fetch_meta_post('/signatures/find', {
-        filter: {
-          where: {
-            id: {
-              inq: Object.keys(enriched.results)
+      const {duration: duration_meta_3, response: enriched_signatures_meta} = await fetch_meta_post({
+        endpoint: '/signatures/find',
+        body: {
+          filter: {
+            where: {
+              id: {
+                inq: Object.keys(enriched.results)
+              }
             }
           }
         }

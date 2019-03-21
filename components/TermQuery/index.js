@@ -73,14 +73,17 @@ export default class TermQuery extends React.PureComponent {
       })
 
       this.log('fetching signatures...')
-      const { response: term_results } = await fetch_meta_post('/signatures/find', {
-        filter: {
-          where: {
-            meta: {
-              fullTextSearch: this.state.term,
-            }
-          },
-          limit: 100,
+      const { response: term_results } = await fetch_meta_post({
+        endpoint: '/signatures/find',
+        body: {
+          filter: {
+            where: {
+              meta: {
+                fullTextSearch: this.state.term,
+              }
+            },
+            limit: 100,
+          }
         }
       })
       this.log('ready')

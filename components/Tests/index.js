@@ -20,7 +20,7 @@ export default class Tests extends React.PureComponent {
   async componentDidMount() {
     let duration_meta = 0
     const start = new Date()
-    const { duration: duration_meta_1, response: libraries } = await fetch_meta('/libraries')
+    const { duration: duration_meta_1, response: libraries } = await fetch_meta({ endpoint: '/libraries' })
     duration_meta += duration_meta_1
 
     this.setState({
@@ -28,15 +28,18 @@ export default class Tests extends React.PureComponent {
     })
 
     for (const library of libraries) {
-      const { duration: duration_meta_2, response: value_counts } = await fetch_meta('/signatures/value_count', {
-        filter: {
-          where: {
-            library: library.id,
+      const { duration: duration_meta_2, response: value_counts } = await fetch_meta({
+        endpoint: '/signatures/value_count',
+        body: {
+          filter: {
+            where: {
+              library: library.id,
+            },
+            fields: this.state.fields,
           },
-          fields: this.state.fields,
-        },
-        depth: 5,
-        contentRange: false,
+          depth: 5,
+          contentRange: false,
+        }
       })
       duration_meta += duration_meta_2
 

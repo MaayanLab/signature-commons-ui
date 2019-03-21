@@ -56,23 +56,31 @@ export default class SearchResults extends React.Component {
       const where = build_where(this.props.search)
 
       const start = Date.now()
-      const {duration: duration_meta_1, contentRange, response: signatures} = await fetch_meta_post('/signatures/find', {
-        filter: {
-          where,
-          limit: 20,
-        },
-      }, controller.signal)
-
-      const library_ids = [...new Set(signatures.map((sig) => sig.library))]
-      const {duration: duration_meta_2, response: libraries} = await fetch_meta_post('/libraries/find', {
-        filter: {
-          where: {
-            id: {
-              inq: library_ids
-            }
+      const {duration: duration_meta_1, contentRange, response: signatures} = await fetch_meta_post({
+        endpoint: '/signatures/find',
+        body: {
+          filter: {
+            where,
+            limit: 20,
           },
         },
-      }, controller.signal)
+        signal: controller.signal
+      })
+
+      const library_ids = [...new Set(signatures.map((sig) => sig.library))]
+      const {duration: duration_meta_2, response: libraries} = await fetch_meta_post({
+        endpoint: '/libraries/find',
+        body: {
+          filter: {
+            where: {
+              id: {
+                inq: library_ids
+              }
+            },
+          },
+        },
+        signal: controller.signal
+      })
 
       const duration_meta = duration_meta_1 + duration_meta_2
 

@@ -6,19 +6,23 @@ export async function resolve_entities(props) {
   let entities = Set([...props.entities])
   let entitiy_ids = {}
 
-  const {duration, response: entity_meta_pre} = await fetch_meta_post('/entities/find', {
-    filter: {
-      where: {
-        'meta.Name': {
-          inq: entities.toArray(),
-        }
-      },
-      fields: [
-        'id',
-        'meta.Name',
-      ]
-    }
-  }, props.controller.signal)
+  const {duration, response: entity_meta_pre} = await fetch_meta_post({
+    endpoint: '/entities/find',
+    body: {
+      filter: {
+        where: {
+          'meta.Name': {
+            inq: entities.toArray(),
+          }
+        },
+        fields: [
+          'id',
+          'meta.Name',
+        ]
+      }
+    },
+    signal: props.controller.signal
+  })
   const entity_meta = maybe_fix_obj(entity_meta_pre)
 
   for(const entity of Object.values(entity_meta)) {

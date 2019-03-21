@@ -60,24 +60,32 @@ export default class Home extends React.PureComponent {
       const signatures = signature_data.map((sig) => sig.uid)
       const entities = signature_data.reduce((all, sig) => [...all, ...sig.entities], [])
 
-      const {response: signature_metadata} = await fetch_meta_post('/signatures/find', {
-        filter: {
-          where: {
-            id: {
-              inq: signatures,
+      const {response: signature_metadata} = await fetch_meta_post({
+        endpoint: '/signatures/find',
+        body: {
+          filter: {
+            where: {
+              id: {
+                inq: signatures,
+              }
             }
           }
-        }
-      }, controller.signal)
-      const {response: entity_metadata} = await fetch_meta_post('/entities/find', {
-        filter: {
-          where: {
-            id: {
-              inq: entities,
+        },
+        signal: controller.signal
+      })
+      const {response: entity_metadata} = await fetch_meta_post({
+        endpoint: '/entities/find',
+        body: {
+          filter: {
+            where: {
+              id: {
+                inq: entities,
+              }
             }
           }
-        }
-      }, controller.signal)
+        },
+        signal: controller.signal
+      })
       const data = {
         entities: entity_metadata,
         signatures: signature_metadata,

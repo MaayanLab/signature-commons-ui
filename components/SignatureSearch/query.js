@@ -35,15 +35,19 @@ export async function query_overlap(props) {
     }, {}
   )
 
-  const {duration: duration_meta, response: enriched_signatures_meta} = await fetch_meta_post('/signatures/find', {
-    filter: {
-      where: {
-        id: {
-          inq: Object.values(enriched_results).map((k) => k.id)
+  const {duration: duration_meta, response: enriched_signatures_meta} = await fetch_meta_post({
+    endpoint: '/signatures/find',
+    body: {
+      filter: {
+        where: {
+          id: {
+            inq: Object.values(enriched_results).map((k) => k.id)
+          }
         }
       }
-    }
-  }, props.controller.signal)
+    },
+    signal: props.controller.signal
+  })
 
   const enriched_signatures = enriched_signatures_meta.reduce(
     (full, signature) => ([
@@ -158,15 +162,19 @@ export async function query_rank(props) {
     }, {}
   )
 
-  const {duration: duration_meta, response: enriched_signatures_meta} = await fetch_meta_post('/signatures/find', {
-    filter: {
-      where: {
-        id: {
-          inq: Object.values(enriched_results).map((k) => k.id)
+  const {duration: duration_meta, response: enriched_signatures_meta} = await fetch_meta_post({
+    endpoint: '/signatures/find',
+    body: {
+      filter: {
+        where: {
+          id: {
+            inq: Object.values(enriched_results).map((k) => k.id)
+          }
         }
       }
-    }
-  }, props.controller.signal)
+    },
+    signal: props.controller.signal
+  })
 
   const enriched_signatures = enriched_signatures_meta.reduce(
     (full, signature) => ([

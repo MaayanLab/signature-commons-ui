@@ -33,14 +33,18 @@ export default class EntityPage extends React.PureComponent {
         controller,
       })
       let duration_meta = 0
-      const { duration: duration_meta_1, response: entities } = await fetch_meta_post('/entities/find', {
-        filter: {
-          where: {
-            'meta.Name': this.state.entity_name,
+      const { duration: duration_meta_1, response: entities } = await fetch_meta_post({
+        endpoint: '/entities/find',
+        body: {
+          filter: {
+            where: {
+              'meta.Name': this.state.entity_name,
+            },
+            limit: 1,
           },
-          limit: 1,
         },
-      }, controller.signal)
+        signal: controller.signal
+      })
       duration_meta += duration_meta_1
 
       const entity = entities[0]
@@ -91,15 +95,19 @@ export default class EntityPage extends React.PureComponent {
         status: 'Resolving signatures...',
       })
 
-      const {duration: duration_meta_2, response: enriched_signatures_meta} = await fetch_meta_post('/signatures/find', {
-        filter: {
-          where: {
-            id: {
-              inq: Object.values(enriched_results).map((k) => k.id)
+      const {duration: duration_meta_2, response: enriched_signatures_meta} = await fetch_meta_post({
+        endpoint: '/signatures/find',
+        body: {
+          filter: {
+            where: {
+              id: {
+                inq: Object.values(enriched_results).map((k) => k.id)
+              }
             }
           }
-        }
-      }, controller.signal)
+        },
+        signal: controller.signal
+      })
       duration_meta += duration_meta_2
 
       this.setState({

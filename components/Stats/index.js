@@ -15,19 +15,19 @@ export default class Stats extends React.Component {
   }
   componentDidMount() {
     (async () => {
-      const { response: library_stats } = await fetch_meta('/libraries/key_count')
+      const { response: library_stats } = await fetch_meta({ endpoint: '/libraries/key_count' })
       this.setState({
         library_stats,
       })
     })();
     (async () => {
-      const { response: signature_stats } = await fetch_meta('/signatures/key_count')
+      const { response: signature_stats } = await fetch_meta({ endpoint: '/signatures/key_count' })
       this.setState({
         signature_stats,
       })
     })();
     (async () => {
-      const { response: entity_stats } = await fetch_meta('/entities/key_count')
+      const { response: entity_stats } = await fetch_meta({ endpoint: '/entities/key_count' })
       this.setState({
         entity_stats,
       })

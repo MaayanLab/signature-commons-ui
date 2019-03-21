@@ -15,17 +15,17 @@ export default class DBCK extends React.Component {
   componentDidMount() {
     (async () => {
       this.setState({
-        library_dbck: await fetch_meta('/libraries/dbck', {filter: {limit: 10}}),
+        library_dbck: await fetch_meta({ endpoint: '/libraries/dbck', body: {filter: {limit: 10}} }),
       })
     })();
     (async () => {
       this.setState({
-        signature_dbck: await fetch_meta('/signatures/dbck', {filter: {limit: 10}}),
+        signature_dbck: await fetch_meta({ endpoint: '/signatures/dbck', body: {filter: {limit: 10}} }),
       })
     })();
     (async () => {
       this.setState({
-        entity_dbck: await fetch_meta('/entities/dbck', {filter: {limit: 10}}),
+        entity_dbck: await fetch_meta({ endpoint: '/entities/dbck', body: {filter: {limit: 10}} }),
       })
     })();
   }
