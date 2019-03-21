@@ -515,7 +515,7 @@ class AdminView extends React.PureComponent {
       //   SignatureList: <LinearProgress />
       // }, async () =>{
       //   const uid = Object.values(e).slice(0,36).join('')
-      //   const { response: signature_fields} = await fetch_meta({ endpoint: '/signatures/key_count?filter={"where":{"library":"'+uid+'"}}' })
+      //   const { response: signature_fields} = await fetch_meta({ endpoint: '/signatures/key_count', body: { filter: { where : { library : uid } } } })
       //   this.get_signatures(signature_fields)
       // });
       // console.log(window.location.hash)
@@ -644,7 +644,13 @@ class AdminView extends React.PureComponent {
   async fetch_sigstats() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: signature_counts} = await fetch_meta({
-      endpoint: '/signatures/value_count?depth=2&filter={"fields":["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]}',
+      endpoint: '/signatures/value_count',
+      body: {
+        depth: 2,
+        filter: {
+          fields: ["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]
+        },
+      },
       signal: this.state.general_controller.signal,
       headers
     })
