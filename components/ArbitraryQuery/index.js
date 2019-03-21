@@ -54,8 +54,11 @@ export default class ArbitraryQuery extends React.Component {
         signatures_results: signatures_meta,
       })
       const {duration: duration_data_1, response: enriched} = await fetch_data({
-        entities: entities_meta.map((entity) => entity.id),
-        signatures: signatures_meta.map((signature) => signature.id),
+        endpoint: '/enrich/overlap',
+        body: {
+          entities: entities_meta.map((entity) => entity.id),
+          signatures: signatures_meta.map((signature) => signature.id),
+        }
       })
       this.setState({
         status: this.state.status + '\nfetching enriched signatures...',

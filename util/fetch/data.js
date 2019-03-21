@@ -2,7 +2,7 @@ import fetch from 'isomorphic-unfetch'
 
 export const base_url = process.env.REACT_APP_DATA_API || (window.location.origin + '/enrichmentapi/api/v1')
 
-export async function fetch_data(endpoint, body, signal) {
+export async function fetch_data({ endpoint, body, signal }) {
   try {
     const start = new Date()
 

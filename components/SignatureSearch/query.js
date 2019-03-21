@@ -13,16 +13,20 @@ export async function query_overlap(props) {
   const entity_meta = maybe_fix_obj(props.input.entities)
   const entities = props.input.entities.map((entity) => entity.id)
 
-  const { response } = await fetch_data('/listdata')
+  const { response } = await fetch_data({ endpoint: '/listdata' })
 
   enriched_results = (await Promise.all(
     response.repositories.filter((repo) => repo.datatype === 'geneset_library').map((repo) =>
-      fetch_data('/enrich/overlap', {
-        entities: entities,
-        signatures: [],
-        database: repo.uuid,
-        limit: 500,
-      }, props.controller.signal)
+      fetch_data({
+        endpoint: '/enrich/overlap',
+        body: {
+          entities: entities,
+          signatures: [],
+          database: repo.uuid,
+          limit: 500,
+        },
+        signal: props.controller.signal
+      })
     )
   )).reduce(
     (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
@@ -125,17 +129,21 @@ export async function query_rank(props) {
   const up_entities = props.input.up_entities.map((entity) => entity.id)
   const down_entities = props.input.down_entities.map((entity) => entity.id)
   
-  const { response } = await fetch_data('/listdata')
+  const { response } = await fetch_data({ endpoint: '/listdata' })
 
   enriched_results = (await Promise.all(
     response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map((repo) =>
-      fetch_data('/enrich/ranktwosided', {
-        up_entities: up_entities,
-        down_entities: down_entities,
-        signatures: [],
-        database: repo.uuid,
-        limit: 500,
-      }, props.controller.signal)
+      fetch_data({
+        endpoint: '/enrich/ranktwosided',
+        body: {
+          up_entities: up_entities,
+          down_entities: down_entities,
+          signatures: [],
+          database: repo.uuid,
+          limit: 500,
+        },
+        signal: props.controller.signal
+      })
     )
   )).reduce(
     (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {

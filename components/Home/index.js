@@ -51,11 +51,15 @@ export default class Home extends React.PureComponent {
         ids = [id]
       }
 
-      const signature_data = (await fetch_data('/fetch/set', {
-        entities: [],
-        signatures: ids,
-        database: 'enrichr',
-      }, controller.signal)).signatures
+      const signature_data = (await fetch_data({
+        endpoint: '/fetch/set',
+        body: {
+          entities: [],
+          signatures: ids,
+          database: 'enrichr',
+        },
+        signal: controller.signal
+      })).signatures
       
       const signatures = signature_data.map((sig) => sig.uid)
       const entities = signature_data.reduce((all, sig) => [...all, ...sig.entities], [])

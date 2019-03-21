@@ -56,30 +56,46 @@ export default class EntityPage extends React.PureComponent {
 
       let duration_data = 0
       const enriched_results = (await Promise.all([
-        fetch_data('/enrich/overlap', {
-          entities: [entity.id],
-          signatures: [],
-          database: 'enrichr_geneset',
-          limit: 10,
-        }, controller.signal),
-        fetch_data('/enrich/overlap', {
-          entities: [entity.id],
-          signatures: [],
-          database: 'creeds_geneset',
-          limit: 10,
-        }, controller.signal),
-        fetch_data('/enrich/rank', {
-          entities: [entity.id],
-          signatures: [],
-          database: 'lincs_clue',
-          limit: 10,
-        }, controller.signal),
-        fetch_data('/enrich/rank', {
-          entities: [entity.id],
-          signatures: [],
-          database: 'lincs_fwd',
-          limit: 10,
-        }, controller.signal),
+        fetch_data({
+          endpoint: '/enrich/overlap',
+          body: {
+            entities: [entity.id],
+            signatures: [],
+            database: 'enrichr_geneset',
+            limit: 10,
+          },
+          signal: controller.signal
+        }),
+        fetch_data({
+          endpoint: '/enrich/overlap',
+          body: {
+            entities: [entity.id],
+            signatures: [],
+            database: 'creeds_geneset',
+            limit: 10,
+          },
+          signal: controller.signal
+        }),
+        fetch_data({
+          endpoint: '/enrich/rank',
+          body: {
+            entities: [entity.id],
+            signatures: [],
+            database: 'lincs_clue',
+            limit: 10,
+          },
+          signal: controller.signal
+        }),
+        fetch_data({
+          endpoint: '/enrich/rank',
+          body: {
+            entities: [entity.id],
+            signatures: [],
+            database: 'lincs_fwd',
+            limit: 10,
+          },
+          signal: controller.signal
+        }),
       ])).reduce(
         (results, {duration: duration_data_n, response: result}) => {
           duration_data += duration_data_n
