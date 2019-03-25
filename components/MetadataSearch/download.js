@@ -1,0 +1,65 @@
+import DataProvider from "../../util/fetch/model";
+import fileDownload from 'js-file-download';
+
+export async function download_json(signature) {
+  const provider = new DataProvider()
+  const signatures = provider.resolve_signatures([signature])
+  const data = []
+  for (const signature of signatures) {
+    data.push({
+      'id': await signature.id,
+      'meta': await signature.meta,
+      'library': await signature.library,
+      'data': await signature.data,
+    })
+  }
+  console.log(data)
+  fileDownload(JSON.stringify(data), 'signatures.json')
+}
+
+export async function download_tsv(signature) {
+  // WIP
+  const provider = new DataProvider()
+  const signatures = provider.resolve_signatures([signature])
+
+  const col_labels = new Set(['id'])
+  const col_headers = {}
+  const row_labels = new Set(['id'])
+  const row_headers = {}
+
+  const data = {}
+
+  for (const signature of signatures) {
+    const signature_id = await signature.id
+    const signature_meta = await signature.meta
+    col_headers[signature_id] = {}
+    for (const key of Object.keys(signature_meta)) {
+      col_labels.add(key)
+      col_headers[signature_id][key] = JSON.stringify(signature_meta[key])
+    }
+
+    for (const entity of await signature.data) {
+      const entity_id = await entity.id
+      if (row_headers[entity_id] !== undefined)
+        continue
+      row_headers.id = entity_id
+      row_headers[entity_id] = {}
+      const entity_meta = await entity.meta
+      for (const key of Object.keys(entity_meta)) {
+        row_labels.add(key)
+        row_headers[key] = JSON.stringify(entity_meta[key])
+      }
+    }
+  }
+
+  const result = ''
+  for (const col_label of col_labels) {
+    result += `${'\t'.repeat(row_labels.length)}\t${col_headers[col_label].join('\t')}\n`
+  }
+  result += `${row_labels.join('\t')}\t${'\t'.repeat(signatures.length)}\n`
+  for (const row of row_headers) {
+    result += `${row_labels.map((row_label) => row[row_label]).join('\t')}\t${'1'.repeat(row.length)}\n`
+  }
+
+  fileDownload(result, 'data.tsv')
+}

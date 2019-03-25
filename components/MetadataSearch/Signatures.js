@@ -1,6 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic';
 import { call } from '../../util/call';
+import { download_json } from './download';
 
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
 const IconButton = dynamic(() => import('../../components/IconButton'), { ssr: false })
@@ -76,7 +77,7 @@ export default class extends React.Component {
                 <IconButton
                   alt="Download"
                   icon="file_download"
-                  onClick={call(this.props.download, signature.id)}
+                  onClick={call(download_json, signature.id)}
                 />
                 &nbsp;
                 {/*this.state.cart.has(signature.id) ? (

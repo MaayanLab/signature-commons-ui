@@ -1,12 +1,9 @@
 import { Set } from 'immutable';
-import fileDownload from 'js-file-download';
 import M from "materialize-css";
 import Base from '../../components/Base';
 import React from "react";
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { call } from '../../util/call';
-import { fetch_data } from "../../util/fetch/data";
-import { base_url as meta_base_url, fetch_meta_post } from "../../util/fetch/meta";
 import MetadataSearch from '../MetadataSearch';
 import Resources from '../Resources';
 import SignatureSearch from '../SignatureSearch';
@@ -19,7 +16,6 @@ export default class Home extends React.PureComponent {
       cart: Set(),
     }
 
-    this.download = this.download.bind(this)
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
   }
@@ -31,75 +27,6 @@ export default class Home extends React.PureComponent {
   componentDidUpdate() {
     M.AutoInit();
     M.updateTextFields();
-  }
-
-  async download(id) {
-    if(this.state.controller !== null) {
-      this.state.controller.abort()
-    }
-
-    try {
-      const controller = new AbortController()
-      this.setState({
-        controller,
-      })
-
-      let ids
-      if(id === undefined) {
-        ids = this.state.cart.toArray()
-      } else {
-        ids = [id]
-      }
-
-      const signature_data = (await fetch_data({
-        endpoint: '/fetch/set',
-        body: {
-          entities: [],
-          signatures: ids,
-          database: 'enrichr',
-        },
-        signal: controller.signal
-      })).signatures
-      
-      const signatures = signature_data.map((sig) => sig.uid)
-      const entities = signature_data.reduce((all, sig) => [...all, ...sig.entities], [])
-
-      const {response: signature_metadata} = await fetch_meta_post({
-        endpoint: '/signatures/find',
-        body: {
-          filter: {
-            where: {
-              id: {
-                inq: signatures,
-              }
-            }
-          }
-        },
-        signal: controller.signal
-      })
-      const {response: entity_metadata} = await fetch_meta_post({
-        endpoint: '/entities/find',
-        body: {
-          filter: {
-            where: {
-              id: {
-                inq: entities,
-              }
-            }
-          }
-        },
-        signal: controller.signal
-      })
-      const data = {
-        entities: entity_metadata,
-        signatures: signature_metadata,
-        values: signature_data,
-        controller: null,
-      }
-      fileDownload(JSON.stringify(data), 'data.json');
-    } catch(e) {
-      console.error(e)
-    }
   }
 
   updateCart(cart) {
@@ -167,7 +94,6 @@ export default class Home extends React.PureComponent {
     <SignatureSearch
       cart={this.state.cart}
       updateCart={this.updateCart}
-      download={this.download}
       {...props}
     />
   )
@@ -176,7 +102,6 @@ export default class Home extends React.PureComponent {
     <MetadataSearch
       cart={this.state.cart}
       updateCart={this.updateCart}
-      download={this.download}
       {...props}
     />
   )
@@ -185,7 +110,6 @@ export default class Home extends React.PureComponent {
     <Resources
       cart={this.state.cart}
       updateCart={this.updateCart}
-      download={this.download}
       {...props}
     />
   )
@@ -194,7 +118,6 @@ export default class Home extends React.PureComponent {
     <Upload
       cart={this.state.cart}
       updateCart={this.updateCart}
-      download={this.download}
       {...props}
     />
   )
