@@ -4,18 +4,18 @@ import IconButton from '../../components/IconButton';
 
 export default class ResourceList extends React.PureComponent {
   render() {
-    const sorted_resources = [...this.props.resources].sort((r1, r2) => r1.name.localeCompare(r2.name))
+    const sorted_resources = [...this.props.resources].sort((r1, r2) => r1.meta.name.localeCompare(r2.meta.name))
     return (
       <div className="row">
         <div className="col offset-s2 s8">
           {sorted_resources.map((resource) => (
             <Link
-              key={resource.name}
-              to={`/Resources/${resource.name.replace(/ /g, '_')}`}
+              key={resource.id}
+              to={`/Resources/${resource.meta.name.replace(/ /g, '_')}`}
             >
               <IconButton
-                alt={resource.name}
-                img={resource.icon}
+                alt={resource.meta.name}
+                img={resource.meta.icon}
               />
             </Link>
           ))}

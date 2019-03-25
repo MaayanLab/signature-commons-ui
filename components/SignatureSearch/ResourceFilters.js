@@ -17,9 +17,9 @@ export default class extends React.Component {
   sort_resources() {
     return [...this.props.resources].sort(
       (r1, r2) => {
-        const diff = (((this.props.resource_signatures || {})[r2.name] || {}).count || 0) - (((this.props.resource_signatures || {})[r1.name] || {}).count || 0)
+        const diff = (((this.props.resource_signatures || {})[r2.id] || {}).count || 0) - (((this.props.resource_signatures || {})[r1.id] || {}).count || 0)
         if (diff === 0)
-          return r1.name.localeCompare(r2.name)
+          return r1.meta.name.localeCompare(r2.meta.name)
         else
           return diff
       }
@@ -35,16 +35,16 @@ export default class extends React.Component {
           this.setState({ resourceAnchor: ref })
       }} className="col s12 center">
         {sorted_resources.map((resource, ind) => (
-          <div key={resource.name}>
+          <div key={resource.id}>
             {this.state.show_all || ind < config.maxResourcesToShow || sorted_resources.length < config.maxResourcesBeforeCollapse ? (
               <div>
                 <Link
-                  to={`${this.props.match.url}/${resource.name.replace(/ /g, '_')}`}
+                  to={`${this.props.match.url}/${resource.meta.name.replace(/ /g, '_')}`}
                 >
                   <IconButton
-                    alt={resource.name}
-                    img={resource.icon}
-                    counter={((this.props.resource_signatures || {})[resource.name] || {}).count}
+                    alt={resource.meta.name}
+                    img={resource.meta.icon}
+                    counter={((this.props.resource_signatures || {})[resource.meta.name] || {}).count}
                   />
                 </Link>
               </div>

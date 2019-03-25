@@ -55,11 +55,14 @@ export async function get_library_resources() {
 
     if (groups[resource] === undefined) {
       groups[resource] = {
-        name: resource,
-        icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
-        description: resource_meta[resource].Description,
-        PMID: resource_meta[resource].PMID,
-        URL: resource_meta[resource].URL,
+        id: resource,
+        meta: {
+          name: resource,
+          icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
+          description: resource_meta[resource].Description,
+          PMID: resource_meta[resource].PMID,
+          URL: resource_meta[resource].URL,
+        },
         libraries: []
       }
     }

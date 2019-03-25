@@ -51,21 +51,21 @@ export default class ResourcePage extends React.Component {
                   <div className="col s12">
                     <div className="card-image col s1">
                       <IconButton
-                        img={this.props.resource.icon}
-                        onClick={call(this.redirectLink, this.props.resource.URL)}
+                        img={this.props.resource.meta.icon}
+                        onClick={call(this.redirectLink, this.props.resource.meta.URL)}
                       />
                     </div>
                     <div className="card-content col s11">
                       <div>
-                        <span className="card-title">{this.props.resource.name}</span>
+                        <span className="card-title">{this.props.resource.meta.name}</span>
                       </div>
                       <div>
                         <span>
                           <b>PMID:</b>&nbsp;
                           <a 
-                            href={"https://www.ncbi.nlm.nih.gov/pubmed/" + this.props.resource.PMID}
+                            href={"https://www.ncbi.nlm.nih.gov/pubmed/" + this.props.resource.meta.PMID}
                           >
-                            {this.props.resource.PMID}
+                            {this.props.resource.meta.PMID}
                           </a>
                         </span>
                       </div>
@@ -73,14 +73,14 @@ export default class ResourcePage extends React.Component {
                         <span>
                           <b>URL:</b>&nbsp;
                           <a
-                            href={this.props.resource.URL}
+                            href={this.props.resource.meta.URL}
                           >
-                            {this.props.resource.URL}
+                            {this.props.resource.meta.URL}
                           </a>
                         </span>
                       </div>
                       <div>
-                        <p>{this.props.resource.description}</p>
+                        <p>{this.props.resource.meta.description}</p>
                       </div>
                     </div>
                   </div>
