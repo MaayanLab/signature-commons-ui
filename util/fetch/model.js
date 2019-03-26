@@ -84,15 +84,50 @@ export default class DataProvider {
       resource._resource.libraries = this.resolve_libraries(resource._resource.libraries)
     }
     for (const lib of Object.values(libraries)) {
+      // update library
       const library = this.resolve_library(lib)
       library._library = lib
+
+      // update resource
       if (library_resource[lib.id] !== undefined)
         library._library.resource = this.resolve_resource(library_resource[lib.id])
+
+      // update signatures
+      if (library._signatures === undefined)
+        library._signatures = new Set()
+      for (const signature of Object.values(this.signatures)) {
+        if (lib.id === (await signature.library).id)
+          library._signatures.push(signature)
+      }
     }
   }
 
   fetch_libraries = async () => {
     await this.fetch_resources()
+  }
+
+  fetch_signatures_for_libraries = async () => {
+    const { response } = await fetch_meta_post({
+      endpoint: `/signatures/find`,
+      body: {
+        filter: {
+          where: {
+            library: {
+              inq: Object.keys(this.libraries)
+            }
+          }
+        }
+      }
+    })
+    for (const sig of response) {
+      const signature = this.resolve_signature(sig)
+      signature._signature = sig
+
+      const library = this.resolve_library(sig.library)
+      if (library._signatures === undefined)
+        library._signatures = new Set()
+      library._signatures.add(signature)
+    }
   }
 
   fetch_signatures = async () => {
@@ -111,6 +146,11 @@ export default class DataProvider {
     for (const sig of response) {
       const signature = this.resolve_signature(sig)
       signature._signature = sig
+
+      const library = this.resolve_library(sig.library)
+      if (library._signatures === undefined)
+        library._signatures = new Set()
+      library._signatures.add(signature)
     }
   }
 
@@ -214,6 +254,16 @@ export class Library {
 
       await this._parent.fetch_libraries()
       return this._library.meta
+    })()
+  }
+
+  get signatures() {
+    return (async () => {
+      if (this._signatures !== undefined)
+        return this._signatures
+      
+      await this._parent.fetch_signatures_for_libraries()
+      return this._signatures
     })()
   }
 }
