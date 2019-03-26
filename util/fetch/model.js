@@ -247,6 +247,16 @@ export class Library {
     })()
   }
 
+  get dataset_type() {
+    return (async () => {
+      if (this._library.dataset_type !== undefined)
+        return this._library.dataset_type
+
+      await this._parent.fetch_libraries()
+      return this._library.dataset_type
+    })()
+  }
+
   get meta() {
     return (async () => {
       if (this._library.meta !== undefined)
@@ -316,14 +326,12 @@ export class Signature {
   get data() {
     // TODO
     return (async () => {
-      return {}
       if (this._signature.data !== undefined)
         return this._signature.data
 
       const library = await this.library
       const { response } = await fetch_data({
-        // endpoint: `/fetch/${await library.dataset_type}`,
-        endpoint: '/fetch/set',
+        endpoint: `/fetch/${await library.dataset_type}`,
         body: {
           entities: [],
           signatures: [await this.id],
