@@ -17,17 +17,15 @@ export async function download_json(signature) {
   fileDownload(JSON.stringify(data), 'signatures.json')
 }
 
-export async function download_tsv(signature) {
-  // WIP
+export async function download_tsv(lib) {
   const provider = new DataProvider()
-  const signatures = provider.resolve_signatures([signature])
+  const library = provider.resolve_library(lib)
+  const signatures = library.signatures
 
   const col_labels = new Set(['id'])
   const col_headers = {}
   const row_labels = new Set(['id'])
   const row_headers = {}
-
-  const data = {}
 
   for (const signature of signatures) {
     const signature_id = await signature.id
@@ -38,7 +36,9 @@ export async function download_tsv(signature) {
       col_headers[signature_id][key] = JSON.stringify(signature_meta[key])
     }
 
-    for (const entity of await signature.data) {
+    const signature_data = await signature.data
+    
+    for (const entity of signature_data) {
       const entity_id = await entity.id
       if (row_headers[entity_id] !== undefined)
         continue
@@ -52,7 +52,7 @@ export async function download_tsv(signature) {
     }
   }
 
-  const result = ''
+  let result = ''
   for (const col_label of col_labels) {
     result += `${'\t'.repeat(row_labels.length)}\t${col_headers[col_label].join('\t')}\n`
   }
