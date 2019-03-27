@@ -704,10 +704,11 @@ class AdminView extends React.PureComponent {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
       const headers = {'Authorization': `Basic ${token}`}
-      const { authenticated: auth} = await fetch_creds('/',
-                                                        undefined,
-                                                        undefined,
-                                                        headers)
+      const { authenticated: auth} = await fetch_creds({
+        endpoint: "/",
+        headers
+      })
+      
       if (!auth){
         return Promise.reject()
       }else{
