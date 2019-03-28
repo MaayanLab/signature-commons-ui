@@ -132,6 +132,7 @@ export default class extends React.Component {
   }
 
   render() {
+    const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
     return (
       <div className="col s12">
         <ul
@@ -141,7 +142,7 @@ export default class extends React.Component {
             onOpenEnd: () => window.dispatchEvent(new Event('resize')),
           })}
         >
-          {this.props.results.map((result) => (
+          {sorted_results.map((result) => (
             <li
               key={result.library.id}
             >
@@ -154,11 +155,27 @@ export default class extends React.Component {
                   backgroundColor: 'rgba(255,255,255,1)',
                 }}
               >
+                <style jsx>{`
+                  .counter {
+                    font-size: 75%;
+                    line-height: 2.2em;
+                    z-index: 100;
+                    color: white;
+                    border-radius: 50%;
+                    width: 25px;
+                    height: 25px;
+                    text-align: center;
+                    vertical-align: middle;
+                  }
+                `}</style>
                 <Label
                   item={result.library}
                   visibility={1}
                 />
                 <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                <div className="counter red lighten-1">
+                  {result.signatures.length}
+                </div>
                 <a
                   href="javascript:void(0);"
                   style={{ border: 0 }}
