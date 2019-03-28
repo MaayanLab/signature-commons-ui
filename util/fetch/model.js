@@ -330,17 +330,25 @@ export class Signature {
         return this._signature.data
 
       const library = await this.library
+      const dataset_type = await library.dataset_type
+      let endpoint
+      if (dataset_type.startsWith('geneset'))
+        endpoint = 'set'
+      else if (dataset_type.startsWith('rank'))
+        endpoint = 'rank'
+      else
+        throw `${dataset_type} not recognized`
+
       const { response } = await fetch_data({
-        endpoint: `/fetch/${await library.dataset_type}`,
+        endpoint: `/fetch/${endpoint}`,
         body: {
           entities: [],
           signatures: [await this.id],
           database: await library.dataset,
         }
       })
-      console.log(response)
-      const entities = response.entities.reduce(
-        (entities, id) => ({...entities, [id]: Entity(id, this._parent)}),
+      const entities = response.signatures[0].entities.reduce(
+        (entities, id) => ({...entities, [id]: this._parent.resolve_entity(id)}),
         {}
       )
       this._signature.data = entities
