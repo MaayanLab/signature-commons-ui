@@ -5,7 +5,7 @@ import { ShowMeta } from '../../components/ShowMeta';
 import { Label } from '../../components/Label';
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
-import { download_tsv } from '../MetadataSearch/download';
+import { download_library_json, download_resource_json } from '../MetadataSearch/download';
 
 export default class ResourcePage extends React.Component {
   componentDidMount() {
@@ -69,6 +69,9 @@ export default class ResourcePage extends React.Component {
                   >
                     BACK
                   </Link>
+                  <a href="javascript:void(0);" onClick={call(download_resource_json, this.props.resource)}>
+                    DOWNLOAD
+                  </a>
                 </div>
               </div>
             </div>
@@ -114,7 +117,7 @@ export default class ResourcePage extends React.Component {
                         <IconButton
                           alt="Download"
                           icon="file_download"
-                          onClick={call(download_tsv, library.id)}
+                          onClick={call(download_library_json, library.id)}
                         />
                         &nbsp;
                         <div style={{ flex: '1 0 auto' }}>&nbsp;</div>

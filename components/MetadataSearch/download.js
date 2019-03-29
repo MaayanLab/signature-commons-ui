@@ -1,7 +1,7 @@
 import DataProvider from "../../util/fetch/model";
 import fileDownload from 'js-file-download';
 
-export async function download_json(signature) {
+export async function download_signature_json(signature) {
   const provider = new DataProvider()
   const data = await provider.serialize_signature(signature, {
     resource: true,
@@ -9,6 +9,27 @@ export async function download_json(signature) {
     data: true,
   })
   fileDownload(JSON.stringify(data), 'signatures.json')
+}
+
+export async function download_library_json(library) {
+  const provider = new DataProvider()
+  const data = await provider.serialize_library(library, {
+    resource: true,
+    library: true,
+    signatures: true,
+    data: true,
+  })
+  fileDownload(JSON.stringify(data), 'library.json')
+}
+
+export async function download_resource_json(resource) {
+  const provider = new DataProvider()
+  const data = await provider.serialize_resource(resource, {
+    libraries: true,
+    signatures: true,
+    data: true,
+  })
+  fileDownload(JSON.stringify(data), 'resource.json')
 }
 
 export async function download_tsv(lib) {
