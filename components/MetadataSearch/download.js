@@ -3,17 +3,11 @@ import fileDownload from 'js-file-download';
 
 export async function download_json(signature) {
   const provider = new DataProvider()
-  const signatures = provider.resolve_signatures([signature])
-  const data = []
-  for (const signature of signatures) {
-    data.push({
-      'id': await signature.id,
-      'meta': await signature.meta,
-      'library': await signature.library,
-      'data': await signature.data,
-    })
-  }
-  console.log(data)
+  const data = await provider.serialize_signature(signature, {
+    resource: true,
+    library: true,
+    data: true,
+  })
   fileDownload(JSON.stringify(data), 'signatures.json')
 }
 

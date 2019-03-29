@@ -2,6 +2,22 @@ import { fetch_meta_post } from "./meta";
 import { fetch_data } from "./data";
 import { get_library_resources } from "../../components/Resources/resources";
 
+async function PromiseAllSeq(promises) {
+  const resolved = []
+  for (const promise of promises) {
+    resolved.push(await promise())
+  }
+  return resolved
+}
+
+/**
+ * The DataProvider facilitates lazy bulk data retrieval while allowing a developer
+ *  to think about model manipulation "element by element." This simplifies logic
+ *  throughout the code while remaining pretty efficient. Hopefully a user doesn't end up
+ *  bringing more data in than can fit into their memory.. (e.g. trying to download all
+ *  signatures). If this becomes a problem in the future we can drop data when it gets too
+ *  large.
+ */
 export default class DataProvider {
   constructor() {
     this.resources = {}
@@ -10,9 +26,107 @@ export default class DataProvider {
     this.entities = {}
   }
 
-  toJSON(key) { return null }
+  async serialize_resource(res, opts) {
+    if (opts === undefined) opts = {}
+
+    const resource = await this.resolve_resource(res)
+    const serialized = {}
+
+    serialized.id = await resource.id
+    serialized.meta =  await resource.meta
+
+    if (opts.libraries === true) {
+      serialized.libraries = await PromiseAllSeq(
+        (await resource.libraries).map(
+          (library) =>
+            async () => await this.serialize_library(library, {
+              signatures: opts.signatures, data: opts.data
+            })
+        )
+      )
+    }
+
+    return serialized
+  }
+
+  async serialize_library(lib, opts) {
+    if (opts === undefined) opts = {}
+
+    const library = await this.resolve_library(lib)
+    const serialized = {}
+
+    serialized.id = await library.id
+    serialized.meta = await library.meta
+    serialized.dataset = await library.dataset
+    serialized.dataset_type = await library.dataset_type
+
+    if (opts.resource === true)
+      serialized.resource = await this.serialize_resource(await library.resource)
+
+    if (opts.signatures === true) {
+      serialized.signatures = await PromiseAllSeq(
+        (await library.signatures).map(
+          (signature) =>
+            async () => await this.serialize_signature(signature, {
+              data: opts.data
+            })
+        )
+      )
+    }
+
+    return serialized
+  }
+
+  async serialize_signature(sig, opts) {
+    if (opts === undefined) opts = {}
+
+    const signature = await this.resolve_signature(sig)
+    const serialized = {}
+
+    serialized.id = await signature.id
+    serialized.meta = await signature.meta
+
+    if (opts.library === true) {
+      serialized.library = await this.serialize_library(await signature.library, {
+        resource: opts.resource
+      })
+    }
+
+    if (opts.data === true) {
+      serialized.data = await PromiseAllSeq(
+        (await signature.data).map(
+          (entity) =>
+            async () => await this.serialize_entity(entity)
+        )
+      )
+    }
+
+    return serialized
+  }
+
+  async serialize_entity(ent, opts) {
+    // TODO: deal with rank data
+    if (opts === undefined) opts = {}
+
+    const entity = await this.resolve_entity(ent)
+    const serialized = {}
+
+    serialized.id = await entity.id
+    serialized.meta = await entity.meta
+
+    if (opts.signature === true) {
+      serialized.signature = await this.serialize_signature(await entity.library, {
+        library: opts.library, resource: opts.resource
+      })
+    }
+    
+    return serialized
+  }
 
   resolve_resource = (resource) => {
+    if (resource instanceof Resource)
+      return resource
+
     if (typeof resource === 'string')
       resource = { 'id': resource }
     if (typeof resource === 'object' && resource.id !== undefined) {
@@ -20,11 +134,14 @@ export default class DataProvider {
         this.resources[resource.id] = new Resource(resource, this)
       return this.resources[resource.id]
     } else {
-      throw new Error('Invalid object provided for resolution')
+      throw new Error(`Invalid object provided for resolution: ${resource}`)
     }
   }
 
   resolve_library = (library) => {
+    if (library instanceof Library)
+      return library
+
     if (typeof library === 'string')
       library = { 'id': library }
     if (typeof library === 'object' && library.id !== undefined) {
@@ -32,11 +149,14 @@ export default class DataProvider {
         this.libraries[library.id] = new Library(library, this)
       return this.libraries[library.id]
     } else {
-      throw new Error('Invalid object provided for resolution')
+      throw new Error(`Invalid object provided for resolution ${library}`)
     }
   }
 
   resolve_signature = (signature) => {
+    if (signature instanceof Signature)
+      return signature
+
     if (typeof signature === 'string')
       signature = { 'id': signature }
     if (typeof signature === 'object' && signature.id !== undefined) {
@@ -44,11 +164,14 @@ export default class DataProvider {
         this.signatures[signature.id] = new Signature(signature, this)
       return this.signatures[signature.id]
     } else {
-      throw new Error('Invalid object provided for resolution')
+      throw new Error(`Invalid object provided for resolution: ${signature}`)
     }
   }
 
   resolve_entity = (entity) => {
+    if (entity instanceof Entity)
+      return entity
+
     if (typeof entity === 'string')
       entity = { 'id': entity }
     if (typeof entity === 'object' && entity.id !== undefined) {
@@ -56,48 +179,70 @@ export default class DataProvider {
         this.entities[entity.id] = new Entity(entity, this)
       return this.entities[entity.id]
     } else {
-      throw new Error('Invalid object provided for resolution')
+      throw new Error(`Invalid object provided for resolution: ${entity}`)
     }
   }
 
-  resolve_resources = (resources) => {
-    return resources.map(this.resolve_resource)
+  resolve_resources = async (resources) => {
+    return await PromiseAllSeq(
+      resources.map(
+        (resource) =>
+          async () => await this.resolve_resource(resource)
+      )
+    )
   }
 
-  resolve_libraries = (libraries) => {
-    return libraries.map(this.resolve_library)
+  resolve_libraries = async (libraries) => {
+    return await PromiseAllSeq(
+      libraries.map(
+        (library) =>
+          async () => await this.resolve_library(library)
+      )
+    )
   }
 
-  resolve_signatures = (signatures) => {
-    return signatures.map(this.resolve_signature)
+  resolve_signatures = async (signatures) => {
+    return await PromiseAllSeq(
+      signatures.map(
+        (signature) =>
+          async () => await this.resolve_signature(signature)
+      )
+    )
   }
 
-  resolve_entities = (entities) => {
-    return entities.map(this.resolve_entity)
+  resolve_entities = async (entities) => {
+    return await PromiseAllSeq(
+      entities.map(
+        (entity) =>
+          async () => await this.resolve_entity(entity)
+      )
+    )
   }
 
   fetch_resources = async () => {
     const { libraries, resources, library_resource } = await get_library_resources()
     for (const res of Object.values(resources)) {
-      const resource = this.resolve_resource(res)
+      const resource = await this.resolve_resource(res)
+      resource._fetched = true
       resource._resource = res
-      resource._resource.libraries = this.resolve_libraries(resource._resource.libraries)
+      resource._libraries = new Set(await this.resolve_libraries(resource._resource.libraries))
     }
     for (const lib of Object.values(libraries)) {
       // update library
-      const library = this.resolve_library(lib)
+      const library = await this.resolve_library(lib)
+      library._fetched = true
       library._library = lib
 
       // update resource
       if (library_resource[lib.id] !== undefined)
-        library._library.resource = this.resolve_resource(library_resource[lib.id])
+        library._resource = await this.resolve_resource(library_resource[lib.id])
 
       // update signatures
       if (library._signatures === undefined)
         library._signatures = new Set()
       for (const signature of Object.values(this.signatures)) {
-        if (lib.id === (await signature.library).id)
-          library._signatures.push(signature)
+        if (lib.id === await (await signature.library).id)
+          library._signatures.add(signature)
       }
     }
   }
@@ -107,6 +252,8 @@ export default class DataProvider {
   }
 
   fetch_signatures_for_libraries = async () => {
+    // TODO: consider just fetching uuids here so we don't fetch the whole signature if
+    //       we already have it
     const { response } = await fetch_meta_post({
       endpoint: `/signatures/find`,
       body: {
@@ -120,10 +267,11 @@ export default class DataProvider {
       }
     })
     for (const sig of response) {
-      const signature = this.resolve_signature(sig)
+      const signature = await this.resolve_signature(sig)
+      signature._fetched = true
       signature._signature = sig
 
-      const library = this.resolve_library(sig.library)
+      const library = await this.resolve_library(sig.library)
       if (library._signatures === undefined)
         library._signatures = new Set()
       library._signatures.add(signature)
@@ -131,23 +279,27 @@ export default class DataProvider {
   }
 
   fetch_signatures = async () => {
+    const signatures = Object.keys(this.signatures).filter((entity) => !this.signatures[entity]._fetched)
+    if (signatures.length === 0)
+      return
     const { response } = await fetch_meta_post({
       endpoint: `/signatures/find`,
       body: {
         filter: {
           where: {
             id: {
-              inq: Object.keys(this.signatures)
+              inq: signatures
             }
           }
         }
       }
     })
     for (const sig of response) {
-      const signature = this.resolve_signature(sig)
+      const signature = await this.resolve_signature(sig)
+      signature._fetched = true
       signature._signature = sig
 
-      const library = this.resolve_library(sig.library)
+      const library = await this.resolve_library(sig.library)
       if (library._signatures === undefined)
         library._signatures = new Set()
       library._signatures.add(signature)
@@ -155,20 +307,24 @@ export default class DataProvider {
   }
 
   fetch_entities = async () => {
+    const entities = Object.keys(this.entities).filter((entity) => !this.entities[entity]._fetched)
+    if (entities.length === 0)
+      return
     const { response } = await fetch_meta_post({
       endpoint: `/entities/find`,
       body: {
         filter: {
           where: {
             id: {
-              inq: Object.keys(this.entities)
+              inq: entities,
             }
           }
         }
       }
     })
     for (const ent of response) {
-      const entity = this.resolve_entity(ent)
+      const entity = await this.resolve_entity(ent)
+      entity._fetched = true
       entity._entity = ent
     }
   }
@@ -189,19 +345,17 @@ export class Resource {
     this._parent = parent
   }
 
-  toJSON(key) { return this._resource }
-
   get id() {
     return Promise.resolve(this._resource.id)
   }
 
   get libraries() {
     return (async () => {
-      if (this._resource.libraries !== undefined)
-        return this._resource.libraries
+      if (this._libraries !== undefined)
+        return this._libraries
 
       await this._parent.fetch_libraries()
-      return this._resource.libraries
+      return this._libraries
     })()
   }
 
@@ -231,10 +385,20 @@ export class Library {
     this._parent = parent
   }
 
-  toJSON(key) { return this._library }
-
   get id() {
     return Promise.resolve(this._library.id)
+  }
+
+  get resource() {
+    return (async () => {
+      if (this._resource !== undefined)
+        return this._resource
+      else if (this._library.resource === undefined)
+        await this._parent.fetch_libraries()
+
+      this._resource = await this._parent.resolve_resource(this._library.resource)
+      return this._resource
+    })()
   }
 
   get dataset() {
@@ -293,23 +457,19 @@ export class Signature {
     this._parent = parent
   }
 
-  toJSON(key) { return this._signature }
-
   get id() {
     return Promise.resolve(this._signature.id)
   }
 
   get library() {
     return (async () => {
-      if (typeof this._signature.library === 'string') {
-        this._signature.library = this._parent.resolve_library(this._signature.library)
-        return this._signature.library
-      } else if (this._signature.library !== undefined) {
-        return this._signature.library
-      }
-      await this._parent.fetch_signatures()
-      await this._parent.fetch_libraries()
-      return this._signature.library
+      if (this._library !== undefined)
+        return this._library
+      else if (this._signature.library === undefined)
+        await this._parent.fetch_signatures()
+
+      this._library = this._parent.resolve_library(this._signature.library)
+      return this._library
     })()
   }
 
@@ -324,10 +484,11 @@ export class Signature {
   }
 
   get data() {
-    // TODO
     return (async () => {
-      if (this._signature.data !== undefined)
-        return this._signature.data
+      if (this._data !== undefined)
+        return this._data
+      // TODO: deal with rank data
+      // TODO: deal with bulk data
 
       const library = await this.library
       const dataset_type = await library.dataset_type
@@ -347,12 +508,14 @@ export class Signature {
           database: await library.dataset,
         }
       })
-      const entities = response.signatures[0].entities.reduce(
-        (entities, id) => ({...entities, [id]: this._parent.resolve_entity(id)}),
-        {}
+      const entities = await PromiseAllSeq(
+        response.signatures[0].entities.map(
+          (entity) =>
+            async () => await this._parent.resolve_entity(entity)
+        )
       )
-      this._signature.data = entities
-      return this._signature.data
+      this._data = entities
+      return this._data
     })()
   }
 }
@@ -371,8 +534,6 @@ export class Entity {
       throw new Error(`Entity should be initialized by entities`)
     this._parent = parent
   }
-
-  toJSON(key) { return this._entity }
 
   get id() {
     return Promise.resolve(this._entity.id)
