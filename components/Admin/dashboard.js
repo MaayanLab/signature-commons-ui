@@ -44,20 +44,20 @@ const CardIcon = withStyles(cardIconStyle)(({ Icon, classes, type }) => (
 const db_vals = (db, props) => {
   const vals = {
     Libraries: {
-      fields: props.library_fields,
+      fields: props.library_piefields,
       stats: props.libchart,
       selected_field: props.libselected,
       icon : LibraryBooks,
       num : props.LibraryNumber,
-      title: `Library ${props.libselected}`
+      title: "Library Stats"
     },
     Signatures: {
-      fields: props.signature_allfields,
+      fields: props.signature_piefields,
       stats: props.sigchart,
       selected_field: props.sigselected,
       icon : Fingerprint,
       num : props.SignatureNumber,
-      title: `Signature ${props.sigselected}`
+      title: "Signature Stats"
     },
     Entities: {
       fields: props.entity_fields,
@@ -258,7 +258,7 @@ const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...
         align="center"
         justify="center">
         <Grid item xs={12}>
-          {display_title}
+          {selected_field.replace(/_/g, " ")}
         </Grid>
         <Grid item xs={12}>
           {stats===null ?
@@ -287,7 +287,7 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
           </div>:
           <Selections
             value={selected_field === null ? fields[0]: selected_field}
-            values={Object.keys(fields).sort()}
+            values={fields.sort()}
             onChange={e => props.handleSelectField(e, props.selected_db)}
           />
         }

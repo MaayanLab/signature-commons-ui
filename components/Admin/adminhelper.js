@@ -32,7 +32,7 @@ export const SignaturePostFilter = (props) => (
         <ReferenceInput label="Library"
                         source="library"
                         reference="libraries"
-                        perPage={props.LibNum}
+                        perPage={props.LibraryNumber==="Loading..."?140:props.LibraryNumber}
                         sort={{ field: 'id', order: 'ASC' }}
                         allowEmpty={false}
                         alwaysOn
