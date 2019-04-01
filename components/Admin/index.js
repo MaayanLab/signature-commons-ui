@@ -51,12 +51,12 @@ class AdminView extends React.PureComponent {
       library_fields: null,
       entity_fields: null,
       signature_fields: null,
-      LibNum: 140,
       LibraryNumber: "Loading...",
       SignatureNumber: "Loading...",
       EntityNumber: "Loading...",
       signature_counts: null,
-      signature_allfields: null,
+      library_piefields: null,
+      signature_piefields: null,
       stats: null,
       libchart: null,
       sigchart: null,
@@ -106,7 +106,7 @@ class AdminView extends React.PureComponent {
     }else{
       return(
         <SignaturePostFilter
-          LibNum={this.state.LibNum}
+          LibraryNumber={this.state.LibraryNumber}
         />
       )
     }
@@ -579,19 +579,27 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  async fetch_libfields() {
+  async fetch_libNumber() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: library_fields } = await fetch_meta({
-      endpoint: '/libraries/key_count',
+    const { response: library_counts } = await fetch_meta({
+      endpoint: '/libraries/count',
       signal: this.state.general_controller.signal,
       headers
     })
     this.setState({
-      LibNum: library_fields.$validator,
+      LibraryNumber: library_counts.count
+    })
+  }
+
+  async fetch_libraryfields() {
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: library_fields} = await fetch_meta({
+      endpoint: `/libraries/key_count`,
+      signal: this.state.general_controller.signal,
+      headers
+    })
+    this.setState({
       library_fields: library_fields,
-      LibraryNumber: library_fields.$validator,
-    },()=>{
-      this.fetch_stats("Libraries")
     })
   }
 
@@ -607,31 +615,27 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  async fetch_sigallfields(){
+  async fetch_signatureNumber(){
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_allfields} = await fetch_meta({
-      endpoint: '/signatures/key_count',
+    const { response: signature_counts} = await fetch_meta({
+      endpoint: '/signatures/count',
       signal: this.state.general_controller.signal,
       headers
     })
     this.setState({
-      signature_allfields: signature_allfields,
-      SignatureNumber: signature_allfields.$validator,
-    },()=>{
-      this.fetch_stats("Signatures")
+      SignatureNumber: signature_counts.count,
     })
   }
 
-  async fetch_entityfields(){
+  async fetch_entityNumber(){
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: entity_fields } = await fetch_meta({
-      endpoint: '/entities/key_count',
+    const { response: entity_counts } = await fetch_meta({
+      endpoint: '/entities/count',
       signal: this.state.general_controller.signal,
       headers
     })
     this.setState({
-      entity_fields: entity_fields,
-      EntityNumber: entity_fields.$validator,
+      EntityNumber: entity_counts.count,
     })
     // this.setState({
     //   entity_fields: entity_fields,
@@ -639,6 +643,18 @@ class AdminView extends React.PureComponent {
     // },()=>{
     //   this.fetch_stats("Entities")
     // })
+  }
+
+  async fetch_entityfields() {
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: entity_fields} = await fetch_meta({
+      endpoint: `/libraries/key_count`,
+      signal: this.state.general_controller.signal,
+      headers
+    })
+    this.setState({
+      entity_fields: entity_fields,
+    })
   }
 
   async fetch_sigstats() {
@@ -670,11 +686,11 @@ class AdminView extends React.PureComponent {
   componentDidMount() {
     window.addEventListener("hashchange", this.hashChangeHandler);
     if (this.state.token && this.state.general_controller){
-      this.fetch_libfields()
+      this.fetch_libNumber()
       this.fetch_sigfields()
       this.fetch_sigstats()
-      this.fetch_sigallfields()
-      this.fetch_entityfields()
+      this.fetch_signatureNumber()
+      this.fetch_entityNumber()
     }
   }
   httpClient(url, options = {}) {
@@ -720,11 +736,17 @@ class AdminView extends React.PureComponent {
         })
 
         // Load column names
-        if(this.state.library_fields===null){
-          this.fetch_libfields()
+        if(this.state.LibraryNumber==="Loading..."){
+          this.fetch_libNumber()
+        }
+        if(this.state.EntityNumber==="Loading..."){
+          this.fetch_entityNumber()
         }
         if(this.state.signature_fields===null){
           this.fetch_sigfields()
+        }
+        if(this.state.library_fields===null){
+          this.fetch_libraryfields()
         }
         if(this.state.entity_fields===null){
           this.fetch_entityfields()
@@ -732,8 +754,24 @@ class AdminView extends React.PureComponent {
         if(this.state.signature_counts===null){
           this.fetch_sigstats()
         }
-        if(this.state.signature_allfields===null){
-          this.fetch_sigallfields()
+        if(this.state.SignatureNumber==="Loading..."){
+          this.fetch_signatureNumber()
+        }
+        if(this.state.library_piefields===null){
+          const response = (await import("../../ui-schemas/dashboard/library_pie.json")).default
+          this.setState({
+            library_piefields: response
+          },()=>{
+            this.fetch_stats("Libraries")
+          })
+        }
+        if(this.state.signature_piefields===null){
+          const response = (await import("../../ui-schemas/dashboard/signature_pie.json")).default
+          this.setState({
+            signature_piefields: response
+          },()=>{
+            this.fetch_stats("Signatures")
+          })
         }
         return Promise.resolve();
       }
@@ -804,8 +842,8 @@ class AdminView extends React.PureComponent {
                                         EntityNumber={this.state.EntityNumber}
                                         signature_counts={this.state.signature_counts}
                                         entity_fields={this.state.entity_fields}
-                                        library_fields={this.state.library_fields}
-                                        signature_allfields={this.state.signature_allfields}
+                                        library_piefields={this.state.library_piefields}
+                                        signature_piefields={this.state.signature_piefields}
                                         handleSelectField={this.handleSelectField}
                                         libselected={this.state.libselected}
                                         sigselected={this.state.sigselected}

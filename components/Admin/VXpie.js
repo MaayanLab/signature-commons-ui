@@ -98,7 +98,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
                 const [centroidX, centroidY] = pie.path.centroid(arc);
                 const { startAngle, endAngle } = arc;
                 const hasSpaceForLabel = endAngle - startAngle >= 0.35;
-
+                const angle = startAngle + (endAngle - startAngle)/2;
                 return (
                   <g key={`browser-${arc.data.label}-${i}`}>
                     <path d={pie.path(arc)}
@@ -113,6 +113,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
                         dy=".33em"
                         fontSize={7}
                         textAnchor="middle"
+                        angle={angle}
                       >
                         {arc.data.label}
                       </text>
