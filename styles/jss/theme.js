@@ -5,6 +5,8 @@ const EntityColors = ["#a03cb4", "#9d42af"]
 const PopularColors = ["#e63c3c", "#ea4141"]
 const StatsColors = ["#fa9614", "#ef931c"]
 
+const LandingColors = ["#9e9e9e", "#c9c9c9"]
+
 export const LibrariesCardHeader = {
   background:
     "linear-gradient(45deg, " + LibraryColors[0] + ", " + LibraryColors[1] + ")",
@@ -45,6 +47,17 @@ export const main = {
 
 export const black = "#000";
 export const white = "#FFF";
+
+export const landingStyle = theme => ({
+  topCard: {
+    background:
+      "linear-gradient(45deg, " + LandingColors[0] + ", " + LandingColors[1] + ")",
+      padding: "50px 10px 10px 10px"
+  },
+  title: {
+    color: "#FFF",
+  }
+})
 
 export const styles = theme => ({
     root: {

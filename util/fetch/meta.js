@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-unfetch'
 
-export const base_url = process.env.REACT_APP_METADATA_API || (window.location.origin + '/signature-commons-metadata-api')
+export const base_url = process.env.REACT_APP_METADATA_API.trim() || (window.location.origin + '/signature-commons-metadata-api')
 export const base_scheme = /^(https?):\/\/.+/.exec(base_url)[1]
 
 export async function fetch_creds({endpoint, body, signal, headers}) {
@@ -77,7 +77,6 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
     }
   )
   const response = await request.json()
-
   let contentRange = request.headers.get('Content-Range')
   if (contentRange !== null) {
     const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)

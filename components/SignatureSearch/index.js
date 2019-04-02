@@ -9,11 +9,12 @@ import ResourceFilters from "./ResourceFilters";
 import LibraryResults from "./LibraryResults";
 import { resolve_entities } from "./resolve";
 import { Set } from 'immutable'
+import { call } from '../../util/call'
+
 
 export default class SignatureSearch extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       input: {},
       controller: null,
@@ -23,10 +24,18 @@ export default class SignatureSearch extends React.Component {
   async componentDidMount() {
     NProgress.start()
     this.setState({...(await get_library_resources())})
+    if(this.props.location.state){
+      this.setState({
+        input: this.props.location.state.input
+      },()=>{
+        this.submit(this.state.input)
+      })
+    }
     NProgress.done()
   }
 
   submit = (input) => {
+    console.log("submitting")
     NProgress.start()
     // TODO: register signature with metadata api
 
@@ -89,12 +98,20 @@ export default class SignatureSearch extends React.Component {
     })
   }
 
-  geneset_searchbox = (props) => (
-    <GenesetSearchBox
-      onSubmit={this.submit}
-      {...props}
-    />
-  )
+  geneset_searchbox = (props) => {
+    console.log(props)
+    if(this.props.location.state){
+      return(<div />)
+    }else{
+      return(
+        <GenesetSearchBox
+          input={this.state.input}
+          onSubmit={this.submit}
+          {...props}
+        />
+        )
+    }
+  }
 
   resource_filters = (props) => (
     <ResourceFilters
