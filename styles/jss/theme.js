@@ -56,6 +56,15 @@ export const landingStyle = theme => ({
   },
   title: {
     color: "#FFF",
+    fontSize: 30
+  },
+  subtitle: {
+    color: "#FFF",
+    fontSize: 14
+  },
+  titleBlack: {
+    color: "#000",
+    textAlign: 'center',
   }
 })
 

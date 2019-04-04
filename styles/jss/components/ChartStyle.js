@@ -6,7 +6,7 @@ import {
 
 export const cardChartStyle = theme => ({
   cardChart: {
-    height: 220
+    height: 300
   },
   progress: {
     margin: '90px auto 90px auto'

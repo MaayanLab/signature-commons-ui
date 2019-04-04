@@ -13,6 +13,12 @@ import { landingStyle } from '../../styles/jss/theme.js'
 import SignatureSearch from '../SignatureSearch';
 import GenesetSearchBox from "./GenesetSearchBox";
 
+import { fetch_meta } from '../../util/fetch/meta'
+
+import {Charts, CurrentVersion} from './Misc'
+import { Stat } from "../Admin/dashboard.js";
+
+
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
 export default withStyles(landingStyle)(class extends React.Component {
@@ -22,9 +28,19 @@ export default withStyles(landingStyle)(class extends React.Component {
     this.state = {
       search: '',
       input: {},
-      type: "Overlap"
+      type: "Overlap",
+      libraries_count: 0,
+      signatures_count: 0,
+      piefields: null,
+      pie_controller: null,
+      pie_stats: null,
+      selected_field: "Assay",
+      meta_counts: null,
+      general_controller: null,
+      counting_fields: null,
     }
     this.searchChange = this.searchChange.bind(this)
+    this.handleSelectField = this.handleSelectField.bind(this);
   }
 
   geneset_searchbox = (props) => (
@@ -39,80 +55,226 @@ export default withStyles(landingStyle)(class extends React.Component {
     this.setState({ search: e.target.value })
   }
 
-  LandingCard(props){
-    const LandingTopCard = withStyles(landingStyle)(({classes, props }) => (
-        <Card className={classes.topCard}>
-          <Grid container 
-            spacing={0}
-            align="center"
-            justify="center">
-            <Grid item md={7} xs={12}>
-              <Grid container 
-                spacing={0}
-                direction={"column"}
-                align="center"
-                justify="center">
-                <Grid item xs={12}>
-                  <Typography variant="headline" className={classes.title} component="h5">
-                      SIGNATURE COMMONS PROJECT
-                  </Typography>
-                  <Typography className={classes.title} color="textSecondary">
-                      Search over half a million signatures
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <SearchBox
-                    search={this.state.search}
-                    searchChange={this.searchChange}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item md={5} xs={12}>
-              {this.geneset_searchbox(props)}
-            </Grid>
-          </Grid>
-        </Card>
-    ));
-    return(<LandingTopCard />)
+  async fetch_count(source) {
+    const { response } = await fetch_meta({ endpoint: `/${source}/count`, body: {} })
+    if(source==="libraries"){
+      this.setState({
+        libraries_count: response.count
+      })
+    }else if(source==="signatures"){
+      this.setState({
+        signatures_count: response.count
+      })
+    }
+  }
+
+  async fetch_stats(selected_field){
+    try {
+      const pie_controller = new AbortController()
+      const db = this.state.piefields[selected_field]
+      if( this.state.pie_controller !== null) {
+          this.state.pie_controller.abort()
+        }
+      this.setState({
+        pie_controller: pie_controller,
+      })
+
+      const url = '/' + db.toLowerCase() +
+                  '/value_count?depth=2&filter={"fields":["' +
+                  selected_field +'"]}'
+      const { response: stats} = await fetch_meta({
+        endpoint: url,
+        signal: pie_controller.signal
+      })
+
+      let stat_vals = undefined
+      const object_fields = this.state.counting_fields === null ?
+                             ["Cell_Line",
+                              "Disease",
+                              "Gene",
+                              "GO",
+                              "Phenotype",
+                              "Small_Molecule",
+                              "Tissue",
+                              "Virus"] :
+                              Object.keys(this.state.counting_fields).filter(key=>this.state.counting_fields[key]=="object")
+      if(object_fields.includes(selected_field)){
+        stat_vals = stats[selected_field + ".Name"]
+      }else{
+        stat_vals = stats[selected_field]
+      }
+      this.setState({
+        pie_stats: stat_vals,
+      })
+    } catch(e) {
+      if(e.code !== DOMException.ABORT_ERR) {
+        this.setState({
+          pie_status: ''
+        })
+      }
+    }
+  }
+
+  async fetch_metacounts() {
+    const fields = (await import("../../ui-schemas/dashboard/counting_fields.json")).default
+    this.setState({
+      counting_fields: fields
+    })
+    const object_fields = Object.keys(fields).filter(key=>fields[key]=="object")
+    if(this.state.general_controller!==null){
+      this.state.general_controller.abort()
+    }
+    try {
+      const general_controller = new AbortController()
+      this.setState({
+        general_controller: general_controller,
+      })
+      // UNCOMMENT TO FETCH STUFF IN THE SERVER
+      // const { response: meta_stats} = await fetch_meta({
+      //   endpoint: '/signatures/value_count',
+      //   body: {
+      //     depth: 2,
+      //     filter: {
+      //       fields: Object.keys(fields)
+      //     },
+      //   },
+      //   signal: this.state.general_controller.signal
+      // })
+      // const meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
+      //                                                         // (key.indexOf(".PubChemID")>-1 &&
+      //                                                         //  key.indexOf("Small_Molecule")>-1) ||
+      //                                                         (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
+      //                                                 .reduce((stat_list, k)=>{
+      //                                                 stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
+      //                                                                         k.replace("Small_Molecule.", ""):
+      //                                                                         k.replace(".Name", ""),
+      //                                                                 counts:Object.keys(meta_stats[k]).length})
+      //                                                 return(stat_list) },
+      //                                                 [])
+      const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
+      meta_counts.sort((a, b) => a.name > b.name);
+      this.setState({
+        meta_counts: meta_counts,
+      })
+     } catch(e) {
+         if(e.code !== DOMException.ABORT_ERR) {
+           this.setState({
+             status: ''
+           })
+         }
+       }
+  }
+
+  handleSelectField(e){
+    const field = e.target.value
+    this.setState({
+      selected_field: field,
+      pie_stats: null,
+    },()=>{
+     this.fetch_stats(this.state.selected_field)
+    })
+  }
+
+  async componentDidMount(){
+    if(this.state.libraries_count===0){
+      this.fetch_count("libraries")
+    }
+    if(this.state.signatures_count===0){
+      this.fetch_count("signatures")
+    }
+    if(this.state.piefields===null){
+        const response = (await import("../../ui-schemas/dashboard/pie_fields.json")).default
+        this.setState({
+          piefields: response
+        },()=>{
+          this.fetch_stats(this.state.selected_field)
+        })
+    }
+    if(this.state.meta_counts===null){
+      this.fetch_metacounts()
+    }
+  }
+
+  componentWillUnmount(){
+    this.state.general_controller.abort()
   }
 
   render(){
     const {classes} = this.props
     return(
       <div>
-        <Card className={classes.topCard}>
-          <Grid container 
-            spacing={0}
-            align="center"
-            justify="center">
-            <Grid item xs={7}>
+        <Grid container 
+              spacing={24}
+              direction={"column"}>
+          <Grid item xs={12}>
+            <Card className={classes.topCard}>
               <Grid container 
-                spacing={0}
-                direction={"column"}
+                spacing={24}
                 align="center"
                 justify="center">
-                <Grid item xs={12}>
-                  <Typography variant="headline" className={classes.title} component="h5">
-                      SIGNATURE COMMONS PROJECT
-                  </Typography>
-                  <Typography className={classes.title} color="textSecondary">
-                      Search over half a million signatures
-                  </Typography>
+                <Grid item xs={12} md={8} lg={7}>
+                  <Grid container 
+                    spacing={24}
+                    direction={"column"}
+                    align="center"
+                    justify="center">
+                    <Grid item xs={12}>
+                      <Typography variant="headline" className={classes.title} component="h3">
+                          SIGNATURE COMMONS PROJECT
+                      </Typography>
+                      <Typography className={classes.subtitle} color="textSecondary">
+                          Search over half a million signatures
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <SearchBox
+                        search={this.state.search}
+                        searchChange={this.searchChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                    {this.state.libraries_count > 0 && this.state.signatures_count > 0 ? 
+                        <CurrentVersion libraries_count={this.state.libraries_count}
+                                        signatures_count={this.state.signatures_count}/>: null}
+                    </Grid>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <SearchBox
-                    search={this.state.search}
-                    searchChange={this.searchChange}
-                  />
+                <Grid item xs={12} md={4} lg={5}>
+                  <Grid item xs={12}>
+                    {this.geneset_searchbox(this.props)}
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={5}>
-              {this.geneset_searchbox(this.props)}
-            </Grid>
+            </Card>
           </Grid>
-        </Card>
+          <Grid item xs={12}>
+            <Grid container 
+                spacing={24}
+                align="center"
+                justify="center">
+                <Grid item xs={4}>
+                  <Stat type="Stats"
+                        fields={this.state.counting_fields}
+                        signature_counts={this.state.meta_counts}
+                        dense/>
+                </Grid>
+                <Grid item xs={4}>
+                  <Charts piefields={this.state.piefields}
+                          pie_stats={this.state.pie_stats}
+                          selected_field={this.state.selected_field}
+                          handleSelectField={this.handleSelectField}/>
+                </Grid>
+                <Grid item xs={4}>
+                  <Charts piefields={this.state.piefields}
+                          pie_stats={this.state.pie_stats}
+                          selected_field={this.state.selected_field}
+                          handleSelectField={this.handleSelectField}/>
+                </Grid>
+              </Grid>
+          </Grid>
+          <Grid item xs={12}>
+          </Grid>
+        </Grid>
       </div>
     )
   }

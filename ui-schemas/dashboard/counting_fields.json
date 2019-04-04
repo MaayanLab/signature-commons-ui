@@ -1,0 +1,13 @@
+{
+  "Antibody_Identifier": "string",
+  "Cell_Line": "object",
+  "Disease": "object",
+  "Metabolite": "object",
+  "MicroRNA": "string",
+  "Phenotype": "object",
+  "PMID": "string",
+  "PTM": "string",
+  "Small_Molecule": "object",
+  "Tissue": "object",
+  "Virus": "object"
+}
