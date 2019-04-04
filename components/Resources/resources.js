@@ -74,7 +74,7 @@ export async function get_library_resources() {
       groups[library.id] = resource
     return groups
   }, {})
-
+  console.log(resources)
   return {
     libraries: library_dict,
     resources: resources,

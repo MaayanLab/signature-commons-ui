@@ -13,8 +13,6 @@ import Upload from '../Upload';
 export default class Home extends React.PureComponent {
   constructor(props) {
     super(props)
-    console.log("Counts")
-    console.log(props)
     this.state = {
       cart: Set(),
     }
@@ -150,12 +148,6 @@ export default class Home extends React.PureComponent {
         <Switch>
           <Route
             exact path="/"
-            render={() => (
-              <Redirect to="/Landing" />
-            )}
-          />
-          <Route
-            path="/Landing"
             component={this.landing}
           />
           <Route

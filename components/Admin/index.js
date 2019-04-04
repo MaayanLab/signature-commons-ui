@@ -73,6 +73,7 @@ class AdminView extends React.PureComponent {
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
       hash: window.location.hash,
+      counting_fields: null,
     }
     this.filterHandler = this.filterHandler.bind(this);
     this.hashChangeHandler = this.hashChangeHandler.bind(this);
@@ -658,24 +659,41 @@ class AdminView extends React.PureComponent {
   }
 
   async fetch_sigstats() {
+    const fields = (await import("../../ui-schemas/dashboard/counting_fields.json")).default
+    this.setState({
+      counting_fields: fields
+    })
+    const object_fields = Object.keys(fields).filter(key=>fields[key]=="object")
+
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: signature_counts} = await fetch_meta({
       endpoint: '/signatures/value_count',
       body: {
         depth: 2,
         filter: {
-          fields: ["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]
+          fields: Object.keys(fields)
         },
       },
       signal: this.state.general_controller.signal,
       headers
     })
-    const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
-                                                    .reduce((stat_list, k)=>{
-                                                    stat_list.push({name: k.replace(".Name", ""),
-                                                                    counts:Object.keys(signature_counts[k]).length})
-                                                    return(stat_list) },
-                                                    [])
+    // const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
+    //                                                 .reduce((stat_list, k)=>{
+    //                                                 stat_list.push({name: k.replace(".Name", ""),
+    //                                                                 counts:Object.keys(signature_counts[k]).length})
+    //                                                 return(stat_list) },
+    //                                                 [])
+    const sig_counts = Object.keys(signature_counts).filter(key=>key.indexOf(".Name")>-1||
+                                                              // (key.indexOf(".PubChemID")>-1 &&
+                                                              //  key.indexOf("Small_Molecule")>-1) ||
+                                                              (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
+                                                      .reduce((stat_list, k)=>{
+                                                      stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
+                                                                              k.replace("Small_Molecule.", ""):
+                                                                              k.replace(".Name", ""),
+                                                                      counts:Object.keys(signature_counts[k]).length})
+                                                      return(stat_list) },
+                                                      [])
 
     sig_counts.sort((a, b) => a.name > b.name);
     this.setState({
@@ -692,6 +710,13 @@ class AdminView extends React.PureComponent {
       this.fetch_signatureNumber()
       this.fetch_entityNumber()
     }
+  }
+
+  componentWillUnmount() {
+      this.state.lib_controller.abort()
+      this.state.sig_controller.abort()
+      this.state.ent_controller.abort()
+      this.state.general_controller.abort()
   }
   httpClient(url, options = {}) {
     if(!(options.hasOwnProperty("method"))){
@@ -851,6 +876,7 @@ class AdminView extends React.PureComponent {
                                         libchart={this.state.libchart}
                                         sigchart={this.state.sigchart}
                                         entchart={this.state.entchart}
+                                        fields={this.state.counting_fields}
                                         {...props}/>}
                catchAll={this.NotFound}
                loginPage={MyLogin}

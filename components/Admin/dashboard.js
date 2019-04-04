@@ -35,7 +35,7 @@ Array.prototype.sum = function (prop) {
     return total
 }
 
-const CardIcon = withStyles(cardIconStyle)(({ Icon, classes, type }) => (
+export const CardIcon = withStyles(cardIconStyle)(({ Icon, classes, type }) => (
     <Card className={`${classes.cardIcon} ${classes[type]}`}>
         <Icon className={classes.icon} />
     </Card>
@@ -70,7 +70,7 @@ const db_vals = (db, props) => {
   return(vals[db])
 }
 
-const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
+export const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
     if(props.type!=="Stats"){
       const {icon, num} = db_vals(props.type, props)
       return(
@@ -88,41 +88,45 @@ const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
       )
     }else{
       const icon = Assessment
-      return(
-        <div className={classes.main}>
-          <CardIcon Icon={icon} type={`${props.type}CardHeader`} />
-          <Card className={classes.card}>
-              <Typography variant="headline" className={classes.bigtext} component="h5">
-                  Stats
-              </Typography>
-              <Divider />
-              {props.signature_counts===null ?
-                <List>
-                  {["Cell_Line", "Disease", "Gene", "Small_Molecule", "Tissue"].map(item =>(
-                    <ListItem>
-                      <ListItemText
-                        primary={item.replace("_"," ")}
-                        secondary={"Loading..."}
-                        style={{ paddingRight: 0 }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>:
-                <List>
-                  {props.signature_counts.map(item =>(
-                    <ListItem>
-                      <ListItemText
-                        primary={item.name.replace("_"," ")}
-                        secondary={item.counts}
-                        style={{ paddingRight: 0 }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-            }
-          </Card>
-        </div>
-      )
+      if(props.fields!==null){
+        return(
+          <div className={classes.main}>
+            <CardIcon Icon={icon} type={`${props.type}CardHeader`} />
+            <Card className={classes.card}>
+                <Typography variant="headline" className={classes.bigtext} component="h5">
+                    Stats
+                </Typography>
+                <Divider />
+                {props.signature_counts===null ?
+                  <List dense={props.dense}>
+                    {Object.keys(props.fields).sort().map(item =>(
+                      <ListItem key={item}>
+                        <ListItemText
+                          primary={item.replace("_"," ")}
+                          secondary={"Loading..."}
+                          style={{ paddingRight: 0 }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>:
+                  <List dense={props.dense}>
+                    {props.signature_counts.map(item =>(
+                      <ListItem key={`${item.name}_1`}>
+                        <ListItemText
+                          primary={item.name.replace("_"," ")}
+                          secondary={item.counts}
+                          style={{ paddingRight: 0 }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+              }
+            </Card>
+          </div>
+        )
+      }else{
+        return(<div/>)
+      }
     }
   })
 
@@ -177,7 +181,7 @@ const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props
   )
 })
 
-const Selections = withStyles(styles)( function({ classes, record={}, ...props }){
+export const Selections = withStyles(styles)( function({ classes, record={}, ...props }){
   return(
     <TextField
       id="charts"
@@ -207,7 +211,7 @@ const Selections = withStyles(styles)( function({ classes, record={}, ...props }
   )
 })
 
-const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={}, ...props }){
+export const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={}, ...props }){
   var stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
     });
@@ -226,10 +230,15 @@ const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={
     data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
     true_values.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
     let width = 220
-    const height = 220
-    const radius= 150
+    let height = 220
+    let radius= 150
     if(props.screenWidth<1086 && props.screenWidth>960){
       width = 180
+    }
+    else if(props.screenWidth>1490){
+      radius=200
+      width=300
+      height=300 
     }
     return(
       <div><DonutChart width={width}
