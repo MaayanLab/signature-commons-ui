@@ -19,6 +19,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
 import { DonutChart } from "./VXpie.js";
 import { withScreenSize } from '@vx/responsive';
 // import DonutChart from "./Donut.js";
@@ -70,12 +74,47 @@ const db_vals = (db, props) => {
   return(vals[db])
 }
 
+const StatTable = withStyles(styles)( function({ classes, record={}, ...props }){
+  const {fields, signature_counts} = props
+  if(signature_counts === null){
+    return(
+      <Table className={classes.table}>
+        <TableBody>
+          {Object.keys(fields).map((key) => (
+            <TableRow key={`${key}_key`}>
+              <TableCell component="th" scope="row">
+                {key.replace("_","")}
+              </TableCell>
+              <TableCell align="center">Loading...</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    )
+  }else{
+    return(
+      <Table className={classes.table}>
+        <TableBody>
+          {signature_counts.map((entry) => (
+            <TableRow key={`${entry.name}_entry`}>
+              <TableCell component="th" scope="row">
+                {entry.name.replace("_"," ")}
+              </TableCell>
+              <TableCell align="center">{entry.counts}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    )
+  }
+})
+
 export const Stat = withStyles(styles)( function({ classes, record={}, ...props }){
     if(props.type!=="Stats"){
       const {icon, num} = db_vals(props.type, props)
       return(
         <div className={classes.main}>
-          <CardIcon Icon={icon} type={`${props.type}CardHeader`} />
+          <CardIcon Icon={icon} type={`${props.color}CardHeader`} />
           <Card className={classes.numcard}>
               <Typography className={classes.title} color="textSecondary">
                   {props.type}
@@ -91,36 +130,13 @@ export const Stat = withStyles(styles)( function({ classes, record={}, ...props 
       if(props.fields!==null){
         return(
           <div className={classes.main}>
-            <CardIcon Icon={icon} type={`${props.type}CardHeader`} />
+            <CardIcon Icon={icon} type={`${props.color}CardHeader`} />
             <Card className={classes.card}>
                 <Typography variant="headline" className={classes.bigtext} component="h5">
-                    Stats
+                    {props.name}
                 </Typography>
                 <Divider />
-                {props.signature_counts===null ?
-                  <List dense={props.dense}>
-                    {Object.keys(props.fields).sort().map(item =>(
-                      <ListItem key={item}>
-                        <ListItemText
-                          primary={item.replace("_"," ")}
-                          secondary={"Loading..."}
-                          style={{ paddingRight: 0 }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>:
-                  <List dense={props.dense}>
-                    {props.signature_counts.map(item =>(
-                      <ListItem key={`${item.name}_1`}>
-                        <ListItemText
-                          primary={item.name.replace("_"," ")}
-                          secondary={item.counts}
-                          style={{ paddingRight: 0 }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-              }
+                <StatTable {...props}/>
             </Card>
           </div>
         )
@@ -133,7 +149,7 @@ export const Stat = withStyles(styles)( function({ classes, record={}, ...props 
 const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props }){
   return(
     <div className={classes.main}>
-      <CardIcon Icon={Whatshot} type={"PopularCardHeader"} />
+      <CardIcon Icon={Whatshot} type={`${props.type}CardHeader`} />
       <Card className={classes.card}>
           <Typography variant="headline" className={classes.bigtext} component="h5">
               Hot Genes
@@ -212,7 +228,8 @@ export const Selections = withStyles(styles)( function({ classes, record={}, ...
 })
 
 export const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={}, ...props }){
-  var stats = Object.entries(props.stats).map(function(entry){
+    
+    var stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
     });
     stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
@@ -232,18 +249,21 @@ export const PieChart = withScreenSize(withStyles(styles)( function({ classes, r
     let width = 220
     let height = 220
     let radius= 150
+    let fontSize = 7
     if(props.screenWidth<1086 && props.screenWidth>960){
       width = 180
     }
     else if(props.screenWidth>1490){
       radius=200
       width=300
-      height=300 
+      height=300
+      fontSize=10 
     }
     return(
       <div><DonutChart width={width}
                        height={height}
                        radius={radius}
+                       fontSize={fontSize}
                        margin={{
                           "top":10,
                           "bottom":10,
@@ -288,7 +308,7 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
   
   return(
     <div className={classes.main}>
-      <CardIcon Icon={DonutSmall} type={`${props.selected_db}CardHeader`} />
+      <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
       <Card className={`${classes.card}`}>
         {fields===null ?
           <div className={classes.ProgressContainer}>
@@ -315,23 +335,23 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
             <Grid item xs={12}>
               <Grid container spacing={24}>
                 <Grid item xs={12} sm={4}>
-                  <Stat type={"Libraries"} {...props} />
+                  <Stat type={"Libraries"} color="Green" {...props} />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <Stat type={"Signatures"} {...props} />
+                  <Stat type={"Signatures"} color="Blue" {...props} />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <Stat type={"Entities"} {...props} />
+                  <Stat type={"Entities"} color="Purple" {...props} />
                 </Grid>
               </Grid>
             </Grid>
             <Grid item xs={12}>
               <Grid container spacing={24}>
                 <Grid item xs={12} sm={6}>
-                  <Charts selected_db={"Libraries"} {...props} />
+                  <Charts selected_db={"Libraries"} color="Green" {...props} />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Charts selected_db={"Signatures"} {...props} />
+                  <Charts selected_db={"Signatures"} color="Blue" {...props} />
                 </Grid>
               </Grid>
             </Grid>
@@ -342,7 +362,7 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
             <Grid item xs={12}>
               <Grid container spacing={24}>
                 <Grid item sm={6} xs={12}>
-                  <Stat type={"Stats"} {...props} />
+                  <Stat type={"Stats"} color="Orange" name={"Stats"} {...props} />
                 </Grid>
                 <Grid item sm={6} xs={12}>
                   <PopularGenes {...props} />

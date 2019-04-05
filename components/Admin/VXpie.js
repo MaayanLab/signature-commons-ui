@@ -22,9 +22,9 @@ function LegendDemo({ title, children }) {
 }
 
 const colorrange = {
-                    "Libraries": ["#afdbaf", "#136313"],
-                    "Entities": ["#d390e1", "#720b87"],
-                    "Signatures": ["#75bef5", "#0367b4"]
+                    "Green": ["#afdbaf", "#136313"],
+                    "Purple": ["#d390e1", "#720b87"],
+                    "Blue": ["#75bef5", "#0367b4"]
                     }
 
 const handleMouseOver = (event, datum, props) => {
@@ -51,6 +51,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
       margin,
       data,
       radius,
+      fontSize,
       true_values
     } = props;
 
@@ -66,7 +67,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
 
   const sizeColorScale = scaleLinear({
     domain: [0, dataLabels.length],
-    range: colorrange[props.selected_db]
+    range: colorrange[props.color]
   });
 
   const ordinalColorScale = scaleOrdinal({
@@ -111,7 +112,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
                         x={centroidX}
                         y={centroidY}
                         dy=".33em"
-                        fontSize={7}
+                        fontSize={fontSize}
                         textAnchor="middle"
                         angle={angle}
                       >

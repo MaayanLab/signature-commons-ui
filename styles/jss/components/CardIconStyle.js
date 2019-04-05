@@ -1,9 +1,9 @@
 import {
-  LibrariesCardHeader,
-  SignaturesCardHeader,
-  EntitiesCardHeader,
-  PopularCardHeader,
-  StatsCardHeader,
+  GreenCardHeader,
+  BlueCardHeader,
+  PurpleCardHeader,
+  RedCardHeader,
+  OrangeCardHeader,
   white,
 } from "../theme.js";
 
@@ -21,10 +21,10 @@ export const cardIconStyle = {
     padding: 14,
     color: white,
   },
-  LibrariesCardHeader,
-  SignaturesCardHeader,
-  EntitiesCardHeader,
-  PopularCardHeader,
-  StatsCardHeader
+  GreenCardHeader,
+  BlueCardHeader,
+  PurpleCardHeader,
+  RedCardHeader,
+  OrangeCardHeader
 };
 
