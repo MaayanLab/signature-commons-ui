@@ -286,7 +286,7 @@ export default withStyles(landingStyle)(class extends React.Component {
             align={"left"}>
         <Grid item xs={12}>
           <Typography variant="headline" className={classes.paragraph} component="p">
-            Search for relevant signatures via their metadata or via geneset enrichment using your own gene lists.
+            Search for signatures using associated terms or via geneset enrichment using your gene list of interest.
           </Typography>
         </Grid>
         <Grid item xs={12}>
