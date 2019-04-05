@@ -61,6 +61,12 @@ export default class ResourcePage extends React.Component {
                       </div>
                       <div>
                         <span>
+                          <b>Signature count:</b>&nbsp;
+                            {this.props.resource.meta.Signature_Count}
+                        </span>
+                      </div>
+                      <div>
+                        <span>
                           <b>PMID:</b>&nbsp;
                           <a 
                             href={"https://www.ncbi.nlm.nih.gov/pubmed/" + this.props.resource.meta.PMID}

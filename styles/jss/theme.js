@@ -1,35 +1,35 @@
 
-const LibraryColors = ["#50a050","#47a347"]
-const SignatureColors = ["#2198f3", "#2f9cef"]
-const EntityColors = ["#a03cb4", "#9d42af"]
-const PopularColors = ["#e63c3c", "#ea4141"]
-const StatsColors = ["#fa9614", "#ef931c"]
+const Greens = ["#50a050","#47a347"]
+const Blues = ["#2198f3", "#2f9cef"]
+const Purples = ["#a03cb4", "#9d42af"]
+const Reds = ["#e63c3c", "#ea4141"]
+const Oranges = ["#fa9614", "#ef931c"]
 
 const LandingColors = ["#9e9e9e", "#c9c9c9"]
 
-export const LibrariesCardHeader = {
+export const GreenCardHeader = {
   background:
-    "linear-gradient(45deg, " + LibraryColors[0] + ", " + LibraryColors[1] + ")",
+    "linear-gradient(45deg, " + Greens[0] + ", " + Greens[1] + ")",
 };
 
-export const SignaturesCardHeader = {
+export const BlueCardHeader = {
   background:
-    "linear-gradient(45deg, " + SignatureColors[0] + ", " + SignatureColors[1] + ")",
+    "linear-gradient(45deg, " + Blues[0] + ", " + Blues[1] + ")",
 };
 
-export const EntitiesCardHeader = {
+export const PurpleCardHeader = {
   background:
-    "linear-gradient(45deg, " + EntityColors[0] + ", " + EntityColors[1] + ")",
+    "linear-gradient(45deg, " + Purples[0] + ", " + Purples[1] + ")",
 };
 
-export const PopularCardHeader = {
+export const RedCardHeader = {
   background:
-    "linear-gradient(45deg, " + PopularColors[0] + ", " + PopularColors[1] + ")",
+    "linear-gradient(45deg, " + Reds[0] + ", " + Reds[1] + ")",
 };
 
-export const StatsCardHeader = {
+export const OrangeCardHeader = {
   background:
-    "linear-gradient(45deg, " + StatsColors[0] + ", " + StatsColors[1] + ")",
+    "linear-gradient(45deg, " + Oranges[0] + ", " + Oranges[1] + ")",
 };
 
 export const card = {
@@ -65,6 +65,16 @@ export const landingStyle = theme => ({
   titleBlack: {
     color: "#000",
     textAlign: 'center',
+  }
+})
+
+export const extraComponentStyle = theme => ({
+  paragraph:{
+    padding: '8px',
+    fontSize: '15px',
+  },
+  listItem:{
+    padding: '8px'
   }
 })
 
@@ -115,5 +125,11 @@ export const styles = theme => ({
     },
     menu: {
       width: 200,
+    },
+    namebox: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      margin: '8px 8px 8px 8px',
+      fontSize: '15px'
     }
 });

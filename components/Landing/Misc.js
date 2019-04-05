@@ -1,5 +1,7 @@
 import React from "react";
 
+import {scaleDiscontinuous} from 'd3fc';
+
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import { withStyles } from '@material-ui/core/styles';
@@ -9,6 +11,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import { withScreenSize } from '@vx/responsive';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import ListItem from '@material-ui/core/ListItem';
 
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
 import { styles } from '../../styles/jss/theme.js'
@@ -35,7 +39,7 @@ export const CurrentVersion = withStyles(textstyles)(({classes, ...props}) => (
 ))
 
 
-const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
+const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }){
   const {piefields,
          pie_stats,
          selected_field} = props
@@ -46,9 +50,6 @@ const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...
         direction={"column"}
         align="center"
         justify="center">
-        <Grid item xs={12}>
-          {selected_field.replace(/_/g, " ")}
-        </Grid>
         <Grid item xs={12}>
           {pie_stats===null ?
             <div className={classes.progress}>
@@ -62,28 +63,39 @@ const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...
   )
 })
 
-export const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
+export const Charts = withStyles(styles)( function({ classes, ...props }){
   
   const {piefields,
          pie_stats,
-         selected_field} = props
+         pie_name,
+         selected_field,
+         ExtraComponent} = props
   
   return(
     <div className={classes.main}>
-      <CardIcon Icon={DonutSmall} type={'EntitiesCardHeader'} />
+      <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
       <Card className={`${classes.card}`}>
-        {piefields===null ?
-          <div className={classes.ProgressContainer}>
-            <LinearProgress/>
-          </div>:
-          <Selections
-            value={selected_field === null ? piefields[0]: selected_field}
-            values={Object.keys(piefields).sort()}
-            onChange={e => props.handleSelectField(e)}
-          />
+        {pie_name === undefined ? 
+          <div>
+            {piefields===null ?
+              <div className={classes.ProgressContainer}>
+                <LinearProgress/>
+              </div>:
+              <Selections
+                value={selected_field === null ? piefields[0]: selected_field}
+                values={Object.keys(piefields).sort()}
+                onChange={e => props.handleSelectField(e)}
+              />
+            }
+          </div> : <Typography className={classes.namebox} color="textPrimary" component="h3">{pie_name}</Typography>
         }
         <ChartCard selected_db="Entities" {...props}/>
+        {ExtraComponent===undefined ? null: <ExtraComponent {...props}/>}
       </Card>
     </div>
   )
 })
+
+export const ListItemLink = (props) => (
+    <ListItem button component="a" {...props} />
+  )
