@@ -76,6 +76,9 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
       signal: signal,
     }
   )
+  if (request.ok !== true)
+    throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+
   const response = await request.json()
 
   let contentRange = request.headers.get('Content-Range')
@@ -117,6 +120,9 @@ export async function fetch_meta_post({endpoint, body, signal}) {
       signal: signal,
     }
   )
+  if (request.ok !== true)
+    throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+
   const response = await request.json()
 
   let contentRange = request.headers.get('Content-Range')
