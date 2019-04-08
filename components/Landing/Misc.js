@@ -31,12 +31,25 @@ const textstyles = {
   }
 }
 
-export const CurrentVersion = withStyles(textstyles)(({classes, ...props}) => (
+export const CurrentVersion = withStyles(textstyles)(({classes, ...props}) => {
+  const date = new Date()
+  return(
     <div className={classes.currentVesion}>
-      Current Database: 
-      <span className={classes.highlighted}>{props.libraries_count.toLocaleString() }</span> Libraries | &nbsp;
-      <span className={classes.highlighted}>{props.signatures_count.toLocaleString()}</span> signatures</div>
-))
+      Current Version: <span className={classes.highlighted}>{date.toDateString()}</span>
+      <ul>
+        <li>
+          <span className={classes.highlighted}>{props.resources_count.toLocaleString() }</span> Resources
+        </li>
+        <li>
+          <span className={classes.highlighted}>{props.libraries_count.toLocaleString() }</span> Libraries
+        </li>
+        <li>
+          <span className={classes.highlighted}>{props.signatures_count.toLocaleString()}</span> Signatures
+        </li>
+      </ul>
+    </div>
+  )
+})
 
 
 const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }){

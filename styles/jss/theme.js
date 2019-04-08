@@ -56,7 +56,7 @@ export const landingStyle = theme => ({
   },
   title: {
     color: "#FFF",
-    fontSize: 30
+    fontSize: 35
   },
   subtitle: {
     color: "#FFF",
@@ -148,7 +148,7 @@ export const styles = theme => ({
         width: "85%"
       }
     },
-    ['@media only screen and (min-width: 1170px)']: {
+    ['@media only screen and (min-width: 1360px)']: {
       container: {
         width: "70%"
       }
