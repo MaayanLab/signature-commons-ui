@@ -44,6 +44,7 @@ theme.shadows[4] = theme.shadows[0]
 export default class extends React.Component {
   render_table = ({ result }) => {
     const sigs = result.signatures
+    console.log(sigs[0])
     const schema = schemas.filter(
       (schema) => objectMatch(schema.match, sigs[0])
     )[0]

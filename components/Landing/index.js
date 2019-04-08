@@ -253,7 +253,7 @@ export default withStyles(landingStyle)(class extends React.Component {
               align={"left"}>
           <Grid item xs={12}>
             <Typography variant="headline" className={classes.paragraph} component="p">
-              Signature commons is a collection of gene signatures collated from a wide-array of resources. Information is available in both human and machine readable formats.
+              Signature commons is a collection of signatures collated from a wide-array of resources. Information is available in both human and machine readable formats.
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -322,6 +322,7 @@ export default withStyles(landingStyle)(class extends React.Component {
       <div>
         <Grid container 
               spacing={24}
+              alignItems={"center"}
               direction={"column"}>
           <Grid item xs={12}>
             <Card className={classes.topCard}>
@@ -329,7 +330,7 @@ export default withStyles(landingStyle)(class extends React.Component {
                 spacing={24}
                 align="center"
                 justify="center">
-                <Grid item xs={12} md={8} lg={7}>
+                <Grid item xs={12} md={7}>
                   <Grid container 
                     spacing={24}
                     direction={"column"}
@@ -340,7 +341,7 @@ export default withStyles(landingStyle)(class extends React.Component {
                           SIGNATURE COMMONS
                       </Typography>
                       <Typography className={classes.subtitle} color="textSecondary">
-                          Search over half a million signatures
+                          Search over half a million signatures collated from an ever-growing number of resources.
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
@@ -350,13 +351,14 @@ export default withStyles(landingStyle)(class extends React.Component {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                    {this.state.libraries_count > 0 && this.state.signatures_count > 0 ? 
+                    {this.state.libraries_count > 0 && this.state.signatures_count > 0 && this.state.resource_signatures!==null ? 
                         <CurrentVersion libraries_count={this.state.libraries_count}
-                                        signatures_count={this.state.signatures_count}/>: null}
+                                        signatures_count={this.state.signatures_count}
+                                        resources_count={Object.keys(this.state.resource_signatures).length}/>: null}
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={4} lg={5}>
+                <Grid item xs={12} md={5}>
                   <Grid item xs={12}>
                     {this.geneset_searchbox(this.props)}
                   </Grid>

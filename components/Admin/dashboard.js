@@ -25,6 +25,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import { DonutChart } from "./VXpie.js";
 import { withScreenSize } from '@vx/responsive';
+import withWidth from '@material-ui/core/withWidth';
+
 // import DonutChart from "./Donut.js";
 
 import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
@@ -327,10 +329,12 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
 })
 
 export const Dashboard = withStyles(styles)( function({ classes, record={}, ...props }){
+  const {width} = props
+  console.log(width)
   return(
     <div className={classes.root}>
       <Grid container spacing={24}>
-        <Grid item xs={12} lg={7}>
+        <Grid item xs={12} xl={7}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
@@ -357,14 +361,14 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} lg={5}>
+        <Grid item xs={12} xl={5}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
-                <Grid item sm={6} xs={12}>
+                <Grid item md={6} xs={12}>
                   <Stat type={"Stats"} color="Orange" name={"Stats"} {...props} />
                 </Grid>
-                <Grid item sm={6} xs={12}>
+                <Grid item md={6} xs={12}>
                   <PopularGenes color="Red" {...props} />
                 </Grid>
               </Grid>
