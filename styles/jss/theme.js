@@ -108,6 +108,12 @@ export const styles = theme => ({
       padding: 16,
       minHeight: 80,
     },
+    longcard:{
+      overflow: 'inherit',
+      textAlign: 'right',
+      padding: 16,
+      minHeight: 600,
+    },
     title: {
       fontSize: '10px',
     },
@@ -120,7 +126,7 @@ export const styles = theme => ({
     textField: {
       marginLeft: theme.spacing.unit,
       marginRight: theme.spacing.unit,
-      width: 120,
+      maxWidth: 120,
       margin: '-20px 8px 8px 8px',
     },
     menu: {
@@ -131,5 +137,21 @@ export const styles = theme => ({
       marginRight: theme.spacing.unit,
       margin: '8px 8px 8px 8px',
       fontSize: '15px'
-    }
+    },
+    container: {
+      margin: "0 auto",
+      maxWidth: "1280px",
+      width: "90%",
+    },
+    ['@media only screen and (min-width: 601px)']: {
+      container: {
+        width: "85%"
+      }
+    },
+    ['@media only screen and (min-width: 1170px)']: {
+      container: {
+        width: "70%"
+      }
+  }
+
 });
