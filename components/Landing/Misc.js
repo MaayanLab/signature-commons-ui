@@ -74,7 +74,7 @@ export const Charts = withStyles(styles)( function({ classes, ...props }){
   return(
     <div className={classes.main}>
       <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
-      <Card className={`${classes.card}`}>
+      <Card className={`${classes.longcard}`}>
         {pie_name === undefined ? 
           <div>
             {piefields===null ?

@@ -12,6 +12,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import NearMe from '@material-ui/icons/NearMe';
 import CloudUpload from '@material-ui/icons/CloudUpload';
+import Pageview from '@material-ui/icons/Pageview';
+import FindReplace from '@material-ui/icons/FindReplace';
+
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -250,7 +253,7 @@ export default withStyles(landingStyle)(class extends React.Component {
               align={"left"}>
           <Grid item xs={12}>
             <Typography variant="headline" className={classes.paragraph} component="p">
-              Signature commons is a collection of over half a million gene signatures from a growing number of libraries constructed from various resources.
+              Signature commons is a collection of gene signatures collated from a wide-array of resources. Information is available in both human and machine readable formats.
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -286,14 +289,14 @@ export default withStyles(landingStyle)(class extends React.Component {
             align={"left"}>
         <Grid item xs={12}>
           <Typography variant="headline" className={classes.paragraph} component="p">
-            Search for signatures using associated terms or via geneset enrichment using your gene list of interest.
+            Explore the database, two ways: (1) searching over the metadata of the signatures using relevant terms, (2) mining for enriched genesets using your own gene list of interest.
           </Typography>
         </Grid>
         <Grid item xs={12}>
           <List dense>
             <ListItem button className={classes.listItem}>
               <ListItemIcon>
-                <NearMe />
+                <Pageview />
               </ListItemIcon>
               <ListItemLink href="#/MetadataSearch">
                 <ListItemText primary="Metadata Search" />
@@ -301,7 +304,7 @@ export default withStyles(landingStyle)(class extends React.Component {
             </ListItem>
             <ListItem button className={classes.listItem}>
               <ListItemIcon>
-                <CloudUpload />
+                <FindReplace />
               </ListItemIcon>
               <ListItemLink href="#/SignatureSearch">
                 <ListItemText primary="Geneset search" />
@@ -334,7 +337,7 @@ export default withStyles(landingStyle)(class extends React.Component {
                     justify="center">
                     <Grid item xs={12}>
                       <Typography variant="headline" className={classes.title} component="h3">
-                          SIGNATURE COMMONS PROJECT
+                          SIGNATURE COMMONS
                       </Typography>
                       <Typography className={classes.subtitle} color="textSecondary">
                           Search over half a million signatures
@@ -366,17 +369,17 @@ export default withStyles(landingStyle)(class extends React.Component {
                 spacing={24}
                 align="center"
                 justify="center">
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <Charts piefields={this.state.piefields}
                           pie_stats={this.state.resource_signatures}
-                          pie_name={"Signatures per resource"}
+                          pie_name={"Resources"}
                           color={"Green"}
                           selected_field={this.state.selected_field}
                           handleSelectField={this.handleSelectField}
                           ExtraComponent={this.ResourceExtraComponent}
                           />
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <Charts piefields={this.state.piefields}
                           pie_stats={this.state.pie_stats}
                           color={"Purple"}
@@ -384,7 +387,7 @@ export default withStyles(landingStyle)(class extends React.Component {
                           ExtraComponent={this.MetaExtraComponent}
                           handleSelectField={this.handleSelectField}/>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} sm={12} md={4}>
                   <Stat type="Stats"
                         fields={this.state.counting_fields}
                         signature_counts={this.state.meta_counts}

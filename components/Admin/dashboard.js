@@ -131,8 +131,8 @@ export const Stat = withStyles(styles)( function({ classes, record={}, ...props 
         return(
           <div className={classes.main}>
             <CardIcon Icon={icon} type={`${props.color}CardHeader`} />
-            <Card className={classes.card}>
-                <Typography variant="headline" className={classes.bigtext} component="h5">
+            <Card className={classes.longcard}>
+                <Typography variant="headline" className={classes.namebox} component="h5">
                     {props.name}
                 </Typography>
                 <Divider />
@@ -149,7 +149,7 @@ export const Stat = withStyles(styles)( function({ classes, record={}, ...props 
 const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props }){
   return(
     <div className={classes.main}>
-      <CardIcon Icon={Whatshot} type={`${props.type}CardHeader`} />
+      <CardIcon Icon={Whatshot} type={`${props.color}CardHeader`} />
       <Card className={classes.card}>
           <Typography variant="headline" className={classes.bigtext} component="h5">
               Hot Genes
@@ -253,7 +253,7 @@ export const PieChart = withScreenSize(withStyles(styles)( function({ classes, r
     if(props.screenWidth<1086 && props.screenWidth>960){
       width = 180
     }
-    else if(props.screenWidth>1490){
+    else if(props.screenWidth>1490 || props.screenWidth<600){
       radius=200
       width=300
       height=300
@@ -365,7 +365,7 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
                   <Stat type={"Stats"} color="Orange" name={"Stats"} {...props} />
                 </Grid>
                 <Grid item sm={6} xs={12}>
-                  <PopularGenes {...props} />
+                  <PopularGenes color="Red" {...props} />
                 </Grid>
               </Grid>
             </Grid>
