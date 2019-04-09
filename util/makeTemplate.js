@@ -7,7 +7,7 @@ export function makeTemplate(
   const values = [...Object.values(templateVariables), process.env.PREFIX];
   let templateFunction = new Function(...keys, `return \`${templateString}\`;`);
   if(templateSubfield){
-    if (templateFunction(...values)!== undefined){
+    if (templateFunction(...values)!== "undefined"){
       templateFunction = new Function(...keys, `return \`${templateSubfield}\`;`);
     }
   }
