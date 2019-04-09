@@ -253,7 +253,7 @@ export default withStyles(landingStyle)(class extends React.Component {
               align={"left"}>
           <Grid item xs={12}>
             <Typography variant="headline" className={classes.paragraph} component="p">
-              Signature commons is a collection of signatures collated from a wide-array of resources. Information is available in both human and machine readable formats.
+              Signature commons provides a one stop repository for signature data collected from a wide-array of resources. Information is available in both human and machine readable formats.
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -263,7 +263,7 @@ export default withStyles(landingStyle)(class extends React.Component {
                   <NearMe />
                 </ListItemIcon>
                 <ListItemLink href="#/Resources">
-                  <ListItemText primary="Go to resource list" />
+                  <ListItemText primary="Explore our resource list" />
                 </ListItemLink>
               </ListItem>
               <ListItem button className={classes.listItem}>
