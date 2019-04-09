@@ -105,7 +105,7 @@ export default withStyles(landingStyle)(class extends React.Component {
             align={"left"}>
         <Grid item xs={12}>
           <Typography variant="headline" className={classes.paragraph} component="p">
-            Explore the database, two ways: (1) searching over the metadata of the signatures using relevant terms, (2) mining for enriched genesets using your own gene list of interest.
+            Explore the database, two ways: (1) search over the metadata of the signatures using relevant terms, (2) mine for enriched genesets using your own gene list of interest.
           </Typography>
         </Grid>
         <Grid item xs={12}>
