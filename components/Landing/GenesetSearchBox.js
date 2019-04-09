@@ -47,7 +47,8 @@ export default class extends React.Component {
       <div className="row">
         <div className="col s12 center">
           <div className="switch">
-            <label>
+            <label style={{color:"#FFF",
+                           fontWeight: 'bold'}}>
               Gene Set or Full Signature
               <input
                 type="checkbox"
@@ -88,7 +89,8 @@ export default class extends React.Component {
     <div className="row">
       <div className="col s12 center">
         <div className="switch">
-          <label>
+          <label style={{color:"#FFF", 
+                         fontWeight: 'bold'}}>
             Gene Set or Full Signature
             <input
               type="checkbox"
