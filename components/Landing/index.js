@@ -28,7 +28,6 @@ import { fetch_meta } from '../../util/fetch/meta'
 
 import {Charts, CurrentVersion, ListItemLink} from './Misc'
 import { Stat } from "../Admin/dashboard.js";
-import {get_signature_counts_per_resources} from '../Resources/resources.js'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
@@ -40,20 +39,8 @@ export default withStyles(landingStyle)(class extends React.Component {
       search: '',
       input: {},
       type: "Overlap",
-      libraries_count: 0,
-      signatures_count: 0,
-      piefields: null,
-      pie_controller: null,
-      pie_stats: null,
-      selected_field: "Assay",
-      meta_counts: null,
-      general_controller: null,
-      counting_fields: null,
-      resource_signatures: null,
-      per_resource_counts: null,
     }
     this.searchChange = this.searchChange.bind(this)
-    this.handleSelectField = this.handleSelectField.bind(this);
   }
 
   geneset_searchbox = (props) => (
@@ -68,184 +55,12 @@ export default withStyles(landingStyle)(class extends React.Component {
     this.setState({ search: e.target.value })
   }
 
-  async fetch_count(source) {
-    const { response } = await fetch_meta({ endpoint: `/${source}/count`, body: {} })
-    if(source==="libraries"){
-      this.setState({
-        libraries_count: response.count
-      })
-    }else if(source==="signatures"){
-      this.setState({
-        signatures_count: response.count
-      })
-    }
-  }
-
-  async fetch_stats(selected_field){
-    try {
-      const pie_controller = new AbortController()
-      const db = this.state.piefields[selected_field]
-      if( this.state.pie_controller !== null) {
-          this.state.pie_controller.abort()
-        }
-      this.setState({
-        pie_controller: pie_controller,
-      })
-
-      const url = '/' + db.toLowerCase() +
-                  '/value_count?depth=2&filter={"fields":["' +
-                  selected_field +'"]}'
-      const { response: stats} = await fetch_meta({
-        endpoint: url,
-        signal: pie_controller.signal
-      })
-
-      let stat_vals = undefined
-      const object_fields = this.state.counting_fields === null ?
-                             ["Cell_Line",
-                              "Disease",
-                              "Gene",
-                              "GO",
-                              "Phenotype",
-                              "Small_Molecule",
-                              "Tissue",
-                              "Virus"] :
-                              Object.keys(this.state.counting_fields).filter(key=>this.state.counting_fields[key]=="object")
-      if(object_fields.includes(selected_field)){
-        stat_vals = stats[selected_field + ".Name"]
-      }else{
-        stat_vals = stats[selected_field]
-      }
-      this.setState({
-        pie_stats: stat_vals,
-      })
-    } catch(e) {
-      if(e.code !== DOMException.ABORT_ERR) {
-        this.setState({
-          pie_status: ''
-        })
-      }
-    }
-  }
-
-  async fetch_metacounts() {
-    const fields = (await import("../../ui-schemas/dashboard/counting_fields.json")).default
-    this.setState({
-      counting_fields: fields
-    })
-    const object_fields = Object.keys(fields).filter(key=>fields[key]=="object")
-    if(this.state.general_controller!==null){
-      this.state.general_controller.abort()
-    }
-    try {
-      const general_controller = new AbortController()
-      this.setState({
-        general_controller: general_controller,
-      })
-      // UNCOMMENT TO FETCH STUFF IN THE SERVER
-      // const { response: meta_stats} = await fetch_meta({
-      //   endpoint: '/signatures/value_count',
-      //   body: {
-      //     depth: 2,
-      //     filter: {
-      //       fields: Object.keys(fields)
-      //     },
-      //   },
-      //   signal: this.state.general_controller.signal
-      // })
-      // const meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
-      //                                                         // (key.indexOf(".PubChemID")>-1 &&
-      //                                                         //  key.indexOf("Small_Molecule")>-1) ||
-      //                                                         (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
-      //                                                 .reduce((stat_list, k)=>{
-      //                                                 stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
-      //                                                                         k.replace("Small_Molecule.", ""):
-      //                                                                         k.replace(".Name", ""),
-      //                                                                 counts:Object.keys(meta_stats[k]).length})
-      //                                                 return(stat_list) },
-      //                                                 [])
-      const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
-      meta_counts.sort((a, b) => a.name > b.name);
-      this.setState({
-        meta_counts: meta_counts,
-      })
-     } catch(e) {
-         if(e.code !== DOMException.ABORT_ERR) {
-           this.setState({
-             status: ''
-           })
-         }
-       }
-  }
-
-  handleSelectField(e){
-    const field = e.target.value
-    this.setState({
-      selected_field: field,
-      pie_stats: null,
-    },()=>{
-     this.fetch_stats(this.state.selected_field)
-    })
-  }
-
-  async componentDidMount(){
-    if(this.state.libraries_count===0){
-      this.fetch_count("libraries")
-    }
-    if(this.state.signatures_count===0){
-      this.fetch_count("signatures")
-    }
-    if(this.state.piefields===null){
-        const response = (await import("../../ui-schemas/dashboard/pie_fields.json")).default
-        this.setState({
-          piefields: response
-        },()=>{
-          this.fetch_stats(this.state.selected_field)
-        })
-    }
-    if(this.state.meta_counts===null){
-      this.fetch_metacounts()
-    }
-    const resource_controller = new AbortController()
-    this.setState({
-      resource_controller: resource_controller,
-    })
-    // Pre computed
-    if(this.state.resource_signatures===null){
-      const response = (await import("../../ui-schemas/resources/all.json")).default
-      const resource_signatures = response.filter(data=>data.Resource_Name!=="Enrichr").reduce((group, data)=>{
-        group[data.Resource_Name] = data.Signature_Count
-        return group
-      }, {})
-     // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
-     //                                                                          counts: resource_signatures[resource]}))
-
-     //  for_sorting.sort(function(a, b) {
-     //      return b.counts - a.counts;
-     //  }); 
-      this.setState({
-        resource_signatures: resource_signatures//for_sorting.slice(0,11),
-      })
-    }
-    // Via Server
-    if(this.state.per_resource_counts===null){
-      this.setState({...(await get_signature_counts_per_resources(this.state.resource_controller))})
-    }
-  }
-
-  componentWillUnmount(){
-    this.state.general_controller.abort()
-    this.state.resource_controller.abort()
-  }
-
-  
-
   ResourceExtraComponent = withStyles(extraComponentStyle)(({ classes, ...props }) => {
-    if(this.state.resource_signatures===null && this.state.signatures_count==0){
+    if(this.props.resource_signatures===null && this.props.signatures_count==0){
       return(<div/>)
     }else{
-      const for_rounding = 10**((""+this.state.signatures_count).length-1)
-      const signatures = Math.floor(this.state.signatures_count/for_rounding)*for_rounding
+      const for_rounding = 10**((""+this.props.signatures_count).length-1)
+      const signatures = Math.floor(this.props.signatures_count/for_rounding)*for_rounding
       return(
         <Grid container 
               spacing={24}
@@ -351,10 +166,10 @@ export default withStyles(landingStyle)(class extends React.Component {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                    {this.state.libraries_count > 0 && this.state.signatures_count > 0 && this.state.resource_signatures!==null ? 
-                        <CurrentVersion libraries_count={this.state.libraries_count}
-                                        signatures_count={this.state.signatures_count}
-                                        resources_count={Object.keys(this.state.resource_signatures).length}/>: null}
+                    {this.props.libraries_count > 0 && this.props.signatures_count > 0 && this.props.resource_signatures!==null ? 
+                        <CurrentVersion libraries_count={this.props.libraries_count}
+                                        signatures_count={this.props.signatures_count}
+                                        resources_count={Object.keys(this.props.resource_signatures).length}/>: null}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -372,27 +187,27 @@ export default withStyles(landingStyle)(class extends React.Component {
                 align="center"
                 justify="center">
                 <Grid item xs={12} sm={6} md={4}>
-                  <Charts piefields={this.state.piefields}
-                          pie_stats={this.state.resource_signatures}
+                  <Charts piefields={this.props.piefields}
+                          pie_stats={this.props.resource_signatures}
                           pie_name={"Resources"}
                           color={"Green"}
-                          selected_field={this.state.selected_field}
-                          handleSelectField={this.handleSelectField}
+                          selected_field={this.props.selected_field}
+                          handleSelectField={this.props.handleSelectField}
                           ExtraComponent={this.ResourceExtraComponent}
                           />
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
-                  <Charts piefields={this.state.piefields}
-                          pie_stats={this.state.pie_stats}
+                  <Charts piefields={this.props.piefields}
+                          pie_stats={this.props.pie_stats}
                           color={"Purple"}
-                          selected_field={this.state.selected_field}
+                          selected_field={this.props.selected_field}
                           ExtraComponent={this.MetaExtraComponent}
-                          handleSelectField={this.handleSelectField}/>
+                          handleSelectField={this.props.handleSelectField}/>
                 </Grid>
                 <Grid item xs={12} sm={12} md={4}>
                   <Stat type="Stats"
-                        fields={this.state.counting_fields}
-                        signature_counts={this.state.meta_counts}
+                        fields={this.props.counting_fields}
+                        signature_counts={this.props.meta_counts}
                         color={"Orange"}
                         name={"Stats"}
                         dense/>
