@@ -38,13 +38,13 @@ export const CurrentVersion = withStyles(textstyles)(({classes, ...props}) => {
       Current Version: <span className={classes.highlighted}>{date.toDateString()}</span>
       <ul>
         <li>
-          <span className={classes.highlighted}>{props.resources_count.toLocaleString() }</span> Resources
+          <span className={classes.highlighted}>{props.signatures_count.toLocaleString()}</span> Signatures
         </li>
         <li>
           <span className={classes.highlighted}>{props.libraries_count.toLocaleString() }</span> Libraries
         </li>
         <li>
-          <span className={classes.highlighted}>{props.signatures_count.toLocaleString()}</span> Signatures
+          <span className={classes.highlighted}>{props.resources_count.toLocaleString() }</span> Resources
         </li>
       </ul>
     </div>
