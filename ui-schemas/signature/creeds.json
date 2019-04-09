@@ -15,6 +15,12 @@
       "type": "text",
       "text": "Microarray"
     },
+    "Disease": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Disease}",
+      "subfield": "${meta.Disease[0].Name}"
+    },
     "Drug": {
       "visibility": 1,
       "type": "object",

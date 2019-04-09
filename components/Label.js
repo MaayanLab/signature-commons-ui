@@ -15,24 +15,38 @@ export const schemas = [
 ]
 
 export const labels = {
-  'text': ({label, prop, data, highlight}) => (
-    <Highlight
-      text={label + ': ' + makeTemplate(prop.text, data)}
-      highlight={highlight}
-      props={{
-        className: "chip grey white-text"
-      }}
-    />
-  ),
-  'object': ({label, prop, data, highlight}) => (
-    <Highlight
-      text={label + ': ' + makeTemplate(prop.text, data, prop.subfield)}
-      highlight={highlight}
-      props={{
-        className: "chip grey white-text"
-      }}
-    />
-  ),
+  'text': ({label, prop, data, highlight}) => {
+    const val = makeTemplate(prop.text, data)
+    if (val==='undefined'){
+      return null
+    } else{
+      return(
+        <Highlight
+          text={label + ': ' + makeTemplate(prop.text, data)}
+          highlight={highlight}
+          props={{
+            className: "chip grey white-text"
+          }}
+        />
+      )
+    }
+  },
+  'object': ({label, prop, data, highlight}) => {
+    const val = makeTemplate(prop.text, data, prop.subfield)
+    if(val==='undefined'){
+      return null
+    }else{
+      return (
+        <Highlight
+          text={label + ': ' + val}
+          highlight={highlight}
+          props={{
+            className: "chip grey white-text"
+          }}
+        />
+      )
+    }
+  },
   'header-img': ({label, prop, data, highlight}) => (
     <div
       className="card-title"
