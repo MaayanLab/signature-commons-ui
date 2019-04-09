@@ -18,7 +18,8 @@
     "Cell-line": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.Cell_Line[0].Name}"
+      "text": "${meta.Cell_Line}",
+      "subfield": "${meta.Cell_Line[0].Name}"
     },
     "Time point": {
       "visibility": 1,
