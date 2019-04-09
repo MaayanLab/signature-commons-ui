@@ -44,7 +44,6 @@ theme.shadows[4] = theme.shadows[0]
 export default class extends React.Component {
   render_table = ({ result }) => {
     const sigs = result.signatures
-    console.log(sigs[0])
     const schema = schemas.filter(
       (schema) => objectMatch(schema.match, sigs[0])
     )[0]
@@ -110,7 +109,12 @@ export default class extends React.Component {
 
     const data = sigs.map((sig) =>
       cols.map((col) => {
-        const val = makeTemplate(schema.properties[col].text, sig)
+        let val = undefined
+        if (schema.properties[col].type=="object"){
+          val = makeTemplate(schema.properties[col].text, sig, schema.properties[col].subfield)
+        }else{
+          val = makeTemplate(schema.properties[col].text, sig)
+        }
         if (val === 'undefined')
           return ''
         try {

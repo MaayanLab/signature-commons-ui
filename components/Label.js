@@ -24,6 +24,15 @@ export const labels = {
       }}
     />
   ),
+  'object': ({label, prop, data, highlight}) => (
+    <Highlight
+      text={label + ': ' + makeTemplate(prop.text, data, prop.subfield)}
+      highlight={highlight}
+      props={{
+        className: "chip grey white-text"
+      }}
+    />
+  ),
   'header-img': ({label, prop, data, highlight}) => (
     <div
       className="card-title"
