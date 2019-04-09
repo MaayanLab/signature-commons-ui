@@ -65,6 +65,18 @@ export const landingStyle = theme => ({
   titleBlack: {
     color: "#000",
     textAlign: 'center',
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
   }
 })
 

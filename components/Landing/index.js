@@ -14,8 +14,8 @@ import NearMe from '@material-ui/icons/NearMe';
 import CloudUpload from '@material-ui/icons/CloudUpload';
 import Pageview from '@material-ui/icons/Pageview';
 import FindReplace from '@material-ui/icons/FindReplace';
-
-
+import Public from '@material-ui/icons/Public';
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
 import { landingStyle,
@@ -28,6 +28,7 @@ import { fetch_meta } from '../../util/fetch/meta'
 
 import {Charts, CurrentVersion, ListItemLink} from './Misc'
 import { Stat } from "../Admin/dashboard.js";
+import { base_scheme as meta_base_scheme, base_url as meta_base_url } from "../../util/fetch/meta";
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
@@ -83,10 +84,10 @@ export default withStyles(landingStyle)(class extends React.Component {
               </ListItem>
               <ListItem button className={classes.listItem}>
                 <ListItemIcon>
-                  <CloudUpload />
+                  <Public />
                 </ListItemIcon>
-                <ListItemLink href="#/UploadCollection">
-                  <ListItemText primary="Upload a new resource/library" />
+                <ListItemLink href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}>
+                  <ListItemText primary="Browse API" />
                 </ListItemLink>
               </ListItem>
             </List>
@@ -170,6 +171,16 @@ export default withStyles(landingStyle)(class extends React.Component {
                         <CurrentVersion libraries_count={this.props.libraries_count}
                                         signatures_count={this.props.signatures_count}
                                         resources_count={Object.keys(this.props.resource_signatures).length}/>: null}
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Link
+                        to={{ pathname: '/UploadCollection' }}
+                      >
+                        <Button variant="contained" color="secondary" className={classes.button}>
+                          Upload your signatures
+                          <CloudUpload className={classes.rightIcon}/>
+                        </Button>
+                      </Link>
                     </Grid>
                   </Grid>
                 </Grid>
