@@ -46,7 +46,6 @@ export default class SignatureSearch extends React.Component {
   }
 
   submit = (input) => {
-    console.log("submitting")
     NProgress.start()
     // TODO: register signature with metadata api
 
@@ -111,7 +110,6 @@ export default class SignatureSearch extends React.Component {
   }
 
   geneset_searchbox = (props) => {
-    console.log(props)
     if(this.props.location.state){
       return(<div />)
     }else{

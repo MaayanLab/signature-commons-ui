@@ -329,8 +329,6 @@ const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
 })
 
 export const Dashboard = withStyles(styles)( function({ classes, record={}, ...props }){
-  const {width} = props
-  console.log(width)
   return(
     <div className={classes.root}>
       <Grid container spacing={24}>
