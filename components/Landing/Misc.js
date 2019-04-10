@@ -52,63 +52,6 @@ export const CurrentVersion = withStyles(textstyles)(({classes, ...props}) => {
 })
 
 
-const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }){
-  const {piefields,
-         pie_stats,
-         selected_field} = props
-  return(
-    <Card className={classes.cardChart}>
-      <Grid container 
-        spacing={0}
-        direction={"column"}
-        align="center"
-        justify="center">
-        <Grid item xs={12}>
-          {pie_stats===null ?
-            <div className={classes.progress}>
-              <CircularProgress />
-            </div>:
-            <PieChart stats={pie_stats} {...props}/>
-          }
-        </Grid>
-      </Grid>
-    </Card>
-  )
-})
-
-export const Charts = withStyles(styles)( function({ classes, ...props }){
-  
-  const {piefields,
-         pie_stats,
-         pie_name,
-         selected_field,
-         ExtraComponent} = props
-  
-  return(
-    <div className={classes.main}>
-      <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
-      <Card className={`${classes.longcard}`}>
-        {pie_name === undefined ? 
-          <div>
-            {piefields===null ?
-              <div className={classes.ProgressContainer}>
-                <LinearProgress/>
-              </div>:
-              <Selections
-                value={selected_field === null ? piefields[0]: selected_field}
-                values={Object.keys(piefields).sort()}
-                onChange={e => props.handleSelectField(e)}
-              />
-            }
-          </div> : <Typography className={classes.namebox} color="textPrimary" component="h3">{pie_name}</Typography>
-        }
-        <ChartCard selected_db="Entities" {...props}/>
-        {ExtraComponent===undefined ? null: <ExtraComponent {...props}/>}
-      </Card>
-    </div>
-  )
-})
-
 export const ListItemLink = (props) => (
     <ListItem button component="a" {...props} />
   )

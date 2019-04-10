@@ -26,8 +26,8 @@ import GenesetSearchBox from "./GenesetSearchBox";
 
 import { fetch_meta } from '../../util/fetch/meta'
 
-import {Charts, CurrentVersion, ListItemLink} from './Misc'
-import { Stat } from "../Admin/dashboard.js";
+import { CurrentVersion, ListItemLink} from './Misc'
+import { Charts, Stat } from "../Admin/dashboard.js";
 import { base_scheme as meta_base_scheme, base_url as meta_base_url } from "../../util/fetch/meta";
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
@@ -205,6 +205,7 @@ export default withStyles(landingStyle)(class extends React.Component {
                           selected_field={this.props.selected_field}
                           handleSelectField={this.props.handleSelectField}
                           ExtraComponent={this.ResourceExtraComponent}
+                          longcard
                           />
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
@@ -213,7 +214,8 @@ export default withStyles(landingStyle)(class extends React.Component {
                           color={"Purple"}
                           selected_field={this.props.selected_field}
                           ExtraComponent={this.MetaExtraComponent}
-                          handleSelectField={this.props.handleSelectField}/>
+                          handleSelectField={this.props.handleSelectField}
+                          longcard/>
                 </Grid>
                 <Grid item xs={12} sm={12} md={4}>
                   <Stat type="Stats"

@@ -42,6 +42,7 @@ import { BooleanField,
 import { Dashboard } from './dashboard';
 
 import { MyLogin } from './Login.js'
+import {get_signature_counts_per_resources} from '../Resources/resources.js'
 
 
 class AdminView extends React.PureComponent {
@@ -54,26 +55,21 @@ class AdminView extends React.PureComponent {
       LibraryNumber: "Loading...",
       SignatureNumber: "Loading...",
       EntityNumber: "Loading...",
-      signature_counts: null,
-      library_piefields: null,
-      signature_piefields: null,
-      stats: null,
-      libchart: null,
-      sigchart: null,
-      entchart:null,
-      libselected: "Assay",
-      sigselected: "Cell_Line",
-      entselected:"Taxon_ID",
+      meta_counts: null,
+      piefields: null,
+      pie_controller: null,
+      pie_stats: null,
+      selected_field: "Assay",
+      meta_counts: null,
+      counting_fields: null,
+      resource_signatures: null,
+      per_resource_counts: null,
       status: null,
       controller: null,
-      lib_controller: null,
-      sig_controller: null,
-      ent_controller: null,
       general_controller: null,
       token: null,
       uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
       hash: window.location.hash,
-      counting_fields: null,
     }
     this.filterHandler = this.filterHandler.bind(this);
     this.hashChangeHandler = this.hashChangeHandler.bind(this);
@@ -113,30 +109,14 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  handleSelectField(e,db){
+  handleSelectField(e){
     const field = e.target.value
-    if(db==="Libraries"){
-      this.setState({
-        libselected: field,
-        libchart: null,
-      }, () => {
-        this.fetch_stats(db)
-      })
-    }else if(db==="Signatures"){
-      this.setState({
-        sigselected: field,
-        sigchart: null,
-      }, () => {
-        this.fetch_stats(db)
-      })
-    }else if(db==="Entities"){
-      this.setState({
-        entselected: field,
-        entchart: null,
-      }, () => {
-        this.fetch_stats(db)
-      })
-    }
+    this.setState({
+      selected_field: field,
+      pie_stats: null,
+    },()=>{
+     this.fetch_stats(this.state.selected_field)
+    })
   }
 
   LibraryList(props) {
@@ -441,70 +421,49 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  async fetch_stats(db){
-    let selected_field  = null
+  async fetch_stats(selected_field){
     try {
-      const stat_controller = new AbortController()
-      if(db=="Libraries") {
-        selected_field = this.state.libselected
-        if( this.state.lib_controller !== null) {
-          this.state.lib_controller.abort()
+      const pie_controller = new AbortController()
+      const db = this.state.piefields[selected_field]
+      if( this.state.pie_controller !== null) {
+          this.state.pie_controller.abort()
         }
-        this.setState({
-          lib_controller: stat_controller,
-        })
-      }else if(db=="Signatures") {
-        selected_field = this.state.sigselected
-        if (this.state.sig_controller !== null) {
-          this.state.sig_controller.abort()
-        }
-        this.setState({
-          sig_controller: stat_controller,
-        })
-      }else if(db=="Entities") {
-        selected_field = this.state.entselected
-        if(this.state.ent_controller !== null) {
-          this.state.ent_controller.abort()
-        }
-        this.setState({
-          ent_controller: stat_controller,
-        })
-      }
-      
+      this.setState({
+        pie_controller: pie_controller,
+      })
       const headers = {'Authorization': `Basic ${this.state.token}`}
       const url = '/' + db.toLowerCase() +
                   '/value_count?depth=2&filter={"fields":["' +
                   selected_field +'"]}'
       const { response: stats} = await fetch_meta({
         endpoint: url,
-        signal: stat_controller.signal,
+        signal: pie_controller.signal,
         headers
       })
+
       let stat_vals = undefined
-      if(["Cell_Line", "Disease", "Gene", "GO", "Phenotype", "Small_Molecule", "Tissue", "Virus"].includes(selected_field)){
+      const object_fields = this.state.counting_fields === null ?
+                             ["Cell_Line",
+                              "Disease",
+                              "Gene",
+                              "GO",
+                              "Phenotype",
+                              "Small_Molecule",
+                              "Tissue",
+                              "Virus"] :
+                              Object.keys(this.state.counting_fields).filter(key=>this.state.counting_fields[key]=="object")
+      if(object_fields.includes(selected_field)){
         stat_vals = stats[selected_field + ".Name"]
-      }else if(selected_field === "Accession"){
-        stat_vals = stats[selected_field + ".ID"]
       }else{
         stat_vals = stats[selected_field]
       }
-      if(db==="Libraries"){
-        this.setState({
-          libchart: stat_vals,
-        })
-      }else if(db==="Signatures"){
-        this.setState({
-          sigchart: stat_vals,
-        })
-      }else if(db==="Entities"){
-        this.setState({
-          entchart: stat_vals,
-        })
-      }
+      this.setState({
+        pie_stats: stat_vals,
+      })
     } catch(e) {
       if(e.code !== DOMException.ABORT_ERR) {
         this.setState({
-          stat_status: ''
+          pie_status: ''
         })
       }
     }
@@ -579,19 +538,25 @@ class AdminView extends React.PureComponent {
       }
     }
   }
-
-  async fetch_libNumber() {
+  async fetch_count(source) {
     const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: library_counts } = await fetch_meta({
-      endpoint: '/libraries/count',
-      signal: this.state.general_controller.signal,
-      headers
-    })
-    this.setState({
-      LibraryNumber: library_counts.count
-    })
+    const { response } = await fetch_meta({ endpoint: `/${source}/count`,
+                                            signal: this.state.general_controller.signal,
+                                            headers })
+    if(source==="libraries"){
+      this.setState({
+        LibraryNumber: response.count
+      })
+    }else if(source==="signatures"){
+      this.setState({
+        SignatureNumber: response.count
+      })
+    }else if(source==="entities"){
+      this.setState({
+        EntityNumber: response.count
+      })
+    }
   }
-
   async fetch_libraryfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: library_fields} = await fetch_meta({
@@ -616,40 +581,10 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  async fetch_signatureNumber(){
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_counts} = await fetch_meta({
-      endpoint: '/signatures/count',
-      signal: this.state.general_controller.signal,
-      headers
-    })
-    this.setState({
-      SignatureNumber: signature_counts.count,
-    })
-  }
-
-  async fetch_entityNumber(){
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: entity_counts } = await fetch_meta({
-      endpoint: '/entities/count',
-      signal: this.state.general_controller.signal,
-      headers
-    })
-    this.setState({
-      EntityNumber: entity_counts.count,
-    })
-    // this.setState({
-    //   entity_fields: entity_fields,
-    //   EntityNumber: entity_fields.$validator,
-    // },()=>{
-    //   this.fetch_stats("Entities")
-    // })
-  }
-
   async fetch_entityfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: entity_fields} = await fetch_meta({
-      endpoint: `/libraries/key_count`,
+      endpoint: `/entities/key_count`,
       signal: this.state.general_controller.signal,
       headers
     })
@@ -658,57 +593,52 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  async fetch_sigstats() {
+  async fetch_metacounts() {
     const fields = (await import("../../ui-schemas/dashboard/counting_fields.json")).default
     this.setState({
       counting_fields: fields
     })
     const object_fields = Object.keys(fields).filter(key=>fields[key]=="object")
 
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_counts} = await fetch_meta({
-      endpoint: '/signatures/value_count',
-      body: {
-        depth: 2,
-        filter: {
-          fields: Object.keys(fields)
-        },
-      },
-      signal: this.state.general_controller.signal,
-      headers
-    })
-    // const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
+    // UNCOMMENT TO FETCH STUFF IN THE SERVER
+    // const headers = {'Authorization': `Basic ${this.state.token}`}
+    // const { response: meta_stats } = await fetch_meta({
+    //   endpoint: '/signatures/value_count',
+    //   body: {
+    //     depth: 2,
+    //     filter: {
+    //       fields: Object.keys(fields)
+    //     },
+    //   },
+    //   signal: this.state.general_controller.signal,
+    //   headers
+    // })
+    // const meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
+    //                                                         // (key.indexOf(".PubChemID")>-1 &&
+    //                                                         //  key.indexOf("Small_Molecule")>-1) ||
+    //                                                         (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
     //                                                 .reduce((stat_list, k)=>{
-    //                                                 stat_list.push({name: k.replace(".Name", ""),
-    //                                                                 counts:Object.keys(signature_counts[k]).length})
+    //                                                 stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
+    //                                                                         k.replace("Small_Molecule.", ""):
+    //                                                                         k.replace(".Name", ""),
+    //                                                                 counts:Object.keys(meta_stats[k]).length})
     //                                                 return(stat_list) },
     //                                                 [])
-    const sig_counts = Object.keys(signature_counts).filter(key=>key.indexOf(".Name")>-1||
-                                                              // (key.indexOf(".PubChemID")>-1 &&
-                                                              //  key.indexOf("Small_Molecule")>-1) ||
-                                                              (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
-                                                      .reduce((stat_list, k)=>{
-                                                      stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
-                                                                              k.replace("Small_Molecule.", ""):
-                                                                              k.replace(".Name", ""),
-                                                                      counts:Object.keys(signature_counts[k]).length})
-                                                      return(stat_list) },
-                                                      [])
-
-    sig_counts.sort((a, b) => a.name > b.name);
+    const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
+    meta_counts.sort((a, b) => a.name > b.name);
     this.setState({
-      signature_counts: sig_counts,
+      meta_counts: meta_counts,
     })
   }
 
   componentDidMount() {
     window.addEventListener("hashchange", this.hashChangeHandler);
     if (this.state.token && this.state.general_controller){
-      this.fetch_libNumber()
+      this.fetch_count("libraries")
+      this.fetch_count("entities")
+      this.fetch_count("signatures")
       this.fetch_sigfields()
-      this.fetch_sigstats()
-      this.fetch_signatureNumber()
-      this.fetch_entityNumber()
+      this.fetch_metacounts()
     }
   }
 
@@ -762,10 +692,13 @@ class AdminView extends React.PureComponent {
 
         // Load column names
         if(this.state.LibraryNumber==="Loading..."){
-          this.fetch_libNumber()
+          this.fetch_count("libraries")
         }
         if(this.state.EntityNumber==="Loading..."){
-          this.fetch_entityNumber()
+          this.fetch_count("entities")
+        }
+        if(this.state.SignatureNumber==="Loading..."){
+          this.fetch_count("signatures")
         }
         if(this.state.signature_fields===null){
           this.fetch_sigfields()
@@ -776,28 +709,38 @@ class AdminView extends React.PureComponent {
         if(this.state.entity_fields===null){
           this.fetch_entityfields()
         }
-        if(this.state.signature_counts===null){
-          this.fetch_sigstats()
+        if(this.state.meta_counts===null){
+          this.fetch_metacounts()
         }
-        if(this.state.SignatureNumber==="Loading..."){
-          this.fetch_signatureNumber()
-        }
-        if(this.state.library_piefields===null){
-          const response = (await import("../../ui-schemas/dashboard/library_pie.json")).default
+        if(this.state.piefields===null){
+          const response = (await import("../../ui-schemas/dashboard/pie_fields.json")).default
           this.setState({
-            library_piefields: response
+            piefields: response
           },()=>{
-            this.fetch_stats("Libraries")
+            this.fetch_stats(this.state.selected_field)
           })
         }
-        if(this.state.signature_piefields===null){
-          const response = (await import("../../ui-schemas/dashboard/signature_pie.json")).default
+        // Pre computed
+        if(this.state.resource_signatures===null){
+          const response = (await import("../../ui-schemas/resources/all.json")).default
+          const resource_signatures = response.filter(data=>data.Resource_Name!=="Enrichr").reduce((group, data)=>{
+            group[data.Resource_Name] = data.Signature_Count
+            return group
+          }, {})
+         // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
+         //                                                                          counts: resource_signatures[resource]}))
+
+         //  for_sorting.sort(function(a, b) {
+         //      return b.counts - a.counts;
+         //  }); 
           this.setState({
-            signature_piefields: response
-          },()=>{
-            this.fetch_stats("Signatures")
+            resource_signatures: resource_signatures//for_sorting.slice(0,11),
           })
         }
+        // Via Server
+        // if(this.state.per_resource_counts===null){
+        //   this.setState({...(await get_signature_counts_per_resources(this.state.general_controller))})
+        // }
         return Promise.resolve();
       }
     }else if (type === AUTH_LOGOUT) {
@@ -862,21 +805,8 @@ class AdminView extends React.PureComponent {
                dataProvider={this.dataProvider}
                authProvider={this.authProvider}
                dashboard={(props) => <Dashboard 
-                                        LibraryNumber={this.state.LibraryNumber}
-                                        SignatureNumber={this.state.SignatureNumber}
-                                        EntityNumber={this.state.EntityNumber}
-                                        signature_counts={this.state.signature_counts}
-                                        entity_fields={this.state.entity_fields}
-                                        library_piefields={this.state.library_piefields}
-                                        signature_piefields={this.state.signature_piefields}
                                         handleSelectField={this.handleSelectField}
-                                        libselected={this.state.libselected}
-                                        sigselected={this.state.sigselected}
-                                        entselected={this.state.entselected}
-                                        libchart={this.state.libchart}
-                                        sigchart={this.state.sigchart}
-                                        entchart={this.state.entchart}
-                                        fields={this.state.counting_fields}
+                                        {...this.state}
                                         {...props}/>}
                catchAll={this.NotFound}
                loginPage={MyLogin}
