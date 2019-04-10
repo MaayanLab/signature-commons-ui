@@ -17,7 +17,7 @@
     },
     "Cell-line": {
       "visibility": 1,
-      "type": "text",
+      "type": "object",
       "text": "${meta.Cell_Line}",
       "subfield": "${meta.Cell_Line[0].Name}"
     },
