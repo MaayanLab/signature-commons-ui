@@ -9,12 +9,14 @@ import LibraryBooks from '@material-ui/icons/LibraryBooks';
 import Whatshot from '@material-ui/icons/Whatshot';
 import DonutSmall from '@material-ui/icons/DonutSmall';
 import Assessment from '@material-ui/icons/Assessment';
+import Refresh from '@material-ui/icons/Refresh';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -26,6 +28,8 @@ import TableRow from '@material-ui/core/TableRow';
 import { DonutChart } from "./VXpie.js";
 import { withScreenSize } from '@vx/responsive';
 import withWidth from '@material-ui/core/withWidth';
+import Button from '@material-ui/core/Button';
+
 
 // import DonutChart from "./Donut.js";
 
@@ -40,6 +44,11 @@ Array.prototype.sum = function (prop) {
     }
     return total
 }
+
+
+export const ListItemLink = (props) => (
+    <ListItem button component="a" {...props} />
+  )
 
 export const CardIcon = withStyles(cardIconStyle)(({ Icon, classes, type }) => (
     <Card className={`${classes.cardIcon} ${classes[type]}`}>
@@ -152,12 +161,26 @@ const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props
   return(
     <div className={classes.main}>
       <CardIcon Icon={Whatshot} type={`${props.color}CardHeader`} />
-      <Card className={classes.card}>
-          <Typography variant="headline" className={classes.bigtext} component="h5">
+      <Card className={classes.longcard}>
+          <Typography variant="headline" className={classes.namebox} component="h5">
               Hot Genes
           </Typography>
           <Divider />
             <List>
+              <ListItem>
+                <ListItemText
+                  primary={"Coming Soon"}
+                  secondary={"12345"}
+                  style={{ paddingRight: 0 }}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary={"Coming Soon"}
+                  secondary={"12345"}
+                  style={{ paddingRight: 0 }}
+                />
+              </ListItem>
               <ListItem>
                 <ListItemText
                   primary={"Coming Soon"}
@@ -278,9 +301,10 @@ export const PieChart = withScreenSize(withStyles(styles)( function({ classes, r
     );
 }))
 
-const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
-  const {fields, stats, selected_field, title} = db_vals(props.selected_db, props)
-  const display_title = fields === null? <div/> : title.replace(/_/g, " ")
+const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }){
+  const {piefields,
+         pie_stats,
+         selected_field} = props
   return(
     <Card className={classes.cardChart}>
       <Grid container 
@@ -289,14 +313,11 @@ const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...
         align="center"
         justify="center">
         <Grid item xs={12}>
-          {selected_field.replace(/_/g, " ")}
-        </Grid>
-        <Grid item xs={12}>
-          {stats===null ?
+          {pie_stats===null ?
             <div className={classes.progress}>
               <CircularProgress />
             </div>:
-            <PieChart stats={stats} {...props}/>
+            <PieChart stats={pie_stats} {...props}/>
           }
         </Grid>
       </Grid>
@@ -304,27 +325,128 @@ const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...
   )
 })
 
-const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
+export const Charts = withStyles(styles)( function({ classes, ...props }){
   
-  const {fields, stats, selected_field} = db_vals(props.selected_db, props)
-  
+  const {piefields,
+         pie_stats,
+         pie_name,
+         selected_field,
+         longcard,
+         ExtraComponent} = props
+  const card_class = longcard ? `${classes.longcard}` : `${classes.card}`
   return(
     <div className={classes.main}>
       <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
-      <Card className={`${classes.card}`}>
-        {fields===null ?
-          <div className={classes.ProgressContainer}>
-            <LinearProgress/>
-          </div>:
-          <Selections
-            value={selected_field === null ? fields[0]: selected_field}
-            values={fields.sort()}
-            onChange={e => props.handleSelectField(e, props.selected_db)}
-          />
+      <Card className={card_class}>
+        {pie_name === undefined ? 
+          <div>
+            {piefields===null ?
+              <div className={classes.ProgressContainer}>
+                <LinearProgress/>
+              </div>:
+              <Selections
+                value={selected_field === null ? piefields[0]: selected_field}
+                values={Object.keys(piefields).sort()}
+                onChange={e => props.handleSelectField(e)}
+              />
+            }
+          </div> : <Typography className={classes.namebox} color="textPrimary" component="h3">{pie_name}</Typography>
         }
-        <ChartCard {...props}/>
+        <ChartCard selected_db="Entities" {...props}/>
+        {ExtraComponent===undefined ? null: <ExtraComponent {...props}/>}
       </Card>
     </div>
+  )
+})
+
+// const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
+//   const {fields, stats, selected_field, title} = db_vals(props.selected_db, props)
+//   const display_title = fields === null? <div/> : title.replace(/_/g, " ")
+//   return(
+//     <Card className={classes.cardChart}>
+//       <Grid container 
+//         spacing={0}
+//         direction={"column"}
+//         align="center"
+//         justify="center">
+//         <Grid item xs={12}>
+//           {selected_field.replace(/_/g, " ")}
+//         </Grid>
+//         <Grid item xs={12}>
+//           {stats===null ?
+//             <div className={classes.progress}>
+//               <CircularProgress />
+//             </div>:
+//             <PieChart stats={stats} {...props}/>
+//           }
+//         </Grid>
+//       </Grid>
+//     </Card>
+//   )
+// })
+
+// const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
+  
+//   const {fields, stats, selected_field} = db_vals(props.selected_db, props)
+  
+//   return(
+//     <div className={classes.main}>
+//       <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
+//       <Card className={`${classes.card}`}>
+//         {fields===null ?
+//           <div className={classes.ProgressContainer}>
+//             <LinearProgress/>
+//           </div>:
+//           <Selections
+//             value={selected_field === null ? fields[0]: selected_field}
+//             values={fields.sort()}
+//             onChange={e => props.handleSelectField(e, props.selected_db)}
+//           />
+//         }
+//         <ChartCard {...props}/>
+//       </Card>
+//     </div>
+//   )
+// })
+
+export const CurrentVersion = withStyles(styles)(({classes, ...props}) => {
+  const date = new Date()
+  return(
+    <div className={classes.currentVesion}>
+      Current Version: <span className={classes.highlighted}>{date.toDateString()}</span>
+      <ul>
+        <li>
+          <span className={classes.highlighted}>{props.signatures_count.toLocaleString()}</span> Signatures
+        </li>
+        <li>
+          <span className={classes.highlighted}>{props.libraries_count.toLocaleString() }</span> Libraries
+        </li>
+        <li>
+          <span className={classes.highlighted}>{props.resources_count.toLocaleString() }</span> Resources
+        </li>
+      </ul>
+    </div>
+  )
+})
+
+const TopCard = withStyles(styles)( function({ classes, record={}, ...props }){
+  const date = new Date()
+  return(
+    <Card className={classes.topCard}>
+      <Grid container spacing={24}>
+        <Grid item xs={12} md={9} lg={8}>
+          <Typography variant="headline" className={classes.bigtitle} component="h3">
+            SIGNATURE COMMONS DASHBOARD
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={3} lg={4}>
+          {props.LibraryNumber > 0 && props.SignatureNumber > 0 && props.resource_signatures!==null ? 
+            <CurrentVersion libraries_count={props.LibraryNumber}
+                            signatures_count={props.SignatureNumber}
+                            resources_count={Object.keys(props.resource_signatures).length}/>: null}
+        </Grid>
+      </Grid>
+    </Card>
   )
 })
 
@@ -332,42 +454,47 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
   return(
     <div className={classes.root}>
       <Grid container spacing={24}>
-        <Grid item xs={12} xl={7}>
+        <Grid item xs={12}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
-              <Grid container spacing={24}>
-                <Grid item xs={12} sm={4}>
-                  <Stat type={"Libraries"} color="Green" {...props} />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Stat type={"Signatures"} color="Blue" {...props} />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Stat type={"Entities"} color="Purple" {...props} />
-                </Grid>
-              </Grid>
+              <TopCard {...props}/>
             </Grid>
             <Grid item xs={12}>
               <Grid container spacing={24}>
                 <Grid item xs={12} sm={6}>
-                  <Charts selected_db={"Libraries"} color="Green" {...props} />
+                   <Charts piefields={props.piefields}
+                          pie_stats={props.resource_signatures}
+                          pie_name={"Resources"}
+                          color={"Green"}
+                          selected_field={props.selected_field}
+                          handleSelectField={props.handleSelectField}
+                          />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Charts selected_db={"Signatures"} color="Blue" {...props} />
+                  <Charts piefields={props.piefields}
+                          pie_stats={props.pie_stats}
+                          color={"Purple"}
+                          selected_field={props.selected_field}
+                          handleSelectField={props.handleSelectField}/>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} xl={5}>
+        <Grid item xs={12}>
           <Grid container spacing={24} direction={"column"}>
             <Grid item xs={12}>
               <Grid container spacing={24}>
                 <Grid item md={6} xs={12}>
-                  <Stat type={"Stats"} color="Orange" name={"Stats"} {...props} />
+                  <Stat type="Stats"
+                        fields={props.counting_fields}
+                        signature_counts={props.meta_counts}
+                        color={"Orange"}
+                        name={"Stats"}
+                        dense/>
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <PopularGenes color="Red" {...props} />
+                  <PopularGenes longcard color="Red" {...props} />
                 </Grid>
               </Grid>
             </Grid>
