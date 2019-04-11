@@ -252,7 +252,7 @@ export const Selections = withStyles(styles)( function({ classes, record={}, ...
   )
 })
 
-export const PieChart = withScreenSize(withStyles(styles)( function({ classes, record={}, ...props }){
+export const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     
     var stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
@@ -275,14 +275,11 @@ export const PieChart = withScreenSize(withStyles(styles)( function({ classes, r
     let height = 220
     let radius= 150
     let fontSize = 7
-    if(props.screenWidth<1086 && props.screenWidth>960){
-      width = 180
-    }
-    else if(props.screenWidth>1490 || props.screenWidth<600){
+    if(props.cardHeight ==300){
       radius=200
       width=300
       height=300
-      fontSize=10 
+      fontSize=10
     }
     return(
       <div><DonutChart width={width}
@@ -299,14 +296,15 @@ export const PieChart = withScreenSize(withStyles(styles)( function({ classes, r
                        {...props}/></div>
         
     );
-}))
+})
 
 const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }){
   const {piefields,
          pie_stats,
+         cardHeight,
          selected_field} = props
   return(
-    <Card className={classes.cardChart}>
+    <Card className={classes.cardChart} style={{height:cardHeight}} {...props}>
       <Grid container 
         spacing={0}
         direction={"column"}
@@ -325,7 +323,7 @@ const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }){
   )
 })
 
-export const Charts = withStyles(styles)( function({ classes, ...props }){
+export const Charts = withScreenSize(withStyles(styles)( function({ classes, ...props }){
   
   const {piefields,
          pie_stats,
@@ -334,6 +332,7 @@ export const Charts = withStyles(styles)( function({ classes, ...props }){
          longcard,
          ExtraComponent} = props
   const card_class = longcard ? `${classes.longcard}` : `${classes.card}`
+  const cardHeight = (props.screenWidth>1490 || props.screenWidth<600) ? 300:225
   return(
     <div className={classes.main}>
       <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
@@ -352,12 +351,12 @@ export const Charts = withStyles(styles)( function({ classes, ...props }){
             }
           </div> : <Typography className={classes.namebox} color="textPrimary" component="h3">{pie_name}</Typography>
         }
-        <ChartCard selected_db="Entities" {...props}/>
+        <ChartCard selected_db="Entities" cardHeight={cardHeight} {...props}/>
         {ExtraComponent===undefined ? null: <ExtraComponent {...props}/>}
       </Card>
     </div>
   )
-})
+}))
 
 // const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
 //   const {fields, stats, selected_field, title} = db_vals(props.selected_db, props)

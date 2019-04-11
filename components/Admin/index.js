@@ -49,20 +49,11 @@ class AdminView extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      library_fields: null,
-      entity_fields: null,
       signature_fields: null,
-      LibraryNumber: "Loading...",
-      SignatureNumber: "Loading...",
-      EntityNumber: "Loading...",
-      meta_counts: null,
       piefields: null,
       pie_controller: null,
       pie_stats: null,
       selected_field: "Assay",
-      meta_counts: null,
-      counting_fields: null,
-      resource_signatures: null,
       per_resource_counts: null,
       status: null,
       controller: null,
@@ -135,7 +126,7 @@ class AdminView extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.state.library_fields).map(function(k){
+          {Object.keys(this.props.library_fields).map(function(k){
             if (k.includes("Link") || k.includes("URL")){
               return(
                 <UrlField key={k}
@@ -199,7 +190,7 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {Object.keys(this.state.library_fields).map(function(k){
+          {Object.keys(this.props.library_fields).map(function(k){
             if(k!=="Description"){
               return(
                 <TextInput
@@ -349,7 +340,7 @@ class AdminView extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.state.entity_fields).map(function(k){
+          {Object.keys(this.props.entity_fields).map(function(k){
             if (k==="Synonyms"){
               return(
                 <TagsField
@@ -381,7 +372,7 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {Object.keys(this.state.entity_fields).map(function(k){
+          {Object.keys(this.props.entity_fields).map(function(k){
             if (k==="Synonyms"){
               return(
                 <LongTextInput
@@ -538,25 +529,25 @@ class AdminView extends React.PureComponent {
       }
     }
   }
-  async fetch_count(source) {
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response } = await fetch_meta({ endpoint: `/${source}/count`,
-                                            signal: this.state.general_controller.signal,
-                                            headers })
-    if(source==="libraries"){
-      this.setState({
-        LibraryNumber: response.count
-      })
-    }else if(source==="signatures"){
-      this.setState({
-        SignatureNumber: response.count
-      })
-    }else if(source==="entities"){
-      this.setState({
-        EntityNumber: response.count
-      })
-    }
-  }
+  // async fetch_count(source) {
+  //   const headers = {'Authorization': `Basic ${this.state.token}`}
+  //   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
+  //                                           signal: this.state.general_controller.signal,
+  //                                           headers })
+  //   if(source==="libraries"){
+  //     this.setState({
+  //       LibraryNumber: response.count
+  //     })
+  //   }else if(source==="signatures"){
+  //     this.setState({
+  //       SignatureNumber: response.count
+  //     })
+  //   }else if(source==="entities"){
+  //     this.setState({
+  //       EntityNumber: response.count
+  //     })
+  //   }
+  // }
   async fetch_libraryfields() {
     const headers = {'Authorization': `Basic ${this.state.token}`}
     const { response: library_fields} = await fetch_meta({
@@ -601,31 +592,31 @@ class AdminView extends React.PureComponent {
     const object_fields = Object.keys(fields).filter(key=>fields[key]=="object")
 
     // UNCOMMENT TO FETCH STUFF IN THE SERVER
-    // const headers = {'Authorization': `Basic ${this.state.token}`}
-    // const { response: meta_stats } = await fetch_meta({
-    //   endpoint: '/signatures/value_count',
-    //   body: {
-    //     depth: 2,
-    //     filter: {
-    //       fields: Object.keys(fields)
-    //     },
-    //   },
-    //   signal: this.state.general_controller.signal,
-    //   headers
-    // })
-    // const meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
-    //                                                         // (key.indexOf(".PubChemID")>-1 &&
-    //                                                         //  key.indexOf("Small_Molecule")>-1) ||
-    //                                                         (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
-    //                                                 .reduce((stat_list, k)=>{
-    //                                                 stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
-    //                                                                         k.replace("Small_Molecule.", ""):
-    //                                                                         k.replace(".Name", ""),
-    //                                                                 counts:Object.keys(meta_stats[k]).length})
-    //                                                 return(stat_list) },
-    //                                                 [])
-    const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
-    meta_counts.sort((a, b) => a.name > b.name);
+    const headers = {'Authorization': `Basic ${this.state.token}`}
+    const { response: meta_stats } = await fetch_meta({
+      endpoint: '/signatures/value_count',
+      body: {
+        depth: 2,
+        filter: {
+          fields: Object.keys(fields)
+        },
+      },
+      signal: this.state.general_controller.signal,
+      headers
+    })
+    const meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
+                                                            // (key.indexOf(".PubChemID")>-1 &&
+                                                            //  key.indexOf("Small_Molecule")>-1) ||
+                                                            (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
+                                                    .reduce((stat_list, k)=>{
+                                                    stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
+                                                                            k.replace("Small_Molecule.", ""):
+                                                                            k.replace(".Name", ""),
+                                                                    counts:Object.keys(meta_stats[k]).length})
+                                                    return(stat_list) },
+                                                    [])
+    // const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
+    // meta_counts.sort((a, b) => a.name > b.name);
     this.setState({
       meta_counts: meta_counts,
     })
@@ -634,20 +625,23 @@ class AdminView extends React.PureComponent {
   componentDidMount() {
     window.addEventListener("hashchange", this.hashChangeHandler);
     if (this.state.token && this.state.general_controller){
-      this.fetch_count("libraries")
-      this.fetch_count("entities")
-      this.fetch_count("signatures")
+      // this.fetch_count("libraries")
+      // this.fetch_count("entities")
+      // this.fetch_count("signatures")
       this.fetch_sigfields()
-      this.fetch_metacounts()
+      // this.fetch_metacounts()
     }
   }
 
   componentWillUnmount() {
-      this.state.lib_controller.abort()
-      this.state.sig_controller.abort()
-      this.state.ent_controller.abort()
+    if(this.state.pie_controller){
+      this.state.pie_controller.abort()
+    }
+    if(this.state.general_controller){
       this.state.general_controller.abort()
+    }
   }
+
   httpClient(url, options = {}) {
     if(!(options.hasOwnProperty("method"))){
       const link = decodeURI(url).split("%2C")
@@ -691,27 +685,21 @@ class AdminView extends React.PureComponent {
         })
 
         // Load column names
-        if(this.state.LibraryNumber==="Loading..."){
-          this.fetch_count("libraries")
-        }
-        if(this.state.EntityNumber==="Loading..."){
-          this.fetch_count("entities")
-        }
-        if(this.state.SignatureNumber==="Loading..."){
-          this.fetch_count("signatures")
-        }
+        // if(this.state.LibraryNumber==="Loading..."){
+        //   this.fetch_count("libraries")
+        // }
+        // if(this.state.EntityNumber==="Loading..."){
+        //   this.fetch_count("entities")
+        // }
+        // if(this.state.SignatureNumber==="Loading..."){
+        //   this.fetch_count("signatures")
+        // }
         if(this.state.signature_fields===null){
           this.fetch_sigfields()
         }
-        if(this.state.library_fields===null){
-          this.fetch_libraryfields()
-        }
-        if(this.state.entity_fields===null){
-          this.fetch_entityfields()
-        }
-        if(this.state.meta_counts===null){
-          this.fetch_metacounts()
-        }
+        // if(this.state.meta_counts===null){
+        //   this.fetch_metacounts()
+        // }
         if(this.state.piefields===null){
           const response = (await import("../../ui-schemas/dashboard/pie_fields.json")).default
           this.setState({
@@ -721,22 +709,22 @@ class AdminView extends React.PureComponent {
           })
         }
         // Pre computed
-        if(this.state.resource_signatures===null){
-          const response = (await import("../../ui-schemas/resources/all.json")).default
-          const resource_signatures = response.filter(data=>data.Resource_Name!=="Enrichr").reduce((group, data)=>{
-            group[data.Resource_Name] = data.Signature_Count
-            return group
-          }, {})
+        // if(this.state.resource_signatures===null){
+        //   const response = (await import("../../ui-schemas/resources/all.json")).default
+        //   const resource_signatures = response.filter(data=>data.Resource_Name!=="Enrichr").reduce((group, data)=>{
+        //     group[data.Resource_Name] = data.Signature_Count
+        //     return group
+        //   }, {})
          // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
          //                                                                          counts: resource_signatures[resource]}))
 
          //  for_sorting.sort(function(a, b) {
          //      return b.counts - a.counts;
          //  }); 
-          this.setState({
-            resource_signatures: resource_signatures//for_sorting.slice(0,11),
-          })
-        }
+          // this.setState({
+          //   resource_signatures: resource_signatures//for_sorting.slice(0,11),
+          // })
+        // }
         // Via Server
         // if(this.state.per_resource_counts===null){
         //   this.setState({...(await get_signature_counts_per_resources(this.state.general_controller))})
@@ -748,14 +736,8 @@ class AdminView extends React.PureComponent {
         if(this.state.general_controller){
           this.state.general_controller.abort()
         }
-        if(this.state.lib_controller){
-          this.state.lib_controller.abort()
-        }
-        if(this.state.sig_controller){
-          this.state.sig_controller.abort()
-        }
-        if(this.state.ent_controller){
-          this.state.ent_controller.abort()
+        if(this.state.pie_controller){
+          this.state.pie_controller.abort()
         }
         return Promise.resolve();
     }else if (type === AUTH_ERROR) {
@@ -765,14 +747,8 @@ class AdminView extends React.PureComponent {
         if(this.state.general_controller){
           this.state.general_controller.abort()
         }
-        if(this.state.lib_controller){
-          this.state.lib_controller.abort()
-        }
-        if(this.state.sig_controller){
-          this.state.sig_controller.abort()
-        }
-        if(this.state.ent_controller){
-          this.state.ent_controller.abort()
+        if(this.state.pie_controller){
+          this.state.pie_controller.abort()
         }
         return Promise.reject()
       }else
@@ -784,14 +760,8 @@ class AdminView extends React.PureComponent {
         if(this.state.general_controller){
           this.state.general_controller.abort()
         }
-        if(this.state.lib_controller){
-          this.state.lib_controller.abort()
-        }
-        if(this.state.sig_controller){
-          this.state.sig_controller.abort()
-        }
-        if(this.state.ent_controller){
-          this.state.ent_controller.abort()
+        if(this.state.pie_controller){
+          this.state.pie_controller.abort()
         }
         return Promise.reject();
       }
@@ -807,11 +777,12 @@ class AdminView extends React.PureComponent {
                dashboard={(props) => <Dashboard 
                                         handleSelectField={this.handleSelectField}
                                         {...this.state}
+                                        {...this.props}
                                         {...props}/>}
                catchAll={this.NotFound}
                loginPage={MyLogin}
         >
-          {this.state.library_fields===null ? <div/>:
+          {this.props.library_fields===null ? <div/>:
             <Resource
               name="libraries"
               list={this.LibraryList}
@@ -827,7 +798,7 @@ class AdminView extends React.PureComponent {
               icon={Fingerprint}
             />
           }
-          {this.state.entity_fields===null ? <div/>:
+          {this.props.entity_fields===null ? <div/>:
             <Resource
               name="entities"
               edit={this.EntityEdit}
