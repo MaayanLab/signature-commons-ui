@@ -58,7 +58,8 @@ export default class Admin extends React.Component {
     const library_fields = await fetch_fields("libraries")
     const entity_fields = await fetch_fields("entities")
     const {meta_counts, fields} = await get_metacounts()
-    const resource_signatures = await get_signature_counts_per_resources()
+    const {resource_signatures} = await get_signature_counts_per_resources()
+    const pie_fields = (await import("../ui-schemas/dashboard/pie_fields.json")).default
     return {
       'LibraryNumber': LibraryNumber,
       'SignatureNumber': SignatureNumber,
@@ -67,7 +68,8 @@ export default class Admin extends React.Component {
       'entity_fields': entity_fields,
       'meta_counts': meta_counts,
       'counting_fields': fields,
-      'resource_signatures': resource_signatures
+      'resource_signatures': resource_signatures,
+      'piefields': pie_fields,
     }
   }
 
