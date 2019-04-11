@@ -94,6 +94,11 @@ export const styles = theme => ({
     root: {
       flexGrow: 1,
     },
+    topCard: {
+      background:
+        "linear-gradient(45deg, " + LandingColors[0] + ", " + LandingColors[1] + ")",
+      padding: "10px",
+    },
     progress: {
       margin: theme.spacing.unit * 2,
     },
@@ -120,6 +125,14 @@ export const styles = theme => ({
       padding: 16,
       minHeight: 80,
     },
+    currentVesion: {
+      color: "#FFF",
+      fontWeight: 'bold',
+      textAlign: "right"
+    },
+    highlighted: {
+      color: "#FFD042"
+    },
     longcard:{
       overflow: 'inherit',
       textAlign: 'right',
@@ -128,6 +141,10 @@ export const styles = theme => ({
     },
     title: {
       fontSize: '10px',
+    },
+    bigtitle: {
+      color: "#FFF",
+      fontSize: 35
     },
     bigtext:{
       fontSize: '15px',
