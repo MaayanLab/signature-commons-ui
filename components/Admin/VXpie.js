@@ -82,8 +82,7 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
 
   return (
     <div>
-      <svg width={width} height={height}>
-        <rect rx={14} width={width} height={height} fill="url('#pie-gradients')" />
+      <svg width={width} height={height} style={{background:"#FFF"}}>
         <Group top={centerY - margin.top} left={centerX}>
           <Pie
             data={data}

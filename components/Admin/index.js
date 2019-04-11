@@ -50,7 +50,6 @@ class AdminView extends React.PureComponent {
     super(props)
     this.state = {
       signature_fields: null,
-      piefields: null,
       pie_controller: null,
       pie_stats: null,
       selected_field: "Assay",
@@ -415,7 +414,7 @@ class AdminView extends React.PureComponent {
   async fetch_stats(selected_field){
     try {
       const pie_controller = new AbortController()
-      const db = this.state.piefields[selected_field]
+      const db = this.props.piefields[selected_field]
       if( this.state.pie_controller !== null) {
           this.state.pie_controller.abort()
         }
@@ -433,7 +432,7 @@ class AdminView extends React.PureComponent {
       })
 
       let stat_vals = undefined
-      const object_fields = this.state.counting_fields === null ?
+      const object_fields = this.props.counting_fields === null ?
                              ["Cell_Line",
                               "Disease",
                               "Gene",
@@ -442,7 +441,7 @@ class AdminView extends React.PureComponent {
                               "Small_Molecule",
                               "Tissue",
                               "Virus"] :
-                              Object.keys(this.state.counting_fields).filter(key=>this.state.counting_fields[key]=="object")
+                              Object.keys(this.props.counting_fields).filter(key=>this.props.counting_fields[key]=="object")
       if(object_fields.includes(selected_field)){
         stat_vals = stats[selected_field + ".Name"]
       }else{
@@ -700,13 +699,8 @@ class AdminView extends React.PureComponent {
         // if(this.state.meta_counts===null){
         //   this.fetch_metacounts()
         // }
-        if(this.state.piefields===null){
-          const response = (await import("../../ui-schemas/dashboard/pie_fields.json")).default
-          this.setState({
-            piefields: response
-          },()=>{
-            this.fetch_stats(this.state.selected_field)
-          })
+        if(this.state.pie_stats===null){
+          this.fetch_stats(this.state.selected_field)
         }
         // Pre computed
         // if(this.state.resource_signatures===null){
