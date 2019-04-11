@@ -85,7 +85,7 @@ export async function get_library_resources() {
   }
 }
 
-export async function get_signature_counts_per_resources(controller) {
+export async function get_signature_counts_per_resources(controller=null) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
   const {library_resource} = await get_library_resources()
 
@@ -96,7 +96,7 @@ export async function get_signature_counts_per_resources(controller) {
               + lib +'"}}'
     const { response: stats} = await fetch_meta({
       endpoint: url,
-      signal: controller.signal
+      signal: controller? controller.signal: null
     })
 
     return {
