@@ -21,7 +21,7 @@ export const fetchJson = async (url, options = {}) => {
     const response = await fetch(url, { ...options, headers: requestHeaders })
 
     if (response.ok !== true)
-        throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+        throw new Error(`Error communicating with API at ${url}`)
 
     const {status, statusText, headers} = response
     const body = await response.text()
