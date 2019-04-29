@@ -1,6 +1,7 @@
 // Modified from https://github.com/marmelab/react-admin/blob/6fd9dd595ff01d8ad52f8eb8ec8f390c2dd31318/packages/ra-core/src/util/fetch.ts
 
 import { HttpError } from 'react-admin';
+import fetch from 'isomorphic-unfetch'
 
 export const fetchJson = async (url, options = {}) => {
     const requestHeaders = (options.headers ||
