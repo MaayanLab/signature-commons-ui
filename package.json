@@ -13,16 +13,17 @@
     "acorn": "^6.1.1",
     "ajv": "^6.9.2",
     "create-react-class": "^15.6.3",
-    "cross-env": "^5.2.0",
     "d3": "^5.7.0",
+    "dotenv-load": "^1.1.0",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
     "js-file-download": "^0.4.4",
     "materialize-css": "^1.0.0",
     "mui-datatables": "^2.0.0-beta.58",
     "next": "^8.0.3",
+    "next-env": "^1.1.0",
     "nprogress": "^0.2.0",
-    "plotly.js": "^1.47.3",
+    "plotly.js": "^1.47.4",
     "prop-types": "^15.6.2",
     "ra-data-simple-rest": "^2.6.0",
     "react": "^16.7.0",
@@ -41,21 +42,26 @@
     "uuid5": "^1.0.2"
   },
   "scripts": {
-    "dev": "cross-env PREFIX=${PREFIX} next",
-    "build": "cross-env PREFIX=${PREFIX} next build",
-    "start": "cross-env PREFIX=${PREFIX} next start",
-    "export": "cross-env PREFIX=${PREFIX} next build && cross-env PREFIX=${PREFIX} next export",
-    "export:production": "cross-env PREFIX=/sigcom npm run export",
-    "export:dev": "cross-env PREFIX=/sigcom-dev npm run export",
-    "deploy": "cross-env REACT_APP_METADATA_API= REACT_APP_DATA_API= PREFIX=${PREFIX} npm run export && docker build --build-arg PREFIX=${PREFIX} -t ${TAG}:${VERSION} . && docker push ${TAG}:${VERSION} && docker tag ${TAG}:${VERSION} ${TAG}:latest && docker push ${TAG}:latest",
-    "deploy:production": "cross-env PREFIX=/sigcom TAG=maayanlab/sigcom VERSION=${npm_package_version} npm run deploy",
-    "deploy:dev": "cross-env PREFIX=/sigcom-dev TAG=maayanlab/sigcom-dev VERSION=${npm_package_version} npm run deploy"
+    "lint:fix": "npm run lint -- --fix",
+    "dev": "NODE_ENV=development dotenv-load next",
+    "build": "dotenv-load next build",
+    "build:docker": "dotenv-load node ./bin/docker-build.js",
+    "start": "dotenv-load next start",
+    "export": "NEXT_EXPORT=1 dotenv-load next build && NEXT_EXPORT=1 dotenv-load next export",
+    "export:production": "NODE_ENV=production npm run export",
+    "export:dev": "NODE_ENV=development npm run export",
+    "deploy": "dotenv-load npm run export && npm run deploy:docker",
+    "deploy:docker": "npm run build:docker && dotenv-load node ./bin/docker-deploy.js",
+    "deploy:production": "NODE_ENV=production npm run deploy",
+    "deploy:dev": "NODE_ENV=development npm run deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "devDependencies": {
+    "dotenv-cli": "^2.0.0",
     "next-build-id": "^2.0.1",
-    "node-sass": "^4.11.0"
+    "node-sass": "^4.12.0",
+    "shelljs": "^0.8.3"
   }
 }

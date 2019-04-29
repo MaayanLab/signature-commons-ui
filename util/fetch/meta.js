@@ -1,6 +1,9 @@
 import fetch from 'isomorphic-unfetch'
 
-export const base_url = process.env.REACT_APP_METADATA_API || (window.location.origin + '/signature-commons-metadata-api')
+export const base_url = process.env.NEXT_SERVER_METADATA_API
+  || process.env.NEXT_STATIC_METADATA_API
+  || process.env.NEXT_PUBLIC_METADATA_API
+  || (window.location.origin + '/signature-commons-metadata-api')
 export const base_scheme = /^(https?):\/\/.+/.exec(base_url)[1]
 
 export async function fetch_creds({endpoint, body, signal, headers}) {
