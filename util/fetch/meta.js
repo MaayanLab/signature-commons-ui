@@ -8,9 +8,8 @@ export async function fetch_creds({endpoint, body, signal, headers}) {
 
   const request = await fetch(
     base_url
-    + endpoint
-    + (
-      (body === undefined) ? '' : (
+    + (endpoint === undefined ? '' : endpoint)
+    + (body === undefined ? '' : (
         '?'
         + Object.keys(body).reduce(
           (params, param) => ([
@@ -20,8 +19,7 @@ export async function fetch_creds({endpoint, body, signal, headers}) {
               + encodeURIComponent(JSON.stringify(body[param]))
           ]), []
         ).join('&')
-      )
-    ),
+      )),
     {
       method: 'GET',
       headers: {
@@ -51,9 +49,8 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
 
   const request = await fetch(
     base_url
-    + endpoint
-    + (
-      (body === undefined) ? '' : (
+    + (endpoint === undefined ? '' : endpoint)
+    + (body === undefined ? '' : (
         '?'
         + Object.keys(body).reduce(
           (params, param) => ([
@@ -63,8 +60,7 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
               + encodeURIComponent(JSON.stringify(body[param]))
           ]), []
         ).join('&')
-      )
-    ),
+      )),
     {
       method: 'GET',
       headers: {
@@ -108,7 +104,8 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
 export async function fetch_meta_post({endpoint, body, signal}) {
   const start = new Date()
   const request = await fetch(
-    base_url + endpoint,
+    base_url
+    + (endpoint === undefined ? '' : endpoint),
     {
       method: 'POST',
       body: JSON.stringify(body),

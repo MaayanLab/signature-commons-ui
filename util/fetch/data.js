@@ -6,7 +6,8 @@ export async function fetch_data({ endpoint, body, signal }) {
   const start = new Date()
 
   const request = await fetch(
-    base_url + endpoint,
+    base_url
+    + (endpoint === undefined ? '' : endpoint),
     {
       method: 'POST',
       body: JSON.stringify(body),
