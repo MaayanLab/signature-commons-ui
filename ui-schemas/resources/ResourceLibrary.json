@@ -4831,10 +4831,10 @@
       }
     ]
   },
-  "Pfamm and Interpro": {
-    "id": "Pfamm and Interpro",
+  "Pfam and Interpro": {
+    "id": "Pfam and Interpro",
     "meta": {
-      "name": "Pfamm and Interpro",
+      "name": "Pfam and Interpro",
       "icon": "/static/images/Pfam_InterPro_Domains.ico",
       "description": "(From the website) InterPro provides functional analysis of proteins by classifying them into families and predicting domains and important sites. It combines protein signatures from a number of member databases into a single searchable resource, capitalising on their individual strengths to produce a powerful integrated database and diagnostic tool.",
       "PMID": "30398656",
@@ -4860,9 +4860,9 @@
           "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=Pfam_InterPro_Domains",
           "Description": "Structural protein domains that are shared among proteins.",
           "Library_name": "Pfam InterPro Domains",
-          "Original_source": "Pfamm and Interpro",
+          "Original_source": "Pfam and Interpro",
           "Link_to_resource": "ftp://ftp.ebi.ac.uk/pub/databases/interpro/",
-          "Primary_Resource": "Pfamm and Interpro",
+          "Primary_Resource": "Pfam and Interpro",
           "Perturbation_Type": "domain",
           "Library_created_by": "MaayanLab",
           "Link_to_processing_scripts_on_GitHub": "https://github.com/MaayanLab/harmonizome_processing_scripts/tree/master/interpro"
