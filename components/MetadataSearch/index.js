@@ -28,12 +28,14 @@ export default class extends React.Component {
   }
 
   async componentDidMount() {
-
-    const { response } = await fetch_meta({ endpoint: '/signatures/count', body: {} })
     const currentSearch = getParam(this.props.location.search, 'q')
     this.setState({
-      currentSearch,
       search: currentSearch,
+    })
+    const { response } = await fetch_meta({ endpoint: '/signatures/count', body: {} })
+    console.log(response)
+    this.setState({
+      currentSearch,
       total_count: response.count
     })
   }

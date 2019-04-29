@@ -79,7 +79,6 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
     throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
 
   const response = await request.json()
-
   let contentRange = request.headers.get('Content-Range')
   if (contentRange !== null) {
     const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)

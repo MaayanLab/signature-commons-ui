@@ -4,6 +4,7 @@ import Base from '../../components/Base';
 import React from "react";
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { call } from '../../util/call';
+import Landing from '../Landing';
 import MetadataSearch from '../MetadataSearch';
 import Resources from '../Resources';
 import SignatureSearch from '../SignatureSearch';
@@ -12,6 +13,8 @@ import Upload from '../Upload';
 export default class Home extends React.PureComponent {
   constructor(props) {
     super(props)
+    console.log("Counts")
+    console.log(props)
     this.state = {
       cart: Set(),
     }
@@ -90,6 +93,14 @@ export default class Home extends React.PureComponent {
     )
   }
 
+  landing = (props) => (
+    <Landing
+      cart={this.state.cart}
+      updateCart={this.updateCart}
+      {...props}
+    />
+  )
+
   signature_search = (props) => (
     <SignatureSearch
       cart={this.state.cart}
@@ -140,8 +151,12 @@ export default class Home extends React.PureComponent {
           <Route
             exact path="/"
             render={() => (
-              <Redirect to="/SignatureSearch" />
+              <Redirect to="/Landing" />
             )}
+          />
+          <Route
+            path="/Landing"
+            component={this.landing}
           />
           <Route
             path="/SignatureSearch"
