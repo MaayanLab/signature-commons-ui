@@ -275,7 +275,7 @@ export const PieChart = withStyles(styles)( function({ classes, record={}, ...pr
     let height = 220
     let radius= 150
     let fontSize = 7
-    if(props.cardHeight ==300){
+    if(props.cardheight ==300){
       radius=200
       width=300
       height=300
@@ -301,10 +301,10 @@ export const PieChart = withStyles(styles)( function({ classes, record={}, ...pr
 const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }){
   const {piefields,
          pie_stats,
-         cardHeight,
+         cardheight,
          selected_field} = props
   return(
-    <Card className={classes.cardChart} style={{height:cardHeight}} {...props}>
+    <Card className={classes.cardChart} style={{height:cardheight}} {...props}>
       <Grid container 
         spacing={0}
         direction={"column"}
@@ -330,12 +330,20 @@ export const Charts = withScreenSize(withStyles(styles)( function({ classes, ...
          pie_name,
          selected_field,
          longcard,
+         color,
          ExtraComponent} = props
   const card_class = longcard ? `${classes.longcard}` : `${classes.card}`
-  const cardHeight = (props.screenWidth>1490 || props.screenWidth<600) ? 300:225
+  const cardheight = (props.screenWidth>1490 || props.screenWidth<600) ? 300:225
+  const propstopass = {
+      piefields,
+      pie_stats,
+      cardheight,
+      selected_field,
+      color,
+    }
   return(
     <div className={classes.main}>
-      <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
+      <CardIcon Icon={DonutSmall} type={`${color}CardHeader`} />
       <Card className={card_class}>
         {pie_name === undefined ? 
           <div>
@@ -351,7 +359,7 @@ export const Charts = withScreenSize(withStyles(styles)( function({ classes, ...
             }
           </div> : <Typography className={classes.namebox} color="textPrimary" component="h3">{pie_name}</Typography>
         }
-        <ChartCard selected_db="Entities" cardHeight={cardHeight} {...props}/>
+        <ChartCard selected_db="Entities" cardheight={cardheight} {...propstopass}/>
         {ExtraComponent===undefined ? null: <ExtraComponent {...props}/>}
       </Card>
     </div>
