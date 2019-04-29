@@ -69,9 +69,6 @@ export default class ResourcePage extends React.Component {
                   >
                     BACK
                   </Link>
-                  <a href="javascript:void(0);" onClick={call(download_resource_json, this.props.resource)}>
-                    DOWNLOAD
-                  </a>
                 </div>
               </div>
             </div>
@@ -103,21 +100,6 @@ export default class ResourcePage extends React.Component {
                         <Label
                           item={library}
                           visibility={1}
-                        />
-                      </div>
-                      <div style={{
-                        display: 'flex',
-                        flexDirection: "row",
-                      }}>
-                        <IconButton
-                          alt="Signature Commons"
-                          img={`${process.env.PREFIX}/static/favicon.ico`}
-                        />
-                        &nbsp;
-                        <IconButton
-                          alt="Download"
-                          icon="file_download"
-                          onClick={call(download_library_json, library.id)}
                         />
                         &nbsp;
                         <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
