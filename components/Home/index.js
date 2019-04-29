@@ -18,17 +18,10 @@ export default class Home extends React.PureComponent {
     super(props)
     this.state = {
       cart: Set(),
-      libraries_count: 0,
-      signatures_count: 0,
-      piefields: null,
       pie_controller: null,
       pie_stats: null,
       selected_field: "Assay",
-      meta_counts: null,
-      general_controller: null,
-      counting_fields: null,
-      resource_signatures: null,
-      per_resource_counts: null,
+      pie_controller: null,
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
@@ -44,47 +37,13 @@ export default class Home extends React.PureComponent {
     if(this.state.signatures_count===0){
       this.fetch_count("signatures")
     }
-    if(this.state.piefields===null){
-        const response = (await import("../../ui-schemas/dashboard/pie_fields.json")).default
-        this.setState({
-          piefields: response
-        },()=>{
-          this.fetch_stats(this.state.selected_field)
-        })
-    }
-    if(this.state.meta_counts===null){
-      this.fetch_metacounts()
-    }
-    const resource_controller = new AbortController()
-    this.setState({
-      resource_controller: resource_controller,
-    })
-    // Pre computed
-    if(this.state.resource_signatures===null){
-      const response = (await import("../../ui-schemas/resources/all.json")).default
-      const resource_signatures = response.filter(data=>data.Resource_Name!=="Enrichr").reduce((group, data)=>{
-        group[data.Resource_Name] = data.Signature_Count
-        return group
-      }, {})
-     // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
-     //                                                                          counts: resource_signatures[resource]}))
-
-     //  for_sorting.sort(function(a, b) {
-     //      return b.counts - a.counts;
-     //  }); 
-      this.setState({
-        resource_signatures: resource_signatures//for_sorting.slice(0,11),
-      })
-    }
-    // Via Server
-    if(this.state.per_resource_counts===null){
-      this.setState({...(await get_signature_counts_per_resources(this.state.resource_controller))})
+    if(this.state.pie_stats===null){
+      this.fetch_stats(this.state.selected_field)
     }
   }
 
   componentWillUnmount(){
-    this.state.general_controller.abort()
-    this.state.resource_controller.abort()
+    this.state.pie_controller.abort()
   }
 
 
@@ -170,7 +129,7 @@ export default class Home extends React.PureComponent {
   async fetch_stats(selected_field){
     try {
       const pie_controller = new AbortController()
-      const db = this.state.piefields[selected_field]
+      const db = this.props.piefields[selected_field]
       if( this.state.pie_controller !== null) {
           this.state.pie_controller.abort()
         }
@@ -187,7 +146,7 @@ export default class Home extends React.PureComponent {
       })
 
       let stat_vals = undefined
-      const object_fields = this.state.counting_fields === null ?
+      const object_fields = this.props.counting_fields === null ?
                              ["Cell_Line",
                               "Disease",
                               "Gene",
@@ -196,7 +155,7 @@ export default class Home extends React.PureComponent {
                               "Small_Molecule",
                               "Tissue",
                               "Virus"] :
-                              Object.keys(this.state.counting_fields).filter(key=>this.state.counting_fields[key]=="object")
+                              Object.keys(this.props.counting_fields).filter(key=>this.props.counting_fields[key]=="object")
       if(object_fields.includes(selected_field)){
         stat_vals = stats[selected_field + ".Name"]
       }else{
@@ -212,56 +171,6 @@ export default class Home extends React.PureComponent {
         })
       }
     }
-  }
-
-  async fetch_metacounts() {
-    const fields = (await import("../../ui-schemas/dashboard/counting_fields.json")).default
-    this.setState({
-      counting_fields: fields
-    })
-    const object_fields = Object.keys(fields).filter(key=>fields[key]=="object")
-    if(this.state.general_controller!==null){
-      this.state.general_controller.abort()
-    }
-    try {
-      const general_controller = new AbortController()
-      this.setState({
-        general_controller: general_controller,
-      })
-      // UNCOMMENT TO FETCH STUFF IN THE SERVER
-      // const { response: meta_stats} = await fetch_meta({
-      //   endpoint: '/signatures/value_count',
-      //   body: {
-      //     depth: 2,
-      //     filter: {
-      //       fields: Object.keys(fields)
-      //     },
-      //   },
-      //   signal: this.state.general_controller.signal
-      // })
-      // const meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
-      //                                                         // (key.indexOf(".PubChemID")>-1 &&
-      //                                                         //  key.indexOf("Small_Molecule")>-1) ||
-      //                                                         (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
-      //                                                 .reduce((stat_list, k)=>{
-      //                                                 stat_list.push({name: k.indexOf('PubChemID')!==-1 ? 
-      //                                                                         k.replace("Small_Molecule.", ""):
-      //                                                                         k.replace(".Name", ""),
-      //                                                                 counts:Object.keys(meta_stats[k]).length})
-      //                                                 return(stat_list) },
-      //                                                 [])
-      const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
-      meta_counts.sort((a, b) => a.name > b.name);
-      this.setState({
-        meta_counts: meta_counts,
-      })
-     } catch(e) {
-         if(e.code !== DOMException.ABORT_ERR) {
-           this.setState({
-             status: ''
-           })
-         }
-       }
   }
 
   handleSelectField(e){
@@ -331,7 +240,10 @@ export default class Home extends React.PureComponent {
         <Switch>
           <Route
             exact path="/"
-            component={this.landing}
+            render={(router_props) => <Landing handleSelectField={this.handleSelectField}
+                                               {...this.state}
+                                               {...this.props}
+                                               {...router_props}/>}
           />
           <Route
             path="/SignatureSearch"

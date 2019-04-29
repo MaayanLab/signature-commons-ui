@@ -167,9 +167,9 @@ export default withStyles(landingStyle)(class extends React.Component {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                    {this.props.libraries_count > 0 && this.props.signatures_count > 0 && this.props.resource_signatures!==null ? 
-                        <CurrentVersion libraries_count={this.props.libraries_count}
-                                        signatures_count={this.props.signatures_count}
+                    {this.props.LibraryNumber > 0 && this.props.SignatureNumber > 0 && this.props.resource_signatures!==null ? 
+                        <CurrentVersion libraries_count={this.props.LibraryNumber}
+                                        signatures_count={this.props.SignatureNumber}
                                         resources_count={Object.keys(this.props.resource_signatures).length}/>: null}
                     </Grid>
                     <Grid item xs={12}>
