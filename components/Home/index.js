@@ -30,7 +30,6 @@ export default class Home extends React.PureComponent {
       resource_signatures: null,
       per_resource_counts: null,
     }
-    console.log(this.state)
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
     this.handleSelectField = this.handleSelectField.bind(this);
