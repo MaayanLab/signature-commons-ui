@@ -173,14 +173,14 @@ export default withStyles(landingStyle)(class extends React.Component {
                                         resources_count={Object.keys(this.props.resource_signatures).length}/>: null}
                     </Grid>
                     <Grid item xs={12}>
-                      <Link
+                      {/* <Link
                         to={{ pathname: '/UploadCollection' }}
-                      >
-                        <Button variant="contained" color="secondary" className={classes.button}>
+                      > */}
+                        <Button variant="contained" color="secondary" className={classes.button} disabled>
                           Upload your signatures
                           <CloudUpload className={classes.rightIcon}/>
                         </Button>
-                      </Link>
+                      {/* </Link> */}
                     </Grid>
                   </Grid>
                 </Grid>
