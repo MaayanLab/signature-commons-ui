@@ -93,7 +93,7 @@ class AdminView extends React.PureComponent {
     }else{
       return(
         <SignaturePostFilter
-          LibraryNumber={this.state.LibraryNumber}
+          LibraryNumber={this.props.LibraryNumber}
         />
       )
     }
