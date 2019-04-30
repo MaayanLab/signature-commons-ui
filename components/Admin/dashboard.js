@@ -38,8 +38,8 @@ import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
 import { styles } from '../../styles/jss/theme.js'
 
 Array.prototype.sum = function (prop) {
-    var total = 0
-    for ( var i = 0, _len = this.length; i < _len; i++ ) {
+    let total = 0
+    for ( let i = 0, _len = this.length; i < _len; i++ ) {
         total += this[i][prop]
     }
     return total
@@ -86,7 +86,7 @@ const db_vals = (db, props) => {
 }
 
 const StatTable = withStyles(styles)( function({ classes, record={}, ...props }){
-  const {fields, signature_counts} = props
+  const {fields, signature_counts, preferred_name} = props
   if(signature_counts === null){
     return(
       <Table className={classes.table}>
@@ -109,7 +109,7 @@ const StatTable = withStyles(styles)( function({ classes, record={}, ...props })
           {signature_counts.map((entry) => (
             <TableRow key={`${entry.name}_entry`}>
               <TableCell component="th" scope="row">
-                {entry.name.replace("_"," ")}
+                {preferred_name[entry.name]}
               </TableCell>
               <TableCell align="center">{entry.counts}</TableCell>
             </TableRow>
@@ -144,7 +144,7 @@ export const Stat = withStyles(styles)( function({ classes, record={}, ...props 
             <CardIcon Icon={icon} type={`${props.color}CardHeader`} />
             <Card className={classes.longcard}>
                 <Typography variant="headline" className={classes.namebox} component="h5">
-                    {props.name}
+                    Overview
                 </Typography>
                 <Divider />
                 <StatTable {...props}/>
@@ -254,17 +254,17 @@ export const Selections = withStyles(styles)( function({ classes, record={}, ...
 
 export const PieChart = withStyles(styles)( function({ classes, record={}, ...props }){
     
-    var stats = Object.entries(props.stats).map(function(entry){
+    let stats = Object.entries(props.stats).map(function(entry){
       return({"label": entry[0], "value": entry[1]});
     });
     stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
-    var included = stats.slice(0,14)
+    let included = stats.slice(0,14)
     const included_sum = included.sum("value")
     const other = stats.slice(14,).sum("value")
     const other_sum = included_sum > other || included_sum < included.length*10 ? other: included_sum*1.5
-    var others = [{"label": "others", "value":other_sum}]
-    var data = other_sum >0 ? included.concat(others): included;
-    var true_values = included.map((entry)=>(
+    let others = [{"label": "others", "value":other_sum}]
+    let data = other_sum >0 ? included.concat(others): included;
+    let true_values = included.map((entry)=>(
                         {label:entry.label, value: entry.value}
                       ))
     true_values = true_values.concat({label:"others",value: other})
@@ -496,6 +496,7 @@ export const Dashboard = withStyles(styles)( function({ classes, record={}, ...p
                   <Stat type="Stats"
                         fields={props.counting_fields}
                         signature_counts={props.meta_counts}
+                        preferred_name={props.preferred_name}
                         color={"Orange"}
                         name={"Stats"}
                         dense/>

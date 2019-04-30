@@ -25,6 +25,7 @@ async function fetch_fields(source) {
 
 async function get_metacounts(){
   const counting_fields = (await import("../ui-schemas/dashboard/counting_fields.json")).default
+  const preferred_name = (await import("../ui-schemas/dashboard/preferred_name.json")).default
   const object_fields = Object.keys(counting_fields).filter(key=>counting_fields[key]=="object")
   const { response: meta_stats } = await fetch_meta({
     endpoint: '/signatures/value_count',
@@ -35,7 +36,7 @@ async function get_metacounts(){
       },
     },
   })
-  const meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
+  let meta_counts = Object.keys(meta_stats).filter(key=>key.indexOf(".Name")>-1||
                                                       // (key.indexOf(".PubChemID")>-1 &&
                                                       //  key.indexOf("Small_Molecule")>-1) ||
                                                       (key.indexOf(".")===-1 && object_fields.indexOf(key)===-1))
@@ -46,8 +47,10 @@ async function get_metacounts(){
                                                               counts:Object.keys(meta_stats[k]).length})
                                               return(stat_list) },
                                               [])
-  return {meta_counts, counting_fields}
+  meta_counts.sort((a, b) => parseFloat(b.counts) - parseFloat(a.counts));
+  return {meta_counts, counting_fields, preferred_name}
 }
+
 
 export default class Admin extends React.Component {
 
@@ -57,7 +60,7 @@ export default class Admin extends React.Component {
     const EntityNumber = await fetch_count("entities")
     const library_fields = await fetch_fields("libraries")
     const entity_fields = await fetch_fields("entities")
-    const {meta_counts, counting_fields} = await get_metacounts()
+    const {meta_counts, counting_fields, preferred_name} = await get_metacounts()
     const {resource_signatures} = await get_signature_counts_per_resources()
     const piefields = (await import("../ui-schemas/dashboard/pie_fields.json")).default
     return {
@@ -68,6 +71,7 @@ export default class Admin extends React.Component {
       entity_fields,
       meta_counts,
       counting_fields,
+      preferred_name,
       resource_signatures,
       piefields,
     }

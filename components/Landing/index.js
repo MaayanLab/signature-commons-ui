@@ -221,6 +221,7 @@ export default withStyles(landingStyle)(class extends React.Component {
                   <Stat type="Stats"
                         fields={this.props.counting_fields}
                         signature_counts={this.props.meta_counts}
+                        preferred_name={this.props.preferred_name}
                         color={"Orange"}
                         name={"Stats"}
                         dense/>
