@@ -97,7 +97,6 @@ export const labels = {
 export function objectMatch(m, o) {
   if(m === undefined)
     return true
-    
   for(const k of Object.keys(m)) {
     const K = makeTemplate(k, o)
     if (typeof m[k] === 'string') {
