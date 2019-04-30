@@ -1,33 +1,46 @@
 import DataProvider from "../../util/fetch/model";
 import fileDownload from 'js-file-download';
 
-export async function download_json(signature) {
+export async function download_signature_json(signature) {
   const provider = new DataProvider()
-  const signatures = provider.resolve_signatures([signature])
-  const data = []
-  for (const signature of signatures) {
-    data.push({
-      'id': await signature.id,
-      'meta': await signature.meta,
-      'library': await signature.library,
-      'data': await signature.data,
-    })
-  }
-  console.log(data)
+  const data = await provider.serialize_signature(signature, {
+    resource: true,
+    library: true,
+    data: true,
+  })
   fileDownload(JSON.stringify(data), 'signatures.json')
 }
 
-export async function download_tsv(signature) {
-  // WIP
+export async function download_library_json(library) {
   const provider = new DataProvider()
-  const signatures = provider.resolve_signatures([signature])
+  const data = await provider.serialize_library(library, {
+    resource: true,
+    library: true,
+    signatures: true,
+    data: true,
+  })
+  fileDownload(JSON.stringify(data), 'library.json')
+}
+
+export async function download_resource_json(resource) {
+  const provider = new DataProvider()
+  const data = await provider.serialize_resource(resource, {
+    libraries: true,
+    signatures: true,
+    data: true,
+  })
+  fileDownload(JSON.stringify(data), 'resource.json')
+}
+
+export async function download_tsv(lib) {
+  const provider = new DataProvider()
+  const library = provider.resolve_library(lib)
+  const signatures = library.signatures
 
   const col_labels = new Set(['id'])
   const col_headers = {}
   const row_labels = new Set(['id'])
   const row_headers = {}
-
-  const data = {}
 
   for (const signature of signatures) {
     const signature_id = await signature.id
@@ -38,7 +51,9 @@ export async function download_tsv(signature) {
       col_headers[signature_id][key] = JSON.stringify(signature_meta[key])
     }
 
-    for (const entity of await signature.data) {
+    const signature_data = await signature.data
+    
+    for (const entity of signature_data) {
       const entity_id = await entity.id
       if (row_headers[entity_id] !== undefined)
         continue
@@ -52,7 +67,7 @@ export async function download_tsv(signature) {
     }
   }
 
-  const result = ''
+  let result = ''
   for (const col_label of col_labels) {
     result += `${'\t'.repeat(row_labels.length)}\t${col_headers[col_label].join('\t')}\n`
   }

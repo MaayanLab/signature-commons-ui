@@ -5,38 +5,15 @@ import { ShowMeta } from '../../components/ShowMeta';
 import { Label } from '../../components/Label';
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
+import { download_library_json, download_resource_json } from '../MetadataSearch/download';
 
 export default class ResourcePage extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.download = this.download.bind(this)
-    this.addToCart = this.addToCart.bind(this)
-    this.removeFromCart = this.removeFromCart.bind(this)
-  }
-
   componentDidMount() {
     M.AutoInit()
   }
 
   redirectLink(url){
     return (e) => window.open(url, '_blank').focus();
-  }
-
-  async download(library_id) {
-    alert('coming soon')
-  }
-
-  addToCart(id) {
-    this.props.updateCart(
-      this.props.cart.add(id)
-    )
-  }
-
-  removeFromCart(id) {
-    this.props.updateCart(
-      this.props.cart.delete(id)
-    )
   }
 
   render() {
@@ -130,35 +107,7 @@ export default class ResourcePage extends React.Component {
                           item={library}
                           visibility={1}
                         />
-                      </div>
-                      <div style={{
-                        display: 'flex',
-                        flexDirection: "row",
-                      }}>
-                        <IconButton
-                          alt="Signature Commons"
-                          img={`${process.env.PREFIX}/static/favicon.ico`}
-                        />
                         &nbsp;
-                        <IconButton
-                          alt="Download"
-                          icon="file_download"
-                          onClick={call(this.download, library.id)}
-                        />
-                        &nbsp;
-                        {this.props.cart.has(library.id) ? (
-                          <IconButton
-                            alt="Remove from Cart"
-                            icon="remove_shopping_cart"
-                            onClick={call(this.removeFromCart, library.id)}
-                          />
-                        ) : (
-                          <IconButton
-                            alt="Add to Cart"
-                            icon="add_shopping_cart"
-                            onClick={call(this.addToCart, library.id)}
-                          />
-                        )}
                         <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                         <a
                           href="javascript:void(0);"

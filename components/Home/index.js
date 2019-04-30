@@ -257,10 +257,6 @@ export default class Home extends React.PureComponent {
             path="/Resources"
             component={this.resources}
           />
-          <Route
-            path="/UploadCollection"
-            component={this.upload}
-          />
         </Switch>
       </Base>
     )
