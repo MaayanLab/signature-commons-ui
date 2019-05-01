@@ -1,5 +1,4 @@
 import React from "react";
-import { Redirect, Link } from 'react-router-dom';
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
