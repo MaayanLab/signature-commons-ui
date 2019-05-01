@@ -18,10 +18,8 @@ export default class Home extends React.PureComponent {
     super(props)
     this.state = {
       cart: Set(),
-      pie_controller: null,
       pie_stats: null,
       selected_field: "Assay",
-      pie_controller: null,
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
@@ -41,11 +39,6 @@ export default class Home extends React.PureComponent {
       this.fetch_stats(this.state.selected_field)
     }
   }
-
-  componentWillUnmount(){
-    this.state.pie_controller.abort()
-  }
-
 
   componentDidUpdate() {
     M.AutoInit();
