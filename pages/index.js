@@ -56,7 +56,36 @@ async function get_metacounts(){
   return {meta_counts, counting_fields, preferred_name}
 }
 
-
+async function get_pie_stats(counting_fields){
+  const piefields = (await import("../ui-schemas/dashboard/pie_fields.json")).default
+  const { response: meta_stats } = await fetch_meta({
+    endpoint: '/signatures/value_count',
+    body: {
+      depth: 2,
+      filter: {
+        fields: Object.keys(piefields)
+      },
+    },
+  })
+  const pie_stats = Object.keys(piefields).map(key=>{
+    if(counting_fields[key]==="object"){
+      return {
+        key: key,
+        stats: meta_stats[key+".Name"]
+      }
+    }else {
+      return{
+        key: key,
+        stats: meta_stats[key]
+      }
+    }
+  })
+  const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {
+      piestats[stats.key] = stats.stats
+      return piestats
+    }, {})
+  return {piefields, pie_fields_and_stats}
+}
 
 const App = (props) => (
   <div className="root">
@@ -82,7 +111,7 @@ App.getInitialProps = async ({ req }) => {
   const EntityNumber = await fetch_count("entities")
   const {meta_counts, counting_fields, preferred_name} = await get_metacounts()
   const {resource_signatures} = await get_signature_counts_per_resources()
-  const piefields = (await import("../ui-schemas/dashboard/pie_fields.json")).default
+  const {piefields, pie_fields_and_stats} = await get_pie_stats(counting_fields)
   return {
     LibraryNumber,
     SignatureNumber,
@@ -91,6 +120,7 @@ App.getInitialProps = async ({ req }) => {
     counting_fields,
     preferred_name,
     resource_signatures,
+    pie_fields_and_stats,
     piefields,
   }
 };

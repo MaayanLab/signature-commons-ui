@@ -127,50 +127,9 @@ export default class Home extends React.PureComponent {
   }
 
   async fetch_stats(selected_field){
-    try {
-      const pie_controller = new AbortController()
-      const db = this.props.piefields[selected_field]
-      if( this.state.pie_controller !== null) {
-          this.state.pie_controller.abort()
-        }
-      this.setState({
-        pie_controller: pie_controller,
-      })
-
-      const url = '/' + db.toLowerCase() +
-                  '/value_count?depth=2&filter={"fields":["' +
-                  selected_field +'"]}'
-      const { response: stats} = await fetch_meta({
-        endpoint: url,
-        signal: pie_controller.signal
-      })
-
-      let stat_vals = undefined
-      const object_fields = this.props.counting_fields === null ?
-                             ["Cell_Line",
-                              "Disease",
-                              "Gene",
-                              "GO",
-                              "Phenotype",
-                              "Small_Molecule",
-                              "Tissue",
-                              "Virus"] :
-                              Object.keys(this.props.counting_fields).filter(key=>this.props.counting_fields[key]=="object")
-      if(object_fields.includes(selected_field)){
-        stat_vals = stats[selected_field + ".Name"]
-      }else{
-        stat_vals = stats[selected_field]
-      }
-      this.setState({
-        pie_stats: stat_vals,
-      })
-    } catch(e) {
-      if(e.code !== DOMException.ABORT_ERR) {
-        this.setState({
-          pie_status: ''
-        })
-      }
-    }
+    this.setState({
+        pie_stats: this.props.pie_fields_and_stats[selected_field],
+    })
   }
 
   handleSelectField(e){
