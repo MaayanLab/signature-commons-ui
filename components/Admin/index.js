@@ -560,14 +560,8 @@ class AdminView extends React.PureComponent {
   }
 
   async fetch_sigfields() {
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_fields} = await fetch_meta({
-      endpoint: `/libraries/${this.state.uid}`,
-      signal: this.state.general_controller.signal,
-      headers
-    })
     this.setState({
-      signature_fields: signature_fields["Signature_keys"],
+      signature_fields: this.props.signature_keys[this.state.uid],
     })
   }
 

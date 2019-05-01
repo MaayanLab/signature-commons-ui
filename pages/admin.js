@@ -22,6 +22,32 @@ async function fetch_fields(source) {
   return(fields)
 }
 
+async function get_signature_keys(){
+    const { response: libraries } = await fetch_meta({
+      endpoint: '/libraries'
+    })
+    const signature_keys_promises = libraries.map(async lib =>{
+      const libid = lib.id
+      const { response: fields} = await fetch_meta({
+        endpoint: `/signatures/key_count`,
+        body: {
+          filter: {
+            where: {library:libid}
+          },
+        },
+      })
+      return {
+        id: libid,
+        keys: Object.keys(fields)
+      }
+    })
+    const sigkeys = await Promise.all(signature_keys_promises)
+    const signature_keys = sigkeys.reduce((keys, sig) => {
+      keys[sig.id] = sig.keys
+      return keys
+    }, {})
+    return signature_keys
+  }
 
 async function get_metacounts(){
   const counting_fields = (await import("../ui-schemas/dashboard/counting_fields.json")).default
@@ -63,6 +89,7 @@ export default class Admin extends React.Component {
     const {meta_counts, counting_fields, preferred_name} = await get_metacounts()
     const {resource_signatures} = await get_signature_counts_per_resources()
     const piefields = (await import("../ui-schemas/dashboard/pie_fields.json")).default
+    const signature_keys = await get_signature_keys()
     return {
       LibraryNumber,
       SignatureNumber,
@@ -74,6 +101,7 @@ export default class Admin extends React.Component {
       preferred_name,
       resource_signatures,
       piefields,
+      signature_keys
     }
   }
 
