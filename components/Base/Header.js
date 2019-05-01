@@ -50,6 +50,7 @@ export function Nav(props) {
 export default withRouter((props) => {
   const paths = props.location.pathname.split('/')
   const title = props.location.pathname === "/" ? "": "Signature Commons"
+  const hide = props.location.pathname === "/" ? "hide": "hide-on-large-only"
   return (
     <header>
       <nav className="nav-extended">
@@ -65,12 +66,12 @@ export default withRouter((props) => {
           </Link>
           <Link
             to="/"
-            className="brand-logo center hide-on-large-only"
+            className={`brand-logo ${hide} hide-on-large-only`}
             style={{
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {title}
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
