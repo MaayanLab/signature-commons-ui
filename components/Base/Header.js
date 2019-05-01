@@ -50,7 +50,7 @@ export function Nav(props) {
 export default withRouter((props) => {
   const paths = props.location.pathname.split('/')
   const title = props.location.pathname === "/" ? "": "Signature Commons"
-  const hide = props.location.pathname === "/" ? "hide": "hide-on-large-only"
+  const location = props.location.pathname === "/" ? "right": "center"
   return (
     <header>
       <nav className="nav-extended">
@@ -66,7 +66,7 @@ export default withRouter((props) => {
           </Link>
           <Link
             to="/"
-            className={`brand-logo ${hide} hide-on-large-only`}
+            className={`brand-logo ${location} hide-on-large-only`}
             style={{
               whiteSpace: 'nowrap',
             }}
