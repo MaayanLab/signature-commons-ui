@@ -21,19 +21,19 @@ async function fetch_fields(source) {
   return (fields)
 }
 
-async function get_signature_keys() {
-  const { response: libraries } = await fetch_meta({
-    endpoint: '/libraries',
-  })
-  const signature_keys_promises = libraries.map(async (lib) =>{
-    const libid = lib.id
-    const { response: fields } = await fetch_meta({
-      endpoint: `/signatures/key_count`,
-      body: {
-        filter: {
-          where: { library: libid },
-        },
-      },
+async function get_signature_keys(){
+    const { response: libraries } = await fetch_meta({
+      endpoint: '/libraries'
+    })
+    const signature_keys_promises = libraries.map(async lib =>{
+      const libid = lib.id
+      const { response: fields} = await fetch_meta({
+        endpoint: `/libraries/${libid}/signatures/key_count`,
+      })
+      return {
+        id: libid,
+        keys: Object.keys(fields)
+      }
     })
     return {
       id: libid,
