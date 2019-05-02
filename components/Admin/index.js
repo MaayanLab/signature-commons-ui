@@ -93,7 +93,7 @@ class AdminView extends React.PureComponent {
     }else{
       return(
         <SignaturePostFilter
-          LibraryNumber={this.state.LibraryNumber}
+          LibraryNumber={this.props.LibraryNumber}
         />
       )
     }
@@ -412,51 +412,9 @@ class AdminView extends React.PureComponent {
   }
 
   async fetch_stats(selected_field){
-    try {
-      const pie_controller = new AbortController()
-      const db = this.props.piefields[selected_field]
-      if( this.state.pie_controller !== null) {
-          this.state.pie_controller.abort()
-        }
-      this.setState({
-        pie_controller: pie_controller,
-      })
-      const headers = {'Authorization': `Basic ${this.state.token}`}
-      const url = '/' + db.toLowerCase() +
-                  '/value_count?depth=2&filter={"fields":["' +
-                  selected_field +'"]}'
-      const { response: stats} = await fetch_meta({
-        endpoint: url,
-        signal: pie_controller.signal,
-        headers
-      })
-
-      let stat_vals = undefined
-      const object_fields = this.props.counting_fields === null ?
-                             ["Cell_Line",
-                              "Disease",
-                              "Gene",
-                              "GO",
-                              "Phenotype",
-                              "Small_Molecule",
-                              "Tissue",
-                              "Virus"] :
-                              Object.keys(this.props.counting_fields).filter(key=>this.props.counting_fields[key]=="object")
-      if(object_fields.includes(selected_field)){
-        stat_vals = stats[selected_field + ".Name"]
-      }else{
-        stat_vals = stats[selected_field]
-      }
-      this.setState({
-        pie_stats: stat_vals,
-      })
-    } catch(e) {
-      if(e.code !== DOMException.ABORT_ERR) {
-        this.setState({
-          pie_status: ''
-        })
-      }
-    }
+    this.setState({
+        pie_stats: this.props.pie_fields_and_stats[selected_field],
+    })
   }
 
   async filterHandler(uid){
@@ -560,14 +518,8 @@ class AdminView extends React.PureComponent {
   }
 
   async fetch_sigfields() {
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_fields} = await fetch_meta({
-      endpoint: `/libraries/${this.state.uid}`,
-      signal: this.state.general_controller.signal,
-      headers
-    })
     this.setState({
-      signature_fields: signature_fields["Signature_keys"],
+      signature_fields: this.props.signature_keys[this.state.uid],
     })
   }
 
