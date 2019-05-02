@@ -29,12 +29,9 @@ export default class Tests extends React.PureComponent {
 
     for (const library of libraries) {
       const { duration: duration_meta_2, response: value_counts } = await fetch_meta({
-        endpoint: '/signatures/value_count',
+        endpoint: `/libraries/${library.id}/signatures/value_count`,
         body: {
           filter: {
-            where: {
-              library: library.id,
-            },
             fields: this.state.fields,
           },
           depth: 5,
