@@ -36,13 +36,14 @@
     "react-plotly.js": "^2.2.0",
     "react-router-dom": "^4.3.1",
     "react-scroll-to-component": "^1.0.2",
-    "serialize-error": "^4.1.0",
     "swagger-client": "^3.8.22",
     "tween": "^0.9.0",
     "typescript": "^3.3.3333",
     "uuid5": "^1.0.2"
   },
   "scripts": {
+    "test": "npm run lint && jest",
+    "lint": "eslint util/**/* pages/**/* styles/**/* components/**/*",
     "lint:fix": "npm run lint -- --fix",
     "dev": "NODE_ENV=development dotenv-load next",
     "build": "dotenv-load next build",
@@ -60,7 +61,12 @@
     "extends": "react-app"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "dotenv-cli": "^2.0.0",
+    "eslint-config-google": "^0.12.0",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint": "^5.16.0",
+    "jest": "^24.7.1",
     "next-build-id": "^2.0.1",
     "node-sass": "^4.12.0",
     "shelljs": "^0.8.3"
