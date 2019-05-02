@@ -1,8 +1,7 @@
-import React from 'react';
-import { Switch, Route, Redirect, Link } from 'react-router-dom'
-import { call } from '../../util/call'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-import Chip from '@material-ui/core/Chip';
+import Chip from '@material-ui/core/Chip'
 
 
 const example_geneset = 'UTP14A S100A6 SCAND1 RRP12 CIAPIN1 ADH5 MTERF3 SPR CHMP4A UFM1 VAT1 HACD3 RFC5 COTL1 NPRL2 TRIB3 PCCB TLE1 CD58 BACE2 KDM3A TARBP1 RNH1 CHAC1 MBNL2 VDAC1 TES OXA1L NOP56 HAT1 CPNE3 DNMT1 ARHGAP1 VPS28 EIF2S2 BAG3 CDCA4 NPDC1 RPS6KA1 FIS1 SYPL1 SARS CDC45 CANT1 HERPUD1 SORBS3 MRPS2 TOR1A TNIP1 SLC25A46 MAL EPCAM HDAC6 CAPN1 TNRC6B PKD1 RRS1 HP ANO10 CEP170B IDE DENND2D CAMK2B ZNF358 RPP38 MRPL19 NUCB2 GNAI1 LSR ADGRE2 PKMYT1 CDK5R1 ABL1 PILRB AXIN1 FBXL8 MCF2L DBNDD1 IGHMBP2 WIPF2 WFS1 OGFOD2 MAPK1IP1L COL11A1 REG3A SERPINA1 MYCBP2 PIGK TCAP CRADD ELK1 DNAJB2 ZBTB16 DAZAP1 MAPKAPK2 EDRF1 CRIP1 UCP3 AGR2 P4HA2'.split(' ').join('\n')
@@ -17,9 +16,9 @@ export default class extends React.Component {
     const input = {
       type: this.props.type,
     }
-    if (this.props.type === 'Overlap')
+    if (this.props.type === 'Overlap') {
       input.geneset = ''
-    else if (this.props.type === 'Rank') {
+    } else if (this.props.type === 'Rank') {
       input.up_geneset = ''
       input.down_geneset = ''
     }
@@ -44,53 +43,53 @@ export default class extends React.Component {
   }
 
   geneset = (props) => (
-      <div className="row">
-        <div className="col s12 center">
-          <div className="switch">
-            <label style={{color:"#FFF",
-                           fontWeight: 'bold'}}>
+    <div className="row">
+      <div className="col s12 center">
+        <div className="switch">
+          <label style={{ color: '#FFF',
+            fontWeight: 'bold' }}>
               Gene Set or Full Signature
-              <input
-                type="checkbox"
-                checked={false}
-                onChange={() => null}
-                onClick={() => this.setState({
-                  input: {
-                    type: 'Rank',
-                    up_geneset: '',
-                    down_geneset: '',
-                  }
-                })}
-              />
-              <span className="lever"></span>
+            <input
+              type="checkbox"
+              checked={false}
+              onChange={() => null}
+              onClick={() => this.setState({
+                input: {
+                  type: 'Rank',
+                  up_geneset: '',
+                  down_geneset: '',
+                },
+              })}
+            />
+            <span className="lever"></span>
               Up and Down Gene Sets
-            </label>
-          </div>
-        </div>
-        <div className="col s12">
-          <div className="input-field">
-            <textarea
-              id="geneset"
-              placeholder="Genes that are regulated in signature or overlap with gene set."
-              style={{
-                height: 200,
-                overflow: 'auto',
-                background:'#f7f7f7',
-              }}
-              value={this.state.input.geneset}
-              onChange={(e) => this.setState({input: {...this.state.input, geneset: e.target.value}})}
-            ></textarea>
-          </div>
+          </label>
         </div>
       </div>
-    )
+      <div className="col s12">
+        <div className="input-field">
+          <textarea
+            id="geneset"
+            placeholder="Genes that are regulated in signature or overlap with gene set."
+            style={{
+              height: 200,
+              overflow: 'auto',
+              background: '#f7f7f7',
+            }}
+            value={this.state.input.geneset}
+            onChange={(e) => this.setState({ input: { ...this.state.input, geneset: e.target.value } })}
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  )
 
   up_down_geneset = (props) => (
     <div className="row">
       <div className="col s12 center">
         <div className="switch">
-          <label style={{color:"#FFF", 
-                         fontWeight: 'bold'}}>
+          <label style={{ color: '#FFF',
+            fontWeight: 'bold' }}>
             Gene Set or Full Signature
             <input
               type="checkbox"
@@ -100,7 +99,7 @@ export default class extends React.Component {
                 input: {
                   type: 'Overlap',
                   geneset: '',
-                }
+                },
               })}
             />
             <span className="lever"></span>
@@ -116,10 +115,10 @@ export default class extends React.Component {
             style={{
               height: 200,
               overflow: 'auto',
-              background:'#f7f7f7',
+              background: '#f7f7f7',
             }}
             value={this.state.input.up_geneset}
-            onChange={(e) => this.setState({input: {...this.state.input, up_geneset: e.target.value}})}
+            onChange={(e) => this.setState({ input: { ...this.state.input, up_geneset: e.target.value } })}
           ></textarea>
         </div>
       </div>
@@ -131,10 +130,10 @@ export default class extends React.Component {
             style={{
               height: 200,
               overflow: 'auto',
-              background:'#f7f7f7',
+              background: '#f7f7f7',
             }}
             value={this.state.input.down_geneset}
-            onChange={(e) => this.setState({input: {...this.state.input, down_geneset: e.target.value}})}
+            onChange={(e) => this.setState({ input: { ...this.state.input, down_geneset: e.target.value } })}
           ></textarea>
         </div>
       </div>
@@ -144,16 +143,16 @@ export default class extends React.Component {
   render() {
     return (
       <div className="row">
-        {this.state.input.type==="Overlap"? this.geneset(): this.up_down_geneset()}
+        {this.state.input.type==='Overlap'? this.geneset(): this.up_down_geneset()}
         <div className="col s12 center">
           <Link to={{
             pathname: `/SignatureSearch/${this.state.input.type}`,
             state: {
-              input: this.state.input
-            }
+              input: this.state.input,
+            },
           }}>
             <button
-              className={"btn waves-effect waves-light" + (this.isEmpty() ? ' disabled' : '')} type="submit" name="action"
+              className={'btn waves-effect waves-light' + (this.isEmpty() ? ' disabled' : '')} type="submit" name="action"
               onClick={() => null}
             >
               Search
@@ -198,7 +197,7 @@ export default class extends React.Component {
                     type: 'Rank',
                     up_geneset: example_geneset_up,
                     down_geneset: example_geneset_down,
-                  }
+                  },
                 })
               }}
               className="chip grey white-text waves-effect waves-light"

@@ -6,77 +6,75 @@ export const base_url = process.env.NEXT_SERVER_METADATA_API
   || (window.location.origin + '/signature-commons-metadata-api')
 export const base_scheme = /^(https?):\/\/.+/.exec(base_url)[1]
 
-export async function fetch_creds({endpoint, body, signal, headers}) {
-  const start = new Date()
-
+export async function fetch_creds({ endpoint, body, signal, headers }) {
   const request = await fetch(
-    base_url
+      base_url
     + (endpoint === undefined ? '' : endpoint)
     + (body === undefined ? '' : (
         '?'
         + Object.keys(body).reduce(
-          (params, param) => ([
-            ...params,
-            encodeURIComponent(param)
+            (params, param) => ([
+              ...params,
+              encodeURIComponent(param)
               + '='
-              + encodeURIComponent(JSON.stringify(body[param]))
-          ]), []
+              + encodeURIComponent(JSON.stringify(body[param])),
+            ]), []
         ).join('&')
       )),
-    {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        // 'Authorization': auth,
-        ...(headers || {}),
-      },
-      signal: signal,
-    }
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          // 'Authorization': auth,
+          ...(headers || {}),
+        },
+        signal: signal,
+      }
   )
-  if(request.ok){
+  if (request.ok) {
     return {
-      authenticated: true
+      authenticated: true,
     }
-  }else{
+  } else {
     return {
-      authenticated: false
+      authenticated: false,
     }
   }
 }
 
 
-
-export async function fetch_meta({endpoint, body, signal, headers}) {
+export async function fetch_meta({ endpoint, body, signal, headers }) {
   const start = new Date()
 
   const request = await fetch(
-    base_url
+      base_url
     + (endpoint === undefined ? '' : endpoint)
     + (body === undefined ? '' : (
         '?'
         + Object.keys(body).reduce(
-          (params, param) => ([
-            ...params,
-            encodeURIComponent(param)
+            (params, param) => ([
+              ...params,
+              encodeURIComponent(param)
               + '='
-              + encodeURIComponent(JSON.stringify(body[param]))
-          ]), []
+              + encodeURIComponent(JSON.stringify(body[param])),
+            ]), []
         ).join('&')
       )),
-    {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        // 'Authorization': auth,
-        ...(headers || {}),
-      },
-      signal: signal,
-    }
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          // 'Authorization': auth,
+          ...(headers || {}),
+        },
+        signal: signal,
+      }
   )
-  if (request.ok !== true)
+  if (request.ok !== true) {
     throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+  }
 
   const response = await request.json()
   let contentRange = request.headers.get('Content-Range')
@@ -103,24 +101,25 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
   }
 }
 
-export async function fetch_meta_post({endpoint, body, signal}) {
+export async function fetch_meta_post({ endpoint, body, signal }) {
   const start = new Date()
   const request = await fetch(
-    base_url
+      base_url
     + (endpoint === undefined ? '' : endpoint),
-    {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         // 'Authorization': auth,
-      },
-      signal: signal,
-    }
+        },
+        signal: signal,
+      }
   )
-  if (request.ok !== true)
+  if (request.ok !== true) {
     throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+  }
 
   const response = await request.json()
 

@@ -1,7 +1,7 @@
 import React from 'react'
-import ReactJson from 'react-json-view';
-import { fetch_meta } from '../../util/fetch/meta';
-import Plot from 'react-plotly.js';
+import ReactJson from 'react-json-view'
+import { fetch_meta } from '../../util/fetch/meta'
+import Plot from 'react-plotly.js'
 import { Map } from 'immutable'
 import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 
@@ -24,7 +24,7 @@ export default class Tests extends React.PureComponent {
     duration_meta += duration_meta_1
 
     this.setState({
-      libraries: maybe_fix_obj(libraries)
+      libraries: maybe_fix_obj(libraries),
     })
 
     for (const library of libraries) {
@@ -39,12 +39,12 @@ export default class Tests extends React.PureComponent {
           },
           depth: 5,
           contentRange: false,
-        }
+        },
       })
       duration_meta += duration_meta_2
 
-      this.setState(({key_value_counts}) => ({
-        key_value_counts: key_value_counts.set(library.id, value_counts)
+      this.setState(({ key_value_counts }) => ({
+        key_value_counts: key_value_counts.set(library.id, value_counts),
       }))
     }
 
@@ -55,7 +55,7 @@ export default class Tests extends React.PureComponent {
   }
   render() {
     return (
-      <div className="row" style={{backgroundColor: 'white'}}>
+      <div className="row" style={{ backgroundColor: 'white' }}>
         Took {this.state.duration} seconds on ui, {this.state.duration_meta} on backend.
         {this.state.fields.map((field) => (
           <div
@@ -65,10 +65,10 @@ export default class Tests extends React.PureComponent {
             <Plot
               layout={{
                 title: field,
-                barmode: 'stack'
+                barmode: 'stack',
               }}
               useResizeHandler={true}
-              style={{width: "100%", height: "800px"}}
+              style={{ width: '100%', height: '800px' }}
               data={Object.values(this.state.libraries).map((library) => {
                 const key_value_counts = this.state.key_value_counts.get(library.id)
                 if (key_value_counts === undefined) return {}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Switch, Route, Redirect, Link } from 'react-router-dom'
+import React from 'react'
+import { Switch, Route, Link } from 'react-router-dom'
 import { call } from '../../util/call'
 
 const example_geneset = 'UTP14A S100A6 SCAND1 RRP12 CIAPIN1 ADH5 MTERF3 SPR CHMP4A UFM1 VAT1 HACD3 RFC5 COTL1 NPRL2 TRIB3 PCCB TLE1 CD58 BACE2 KDM3A TARBP1 RNH1 CHAC1 MBNL2 VDAC1 TES OXA1L NOP56 HAT1 CPNE3 DNMT1 ARHGAP1 VPS28 EIF2S2 BAG3 CDCA4 NPDC1 RPS6KA1 FIS1 SYPL1 SARS CDC45 CANT1 HERPUD1 SORBS3 MRPS2 TOR1A TNIP1 SLC25A46 MAL EPCAM HDAC6 CAPN1 TNRC6B PKD1 RRS1 HP ANO10 CEP170B IDE DENND2D CAMK2B ZNF358 RPP38 MRPL19 NUCB2 GNAI1 LSR ADGRE2 PKMYT1 CDK5R1 ABL1 PILRB AXIN1 FBXL8 MCF2L DBNDD1 IGHMBP2 WIPF2 WFS1 OGFOD2 MAPK1IP1L COL11A1 REG3A SERPINA1 MYCBP2 PIGK TCAP CRADD ELK1 DNAJB2 ZBTB16 DAZAP1 MAPKAPK2 EDRF1 CRIP1 UCP3 AGR2 P4HA2'.split(' ').join('\n')
@@ -13,9 +13,9 @@ export default class extends React.Component {
     const input = {
       type: this.props.match.params.type,
     }
-    if (this.props.match.params.type === 'Overlap')
+    if (this.props.match.params.type === 'Overlap') {
       input.geneset = ''
-    else if (this.props.match.params.type === 'Rank') {
+    } else if (this.props.match.params.type === 'Rank') {
       input.up_geneset = ''
       input.down_geneset = ''
     }
@@ -50,7 +50,7 @@ export default class extends React.Component {
                 type: 'Rank',
                 up_geneset: '',
                 down_geneset: '',
-              }
+              },
             })}
           >
             <label>
@@ -76,7 +76,7 @@ export default class extends React.Component {
               overflow: 'auto',
             }}
             value={this.state.input.geneset}
-            onChange={(e) => this.setState({input: {...this.state.input, geneset: e.target.value}})}
+            onChange={(e) => this.setState({ input: { ...this.state.input, geneset: e.target.value } })}
           ></textarea>
         </div>
       </div>
@@ -93,7 +93,7 @@ export default class extends React.Component {
               input: {
                 type: 'Overlap',
                 geneset: '',
-              }
+              },
             })}
           >
             <label>
@@ -119,7 +119,7 @@ export default class extends React.Component {
               overflow: 'auto',
             }}
             value={this.state.input.up_geneset}
-            onChange={(e) => this.setState({input: {...this.state.input, up_geneset: e.target.value}})}
+            onChange={(e) => this.setState({ input: { ...this.state.input, up_geneset: e.target.value } })}
           ></textarea>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default class extends React.Component {
               overflow: 'auto',
             }}
             value={this.state.input.down_geneset}
-            onChange={(e) => this.setState({input: {...this.state.input, down_geneset: e.target.value}})}
+            onChange={(e) => this.setState({ input: { ...this.state.input, down_geneset: e.target.value } })}
           ></textarea>
         </div>
       </div>
@@ -149,7 +149,7 @@ export default class extends React.Component {
         </Switch>
         <div className="col s12 center">
           <button
-            className={"btn waves-effect waves-light" + (this.isEmpty() ? ' disabled' : '')} type="submit" name="action"
+            className={'btn waves-effect waves-light' + (this.isEmpty() ? ' disabled' : '')} type="submit" name="action"
             onClick={call(this.props.onSubmit, this.state.input)}
           >
             Search
@@ -198,7 +198,7 @@ export default class extends React.Component {
                     type: 'Rank',
                     up_geneset: example_geneset_up,
                     down_geneset: example_geneset_down,
-                  }
+                  },
                 })
               }}
             >

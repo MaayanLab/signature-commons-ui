@@ -1,8 +1,8 @@
-import React from "react";
-import ReactJson from 'react-json-view';
-import ReactLoading from 'react-loading';
-import Swagger from 'swagger-client';
-import { fetch_meta_post } from '../../util/fetch/meta';
+import React from 'react'
+import ReactJson from 'react-json-view'
+import ReactLoading from 'react-loading'
+import Swagger from 'swagger-client'
+import { fetch_meta_post } from '../../util/fetch/meta'
 
 export default class TermQuery extends React.PureComponent {
   constructor(props) {
@@ -22,7 +22,7 @@ export default class TermQuery extends React.PureComponent {
 
   log(msg) {
     this.setState((prevState) => ({
-      status: prevState.status + '\n' + msg
+      status: prevState.status + '\n' + msg,
     }))
   }
 
@@ -58,7 +58,7 @@ export default class TermQuery extends React.PureComponent {
         enrichr_results: results.body,
       })
       this.log('ready')
-    } catch(e) {
+    } catch (e) {
       this.log('Error: ' + e)
       this.setState({
         enrichr_results: {},
@@ -80,17 +80,17 @@ export default class TermQuery extends React.PureComponent {
             where: {
               meta: {
                 fullTextSearch: this.state.term,
-              }
+              },
             },
             limit: 100,
-          }
-        }
+          },
+        },
       })
       this.log('ready')
       this.setState({
         term_results,
       })
-    } catch(e) {
+    } catch (e) {
       this.log('Error: ' + e)
       this.setState({
         term_results: this.state.term_results || {},
@@ -99,7 +99,7 @@ export default class TermQuery extends React.PureComponent {
   }
 
   setTerm(e) {
-    this.setState({term: e.target.value})
+    this.setState({ term: e.target.value })
   }
 
   render() {
@@ -111,11 +111,11 @@ export default class TermQuery extends React.PureComponent {
             <input
               onChange={this.setTerm}
               value={this.state.term}
-              style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}
+              style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}
             />
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.term_results === null ? (
-                <ReactLoading type="spokes"  color="#000" />
+                <ReactLoading type="spokes" color="#000" />
               ) : (
                 <ReactJson
                   src={this.state.term_results}
@@ -128,27 +128,27 @@ export default class TermQuery extends React.PureComponent {
             <legend>Process</legend>
             <button
               onClick={this.submit}
-              style={{float: 'left', width: '49%', height: '150px'}}
+              style={{ float: 'left', width: '49%', height: '150px' }}
             >
               Submit
             </button>
             <textarea
               readOnly
               value={this.state.status}
-              style={{float: 'left', width: '49%', height: '150px'}}
+              style={{ float: 'left', width: '49%', height: '150px' }}
             ></textarea>
           </fieldset>
           <fieldset>
             <legend>Send results to Enrichr</legend>
             <button
               onClick={this.sendToEnrichr}
-              style={{float: 'left', width: '49%', height: '150px'}}
+              style={{ float: 'left', width: '49%', height: '150px' }}
             >
               Send to Enrichr
             </button>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.enrichr_results === null ? (
-                <ReactLoading type="spokes"  color="#000" />
+                <ReactLoading type="spokes" color="#000" />
               ) : (
                 <ReactJson
                   src={this.state.enrichr_results}
@@ -159,6 +159,6 @@ export default class TermQuery extends React.PureComponent {
           </fieldset>
         </main>
       </div>
-    );
+    )
   }
 }

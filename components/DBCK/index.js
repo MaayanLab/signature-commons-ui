@@ -1,7 +1,7 @@
-import React from "react";
-import ReactJson from 'react-json-view';
-import ReactLoading from 'react-loading';
-import { fetch_meta } from '../../util/fetch/meta';
+import React from 'react'
+import ReactJson from 'react-json-view'
+import ReactLoading from 'react-loading'
+import { fetch_meta } from '../../util/fetch/meta'
 
 export default class DBCK extends React.Component {
   constructor(props) {
@@ -15,19 +15,19 @@ export default class DBCK extends React.Component {
   componentDidMount() {
     (async () => {
       this.setState({
-        library_dbck: await fetch_meta({ endpoint: '/libraries/dbck', body: {filter: {limit: 10}} }),
+        library_dbck: await fetch_meta({ endpoint: '/libraries/dbck', body: { filter: { limit: 10 } } }),
       })
     })();
     (async () => {
       this.setState({
-        signature_dbck: await fetch_meta({ endpoint: '/signatures/dbck', body: {filter: {limit: 10}} }),
+        signature_dbck: await fetch_meta({ endpoint: '/signatures/dbck', body: { filter: { limit: 10 } } }),
       })
     })();
     (async () => {
       this.setState({
-        entity_dbck: await fetch_meta({ endpoint: '/entities/dbck', body: {filter: {limit: 10}} }),
+        entity_dbck: await fetch_meta({ endpoint: '/entities/dbck', body: { filter: { limit: 10 } } }),
       })
-    })();
+    })()
   }
   render() {
     return (
@@ -37,7 +37,7 @@ export default class DBCK extends React.Component {
             <legend>
               Library dbck
             </legend>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.library_dbck === null ? (
                 <ReactLoading type="spokes" color="#000" />
               ) : (
@@ -52,7 +52,7 @@ export default class DBCK extends React.Component {
             <legend>
               Signature dbck
             </legend>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.signature_dbck === null ? (
                 <ReactLoading type="spokes" color="#000" />
               ) : (
@@ -67,7 +67,7 @@ export default class DBCK extends React.Component {
             <legend>
               Entity dbck
             </legend>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.entity_dbck === null ? (
                 <ReactLoading type="spokes" color="#000" />
               ) : (

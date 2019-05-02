@@ -7,12 +7,12 @@ import Error from './_error'
 import serializeError from 'serialize-error'
 import '../styles/index.scss'
 
-NProgress.configure({ showSpinner: false });
+NProgress.configure({ showSpinner: false })
 
-Router.events.on('routeChangeStart', url => NProgress.start())
-Router.events.on('hashChangeStart', url => NProgress.start())
+Router.events.on('routeChangeStart', (url) => NProgress.start())
+Router.events.on('hashChangeStart', (url) => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
-Router.events.on('hashChangeComplete', url => NProgress.done())
+Router.events.on('hashChangeComplete', (url) => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
 
 export default class extends App {
@@ -40,7 +40,7 @@ export default class extends App {
     this.setState({ error, errorInfo })
   }
 
-  render () {
+  render() {
     const { Component, pageProps } = this.props
 
     if (this.props.errorCode || this.state.error !== undefined) {

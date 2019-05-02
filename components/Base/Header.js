@@ -1,6 +1,6 @@
-import React from 'react';
-import { withRouter, Link } from 'react-router-dom';
-import { base_scheme as meta_base_scheme, base_url as meta_base_url } from "../../util/fetch/meta";
+import React from 'react'
+import { withRouter, Link } from 'react-router-dom'
+import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
 
 export function Nav(props) {
   return (
@@ -42,8 +42,8 @@ export function Nav(props) {
 
 export default withRouter((props) => {
   const paths = props.location.pathname.split('/')
-  const title = props.location.pathname === "/" ? "": "Signature Commons"
-  const location = props.location.pathname === "/" ? "right": "center"
+  const title = props.location.pathname === '/' ? '': 'Signature Commons'
+  const location = props.location.pathname === '/' ? 'right': 'center'
   return (
     <header>
       <nav className="nav-extended">

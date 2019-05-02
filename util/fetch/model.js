@@ -1,6 +1,6 @@
-import { fetch_meta_post } from "./meta";
-import { fetch_data } from "./data";
-import { get_library_resources } from "../../components/Resources/resources";
+import { fetch_meta_post } from './meta'
+import { fetch_data } from './data'
+import { get_library_resources } from '../../components/Resources/resources'
 
 async function PromiseAllSeq(promises) {
   const resolved = []
@@ -33,18 +33,19 @@ export default class DataProvider {
     const serialized = {}
 
     serialized.id = await resource.id
-    serialized.meta =  await resource.meta
+    serialized.meta = await resource.meta
 
     if (!opts.fetched_data) {
-      if (opts.signatures === true)
+      if (opts.signatures === true) {
         await this.fetch_signatures_for_libraries(await resource.libraries)
+      }
 
       if (opts.data === true) {
         const signatures = (await PromiseAllSeq((await resource.libraries).map(
-          (library) =>
-            async () => await library.signatures
+            (library) =>
+              async () => await library.signatures
         ))).reduce(
-          (all, sigs) => [...all, ...sigs], []
+            (all, sigs) => [...all, ...sigs], []
         )
         await this.fetch_data_for_signatures(signatures)
       }
@@ -52,14 +53,14 @@ export default class DataProvider {
 
     if (opts.libraries === true) {
       serialized.libraries = await PromiseAllSeq(
-        (await resource.libraries).map(
-          (library) =>
-            async () => await this.serialize_library(library, {
-              signatures: opts.signatures,
-              data: opts.data,
-              fetched_data: true,
-            })
-        )
+          (await resource.libraries).map(
+              (library) =>
+                async () => await this.serialize_library(library, {
+                  signatures: opts.signatures,
+                  data: opts.data,
+                  fetched_data: true,
+                })
+          )
       )
     }
 
@@ -78,24 +79,27 @@ export default class DataProvider {
     serialized.dataset_type = await library.dataset_type
 
     if (!opts.fetched_data) {
-      if (opts.signatures === true)
+      if (opts.signatures === true) {
         await this.fetch_signatures_for_libraries([library])
+      }
 
-      if (opts.data === true)
+      if (opts.data === true) {
         await this.fetch_data_for_signatures(await library.signatures)
+      }
     }
 
-    if (opts.resource === true)
+    if (opts.resource === true) {
       serialized.resource = await this.serialize_resource(await library.resource)
+    }
 
     if (opts.signatures === true) {
       serialized.signatures = await PromiseAllSeq(
-        (await library.signatures).map(
-          (signature) =>
-            async () => await this.serialize_signature(signature, {
-              data: opts.data, fetched_data: true
-            })
-        )
+          (await library.signatures).map(
+              (signature) =>
+                async () => await this.serialize_signature(signature, {
+                  data: opts.data, fetched_data: true,
+                })
+          )
       )
     }
 
@@ -113,16 +117,16 @@ export default class DataProvider {
 
     if (opts.library === true) {
       serialized.library = await this.serialize_library(await signature.library, {
-        resource: opts.resource
+        resource: opts.resource,
       })
     }
 
     if (opts.data === true) {
       serialized.data = await PromiseAllSeq(
-        (await signature.data).map(
-          (entity) =>
-            async () => await this.serialize_entity(entity)
-        )
+          (await signature.data).map(
+              (entity) =>
+                async () => await this.serialize_entity(entity)
+          )
       )
     }
 
@@ -141,7 +145,7 @@ export default class DataProvider {
 
     if (opts.signature === true) {
       serialized.signature = await this.serialize_signature(await entity.library, {
-        library: opts.library, resource: opts.resource
+        library: opts.library, resource: opts.resource,
       })
     }
 
@@ -149,14 +153,17 @@ export default class DataProvider {
   }
 
   resolve_resource = (resource) => {
-    if (resource instanceof Resource)
+    if (resource instanceof Resource) {
       return resource
+    }
 
-    if (typeof resource === 'string')
+    if (typeof resource === 'string') {
       resource = { 'id': resource }
+    }
     if (typeof resource === 'object' && resource.id !== undefined) {
-      if (this.resources[resource.id] === undefined)
+      if (this.resources[resource.id] === undefined) {
         this.resources[resource.id] = new Resource(resource, this)
+      }
       return this.resources[resource.id]
     } else {
       throw new Error(`Invalid object provided for resolution: ${resource}`)
@@ -164,14 +171,17 @@ export default class DataProvider {
   }
 
   resolve_library = (library) => {
-    if (library instanceof Library)
+    if (library instanceof Library) {
       return library
+    }
 
-    if (typeof library === 'string')
+    if (typeof library === 'string') {
       library = { 'id': library }
+    }
     if (typeof library === 'object' && library.id !== undefined) {
-      if (this.libraries[library.id] === undefined)
+      if (this.libraries[library.id] === undefined) {
         this.libraries[library.id] = new Library(library, this)
+      }
       return this.libraries[library.id]
     } else {
       throw new Error(`Invalid object provided for resolution ${library}`)
@@ -179,14 +189,17 @@ export default class DataProvider {
   }
 
   resolve_signature = (signature) => {
-    if (signature instanceof Signature)
+    if (signature instanceof Signature) {
       return signature
+    }
 
-    if (typeof signature === 'string')
+    if (typeof signature === 'string') {
       signature = { 'id': signature }
+    }
     if (typeof signature === 'object' && signature.id !== undefined) {
-      if (this.signatures[signature.id] === undefined)
+      if (this.signatures[signature.id] === undefined) {
         this.signatures[signature.id] = new Signature(signature, this)
+      }
       return this.signatures[signature.id]
     } else {
       throw new Error(`Invalid object provided for resolution: ${signature}`)
@@ -194,14 +207,17 @@ export default class DataProvider {
   }
 
   resolve_entity = (entity) => {
-    if (entity instanceof Entity)
+    if (entity instanceof Entity) {
       return entity
+    }
 
-    if (typeof entity === 'string')
+    if (typeof entity === 'string') {
       entity = { 'id': entity }
+    }
     if (typeof entity === 'object' && entity.id !== undefined) {
-      if (this.entities[entity.id] === undefined)
+      if (this.entities[entity.id] === undefined) {
         this.entities[entity.id] = new Entity(entity, this)
+      }
       return this.entities[entity.id]
     } else {
       throw new Error(`Invalid object provided for resolution: ${entity}`)
@@ -210,37 +226,37 @@ export default class DataProvider {
 
   resolve_resources = async (resources) => {
     return await PromiseAllSeq(
-      resources.map(
-        (resource) =>
-          async () => await this.resolve_resource(resource)
-      )
+        resources.map(
+            (resource) =>
+              async () => await this.resolve_resource(resource)
+        )
     )
   }
 
   resolve_libraries = async (libraries) => {
     return await PromiseAllSeq(
-      libraries.map(
-        (library) =>
-          async () => await this.resolve_library(library)
-      )
+        libraries.map(
+            (library) =>
+              async () => await this.resolve_library(library)
+        )
     )
   }
 
   resolve_signatures = async (signatures) => {
     return await PromiseAllSeq(
-      signatures.map(
-        (signature) =>
-          async () => await this.resolve_signature(signature)
-      )
+        signatures.map(
+            (signature) =>
+              async () => await this.resolve_signature(signature)
+        )
     )
   }
 
   resolve_entities = async (entities) => {
     return await PromiseAllSeq(
-      entities.map(
-        (entity) =>
-          async () => await this.resolve_entity(entity)
-      )
+        entities.map(
+            (entity) =>
+              async () => await this.resolve_entity(entity)
+        )
     )
   }
 
@@ -259,15 +275,18 @@ export default class DataProvider {
       library._library = lib
 
       // update resource
-      if (library_resource[lib.id] !== undefined)
+      if (library_resource[lib.id] !== undefined) {
         library._resource = await this.resolve_resource(library_resource[lib.id])
+      }
 
       // update signatures
-      if (library._signatures === undefined)
+      if (library._signatures === undefined) {
         library._signatures = new Set()
+      }
       for (const signature of Object.values(this.signatures)) {
-        if (lib.id === await (await signature.library).id)
+        if (lib.id === await (await signature.library).id) {
           library._signatures.add(signature)
+        }
       }
     }
   }
@@ -288,15 +307,15 @@ export default class DataProvider {
           where: {
             library: {
               inq: await PromiseAllSeq(
-                libraries.map(
-                  (library) =>
-                    async () => await library.id
-                )
-              )
-            }
-          }
-        }
-      }
+                  libraries.map(
+                      (library) =>
+                        async () => await library.id
+                  )
+              ),
+            },
+          },
+        },
+      },
     })
     for (const sig of response) {
       const signature = await this.resolve_signature(sig)
@@ -304,27 +323,29 @@ export default class DataProvider {
       signature._signature = sig
 
       const library = await signature.library
-      if (library._signatures === undefined)
+      if (library._signatures === undefined) {
         library._signatures = new Set()
+      }
       library._signatures.add(signature)
     }
   }
 
   fetch_signatures = async () => {
     const signatures = Object.keys(this.signatures).filter((entity) => !this.signatures[entity]._fetched)
-    if (signatures.length === 0)
+    if (signatures.length === 0) {
       return
+    }
     const { response } = await fetch_meta_post({
       endpoint: `/signatures/find`,
       body: {
         filter: {
           where: {
             id: {
-              inq: signatures
-            }
-          }
-        }
-      }
+              inq: signatures,
+            },
+          },
+        },
+      },
     })
     for (const sig of response) {
       const signature = await this.resolve_signature(sig)
@@ -332,8 +353,9 @@ export default class DataProvider {
       signature._signature = sig
 
       const library = await signature.library
-      if (library._signatures === undefined)
+      if (library._signatures === undefined) {
         library._signatures = new Set()
+      }
       library._signatures.add(signature)
     }
   }
@@ -348,8 +370,9 @@ export default class DataProvider {
     for (const signature of signatures) {
       const library = await signature.library
       const dataset_with_type = JSON.stringify([await library.dataset, await library.dataset_type])
-      if (dataset_with_type_signatures[dataset_with_type] === undefined)
+      if (dataset_with_type_signatures[dataset_with_type] === undefined) {
         dataset_with_type_signatures[dataset_with_type] = new Set()
+      }
       dataset_with_type_signatures[dataset_with_type].add(signature)
     }
     // go through groups and grab signatures
@@ -359,12 +382,13 @@ export default class DataProvider {
 
       // get the relevant endpoint to query
       let endpoint
-      if (dataset_type.startsWith('geneset'))
+      if (dataset_type.startsWith('geneset')) {
         endpoint = 'set'
-      else if (dataset_type.startsWith('rank'))
+      } else if (dataset_type.startsWith('rank')) {
         endpoint = 'rank'
-      else
+      } else {
         throw `${dataset_type} not recognized`
+      }
 
       // construct request with signatures of interest
       const { response } = await fetch_data({
@@ -373,7 +397,7 @@ export default class DataProvider {
           entities: [],
           signatures: await PromiseAllSeq(cur_signatures.map((signature) => async () => await signature.id)),
           database: dataset,
-        }
+        },
       })
 
       // resolve results
@@ -389,8 +413,9 @@ export default class DataProvider {
 
   fetch_entities = async () => {
     const entities = Object.keys(this.entities).filter((entity) => !this.entities[entity]._fetched)
-    if (entities.length === 0)
+    if (entities.length === 0) {
       return
+    }
     const { response } = await fetch_meta_post({
       endpoint: `/entities/find`,
       body: {
@@ -398,10 +423,10 @@ export default class DataProvider {
           where: {
             id: {
               inq: entities,
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     })
     for (const ent of response) {
       const entity = await this.resolve_entity(ent)
@@ -413,16 +438,19 @@ export default class DataProvider {
 
 export class Resource {
   constructor(resource, parent) {
-    if (typeof resource === 'object')
+    if (typeof resource === 'object') {
       this._resource = resource
-    else if (typeof resource === 'string')
+    } else if (typeof resource === 'string') {
       this._resource = { 'id': this.id }
-    
-    if (this._resource === undefined || this._resource.id === undefined)
-      throw new Error(`Resource could not be initialized with ${JSON.stringify(resource)}`)
+    }
 
-    if (typeof parent === undefined)
+    if (this._resource === undefined || this._resource.id === undefined) {
+      throw new Error(`Resource could not be initialized with ${JSON.stringify(resource)}`)
+    }
+
+    if (typeof parent === undefined) {
       throw new Error(`Resource should be initialized by libraries`)
+    }
     this._parent = parent
   }
 
@@ -432,8 +460,9 @@ export class Resource {
 
   get libraries() {
     return (async () => {
-      if (this._libraries !== undefined)
+      if (this._libraries !== undefined) {
         return [...this._libraries]
+      }
 
       await this._parent.fetch_libraries()
       return [...this._libraries]
@@ -442,8 +471,9 @@ export class Resource {
 
   get meta() {
     return (async () => {
-      if (this._resource.meta !== undefined)
+      if (this._resource.meta !== undefined) {
         return this._resource.meta
+      }
 
       await this._parent.fetch_resources()
       return this._resource.meta
@@ -453,16 +483,19 @@ export class Resource {
 
 export class Library {
   constructor(library, parent) {
-    if (typeof library === 'object')
+    if (typeof library === 'object') {
       this._library = library
-    else if (typeof library === 'string')
+    } else if (typeof library === 'string') {
       this._library = { 'id': this.id }
-    
-    if (this._library === undefined || this._library.id === undefined)
-      throw new Error(`Library could not be initialized with ${JSON.stringify(library)}`)
+    }
 
-    if (typeof parent === undefined)
+    if (this._library === undefined || this._library.id === undefined) {
+      throw new Error(`Library could not be initialized with ${JSON.stringify(library)}`)
+    }
+
+    if (typeof parent === undefined) {
       throw new Error(`Library should be initialized by libraries`)
+    }
     this._parent = parent
   }
 
@@ -472,10 +505,11 @@ export class Library {
 
   get resource() {
     return (async () => {
-      if (this._resource !== undefined)
+      if (this._resource !== undefined) {
         return this._resource
-      else if (this._library.resource === undefined)
+      } else if (this._library.resource === undefined) {
         await this._parent.fetch_libraries()
+      }
 
       this._resource = await this._parent.resolve_resource(this._library.resource)
       return this._resource
@@ -484,8 +518,9 @@ export class Library {
 
   get dataset() {
     return (async () => {
-      if (this._library.dataset !== undefined)
+      if (this._library.dataset !== undefined) {
         return this._library.dataset
+      }
 
       await this._parent.fetch_libraries()
       return this._library.dataset
@@ -494,8 +529,9 @@ export class Library {
 
   get dataset_type() {
     return (async () => {
-      if (this._library.dataset_type !== undefined)
+      if (this._library.dataset_type !== undefined) {
         return this._library.dataset_type
+      }
 
       await this._parent.fetch_libraries()
       return this._library.dataset_type
@@ -504,8 +540,9 @@ export class Library {
 
   get meta() {
     return (async () => {
-      if (this._library.meta !== undefined)
+      if (this._library.meta !== undefined) {
         return this._library.meta
+      }
 
       await this._parent.fetch_libraries()
       return this._library.meta
@@ -514,8 +551,9 @@ export class Library {
 
   get signatures() {
     return (async () => {
-      if (this._signatures !== undefined && this._signatures.length > 0)
+      if (this._signatures !== undefined && this._signatures.length > 0) {
         return [...this._signatures]
+      }
 
       await this._parent.fetch_signatures_for_libraries([this])
       return [...this._signatures]
@@ -525,16 +563,19 @@ export class Library {
 
 export class Signature {
   constructor(signature, parent) {
-    if (typeof signature === 'object')
+    if (typeof signature === 'object') {
       this._signature = signature
-    else if (typeof signature === 'string')
+    } else if (typeof signature === 'string') {
       this._signature = { 'id': this.id }
-    
-    if (this._signature === undefined || this._signature.id === undefined)
-      throw new Error(`Signature could not be initialized with ${JSON.stringify(signature)}`)
+    }
 
-    if (typeof parent === undefined)
+    if (this._signature === undefined || this._signature.id === undefined) {
+      throw new Error(`Signature could not be initialized with ${JSON.stringify(signature)}`)
+    }
+
+    if (typeof parent === undefined) {
       throw new Error(`Signature should be initialized by Signatures`)
+    }
     this._parent = parent
   }
 
@@ -544,10 +585,11 @@ export class Signature {
 
   get library() {
     return (async () => {
-      if (this._library !== undefined)
+      if (this._library !== undefined) {
         return this._library
-      else if (this._signature.library === undefined)
+      } else if (this._signature.library === undefined) {
         await this._parent.fetch_signatures()
+      }
 
       this._library = this._parent.resolve_library(this._signature.library)
       return this._library
@@ -556,8 +598,9 @@ export class Signature {
 
   get meta() {
     return (async () => {
-      if (this._signature.meta !== undefined)
+      if (this._signature.meta !== undefined) {
         return this._signature.meta
+      }
 
       await this._parent.fetch_signatures()
       return this._signature.meta
@@ -566,8 +609,9 @@ export class Signature {
 
   get data() {
     return (async () => {
-      if (this._data !== undefined)
+      if (this._data !== undefined) {
         return this._data
+      }
 
       await this._parent.fetch_data_for_signatures([this])
       return this._data
@@ -577,16 +621,19 @@ export class Signature {
 
 export class Entity {
   constructor(entity, parent) {
-    if (typeof entity === 'object')
+    if (typeof entity === 'object') {
       this._entity = entity
-    else if (typeof entity === 'string')
+    } else if (typeof entity === 'string') {
       this._entity = { 'id': this.id }
-    
-    if (this._entity === undefined || this._entity.id === undefined)
-      throw new Error(`Entity could not be initialized with ${JSON.stringify(entity)}`)
+    }
 
-    if (typeof parent === undefined)
+    if (this._entity === undefined || this._entity.id === undefined) {
+      throw new Error(`Entity could not be initialized with ${JSON.stringify(entity)}`)
+    }
+
+    if (typeof parent === undefined) {
       throw new Error(`Entity should be initialized by entities`)
+    }
     this._parent = parent
   }
 
@@ -596,8 +643,9 @@ export class Entity {
 
   get meta() {
     return (async () => {
-      if (this._entity.meta !== undefined)
+      if (this._entity.meta !== undefined) {
         return this._entity.meta
+      }
 
       await this._parent.fetch_entities()
       return this._entity.meta

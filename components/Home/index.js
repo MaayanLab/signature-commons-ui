@@ -1,17 +1,15 @@
-import { Set } from 'immutable';
-import M from "materialize-css";
-import Base from '../../components/Base';
-import React from "react";
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { call } from '../../util/call';
-import Landing from '../Landing';
-import MetadataSearch from '../MetadataSearch';
-import Resources from '../Resources';
-import SignatureSearch from '../SignatureSearch';
-import Upload from '../Upload';
+import { Set } from 'immutable'
+import M from 'materialize-css'
+import Base from '../../components/Base'
+import React from 'react'
+import { Route, Switch } from 'react-router-dom'
+import { call } from '../../util/call'
+import Landing from '../Landing'
+import MetadataSearch from '../MetadataSearch'
+import Resources from '../Resources'
+import SignatureSearch from '../SignatureSearch'
+import Upload from '../Upload'
 
-import { fetch_meta } from '../../util/fetch/meta'
-import {get_signature_counts_per_resources} from '../Resources/resources.js'
 
 export default class Home extends React.PureComponent {
   constructor(props) {
@@ -19,29 +17,30 @@ export default class Home extends React.PureComponent {
     this.state = {
       cart: Set(),
       pie_stats: null,
-      selected_field: "Assay",
+      selected_field: 'Assay',
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
-    this.handleSelectField = this.handleSelectField.bind(this);
-
+    this.handleSelectField = this.handleSelectField.bind(this)
   }
 
   async componentDidMount() {
-    M.AutoInit();
-    if(this.state.pie_stats===null){
+    M.AutoInit()
+    // const elems = document.querySelectorAll('.sidenav');
+    // const instances = M.Sidenav.init(elems, {edge:"right"});
+    if (this.state.pie_stats===null) {
       this.fetch_stats(this.state.selected_field)
     }
   }
 
 
   componentDidUpdate() {
-    M.AutoInit();
-    M.updateTextFields();
+    M.AutoInit()
+    M.updateTextFields()
   }
 
   updateCart(cart) {
-    this.setState({cart})
+    this.setState({ cart })
   }
 
   CartActions() {
@@ -101,19 +100,19 @@ export default class Home extends React.PureComponent {
     )
   }
 
-  async fetch_stats(selected_field){
+  async fetch_stats(selected_field) {
     this.setState({
-        pie_stats: this.props.pie_fields_and_stats[selected_field],
+      pie_stats: this.props.pie_fields_and_stats[selected_field],
     })
   }
 
-  handleSelectField(e){
+  handleSelectField(e) {
     const field = e.target.value
     this.setState({
       selected_field: field,
       pie_stats: null,
-    },()=>{
-     this.fetch_stats(this.state.selected_field)
+    }, ()=>{
+      this.fetch_stats(this.state.selected_field)
     })
   }
 
@@ -175,9 +174,9 @@ export default class Home extends React.PureComponent {
           <Route
             exact path="/"
             render={(router_props) => <Landing handleSelectField={this.handleSelectField}
-                                               {...this.state}
-                                               {...this.props}
-                                               {...router_props}/>}
+              {...this.state}
+              {...this.props}
+              {...router_props}/>}
           />
           <Route
             path="/SignatureSearch"

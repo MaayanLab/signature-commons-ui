@@ -2,15 +2,15 @@ import {
   card,
   main,
   white,
-} from "../theme.js";
+} from '../theme.js'
 
-export const cardChartStyle = theme => ({
+export const cardChartStyle = (theme) => ({
   cardChart: {
-    background: '#fff',
+    background: white,
   },
   progress: {
-    margin: '90px auto 90px auto'
+    margin: '90px auto 90px auto',
   },
   card,
-  main
-});
+  main,
+})

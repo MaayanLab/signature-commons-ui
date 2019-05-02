@@ -5,14 +5,14 @@ import {
   RedCardHeader,
   OrangeCardHeader,
   white,
-} from "../theme.js";
+} from '../theme.js'
 
 export const cardIconStyle = {
   cardIcon: {
-    borderRadius: "3px",
+    borderRadius: '3px',
     margin: '-20px 20px 0 15px',
-    float: "left",
-    zIndex: 100
+    float: 'left',
+    zIndex: 100,
   },
   icon: {
     float: 'right',
@@ -25,6 +25,6 @@ export const cardIconStyle = {
   BlueCardHeader,
   PurpleCardHeader,
   RedCardHeader,
-  OrangeCardHeader
-};
+  OrangeCardHeader,
+}
 

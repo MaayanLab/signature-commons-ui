@@ -9,20 +9,22 @@ export async function fetch_data({ endpoint, body, signal }) {
   const start = new Date()
 
   const request = await fetch(
-    base_url
+      base_url
     + (endpoint === undefined ? '' : endpoint),
-    {
-      method: 'POST',
-      body: JSON.stringify(body),
-      signal: signal,
-    }
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        signal: signal,
+      }
   )
-  if (request.ok !== true)
+  if (request.ok !== true) {
     throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+  }
 
   let response_text = await request.text()
-  if (response_text === '') // normalize empty responses
+  if (response_text === '') { // normalize empty responses
     response_text = '{"signatures":[], "matchingEntities": [], "results": {}}'
+  }
 
   const response = JSON.parse(response_text)
 

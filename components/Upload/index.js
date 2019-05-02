@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import { parse_file } from '../../util/parse'
 import M from 'materialize-css'
 
@@ -22,23 +22,23 @@ export default class Upload extends React.Component {
     try {
       const loader = new FileReader()
       loader.onload = (evt) => {
-        if(evt.target.readyState !== 2) return
-        if(evt.target.error) throw new Error(evt.target.error)
+        if (evt.target.readyState !== 2) return
+        if (evt.target.error) throw new Error(evt.target.error)
         this.setState({
-          file: evt.target.result
+          file: evt.target.result,
         }, this.process)
       }
       loader.readAsText(e.target.files[0])
-    } catch(e) {
+    } catch (e) {
     }
   }
 
   process() {
     try {
       this.setState({
-        parsed: JSON.stringify([...parse_file(this.state.file)])
+        parsed: JSON.stringify([...parse_file(this.state.file)]),
       })
-    } catch(e) {
+    } catch (e) {
       console.error(e)
     }
   }
@@ -66,12 +66,12 @@ export default class Upload extends React.Component {
                   <div className="col s6">
                     <table>
                       <tbody>
-                      <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label 1  </td><td>Col Value 1  </td><td>...   </td></tr>
-                      <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label 2  </td><td>Col Value 2  </td><td>...   </td></tr>
-                      <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label ...</td><td>Col Value ...</td><td>...   </td></tr>
-                      <tr><td>Row Label 1  </td><td>Row Label 2  </td><td>Row Label ...   </td><td>&nbsp;       </td><td>&nbsp;</td></tr>
-                      <tr><td>Row Value 1  </td><td>Row Value 2  </td><td>Row Value ...   </td><td>1            </td><td>-1    </td></tr>
-                      <tr><td>Row Value ...</td><td>Row Value ...</td><td>Row Value ...   </td><td>0.2          </td><td>...   </td></tr>
+                        <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label 1  </td><td>Col Value 1  </td><td>...   </td></tr>
+                        <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label 2  </td><td>Col Value 2  </td><td>...   </td></tr>
+                        <tr><td>&nbsp;       </td><td>&nbsp;       </td><td>Column Label ...</td><td>Col Value ...</td><td>...   </td></tr>
+                        <tr><td>Row Label 1  </td><td>Row Label 2  </td><td>Row Label ...   </td><td>&nbsp;       </td><td>&nbsp;</td></tr>
+                        <tr><td>Row Value 1  </td><td>Row Value 2  </td><td>Row Value ...   </td><td>1            </td><td>-1    </td></tr>
+                        <tr><td>Row Value ...</td><td>Row Value ...</td><td>Row Value ...   </td><td>0.2          </td><td>...   </td></tr>
                       </tbody>
                     </table>
                   </div>

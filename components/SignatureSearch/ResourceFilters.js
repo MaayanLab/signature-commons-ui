@@ -10,7 +10,7 @@ export default class extends React.Component {
     super(props)
 
     this.state = {
-      show_all: false
+      show_all: false,
     }
   }
 
@@ -18,13 +18,14 @@ export default class extends React.Component {
 
   sort_resources() {
     return [...this.props.resources].sort(
-      (r1, r2) => {
-        const diff = (((this.props.resource_signatures || {})[r2.id] || {}).count || 0) - (((this.props.resource_signatures || {})[r1.id] || {}).count || 0)
-        if (diff === 0)
-          return r1.meta.name.localeCompare(r2.meta.name)
-        else
-          return diff
-      }
+        (r1, r2) => {
+          const diff = (((this.props.resource_signatures || {})[r2.id] || {}).count || 0) - (((this.props.resource_signatures || {})[r1.id] || {}).count || 0)
+          if (diff === 0) {
+            return r1.meta.name.localeCompare(r2.meta.name)
+          } else {
+            return diff
+          }
+        }
     )
   }
 
@@ -41,8 +42,9 @@ export default class extends React.Component {
 
     return (
       <div ref={(ref) => {
-        if (!this.state.resourceAnchor)
+        if (!this.state.resourceAnchor) {
           this.setState({ resourceAnchor: ref })
+        }
       }} className="col s12 center">
         {sorted_resources.map((resource, ind) => {
           const count = ((this.props.resource_signatures || {})[resource.meta.name] || {}).count
@@ -74,7 +76,7 @@ export default class extends React.Component {
         })}
         {sorted_resources.length >= config.maxResourcesBeforeCollapse ? (
           <IconButton
-            alt={this.state.show_all ? "Less": "More"}
+            alt={this.state.show_all ? 'Less': 'More'}
             icon="more_horiz"
             onClick={this.toggle_show_all}
           />

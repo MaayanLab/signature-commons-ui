@@ -1,88 +1,73 @@
-import React from 'react';
-import { Pie } from '@vx/shape';
-import { Group } from '@vx/group';
-import { scaleLinear, scaleOrdinal } from '@vx/scale';
-import { interpolateBlues } from 'd3-scale-chromatic';
-import { LegendOrdinal } from '@vx/legend';
-import { withTooltip, TooltipWithBounds } from '@vx/tooltip';
-import { withScreenSize } from '@vx/responsive';
-import { localPoint } from '@vx/event';
+import React from 'react'
+import { Pie } from '@vx/shape'
+import { Group } from '@vx/group'
+import { scaleLinear, scaleOrdinal } from '@vx/scale'
+import { withTooltip, TooltipWithBounds } from '@vx/tooltip'
+import { withScreenSize } from '@vx/responsive'
+import { localPoint } from '@vx/event'
 
-import Grid from '@material-ui/core/Grid';
-
-
-
-function LegendDemo({ title, children }) {
-  return (
-    <div className="legend">
-      <div className="title">{title}</div>
-      {children}
-    </div>
-  );
-}
 
 const colorrange = {
-                    "Green": ["#afdbaf", "#136313"],
-                    "Purple": ["#d390e1", "#720b87"],
-                    "Blue": ["#75bef5", "#0367b4"]
-                    }
+  'Green': ['#afdbaf', '#136313'],
+  'Purple': ['#d390e1', '#720b87'],
+  'Blue': ['#75bef5', '#0367b4'],
+}
 
 const handleMouseOver = (event, datum, props) => {
-  const coords = localPoint(event.target.ownerSVGElement, event);
+  const coords = localPoint(event.target.ownerSVGElement, event)
   props.showTooltip({
     tooltipLeft: coords.x,
     tooltipTop: coords.y,
-    tooltipData: datum
-  });
-};
+    tooltipData: datum,
+  })
+}
 
-  const white = '#ffffff';
-  const black = '#000000';
-export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
+const black = '#000000'
+export const DonutChart = withScreenSize(withTooltip(function({ ...props }) {
   // data format {Tissue: Value}
   const {
-      tooltipData,
-      tooltipLeft,
-      tooltipTop,
-      tooltipOpen,
-      hideTooltip,
-      width,
-      height,
-      margin,
-      data,
-      radius,
-      fontSize,
-      true_values
-    } = props;
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    hideTooltip,
+    width,
+    height,
+    margin,
+    data,
+    radius,
+    fontSize,
+    true_values,
+  } = props
 
-  const dataLabels = data.map(function(d){
-    return(
+  const dataLabels = data.map(function(d) {
+    return (
       d.label
     )
   })
-  const value = d => d.value;
-  const centerY = (height) / 2;
-  const centerX = (width) / 2;
+  const value = (d) => d.value
+  const centerY = (height) / 2
+  const centerX = (width) / 2
 
 
   const sizeColorScale = scaleLinear({
     domain: [0, dataLabels.length],
-    range: colorrange[props.color]
-  });
+    range: colorrange[props.color],
+  })
 
   const ordinalColorScale = scaleOrdinal({
-  domain: dataLabels,
-  range: dataLabels.map(function(b,i){
-            return(
-              sizeColorScale(i)
-            )
-          })
-  });
+    domain: dataLabels,
+    range: dataLabels.map(function(b, i) {
+      return (
+        sizeColorScale(i)
+      )
+    }),
+  })
 
 
   return (
     <div>
-      <svg width={width} height={height} style={{background:"#FFF"}}>
+      <svg width={width} height={height} style={{ background: '#FFF' }}>
         <Group top={centerY - margin.top} left={centerX}>
           <Pie
             data={data}
@@ -92,19 +77,18 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
             cornerRadius={3}
             padAngle={0}
           >
-            {pie => {
+            {(pie) => {
               return pie.arcs.map((arc, i) => {
-                const opacity = 1 / (i + 2);
-                const [centroidX, centroidY] = pie.path.centroid(arc);
-                const { startAngle, endAngle } = arc;
-                const hasSpaceForLabel = endAngle - startAngle >= 0.35;
-                const angle = startAngle + (endAngle - startAngle)/2;
+                const [centroidX, centroidY] = pie.path.centroid(arc)
+                const { startAngle, endAngle } = arc
+                const hasSpaceForLabel = endAngle - startAngle >= 0.35
+                const angle = startAngle + (endAngle - startAngle)/2
                 return (
                   <g key={`browser-${arc.data.label}-${i}`}>
                     <path d={pie.path(arc)}
-                          fill={ordinalColorScale(dataLabels[i])}
-                          onMouseMove={e => handleMouseOver(e, true_values[i], props)}
-                          onMouseOut={hideTooltip}/>
+                      fill={ordinalColorScale(dataLabels[i])}
+                      onMouseMove={(e) => handleMouseOver(e, true_values[i], props)}
+                      onMouseOut={hideTooltip}/>
                     {hasSpaceForLabel && (
                       <text
                         fill={black}
@@ -119,8 +103,8 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
                       </text>
                     )}
                   </g>
-                );
-              });
+                )
+              })
             }}
           </Pie>
         </Group>
@@ -131,11 +115,11 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }){
           key={Math.random()}
           top={tooltipTop}
           left={tooltipLeft}
-          style={{fontSize: '10px'}}
+          style={{ fontSize: '10px' }}
         >
           <strong>{tooltipData.label}</strong>: {tooltipData.value}
         </TooltipWithBounds>
       )}
     </div>
-  );
-}));
+  )
+}))

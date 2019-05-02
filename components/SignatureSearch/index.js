@@ -1,25 +1,25 @@
-import React from "react"
+import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import GenesetSearchBox from "./GenesetSearchBox";
+import GenesetSearchBox from './GenesetSearchBox'
 import uuid5 from 'uuid5'
 import NProgress from 'nprogress'
-import { query_overlap, query_rank } from "./query";
-import { get_library_resources } from "../Resources/resources";
-import ResourceFilters from "./ResourceFilters";
-import LibraryResults from "./LibraryResults";
-import { resolve_entities } from "./resolve";
+import { query_overlap, query_rank } from './query'
+import { get_library_resources } from '../Resources/resources'
+import ResourceFilters from './ResourceFilters'
+import LibraryResults from './LibraryResults'
+import { resolve_entities } from './resolve'
 import { Set } from 'immutable'
-import { call } from '../../util/call'
 
 
 function parse_entities(input) {
   return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
-    (lines, line) => {
-      const parsed = /^(.+?)(,(.+))?$/.exec(line)
-      if (parsed !== null)
-        return [...lines, parsed[1]]
-      return lines
-    }, []
+      (lines, line) => {
+        const parsed = /^(.+?)(,(.+))?$/.exec(line)
+        if (parsed !== null) {
+          return [...lines, parsed[1]]
+        }
+        return lines
+      }, []
   ))
 }
 
@@ -34,11 +34,11 @@ export default class SignatureSearch extends React.Component {
 
   async componentDidMount() {
     NProgress.start()
-    this.setState({...(await get_library_resources())})
-    if(this.props.location.state){
+    this.setState({ ...(await get_library_resources()) })
+    if (this.props.location.state) {
       this.setState({
-        input: this.props.location.state.input
-      },()=>{
+        input: this.props.location.state.input,
+      }, ()=>{
         this.submit(this.state.input)
       })
     }
@@ -54,7 +54,7 @@ export default class SignatureSearch extends React.Component {
     if (controller !== null) controller.abort()
     else controller = new AbortController()
     this.setState(() => ({
-      controller, input
+      controller, input,
     }), async () => {
       if (input.type === 'Overlap') {
         const unresolved_entities = parse_entities(input.geneset)
@@ -74,7 +74,7 @@ export default class SignatureSearch extends React.Component {
           ...this.state,
           input: {
             entities: resolved_entities,
-          }
+          },
         })
         this.setState(() => ({ ...results, mismatched }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -100,26 +100,25 @@ export default class SignatureSearch extends React.Component {
           input: {
             up_entities: resolved_up_entities,
             down_entities: resolved_down_entities,
-          }
+          },
         })
         this.setState(() => ({ ...results, mismatched }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
       }
-
     })
   }
 
   geneset_searchbox = (props) => {
-    if(this.props.location.state){
-      return(<div />)
-    }else{
-      return(
+    if (this.props.location.state) {
+      return (<div />)
+    } else {
+      return (
         <GenesetSearchBox
           input={this.state.input}
           onSubmit={this.submit}
           {...props}
         />
-        )
+      )
     }
   }
 
@@ -135,7 +134,7 @@ export default class SignatureSearch extends React.Component {
     <LibraryResults
       results={
         (((this.state.resource_signatures || {})[props.match.params.resource.replace('_', ' ')] || {}).libraries || []).map(
-          (lib) => this.state.library_signatures[lib]
+            (lib) => this.state.library_signatures[lib]
         )
       }
       {...props}

@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import Header from './Header'
 import Footer from './Footer'
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
 
@@ -28,13 +28,13 @@ export default withStyles(styles)(class extends React.PureComponent {
 
   componentDidUpdate() {
     if (this.state.M !== undefined) {
-      this.state.M.AutoInit();
-      this.state.M.updateTextFields();
+      this.state.M.AutoInit()
+      this.state.M.updateTextFields()
     }
   }
 
   render() {
-    const {classes} = this.props
+    const { classes } = this.props
     return (
       <div className="root">
         <Head>

@@ -1,5 +1,5 @@
-import DataProvider from "../../util/fetch/model";
-import fileDownload from 'js-file-download';
+import DataProvider from '../../util/fetch/model'
+import fileDownload from 'js-file-download'
 
 export async function download_signature_json(signature) {
   const provider = new DataProvider()
@@ -52,11 +52,12 @@ export async function download_tsv(lib) {
     }
 
     const signature_data = await signature.data
-    
+
     for (const entity of signature_data) {
       const entity_id = await entity.id
-      if (row_headers[entity_id] !== undefined)
+      if (row_headers[entity_id] !== undefined) {
         continue
+      }
       row_headers.id = entity_id
       row_headers[entity_id] = {}
       const entity_meta = await entity.meta

@@ -1,9 +1,9 @@
 import React from 'react'
-import ReactJson from 'react-json-view';
-import { fetch_meta_post } from '../../util/fetch/meta';
-import { fetch_data } from '../../util/fetch/data';
+import ReactJson from 'react-json-view'
+import { fetch_meta_post } from '../../util/fetch/meta'
+import { fetch_data } from '../../util/fetch/data'
 import { maybe_fix_obj } from '../../util/maybe_fix_obj'
-import { ShowMeta } from '../../components/ShowMeta';
+import { ShowMeta } from '../../components/ShowMeta'
 
 export default class EntityPage extends React.PureComponent {
   constructor(props) {
@@ -13,7 +13,7 @@ export default class EntityPage extends React.PureComponent {
       duration: 0,
       duration_meta: 0,
       duration_data: 0,
-      entity_name: "STAT3",
+      entity_name: 'STAT3',
       status: null,
       controller: null,
       entity: null,
@@ -21,7 +21,7 @@ export default class EntityPage extends React.PureComponent {
   }
 
   async componentDidMount() {
-    if(this.state.controller !== null) {
+    if (this.state.controller !== null) {
       this.state.controller.abort()
     }
     try {
@@ -43,7 +43,7 @@ export default class EntityPage extends React.PureComponent {
             limit: 1,
           },
         },
-        signal: controller.signal
+        signal: controller.signal,
       })
       duration_meta += duration_meta_1
 
@@ -64,7 +64,7 @@ export default class EntityPage extends React.PureComponent {
             database: 'enrichr_geneset',
             limit: 10,
           },
-          signal: controller.signal
+          signal: controller.signal,
         }),
         fetch_data({
           endpoint: '/enrich/overlap',
@@ -74,7 +74,7 @@ export default class EntityPage extends React.PureComponent {
             database: 'creeds_geneset',
             limit: 10,
           },
-          signal: controller.signal
+          signal: controller.signal,
         }),
         fetch_data({
           endpoint: '/enrich/rank',
@@ -84,7 +84,7 @@ export default class EntityPage extends React.PureComponent {
             database: 'lincs_clue',
             limit: 10,
           },
-          signal: controller.signal
+          signal: controller.signal,
         }),
         fetch_data({
           endpoint: '/enrich/rank',
@@ -94,16 +94,16 @@ export default class EntityPage extends React.PureComponent {
             database: 'lincs_fwd',
             limit: 10,
           },
-          signal: controller.signal
+          signal: controller.signal,
         }),
       ])).reduce(
-        (results, {duration: duration_data_n, response: result}) => {
-          duration_data += duration_data_n
-          return ({
-            ...results,
-            ...maybe_fix_obj(result.results),
-          })
-        }, {}
+          (results, { duration: duration_data_n, response: result }) => {
+            duration_data += duration_data_n
+            return ({
+              ...results,
+              ...maybe_fix_obj(result.results),
+            })
+          }, {}
       )
 
       this.setState({
@@ -111,18 +111,18 @@ export default class EntityPage extends React.PureComponent {
         status: 'Resolving signatures...',
       })
 
-      const {duration: duration_meta_2, response: enriched_signatures_meta} = await fetch_meta_post({
+      const { duration: duration_meta_2, response: enriched_signatures_meta } = await fetch_meta_post({
         endpoint: '/signatures/find',
         body: {
           filter: {
             where: {
               id: {
-                inq: Object.values(enriched_results).map((k) => k.id)
-              }
-            }
-          }
+                inq: Object.values(enriched_results).map((k) => k.id),
+              },
+            },
+          },
         },
-        signal: controller.signal
+        signal: controller.signal,
       })
       duration_meta += duration_meta_2
 
@@ -131,10 +131,10 @@ export default class EntityPage extends React.PureComponent {
       })
 
       const enriched_signatures = enriched_signatures_meta.reduce(
-        (full, signature) => ([
-          ...full,
-          ...signature,
-        ]), []
+          (full, signature) => ([
+            ...full,
+            ...signature,
+          ]), []
       )
 
       this.setState({
@@ -143,8 +143,8 @@ export default class EntityPage extends React.PureComponent {
         status: '',
         controller: null,
       })
-    } catch(e) {
-      if(e.code !== DOMException.ABORT_ERR) {
+    } catch (e) {
+      if (e.code !== DOMException.ABORT_ERR) {
         this.setState({
           status: e + '',
           controller: null,
@@ -155,7 +155,7 @@ export default class EntityPage extends React.PureComponent {
 
   render() {
     return (
-      <div className="row" style={{backgroundColor: 'white'}}>
+      <div className="row" style={{ backgroundColor: 'white' }}>
         Took {this.state.duration.toPrecision(3)} seconds total, {this.state.duration_meta.toPrecision(3)} on metadata, {this.state.duration_data.toPrecision(3)} on data
         {this.state.entity === null ? null : (
           <div className="col s12">
@@ -164,7 +164,7 @@ export default class EntityPage extends React.PureComponent {
               value={{
                 '@id': this.state.entity.id,
                 '@type': 'Entity',
-                'meta': this.state.entity.meta
+                'meta': this.state.entity.meta,
               }}
             />
           </div>
