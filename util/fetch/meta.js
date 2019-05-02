@@ -1,6 +1,9 @@
 import fetch from 'isomorphic-unfetch'
 
-export const base_url = process.env.REACT_APP_METADATA_API.trim() || (window.location.origin + '/signature-commons-metadata-api')
+export const base_url = process.env.NEXT_SERVER_METADATA_API
+  || process.env.NEXT_STATIC_METADATA_API
+  || process.env.NEXT_PUBLIC_METADATA_API
+  || (window.location.origin + '/signature-commons-metadata-api')
 export const base_scheme = /^(https?):\/\/.+/.exec(base_url)[1]
 
 export async function fetch_creds({endpoint, body, signal, headers}) {
@@ -8,9 +11,8 @@ export async function fetch_creds({endpoint, body, signal, headers}) {
 
   const request = await fetch(
     base_url
-    + endpoint
-    + (
-      (body === undefined) ? '' : (
+    + (endpoint === undefined ? '' : endpoint)
+    + (body === undefined ? '' : (
         '?'
         + Object.keys(body).reduce(
           (params, param) => ([
@@ -20,8 +22,7 @@ export async function fetch_creds({endpoint, body, signal, headers}) {
               + encodeURIComponent(JSON.stringify(body[param]))
           ]), []
         ).join('&')
-      )
-    ),
+      )),
     {
       method: 'GET',
       headers: {
@@ -51,9 +52,8 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
 
   const request = await fetch(
     base_url
-    + endpoint
-    + (
-      (body === undefined) ? '' : (
+    + (endpoint === undefined ? '' : endpoint)
+    + (body === undefined ? '' : (
         '?'
         + Object.keys(body).reduce(
           (params, param) => ([
@@ -63,8 +63,7 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
               + encodeURIComponent(JSON.stringify(body[param]))
           ]), []
         ).join('&')
-      )
-    ),
+      )),
     {
       method: 'GET',
       headers: {
@@ -76,6 +75,9 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
       signal: signal,
     }
   )
+  if (request.ok !== true)
+    throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+
   const response = await request.json()
   let contentRange = request.headers.get('Content-Range')
   if (contentRange !== null) {
@@ -104,7 +106,8 @@ export async function fetch_meta({endpoint, body, signal, headers}) {
 export async function fetch_meta_post({endpoint, body, signal}) {
   const start = new Date()
   const request = await fetch(
-    base_url + endpoint,
+    base_url
+    + (endpoint === undefined ? '' : endpoint),
     {
       method: 'POST',
       body: JSON.stringify(body),
@@ -116,6 +119,9 @@ export async function fetch_meta_post({endpoint, body, signal}) {
       signal: signal,
     }
   )
+  if (request.ok !== true)
+    throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+
   const response = await request.json()
 
   let contentRange = request.headers.get('Content-Range')

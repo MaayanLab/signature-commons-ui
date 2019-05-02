@@ -52,6 +52,9 @@ export async function get_library_resources() {
       resource = 'ARCHS4'
     if (resource === 'Enrichr')
       return groups
+      
+    if (resource_meta[resource] === undefined)
+      console.error(`Resource not found: ${resource}`)
 
     if (groups[resource] === undefined) {
       groups[resource] = {
@@ -59,9 +62,9 @@ export async function get_library_resources() {
         meta: {
           name: resource,
           icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
-          description: resource_meta[resource].Description,
-          PMID: resource_meta[resource].PMID,
-          URL: resource_meta[resource].URL,
+          description: (resource_meta[resource] || {}).Description,
+          PMID: (resource_meta[resource] || {}).PMID,
+          URL: (resource_meta[resource] || {}).URL,
           Signature_Count: resource_meta[resource].Signature_Count, // Precomputed
         },
         libraries: []

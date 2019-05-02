@@ -1,6 +1,7 @@
 // Modified from https://github.com/marmelab/react-admin/blob/6fd9dd595ff01d8ad52f8eb8ec8f390c2dd31318/packages/ra-core/src/util/fetch.ts
 
 import { HttpError } from 'react-admin';
+import fetch from 'isomorphic-unfetch'
 
 export const fetchJson = async (url, options = {}) => {
     const requestHeaders = (options.headers ||
@@ -18,6 +19,10 @@ export const fetchJson = async (url, options = {}) => {
     //     requestHeaders.set('Authorization', options.user.token);
     // }
     const response = await fetch(url, { ...options, headers: requestHeaders })
+
+    if (response.ok !== true)
+        throw new Error(`Error communicating with API at ${url}`)
+
     const {status, statusText, headers} = response
     const body = await response.text()
     const json = JSON.parse(body)

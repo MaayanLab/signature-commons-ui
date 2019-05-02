@@ -1,7 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic';
 import { call } from '../../util/call';
-import { download_json } from './download';
+import { download_signature_json } from './download';
 
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
 const IconButton = dynamic(() => import('../../components/IconButton'), { ssr: false })
@@ -49,50 +49,6 @@ export default class extends React.Component {
                   highlight={this.props.search}
                   visibility={1}
                 />
-              </div>
-              <div style={{
-                display: 'flex',
-                flexDirection: "row",
-              }}>
-                <IconButton
-                  alt="Enrichr"
-                  img={`${process.env.PREFIX}/static/images/enrichr.ico`}
-                />
-                &nbsp;
-                <IconButton
-                  alt="Geneshot"
-                  img={`${process.env.PREFIX}/static/images/geneshot.png`}
-                />
-                &nbsp;
-                <IconButton
-                  alt="ARCHS4"
-                  img={`${process.env.PREFIX}/static/images/archs4.png`}
-                />
-                &nbsp;
-                <IconButton
-                  alt="Signature Commons"
-                  img={`${process.env.PREFIX}/static/favicon.ico`}
-                />
-                &nbsp;
-                <IconButton
-                  alt="Download"
-                  icon="file_download"
-                  onClick={call(download_json, signature.id)}
-                />
-                &nbsp;
-                {/*this.state.cart.has(signature.id) ? (
-                  <IconButton
-                    alt="Remove from Cart"
-                    icon="remove_shopping_cart"
-                    onClick={call(this.removeFromCart, signature.id)}
-                  />
-                ) : (
-                  <IconButton
-                    alt="Add to Cart"
-                    icon="add_shopping_cart"
-                    onClick={call(this.addToCart, signature.id)}
-                  />
-                )*/}
                 <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                 <a
                   href="javascript:void(0);"

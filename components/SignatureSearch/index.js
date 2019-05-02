@@ -12,6 +12,17 @@ import { Set } from 'immutable'
 import { call } from '../../util/call'
 
 
+function parse_entities(input) {
+  return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
+    (lines, line) => {
+      const parsed = /^(.+?)(,(.+))?$/.exec(line)
+      if (parsed !== null)
+        return [...lines, parsed[1]]
+      return lines
+    }, []
+  ))
+}
+
 export default class SignatureSearch extends React.Component {
   constructor(props) {
     super(props)
@@ -46,15 +57,17 @@ export default class SignatureSearch extends React.Component {
       controller, input
     }), async () => {
       if (input.type === 'Overlap') {
-        const unresolved_entities = Set(input.geneset.toUpperCase().split(/[ \t\n;]+/).map(
-            // TODO: handle weights
-          (line) => /^(.+?)(,(.+))?$/.exec(line)[1]
-        ))
+        const unresolved_entities = parse_entities(input.geneset)
         const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
-        if (mismatched.count() > 0)
-          console.warn('mismatched entities', [...mismatched])
+        if (mismatched.count() > 0) {
+          M.toast({
+            html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
+            classes: 'rounded',
+            displayLength: 4000,
+          })
+        }
 
-        const resolved_entities = [...unresolved_entities].map((entity) => entities[entity])
+        const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
         const signature_id = uuid5(JSON.stringify(resolved_entities))
 
         const results = await query_overlap({
@@ -63,26 +76,25 @@ export default class SignatureSearch extends React.Component {
             entities: resolved_entities,
           }
         })
-        this.setState(() => ({ ...results }), () => NProgress.done())
+        this.setState(() => ({ ...results, mismatched }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
       } else if (input.type === 'Rank') {
-        const unresolved_up_entities = Set(input.up_geneset.toUpperCase().split(/[ \t\n;]+/).map(
-            // TODO: handle weights
-          (line) => /^(.+?)(,(.+))?$/.exec(line)[1]
-        ))
-        const unresolved_down_entities = Set(input.down_geneset.toUpperCase().split(/[ \t\n;]+/).map(
-            // TODO: handle weights
-          (line) => /^(.+?)(,(.+))?$/.exec(line)[1]
-        ))
+        const unresolved_up_entities = parse_entities(input.up_geneset)
+        const unresolved_down_entities = parse_entities(input.down_geneset)
         const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
         const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
-        if (mismatched.count() > 0)
-          console.warn('mismatched entities', [...mismatched])
+        if (mismatched.count() > 0) {
+          M.toast({
+            html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
+            classes: 'rounded',
+            displayLength: 4000,
+          })
+        }
 
-        const resolved_up_entities = [...unresolved_up_entities].map((entity) => entities[entity])
-        const resolved_down_entities = [...unresolved_down_entities].map((entity) => entities[entity])
+        const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
+        const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
         const signature_id = uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
-  
+
         const results = await query_rank({
           ...this.state,
           input: {
@@ -90,7 +102,7 @@ export default class SignatureSearch extends React.Component {
             down_entities: resolved_down_entities,
           }
         })
-        this.setState(() => ({ ...results }), () => NProgress.done())
+        this.setState(() => ({ ...results, mismatched }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
       }
 

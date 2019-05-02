@@ -26,13 +26,6 @@ export function Nav(props) {
           Resources
         </Link>
       </li>
-      <li
-        className={props.location.pathname === '/UploadCollection' ? 'active' : ''}
-      >
-        <Link to="/UploadCollection">
-          Upload
-        </Link>
-      </li>
       <li>
         <a
           target="_blank"

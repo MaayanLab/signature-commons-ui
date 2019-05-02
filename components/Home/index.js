@@ -29,16 +29,11 @@ export default class Home extends React.PureComponent {
 
   async componentDidMount() {
     M.AutoInit();
-    if(this.state.libraries_count===0){
-      this.fetch_count("libraries")
-    }
-    if(this.state.signatures_count===0){
-      this.fetch_count("signatures")
-    }
     if(this.state.pie_stats===null){
       this.fetch_stats(this.state.selected_field)
     }
   }
+
 
   componentDidUpdate() {
     M.AutoInit();
@@ -104,19 +99,6 @@ export default class Home extends React.PureComponent {
         </ul>
       </div>
     )
-  }
-
-  async fetch_count(source) {
-    const { response } = await fetch_meta({ endpoint: `/${source}/count`, body: {} })
-    if(source==="libraries"){
-      this.setState({
-        libraries_count: response.count
-      })
-    }else if(source==="signatures"){
-      this.setState({
-        signatures_count: response.count
-      })
-    }
   }
 
   async fetch_stats(selected_field){
@@ -208,10 +190,6 @@ export default class Home extends React.PureComponent {
           <Route
             path="/Resources"
             component={this.resources}
-          />
-          <Route
-            path="/UploadCollection"
-            component={this.upload}
           />
         </Switch>
       </Base>
