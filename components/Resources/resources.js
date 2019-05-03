@@ -99,8 +99,8 @@ export async function get_signature_counts_per_resources(controller=null) {
     const { response: stats } = await fetch_meta({
       endpoint: `/libraries/${lib}/signatures/key_count`,
       body: {
-        fields: ["$validator"]
-      }
+        fields: ['$validator'],
+      },
       signal: controller? controller.signal: null,
     })
 
