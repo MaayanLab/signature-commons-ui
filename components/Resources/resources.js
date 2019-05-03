@@ -95,11 +95,12 @@ export async function get_signature_counts_per_resources(controller=null) {
 
   const count_promises = Object.keys(library_resource).map(async (lib) => {
     // request details from GitHub’s API with Axios
-    const url = '/signatures' +
-              '/key_count?filter={"fields":["$validator"], "where": {"library": "'
-              + lib +'"}}'
+
     const { response: stats } = await fetch_meta({
-      endpoint: url,
+      endpoint: `/libraries/${lib}/signatures/key_count`,
+      body: {
+        fields: ["$validator"]
+      }
       signal: controller? controller.signal: null,
     })
 
