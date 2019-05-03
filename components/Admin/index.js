@@ -432,10 +432,11 @@ class AdminView extends React.PureComponent {
       })
       const headers = { 'Authorization': `Basic ${this.state.token}` }
       const { response: signature_fields } = await fetch_meta({
-        endpoint: `/libraries/${uid}`,
+        endpoint: `/libraries/${uid}/signatures/key_count`,
         signal: controller.signal,
         headers,
       })
+
       // await fetch_meta({
       //   endpoint: '/libraries' + uid,
       //   signal: controller.signal,
@@ -444,7 +445,7 @@ class AdminView extends React.PureComponent {
 
       this.setState({
         // signature_fields: signature_fields,
-        signature_fields: signature_fields['Signature_keys'],
+        signature_fields: Object.keys(signature_fields),
         uid: uid,
       })
     } catch (e) {
