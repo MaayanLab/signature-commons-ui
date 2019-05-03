@@ -41,7 +41,7 @@ const theme = createMuiTheme({
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
 
-export default class extends React.Component {
+export default class LibraryResults extends React.Component {
   render_table = ({ result }) => {
     const sigs = result.signatures
     const schema = schemas.filter(

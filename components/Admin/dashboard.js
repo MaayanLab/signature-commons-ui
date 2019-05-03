@@ -31,10 +31,10 @@ import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
 import { styles } from '../../styles/jss/theme.js'
 
-Array.prototype.sum = function(prop) {
+function sum(arr, prop) {
   let total = 0
-  for ( let i = 0, _len = this.length; i < _len; i++ ) {
-    total += this[i][prop]
+  for ( let i = 0, _len = arr.length; i < _len; i++ ) {
+    total += arr[i][prop]
   }
   return total
 }
@@ -252,8 +252,8 @@ export const PieChart = withStyles(styles)( function({ classes, record={}, ...pr
   })
   stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
   const included = stats.slice(0, 14)
-  const included_sum = included.sum('value')
-  const other = stats.slice(14,).sum('value')
+  const included_sum = sum(included, 'value')
+  const other = sum(stats.slice(14), 'value')
   const other_sum = included_sum > other || included_sum < included.length*10 ? other: included_sum*1.5
   const others = [{ 'label': 'others', 'value': other_sum }]
   const data = other_sum >0 ? included.concat(others): included
