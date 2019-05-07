@@ -53,8 +53,10 @@ export async function get_library_resources() {
     if (resource === 'Enrichr')
       return groups
       
-    if (resource_meta[resource] === undefined)
+    if (resource_meta[resource] === undefined) {
       console.error(`Resource not found: ${resource}`)
+      return groups
+    }
 
     if (groups[resource] === undefined) {
       groups[resource] = {
