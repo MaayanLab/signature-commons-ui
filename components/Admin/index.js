@@ -19,7 +19,9 @@ import { Admin,
   AUTH_LOGIN,
   AUTH_LOGOUT,
   AUTH_ERROR,
-  AUTH_CHECK } from 'react-admin'
+  AUTH_CHECK,
+  GET_ONE,
+  UPDATE } from 'react-admin'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -28,7 +30,7 @@ import Fingerprint from '@material-ui/icons/Fingerprint'
 import LibraryBooks from '@material-ui/icons/LibraryBooks'
 
 import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta'
-import { fetchJson } from '../../util/fetch/fetch'
+import { fetchJson, patchJson } from '../../util/fetch/fetch'
 
 import loopbackProvider from './loopback-provider'
 import { BooleanField,
@@ -612,7 +614,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  httpClient(url, options = {}) {
+  httpClient(url, options = {}, type=GET_ONE) {
     if (!(options.hasOwnProperty('method'))) {
       const link = decodeURI(url).split('%2C')
       const url_params = link.filter((l)=> (l.includes('skip')||l.includes('limit')))
@@ -633,8 +635,11 @@ class AdminView extends React.PureComponent {
 
     const token = (options.token || this.state.token)
     options.headers.set('Authorization', `Basic ${token}`)
-
-    return fetchJson(url, options)
+    if(type===UPDATE){
+      return patchJson(url,options)
+    }else{
+      return fetchJson(url, options)
+    }
   }
 
   async authProvider(type, params) {

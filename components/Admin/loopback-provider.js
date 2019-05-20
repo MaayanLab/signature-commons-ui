@@ -189,7 +189,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
         resource,
         params
     )
-    return httpClient(url, options).then((response) =>
+    return httpClient(url, options, type).then((response) =>
       convertHTTPResponse(response, type, resource, params)
     )
   }

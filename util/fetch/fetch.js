@@ -20,10 +20,6 @@ export const fetchJson = async (url, options = {}) => {
   // }
   const response = await fetch(url, { ...options, headers: requestHeaders })
 
-  if (response.ok !== true) {
-    throw new Error(`Error communicating with API at ${url}`)
-  }
-
   const { status, statusText, headers } = response
   const body = await response.text()
   const json = JSON.parse(body)
@@ -43,6 +39,49 @@ export const fetchJson = async (url, options = {}) => {
         json
     )
   } else {
+    return Promise.resolve({ status, headers, body, json })
+  }
+}
+
+export const patchJson = async (url, options = {}) => {
+  const requestHeaders = (options.headers ||
+        new Headers({
+          Accept: 'application/json',
+        }))
+  if (
+    !requestHeaders.has('Content-Type') &&
+        !(options && options.body && options.body instanceof FormData)
+  ) {
+    requestHeaders.set('Content-Type', 'application/json')
+  }
+  //  We're already doing this in httpclient
+  // if (options.user && options.user.authenticated && options.user.token) {
+  //     requestHeaders.set('Authorization', options.user.token);
+  // }
+  const response = await fetch(url, { ...options, headers: requestHeaders })
+
+
+  const { status, statusText, headers } = response
+  if (status < 200 || status >= 300) {
+    const body = await response.text()
+    const json = JSON.parse(body)
+    let errormessage = null
+    if (json && json.error.message.errors) {
+      errormessage = statusText + ': ' + json.error.message.errors[0].message
+    } else if (json && json.error.message) {
+      errormessage = statusText + ': ' + json.error.message
+    } else if (json && json.error.name) {
+      errormessage = statusText + ': ' + json.error.name
+    }
+    throw new HttpError(
+        errormessage || statusText,
+        status,
+        json
+    )
+  } else {
+    // return the original body if successful
+    const body = options.body
+    const json = JSON.parse(body)
     return Promise.resolve({ status, headers, body, json })
   }
 }
