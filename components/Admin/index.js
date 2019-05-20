@@ -182,6 +182,21 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
+          <TextInput
+            key={'$validator'}
+            label={"Core Validator"}
+            source={'$validator'}
+          />
+          <TextInput
+            key={'dataset'}
+            label={"Dataset"}
+            source={'dataset'}
+          />
+          <TextInput
+            key={'dataset_type'}
+            label={"Dataset type"}
+            source={'dataset_type'}
+          />
           {Object.keys(this.props.library_fields).map(function(k) {
             if (k!=='Description') {
               return (
@@ -291,6 +306,16 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
+          <TextInput
+            key={'$validator'}
+            label={"Core Validator"}
+            source={'$validator'}
+          />
+          <TextInput
+            key={'library'}
+            label={"library"}
+            source={'library'}
+          />
           {this.state.signature_fields.map(function(k) {
             if (['distil_id', 'qc_tag', 'pert_ids', 'ctrl_ids',
               'Gene', 'Disease', 'Cell_Line', 'Tissue',
@@ -360,6 +385,11 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
+          <TextInput
+            key={'$validator'}
+            label={"Core Validator"}
+            source={'$validator'}
+          />
           {Object.keys(this.props.entity_fields).map(function(k) {
             if (k==='Synonyms') {
               return (
