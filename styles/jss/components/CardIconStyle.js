@@ -4,6 +4,7 @@ import {
   PurpleCardHeader,
   RedCardHeader,
   OrangeCardHeader,
+  GrayCardHeader,
   white,
 } from '../theme.js'
 
@@ -26,5 +27,6 @@ export const cardIconStyle = {
   PurpleCardHeader,
   RedCardHeader,
   OrangeCardHeader,
+  GrayCardHeader,
 }
 

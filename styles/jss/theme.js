@@ -4,8 +4,15 @@ const Blues = ['#2198f3', '#2f9cef']
 const Purples = ['#a03cb4', '#9d42af']
 const Reds = ['#e63c3c', '#ea4141']
 const Oranges = ['#fa9614', '#ef931c']
+const Grays = ['#9e9e9e', '#c9c9c9']
 
-const LandingColors = ['#9e9e9e', '#c9c9c9']
+// const LandingColors = ['#9e9e9e', '#c9c9c9']
+
+
+export const GrayCardHeader = {
+  background:
+    'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
+}
 
 export const GreenCardHeader = {
   background:
@@ -49,10 +56,27 @@ export const black = '#000'
 export const white = '#FFF'
 
 export const landingStyle = (theme) => ({
+  toggleContainer: {
+    height: 56,
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: `${theme.spacing.unit}px 0`,
+  },
+  centered: {
+    textAlign: 'center',
+  },
+  paddedText: {
+    verticalAlign: '20%',
+  },
   topCard: {
+    padding: '20px',
     background:
-      'linear-gradient(45deg, ' + LandingColors[0] + ', ' + LandingColors[1] + ')',
-    padding: '50px 10px 10px 10px',
+      'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
+  },
+  stretched: {
+    width: '80%',
   },
   title: {
     color: '#FFF',
@@ -67,6 +91,8 @@ export const landingStyle = (theme) => ({
     textAlign: 'center',
   },
   button: {
+    background:
+      'linear-gradient(45deg, ' + Blues[0] + ', ' + Blues[1] + ')',
     margin: theme.spacing.unit,
   },
   leftIcon: {
@@ -78,6 +104,20 @@ export const landingStyle = (theme) => ({
   iconSmall: {
     fontSize: 20,
   },
+  cardIcon: {
+    borderRadius: '3px',
+    margin: '20px 20px 5px 20px',
+    float: 'left',
+    zIndex: 100,
+  },
+  icon: {
+    float: 'right',
+    width: 75,
+    height: 75,
+    padding: 14,
+    color: white,
+  },
+  GrayCardHeader,
 })
 
 export const extraComponentStyle = (theme) => ({
@@ -94,10 +134,15 @@ export const styles = (theme) => ({
   root: {
     flexGrow: 1,
   },
+  unpadded: {
+    padding: 0,
+  },
+  paddedCard: {
+    padding: '10px',
+  },
   topCard: {
     background:
-        'linear-gradient(45deg, ' + LandingColors[0] + ', ' + LandingColors[1] + ')',
-    padding: '10px',
+        'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
   },
   progress: {
     margin: theme.spacing.unit * 2,
@@ -153,10 +198,10 @@ export const styles = (theme) => ({
     fontSize: '15px',
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    maxWidth: 120,
     margin: '-20px 8px 8px 8px',
+  },
+  textFieldWidth: {
+    maxWidth: 120,
   },
   menu: {
     width: 200,
