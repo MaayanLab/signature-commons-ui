@@ -11,6 +11,7 @@ const colorrange = {
   'Green': ['#afdbaf', '#136313'],
   'Purple': ['#d390e1', '#720b87'],
   'Blue': ['#75bef5', '#0367b4'],
+  'Gray': ['#717171', '#fefefe'],
 }
 
 const handleMouseOver = (event, datum, props) => {

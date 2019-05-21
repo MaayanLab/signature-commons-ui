@@ -186,17 +186,17 @@ class AdminView extends React.PureComponent {
           <DisabledInput source="id" />
           <TextInput
             key={'$validator'}
-            label={"Core Validator"}
+            label={'Core Validator'}
             source={'$validator'}
           />
           <TextInput
             key={'dataset'}
-            label={"Dataset"}
+            label={'Dataset'}
             source={'dataset'}
           />
           <TextInput
             key={'dataset_type'}
-            label={"Dataset type"}
+            label={'Dataset type'}
             source={'dataset_type'}
           />
           {Object.keys(this.props.library_fields).map(function(k) {
@@ -310,12 +310,12 @@ class AdminView extends React.PureComponent {
           <DisabledInput source="id" />
           <TextInput
             key={'$validator'}
-            label={"Core Validator"}
+            label={'Core Validator'}
             source={'$validator'}
           />
           <TextInput
             key={'library'}
-            label={"library"}
+            label={'library'}
             source={'library'}
           />
           {this.state.signature_fields.map(function(k) {
@@ -389,7 +389,7 @@ class AdminView extends React.PureComponent {
           <DisabledInput source="id" />
           <TextInput
             key={'$validator'}
-            label={"Core Validator"}
+            label={'Core Validator'}
             source={'$validator'}
           />
           {Object.keys(this.props.entity_fields).map(function(k) {
@@ -635,9 +635,9 @@ class AdminView extends React.PureComponent {
 
     const token = (options.token || this.state.token)
     options.headers.set('Authorization', `Basic ${token}`)
-    if(type===UPDATE){
-      return patchJson(url,options)
-    }else{
+    if (type===UPDATE) {
+      return patchJson(url, options)
+    } else {
       return fetchJson(url, options)
     }
   }
