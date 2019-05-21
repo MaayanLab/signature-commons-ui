@@ -99,11 +99,9 @@ export function objectMatch(m, o) {
     return true
   for(const k of Object.keys(m)) {
     const K = makeTemplate(k, o)
-    console.log(K,k,o)
     if (typeof m[k] === 'string') {
       const V = makeTemplate(m[k], o)
-      console.log(V,m[k],o)
-      if (K !== V)
+      if (K.match(RegExp(V))===null)
         return false
     } else if (typeof m[k] === 'object') {
       if (m[k]['ne'] !== undefined) {
