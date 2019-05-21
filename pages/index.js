@@ -34,6 +34,7 @@ async function get_metacounts() {
       },
     },
   })
+
   const meta_counts = Object.keys(meta_stats).filter((key)=>key.indexOf('.Name')>-1||
                                                       // (key.indexOf(".PubChemID")>-1 &&
                                                       //  key.indexOf("Small_Molecule")>-1) ||
@@ -99,7 +100,7 @@ const App = (props) => (
   </div>
 )
 
-App.getInitialProps = async ({ req }) => {
+App.getInitialProps = async () => {
   const LibraryNumber = await fetch_count('libraries')
   const SignatureNumber = await fetch_count('signatures')
   const EntityNumber = await fetch_count('entities')

@@ -18,11 +18,9 @@ Router.events.on('routeChangeError', () => NProgress.done())
 export default class extends App {
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {}
-
-    if (Component.getInitialProps) {
+    if (process.env.NODE_ENV === 'production' && Component.getInitialProps) {
       pageProps = await Component.getInitialProps(ctx)
     }
-
     return { pageProps }
   }
 
@@ -31,7 +29,18 @@ export default class extends App {
     this.state = {
       error: undefined,
       errorInfo: undefined,
+      pageProps: {},
     }
+  }
+
+  async componentDidMount() {
+    let { Component, pageProps } = this.props
+    if (process.env.NODE_ENV === 'development' && Object.keys(pageProps).length===0) {
+      pageProps = await Component.getInitialProps()
+    }
+    this.setState({
+      pageProps,
+    })
   }
 
   componentDidCatch(error, errorInfo) {
@@ -41,8 +50,8 @@ export default class extends App {
   }
 
   render() {
-    const { Component, pageProps } = this.props
-
+    const { Component } = this.props
+    const { pageProps } = this.state
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
         <Container className="root">
@@ -50,10 +59,14 @@ export default class extends App {
         </Container>
       )
     }
-
     return (
       <Container className="root">
-        <Component {...pageProps} />
+        { Object.keys(pageProps).length>0 ?
+        <Component {...pageProps} />:
+        <div>
+        Loading Page...
+        </div>
+        }
       </Container>
     )
   }
