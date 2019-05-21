@@ -42,8 +42,6 @@ export function Nav(props) {
 
 export default withRouter((props) => {
   const paths = props.location.pathname.split('/')
-  const title = props.location.pathname === '/' ? '': 'Signature Commons'
-  const location = props.location.pathname === '/' ? 'right': 'center'
   return (
     <header>
       <nav className="nav-extended">
@@ -55,7 +53,7 @@ export default withRouter((props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {title}
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
           </Link>
           <Link
             to="/"
@@ -64,7 +62,7 @@ export default withRouter((props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {title}
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
