@@ -5,8 +5,9 @@
   "Metabolite": "Metabolites",
   "MicroRNA": "MicroRNAs",
   "Phenotype": "Phenotypes",
-  "PMID": "PMIDs",
+  "Gene": "Genes",
   "PTM": "PTMs",
+  "Pathway": "Pathways",
   "Small_Molecule": "Small Molecules",
   "Tissue": "Tissues",
   "Virus": "Viruses"
