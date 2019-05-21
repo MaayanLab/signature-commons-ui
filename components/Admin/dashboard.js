@@ -217,12 +217,13 @@ const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props
 })
 
 export const Selections = withStyles(styles)( function({ classes, record={}, ...props }) {
+  console.log(classes.unpadded)
   return (
     <TextField
       id="charts"
       select
       label={props.name}
-      className={classes.textField}
+      className={`${classes.textField} ${classes.unpadded}`}
       value={props.value}
       SelectProps={{
         MenuProps: {
@@ -230,7 +231,6 @@ export const Selections = withStyles(styles)( function({ classes, record={}, ...
         },
       }}
       margin="normal"
-      variant="outlined"
       onChange={props.onChange}
     >
       {props.values.map(function(k) {
@@ -291,26 +291,23 @@ export const PieChart = withStyles(styles)( function({ classes, record={}, ...pr
   )
 })
 
-const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }) {
-  const { pie_stats,
-    cardheight } = props
+export const ChartCard = withStyles(cardChartStyle)( function({ classes, ...props }) {
+  const { pie_stats } = props
   return (
-    <Card className={classes.cardChart} style={{ height: cardheight }} {...props}>
-      <Grid container
-        spacing={0}
-        direction={'column'}
-        align="center"
-        justify="center">
-        <Grid item xs={12}>
-          {pie_stats===null ?
+    <Grid container
+      spacing={0}
+      direction={'column'}
+      align="center"
+      justify="center">
+      <Grid item xs={12}>
+        {pie_stats===null ?
             <div className={classes.progress}>
               <CircularProgress />
             </div>:
             <PieChart stats={pie_stats} {...props}/>
-          }
-        </Grid>
+        }
       </Grid>
-    </Card>
+    </Grid>
   )
 })
 
@@ -349,7 +346,7 @@ export const Charts = withScreenSize(withStyles(styles)( function({ classes, ...
             }
           </div> : <Typography className={classes.namebox} color="textPrimary" component="h3">{pie_name}</Typography>
         }
-        <ChartCard selected_db="Entities" cardheight={cardheight} {...propstopass}/>
+        <ChartCard cardheight={cardheight} {...propstopass}/>
         {ExtraComponent===undefined ? null: <ExtraComponent {...props}/>}
       </Card>
     </div>

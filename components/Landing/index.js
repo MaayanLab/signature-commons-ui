@@ -2,23 +2,13 @@ import React from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import NearMe from '@material-ui/icons/NearMe'
-import Pageview from '@material-ui/icons/Pageview'
-import FindReplace from '@material-ui/icons/FindReplace'
-import Public from '@material-ui/icons/Public'
 import { withStyles } from '@material-ui/core/styles'
 
-import { landingStyle,
-  extraComponentStyle } from '../../styles/jss/theme.js'
+import { landingStyle } from '../../styles/jss/theme.js'
 
 
-import { ListItemLink, TitleCard } from './Misc'
-import { Charts, Stat } from '../Admin/dashboard.js'
-import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
+import { SearchCard, StatDiv, CountsDiv, BottomLinks } from './Misc'
+import { ChartCard, Selections } from '../Admin/dashboard.js'
 
 export default withStyles(landingStyle)(class extends React.Component {
   constructor(props) {
@@ -26,88 +16,24 @@ export default withStyles(landingStyle)(class extends React.Component {
     this.state = {
       search: '',
       input: {},
+      searchType: 'metadata',
       type: 'Overlap',
     }
+    this.handleChange = this.handleChange.bind(this)
     this.searchChange = this.searchChange.bind(this)
   }
 
+  handleChange(event, searchType) {
+    if (searchType) {
+      this.setState({ searchType }, ()=> {
+        const element = document.getElementById('topcard')
+        element.scrollIntoView({ block: 'start', inline: 'center', behavior: 'smooth' })
+      })
+    }
+  }
   searchChange(e) {
     this.setState({ search: e.target.value })
   }
-
-  ResourceExtraComponent = withStyles(extraComponentStyle)(({ classes, ...props }) => {
-    if (this.props.resource_signatures===null && this.props.signatures_count==0) {
-      return (<div/>)
-    } else {
-      return (
-        <Grid container
-          spacing={24}
-          direction={'column'}
-          align={'left'}>
-          <Grid item xs={12}>
-            <Typography variant="headline" className={classes.paragraph} component="p">
-              Signature commons provides a one stop repository for signature data collected from a wide-array of resources. Information is available in both human and machine readable formats.
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <List dense>
-              <ListItem button className={classes.listItem}>
-                <ListItemIcon>
-                  <NearMe />
-                </ListItemIcon>
-                <ListItemLink href="#/Resources">
-                  <ListItemText primary="Explore our resource list" />
-                </ListItemLink>
-              </ListItem>
-              <ListItem button className={classes.listItem}>
-                <ListItemIcon>
-                  <Public />
-                </ListItemIcon>
-                <ListItemLink href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}>
-                  <ListItemText primary="Browse API" />
-                </ListItemLink>
-              </ListItem>
-            </List>
-          </Grid>
-        </Grid>
-      )
-    }
-  })
-
-  MetaExtraComponent = withStyles(extraComponentStyle)(({ classes, ...props }) => {
-    return (
-      <Grid container
-        spacing={24}
-        direction={'column'}
-        align={'left'}>
-        <Grid item xs={12}>
-          <Typography variant="headline" className={classes.paragraph} component="p">
-            Explore the database, two ways: (1) search over the metadata of the signatures using relevant terms, (2) mine for enriched genesets using your own gene list of interest.
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <List dense>
-            <ListItem button className={classes.listItem}>
-              <ListItemIcon>
-                <Pageview />
-              </ListItemIcon>
-              <ListItemLink href="#/MetadataSearch">
-                <ListItemText primary="Metadata Search" />
-              </ListItemLink>
-            </ListItem>
-            <ListItem button className={classes.listItem}>
-              <ListItemIcon>
-                <FindReplace />
-              </ListItemIcon>
-              <ListItemLink href="#/SignatureSearch">
-                <ListItemText primary="Geneset search" />
-              </ListItemLink>
-            </ListItem>
-          </List>
-        </Grid>
-      </Grid>
-    )
-  })
 
 
   render() {
@@ -117,48 +43,50 @@ export default withStyles(landingStyle)(class extends React.Component {
           spacing={24}
           alignItems={'center'}
           direction={'column'}>
-          <Grid item xs={12}>
-            <TitleCard search={this.state.search}
+          <Grid item xs={12} className={this.props.classes.stretched} id='topcard'>
+            <SearchCard search={this.state.search}
               searchChange={this.searchChange}
+              handleChange={this.handleChange}
               type={this.state.type}
+              searchType={this.state.searchType}
               submit={this.submit}
               {...this.props} />
           </Grid>
+          <Grid item xs={12} className={this.props.classes.stretched}>
+            <StatDiv {...this.props}/>
+          </Grid>
           <Grid item xs={12}>
-            <Grid container
-              spacing={24}
-              align="center"
-              justify="center">
-              <Grid item xs={12} sm={6} md={4}>
-                <Charts piefields={this.props.piefields}
-                  pie_stats={this.props.resource_signatures}
-                  pie_name={'Resources'}
-                  color={'Green'}
-                  selected_field={this.props.selected_field}
-                  handleSelectField={this.props.handleSelectField}
-                  ExtraComponent={this.ResourceExtraComponent}
-                  longcard
+            <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} color={'Blue'}/>
+            <div className={this.props.classes.centered}>
+              <Typography variant="caption">
+                Signatures per Resource
+              </Typography>
+            </div>
+          </Grid>
+          <Grid item xs={12} className={this.props.classes.stretched}>
+          </Grid>
+          <Grid item xs={12} className={this.props.classes.stretched}>
+            <CountsDiv {...this.props}/>
+          </Grid>
+          <Grid item xs={12}>
+            <div className={this.props.classes.centered}>
+              <div>
+                <span className={this.props.classes.paddedText}>Examine metadata:</span>
+                <Selections
+                  value={this.props.selected_field}
+                  values={Object.keys(this.props.piefields).sort()}
+                  onChange={(e) => this.props.handleSelectField(e)}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <Charts piefields={this.props.piefields}
-                  pie_stats={this.props.pie_stats}
-                  color={'Purple'}
-                  selected_field={this.props.selected_field}
-                  ExtraComponent={this.MetaExtraComponent}
-                  handleSelectField={this.props.handleSelectField}
-                  longcard/>
-              </Grid>
-              <Grid item xs={12} sm={12} md={4}>
-                <Stat type="Stats"
-                  fields={this.props.counting_fields}
-                  signature_counts={this.props.meta_counts}
-                  preferred_name={this.props.preferred_name}
-                  color={'Orange'}
-                  name={'Stats'}
-                  dense/>
-              </Grid>
-            </Grid>
+              </div>
+              <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
+              <Typography variant="caption">
+                Signatures per {this.props.selected_field.replace(/_/g, ' ')}
+              </Typography>
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <BottomLinks handleChange={this.handleChange}
+              {...this.props} />
           </Grid>
           <Grid item xs={12}>
           </Grid>

@@ -1,178 +1,265 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
-import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
-import withWidth from '@material-ui/core/withWidth'
 import Button from '@material-ui/core/Button'
-import CloudUpload from '@material-ui/icons/CloudUpload'
+
+import ToggleButton from '@material-ui/lab/ToggleButton'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
+
+
+import { FindReplace,
+  FileFind,
+  LibraryBooks,
+  Fingerprint,
+  Web,
+  Human,
+  TestTube,
+  ChartBubble,
+  Webhook,
+  Tilde,
+  EmoticonCryOutline,
+  DecagramOutline,
+  Dna,
+  CameraMeteringMatrix,
+  Hammer,
+  HexagonMultiple,
+  Axis,
+  NearMe,
+  Earth } from 'mdi-material-ui'
 
 import GenesetSearchBox from './GenesetSearchBox'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
 
-const textstyles = {
-  currentVesion: {
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  highlighted: {
-    color: '#FFD042',
-  },
+const IconMapper = {
+  'Phenotypes': <Human />,
+  'Small Molecules': <HexagonMultiple />,
+  'Metabolites': <ChartBubble />,
+  'MicroRNAs': <Tilde />,
+  'Diseases': <EmoticonCryOutline />,
+  'Cell Lines': <TestTube />,
+  'Tissues': <CameraMeteringMatrix />,
+  'Antibodies': <Axis />,
+  'Viruses': <DecagramOutline />,
+  'PTMs': <Hammer />,
+  'Genes': <Dna />,
+  'Pathways': <Webhook />,
 }
 
-export const CurrentVersion = withStyles(textstyles)(({ classes, ...props }) => {
-  const date = new Date()
+export const BottomLinks = ( { classes, width, ...props } ) => {
   return (
-    <div className={classes.currentVesion}>
-      Current Version: <span className={classes.highlighted}>{date.toDateString()}</span>
-      <ul>
-        <li>
-          <span className={classes.highlighted}>{props.signatures_count.toLocaleString()}</span> Signatures
-        </li>
-        <li>
-          <span className={classes.highlighted}>{props.libraries_count.toLocaleString() }</span> Libraries
-        </li>
-        <li>
-          <span className={classes.highlighted}>{props.resources_count.toLocaleString() }</span> Resources
-        </li>
-      </ul>
-    </div>
+    <Grid container
+      spacing={24}
+      alignItems={'center'}>
+      <Grid item xs={6} sm={3}>
+        <div className={classes.centered}>
+          <Grid container
+            spacing={8}
+            alignItems={'center'}
+            direction={'column'}>
+            <Grid item xs={12}>
+              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
+                onClick={(e)=>props.handleChange(e, 'metadata')}>
+                <FileFind className={classes.icon} />
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subheader">
+                  Metadata Search
+              </Typography>
+            </Grid>
+          </Grid>
+        </div>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+        <div className={classes.centered}>
+          <Grid container
+            spacing={8}
+            alignItems={'center'}
+            direction={'column'}>
+            <Grid item xs={12}>
+              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
+                onClick={(e)=>props.handleChange(e, 'signature')}>
+                <FindReplace className={classes.icon} />
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subheader">
+                  Signature Search
+              </Typography>
+            </Grid>
+          </Grid>
+        </div>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+        <div className={classes.centered}>
+          <Grid container
+            spacing={8}
+            alignItems={'center'}
+            direction={'column'}>
+            <Grid item xs={12}>
+              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href="#/Resources">
+                <NearMe className={classes.icon} />
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subheader">
+                  Browse Resources
+              </Typography>
+            </Grid>
+          </Grid>
+        </div>
+      </Grid>
+      <Grid item xs={6} sm={3}>
+        <div className={classes.centered}>
+          <Grid container
+            spacing={8}
+            alignItems={'center'}
+            direction={'column'}>
+            <Grid item xs={12}>
+              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
+                href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}>
+                <Earth className={classes.icon} />
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subheader">
+                  API
+              </Typography>
+            </Grid>
+          </Grid>
+        </div>
+      </Grid>
+    </Grid>
   )
-})
+}
 
-export const TitleCard = withWidth()(({ classes, width, ...props }) =>{
-  if (width==='sm' || width==='xs') {
-    return (
-      <Card className={classes.topCard}>
+export const CountsDiv = ({ classes, width, ...props }) => {
+  const { meta_counts, preferred_name } = props
+  return (
+    <Grid container
+      spacing={24}
+      alignItems={'center'}>
+      <Grid item xs={12}>
+        <div className={classes.centered}>
+          <Typography variant="title">
+           Search across a wide-array of biological information
+          </Typography>
+        </div>
+      </Grid>
+      {meta_counts.map((entry) => (
+        <Grid item xs={4} sm={3} key={entry}>
+          <div className={classes.centered}>
+            {IconMapper[preferred_name[entry.name]]}
+            <Typography variant="subheading">
+              {entry.counts}
+            </Typography>
+            <Typography variant="caption">
+              {preferred_name[entry.name]}
+            </Typography>
+          </div>
+        </Grid>
+      ))}
+    </Grid>
+  )
+}
+
+export const StatDiv = ({ classes, width, ...props }) => {
+  return (
+    <Grid container
+      spacing={24}
+      alignItems={'center'}>
+      <Grid item xs={12}>
         <Grid container
           spacing={24}
-          align="center"
-          justify="center">
+          alignItems={'center'}>
           <Grid item xs={12}>
-            <Grid container
-              spacing={24}
-              direction={'column'}
-              align="center"
-              justify="center">
-              <Grid item xs={12}>
-                <Typography variant="headline" className={classes.title} component="h3">
-                      SIGNATURE COMMONS
-                </Typography>
-                <Typography className={classes.subtitle} color="textSecondary">
-                      Search over half a million signatures collated from an ever-growing number of resources.
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                {props.LibraryNumber > 0 && props.SignatureNumber > 0 && props.resource_signatures!==null ?
-                    <CurrentVersion libraries_count={props.LibraryNumber}
-                      signatures_count={props.SignatureNumber}
-                      resources_count={Object.keys(props.resource_signatures).length}/>: null}
-              </Grid>
-              <Grid item xs={12}>
-                <SearchBox
-                  search={props.search}
-                  searchChange={props.searchChange}
-                />
-              </Grid>
-            </Grid>
+            <div className={classes.centered}>
+              <Typography variant="title">
+               Explore our collection of signatures extracted from an ever-growing number of resources
+              </Typography>
+            </div>
           </Grid>
-          <Grid item xs={12}>
-            <Grid item xs={12}>
-              <GenesetSearchBox
-                onSubmit={props.submit}
-                type={props.type}
-                {...props}
-              />
-            </Grid>
+          <Grid item xs={4}>
+            <div className={classes.centered}>
+              <LibraryBooks />
+              <Typography variant="h5" component="h5">
+                {props.LibraryNumber}
+              </Typography>
+              Libraries
+            </div>
           </Grid>
-          <Grid item xs={12}>
-            <Grid container
-              spacing={24}
-              align="center"
-              justify="center">
-              <Grid item xs={12}>
-                <Link
-                  to={{ pathname: '/UploadCollection' }}
-                >
-                  <Button variant="contained" color="secondary" className={classes.button}>
-                      Upload your signatures
-                    <CloudUpload className={classes.rightIcon}/>
-                  </Button>
-                </Link>
-              </Grid>
-            </Grid>
+          <Grid item xs={4}>
+            <div className={classes.centered}>
+              <Fingerprint />
+              <Typography variant="h5" component="h5">
+                {props.SignatureNumber}
+              </Typography>
+              Signatures
+            </div>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
+            <div className={classes.centered}>
+              <Web />
+              <Typography variant="h5" component="h5">
+                {Object.keys(props.resource_signatures).length}
+              </Typography>
+              Resources
+            </div>
           </Grid>
         </Grid>
-      </Card>
-    )
-  } else {
-    return (
-      <Card className={classes.topCard}>
-        <Grid container
-          spacing={24}
-          align="center"
-          justify="center">
-          <Grid item md={7}>
-            <Grid container
-              spacing={24}
-              direction={'column'}
-              align="center"
-              justify="center">
-              <Grid item xs={12}>
-                <Typography variant="headline" className={classes.title} component="h3">
-                      SIGNATURE COMMONS
-                </Typography>
-                <Typography className={classes.subtitle} color="textSecondary">
-                      Search over half a million signatures collated from an ever-growing number of resources.
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <SearchBox
-                  search={props.search}
-                  searchChange={props.searchChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                {props.LibraryNumber > 0 && props.SignatureNumber > 0 && props.resource_signatures!==null ?
-                    <CurrentVersion libraries_count={props.LibraryNumber}
-                      signatures_count={props.SignatureNumber}
-                      resources_count={Object.keys(props.resource_signatures).length}/>: null}
-              </Grid>
-              <Grid item xs={12}>
-                <Link
-                  to={{ pathname: '/UploadCollection' }}
-                >
-                  <Button variant="contained" color="secondary" className={classes.button}>
-                      Upload your signatures
-                    <CloudUpload className={classes.rightIcon}/>
-                  </Button>
-                </Link>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item md={5}>
-            <Grid item xs={12}>
-              <GenesetSearchBox
-                onSubmit={props.submit}
-                type={props.type}
-                {...props}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Card>
-    )
-  }
-})
+      </Grid>
+    </Grid>
+  )
+}
 
+export const SearchCard = ({ classes, width, ...props }) =>{
+  return (
+    <Card className={`${classes.paddedCard} ${classes.topCard}`}>
+      <Grid container
+        spacing={24}
+        direction={'column'}
+        align="center"
+        justify="center">
+        <Grid item xs={12}>
+          <div className={classes.toggleContainer}>
+            <ToggleButtonGroup value={props.searchType} exclusive onChange={props.handleChange}>
+              <ToggleButton value="metadata">
+                <FileFind />
+                Metadata Search
+              </ToggleButton>
+              <ToggleButton value="signature">
+                <FindReplace />
+                Signature Search
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
+        </Grid>
+        <Grid item xs={12}>
+          {props.searchType == 'metadata' ?
+            <SearchBox
+              id='metadata'
+              search={props.search}
+              searchChange={props.searchChange}
+            /> :
+            <GenesetSearchBox
+              id="signature"
+              onSubmit={props.submit}
+              type={props.type}
+              {...props}
+            />
+          }
+        </Grid>
+      </Grid>
+    </Card>
+  )
+}
 
 export const ListItemLink = (props) => (
   <ListItem button component="a" {...props} />
