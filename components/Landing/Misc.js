@@ -11,7 +11,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
 
-import ReactWordcloud from "react-wordcloud";
+import ReactWordcloud from 'react-wordcloud'
 
 import { FindReplace,
   FileFind,
@@ -274,27 +274,26 @@ export const ListItemLink = (props) => (
 )
 
 export const WordCloud = function({ classes, record={}, ...props }) {
-  const {stats} = props
+  const { stats } = props
   console.log(stats)
-  if(stats!==null){
+  if (stats!==null) {
     const wordstats = Object.entries(stats).map(function(entry) {
       return ({ 'text': entry[0], 'value': entry[1] })
     })
     wordstats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
     const included = wordstats.slice(0, 29)
-    
+
     return (
       <div style={{ width: 300, height: 300, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
           options={{
             colors: ['#000'],
             rotations: 3,
-            rotationsAngles: [0,90],
+            rotationsAngles: [0, 90],
           }} />
       </div>
-
     )
-  }else{
-    return( <div />)
+  } else {
+    return ( <div />)
   }
 }
