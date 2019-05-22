@@ -43,6 +43,23 @@ async function get_signature_keys() {
   return signature_keys
 }
 
+async function get_versioncounts() {
+  const { response: libraries } = await fetch_meta({
+    endpoint: '/libraries',
+  })
+  const re = new RegExp("^[0-9]{4}")
+  const version_dumps = libraries.map((lib)=>lib["meta"]["Version"].match(re)[0]).reduce((versions, version)=>{
+      if(versions[version]===undefined){
+        versions[version] = 1
+      } else {
+        versions[version]++
+      }
+      return versions
+    }, {})
+  const version_counts = Object.keys(version_dumps).map((ver)=>({name: ver, counts: version_dumps[ver]}))
+  return version_counts
+}
+
 async function get_metacounts() {
   const counting_fields = (await import('../ui-schemas/dashboard/counting_fields.json')).default
   const preferred_name = (await import('../ui-schemas/dashboard/preferred_name.json')).default
@@ -116,6 +133,7 @@ export default class Admin extends React.Component {
     const { resource_signatures } = await get_signature_counts_per_resources()
     const { piefields, pie_fields_and_stats } = await get_pie_stats(counting_fields)
     const signature_keys = await get_signature_keys()
+    const version_counts = await get_versioncounts()
     return {
       LibraryNumber,
       SignatureNumber,
@@ -129,6 +147,7 @@ export default class Admin extends React.Component {
       pie_fields_and_stats,
       resource_signatures,
       signature_keys,
+      version_counts
     }
   }
 
