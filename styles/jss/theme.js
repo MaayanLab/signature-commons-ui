@@ -67,8 +67,11 @@ export const landingStyle = (theme) => ({
   centered: {
     textAlign: 'center',
   },
-  paddedText: {
+  vertical20: {
     verticalAlign: '20%',
+  },
+  vertical55: {
+    verticalAlign: '55%',
   },
   topCard: {
     padding: '20px',
@@ -117,7 +120,29 @@ export const landingStyle = (theme) => ({
     padding: 14,
     color: white,
   },
+  textField: {
+    margin: '-20px 8px 8px 8px',
+  },
+  whiteText: {
+    color: '#FFF'
+  },
+  statCard: {
+    color: '#FFF',
+    padding: 20
+  },
+  bigIcon: {
+    width: 50,
+    height: 50,
+    float: "right",
+  },
+  basicCard: {
+    overflow: 'inherit',
+    textAlign: 'right',
+    padding: 16,
+    minHeight: 80,
+  },
   GrayCardHeader,
+  BlueCardHeader
 })
 
 export const extraComponentStyle = (theme) => ({

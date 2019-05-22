@@ -9,6 +9,7 @@ import { landingStyle } from '../../styles/jss/theme.js'
 
 import { SearchCard, StatDiv, CountsDiv, BottomLinks } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
+import { BarChart } from '../Admin/VXbar.js'
 
 export default withStyles(landingStyle)(class extends React.Component {
   constructor(props) {
@@ -56,12 +57,26 @@ export default withStyles(landingStyle)(class extends React.Component {
             <StatDiv {...this.props}/>
           </Grid>
           <Grid item xs={12}>
-            <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} color={'Blue'}/>
-            <div className={this.props.classes.centered}>
-              <Typography variant="caption">
-                Signatures per Resource
-              </Typography>
-            </div>
+            <Grid container
+            spacing={24}
+            alignItems={'center'}>
+            <Grid item xs={12} sm={6}>
+              <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} color={'Blue'}/>
+              <div className={this.props.classes.centered}>
+                <Typography variant="caption">
+                  Signatures per Resource
+                </Typography>
+              </div>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <BarChart width={300} height={320} meta_counts={this.props.version_counts} fontSize={11}/>
+              <div className={this.props.classes.centered}>
+                <Typography variant="caption">
+                  Libraries per year
+                </Typography>
+              </div>
+            </Grid>
+          </Grid>
           </Grid>
           <Grid item xs={12} className={this.props.classes.stretched}>
           </Grid>
@@ -71,7 +86,7 @@ export default withStyles(landingStyle)(class extends React.Component {
           <Grid item xs={12}>
             <div className={this.props.classes.centered}>
               <div>
-                <span className={this.props.classes.paddedText}>Examine metadata:</span>
+                <span className={this.props.classes.vertical20}>Examine metadata:</span>
                 <Selections
                   value={this.props.selected_field}
                   values={Object.keys(this.props.piefields).sort()}
