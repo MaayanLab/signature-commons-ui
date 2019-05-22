@@ -1,8 +1,6 @@
 import React from 'react'
 import Card from '@material-ui/core/Card'
 import { withStyles } from '@material-ui/core/styles'
-import BlurOn from '@material-ui/icons/BlurOn'
-import Assessment from '@material-ui/icons/Assessment'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
@@ -10,19 +8,14 @@ import ListItem from '@material-ui/core/ListItem'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableRow from '@material-ui/core/TableRow'
 import { DonutChart } from './VXpie.js'
 import { BarChart } from './VXbar.js'
 import { withScreenSize } from '@vx/responsive'
 
-import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
 import { landingStyle } from '../../styles/jss/theme.js'
 
-import { Title } from 'react-admin';
+import { Title } from 'react-admin'
 
 import { LibraryBooks,
   Fingerprint,
@@ -49,112 +42,6 @@ export const ListItemLink = (props) => (
   <ListItem button component="a" {...props} />
 )
 
-export const CardIcon = withStyles(cardIconStyle)(({ Icon, classes, type }) => (
-  <Card className={`${classes.cardIcon} ${classes[type]}`}>
-    <Icon className={classes.icon} />
-  </Card>
-))
-
-const db_vals = (db, props) => {
-  const vals = {
-    Libraries: {
-      fields: props.library_piefields,
-      stats: props.libchart,
-      selected_field: props.libselected,
-      icon: LibraryBooks,
-      num: props.LibraryNumber,
-      title: 'Library Stats',
-    },
-    Signatures: {
-      fields: props.signature_piefields,
-      stats: props.sigchart,
-      selected_field: props.sigselected,
-      icon: Fingerprint,
-      num: props.SignatureNumber,
-      title: 'Signature Stats',
-    },
-    Entities: {
-      fields: props.entity_fields,
-      stats: props.entchart,
-      selected_field: props.entselected,
-      icon: BlurOn,
-      num: props.EntityNumber,
-    },
-  }
-  return (vals[db])
-}
-
-const StatTable = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
-  const { fields, signature_counts, preferred_name } = props
-  if (signature_counts === null) {
-    return (
-      <Table className={classes.table}>
-        <TableBody>
-          {Object.keys(fields).map((key) => (
-            <TableRow key={`${key}_key`}>
-              <TableCell component="th" scope="row">
-                {key.replace('_', '')}
-              </TableCell>
-              <TableCell align="center">Loading...</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    )
-  } else {
-    return (
-      <Table className={classes.table}>
-        <TableBody>
-          {signature_counts.map((entry) => (
-            <TableRow key={`${entry.name}_entry`}>
-              <TableCell component="th" scope="row">
-                {preferred_name[entry.name]}
-              </TableCell>
-              <TableCell align="center">{entry.counts}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    )
-  }
-})
-
-export const Stat = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
-  if (props.type!=='Stats') {
-    const { icon, num } = db_vals(props.type, props)
-    return (
-      <div className={classes.main}>
-        <CardIcon Icon={icon} type={`${props.color}CardHeader`} />
-        <Card className={classes.numcard}>
-          <Typography className={classes.title} color="textSecondary">
-            {props.type}
-          </Typography>
-          <Typography variant="headline" className={classes.statnum} component="h5">
-            {num}
-          </Typography>
-        </Card>
-      </div>
-    )
-  } else {
-    const icon = Assessment
-    if (props.fields!==null) {
-      return (
-        <div className={classes.main}>
-          <CardIcon Icon={icon} type={`${props.color}CardHeader`} />
-          <Card className={classes.longcard}>
-            <Typography variant="headline" className={classes.namebox} component="h5">
-                    Overview
-            </Typography>
-            <Divider />
-            <StatTable {...props}/>
-          </Card>
-        </div>
-      )
-    } else {
-      return (<div/>)
-    }
-  }
-})
 
 export const Selections = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   return (
