@@ -47,16 +47,16 @@ async function get_versioncounts() {
   const { response: libraries } = await fetch_meta({
     endpoint: '/libraries',
   })
-  const re = new RegExp("^[0-9]{4}")
-  const version_dumps = libraries.map((lib)=>lib["meta"]["Version"].match(re)[0]).reduce((versions, version)=>{
-      if(versions[version]===undefined){
-        versions[version] = 1
-      } else {
-        versions[version]++
-      }
-      return versions
-    }, {})
-  const version_counts = Object.keys(version_dumps).map((ver)=>({name: ver, counts: version_dumps[ver]}))
+  const re = new RegExp('^[0-9]{4}')
+  const version_dumps = libraries.map((lib)=>lib['meta']['Version'].match(re)[0]).reduce((versions, version)=>{
+    if (versions[version]===undefined) {
+      versions[version] = 1
+    } else {
+      versions[version]++
+    }
+    return versions
+  }, {})
+  const version_counts = Object.keys(version_dumps).map((ver)=>({ name: ver, counts: version_dumps[ver] }))
   return version_counts
 }
 
@@ -147,7 +147,7 @@ export default class Admin extends React.Component {
       pie_fields_and_stats,
       resource_signatures,
       signature_keys,
-      version_counts
+      version_counts,
     }
   }
 

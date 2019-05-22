@@ -124,16 +124,16 @@ export const landingStyle = (theme) => ({
     margin: '-20px 8px 8px 8px',
   },
   whiteText: {
-    color: '#FFF'
+    color: '#FFF',
   },
   statCard: {
     color: '#FFF',
-    padding: 20
+    padding: 20,
   },
   bigIcon: {
     width: 50,
     height: 50,
-    float: "right",
+    float: 'right',
   },
   basicCard: {
     overflow: 'inherit',
@@ -142,7 +142,7 @@ export const landingStyle = (theme) => ({
     minHeight: 80,
   },
   GrayCardHeader,
-  BlueCardHeader
+  BlueCardHeader,
 })
 
 export const extraComponentStyle = (theme) => ({

@@ -58,25 +58,25 @@ export default withStyles(landingStyle)(class extends React.Component {
           </Grid>
           <Grid item xs={12}>
             <Grid container
-            spacing={24}
-            alignItems={'center'}>
-            <Grid item xs={12} sm={6}>
-              <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} color={'Blue'}/>
-              <div className={this.props.classes.centered}>
-                <Typography variant="caption">
+              spacing={24}
+              alignItems={'center'}>
+              <Grid item xs={12} sm={6}>
+                <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} color={'Blue'}/>
+                <div className={this.props.classes.centered}>
+                  <Typography variant="caption">
                   Signatures per Resource
-                </Typography>
-              </div>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <BarChart width={300} height={320} meta_counts={this.props.version_counts} fontSize={11}/>
-              <div className={this.props.classes.centered}>
-                <Typography variant="caption">
+                  </Typography>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <BarChart width={300} height={320} meta_counts={this.props.version_counts} fontSize={11}/>
+                <div className={this.props.classes.centered}>
+                  <Typography variant="caption">
                   Libraries per year
-                </Typography>
-              </div>
+                  </Typography>
+                </div>
+              </Grid>
             </Grid>
-          </Grid>
           </Grid>
           <Grid item xs={12} className={this.props.classes.stretched}>
           </Grid>
