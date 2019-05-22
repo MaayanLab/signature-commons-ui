@@ -1,9 +1,8 @@
 import React from 'react'
 import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/core/styles'
 import BlurOn from '@material-ui/icons/BlurOn'
-import Fingerprint from '@material-ui/icons/Fingerprint'
-import LibraryBooks from '@material-ui/icons/LibraryBooks'
 import Whatshot from '@material-ui/icons/Whatshot'
 import DonutSmall from '@material-ui/icons/DonutSmall'
 import Assessment from '@material-ui/icons/Assessment'
@@ -22,14 +21,17 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import { DonutChart } from './VXpie.js'
+import { BarChart } from './VXbar.js'
 import { withScreenSize } from '@vx/responsive'
-
-
-// import DonutChart from "./Donut.js";
 
 import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
-import { styles } from '../../styles/jss/theme.js'
+import { landingStyle } from '../../styles/jss/theme.js'
+
+import { LibraryBooks,
+  Fingerprint,
+  Web,
+  Blur } from 'mdi-material-ui'
 
 Array.prototype.sum = function(prop) {
   let total = 0
@@ -37,6 +39,13 @@ Array.prototype.sum = function(prop) {
     total += this[i][prop]
   }
   return total
+}
+
+const icon_mapper = {
+  Libraries: LibraryBooks,
+  Signatures: Fingerprint,
+  Entities: Blur,
+  Resources: Web
 }
 
 
@@ -79,7 +88,7 @@ const db_vals = (db, props) => {
   return (vals[db])
 }
 
-const StatTable = withStyles(styles)( function({ classes, record={}, ...props }) {
+const StatTable = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   const { fields, signature_counts, preferred_name } = props
   if (signature_counts === null) {
     return (
@@ -114,7 +123,7 @@ const StatTable = withStyles(styles)( function({ classes, record={}, ...props })
   }
 })
 
-export const Stat = withStyles(styles)( function({ classes, record={}, ...props }) {
+export const Stat = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   if (props.type!=='Stats') {
     const { icon, num } = db_vals(props.type, props)
     return (
@@ -151,7 +160,7 @@ export const Stat = withStyles(styles)( function({ classes, record={}, ...props 
   }
 })
 
-const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props }) {
+const PopularGenes = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   return (
     <div className={classes.main}>
       <CardIcon Icon={Whatshot} type={`${props.color}CardHeader`} />
@@ -216,8 +225,7 @@ const PopularGenes = withStyles(styles)( function({ classes, record={}, ...props
   )
 })
 
-export const Selections = withStyles(styles)( function({ classes, record={}, ...props }) {
-  console.log(classes.unpadded)
+export const Selections = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   return (
     <TextField
       id="charts"
@@ -246,7 +254,7 @@ export const Selections = withStyles(styles)( function({ classes, record={}, ...
   )
 })
 
-export const PieChart = withStyles(styles)( function({ classes, record={}, ...props }) {
+export const PieChart = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   const stats = Object.entries(props.stats).map(function(entry) {
     return ({ 'label': entry[0], 'value': entry[1] })
   })
@@ -311,188 +319,125 @@ export const ChartCard = withStyles(cardChartStyle)( function({ classes, ...prop
   )
 })
 
-export const Charts = withScreenSize(withStyles(styles)( function({ classes, ...props }) {
-  const { piefields,
-    pie_stats,
-    pie_name,
-    selected_field,
-    longcard,
-    color,
-    ExtraComponent } = props
-  const card_class = longcard ? `${classes.longcard}` : `${classes.card}`
-  const cardheight = (props.screenWidth>1490 || props.screenWidth<600) ? 300:225
-  const propstopass = {
-    piefields,
-    pie_stats,
-    cardheight,
-    selected_field,
-    color,
-  }
-  return (
-    <div className={classes.main}>
-      <CardIcon Icon={DonutSmall} type={`${color}CardHeader`} />
-      <Card className={card_class}>
-        {pie_name === undefined ?
-          <div>
-            {piefields===null ?
-              <div className={classes.ProgressContainer}>
-                <LinearProgress/>
+const PieChartGroup = withScreenSize(function({ classes, record={}, ...props }) {
+  const { name, selected_field, piefields } = props
+  const pie_stats = name === "Resource" ? props.resource_signatures: props.pie_stats
+  const cardheight = props.screenWidth > 900 || props.screenWidth < 600 ? 300 : 250
+  return(
+    <Card className={classes.basicCard}>
+      <Grid container
+          spacing={24}
+          direction={'column'}>
+          <Grid item xs={12}>
+            {name !== "Resource" ?
+              <div>
+                <span className={classes.vertical20}>Signatures per </span>
+                <Selections
+                  value={ selected_field}
+                  values={Object.keys( piefields).sort()}
+                  onChange={(e) =>  props.handleSelectField(e)}
+                />
               </div>:
-              <Selections
-                value={selected_field === null ? piefields[0]: selected_field}
-                values={Object.keys(piefields).sort()}
-                onChange={(e) => props.handleSelectField(e)}
-              />
+              <span className={classes.vertical55}>Signatures per {name}</span>
             }
-          </div> : <Typography className={classes.namebox} color="textPrimary" component="h3">{pie_name}</Typography>
-        }
-        <ChartCard cardheight={cardheight} {...propstopass}/>
-        {ExtraComponent===undefined ? null: <ExtraComponent {...props}/>}
-      </Card>
-    </div>
-  )
-}))
-
-// const ChartCard = withStyles(cardChartStyle)( function({ classes, record={}, ...props }){
-//   const {fields, stats, selected_field, title} = db_vals(props.selected_db, props)
-//   const display_title = fields === null? <div/> : title.replace(/_/g, " ")
-//   return(
-//     <Card className={classes.cardChart}>
-//       <Grid container
-//         spacing={0}
-//         direction={"column"}
-//         align="center"
-//         justify="center">
-//         <Grid item xs={12}>
-//           {selected_field.replace(/_/g, " ")}
-//         </Grid>
-//         <Grid item xs={12}>
-//           {stats===null ?
-//             <div className={classes.progress}>
-//               <CircularProgress />
-//             </div>:
-//             <PieChart stats={stats} {...props}/>
-//           }
-//         </Grid>
-//       </Grid>
-//     </Card>
-//   )
-// })
-
-// const Charts = withStyles(styles)( function({ classes, record={}, ...props }){
-
-//   const {fields, stats, selected_field} = db_vals(props.selected_db, props)
-
-//   return(
-//     <div className={classes.main}>
-//       <CardIcon Icon={DonutSmall} type={`${props.color}CardHeader`} />
-//       <Card className={`${classes.card}`}>
-//         {fields===null ?
-//           <div className={classes.ProgressContainer}>
-//             <LinearProgress/>
-//           </div>:
-//           <Selections
-//             value={selected_field === null ? fields[0]: selected_field}
-//             values={fields.sort()}
-//             onChange={e => props.handleSelectField(e, props.selected_db)}
-//           />
-//         }
-//         <ChartCard {...props}/>
-//       </Card>
-//     </div>
-//   )
-// })
-
-export const CurrentVersion = withStyles(styles)(({ classes, ...props }) => {
-  const date = new Date()
-  return (
-    <div className={classes.currentVesion}>
-      Current Version: <span className={classes.highlighted}>{date.toDateString()}</span>
-      <ul>
-        <li>
-          <span className={classes.highlighted}>{props.signatures_count.toLocaleString()}</span> Signatures
-        </li>
-        <li>
-          <span className={classes.highlighted}>{props.libraries_count.toLocaleString() }</span> Libraries
-        </li>
-        <li>
-          <span className={classes.highlighted}>{props.resources_count.toLocaleString() }</span> Resources
-        </li>
-      </ul>
-    </div>
-  )
-})
-
-const TopCard = withStyles(styles)( function({ classes, record={}, ...props }) {
-  return (
-    <Card className={classes.topCard}>
-      <Grid container spacing={24}>
-        <Grid item xs={12} md={9} lg={8}>
-          <Typography variant="headline" className={classes.bigtitle} component="h3">
-            SIGNATURE COMMONS DASHBOARD
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={3} lg={4}>
-          {props.LibraryNumber > 0 && props.SignatureNumber > 0 && props.resource_signatures!==null ?
-            <CurrentVersion libraries_count={props.LibraryNumber}
-              signatures_count={props.SignatureNumber}
-              resources_count={Object.keys(props.resource_signatures).length}/>: null}
-        </Grid>
+            <Divider />
+          </Grid>
+          <Grid item xs={12}>
+            <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} selected_field={selected_field}/>
+          </Grid>
       </Grid>
     </Card>
   )
 })
 
-export const Dashboard = withStyles(styles)( function({ classes, record={}, ...props }) {
+const BarChartGroup = withScreenSize(function({ classes, record={}, ...props }) {
+  const {bar_counts, name} = props
+  const width = props.screenWidth > 900 ? 1000 : 700
+  const height =  props.screenWidth > 900 ? 400 : 300
+  const fontSize =  props.screenWidth > 900 ? 11 : 8
+  return(
+    <Card className={classes.basicCard}>
+      <span className={classes.vertical55}>{name}</span>
+      <Divider />
+      <BarChart width={width} height={height} meta_counts={bar_counts} fontSize={fontSize}/>
+    </Card>
+  )
+})
+
+const StatCard = function({ classes, record={}, ...props }) {
+  const {stat_type, counts, new_entries} = props
+  const Icon = icon_mapper[stat_type]
+  return(
+    <Card className={`${classes.statCard} ${classes.GrayCardHeader}`}>
+      <Grid container spacing={24}>
+        <Grid item xs={7}>
+          <Typography variant="title" className={classes.whiteText}>
+            {counts}
+          </Typography>
+          <Typography variant="subheader">
+              {stat_type}
+          </Typography>
+          <Typography variant="button" className={classes.whiteText}>
+              ({new_entries} new)
+          </Typography>
+        </Grid>
+        <Grid item xs={5}>
+          <Icon className={classes.bigIcon} />
+        </Grid>
+      </Grid>
+    </Card>
+  )
+}
+
+const StatRow = function({ classes, record={}, ...props }) {
+  const new_entries = 0
+  return(
+    <Grid container spacing={24}>
+      <Grid item xs={6} md={3}>
+        <StatCard counts={props.LibraryNumber} stat_type="Libraries" classes={classes} new_entries={props.LibraryNumber}/>
+      </Grid>
+      <Grid item xs={6} md={3}>
+        <StatCard counts={props.SignatureNumber} stat_type="Signatures" classes={classes} new_entries={props.SignatureNumber}/>
+      </Grid>
+      <Grid item xs={6} md={3}>
+        <StatCard counts={props.EntityNumber} stat_type="Entities" classes={classes} new_entries={props.EntityNumber}/>
+      </Grid>
+      <Grid item xs={6} md={3}>
+        <StatCard counts={Object.keys(props.resource_signatures).length} stat_type="Resources" classes={classes} new_entries={Object.keys(props.resource_signatures).length}/>
+      </Grid>
+    </Grid>
+  )
+}
+
+export const Dashboard = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   return (
     <div className={classes.root}>
       <Grid container spacing={24}>
         <Grid item xs={12}>
-          <Grid container spacing={24} direction={'column'}>
-            <Grid item xs={12}>
-              <TopCard {...props}/>
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={24}>
-                <Grid item xs={12} sm={6}>
-                  <Charts piefields={props.piefields}
-                    pie_stats={props.resource_signatures}
-                    pie_name={'Resources'}
-                    color={'Green'}
-                    selected_field={props.selected_field}
-                    handleSelectField={props.handleSelectField}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Charts piefields={props.piefields}
-                    pie_stats={props.pie_stats}
-                    color={'Purple'}
-                    selected_field={props.selected_field}
-                    handleSelectField={props.handleSelectField}/>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+          <StatRow classes={classes} {...props}/>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <PieChartGroup name={"Resource"}
+            classes={classes}
+            {...props}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <PieChartGroup name={props.selected_field}
+            classes={classes}
+            {...props}/>
         </Grid>
         <Grid item xs={12}>
-          <Grid container spacing={24} direction={'column'}>
-            <Grid item xs={12}>
-              <Grid container spacing={24}>
-                <Grid item md={6} xs={12}>
-                  <Stat type="Stats"
-                    fields={props.counting_fields}
-                    signature_counts={props.meta_counts}
-                    preferred_name={props.preferred_name}
-                    color={'Orange'}
-                    name={'Stats'}
-                    dense/>
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <PopularGenes longcard color="Red" {...props} />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+          <BarChartGroup classes={classes}
+            name={"Unique terms per field"}
+            bar_counts={props.meta_counts}
+            {...props}/>
+        </Grid>
+        <Grid item xs={12}>
+          <BarChartGroup classes={classes}
+            name={"Libraries per year"}
+            bar_counts={props.version_counts}
+            {...props}/>
         </Grid>
       </Grid>
     </div>

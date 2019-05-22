@@ -48,6 +48,7 @@ import { MyLogin } from './Login.js'
 class AdminView extends React.PureComponent {
   constructor(props) {
     super(props)
+    const token = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_CREDS: ''
     this.state = {
       signature_fields: null,
       pie_controller: null,
@@ -57,7 +58,7 @@ class AdminView extends React.PureComponent {
       status: null,
       controller: null,
       general_controller: null,
-      token: null,
+      token: token,
       uid: '308de661-d3e2-11e8-8fe6-787b8ad942f3',
       hash: window.location.hash,
     }
@@ -596,13 +597,8 @@ class AdminView extends React.PureComponent {
 
   componentDidMount() {
     window.addEventListener('hashchange', this.hashChangeHandler)
-    if (this.state.token && this.state.general_controller) {
-      // this.fetch_count("libraries")
-      // this.fetch_count("entities")
-      // this.fetch_count("signatures")
-      this.fetch_sigfields()
-      // this.fetch_metacounts()
-    }
+    this.fetch_stats(this.state.selected_field)
+    this.fetch_sigfields()
   }
 
   componentWillUnmount() {
