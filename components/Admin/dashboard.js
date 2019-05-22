@@ -22,6 +22,8 @@ import { cardIconStyle } from '../../styles/jss/components/CardIconStyle.js'
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
 import { landingStyle } from '../../styles/jss/theme.js'
 
+import { Title } from 'react-admin';
+
 import { LibraryBooks,
   Fingerprint,
   Web,
@@ -340,6 +342,7 @@ const StatRow = function({ classes, record={}, ...props }) {
 export const Dashboard = withStyles(landingStyle)( function({ classes, record={}, ...props }) {
   return (
     <div className={classes.root}>
+      <Title title="Signature Commons Dashboard" />
       <Grid container spacing={24}>
         <Grid item xs={12}>
           <StatRow classes={classes} {...props}/>

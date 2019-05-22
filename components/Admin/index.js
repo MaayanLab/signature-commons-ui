@@ -739,7 +739,7 @@ class AdminView extends React.PureComponent {
 
   render() {
     return (
-      <Admin title="Signature Commons Admin Page"
+      <Admin title={'Signature Commons Dashboard'}
         dataProvider={this.dataProvider}
         authProvider={this.authProvider}
         dashboard={(props) => <Dashboard
