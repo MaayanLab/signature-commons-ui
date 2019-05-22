@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { landingStyle } from '../../styles/jss/theme.js'
 
 
-import { SearchCard, StatDiv, CountsDiv, BottomLinks } from './Misc'
+import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
 import { BarChart } from '../Admin/VXbar.js'
 
@@ -56,7 +56,7 @@ export default withStyles(landingStyle)(class extends React.Component {
           <Grid item xs={12} className={this.props.classes.stretched}>
             <StatDiv {...this.props}/>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={this.props.classes.stretched}>
             <Grid container
               spacing={24}
               alignItems={'center'}>
@@ -83,21 +83,37 @@ export default withStyles(landingStyle)(class extends React.Component {
           <Grid item xs={12} className={this.props.classes.stretched}>
             <CountsDiv {...this.props}/>
           </Grid>
-          <Grid item xs={12}>
-            <div className={this.props.classes.centered}>
-              <div>
-                <span className={this.props.classes.vertical20}>Examine metadata:</span>
-                <Selections
-                  value={this.props.selected_field}
-                  values={Object.keys(this.props.piefields).sort()}
-                  onChange={(e) => this.props.handleSelectField(e)}
-                />
-              </div>
-              <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
-              <Typography variant="caption">
-                Signatures per {this.props.selected_field.replace(/_/g, ' ')}
-              </Typography>
-            </div>
+          <Grid item xs={12} className={this.props.classes.stretched}>
+            <Grid container
+              spacing={24}
+              alignItems={'center'}>
+              <Grid item xs={12}>
+                <div className={this.props.classes.centered}>
+                  <span className={this.props.classes.vertical20}>Examine metadata:</span>
+                  <Selections
+                    value={this.props.selected_field}
+                    values={Object.keys(this.props.piefields).sort()}
+                    onChange={(e) => this.props.handleSelectField(e)}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <div className={this.props.classes.centered}>
+                  <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
+                  <Typography variant="caption">
+                    Signatures per {this.props.selected_field.replace(/_/g, ' ')}
+                  </Typography>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <div className={this.props.classes.centered}>
+                  <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
+                  <Typography variant="caption">
+                    Top {this.props.selected_field.replace(/_/g, ' ')} terms
+                  </Typography>
+                </div>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item xs={12}>
             <BottomLinks handleChange={this.handleChange}

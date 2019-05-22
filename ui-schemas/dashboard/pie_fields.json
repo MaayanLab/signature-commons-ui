@@ -1,12 +1,11 @@
 {
-  "Assay": "Libraries",
-  "Readout": "Libraries",
+  "Assay": "Signatures",
+  "Readout": "Signatures",
   "Organism": "Signatures",
   "Perturbation_Type": "Signatures",
   "Small_Molecule": "Signatures",
   "Cell_Line": "Signatures",
   "Tissue": "Signatures",
-  "Phenotype": "Signatures",
   "Disease": "Signatures",
   "Program": "Signatures"
 }
