@@ -281,7 +281,6 @@ export const WordCloud = function({ classes, record={}, ...props }) {
       return ({ 'text': entry[0], 'value': entry[1] })
     })
     wordstats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-    const included = wordstats.slice(0, 29)
 
     return (
       <div style={{ width: 300, height: 300, display: 'block', margin: 'auto' }}>
