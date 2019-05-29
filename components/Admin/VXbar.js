@@ -3,8 +3,8 @@ import { Bar } from '@vx/shape'
 import { Group } from '@vx/group'
 import { scaleBand, scaleLinear } from '@vx/scale'
 import { AxisBottom } from '@vx/axis'
-import { withTooltip, TooltipWithBounds } from '@vx/tooltip'
-import { localPoint } from '@vx/event'
+import Tippy from '@tippy.js/react'
+
 
 // accessors
 const x = (d) => d.name.replace('_', ' ')
@@ -13,25 +13,8 @@ const y = (d) => +d.counts
 const black = '#000'
 const white = '#fff'
 
-const handleMouseOver = (event, datum, props) => {
-  const coords = localPoint(event.target.ownerSVGElement, event)
 
-  props.showTooltip({
-    tooltipLeft: coords.x,
-    tooltipTop: coords.y,
-    tooltipData: datum,
-  })
-}
-
-
-export const BarChart = withTooltip(({ width, height, meta_counts, fontSize, ...props }) => {
-  const {
-    tooltipData,
-    tooltipLeft,
-    tooltipTop,
-    tooltipOpen,
-    hideTooltip,
-  } = props
+export const BarChart = ({ width, height, meta_counts, fontSize, ...props }) => {
   // bounds
   const xMax = width
   const yMax = height - 120
@@ -48,6 +31,8 @@ export const BarChart = withTooltip(({ width, height, meta_counts, fontSize, ...
     rangeRound: [yMax, 0],
     domain: [0, Math.max(...meta_counts.map(y))],
   })
+  console.log('meta_counts')
+  console.log(meta_counts)
   return (
     <div>
       <svg width={width} height={height} style={{ display: 'block', margin: 'auto' }}>
@@ -60,16 +45,26 @@ export const BarChart = withTooltip(({ width, height, meta_counts, fontSize, ...
             const barX = xScale(meta_field)
             const barY = yMax - barHeight
             return (
-              <Bar
-                key={`bar-${meta_field}`}
-                x={barX}
-                y={barY}
-                width={barWidth}
-                height={barHeight}
-                fill="#75bef5"
-                onMouseMove={(e) => handleMouseOver(e, meta_counts[i], props)}
-                onMouseOut={hideTooltip}
-              />
+              <Tippy
+                key={`tip-${meta_field}`}
+                content={`${x(d)} (${y(d)})`}
+                arrow={true}
+                theme="bootstrap"
+                distance={7}
+                hideOnClick={false}
+                animation={'scale'}
+              >
+                <g>
+                  <Bar
+                    key={`bar-${meta_field}`}
+                    x={barX}
+                    y={barY}
+                    width={barWidth}
+                    height={barHeight}
+                    fill="#75bef5"
+                  />
+                </g>
+              </Tippy>
             )
           })}
         </Group>
@@ -86,17 +81,6 @@ export const BarChart = withTooltip(({ width, height, meta_counts, fontSize, ...
           })}
         />
       </svg>
-      {tooltipOpen && (
-        <TooltipWithBounds
-          // set this to random so it correctly updates with parent bounds
-          key={Math.random()}
-          top={tooltipTop}
-          left={tooltipLeft}
-          style={{ fontSize: '10px' }}
-        >
-          <strong>{tooltipData.name.replace('_', ' ')}</strong>: {tooltipData.counts}
-        </TooltipWithBounds>
-      )}
     </div>
   )
-})
+}

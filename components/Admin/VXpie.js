@@ -2,9 +2,8 @@ import React from 'react'
 import { Pie } from '@vx/shape'
 import { Group } from '@vx/group'
 import { scaleLinear, scaleOrdinal } from '@vx/scale'
-import { withTooltip, TooltipWithBounds } from '@vx/tooltip'
 import { withScreenSize } from '@vx/responsive'
-import { localPoint } from '@vx/event'
+import Tippy from '@tippy.js/react'
 
 
 const colorrange = {
@@ -14,31 +13,16 @@ const colorrange = {
   'Gray': ['#717171', '#fefefe'],
 }
 
-const handleMouseOver = (event, datum, props) => {
-  const coords = localPoint(event.target.ownerSVGElement, event)
-  props.showTooltip({
-    tooltipLeft: coords.x,
-    tooltipTop: coords.y,
-    tooltipData: datum,
-  })
-}
-
 const black = '#000000'
-export const DonutChart = withScreenSize(withTooltip(function({ ...props }) {
+export const DonutChart = withScreenSize(function({ ...props }) {
   // data format {Tissue: Value}
   const {
-    tooltipData,
-    tooltipLeft,
-    tooltipTop,
-    tooltipOpen,
-    hideTooltip,
     width,
     height,
     margin,
     data,
     radius,
     fontSize,
-    true_values,
   } = props
 
   const dataLabels = data.map(function(d) {
@@ -85,42 +69,40 @@ export const DonutChart = withScreenSize(withTooltip(function({ ...props }) {
                 const hasSpaceForLabel = endAngle - startAngle >= 0.35
                 const angle = startAngle + (endAngle - startAngle)/2
                 return (
-                  <g key={`browser-${arc.data.label}-${i}`}>
-                    <path d={pie.path(arc)}
-                      fill={ordinalColorScale(dataLabels[i])}
-                      onMouseMove={(e) => handleMouseOver(e, true_values[i], props)}
-                      onMouseOut={hideTooltip}/>
-                    {hasSpaceForLabel && (
-                      <text
-                        fill={black}
-                        x={centroidX}
-                        y={centroidY}
-                        dy=".33em"
-                        fontSize={fontSize}
-                        textAnchor="middle"
-                        angle={angle}
-                      >
-                        {arc.data.label}
-                      </text>
-                    )}
-                  </g>
+                  <Tippy
+                    key={`tip-${arc.data.label}-${i}`}
+                    content={`${data[i].label} (${data[i].value})`}
+                    arrow={true}
+                    theme="bootstrap"
+                    distance={7}
+                    hideOnClick={false}
+                    followCursor={'initial'}
+                    animation={'scale'}
+                  >
+                    <g key={`browser-${arc.data.label}-${i}`}>
+                      <path d={pie.path(arc)}
+                        fill={ordinalColorScale(dataLabels[i])}/>
+                      {hasSpaceForLabel && (
+                        <text
+                          fill={black}
+                          x={centroidX}
+                          y={centroidY}
+                          dy=".33em"
+                          fontSize={fontSize}
+                          textAnchor="middle"
+                          angle={angle}
+                        >
+                          {arc.data.label}
+                        </text>
+                      )}
+                    </g>
+                  </Tippy>
                 )
               })
             }}
           </Pie>
         </Group>
       </svg>
-      {tooltipOpen && (
-        <TooltipWithBounds
-          // set this to random so it correctly updates with parent bounds
-          key={Math.random()}
-          top={tooltipTop}
-          left={tooltipLeft}
-          style={{ fontSize: '10px' }}
-        >
-          <strong>{tooltipData.label}</strong>: {tooltipData.value}
-        </TooltipWithBounds>
-      )}
     </div>
   )
-}))
+})
