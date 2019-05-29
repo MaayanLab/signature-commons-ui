@@ -9,6 +9,7 @@
     "@material-ui/icons": "^1.1.1",
     "@material-ui/lab": "^3.0.0-alpha.30",
     "@mdi/font": "^3.6.95",
+    "@tippy.js/react": "^2.2.0",
     "@vx/vx": "0.0.186",
     "@zeit/next-sass": "^1.0.1",
     "abort-controller": "^1.1.0",
