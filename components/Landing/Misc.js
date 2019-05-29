@@ -162,7 +162,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
         </div>
       </Grid>
       {meta_counts.map((entry) => (
-        <Grid item xs={4} sm={3} key={entry}>
+        <Grid item xs={4} sm={3} key={entry.name}>
           <div className={classes.centered}>
             {IconMapper[preferred_name[entry.name]]}
             <Typography variant="subheading">
