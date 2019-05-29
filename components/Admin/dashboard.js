@@ -93,12 +93,11 @@ export const PieChart = withStyles(landingStyle)( function({ classes, record={},
   let width = 220
   let height = 220
   let radius= 150
-  let fontSize = 7
+  const fontSize = 7
   if (props.cardheight ==300) {
     radius=200
     width=300
     height=300
-    fontSize=10
   }
   return (
     <div><DonutChart width={width}
