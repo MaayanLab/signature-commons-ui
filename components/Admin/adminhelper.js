@@ -99,6 +99,20 @@ export const TagsField = withStyles(styles)(function({ classes, record={}, ...pr
 })
 TagsField.defaultProps = { addLabel: true }
 
+export const NameAccField = withStyles(styles)(function({ classes, record={}, ...props }) {
+  const name = record.meta[props.field].Name
+  const acc = record.meta[props.field].Accession
+  const val = `${acc} (${name})`
+  return (
+    <Chip
+      key={val}
+      label={val}
+      className={classes.chip}
+    />
+  )
+})
+NameAccField.defaultProps = { addLabel: true }
+
 export const BooleanField = withStyles(styles)( function({ classes, record={}, ...props }) {
   if (record.meta[props.field] === props.TrueValue) {
     return (<CheckIcon className={classes.icon}/>)
