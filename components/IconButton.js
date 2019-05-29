@@ -21,7 +21,6 @@ const IconButton = (props) => (
     .icon-btn > div > img {
       position: relative;
       top: 50%;
-      transform: translateY(-50%); 
       height: 24px;
       max-width: 48px;
     }
@@ -47,9 +46,7 @@ const IconButton = (props) => (
       className="left icon-btn waves-effect waves-light"
       onClick={props.onClick}
     >
-      <div
-        className="btn btn-floating waves-effect waves-light grey lighten-3 center valign-wrapper"
-      >
+      <div>
         {props.img !== undefined ? (
           <img
             alt={props.alt}
