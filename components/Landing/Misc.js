@@ -275,7 +275,6 @@ export const ListItemLink = (props) => (
 
 export const WordCloud = function({ classes, record={}, ...props }) {
   const { stats } = props
-  console.log(stats)
   if (stats!==null) {
     const wordstats = Object.entries(stats).map(function(entry) {
       return ({ 'text': entry[0], 'value': entry[1] })

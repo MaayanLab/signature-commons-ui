@@ -31,8 +31,6 @@ export const BarChart = ({ width, height, meta_counts, fontSize, ...props }) => 
     rangeRound: [yMax, 0],
     domain: [0, Math.max(...meta_counts.map(y))],
   })
-  console.log('meta_counts')
-  console.log(meta_counts)
   return (
     <div>
       <svg width={width} height={height} style={{ display: 'block', margin: 'auto' }}>
