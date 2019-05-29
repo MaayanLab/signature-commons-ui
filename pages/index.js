@@ -99,6 +99,28 @@ async function get_versioncounts() {
   return version_counts
 }
 
+async function get_signature_keys() {
+  const { response: libraries } = await fetch_meta({
+    endpoint: '/libraries',
+  })
+  const signature_keys_promises = libraries.map(async (lib) =>{
+    const libid = lib.id
+    const { response: fields } = await fetch_meta({
+      endpoint: `/libraries/${libid}/signatures/key_count`,
+    })
+    return {
+      id: libid,
+      keys: Object.keys(fields),
+    }
+  })
+  const sigkeys = await Promise.all(signature_keys_promises)
+  const signature_keys = sigkeys.reduce((keys, sig) => {
+    keys[sig.id] = sig.keys
+    return keys
+  }, {})
+  return signature_keys
+}
+
 const App = (props) => (
   <div className="root">
     <Router>
@@ -124,6 +146,7 @@ App.getInitialProps = async () => {
   const { meta_counts, counting_fields, preferred_name } = await get_metacounts()
   const { resource_signatures } = await get_signature_counts_per_resources()
   const { piefields, pie_fields_and_stats } = await get_pie_stats(counting_fields)
+  const signature_keys = await get_signature_keys()
   const version_counts = await get_versioncounts()
   return {
     LibraryNumber,
@@ -136,6 +159,7 @@ App.getInitialProps = async () => {
     pie_fields_and_stats,
     piefields,
     version_counts,
+    signature_keys
   }
 }
 

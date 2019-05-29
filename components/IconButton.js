@@ -29,7 +29,7 @@ const IconButton = (props) => (
     }
     .icon-btn > .counter {
       position: absolute;
-      top: -0.3em;
+      top: 0.3em;
       font-size: 75%;
       left: 5em;
       line-height: 2.2em;

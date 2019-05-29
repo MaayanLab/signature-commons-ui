@@ -105,7 +105,7 @@ export function objectMatch(m, o) {
         return false
     } else if (typeof m[k] === 'object') {
       if (m[k]['ne'] !== undefined) {
-        if ((m[k]['ne'] === null && K !== undefined) || K === m[k]['ne'])
+        if (m[k]['ne'] === K)
           return false
       } else {
         throw new Error(`'Operation not recognized ${JSON.stringify(m[k])} ${JSON.stringify(m)} ${JSON.stringify(o)}`)
@@ -127,7 +127,8 @@ export function Label({item, highlight, visibility}) {
   return (
     <div>
       {Object.keys(schema.properties).filter(
-        (prop) => schema.properties[prop].visibility >= visibility && objectMatch(schema.properties[prop].condition, item)
+        (prop) => {
+          return (schema.properties[prop].visibility >= visibility && objectMatch(schema.properties[prop].condition, item))}
       ).map((label) => (
         <span key={label}>
           {labels[schema.properties[label].type]({

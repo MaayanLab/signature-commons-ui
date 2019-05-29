@@ -42,14 +42,38 @@ const theme = createMuiTheme({
 theme.shadows[4] = theme.shadows[0]
 
 export default class extends React.Component {
+
+  check_column = ({schema, prop, lib}) => {
+    if (schema.properties[prop].text===undefined){
+      console.log(prop)
+      return false
+    }
+    else{
+      const sig_keys = this.props.signature_keys[lib]
+      const col_src = schema.properties[prop].text.replace(/meta\./g, '').replace(/meta\[\'/g, '').replace(/']/g, '').replace(/\${/g, '').replace(/}/g, '')
+      if (schema.properties[prop].columnType === "number"){
+        return true
+      }else if(sig_keys.indexOf(col_src)>-1){
+        return true
+      }else{
+        const substring = sig_keys.filter((k)=>schema.properties[prop].text.indexOf(k)>-1)
+        if (substring.length > 0){
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   render_table = ({ result }) => {
     const sigs = result.signatures
     const schema = schemas.filter(
         (schema) => objectMatch(schema.match, sigs[0])
     )[0]
+    const lib = sigs[0].library.id
     const cols = Object.keys(schema.properties).filter(
-        (prop) => {
-          if (schema.properties[prop].type === 'text') {
+        (prop) => { 
+          if (this.check_column({schema, prop, lib})) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
                 return true
@@ -127,7 +151,7 @@ export default class extends React.Component {
         }
       })
     )
-
+    console.log(options)
     return (
       <MuiThemeProvider theme={theme}>
         <MUIDataTable

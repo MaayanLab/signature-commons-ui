@@ -128,6 +128,7 @@ export default class Home extends React.PureComponent {
     <SignatureSearch
       cart={this.state.cart}
       updateCart={this.updateCart}
+      signature_keys={this.props.signature_keys}
       {...props}
     />
   )

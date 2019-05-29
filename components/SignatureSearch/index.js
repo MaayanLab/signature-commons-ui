@@ -137,6 +137,7 @@ export default class SignatureSearch extends React.Component {
             (lib) => this.state.library_signatures[lib]
         )
       }
+      signature_keys={this.props.signature_keys}
       {...props}
     />
   )
