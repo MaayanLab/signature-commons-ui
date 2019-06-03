@@ -1,0 +1,11 @@
+{
+  "Assay": "Signatures",
+  "Readout": "Signatures",
+  "Organism": "Signatures",
+  "Perturbation_Type": "Signatures",
+  "Small_Molecule": "Signatures",
+  "Cell_Line": "Signatures",
+  "Tissue": "Signatures",
+  "Disease": "Signatures",
+  "Program": "Signatures"
+}

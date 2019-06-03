@@ -1,6 +1,6 @@
 {
   "match": {
-    "${$validator}": "/@dcic/signature-commons-schema/core/signature.json",
+    "${$validator}": "/@dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
     "${library.dataset}": "lincs_fwd"
   },
   "properties": {
@@ -15,20 +15,28 @@
       "type": "text",
       "text": "Microarray"
     },
+    "Disease": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Disease}",
+      "subfield": "${meta.Disease[0].Name}"
+    },
     "Drug": {
       "visibility": 1,
-      "type": "text",
-      "text": "${meta.drug_name}"
+      "type": "object",
+      "text": "${meta.Small_Molecule}",
+      "subfield": "${meta.Small_Molecule[0].Name}"
     },
     "DrugBank": {
       "visibility": 1,
-      "type": "text",
-      "text": "${meta.drugbank_id}"
+      "type": "object",
+      "text": "${meta.Small_Molecule}",
+      "subfield": "${meta.Small_Molecule[0].DrugBankID}"
     },
     "Organism": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.organism}"
+      "text": "${meta.Organism}"
     },
     "GEO Accession": {
       "visibility": 1,

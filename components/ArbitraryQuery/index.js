@@ -1,8 +1,8 @@
-import React from "react";
-import ReactJson from 'react-json-view';
-import ReactLoading from 'react-loading';
-import { fetch_data } from '../../util/fetch/data';
-import { fetch_meta_post } from '../../util/fetch/meta';
+import React from 'react'
+import ReactJson from 'react-json-view'
+import ReactLoading from 'react-loading'
+import { fetch_data } from '../../util/fetch/data'
+import { fetch_meta_post } from '../../util/fetch/meta'
 
 export default class ArbitraryQuery extends React.Component {
   constructor(props) {
@@ -33,55 +33,55 @@ export default class ArbitraryQuery extends React.Component {
       this.setState({
         status: this.state.status + '\nfetching entities...',
       })
-      const {duration: duration_meta_1, response: entities_meta} = await fetch_meta_post({
+      const { duration: duration_meta_1, response: entities_meta } = await fetch_meta_post({
         endpoint: '/entities/find',
         body: {
-          filter: JSON.parse(this.state.entities)
-        }
+          filter: JSON.parse(this.state.entities),
+        },
       })
       this.setState({
         status: this.state.status + '\nfetching signatures...',
         entities_results: entities_meta,
       })
-      const {duration: duration_meta_2, response: signatures_meta} = await fetch_meta_post({
+      const { duration: duration_meta_2, response: signatures_meta } = await fetch_meta_post({
         endpoint: '/signatures/find',
         body: {
-          filter: JSON.parse(this.state.signatures)
-        }
+          filter: JSON.parse(this.state.signatures),
+        },
       })
       this.setState({
         status: this.state.status + '\nenriching signatures...',
         signatures_results: signatures_meta,
       })
-      const {duration: duration_data_1, response: enriched} = await fetch_data({
+      const { duration: duration_data_1, response: enriched } = await fetch_data({
         endpoint: '/enrich/overlap',
         body: {
           entities: entities_meta.map((entity) => entity.id),
           signatures: signatures_meta.map((signature) => signature.id),
-        }
+        },
       })
       this.setState({
         status: this.state.status + '\nfetching enriched signatures...',
         enrich_results: enriched,
       })
-      const {duration: duration_meta_3, response: enriched_signatures_meta} = await fetch_meta_post({
+      const { duration: duration_meta_3, response: enriched_signatures_meta } = await fetch_meta_post({
         endpoint: '/signatures/find',
         body: {
           filter: {
             where: {
               id: {
-                inq: Object.keys(enriched.results)
-              }
-            }
-          }
-        }
+                inq: Object.keys(enriched.results),
+              },
+            },
+          },
+        },
       })
       const enriched_signatures = enriched_signatures_meta.reduce((full, signature) => ([
         ...full,
         {
           ...signature,
           ...enriched.results[signature.id],
-        }
+        },
       ]))
       this.setState({
         status: this.state.status + '\nready',
@@ -89,7 +89,7 @@ export default class ArbitraryQuery extends React.Component {
         meta_duration: duration_meta_1 + duration_meta_2 + duration_meta_3,
         data_duration: duration_data_1,
       })
-    } catch(e) {
+    } catch (e) {
       this.setState({
         status: this.state.status + '\nError: ' + e,
         entities_results: this.state.entities_results || {},
@@ -106,13 +106,13 @@ export default class ArbitraryQuery extends React.Component {
           <fieldset>
             <legend>Entities</legend>
             <textarea
-              onChange={(e) => this.setState({entities: e.target.value})}
+              onChange={(e) => this.setState({ entities: e.target.value })}
               value={this.state.entities}
-              style={{float: 'left', width: '49%', height: '150px'}}
+              style={{ float: 'left', width: '49%', height: '150px' }}
             ></textarea>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.entities_results === null ? (
-                <ReactLoading type="spokes"  color="#000" />
+                <ReactLoading type="spokes" color="#000" />
               ) : (
                 <ReactJson
                   src={this.state.entities_results}
@@ -124,13 +124,13 @@ export default class ArbitraryQuery extends React.Component {
           <fieldset>
             <legend>Signatures</legend>
             <textarea
-              onChange={(e) => this.setState({signatures: e.target.value})}
+              onChange={(e) => this.setState({ signatures: e.target.value })}
               value={this.state.signatures}
-              style={{float: 'left', width: '49%', height: '150px'}}
+              style={{ float: 'left', width: '49%', height: '150px' }}
             ></textarea>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.signatures_results === null ? (
-                <ReactLoading type="spokes"  color="#000" />
+                <ReactLoading type="spokes" color="#000" />
               ) : (
                 <ReactJson
                   src={this.state.signatures_results}
@@ -143,21 +143,21 @@ export default class ArbitraryQuery extends React.Component {
             <legend>Process</legend>
             <button
               onClick={this.submit}
-              style={{float: 'left', width: '49%', height: '150px'}}
+              style={{ float: 'left', width: '49%', height: '150px' }}
             >
               Submit
             </button>
             <textarea
               readOnly
               value={this.state.status}
-              style={{float: 'left', width: '49%', height: '150px'}}
+              style={{ float: 'left', width: '49%', height: '150px' }}
             ></textarea>
           </fieldset>
           <fieldset>
             <legend>Results</legend>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.enrich_results === null ? (
-                <ReactLoading type="spokes"  color="#000" />
+                <ReactLoading type="spokes" color="#000" />
               ) : (
                 <ReactJson
                   src={this.state.enrich_results}
@@ -165,9 +165,9 @@ export default class ArbitraryQuery extends React.Component {
                 />
               )}
             </div>
-            <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+            <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
               {this.state.results === null ? (
-                <ReactLoading type="spokes"  color="#000" />
+                <ReactLoading type="spokes" color="#000" />
               ) : (
                 <ReactJson
                   src={this.state.results}
@@ -178,6 +178,6 @@ export default class ArbitraryQuery extends React.Component {
           </fieldset>
         </main>
       </div>
-    );
+    )
   }
 }

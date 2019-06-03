@@ -1,10 +1,7 @@
 import React from 'react'
-import dynamic from 'next/dynamic';
-import { call } from '../../util/call';
-import { download_signature_json } from './download';
+import dynamic from 'next/dynamic'
 
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
-const IconButton = dynamic(() => import('../../components/IconButton'), { ssr: false })
 const Label = dynamic(() => import('../../components/Label'), { ssr: false })
 
 export default class extends React.Component {
@@ -35,7 +32,7 @@ export default class extends React.Component {
               style={{
                 padding: 10,
                 display: 'flex',
-                flexDirection: "column",
+                flexDirection: 'column',
                 backgroundColor: 'rgba(255,255,255,1)',
               }}
             >
@@ -43,7 +40,7 @@ export default class extends React.Component {
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
-              }}>
+                }}>
                 <Label
                   item={signature}
                   highlight={this.props.search}
@@ -62,7 +59,7 @@ export default class extends React.Component {
             <div
               className="collapsible-body"
             >
-              <div 
+              <div
                 style={{
                   height: '300px',
                   overflow: 'auto',
@@ -79,7 +76,7 @@ export default class extends React.Component {
                       '@id': signature.library.id,
                       '@type': 'Library',
                       'meta': signature.library.meta,
-                    }
+                    },
                   ]}
                   highlight={this.props.search}
                 />

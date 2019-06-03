@@ -1,97 +1,256 @@
 
-const LibraryColors = ["#50a050","#47a347"]
-const SignatureColors = ["#2198f3", "#2f9cef"]
-const EntityColors = ["#a03cb4", "#9d42af"]
-const PopularColors = ["#e63c3c", "#ea4141"]
-const StatsColors = ["#fa9614", "#ef931c"]
+const Greens = ['#50a050', '#47a347']
+const Blues = ['#2198f3', '#2f9cef']
+const Purples = ['#a03cb4', '#9d42af']
+const Reds = ['#e63c3c', '#ea4141']
+const Oranges = ['#fa9614', '#ef931c']
+const Grays = ['#9e9e9e', '#c9c9c9']
 
-export const LibrariesCardHeader = {
-  background:
-    "linear-gradient(45deg, " + LibraryColors[0] + ", " + LibraryColors[1] + ")",
-};
+// const LandingColors = ['#9e9e9e', '#c9c9c9']
 
-export const SignaturesCardHeader = {
-  background:
-    "linear-gradient(45deg, " + SignatureColors[0] + ", " + SignatureColors[1] + ")",
-};
 
-export const EntitiesCardHeader = {
+export const GrayCardHeader = {
   background:
-    "linear-gradient(45deg, " + EntityColors[0] + ", " + EntityColors[1] + ")",
-};
+    'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
+}
 
-export const PopularCardHeader = {
+export const GreenCardHeader = {
   background:
-    "linear-gradient(45deg, " + PopularColors[0] + ", " + PopularColors[1] + ")",
-};
+    'linear-gradient(45deg, ' + Greens[0] + ', ' + Greens[1] + ')',
+}
 
-export const StatsCardHeader = {
+export const BlueCardHeader = {
   background:
-    "linear-gradient(45deg, " + StatsColors[0] + ", " + StatsColors[1] + ")",
-};
+    'linear-gradient(45deg, ' + Blues[0] + ', ' + Blues[1] + ')',
+}
+
+export const PurpleCardHeader = {
+  background:
+    'linear-gradient(45deg, ' + Purples[0] + ', ' + Purples[1] + ')',
+}
+
+export const RedCardHeader = {
+  background:
+    'linear-gradient(45deg, ' + Reds[0] + ', ' + Reds[1] + ')',
+}
+
+export const OrangeCardHeader = {
+  background:
+    'linear-gradient(45deg, ' + Oranges[0] + ', ' + Oranges[1] + ')',
+}
 
 export const card = {
   overflow: 'inherit',
   textAlign: 'right',
   padding: 16,
   minHeight: 80,
-};
+}
 
 export const main = {
   flex: '1',
   marginRight: '1em',
   marginTop: 20,
-};
+}
 
-export const black = "#000";
-export const white = "#FFF";
+export const black = '#000'
+export const white = '#FFF'
 
-export const styles = theme => ({
-    root: {
-      flexGrow: 1,
+export const landingStyle = (theme) => ({
+  toggleContainer: {
+    height: 56,
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: `${theme.spacing.unit}px 0`,
+  },
+  centered: {
+    textAlign: 'center',
+  },
+  vertical20: {
+    verticalAlign: '20%',
+  },
+  vertical55: {
+    verticalAlign: '55%',
+  },
+  topCard: {
+    padding: '20px',
+    background:
+      'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
+  },
+  stretched: {
+    width: '80%',
+  },
+  title: {
+    color: '#FFF',
+    fontSize: 35,
+  },
+  subtitle: {
+    color: '#FFF',
+    fontSize: 14,
+  },
+  titleBlack: {
+    color: '#000',
+    textAlign: 'center',
+  },
+  button: {
+    background:
+      'linear-gradient(45deg, ' + Blues[0] + ', ' + Blues[1] + ')',
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
+  },
+  cardIcon: {
+    borderRadius: '3px',
+    margin: '20px 20px 5px 20px',
+    float: 'left',
+    zIndex: 100,
+  },
+  icon: {
+    float: 'right',
+    width: 75,
+    height: 75,
+    padding: 14,
+    color: white,
+  },
+  textField: {
+    margin: '-20px 8px 8px 8px',
+  },
+  whiteText: {
+    color: '#FFF',
+  },
+  statCard: {
+    color: '#FFF',
+    padding: 20,
+  },
+  bigIcon: {
+    width: 50,
+    height: 50,
+    float: 'right',
+  },
+  basicCard: {
+    overflow: 'inherit',
+    textAlign: 'right',
+    padding: 16,
+    minHeight: 80,
+  },
+  GrayCardHeader,
+  BlueCardHeader,
+})
+
+export const extraComponentStyle = (theme) => ({
+  paragraph: {
+    padding: '8px',
+    fontSize: '15px',
+  },
+  listItem: {
+    padding: '8px',
+  },
+})
+
+export const styles = (theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  unpadded: {
+    padding: 0,
+  },
+  paddedCard: {
+    padding: '10px',
+  },
+  topCard: {
+    background:
+        'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
+  },
+  progress: {
+    margin: theme.spacing.unit * 2,
+  },
+  ProgressContainer: {
+    marginLeft: 'auto',
+    marginRight: 0,
+    height: 30,
+    width: 120,
+  },
+  main: {
+    flex: '1',
+    marginRight: '1em',
+    marginTop: 20,
+  },
+  numcard: {
+    overflow: 'inherit',
+    textAlign: 'right',
+    padding: 16,
+    height: 70,
+  },
+  card: {
+    overflow: 'inherit',
+    textAlign: 'right',
+    padding: 16,
+    minHeight: 80,
+  },
+  currentVesion: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'right',
+  },
+  highlighted: {
+    color: '#FFD042',
+  },
+  longcard: {
+    overflow: 'inherit',
+    textAlign: 'right',
+    padding: 16,
+    minHeight: 600,
+  },
+  title: {
+    fontSize: '10px',
+  },
+  bigtitle: {
+    color: '#FFF',
+    fontSize: 35,
+  },
+  bigtext: {
+    fontSize: '15px',
+  },
+  statnum: {
+    fontSize: '15px',
+  },
+  textField: {
+    margin: '-20px 8px 8px 8px',
+  },
+  textFieldWidth: {
+    maxWidth: 120,
+  },
+  menu: {
+    width: 200,
+  },
+  namebox: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    margin: '8px 8px 8px 8px',
+    fontSize: '15px',
+  },
+  container: {
+    margin: '0 auto',
+    maxWidth: '1280px',
+    width: '90%',
+  },
+  ['@media only screen and (min-width: 601px)']: {
+    container: {
+      width: '85%',
     },
-    progress: {
-      margin: theme.spacing.unit * 2,
+  },
+  ['@media only screen and (min-width: 1360px)']: {
+    container: {
+      width: '70%',
     },
-    ProgressContainer:{
-      marginLeft: 'auto',
-      marginRight: 0,
-      height: 30,
-      width: 120
-    },
-    main: {
-      flex: '1',
-      marginRight: '1em',
-      marginTop: 20,
-    },
-    numcard: {
-      overflow: 'inherit',
-      textAlign: 'right',
-      padding: 16,
-      height: 70,
-    },
-    card: {
-      overflow: 'inherit',
-      textAlign: 'right',
-      padding: 16,
-      minHeight: 80,
-    },
-    title: {
-      fontSize: '10px',
-    },
-    bigtext:{
-      fontSize: '15px',
-    },
-    statnum: {
-      fontSize: '15px',
-    },
-    textField: {
-      marginLeft: theme.spacing.unit,
-      marginRight: theme.spacing.unit,
-      width: 120,
-      margin: '-20px 8px 8px 8px',
-    },
-    menu: {
-      width: 200,
-    }
-});
+  },
+
+})

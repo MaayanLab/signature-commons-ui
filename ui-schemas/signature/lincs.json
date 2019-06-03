@@ -1,6 +1,6 @@
 {
   "match": {
-    "${$validator}": "/@dcic/signature-commons-schema/core/signature.json",
+    "${$validator}": "/@dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
     "${library.dataset}": "lincs_clue"
   },
   "properties": {
@@ -17,8 +17,9 @@
     },
     "Cell-line": {
       "visibility": 1,
-      "type": "text",
-      "text": "${meta.cell_id}"
+      "type": "object",
+      "text": "${meta.Cell_Line}",
+      "subfield": "${meta.Cell_Line[0].Name}"
     },
     "Time point": {
       "visibility": 1,

@@ -4,30 +4,30 @@ import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 
 export async function resolve_entities(props) {
   let entities = Set([...props.entities])
-  let entitiy_ids = {}
+  const entitiy_ids = {}
 
-  const {duration, response: entity_meta_pre} = await fetch_meta_post({
+  const { duration, response: entity_meta_pre } = await fetch_meta_post({
     endpoint: '/entities/find',
     body: {
       filter: {
         where: {
           'meta.Name': {
             inq: entities.toArray(),
-          }
+          },
         },
         fields: [
           'id',
           'meta.Name',
-        ]
-      }
+        ],
+      },
     },
-    signal: props.controller.signal
+    signal: props.controller.signal,
   })
   const entity_meta = maybe_fix_obj(entity_meta_pre)
 
-  for(const entity of Object.values(entity_meta)) {
+  for (const entity of Object.values(entity_meta)) {
     const matched_entities = entities.intersect(
-      Set([entity.meta.Name])
+        Set([entity.meta.Name])
     )
 
     if (matched_entities.count() > 0) {
@@ -35,8 +35,9 @@ export async function resolve_entities(props) {
       for (const matched_entity of matched_entities) {
         entitiy_ids[matched_entity] = entity
       }
-      if (matched_entities.count() > 1)
+      if (matched_entities.count() > 1) {
         console.warn(entity, 'matched', [...matched_entities])
+      }
     }
   }
 

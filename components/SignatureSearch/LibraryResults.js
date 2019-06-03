@@ -1,9 +1,9 @@
 import React from 'react'
-import M from "materialize-css"
+import M from 'materialize-css'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core'
-import MUIDataTable from "mui-datatables"
-import TableCell from "@material-ui/core/TableCell"
-import TableRow from "@material-ui/core/TableRow"
+import MUIDataTable from 'mui-datatables'
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
 import ShowMeta from '../../components/ShowMeta'
 import { Label, objectMatch, schemas } from '../../components/Label'
 import { makeTemplate } from '../../util/makeTemplate'
@@ -27,39 +27,65 @@ const theme = createMuiTheme({
   overrides: {
     MuiCheckbox: {
       root: {
-        display: 'none'
-      }
+        display: 'none',
+      },
     },
     MUIDataTable: {
       responsiveScroll: {
         maxHeight: '500px',
         minHeight: '500px',
-      }
-    }
-  }
+      },
+    },
+  },
 })
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
 
 export default class extends React.Component {
+
+  check_column = ({schema, prop, lib}) => {
+    if (schema.properties[prop].text===undefined){
+      console.log(prop)
+      return false
+    }
+    else{
+      const sig_keys = this.props.signature_keys[lib]
+      const col_src = schema.properties[prop].text.replace(/meta\./g, '').replace(/meta\[\'/g, '').replace(/']/g, '').replace(/\${/g, '').replace(/}/g, '')
+      if (schema.properties[prop].columnType === "number"){
+        return true
+      }else if(sig_keys.indexOf(col_src)>-1){
+        return true
+      }else{
+        const substring = sig_keys.filter((k)=>schema.properties[prop].text.indexOf(k)>-1)
+        if (substring.length > 0){
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   render_table = ({ result }) => {
     const sigs = result.signatures
     const schema = schemas.filter(
-      (schema) => objectMatch(schema.match, sigs[0])
+        (schema) => objectMatch(schema.match, sigs[0])
     )[0]
+    const lib = sigs[0].library.id
     const cols = Object.keys(schema.properties).filter(
-      (prop) => {
-        if(schema.properties[prop].type === 'text') {
-          if(this.props.match.params.type === 'Overlap') {
-            if(two_tailed_columns.indexOf(prop) === -1)
-              return true
-          } else if(this.props.match.params.type === 'Rank') {
-            if(one_tailed_columns.indexOf(prop) === -1)
-              return true
+        (prop) => { 
+          if (this.check_column({schema, prop, lib})) {
+            if (this.props.match.params.type === 'Overlap') {
+              if (two_tailed_columns.indexOf(prop) === -1) {
+                return true
+              }
+            } else if (this.props.match.params.type === 'Rank') {
+              if (one_tailed_columns.indexOf(prop) === -1) {
+                return true
+              }
+            }
           }
+          return false
         }
-        return false
-      }
     )
     const options = {
       filter: true,
@@ -81,16 +107,16 @@ export default class extends React.Component {
                   '@id': sigs[rowMeta.dataIndex].library.id,
                   '@type': 'Library',
                   'meta': sigs[rowMeta.dataIndex].library.meta,
-                }
+                },
               ]}
             />
           </TableCell>
         </TableRow>
-      )
+      ),
     }
 
     const columns = cols.map((col) => {
-      let opts = {
+      const opts = {
         name: col,
         options: schema.properties[col].columnOptions || {},
       }
@@ -109,17 +135,23 @@ export default class extends React.Component {
 
     const data = sigs.map((sig) =>
       cols.map((col) => {
-        const val = makeTemplate(schema.properties[col].text, sig)
-        if (val === 'undefined')
+        let val = undefined
+        if (schema.properties[col].type=='object') {
+          val = makeTemplate(schema.properties[col].text, sig, schema.properties[col].subfield)
+        } else {
+          val = makeTemplate(schema.properties[col].text, sig)
+        }
+        if (val === 'undefined') {
           return ''
+        }
         try {
           return JSON.parse(val)
-        } catch(e) {
+        } catch (e) {
           return val
         }
       })
     )
-    
+    console.log(options)
     return (
       <MuiThemeProvider theme={theme}>
         <MUIDataTable
@@ -191,13 +223,13 @@ export default class extends React.Component {
                     height: 600px;
                   }
                 `}</style>
-                <div 
+                <div
                   style={{
                     paddingTop: 0,
                     marginTop: '-25px',
                   }}
                 >
-                {/*
+                  {/*
                   <ul
                     className="tabs"
                     ref={(ref) => M.Tabs.init(ref, {
@@ -246,7 +278,7 @@ export default class extends React.Component {
                     })()}
                   </div>
                   */}
-                  <div id={"table-" + result.library.id } className="tab-content">
+                  <div id={'table-' + result.library.id } className="tab-content">
                     {this.render_table({ result })}
                   </div>
                 </div>

@@ -1,8 +1,8 @@
-import React from "react";
-import ReactJson from 'react-json-view';
-import ReactLoading from 'react-loading';
-import { fetch_meta } from '../../util/fetch/meta';
-import RadarChart from './RadarChart';
+import React from 'react'
+import ReactJson from 'react-json-view'
+import ReactLoading from 'react-loading'
+import { fetch_meta } from '../../util/fetch/meta'
+import RadarChart from './RadarChart'
 
 export default class Stats extends React.Component {
   constructor(props) {
@@ -31,7 +31,7 @@ export default class Stats extends React.Component {
       this.setState({
         entity_stats,
       })
-    })();
+    })()
   }
   render() {
     return (
@@ -42,13 +42,13 @@ export default class Stats extends React.Component {
               Library key_count
             </legend>
             {this.state.library_stats === null ? (
-              <ReactLoading type="spokes"  color="#000" />
+              <ReactLoading type="spokes" color="#000" />
             ) : (
               <div>
                 <RadarChart
                   data={this.state.library_stats}
                 />
-                <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+                <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
                   <ReactJson
                     src={JSON.parse(JSON.stringify(this.state.library_stats))}
                     collapsed={2}
@@ -62,13 +62,13 @@ export default class Stats extends React.Component {
               Signature key_count
             </legend>
             {this.state.signature_stats === null ? (
-              <ReactLoading type="spokes"  color="#000" />
+              <ReactLoading type="spokes" color="#000" />
             ) : (
               <div>
                 <RadarChart
                   data={this.state.signature_stats}
                 />
-                <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+                <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
                   <ReactJson
                     src={JSON.parse(JSON.stringify(this.state.signature_stats))}
                     collapsed={2}
@@ -82,13 +82,13 @@ export default class Stats extends React.Component {
               Entity key_count
             </legend>
             {this.state.entity_stats === null ? (
-              <ReactLoading type="spokes"  color="#000" />
+              <ReactLoading type="spokes" color="#000" />
             ) : (
               <div>
                 <RadarChart
                   data={this.state.entity_stats}
                 />
-                <div style={{float: 'left', width: '49%', height: '150px', overflow: 'auto'}}>
+                <div style={{ float: 'left', width: '49%', height: '150px', overflow: 'auto' }}>
                   <ReactJson
                     src={JSON.parse(JSON.stringify(this.state.entity_stats))}
                     collapsed={2}

@@ -5,74 +5,73 @@ import { maybe_fix_obj } from '../../util/maybe_fix_obj'
 
 export async function query_overlap(props) {
   const start = Date.now()
-  
+
   let duration_data = 0
   let count_data = 0
-  let enriched_results
 
   const entity_meta = maybe_fix_obj(props.input.entities)
   const entities = props.input.entities.map((entity) => entity.id)
 
   const { response } = await fetch_data({ endpoint: '/listdata' })
 
-  enriched_results = (await Promise.all(
-    response.repositories.filter((repo) => repo.datatype === 'geneset_library').map((repo) =>
-      fetch_data({
-        endpoint: '/enrich/overlap',
-        body: {
-          entities: entities,
-          signatures: [],
-          database: repo.uuid,
-          limit: 500,
-        },
-        signal: props.controller.signal
-      })
-    )
+  const enriched_results = (await Promise.all(
+      response.repositories.filter((repo) => repo.datatype === 'geneset_library').map((repo) =>
+        fetch_data({
+          endpoint: '/enrich/overlap',
+          body: {
+            entities: entities,
+            signatures: [],
+            database: repo.uuid,
+            limit: 500,
+          },
+          signal: props.controller.signal,
+        })
+      )
   )).reduce(
-    (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
-      duration_data += duration_data_n
-      count_data += (contentRange_data_n || {}).count || 0
-      return ({
-        ...results,
-        ...maybe_fix_obj(result.results),
-      })
-    }, {}
+      (results, { duration: duration_data_n, contentRange: contentRange_data_n, response: result }) => {
+        duration_data += duration_data_n
+        count_data += (contentRange_data_n || {}).count || 0
+        return ({
+          ...results,
+          ...maybe_fix_obj(result.results),
+        })
+      }, {}
   )
 
-  const {duration: duration_meta, response: enriched_signatures_meta} = await fetch_meta_post({
+  const { duration: duration_meta, response: enriched_signatures_meta } = await fetch_meta_post({
     endpoint: '/signatures/find',
     body: {
       filter: {
         where: {
           id: {
-            inq: Object.values(enriched_results).map((k) => k.id)
-          }
-        }
-      }
+            inq: Object.values(enriched_results).map((k) => k.id),
+          },
+        },
+      },
     },
-    signal: props.controller.signal
+    signal: props.controller.signal,
   })
 
   const enriched_signatures = enriched_signatures_meta.reduce(
-    (full, signature) => ([
-      ...full,
-      {
-        ...signature,
-        meta: {
-          ...signature.meta,
-          ...{
-            ...enriched_results[signature.id],
-            ...(enriched_results[signature.id].overlap === undefined ? {} : {
-              overlap: enriched_results[signature.id].overlap.map((id) => ({
-                '@id': id,
-                '@type': 'Entity',
-                'meta': entity_meta[id].meta
-              })),
-            }),
+      (full, signature) => ([
+        ...full,
+        {
+          ...signature,
+          meta: {
+            ...signature.meta,
+            ...{
+              ...enriched_results[signature.id],
+              ...(enriched_results[signature.id].overlap === undefined ? {} : {
+                overlap: enriched_results[signature.id].overlap.map((id) => ({
+                  '@id': id,
+                  '@type': 'Entity',
+                  'meta': entity_meta[id].meta,
+                })),
+              }),
+            },
           },
         },
-      }
-    ]), []
+      ]), []
   )
 
   const resource_signatures = {}
@@ -93,7 +92,7 @@ export async function query_overlap(props) {
     if (resource_signatures[resource] === undefined) {
       resource_signatures[resource] = {
         libraries: Set(),
-        count: 0
+        count: 0,
       }
     }
     resource_signatures[resource] = {
@@ -120,7 +119,6 @@ export async function query_rank(props) {
 
   let duration_data = 0
   let count_data = 0
-  let enriched_results
 
   const entity_meta = {
     ...maybe_fix_obj(props.input.up_entities),
@@ -128,82 +126,82 @@ export async function query_rank(props) {
   }
   const up_entities = props.input.up_entities.map((entity) => entity.id)
   const down_entities = props.input.down_entities.map((entity) => entity.id)
-  
+
   const { response } = await fetch_data({ endpoint: '/listdata' })
 
-  enriched_results = (await Promise.all(
-    response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map((repo) =>
-      fetch_data({
-        endpoint: '/enrich/ranktwosided',
-        body: {
-          up_entities: up_entities,
-          down_entities: down_entities,
-          signatures: [],
-          database: repo.uuid,
-          limit: 500,
-        },
-        signal: props.controller.signal
-      })
-    )
+  const enriched_results = (await Promise.all(
+      response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map((repo) =>
+        fetch_data({
+          endpoint: '/enrich/ranktwosided',
+          body: {
+            up_entities: up_entities,
+            down_entities: down_entities,
+            signatures: [],
+            database: repo.uuid,
+            limit: 500,
+          },
+          signal: props.controller.signal,
+        })
+      )
   )).reduce(
-    (results, {duration: duration_data_n, contentRange: contentRange_data_n, response: result}) => {
-      duration_data += duration_data_n
-      count_data += (contentRange_data_n || {}).count || 0
-      return ({
-        ...results,
-        ...maybe_fix_obj(
-          result.results.reduce(
-            (results, result) =>
+      (results, { duration: duration_data_n, contentRange: contentRange_data_n, response: result }) => {
+        duration_data += duration_data_n
+        count_data += (contentRange_data_n || {}).count || 0
+        return ({
+          ...results,
+          ...maybe_fix_obj(
+              result.results.reduce(
+                  (results, result) =>
               result['p-up'] < 0.05 && result['p-down'] <= 0.05 ? [
                 ...results,
                 ({
                   ...result,
-                  id: result.signature
+                  id: result.signature,
                 }),
               ] : results,
-            []
-          ).sort(
-            (a, b) => (a['p-up'] - b['p-up']) + (a['p-down'] - b['p-down'])
-          ).slice(0, 1000)
-        ),
-      })
-    }, {}
+                  []
+              ).sort(
+                  (a, b) => (a['p-up'] - b['p-up']) + (a['p-down'] - b['p-down'])
+              ).slice(0, 1000)
+          ),
+        })
+      }, {}
   )
 
-  const {duration: duration_meta, response: enriched_signatures_meta} = await fetch_meta_post({
+  const { duration: duration_meta, response: enriched_signatures_meta } = await fetch_meta_post({
     endpoint: '/signatures/find',
     body: {
       filter: {
         where: {
           id: {
-            inq: Object.values(enriched_results).map((k) => k.id)
-          }
-        }
-      }
+            inq: Object.values(enriched_results).map((k) => k.id),
+          },
+        },
+      },
     },
-    signal: props.controller.signal
+    signal: props.controller.signal,
   })
 
   const enriched_signatures = enriched_signatures_meta.reduce(
-    (full, signature) => ([
-      ...full,
-      {
-        ...signature,
-        meta: {
-          ...signature.meta,
-          ...{
-            ...enriched_results[signature.id],
-            ...(enriched_results[signature.id].overlap === undefined ? {} : {
-              overlap: enriched_results[signature.id].overlap.map((id) => ({
-                '@id': id,
-                '@type': 'Entity',
-                'meta': entity_meta[id].meta
-              })),
-            }),
+      (full, signature) => ([
+        ...full,
+        {
+          ...signature,
+          meta: {
+            ...signature.meta,
+            ...{
+              ...enriched_results[signature.id],
+              ...(enriched_results[signature.id].overlap === undefined ? {} : {
+                overlap: enriched_results[signature.id].overlap.map((id) => ({
+                  '@id': id,
+                  '@type': 'Entity',
+                  'meta': entity_meta[id].meta,
+                })),
+              }),
+            },
           },
         },
-      }
-    ]), []
+      ]), []
   )
 
   const resource_signatures = {}
@@ -224,7 +222,7 @@ export async function query_rank(props) {
     if (resource_signatures[resource] === undefined) {
       resource_signatures[resource] = {
         libraries: Set(),
-        count: 0
+        count: 0,
       }
     }
     resource_signatures[resource] = {

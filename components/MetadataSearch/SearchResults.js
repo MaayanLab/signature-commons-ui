@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 import NProgress from 'nprogress'
-import { fetch_meta_post } from "../../util/fetch/meta";
-import dynamic from 'next/dynamic';
+import { fetch_meta_post } from '../../util/fetch/meta'
+import dynamic from 'next/dynamic'
 
 const Signatures = dynamic(() => import('../../components/MetadataSearch/Signatures'))
 
@@ -10,14 +10,14 @@ function build_where(q) {
     const [key, ...value] = q.split(':')
     return {
       ['meta.' + key]: {
-        ilike: '%' + value.join(':') + '%'
-      }
+        ilike: '%' + value.join(':') + '%',
+      },
     }
   } else {
     return {
       meta: {
-        fullTextSearch: q
-      }
+        fullTextSearch: q,
+      },
     }
   }
 }
@@ -27,7 +27,7 @@ export default class SearchResults extends React.Component {
     super(props)
 
     this.state = {
-      controller: undefined
+      controller: undefined,
     }
     this.performSearch = this.performSearch.bind(this)
   }
@@ -36,12 +36,13 @@ export default class SearchResults extends React.Component {
     this.performSearch()
   }
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.search !== this.props.search)
+    if (prevProps.search !== this.props.search) {
       this.performSearch()
+    }
   }
 
   async performSearch() {
-    if(this.state.controller !== undefined) {
+    if (this.state.controller !== undefined) {
       this.state.controller.abort()
     }
     try {
@@ -56,7 +57,7 @@ export default class SearchResults extends React.Component {
       const where = build_where(this.props.search)
 
       const start = Date.now()
-      const {duration: duration_meta_1, contentRange, response: signatures} = await fetch_meta_post({
+      const { duration: duration_meta_1, contentRange, response: signatures } = await fetch_meta_post({
         endpoint: '/signatures/find',
         body: {
           filter: {
@@ -64,30 +65,31 @@ export default class SearchResults extends React.Component {
             limit: 20,
           },
         },
-        signal: controller.signal
+        signal: controller.signal,
       })
 
       const library_ids = [...new Set(signatures.map((sig) => sig.library))]
-      const {duration: duration_meta_2, response: libraries} = await fetch_meta_post({
+      const { duration: duration_meta_2, response: libraries } = await fetch_meta_post({
         endpoint: '/libraries/find',
         body: {
           filter: {
             where: {
               id: {
-                inq: library_ids
-              }
+                inq: library_ids,
+              },
             },
           },
         },
-        signal: controller.signal
+        signal: controller.signal,
       })
 
       const duration_meta = duration_meta_1 + duration_meta_2
 
-      const library_dict = libraries.reduce((L, l) => ({...L, [l.id]: l}), {})
+      const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
 
-      for(const signature of signatures)
+      for (const signature of signatures) {
         signature.library = library_dict[signature.library]
+      }
 
       this.setState({
         signatures,
@@ -96,9 +98,9 @@ export default class SearchResults extends React.Component {
         duration_meta,
         count: contentRange.count,
       }, () => NProgress.done())
-    } catch(e) {
+    } catch (e) {
       NProgress.done()
-      if(e.code !== DOMException.ABORT_ERR) {
+      if (e.code !== DOMException.ABORT_ERR) {
         this.setState({
           status: e + '',
         })
@@ -113,9 +115,9 @@ export default class SearchResults extends React.Component {
           {this.state.signatures !== undefined && this.state.count !== undefined ? (
             <span className="grey-text">
               Found {this.state.count}
-              {this.props.total_count !== undefined ? ` matches out of ${this.props.total_count} ` : null}
+              {this.props.total_count !== undefined ? ` matches out of ${this.props.total_count} ` : null}
               signatures
-              {this.state.duration_meta !== undefined  ? ` in ${this.state.duration_meta.toPrecision(3)} seconds` : null}
+              {this.state.duration_meta !== undefined ? ` in ${this.state.duration_meta.toPrecision(3)} seconds` : null}
             </span>
           ) : null}
         </div>

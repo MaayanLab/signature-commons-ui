@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import IconButton from '../../components/IconButton';
+import IconButton from '../../components/IconButton'
 
 export default class ResourceList extends React.PureComponent {
   render() {

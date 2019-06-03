@@ -1,6 +1,6 @@
-import React from 'react';
-import { withRouter, Link } from 'react-router-dom';
-import { base_scheme as meta_base_scheme, base_url as meta_base_url } from "../../util/fetch/meta";
+import React from 'react'
+import { withRouter, Link } from 'react-router-dom'
+import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
 
 export function Nav(props) {
   return (
@@ -57,7 +57,7 @@ export default withRouter((props) => {
           </Link>
           <Link
             to="/"
-            className="brand-logo center hide-on-large-only"
+            className={`brand-logo ${location} hide-on-large-only`}
             style={{
               whiteSpace: 'nowrap',
             }}

@@ -1,7 +1,7 @@
 import React from 'react'
-import { get_library_resources } from './resources';
-import ResourcePage from './ResourcePage';
-import ResourceList from './ResourceList';
+import { get_library_resources } from './resources'
+import ResourcePage from './ResourcePage'
+import ResourceList from './ResourceList'
 import { Route, Switch } from 'react-router-dom'
 import NProgress from 'nprogress'
 
@@ -18,7 +18,7 @@ export default class Resources extends React.PureComponent {
 
   async componentDidMount() {
     NProgress.start()
-    this.setState({...(await get_library_resources())})
+    this.setState({ ...(await get_library_resources()) })
     NProgress.done()
   }
 

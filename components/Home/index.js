@@ -1,36 +1,46 @@
-import { Set } from 'immutable';
-import M from "materialize-css";
-import Base from '../../components/Base';
-import React from "react";
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { call } from '../../util/call';
-import MetadataSearch from '../MetadataSearch';
-import Resources from '../Resources';
-import SignatureSearch from '../SignatureSearch';
-import Upload from '../Upload';
+import { Set } from 'immutable'
+import M from 'materialize-css'
+import Base from '../../components/Base'
+import React from 'react'
+import { Route, Switch } from 'react-router-dom'
+import { call } from '../../util/call'
+import Landing from '../Landing'
+import MetadataSearch from '../MetadataSearch'
+import Resources from '../Resources'
+import SignatureSearch from '../SignatureSearch'
+import Upload from '../Upload'
+
 
 export default class Home extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
       cart: Set(),
+      pie_stats: null,
+      selected_field: 'Assay',
     }
-
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
+    this.handleSelectField = this.handleSelectField.bind(this)
   }
 
-  componentDidMount() {
-    M.AutoInit();
+  async componentDidMount() {
+    M.AutoInit()
+    // const elems = document.querySelectorAll('.sidenav');
+    // const instances = M.Sidenav.init(elems, {edge:"right"});
+    if (this.state.pie_stats===null) {
+      this.fetch_stats(this.state.selected_field)
+    }
   }
+
 
   componentDidUpdate() {
-    M.AutoInit();
-    M.updateTextFields();
+    M.AutoInit()
+    M.updateTextFields()
   }
 
   updateCart(cart) {
-    this.setState({cart})
+    this.setState({ cart })
   }
 
   CartActions() {
@@ -90,10 +100,35 @@ export default class Home extends React.PureComponent {
     )
   }
 
+  async fetch_stats(selected_field) {
+    this.setState({
+      pie_stats: this.props.pie_fields_and_stats[selected_field],
+    })
+  }
+
+  handleSelectField(e) {
+    const field = e.target.value
+    this.setState({
+      selected_field: field,
+      pie_stats: null,
+    }, ()=>{
+      this.fetch_stats(this.state.selected_field)
+    })
+  }
+
+  landing = (props) => (
+    <Landing
+      handleSelectField={this.handleSelectField}
+      {...this.state}
+      {...props}
+    />
+  )
+
   signature_search = (props) => (
     <SignatureSearch
       cart={this.state.cart}
       updateCart={this.updateCart}
+      signature_keys={this.props.signature_keys}
       {...props}
     />
   )
@@ -139,9 +174,10 @@ export default class Home extends React.PureComponent {
         <Switch>
           <Route
             exact path="/"
-            render={() => (
-              <Redirect to="/SignatureSearch" />
-            )}
+            render={(router_props) => <Landing handleSelectField={this.handleSelectField}
+              {...this.state}
+              {...this.props}
+              {...router_props}/>}
           />
           <Route
             path="/SignatureSearch"

@@ -1,45 +1,47 @@
-import React from "react";
-import { Redirect } from 'react-router';
+import React from 'react'
+import { Redirect } from 'react-router'
 import { Admin,
-         ArrayField,
-         ChipField,
-         Datagrid,
-         DisabledInput,
-         Edit,
-         EditButton,
-         List,
-         LongTextInput,
-         ReferenceField,
-         Resource,
-         SimpleForm,
-         SingleFieldList,
-         TextField,
-         TextInput,
-         UrlField,
-         AUTH_LOGIN,
-         AUTH_LOGOUT,
-         AUTH_ERROR,
-         AUTH_CHECK,
-         GET_ONE } from 'react-admin';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import BlurOn from '@material-ui/icons/BlurOn';
-import Fingerprint from '@material-ui/icons/Fingerprint';
-import LibraryBooks from '@material-ui/icons/LibraryBooks';
+  ArrayField,
+  ChipField,
+  Datagrid,
+  DisabledInput,
+  Edit,
+  EditButton,
+  List,
+  LongTextInput,
+  ReferenceField,
+  Resource,
+  SimpleForm,
+  SingleFieldList,
+  TextField,
+  TextInput,
+  UrlField,
+  AUTH_LOGIN,
+  AUTH_LOGOUT,
+  AUTH_ERROR,
+  AUTH_CHECK,
+  GET_ONE,
+  UPDATE } from 'react-admin'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardHeader from '@material-ui/core/CardHeader'
+import BlurOn from '@material-ui/icons/BlurOn'
+import Fingerprint from '@material-ui/icons/Fingerprint'
+import LibraryBooks from '@material-ui/icons/LibraryBooks'
 
-import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta';
-import { fetchJson } from '../../util/fetch/fetch';
+import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta'
+import { fetchJson, patchJson } from '../../util/fetch/fetch'
 
-import loopbackProvider from './loopback-provider';
+import loopbackProvider from './loopback-provider'
 import { BooleanField,
-         SignaturePostFilter,
-         FullTextFilter,
-         LibraryAvatar,
-         Description,
-         SplitChip,
-         TagsField } from './adminhelper';
-import { Dashboard } from './dashboard';
+  SignaturePostFilter,
+  FullTextFilter,
+  LibraryAvatar,
+  Description,
+  SplitChip,
+  TagsField,
+  NameAccField } from './adminhelper'
+import { Dashboard } from './dashboard'
 
 import { MyLogin } from './Login.js'
 
@@ -47,48 +49,34 @@ import { MyLogin } from './Login.js'
 class AdminView extends React.PureComponent {
   constructor(props) {
     super(props)
+    const token = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_CREDS: ''
     this.state = {
-      library_fields: null,
-      entity_fields: null,
       signature_fields: null,
-      LibNum: 140,
-      LibraryNumber: "Loading...",
-      SignatureNumber: "Loading...",
-      EntityNumber: "Loading...",
-      signature_counts: null,
-      signature_allfields: null,
-      stats: null,
-      libchart: null,
-      sigchart: null,
-      entchart:null,
-      libselected: "Assay",
-      sigselected: "Cell_Line",
-      entselected:"Taxon_ID",
+      pie_controller: null,
+      pie_stats: null,
+      selected_field: 'Assay',
+      per_resource_counts: null,
       status: null,
       controller: null,
-      lib_controller: null,
-      sig_controller: null,
-      ent_controller: null,
       general_controller: null,
-      token: null,
-      uid: "308de661-d3e2-11e8-8fe6-787b8ad942f3",
+      token: token,
+      uid: '308de661-d3e2-11e8-8fe6-787b8ad942f3',
       hash: window.location.hash,
     }
-    this.filterHandler = this.filterHandler.bind(this);
-    this.hashChangeHandler = this.hashChangeHandler.bind(this);
-    this.LibraryList = this.LibraryList.bind(this);
-    this.LibraryEdit = this.LibraryEdit.bind(this);
-    this.EntityList = this.EntityList.bind(this);
-    this.EntityEdit = this.EntityEdit.bind(this);
-    this.SignatureList = this.SignatureList.bind(this);
-    this.SignatureEdit = this.SignatureEdit.bind(this);
-    this.httpClient = this.httpClient.bind(this);
-    this.filterForm = this.filterForm.bind(this);
-    this.authProvider = this.authProvider.bind(this);
-    this.NotFound = this.NotFound.bind(this);
-    this.handleSelectField = this.handleSelectField.bind(this);
-    this.dataProvider = loopbackProvider(base_url, this.httpClient);
-
+    this.filterHandler = this.filterHandler.bind(this)
+    this.hashChangeHandler = this.hashChangeHandler.bind(this)
+    this.LibraryList = this.LibraryList.bind(this)
+    this.LibraryEdit = this.LibraryEdit.bind(this)
+    this.EntityList = this.EntityList.bind(this)
+    this.EntityEdit = this.EntityEdit.bind(this)
+    this.SignatureList = this.SignatureList.bind(this)
+    this.SignatureEdit = this.SignatureEdit.bind(this)
+    this.httpClient = this.httpClient.bind(this)
+    this.filterForm = this.filterForm.bind(this)
+    this.authProvider = this.authProvider.bind(this)
+    this.NotFound = this.NotFound.bind(this)
+    this.handleSelectField = this.handleSelectField.bind(this)
+    this.dataProvider = loopbackProvider(base_url, this.httpClient)
   }
 
   // const httpClient = (url, options = {}) => {
@@ -100,112 +88,92 @@ class AdminView extends React.PureComponent {
   //   return fetchUtils.fetchJson(url, options);
   // }
 
-  filterForm(props){
-    if(this.state.token===null){
+  filterForm(props) {
+    if (this.state.token===null) {
       return false
-    }else{
-      return(
+    } else {
+      return (
         <SignaturePostFilter
-          LibNum={this.state.LibNum}
+          LibraryNumber={this.props.LibraryNumber}
         />
       )
     }
   }
 
-  handleSelectField(e,db){
+  handleSelectField(e) {
     const field = e.target.value
-    if(db==="Libraries"){
-      this.setState({
-        libselected: field,
-        libchart: null,
-      }, () => {
-        this.fetch_stats(db)
-      })
-    }else if(db==="Signatures"){
-      this.setState({
-        sigselected: field,
-        sigchart: null,
-      }, () => {
-        this.fetch_stats(db)
-      })
-    }else if(db==="Entities"){
-      this.setState({
-        entselected: field,
-        entchart: null,
-      }, () => {
-        this.fetch_stats(db)
-      })
-    }
+    this.setState({
+      selected_field: field,
+      pie_stats: null,
+    }, ()=>{
+      this.fetch_stats(this.state.selected_field)
+    })
   }
 
   LibraryList(props) {
     return (
-      <List 
+      <List
         title="Libraries"
         filters={<FullTextFilter />}
         {...props}>
         <Datagrid>
           <LibraryAvatar
-            source={"meta.Library_name"}
-            title={"Library"}
-            label={"Library"}
+            source={'meta.Library_name'}
+            title={'Library'}
+            label={'Library'}
             textAlign="center"
           />
           <TextField
             source="id"
           />
-          {Object.keys(this.state.library_fields).map(function(k){
-            if (k.includes("Link") || k.includes("URL")){
-              return(
+          {Object.keys(this.props.library_fields).map(function(k) {
+            if (k.includes('Link') || k.includes('URL')) {
+              return (
                 <UrlField key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 />
               )
-            }
-            else if(["Readout","Assay"].includes(k)){
-              return(
+            } else if (['Readout', 'Assay'].includes(k)) {
+              return (
                 <ChipField
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 />
               )
-            }
-            else if(k==="Weighted"){
-              return(
+            } else if (k==='Weighted') {
+              return (
                 <BooleanField
                   key={k}
-                  label={k.replace(/_/g," ")}
+                  label={k.replace(/_/g, ' ')}
                   field={k}
-                  TrueValue={"True"}
+                  TrueValue={'True'}
                 />
               )
-            }
-            else if (["Perturbation_Type","Organism"].includes(k)){
-              return(
+            } else if (['Perturbation_Type', 'Organism'].includes(k)) {
+              return (
                 <SplitChip
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                   field={k}
                 />
               )
-            }
-            else if (!["Icon","Library_name","Description","Spec","$validator"].includes(k)){
-              return(
+            } else if (!['Icon', 'Library_name', 'Description', 'Spec', '$validator'].includes(k)) {
+              return (
                 <TextField
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 />
               )
             }
           })}
           <Description
-            source={"meta.Description"}
-            title={"Description"}
-            label={"Description"}
+            source={'meta.Description'}
+            title={'Description'}
+            label={'Description'}
           />
           <EditButton />
         </Datagrid>
@@ -213,40 +181,55 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  LibraryEdit(props){
-    return(
+  LibraryEdit(props) {
+    return (
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {Object.keys(this.state.library_fields).map(function(k){
-            if(k!=="Description"){
-              return(
+          <TextInput
+            key={'$validator'}
+            label={'Core Validator'}
+            source={'$validator'}
+          />
+          <TextInput
+            key={'dataset'}
+            label={'Dataset'}
+            source={'dataset'}
+          />
+          <TextInput
+            key={'dataset_type'}
+            label={'Dataset type'}
+            source={'dataset_type'}
+          />
+          {Object.keys(this.props.library_fields).map(function(k) {
+            if (k!=='Description') {
+              return (
                 <TextInput
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 />
               )
             }
           })}
           <LongTextInput
-            key={"Description"}
-            label={"Description"}
-            source={"meta.Description"}
+            key={'Description'}
+            label={'Description'}
+            source={'meta.Description'}
           />
         </SimpleForm>
       </Edit>
     )
   }
 
-  SignatureList(props){
-    return(
+  SignatureList(props) {
+    return (
       <List
         {...props}
         filters={this.filterForm(props)}
-        filterDefaultValues={{"library": this.state.uid}}
+        filterDefaultValues={{ 'library': this.state.uid }}
         title="Signatures"
-      > 
+      >
         <Datagrid>
           <TextField
             source="id"
@@ -256,99 +239,110 @@ class AdminView extends React.PureComponent {
             reference="libraries"
             linkType={false}
           >
-            <TextField 
-              source="meta.Library_name" 
-              style={{width: 150}}/>
+            <TextField
+              source="meta.Library_name"
+              style={{ width: 150 }}/>
           </ReferenceField>
-          {this.state.signature_fields.map(function(k){
-            if(["Gene", "Disease", "Cell_Line", "Tissue", "Small_Molecule"].includes(k)){
-              return(
-                <ArrayField 
+          {this.state.signature_fields.filter((k)=>!k.includes('.')).map(function(k) {
+            if (['Gene', 'Disease', 'Cell_Line', 'Tissue', 'Small_Molecule'].includes(k)) {
+              return (
+                <ArrayField
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 >
                   <SingleFieldList>
                     <ChipField source="Name" />
                   </SingleFieldList>
                 </ArrayField>
               )
-            }else if (["distil_id", "qc_tag", "pert_ids", "ctrl_ids"].includes(k)){
-              return(
+            } else if (['distil_id', 'qc_tag', 'pert_ids', 'ctrl_ids'].includes(k)) {
+              return (
                 <TagsField
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                   field={k}
                 />
               )
-            }else if(k==="Accession"){
-              return(
-                <ArrayField 
+            } else if (k==='Accession') {
+              return (
+                <ArrayField
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 >
                   <SingleFieldList>
                     <ChipField source="ID" />
                   </SingleFieldList>
                 </ArrayField>
               )
-            }else if(k==="GO"){
-              return(
-                <ChipField source={"meta." + k + ".Name"} />
-              )
-            }
-            else if(k=="Description"){
-              return(
-                <Description
-                  source={"meta.Description"}
-                  title={"Description"}
-                  label={"Description"}
+            } else if (k==='GO') {
+              return (
+                <NameAccField
+                  key={k}
+                  label={k.replace(/_/g, ' ')}
+                  field={k}
                 />
               )
-            }
-            else if(k!=="$validator"){
-              return(
+            } else if (k=='Description') {
+              return (
+                <Description
+                  source={'meta.Description'}
+                  title={'Description'}
+                  label={'Description'}
+                />
+              )
+            } else if (k!=='$validator') {
+              return (
                 <TextField
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 />
               )
             }
           })}
           <EditButton />
-        </Datagrid> 
+        </Datagrid>
       </List>
     )
   }
 
-  SignatureEdit(props){
-    return(
+  SignatureEdit(props) {
+    return (
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {this.state.signature_fields.map(function(k){
-            if(["distil_id", "qc_tag", "pert_ids", "ctrl_ids",
-                "Gene", "Disease", "Cell_Line", "Tissue",
-                "Small_Molecule", "Accession"].includes(k)){
-              return(
+          <TextInput
+            key={'$validator'}
+            label={'Core Validator'}
+            source={'$validator'}
+          />
+          <TextInput
+            key={'library'}
+            label={'library'}
+            source={'library'}
+          />
+          {this.state.signature_fields.map(function(k) {
+            if (['distil_id', 'qc_tag', 'pert_ids', 'ctrl_ids',
+              'Gene', 'Disease', 'Cell_Line', 'Tissue',
+              'Small_Molecule', 'Accession'].includes(k)) {
+              return (
                 <LongTextInput
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
-                  format={v=>JSON.stringify(v, null, 2)}
-                  parse={v=>JSON.parse(v)}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
+                  format={(v)=>JSON.stringify(v, null, 2)}
+                  parse={(v)=>JSON.parse(v)}
                 />
               )
-            }
-            else{
-              return(
+            } else {
+              return (
                 <TextInput
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 />
               )
             }
@@ -360,7 +354,7 @@ class AdminView extends React.PureComponent {
 
   EntityList(props) {
     return (
-      <List 
+      <List
         title="Entities"
         filters={<FullTextFilter />}
         {...props}>
@@ -368,23 +362,22 @@ class AdminView extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.state.entity_fields).map(function(k){
-            if (k==="Synonyms"){
-              return(
+          {Object.keys(this.props.entity_fields).map(function(k) {
+            if (k==='Synonyms') {
+              return (
                 <TagsField
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                   field={k}
                 />
               )
-            }
-            else if(k!=="$validator"){
-              return(
+            } else if (k!=='$validator') {
+              return (
                 <TextField
                   key={k}
-                  source={"meta." + k}
-                  label={k.replace(/_/g," ")}
+                  source={'meta.' + k}
+                  label={k.replace(/_/g, ' ')}
                 />
               )
             }
@@ -395,29 +388,33 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  EntityEdit(props){
-    return(
+  EntityEdit(props) {
+    return (
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          {Object.keys(this.state.entity_fields).map(function(k){
-            if (k==="Synonyms"){
-              return(
+          <TextInput
+            key={'$validator'}
+            label={'Core Validator'}
+            source={'$validator'}
+          />
+          {Object.keys(this.props.entity_fields).map(function(k) {
+            if (k==='Synonyms') {
+              return (
                 <LongTextInput
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
-                  format={v=>JSON.stringify(v, null, 2)}
-                  parse={v=>JSON.parse(v)}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
+                  format={(v)=>JSON.stringify(v, null, 2)}
+                  parse={(v)=>JSON.parse(v)}
                 />
               )
-            }
-            else{
-              return(
+            } else {
+              return (
                 <TextInput
                   key={k}
-                  label={k.replace(/_/g," ")}
-                  source={"meta." + k}
+                  label={k.replace(/_/g, ' ')}
+                  source={'meta.' + k}
                 />
               )
             }
@@ -428,146 +425,40 @@ class AdminView extends React.PureComponent {
   }
 
   NotFound(props) {
-    if(this.state.token){
-      return(
+    if (this.state.token) {
+      return (
         <Card>
           <CardHeader title="Oop! I don't know what you are looking for" />
           <CardContent>Check your link, please.</CardContent>
         </Card>
       )
-    }else{
+    } else {
       return <Redirect to='/' />
     }
   }
 
-  async fetch_stats(db){
-    let selected_field  = null
-    try {
-      const stat_controller = new AbortController()
-      if(db=="Libraries") {
-        selected_field = this.state.libselected
-        if( this.state.lib_controller !== null) {
-          this.state.lib_controller.abort()
-        }
-        this.setState({
-          lib_controller: stat_controller,
-        })
-      }else if(db=="Signatures") {
-        selected_field = this.state.sigselected
-        if (this.state.sig_controller !== null) {
-          this.state.sig_controller.abort()
-        }
-        this.setState({
-          sig_controller: stat_controller,
-        })
-      }else if(db=="Entities") {
-        selected_field = this.state.entselected
-        if(this.state.ent_controller !== null) {
-          this.state.ent_controller.abort()
-        }
-        this.setState({
-          ent_controller: stat_controller,
-        })
-      }
-      
-      const headers = {'Authorization': `Basic ${this.state.token}`}
-      const url = '/' + db.toLowerCase() +
-                  '/value_count?depth=2&filter={"fields":["' +
-                  selected_field +'"]}'
-      const { response: stats} = await fetch_meta({
-        endpoint: url,
-        signal: stat_controller.signal,
-        headers
-      })
-      let stat_vals = undefined
-      if(["Cell_Line", "Disease", "Gene", "GO", "Phenotype", "Small_Molecule", "Tissue", "Virus"].includes(selected_field)){
-        stat_vals = stats[selected_field + ".Name"]
-      }else if(selected_field === "Accession"){
-        stat_vals = stats[selected_field + ".ID"]
-      }else{
-        stat_vals = stats[selected_field]
-      }
-      if(db==="Libraries"){
-        this.setState({
-          libchart: stat_vals,
-        })
-      }else if(db==="Signatures"){
-        this.setState({
-          sigchart: stat_vals,
-        })
-      }else if(db==="Entities"){
-        this.setState({
-          entchart: stat_vals,
-        })
-      }
-    } catch(e) {
-      if(e.code !== DOMException.ABORT_ERR) {
-        this.setState({
-          stat_status: ''
-        })
-      }
-    }
+  async fetch_stats(selected_field) {
+    this.setState({
+      pie_stats: this.props.pie_fields_and_stats[selected_field],
+    })
   }
 
-  async filterHandler(uid){
-      // console.log(e)
-      // this.setState({
-      //   SignatureList: <LinearProgress />
-      // }, async () =>{
-      //   const uid = Object.values(e).slice(0,36).join('')
-      //   const { response: signature_fields} = await fetch_meta({ endpoint: '/signatures/key_count', body: { filter: { where : { library : uid } } } })
-      //   this.get_signatures(signature_fields)
-      // });
-      // console.log(window.location.hash)
-      // console.log(this.state.hash)
-      if(this.state.controller !== null && decodeURI(window.location.hash) !== this.state.hash) {
-        if(this.state.hash.includes("/signatures")){
-          this.setState({
-            hash: decodeURI(window.location.hash)
-          })
-        }
-        this.state.controller.abort()
-      }
-      try {
-        const controller = new AbortController()
-        this.setState({
-          status: 'Searching...',
-          controller: controller,
-        })
-        const headers = {'Authorization': `Basic ${this.state.token}`}
-        const { response: signature_fields } = await fetch_meta({
-          endpoint: `/libraries/${uid}`,
-          signal: controller.signal,
-          headers
-        })
-        // await fetch_meta({
-        //   endpoint: '/libraries' + uid,
-        //   signal: controller.signal,
-        //   headers
-        // })
-
-        this.setState({
-          // signature_fields: signature_fields,
-          signature_fields: signature_fields["Signature_keys"],
-          uid: uid
-        });
-      } catch(e) {
-        if(e.code !== DOMException.ABORT_ERR) {
-          this.setState({
-            status: e + ''
-          })
-        }
-      }
+  async filterHandler(uid) {
+    this.setState({
+      // signature_fields: signature_fields,
+      signature_fields: this.props.signature_keys[uid],
+      uid: uid,
+    })
   }
 
-  hashChangeHandler(){
+  hashChangeHandler() {
     const hash = decodeURI(window.location.hash)
     this.setState({
-      hash: hash
+      hash: hash,
     })
-    if (hash.includes('/signatures?filter={"library"')){
+    if (hash.includes('/signatures?filter={"library"')) {
       const hashparts = hash.split('"')
-      if(hashparts.length > 4){
+      if (hashparts.length > 4) {
         const uid = hashparts[3]
         // const params = hashparts[4].split("&")
         // const page = params.filter((l)=>(l.includes("page")))[0].split("=")[1]
@@ -578,270 +469,275 @@ class AdminView extends React.PureComponent {
       }
     }
   }
-
-  async fetch_libfields() {
-    const headers = {'Authorization': `Basic ${this.state.token}`}
+  // async fetch_count(source) {
+  //   const headers = {'Authorization': `Basic ${this.state.token}`}
+  //   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
+  //                                           signal: this.state.general_controller.signal,
+  //                                           headers })
+  //   if(source==="libraries"){
+  //     this.setState({
+  //       LibraryNumber: response.count
+  //     })
+  //   }else if(source==="signatures"){
+  //     this.setState({
+  //       SignatureNumber: response.count
+  //     })
+  //   }else if(source==="entities"){
+  //     this.setState({
+  //       EntityNumber: response.count
+  //     })
+  //   }
+  // }
+  async fetch_libraryfields() {
+    const headers = { 'Authorization': `Basic ${this.state.token}` }
     const { response: library_fields } = await fetch_meta({
-      endpoint: '/libraries/key_count',
+      endpoint: `/libraries/key_count`,
       signal: this.state.general_controller.signal,
-      headers
+      headers,
     })
     this.setState({
-      LibNum: library_fields.$validator,
       library_fields: library_fields,
-      LibraryNumber: library_fields.$validator,
-    },()=>{
-      this.fetch_stats("Libraries")
     })
   }
 
   async fetch_sigfields() {
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_fields} = await fetch_meta({
-      endpoint: `/libraries/${this.state.uid}`,
-      signal: this.state.general_controller.signal,
-      headers
-    })
     this.setState({
-      signature_fields: signature_fields["Signature_keys"],
+      signature_fields: this.props.signature_keys[this.state.uid],
     })
   }
 
-  async fetch_sigallfields(){
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_allfields} = await fetch_meta({
-      endpoint: '/signatures/key_count',
-      signal: this.state.general_controller.signal,
-      headers
-    })
-    this.setState({
-      signature_allfields: signature_allfields,
-      SignatureNumber: signature_allfields.$validator,
-    },()=>{
-      this.fetch_stats("Signatures")
-    })
-  }
-
-  async fetch_entityfields(){
-    const headers = {'Authorization': `Basic ${this.state.token}`}
+  async fetch_entityfields() {
+    const headers = { 'Authorization': `Basic ${this.state.token}` }
     const { response: entity_fields } = await fetch_meta({
-      endpoint: '/entities/key_count',
+      endpoint: `/entities/key_count`,
       signal: this.state.general_controller.signal,
-      headers
+      headers,
     })
     this.setState({
       entity_fields: entity_fields,
-      EntityNumber: entity_fields.$validator,
     })
-    // this.setState({
-    //   entity_fields: entity_fields,
-    //   EntityNumber: entity_fields.$validator,
-    // },()=>{
-    //   this.fetch_stats("Entities")
-    // })
   }
 
-  async fetch_sigstats() {
-    const headers = {'Authorization': `Basic ${this.state.token}`}
-    const { response: signature_counts} = await fetch_meta({
+  async fetch_metacounts() {
+    const fields = (await import('../../ui-schemas/dashboard/counting_fields.json')).default
+    this.setState({
+      counting_fields: fields,
+    })
+    const object_fields = Object.keys(fields).filter((key)=>fields[key]=='object')
+
+    // UNCOMMENT TO FETCH STUFF IN THE SERVER
+    const headers = { 'Authorization': `Basic ${this.state.token}` }
+    const { response: meta_stats } = await fetch_meta({
       endpoint: '/signatures/value_count',
       body: {
         depth: 2,
         filter: {
-          fields: ["Gene", "Cell_Line", "Small_Molecule", "Tissue", "Disease"]
+          fields: Object.keys(fields),
         },
       },
       signal: this.state.general_controller.signal,
-      headers
+      headers,
     })
-    const sig_counts = Object.keys(signature_counts).filter(key=>key.includes(".Name"))
-                                                    .reduce((stat_list, k)=>{
-                                                    stat_list.push({name: k.replace(".Name", ""),
-                                                                    counts:Object.keys(signature_counts[k]).length})
-                                                    return(stat_list) },
-                                                    [])
-
-    sig_counts.sort((a, b) => a.name > b.name);
+    const meta_counts = Object.keys(meta_stats).filter((key)=>key.indexOf('.Name')>-1||
+                                                            // (key.indexOf(".PubChemID")>-1 &&
+                                                            //  key.indexOf("Small_Molecule")>-1) ||
+                                                            (key.indexOf('.')===-1 && object_fields.indexOf(key)===-1))
+        .reduce((stat_list, k)=>{
+          stat_list.push({ name: k.indexOf('PubChemID')!==-1 ?
+                                                                            k.replace('Small_Molecule.', ''):
+                                                                            k.replace('.Name', ''),
+          counts: Object.keys(meta_stats[k]).length })
+          return (stat_list)
+        },
+        [])
+    // const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
+    // meta_counts.sort((a, b) => a.name > b.name);
     this.setState({
-      signature_counts: sig_counts,
+      meta_counts: meta_counts,
     })
   }
 
   componentDidMount() {
-    window.addEventListener("hashchange", this.hashChangeHandler);
-    if (this.state.token && this.state.general_controller){
-      this.fetch_libfields()
-      this.fetch_sigfields()
-      this.fetch_sigstats()
-      this.fetch_sigallfields()
-      this.fetch_entityfields()
+    window.addEventListener('hashchange', this.hashChangeHandler)
+    this.fetch_stats(this.state.selected_field)
+    this.fetch_sigfields()
+  }
+
+  componentWillUnmount() {
+    if (this.state.pie_controller) {
+      this.state.pie_controller.abort()
+    }
+    if (this.state.general_controller) {
+      this.state.general_controller.abort()
     }
   }
-  httpClient(url, options = {}) {
-    if(!(options.hasOwnProperty("method"))){
-      const link = decodeURI(url).split("%2C")
-      const url_params = link.filter((l)=> (l.includes("skip")||l.includes("limit")))
-                             .map((l)=>(l.split("%3A")[1]));
+
+  httpClient(url, options = {}, type=GET_ONE) {
+    if (!(options.hasOwnProperty('method'))) {
+      const link = decodeURI(url).split('%2C')
+      const url_params = link.filter((l)=> (l.includes('skip')||l.includes('limit')))
+          .map((l)=>(l.split('%3A')[1]))
       const page = (url_params[0]/url_params[1]) + 1
       this.setState({
-        apipage: page
+        apipage: page,
       })
     }
 
-    if (this.state.controller!== null)
-      options["signal"] = this.state.controller.signal
+    if (this.state.controller!== null) {
+      options['signal'] = this.state.controller.signal
+    }
 
-    if (options.headers === undefined)
-      options.headers = new Headers({ Accept: 'application/json' });
-    
+    if (options.headers === undefined) {
+      options.headers = new Headers({ Accept: 'application/json' })
+    }
+
     const token = (options.token || this.state.token)
-    options.headers.set('Authorization', `Basic ${token}`);
-    
-    return fetchJson(url, options);
+    options.headers.set('Authorization', `Basic ${token}`)
+    if (type===UPDATE) {
+      return patchJson(url, options)
+    } else {
+      return fetchJson(url, options)
+    }
   }
 
   async authProvider(type, params) {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
-      const headers = {'Authorization': `Basic ${token}`}
-      const { authenticated: auth} = await fetch_creds('/',
-                                                        undefined,
-                                                        undefined,
-                                                        headers)
-      if (!auth){
+      const headers = { 'Authorization': `Basic ${token}` }
+      const { authenticated: auth } = await fetch_creds({
+        endpoint: '/',
+        headers,
+      })
+
+      if (!auth) {
         return Promise.reject()
-      }else{
+      } else {
         this.setState({ token: token })
-        
+
         const general_controller = new AbortController()
         this.setState({
           general_controller: general_controller,
         })
 
         // Load column names
-        if(this.state.library_fields===null){
-          this.fetch_libfields()
-        }
-        if(this.state.signature_fields===null){
+        // if(this.state.LibraryNumber==="Loading..."){
+        //   this.fetch_count("libraries")
+        // }
+        // if(this.state.EntityNumber==="Loading..."){
+        //   this.fetch_count("entities")
+        // }
+        // if(this.state.SignatureNumber==="Loading..."){
+        //   this.fetch_count("signatures")
+        // }
+        if (this.state.signature_fields===null) {
           this.fetch_sigfields()
         }
-        if(this.state.entity_fields===null){
-          this.fetch_entityfields()
+        // if(this.state.meta_counts===null){
+        //   this.fetch_metacounts()
+        // }
+        if (this.state.pie_stats===null) {
+          this.fetch_stats(this.state.selected_field)
         }
-        if(this.state.signature_counts===null){
-          this.fetch_sigstats()
-        }
-        if(this.state.signature_allfields===null){
-          this.fetch_sigallfields()
-        }
-        return Promise.resolve();
+        // Pre computed
+        // if(this.state.resource_signatures===null){
+        //   const response = (await import("../../ui-schemas/resources/all.json")).default
+        //   const resource_signatures = response.filter(data=>data.Resource_Name!=="Enrichr").reduce((group, data)=>{
+        //     group[data.Resource_Name] = data.Signature_Count
+        //     return group
+        //   }, {})
+        // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
+        //                                                                          counts: resource_signatures[resource]}))
+
+        //  for_sorting.sort(function(a, b) {
+        //      return b.counts - a.counts;
+        //  });
+        // this.setState({
+        //   resource_signatures: resource_signatures//for_sorting.slice(0,11),
+        // })
+        // }
+        // Via Server
+        // if(this.state.per_resource_counts===null){
+        //   this.setState({...(await get_signature_counts_per_resources(this.state.general_controller))})
+        // }
+        return Promise.resolve()
       }
-    }else if (type === AUTH_LOGOUT) {
+    } else if (type === AUTH_LOGOUT) {
+      this.setState({ token: null })
+      if (this.state.general_controller) {
+        this.state.general_controller.abort()
+      }
+      if (this.state.pie_controller) {
+        this.state.pie_controller.abort()
+      }
+      return Promise.resolve()
+    } else if (type === AUTH_ERROR) {
+      if (params === 'DOMException: "The operation was aborted. "') {
         this.setState({ token: null })
-        if(this.state.general_controller){
+        if (this.state.general_controller) {
           this.state.general_controller.abort()
         }
-        if(this.state.lib_controller){
-          this.state.lib_controller.abort()
-        }
-        if(this.state.sig_controller){
-          this.state.sig_controller.abort()
-        }
-        if(this.state.ent_controller){
-          this.state.ent_controller.abort()
-        }
-        return Promise.resolve();
-    }else if (type === AUTH_ERROR) {
-      if (params === 'DOMException: "The operation was aborted. "'){
-        const status  = params.status;
-        this.setState({ token: null })
-        if(this.state.general_controller){
-          this.state.general_controller.abort()
-        }
-        if(this.state.lib_controller){
-          this.state.lib_controller.abort()
-        }
-        if(this.state.sig_controller){
-          this.state.sig_controller.abort()
-        }
-        if(this.state.ent_controller){
-          this.state.ent_controller.abort()
+        if (this.state.pie_controller) {
+          this.state.pie_controller.abort()
         }
         return Promise.reject()
-      }else
+      } else {
         return Promise.resolve()
-    }else if (type === AUTH_CHECK) {
-      if(this.state.token){
+      }
+    } else if (type === AUTH_CHECK) {
+      if (this.state.token) {
         return Promise.resolve()
-      }else{
-        if(this.state.general_controller){
+      } else {
+        if (this.state.general_controller) {
           this.state.general_controller.abort()
         }
-        if(this.state.lib_controller){
-          this.state.lib_controller.abort()
+        if (this.state.pie_controller) {
+          this.state.pie_controller.abort()
         }
-        if(this.state.sig_controller){
-          this.state.sig_controller.abort()
-        }
-        if(this.state.ent_controller){
-          this.state.ent_controller.abort()
-        }
-        return Promise.reject();
+        return Promise.reject()
       }
     }
     return Promise.reject()
   }
 
   render() {
-      return (
-        <Admin title="Signature Commons Admin Page"
-               dataProvider={this.dataProvider}
-               authProvider={this.authProvider}
-               dashboard={(props) => <Dashboard 
-                                        LibraryNumber={this.state.LibraryNumber}
-                                        SignatureNumber={this.state.SignatureNumber}
-                                        EntityNumber={this.state.EntityNumber}
-                                        signature_counts={this.state.signature_counts}
-                                        entity_fields={this.state.entity_fields}
-                                        library_fields={this.state.library_fields}
-                                        signature_allfields={this.state.signature_allfields}
-                                        handleSelectField={this.handleSelectField}
-                                        libselected={this.state.libselected}
-                                        sigselected={this.state.sigselected}
-                                        entselected={this.state.entselected}
-                                        libchart={this.state.libchart}
-                                        sigchart={this.state.sigchart}
-                                        entchart={this.state.entchart}
-                                        {...props}/>}
-               catchAll={this.NotFound}
-               loginPage={MyLogin}
-        >
-          {this.state.library_fields===null ? <div/>:
+    return (
+      <Admin title={'Signature Commons Dashboard'}
+        dataProvider={this.dataProvider}
+        authProvider={this.authProvider}
+        dashboard={(props) => <Dashboard
+          handleSelectField={this.handleSelectField}
+          {...this.state}
+          {...this.props}
+          {...props}/>}
+        catchAll={this.NotFound}
+        loginPage={MyLogin}
+      >
+        {this.props.library_fields===null ? <div/>:
             <Resource
               name="libraries"
               list={this.LibraryList}
               edit={this.LibraryEdit}
               icon={LibraryBooks}
             />
-          }
-          {this.state.signature_fields===null ? <div/>:
+        }
+        {this.state.signature_fields===null ? <div/>:
             <Resource
               name="signatures"
               edit={this.SignatureEdit}
               list={this.SignatureList}
               icon={Fingerprint}
             />
-          }
-          {this.state.entity_fields===null ? <div/>:
+        }
+        {this.props.entity_fields===null ? <div/>:
             <Resource
               name="entities"
               edit={this.EntityEdit}
               list={this.EntityList}
               icon={BlurOn}
             />
-          }
-        </Admin>
-      )
+        }
+      </Admin>
+    )
   }
 }
 

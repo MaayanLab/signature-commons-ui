@@ -1,19 +1,18 @@
 import React from 'react'
-import IconButton from '../../components/IconButton';
-import { call } from '../../util/call';
-import { ShowMeta } from '../../components/ShowMeta';
-import { Label } from '../../components/Label';
+import IconButton from '../../components/IconButton'
+import { call } from '../../util/call'
+import { ShowMeta } from '../../components/ShowMeta'
+import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
-import { download_library_json, download_resource_json } from '../MetadataSearch/download';
 
 export default class ResourcePage extends React.Component {
   componentDidMount() {
     M.AutoInit()
   }
 
-  redirectLink(url){
-    return (e) => window.open(url, '_blank').focus();
+  redirectLink(url) {
+    return (e) => window.open(url, '_blank').focus()
   }
 
   render() {
@@ -38,9 +37,15 @@ export default class ResourcePage extends React.Component {
                       </div>
                       <div>
                         <span>
+                          <b>Signature count:</b>&nbsp;
+                          {this.props.resource.meta.Signature_Count}
+                        </span>
+                      </div>
+                      <div>
+                        <span>
                           <b>PMID:</b>&nbsp;
-                          <a 
-                            href={"https://www.ncbi.nlm.nih.gov/pubmed/" + this.props.resource.meta.PMID}
+                          <a
+                            href={'https://www.ncbi.nlm.nih.gov/pubmed/' + this.props.resource.meta.PMID}
                           >
                             {this.props.resource.meta.PMID}
                           </a>
@@ -65,7 +70,7 @@ export default class ResourcePage extends React.Component {
                 <div className="card-action">
                   <Link
                     to="/Resources"
-                    className="waves-effect waves-teal btn-flat" 
+                    className="waves-effect waves-teal btn-flat"
                   >
                     BACK
                   </Link>
@@ -88,7 +93,7 @@ export default class ResourcePage extends React.Component {
                       style={{
                         padding: 10,
                         display: 'flex',
-                        flexDirection: "column",
+                        flexDirection: 'column',
                         backgroundColor: 'rgba(255,255,255,1)',
                       }}
                     >
@@ -96,7 +101,7 @@ export default class ResourcePage extends React.Component {
                         style={{
                           display: 'flex',
                           flexDirection: 'row',
-                      }}>
+                        }}>
                         <Label
                           item={library}
                           visibility={1}

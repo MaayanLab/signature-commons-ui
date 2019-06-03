@@ -1,0 +1,14 @@
+{
+  "Antibody_Identifier": "Antibodies",
+  "Cell_Line": "Cell Lines",
+  "Disease": "Diseases",
+  "Metabolite": "Metabolites",
+  "MicroRNA": "MicroRNAs",
+  "Phenotype": "Phenotypes",
+  "Gene": "Genes",
+  "PTM": "PTMs",
+  "Pathway": "Pathways",
+  "Small_Molecule": "Small Molecules",
+  "Tissue": "Tissues",
+  "Virus": "Viruses"
+}

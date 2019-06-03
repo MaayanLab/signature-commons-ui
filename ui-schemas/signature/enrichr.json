@@ -1,6 +1,6 @@
 {
   "match": {
-    "${$validator}": "/@dcic/signature-commons-schema/core/signature.json",
+    "${$validator}": "/@dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
     "${library.dataset}": "enrichr_geneset"
   },
   "properties": {
@@ -71,6 +71,69 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.setsize}"
+    },
+    "Cell-line": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Cell_Line}",
+      "subfield": "${meta.Cell_Line[0].Name}"
+    },
+    "Tissue": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Tissue}",
+      "subfield": "${meta.Tissue[0].Name}"
+    },
+    "Antibody_Identifier": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Antibody_Identifier}"
+    },
+    "Disease": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Disease}",
+      "subfield": "${meta.Disease[0].Name}"
+    },
+    "Gene": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Gene}",
+      "subfield": "${meta.Gene[0].Name}"
+    },
+    "Metabolite": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Metabolite}",
+      "subfield": "${meta.Metabolite.Name}"
+    },
+    "MicroRNA": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.MicroRNA}"
+    },
+    "Phenotype": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Phenotype}",
+      "subfield": "${meta.Phenotype[0].Name}"
+    },
+    "PTM": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.PTM}"
+    },
+    "Small Molecule": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Small_Molecule}",
+      "subfield": "${meta.Small_Molecule[0].Name}"
+    },
+    "Virus": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Virus}",
+      "subfield": "${meta.Virus[0].Name}"
     }
   }
 }

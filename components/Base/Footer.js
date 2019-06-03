@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function (props) {
+export default function(props) {
   return (
     <footer className="page-footer grey lighten-3 black-text">
       <div className="container">
