@@ -105,7 +105,7 @@
       "visibility": 1,
       "type": "object",
       "text": "${meta.Metabolite}",
-      "subfield": "${meta.Metabolite[0].Name}"
+      "subfield": "${meta.Metabolite.Name}"
     },
     "MicroRNA": {
       "visibility": 1,
