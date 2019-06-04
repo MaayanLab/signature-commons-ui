@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
 
-export default withStyles(styles)(class extends React.PureComponent {
+export default withStyles(styles)(class Base extends React.PureComponent {
   constructor(props) {
     super(props)
 

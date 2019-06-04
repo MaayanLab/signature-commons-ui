@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import config from '../../ui-schemas/MetadataSearch'
 
-export default class extends React.Component {
+export default class MetadataSearchBox extends React.Component {
   render() {
     return (
       <form action="javascript:void(0);">

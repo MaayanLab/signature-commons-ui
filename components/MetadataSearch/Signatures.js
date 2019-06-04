@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
 const Label = dynamic(() => import('../../components/Label'), { ssr: false })
 
-export default class extends React.Component {
+export default class MetadataSearchSignatures extends React.Component {
   constructor(props) {
     super(props)
     this.initialize = this.initialize.bind(this)

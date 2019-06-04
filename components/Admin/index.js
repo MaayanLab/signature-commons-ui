@@ -444,11 +444,55 @@ class AdminView extends React.PureComponent {
   }
 
   async filterHandler(uid) {
-    this.setState({
-      // signature_fields: signature_fields,
-      signature_fields: this.props.signature_keys[uid],
-      uid: uid,
-    })
+    // console.log(e)
+    // this.setState({
+    //   SignatureList: <LinearProgress />
+    // }, async () =>{
+    //   const uid = Object.values(e).slice(0,36).join('')
+    //   const { response: signature_fields} = await fetch_meta({ endpoint: '/signatures/key_count', body: { filter: { where : { library : uid } } } })
+    //   this.get_signatures(signature_fields)
+    // });
+    // console.log(window.location.hash)
+    // console.log(this.state.hash)
+    if (this.state.controller !== null && decodeURI(window.location.hash) !== this.state.hash) {
+      if (this.state.hash.includes('/signatures')) {
+        this.setState({
+          hash: decodeURI(window.location.hash),
+        })
+      }
+      this.state.controller.abort()
+    }
+    try {
+      const controller = new AbortController()
+      this.setState({
+        status: 'Searching...',
+        controller: controller,
+      })
+      const headers = { 'Authorization': `Basic ${this.state.token}` }
+      const { response: signature_fields } = await fetch_meta({
+        endpoint: `/libraries/${uid}/signatures/key_count`,
+        signal: controller.signal,
+        headers,
+      })
+
+      // await fetch_meta({
+      //   endpoint: '/libraries' + uid,
+      //   signal: controller.signal,
+      //   headers
+      // })
+
+      this.setState({
+        // signature_fields: signature_fields,
+        signature_fields: Object.keys(signature_fields),
+        uid: uid,
+      })
+    } catch (e) {
+      if (e.code !== DOMException.ABORT_ERR) {
+        this.setState({
+          status: e + '',
+        })
+      }
+    }
   }
 
   hashChangeHandler() {

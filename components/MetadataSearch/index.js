@@ -14,7 +14,7 @@ function getParam(search, param) {
   return val
 }
 
-export default class extends React.Component {
+export default class MetadataSearch extends React.Component {
   constructor(props) {
     super(props)
 

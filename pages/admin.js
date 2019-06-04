@@ -25,7 +25,7 @@ async function get_signature_keys() {
   const { response: libraries } = await fetch_meta({
     endpoint: '/libraries',
   })
-  const signature_keys_promises = libraries.map(async (lib) =>{
+  const signature_keys_promises = libraries.map(async (lib) => {
     const libid = lib.id
     const { response: fields } = await fetch_meta({
       endpoint: `/libraries/${libid}/signatures/key_count`,

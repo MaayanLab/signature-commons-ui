@@ -11,7 +11,7 @@ import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
 import { BarChart } from '../Admin/VXbar.js'
 
-export default withStyles(landingStyle)(class extends React.Component {
+export default withStyles(landingStyle)(class LandingPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
