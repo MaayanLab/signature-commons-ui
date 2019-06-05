@@ -157,7 +157,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-           Search across a wide-array of biological information
+            Search across a broad gathering of perturbations
           </Typography>
         </div>
       </Grid>
