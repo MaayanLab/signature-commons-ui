@@ -25,17 +25,12 @@ const two_tailed_columns = [
 
 const theme = createMuiTheme({
   overrides: {
-    MuiCheckbox: {
-      root: {
-        display: 'none',
-      },
-    },
     MUIDataTable: {
       responsiveScroll: {
         maxHeight: '500px',
-        minHeight: '500px',
+        minHeight: '500px'
       },
-    },
+    }
   },
 })
 // Weird hack to remove table shadows
@@ -45,7 +40,6 @@ export default class extends React.Component {
 
   check_column = ({schema, prop, lib}) => {
     if (schema.properties[prop].text===undefined){
-      console.log(prop)
       return false
     }
     else{
@@ -53,6 +47,8 @@ export default class extends React.Component {
       const col_src = schema.properties[prop].text.replace(/meta\./g, '').replace(/meta\[\'/g, '').replace(/']/g, '').replace(/\${/g, '').replace(/}/g, '')
       if (schema.properties[prop].columnType === "number"){
         return true
+      }else if (schema.properties[prop].columnType === "meta"){
+        return false
       }else if(sig_keys.indexOf(col_src)>-1){
         return true
       }else{
@@ -151,7 +147,6 @@ export default class extends React.Component {
         }
       })
     )
-    console.log(options)
     return (
       <MuiThemeProvider theme={theme}>
         <MUIDataTable
