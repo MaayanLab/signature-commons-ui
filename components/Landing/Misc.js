@@ -190,7 +190,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-               Explore our collection of signatures extracted from an ever-growing number of resources
+               Explore an extensive collection of well-annotated gene-sets and signatures
               </Typography>
             </div>
           </Grid>
