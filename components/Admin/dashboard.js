@@ -195,7 +195,7 @@ const StatCard = function({ classes, record={}, ...props }) {
             {stat_type}
           </Typography>
           <Typography variant="button" className={classes.whiteText}>
-              ({new_entries} new)
+              (0 new)
           </Typography>
         </Grid>
         <Grid item xs={5}>
