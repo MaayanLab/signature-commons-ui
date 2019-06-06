@@ -159,7 +159,7 @@ App.getInitialProps = async () => {
     pie_fields_and_stats,
     piefields,
     version_counts,
-    signature_keys
+    signature_keys,
   }
 }
 

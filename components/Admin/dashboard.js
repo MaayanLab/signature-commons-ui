@@ -160,7 +160,7 @@ const PieChartGroup = withScreenSize(function({ classes, record={}, ...props }) 
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} selected_field={selected_field}/>
+          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} selected_field={selected_field} disabled/>
         </Grid>
       </Grid>
     </Card>

@@ -28,32 +28,30 @@ const theme = createMuiTheme({
     MUIDataTable: {
       responsiveScroll: {
         maxHeight: '500px',
-        minHeight: '500px'
+        minHeight: '500px',
       },
-    }
+    },
   },
 })
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
 
 export default class LibraryResults extends React.Component {
-
-  check_column = ({schema, prop, lib}) => {
-    if (schema.properties[prop].text===undefined){
+  check_column = ({ schema, prop, lib }) => {
+    if (schema.properties[prop].text===undefined) {
       return false
-    }
-    else{
+    } else {
       const sig_keys = this.props.signature_keys[lib]
       const col_src = schema.properties[prop].text.replace(/meta\./g, '').replace(/meta\[\'/g, '').replace(/']/g, '').replace(/\${/g, '').replace(/}/g, '')
-      if (schema.properties[prop].columnType === "number"){
+      if (schema.properties[prop].columnType === 'number') {
         return true
-      }else if (schema.properties[prop].columnType === "meta"){
+      } else if (schema.properties[prop].columnType === 'meta') {
         return false
-      }else if(sig_keys.indexOf(col_src)>-1){
+      } else if (sig_keys.indexOf(col_src)>-1) {
         return true
-      }else{
+      } else {
         const substring = sig_keys.filter((k)=>schema.properties[prop].text.indexOf(k)>-1)
-        if (substring.length > 0){
+        if (substring.length > 0) {
           return true
         }
       }
@@ -68,8 +66,8 @@ export default class LibraryResults extends React.Component {
     )[0]
     const lib = sigs[0].library.id
     const cols = Object.keys(schema.properties).filter(
-        (prop) => { 
-          if (this.check_column({schema, prop, lib})) {
+        (prop) => {
+          if (this.check_column({ schema, prop, lib })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
                 return true

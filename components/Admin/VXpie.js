@@ -13,6 +13,16 @@ const colorrange = {
   'Gray': ['#717171', '#fefefe'],
 }
 
+const handleClick = (e, label, resources, disabled) => {
+  if (disabled===undefined) {
+    if (resources) {
+      location.href = `#/Resources/${label}`
+    } else {
+      location.href = `#/MetadataSearch?q=${label}`
+    }
+  }
+}
+
 const black = '#000000'
 export const DonutChart = withScreenSize(function({ ...props }) {
   // data format {Tissue: Value}
@@ -23,8 +33,9 @@ export const DonutChart = withScreenSize(function({ ...props }) {
     data,
     radius,
     fontSize,
+    resources,
+    disabled,
   } = props
-
   const dataLabels = data.map(function(d) {
     return (
       d.label
@@ -81,7 +92,9 @@ export const DonutChart = withScreenSize(function({ ...props }) {
                   >
                     <g key={`browser-${arc.data.label}-${i}`}>
                       <path d={pie.path(arc)}
-                        fill={ordinalColorScale(dataLabels[i])}/>
+                        fill={ordinalColorScale(dataLabels[i])}
+                        onClick={(e) => handleClick(e, arc.data.label, resources, disabled)}
+                      />
                       {hasSpaceForLabel && (
                         <text
                           fill={black}

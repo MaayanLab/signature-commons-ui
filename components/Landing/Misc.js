@@ -280,7 +280,7 @@ function getCallback(callback) {
 }
 
 const callbacks = {
-  onWordClick: getCallback('onWordClick')
+  onWordClick: getCallback('onWordClick'),
 }
 
 export const WordCloud = function({ classes, record={}, ...props }) {
@@ -294,7 +294,7 @@ export const WordCloud = function({ classes, record={}, ...props }) {
     return (
       <div style={{ width: 300, height: 300, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
-        callbacks={callbacks}
+          callbacks={callbacks}
           options={{
             colors: ['#000'],
             rotations: 3,
