@@ -47,10 +47,7 @@ export async function get_library_resources() {
   const { response: libraries } = await fetch_meta_post({ endpoint: '/libraries/find', body: {} })
   const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
   const resources = libraries.reduce((groups, lib) => {
-    let resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name']
-    if ((lib.meta['Library_name'] || '').indexOf('ARCHS4') !== -1) {
-      resource = 'ARCHS4'
-    }
+    let resource = lib.meta['Primary_Resource_Short_Version'] || lib.meta['Primary_Resource']
     if (resource === 'Enrichr') {
       return groups
     }
