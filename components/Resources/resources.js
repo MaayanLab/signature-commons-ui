@@ -49,13 +49,7 @@ export async function get_library_resources() {
 
   const resources = {}
   for (const lib of libraries) {
-    let resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name'] || lib.meta['Library_name']
-    if ((lib.meta['Library_name'] || '') === '') {
-      resource = 'ARCHS4'
-    }
-    if (resource === 'Enrichr') {
-      return groups
-    }
+    const resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name'] || lib.meta['Library_name']
 
     if (resource_meta[resource] === undefined) {
       console.error(`Resource not found: ${resource}`)
