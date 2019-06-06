@@ -5,7 +5,7 @@ import config from '../../ui-schemas/SignatureSearch.json'
 import { call } from '../../util/call'
 import M from 'materialize-css'
 
-export default class extends React.Component {
+export default class ResourceFilters extends React.Component {
   constructor(props) {
     super(props)
 

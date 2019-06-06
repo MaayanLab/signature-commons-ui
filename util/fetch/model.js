@@ -387,7 +387,7 @@ export default class DataProvider {
       } else if (dataset_type.startsWith('rank')) {
         endpoint = 'rank'
       } else {
-        throw `${dataset_type} not recognized`
+        throw new Error(`${dataset_type} not recognized`)
       }
 
       // construct request with signatures of interest

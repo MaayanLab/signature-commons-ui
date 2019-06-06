@@ -16,22 +16,6 @@ export const primary_two_tailed_resources = [
   'CMAP',
 ]
 
-export const renamed = {
-  'Human Phenotype Ontology': 'HPO',
-  'MGI Mammalian Phenotype': 'MGI-MP',
-  'Cancer Cell Line Encyclopedia': 'CCLE',
-  'NCI': 'NCI Pathways',
-  'Disease Signatures': 'CREEDS',
-  'Single Drug Perturbations': 'CREEDS',
-  'Single Gene Perturbations': 'CREEDS',
-  'clueio': 'CMAP',
-  'GEO': 'CREEDS',
-  'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
-  'ENCODE/ChEA': 'ENCODE',
-  'Gene Ontology Consortium': 'Gene Ontology',
-  'PubMed': 'Enrichr',
-}
-
 export const iconOf = {
   'CREEDS': `static/images/creeds.png`,
   'CMAP': `static/images/clueio.ico`,
@@ -46,33 +30,60 @@ export async function get_library_resources() {
   }, {})
   const { response: libraries } = await fetch_meta_post({ endpoint: '/libraries/find', body: {} })
   const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
-  const resources = libraries.reduce((groups, lib) => {
-    let resource = lib.meta['Primary_Resource_Short_Version'] || lib.meta['Primary_Resource']
-    if (resource === 'Enrichr') {
-      return groups
-    }
+
+  const resources = {}
+  for (const lib of libraries) {
+    const resource = lib.meta['Primary_Resource_Short_Version'] || lib.meta['Primary_Resource'] || lib.meta['Library_name']
 
     if (resource_meta[resource] === undefined) {
       console.error(`Resource not found: ${resource}`)
     }
 
-    if (groups[resource] === undefined) {
-      groups[resource] = {
-        id: resource,
-        meta: {
-          name: resource,
-          icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
-          description: (resource_meta[resource] || {}).Description,
-          PMID: (resource_meta[resource] || {}).PMID,
-          URL: (resource_meta[resource] || {}).URL,
-          Signature_Count: resource_meta[resource].Signature_Count, // Precomputed
-        },
-        libraries: [],
+    if (resources[resource] === undefined) {
+      if (resource_meta[resource] === undefined) {
+        console.warn(`Resource not found: ${resource}, registering library as resource`)
+        resources[resource] = {
+          id: resource,
+          meta: {
+            name: resource,
+            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || ''}`,
+            Signature_Count: await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` }),
+          },
+          libraries: [],
+        }
+        if (lib.meta['Description']) {
+          resources[resource].meta.description = lib.meta['Description']
+        }
+        if (lib.meta['PMID']) {
+          resources[resource].meta['PMID'] = lib.meta['PMID']
+        }
+        if (lib.meta['URL']) {
+          resources[resource].meta['URL'] = lib.meta['URL']
+        }
+      } else {
+        resources[resource] = {
+          id: resource,
+          meta: {
+            name: resource,
+            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
+            Signature_Count: resource_meta[resource].Signature_Count, // Precomputed
+          },
+          libraries: [],
+        }
+        if (resource_meta[resource]['Description']) {
+          resources[resource].meta.description = resource_meta[resource]['Description']
+        }
+        if (resource_meta[resource]['PMID']) {
+          resources[resource].meta['PMID'] = resource_meta[resource]['PMID']
+        }
+        if (resource_meta[resource]['URL']) {
+          resources[resource].meta['URL'] = resource_meta[resource]['URL']
+        }
       }
     }
-    groups[resource].libraries.push({ ...lib })
-    return groups
-  }, {})
+    resources[resource].libraries.push({ ...lib })
+  }
+
   const library_resource = Object.keys(resources).reduce((groups, resource) => {
     for (const library of resources[resource].libraries) {
       groups[library.id] = resource

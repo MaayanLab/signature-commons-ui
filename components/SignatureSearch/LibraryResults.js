@@ -36,7 +36,7 @@ const theme = createMuiTheme({
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
 
-export default class extends React.Component {
+export default class LibraryResults extends React.Component {
 
   check_column = ({schema, prop, lib}) => {
     if (schema.properties[prop].text===undefined){
@@ -169,9 +169,10 @@ export default class extends React.Component {
             onOpenEnd: () => window.dispatchEvent(new Event('resize')),
           })}
         >
-          {sorted_results.map((result) => (
+          {sorted_results.map((result, ind) => (
             <li
               key={result.library.id}
+              className={ind === 0 ? 'active' : ''}
             >
               <div
                 className="page-header collapsible-header"
