@@ -92,7 +92,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   <span className={this.props.classes.vertical20}>Examine metadata:</span>
                   <Selections
                     value={this.props.selected_field}
-                    values={Object.keys(this.props.piefields).sort()}
+                    values={Object.keys(this.props.pie_fields_and_stats).sort()}
                     onChange={(e) => this.props.handleSelectField(e)}
                   />
                 </div>

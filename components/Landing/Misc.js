@@ -37,21 +37,7 @@ import GenesetSearchBox from './GenesetSearchBox'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
-
-const IconMapper = {
-  'Phenotypes': <Human />,
-  'Small Molecules': <HexagonMultiple />,
-  'Metabolites': <ChartBubble />,
-  'MicroRNAs': <Tilde />,
-  'Diseases': <EmoticonCryOutline />,
-  'Cell Lines': <TestTube />,
-  'Tissues': <CameraMeteringMatrix />,
-  'Antibodies': <Axis />,
-  'Viruses': <DecagramOutline />,
-  'PTMs': <Hammer />,
-  'Genes': <Dna />,
-  'Pathways': <Webhook />,
-}
+const meta_default_icon = <span class="mdi mdi-creation mdi-24px"></span>
 
 export const BottomLinks = ( { classes, width, ...props } ) => {
   return (
@@ -149,7 +135,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
 }
 
 export const CountsDiv = ({ classes, width, ...props }) => {
-  const { meta_counts, preferred_name } = props
+  const { meta_counts } = props
   return (
     <Grid container
       spacing={24}
@@ -164,12 +150,12 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       {meta_counts.map((entry) => (
         <Grid item xs={4} sm={3} key={entry.name}>
           <div className={classes.centered}>
-            {IconMapper[preferred_name[entry.name]]}
+            <span class={`mdi ${entry.icon} mdi-24px`}></span>
             <Typography variant="subheading">
               {entry.counts}
             </Typography>
             <Typography variant="caption">
-              {preferred_name[entry.name]}
+              {entry.Preferred_Name}
             </Typography>
           </div>
         </Grid>
@@ -196,7 +182,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           </Grid>
           <Grid item xs={4}>
             <div className={classes.centered}>
-              <LibraryBooks />
+              <span class="mdi mdi-library-books mdi-24px"></span>
               <Typography variant="h5" component="h5">
                 {props.LibraryNumber}
               </Typography>
@@ -205,7 +191,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           </Grid>
           <Grid item xs={4}>
             <div className={classes.centered}>
-              <Fingerprint />
+              <span class="mdi mdi-fingerprint mdi-24px"></span>
               <Typography variant="h5" component="h5">
                 {props.SignatureNumber}
               </Typography>
@@ -214,7 +200,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           </Grid>
           <Grid item xs={4}>
             <div className={classes.centered}>
-              <Web />
+              <span class="mdi mdi-web mdi-24px"></span>
               <Typography variant="h5" component="h5">
                 {Object.keys(props.resource_signatures).length}
               </Typography>

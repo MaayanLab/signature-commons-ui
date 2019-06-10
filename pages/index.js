@@ -21,57 +21,101 @@ async function fetch_count(source) {
   return (response.count)
 }
 
-async function get_metacounts() {
-  const counting_fields = (await import('../ui-schemas/dashboard/counting_fields.json')).default
-  const preferred_name = (await import('../ui-schemas/dashboard/preferred_name.json')).default
-  const object_fields = Object.keys(counting_fields).filter((key)=>counting_fields[key]=='object')
-  const { response: meta_stats } = await fetch_meta({
-    endpoint: '/signatures/value_count',
-    body: {
-      depth: 2,
-      filter: {
-        fields: Object.keys(counting_fields),
-      },
-    },
+async function get_counts() {
+  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui.json')).default
+  const counting_fields = landing_ui.filter((item)=>item.Table_Count).map((item)=>item.Field_Name)
+  const count_promise = counting_fields.map( async (table)=> {
+    const count_stats = await fetch_count(table)
+    return {table: table, counts: count_stats}
   })
-
-  const meta_counts = Object.keys(meta_stats).filter((key)=>key.indexOf('.Name')>-1||
-                                                      // (key.indexOf(".PubChemID")>-1 &&
-                                                      //  key.indexOf("Small_Molecule")>-1) ||
-                                                      (key.indexOf('.')===-1 && object_fields.indexOf(key)===-1))
-      .reduce((stat_list, k)=>{
-        stat_list.push({ name: k.indexOf('PubChemID')!==-1 ?
-                                                                      k.replace('Small_Molecule.', ''):
-                                                                      k.replace('.Name', ''),
-        counts: Object.keys(meta_stats[k]).length })
-        return (stat_list)
-      },
-      [])
-  meta_counts.sort((a, b) => parseFloat(b.counts) - parseFloat(a.counts))
-  return { meta_counts, counting_fields, preferred_name }
+  const counts = await Promise.all(count_promise)
+  const table_mapping = {
+    "libraries": "LibraryNumber",
+    "signatures": "SignatureNumber",
+    "entities": "EntityNumber",
+    "resources": "ResourceNumber"
+  }
+  const counts_mapped = counts.reduce((accumulator, item)=>{
+    accumulator[table_mapping[item.table]] = item.counts
+    return(accumulator)
+  }, {})
+  console.log({...counts_mapped})
+  return {...counts_mapped}
 }
 
-async function get_pie_stats(counting_fields) {
-  const piefields = (await import('../ui-schemas/dashboard/pie_fields.json')).default
+async function get_metacounts() {
+  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui.json')).default
+  const counting_fields = landing_ui.filter((item)=>item.Meta_Count)
+  
+  const per_table_fields = counting_fields.reduce((tables, item) => {
+    if (tables[item.Table] === undefined) {
+      tables[item.Table] = [item.Field_Name]
+    } else{
+      tables[item.Table] = [...tables[item.Table], item.Field_Name]
+    }
+    return(tables)
+  }, {})
+
+
+  const meta_promise = Object.keys(per_table_fields).map( async (table)=> {
+    const { response: meta_stats } = await fetch_meta({
+      endpoint: `/${table}/value_count`,
+      body: {
+        depth: 2,
+        filter: {
+          fields: per_table_fields[table],
+        },
+      },
+    })
+    return meta_stats
+  })
+  
+  const meta = await Promise.all(meta_promise)
+  const meta_stats = meta.reduce((mapping, item)=>{
+    mapping = {...item, ...mapping}
+    return mapping
+  }, {})
+
+  const object_fields = counting_fields.filter((item)=>item.Type==='object')
+  const meta_counts = landing_ui.filter((item)=>item.Meta_Count).reduce((stat_list, item)=>{
+    const k = item.Type==="object" ? `${item.Field_Name}.Name`: item.Field_Name
+    stat_list.push({ name: k.indexOf('PubChemID')!==-1 ?
+                             k.replace('Small_Molecule.', ''):
+                             k.replace('.Name', ''),
+                     counts: Object.keys(meta_stats[k]).length,
+                     icon: item.MDI_Icon,
+                     Preferred_Name: item.Preferred_Name})
+    return (stat_list)
+  }, [])
+
+  meta_counts.sort((a, b) => parseFloat(b.counts) - parseFloat(a.counts))
+  return { meta_counts }
+}
+
+async function get_pie_stats() {
+  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui.json')).default
+  const pie_schema = landing_ui.filter((item)=>item.Pie_Count)
+  const piefields = pie_schema.map((item)=>(item.Field_Name))
+
   const { response: meta_stats } = await fetch_meta({
     endpoint: '/signatures/value_count',
     body: {
       depth: 2,
       filter: {
-        fields: Object.keys(piefields),
+        fields: piefields,
       },
     },
   })
-  const pie_stats = Object.keys(piefields).map((key)=>{
-    if (counting_fields[key]==='object') {
+  const pie_stats = pie_schema.map((item)=>{
+    if (item.Type==="object") {
       return {
-        key: key,
-        stats: meta_stats[key+'.Name'],
+        key: item.Field_Name,
+        stats: meta_stats[item.Field_Name+'.Name'],
       }
     } else {
       return {
-        key: key,
-        stats: meta_stats[key],
+        key: item.Field_Name,
+        stats: meta_stats[item.Field_Name],
       }
     }
   })
@@ -79,7 +123,7 @@ async function get_pie_stats(counting_fields) {
     piestats[stats.key] = stats.stats
     return piestats
   }, {})
-  return { piefields, pie_fields_and_stats }
+  return { pie_fields_and_stats }
 }
 
 async function get_versioncounts() {
@@ -140,12 +184,10 @@ const App = (props) => (
 )
 
 App.getInitialProps = async () => {
-  const LibraryNumber = await fetch_count('libraries')
-  const SignatureNumber = await fetch_count('signatures')
-  const EntityNumber = await fetch_count('entities')
-  const { meta_counts, counting_fields, preferred_name } = await get_metacounts()
+  const {LibraryNumber, SignatureNumber, EntityNumber} = await get_counts()
+  const { meta_counts } = await get_metacounts()
   const { resource_signatures } = await get_signature_counts_per_resources()
-  const { piefields, pie_fields_and_stats } = await get_pie_stats(counting_fields)
+  const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()
   const version_counts = await get_versioncounts()
   return {
@@ -153,11 +195,8 @@ App.getInitialProps = async () => {
     SignatureNumber,
     EntityNumber,
     meta_counts,
-    counting_fields,
-    preferred_name,
     resource_signatures,
     pie_fields_and_stats,
-    piefields,
     version_counts,
     signature_keys,
   }
