@@ -52,7 +52,7 @@
     "lint": "eslint util/**/* pages/**/* styles/**/* components/**/*",
     "lint:fix": "npm run lint -- --fix",
     "dev": "NODE_ENV=development dotenv-load next",
-    "build": "dotenv-load next build",
+    "build": "NODE_ENV=production dotenv-load next build",
     "build:docker": "dotenv-load node ./bin/docker-build.js",
     "start": "dotenv-load next start",
     "export": "NEXT_EXPORT=1 dotenv-load next build && NEXT_EXPORT=1 dotenv-load next export",
