@@ -34,7 +34,6 @@ export default class SignatureSearch extends React.Component {
 
   async componentDidMount() {
     NProgress.start()
-    this.setState({ ...(await get_library_resources()) })
     if (this.props.location.state) {
       this.setState({
         input: this.props.location.state.input,
@@ -72,6 +71,7 @@ export default class SignatureSearch extends React.Component {
 
         const results = await query_overlap({
           ...this.state,
+          ...this.props,
           input: {
             entities: resolved_entities,
           },
@@ -97,6 +97,7 @@ export default class SignatureSearch extends React.Component {
 
         const results = await query_rank({
           ...this.state,
+          ...this.props,
           input: {
             up_entities: resolved_up_entities,
             down_entities: resolved_down_entities,
@@ -124,7 +125,7 @@ export default class SignatureSearch extends React.Component {
 
   resource_filters = (props) => (
     <ResourceFilters
-      resources={Object.values(this.state.resources || {})}
+      resources={Object.values(this.props.resources || {})}
       resource_signatures={this.state.resource_signatures || {}}
       {...props}
     />

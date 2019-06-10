@@ -5,9 +5,7 @@
     "Preferred_Name": "Antibodies",
     "MDI_Icon": "mdi-axis",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "Cell_Line",
@@ -16,8 +14,7 @@
     "MDI_Icon": "mdi-test-tube",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "Disease",
@@ -25,9 +22,7 @@
     "Preferred_Name": "Diseases",
     "MDI_Icon": "mdi-emoticon-cry-outline",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "Metabolite",
@@ -35,9 +30,7 @@
     "Preferred_Name": "Metabolites",
     "MDI_Icon": "mdi-chart-bubble",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "MicroRNA",
@@ -45,9 +38,7 @@
     "Preferred_Name": "MicroRNAs",
     "MDI_Icon": "mdi-tilde",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "Phenotype",
@@ -55,9 +46,7 @@
     "Preferred_Name": "Phenotypes",
     "MDI_Icon": "mdi-human",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "Pathway",
@@ -65,9 +54,7 @@
     "Preferred_Name": "Pathways",
     "MDI_Icon": "mdi-webhook",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "Gene",
@@ -76,8 +63,7 @@
     "MDI_Icon": "mdi-dna",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "PTM",
@@ -85,9 +71,7 @@
     "Preferred_Name": "PTMs",
     "MDI_Icon": "mdi-hammer",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "Small_Molecule",
@@ -96,8 +80,7 @@
     "MDI_Icon": "mdi-hexagon-multiple",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "Tissue",
@@ -106,8 +89,7 @@
     "MDI_Icon": "mdi-camera-metering-matrix",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "Virus",
@@ -115,62 +97,48 @@
     "Preferred_Name": "Viruses",
     "MDI_Icon": "mdi-decagram-outline",
     "Table": "signatures",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Table_Count": false
+    "Meta_Count": true
   },
   {
     "Field_Name": "Assay",
     "Type": "string",
     "Preferred_Name": "Assays",
     "Table": "signatures",
-    "Meta_Count": false,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "Readout",
     "Type": "string",
     "Preferred_Name": "Readouts",
     "Table": "signatures",
-    "Meta_Count": false,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "Organism",
     "Type": "string",
     "Preferred_Name": "Organisms",
     "Table": "signatures",
-    "Meta_Count": false,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "Perturbation_Type",
     "Type": "string",
     "Preferred_Name": "Perturbation Types",
     "Table": "signatures",
-    "Meta_Count": false,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "Program",
     "Type": "string",
     "Preferred_Name": "Programs",
     "Table": "signatures",
-    "Meta_Count": false,
-    "Pie_Count": true,
-    "Table_Count": false
+    "Pie_Count": true
   },
   {
     "Field_Name": "libraries",
     "Type": "table",
     "Preferred_Name": "Libraries",
     "MDI_Icon": "mdi-library-books",
-    "Meta_Count": false,
-    "Pie_Count": false,
     "Table_Count": true
   },
   {
@@ -178,8 +146,6 @@
     "Type": "table",
     "Preferred_Name": "Signatures",
     "MDI_Icon": "mdi-fingerprint",
-    "Meta_Count": false,
-    "Pie_Count": false,
     "Table_Count": true
   },
   {
@@ -187,17 +153,19 @@
     "Type": "table",
     "Preferred_Name": "Entities",
     "MDI_Icon": "mdi-blur",
-    "Meta_Count": false,
-    "Pie_Count": false,
     "Table_Count": true
   },
   {
     "Field_Name": "resources",
     "Type": "table",
     "Preferred_Name": "Resources",
-    "MDI_Icon": "mdi-web",
-    "Meta_Count": false,
-    "Pie_Count": false,
-    "Table_Count": false
+    "MDI_Icon": "mdi-web"
+  },
+  {
+    "Field_Name": "Version",
+    "Type": "string",
+    "Table": "libraries",
+    "Preferred_Name": "Library per year",
+    "Bar_Count": true
   }
 ]

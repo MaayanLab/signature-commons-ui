@@ -99,7 +99,7 @@ export async function get_library_resources() {
 
 export async function get_signature_counts_per_resources(controller=null) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { library_resource } = await get_library_resources()
+  const { libraries, resources, library_resource } = await get_library_resources()
 
   const count_promises = Object.keys(library_resource).map(async (lib) => {
     // request details from GitHub’s API with Axios
@@ -135,5 +135,8 @@ export async function get_signature_counts_per_resources(controller=null) {
   // });
   return {
     resource_signatures: per_resource_counts, // for_sorting.slice(0,11)
+    libraries,
+    resources,
+    library_resource
   }
 }

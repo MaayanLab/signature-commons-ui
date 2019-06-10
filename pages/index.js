@@ -22,7 +22,7 @@ async function fetch_count(source) {
 }
 
 async function get_counts() {
-  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui.json')).default
+  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item)=>item.Table_Count).map((item)=>item.Field_Name)
   const count_promise = counting_fields.map( async (table)=> {
     const count_stats = await fetch_count(table)
@@ -39,12 +39,11 @@ async function get_counts() {
     accumulator[table_mapping[item.table]] = item.counts
     return(accumulator)
   }, {})
-  console.log({...counts_mapped})
   return {...counts_mapped}
 }
 
 async function get_metacounts() {
-  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui.json')).default
+  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item)=>item.Meta_Count)
   
   const per_table_fields = counting_fields.reduce((tables, item) => {
@@ -55,7 +54,6 @@ async function get_metacounts() {
     }
     return(tables)
   }, {})
-
 
   const meta_promise = Object.keys(per_table_fields).map( async (table)=> {
     const { response: meta_stats } = await fetch_meta({
@@ -75,7 +73,6 @@ async function get_metacounts() {
     mapping = {...item, ...mapping}
     return mapping
   }, {})
-
   const object_fields = counting_fields.filter((item)=>item.Type==='object')
   const meta_counts = landing_ui.filter((item)=>item.Meta_Count).reduce((stat_list, item)=>{
     const k = item.Type==="object" ? `${item.Field_Name}.Name`: item.Field_Name
@@ -93,7 +90,7 @@ async function get_metacounts() {
 }
 
 async function get_pie_stats() {
-  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui.json')).default
+  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const pie_schema = landing_ui.filter((item)=>item.Pie_Count)
   const piefields = pie_schema.map((item)=>(item.Field_Name))
 
@@ -126,21 +123,45 @@ async function get_pie_stats() {
   return { pie_fields_and_stats }
 }
 
-async function get_versioncounts() {
-  const { response: libraries } = await fetch_meta({
-    endpoint: '/libraries',
+async function get_barcounts() {
+  const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
+  const counting_fields = landing_ui.filter((item)=>item.Bar_Count)
+  const meta_promise = counting_fields.map( async (item)=> {
+    const { response: meta_stats } = await fetch_meta({
+      endpoint: `/${item.Table}/value_count`,
+      body: {
+        depth: 2,
+        filter: {
+          fields: [item.Field_Name],
+        },
+      },
+    })
+    const stats = Object.keys(meta_stats[item.Field_Name]).reduce((accumulator, bar)=>{
+      const count = meta_stats[item.Field_Name][bar]
+      if(bar==="2017b"){
+        if(accumulator["2017"]===undefined){
+          accumulator["2017"] = count
+        }else {
+          accumulator["2017"] = accumulator["2017"]+ count
+        }
+      }else {
+        if(accumulator[bar]===undefined){
+          accumulator[bar] = count
+        }else {
+          accumulator[bar] = accumulator[bar]+ count
+        }
+      }
+      return accumulator
+    }, {}) // TODO: Fix this as schema
+    return {field: item.Field_Name, stats: stats}
   })
-  const re = new RegExp('^[0-9]{4}')
-  const version_dumps = libraries.map((lib)=>lib['meta']['Version'].match(re)[0]).reduce((versions, version)=>{
-    if (versions[version]===undefined) {
-      versions[version] = 1
-    } else {
-      versions[version]++
-    }
-    return versions
-  }, {})
-  const version_counts = Object.keys(version_dumps).map((ver)=>({ name: ver, counts: version_dumps[ver] }))
-  return version_counts
+  
+  const meta = await Promise.all(meta_promise)
+  const barcounts = meta.reduce((accumulator, item)=>{
+    accumulator[item.field] = Object.keys(item.stats).map((key)=>({ name: key, counts: item.stats[key] }))
+    return accumulator
+  },{})
+  return { barcounts }
 }
 
 async function get_signature_keys() {
@@ -186,10 +207,11 @@ const App = (props) => (
 App.getInitialProps = async () => {
   const {LibraryNumber, SignatureNumber, EntityNumber} = await get_counts()
   const { meta_counts } = await get_metacounts()
-  const { resource_signatures } = await get_signature_counts_per_resources()
+  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources()
   const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()
-  const version_counts = await get_versioncounts()
+  const { barcounts } = await get_barcounts()
+  console.log(barcounts)
   return {
     LibraryNumber,
     SignatureNumber,
@@ -197,8 +219,11 @@ App.getInitialProps = async () => {
     meta_counts,
     resource_signatures,
     pie_fields_and_stats,
-    version_counts,
+    barcounts,
     signature_keys,
+    libraries,
+    resources,
+    library_resource
   }
 }
 

@@ -129,6 +129,9 @@ export default class Home extends React.PureComponent {
       cart={this.state.cart}
       updateCart={this.updateCart}
       signature_keys={this.props.signature_keys}
+      libraries={this.props.libraries}
+      resources={this.props.resources}
+      library_resource={this.props.library_resource}
       {...props}
     />
   )
@@ -145,6 +148,9 @@ export default class Home extends React.PureComponent {
     <Resources
       cart={this.state.cart}
       updateCart={this.updateCart}
+      libraries={this.props.libraries}
+      resources={this.props.resources}
+      library_resource={this.props.library_resource}
       {...props}
     />
   )

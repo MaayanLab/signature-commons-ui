@@ -37,7 +37,7 @@ import GenesetSearchBox from './GenesetSearchBox'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
-const meta_default_icon = <span class="mdi mdi-creation mdi-24px"></span>
+const meta_default_icon = "mdi-creation"
 
 export const BottomLinks = ( { classes, width, ...props } ) => {
   return (
@@ -150,7 +150,9 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       {meta_counts.map((entry) => (
         <Grid item xs={4} sm={3} key={entry.name}>
           <div className={classes.centered}>
-            <span class={`mdi ${entry.icon} mdi-24px`}></span>
+            { entry.icon===undefined ? <span class={`mdi ${meta_default_icon} mdi-24px`}></span>:
+              <span class={`mdi ${entry.icon} mdi-24px`}></span>
+            }
             <Typography variant="subheading">
               {entry.counts}
             </Typography>
