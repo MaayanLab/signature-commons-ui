@@ -1,0 +1,60 @@
+[
+  {
+    "Field_Name": "cellLine",
+    "Type": "string",
+    "Preferred_Name": "cellLine",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "cellType",
+    "Type": "string",
+    "Preferred_Name": "cellType",
+    "MDI_Icon": "mdi-test-tube",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "probeset",
+    "Type": "string",
+    "Preferred_Name": "probeset",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "libraries",
+    "Type": "table",
+    "Preferred_Name": "Libraries",
+    "MDI_Icon": "mdi-library-books",
+    "Table_Count": true
+  },
+  {
+    "Field_Name": "signatures",
+    "Type": "table",
+    "Preferred_Name": "Signatures",
+    "MDI_Icon": "mdi-fingerprint",
+    "Table_Count": true
+  },
+  {
+    "Field_Name": "entities",
+    "Type": "table",
+    "Preferred_Name": "Entities",
+    "MDI_Icon": "mdi-blur",
+    "Table_Count": true
+  },
+  {
+    "Field_Name": "resources",
+    "Type": "table",
+    "Preferred_Name": "Resources",
+    "MDI_Icon": "mdi-web"
+  },
+  {
+    "Field_Name": "Library_name",
+    "Type": "string",
+    "Table": "libraries",
+    "Preferred_Name": "Library name",
+    "Bar_Count": true
+  }
+]
