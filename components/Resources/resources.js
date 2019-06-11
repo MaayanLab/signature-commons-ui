@@ -47,7 +47,7 @@ export async function get_library_resources() {
           id: resource,
           meta: {
             name: resource,
-            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || ''}`,
+            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
             Signature_Count: Signature_Count.count,
           },
           libraries: [],

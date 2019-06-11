@@ -9,10 +9,11 @@ export const schemas = [
   require('../ui-schemas/library/lincs.json'),
   require('../ui-schemas/library/creeds.json'),
   require('../ui-schemas/library/enrichr.json'),
-  require('../ui-schemas/library/default.json'),
   require('../ui-schemas/signature/lincs.json'),
   require('../ui-schemas/signature/creeds.json'),
   require('../ui-schemas/signature/enrichr.json'),
+  require('../ui-schemas/library/default.json'),
+  require('../ui-schemas/signature/default.json'),
 ]
 
 export const labels = {
@@ -93,6 +94,22 @@ export const labels = {
       />
     </div>
   ),
+  'text-default': ({label, prop, data, highlight}) => {
+    const val = makeTemplate(prop.text, data)
+    if (val==='undefined'){
+      return null
+    } else{
+      return(
+        <Highlight
+          text={makeTemplate(prop.text, data)}
+          highlight={highlight}
+          props={{
+            className: "chip grey white-text"
+          }}
+        />
+      )
+    }
+  },
 }
 
 export function objectMatch(m, o) {
