@@ -186,6 +186,15 @@ async function get_signature_keys() {
   return signature_keys
 }
 
+async function get_ui_content() {
+  const ui_json = (await import('../ui-schemas/dashboard/ui.json')).default
+  const ui_content = ui_json.filter((item)=>item.landing)
+  if (ui_content.length>0){
+    return ui_content[0]
+  }
+  return {content:{}}
+}
+
 const App = (props) => (
   <div className="root">
     <Router>
@@ -222,7 +231,8 @@ App.getInitialProps = async () => {
     signature_keys,
     libraries,
     resources,
-    library_resource
+    library_resource,
+    ui_content
   }
 }
 
