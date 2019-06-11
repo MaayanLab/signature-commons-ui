@@ -9,14 +9,12 @@
       "text_1": "Explore an extensive collection of MCF10a gene-sets and signatures",
       "text_2": "Search across a broad gathering of perturbations",
       "text_3": "Examine metadata:",
-      "text_4": "Start mining mcf10a datasets",
+      "text_4": "Start using Signature Commons on your project",
       "resource_pie_caption": "Signatures per Resource",
-      "bar-chart": [
-        {
-          "Field_Name": "Library_name",
-          "Caption": "Library names"
-        }
-      ]
+      "bar-chart": {
+        "Field_Name": "Library_name",
+        "Caption": "Library names"
+      }
     }
   }
 ]

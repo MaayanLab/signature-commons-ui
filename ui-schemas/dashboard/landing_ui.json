@@ -139,27 +139,36 @@
     "Type": "table",
     "Preferred_Name": "Libraries",
     "MDI_Icon": "mdi-library-books",
-    "Table_Count": true
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
   },
   {
     "Field_Name": "signatures",
     "Type": "table",
     "Preferred_Name": "Signatures",
     "MDI_Icon": "mdi-fingerprint",
-    "Table_Count": true
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
   },
   {
     "Field_Name": "entities",
     "Type": "table",
     "Preferred_Name": "Entities",
     "MDI_Icon": "mdi-blur",
-    "Table_Count": true
+    "Table_Count": true,
+    "Visible_On_Landing": false,
+    "Visible_On_Admin": true
   },
   {
     "Field_Name": "resources",
     "Type": "table",
     "Preferred_Name": "Resources",
-    "MDI_Icon": "mdi-web"
+    "MDI_Icon": "mdi-web",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
   },
   {
     "Field_Name": "Version",
