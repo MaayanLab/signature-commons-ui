@@ -70,7 +70,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 </div>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <BarChart width={300} height={320} meta_counts={this.props.barcounts.Version} fontSize={11}/>
+                <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/>
                 <div className={this.props.classes.centered}>
                   <Typography variant="caption">
                   Libraries per year

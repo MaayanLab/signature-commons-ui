@@ -17,7 +17,7 @@ export default class Home extends React.PureComponent {
     this.state = {
       cart: Set(),
       pie_stats: null,
-      selected_field: 'Assay',
+      selected_field: Object.keys(props.pie_fields_and_stats)[0]
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
