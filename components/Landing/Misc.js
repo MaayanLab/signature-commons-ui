@@ -47,7 +47,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-           Start using Signature Commons on your project
+           { props.ui_content.content.text_4 || 'Start using Signature Commons on your project'}
           </Typography>
         </div>
       </Grid>
@@ -136,6 +136,12 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
 
 export const CountsDiv = ({ classes, width, ...props }) => {
   const { meta_counts } = props
+  let sm = 3
+  let xs = 4
+  if (meta_counts.length < 4 ){
+    sm = 12 / meta_counts.length
+    xs = 12 / meta_counts.length
+  }
   return (
     <Grid container
       spacing={24}
@@ -143,12 +149,12 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            Search across a broad gathering of perturbations
+            {props.ui_content.content.text_2 || 'Search across a broad gathering of perturbations'}
           </Typography>
         </div>
       </Grid>
       {meta_counts.map((entry) => (
-        <Grid item xs={4} sm={3} key={entry.name}>
+        <Grid item xs={sm} sm={xs} key={entry.name}>
           <div className={classes.centered}>
             { entry.icon===undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span>:
               <span className={`mdi ${entry.icon} mdi-24px`}></span>
@@ -178,37 +184,21 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-               Explore an extensive collection of well-annotated gene-sets and signatures
+               {props.ui_content.content.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
               </Typography>
             </div>
           </Grid>
-          <Grid item xs={4}>
-            <div className={classes.centered}>
-              <span className="mdi mdi-library-books mdi-24px"></span>
-              <Typography variant="title" component="h5">
-                {props.LibraryNumber}
-              </Typography>
-              Libraries
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <div className={classes.centered}>
-              <span className="mdi mdi-fingerprint mdi-24px"></span>
-              <Typography variant="title" component="h5">
-                {props.SignatureNumber}
-              </Typography>
-              Signatures
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <div className={classes.centered}>
-              <span className="mdi mdi-web mdi-24px"></span>
-              <Typography variant="title" component="h5">
-                {Object.keys(props.resource_signatures).length}
-              </Typography>
-              Resources
-            </div>
-          </Grid>
+          {props.table_counts.map((item)=>(
+            <Grid item xs={4}>
+              <div className={classes.centered}>
+                <span className={`mdi ${item.icon} mdi-24px`}></span>
+                <Typography variant="title" component="h5">
+                  {item.counts}
+                </Typography>
+                {item.preferred_name}
+              </div>
+            </Grid>
+            ))}
         </Grid>
       </Grid>
     </Grid>

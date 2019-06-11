@@ -64,17 +64,25 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'}/>
                 <div className={this.props.classes.centered}>
                   <Typography variant="caption">
-                  Signatures per Resource
+                  {this.props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}
                   </Typography>
                 </div>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/>
-                <div className={this.props.classes.centered}>
-                  <Typography variant="caption">
-                  Libraries per year
-                  </Typography>
-                </div>
+                { this.props.ui_content.content["bar-chart"] !== undefined ? 
+                  <div className={this.props.classes.centered}>
+                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content["bar-chart"][0].Field_Name]} fontSize={11}/>
+                      <Typography variant="caption">
+                        {this.props.ui_content.content["bar-chart"][0].Caption}
+                      </Typography>
+                    </div> :
+                  <div className={this.props.classes.centered}>
+                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/>
+                      <Typography variant="caption">
+                      Bar Chart
+                      </Typography>
+                    </div>
+                }
               </Grid>
             </Grid>
           </Grid>
@@ -89,7 +97,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               alignItems={'center'}>
               <Grid item xs={12}>
                 <div className={this.props.classes.centered}>
-                  <span className={this.props.classes.vertical20}>Examine metadata:</span>
+                  <span className={this.props.classes.vertical20}>{this.props.ui_content.content.text_3 || 'Examine metadata:'}</span>
                   <Selections
                     value={this.props.selected_field}
                     values={Object.keys(this.props.pie_fields_and_stats).sort()}
