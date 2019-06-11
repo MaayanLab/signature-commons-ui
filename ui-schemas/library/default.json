@@ -6,8 +6,8 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${meta['Icon']}",
-      "alt": "${meta['Primary_Resource']}"
+      "alt": "${meta['Library_name']}",
+      "src": "${PREFIX}/static/images/default-black.png"
     },
     "Library": {
       "visibility": 1,
