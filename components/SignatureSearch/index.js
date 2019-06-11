@@ -117,6 +117,7 @@ export default class SignatureSearch extends React.Component {
         <GenesetSearchBox
           input={this.state.input}
           onSubmit={this.submit}
+          ui_content={this.props.ui_content}
           {...props}
         />
       )

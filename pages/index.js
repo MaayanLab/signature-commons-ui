@@ -21,14 +21,24 @@ async function fetch_count(source) {
   return (response.count)
 }
 
-async function get_counts() {
+async function get_counts(resource_count) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item)=>item.Table_Count)
-  const count_promise = counting_fields.map( async (item)=> {
+  const resource_field = counting_fields.filter((item)=>item.Field_Name==='resources')
+  const count_promise = counting_fields.filter((item)=>item.Field_Name!=='resources').map( async (item)=> {
     const count_stats = await fetch_count(item.Field_Name)
-    return {table: item.Field_Name, preferred_name: item.Preferred_Name, icon:item.MDI_Icon, counts: count_stats}
+    return {table: item.Field_Name,
+            preferred_name: item.Preferred_Name,
+            icon:item.MDI_Icon,
+            Visible_On_Landing: item.Visible_On_Landing,
+            counts: count_stats}
   })
-  const table_counts = await Promise.all(count_promise)
+  let table_counts = await Promise.all(count_promise)
+  table_counts = resource_field.length > 0 ? [...table_counts, {table:resource_field[0].Field_Name,
+                                                                preferred_name: resource_field[0].Preferred_Name,
+                                                                icon: resource_field[0].MDI_Icon,
+                                                                Visible_On_Landing: resource_field[0].Visible_On_Landing,
+                                                                counts: resource_count}] : table_counts
   return table_counts
 }
 
@@ -204,9 +214,9 @@ const App = (props) => (
 )
 
 App.getInitialProps = async () => {
-  const table_counts = await get_counts()
-  const { meta_counts } = await get_metacounts()
   const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources()
+  const table_counts = await get_counts(Object.keys(resources).length)
+  const { meta_counts } = await get_metacounts()
   const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()
   const { barcounts } = await get_barcounts()

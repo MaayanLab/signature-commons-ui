@@ -71,9 +71,9 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               <Grid item xs={12} sm={6}>
                 { this.props.ui_content.content["bar-chart"] !== undefined ? 
                   <div className={this.props.classes.centered}>
-                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content["bar-chart"][0].Field_Name]} fontSize={11}/>
+                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content["bar-chart"].Field_Name]} fontSize={11}/>
                       <Typography variant="caption">
-                        {this.props.ui_content.content["bar-chart"][0].Caption}
+                        {this.props.ui_content.content["bar-chart"].Caption}
                       </Typography>
                     </div> :
                   <div className={this.props.classes.centered}>

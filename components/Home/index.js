@@ -132,6 +132,7 @@ export default class Home extends React.PureComponent {
       libraries={this.props.libraries}
       resources={this.props.resources}
       library_resource={this.props.library_resource}
+      ui_content={this.props.ui_content}
       {...props}
     />
   )
@@ -140,6 +141,7 @@ export default class Home extends React.PureComponent {
     <MetadataSearch
       cart={this.state.cart}
       updateCart={this.updateCart}
+      ui_content={this.props.ui_content}
       {...props}
     />
   )

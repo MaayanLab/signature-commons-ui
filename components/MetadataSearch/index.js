@@ -53,12 +53,14 @@ export default class MetadataSearch extends React.Component {
   }
 
   render() {
+    console.log(this.props.ui_content)
     return (
       <div className="row">
         <div className="col s12 center">
           <SearchBox
             search={this.state.search}
             searchChange={this.searchChange}
+            ui_content={this.props.ui_content}
           />
         </div>
         {this.state.currentSearch === '' ? null : (

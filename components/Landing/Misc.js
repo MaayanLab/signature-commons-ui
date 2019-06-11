@@ -173,7 +173,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
               </Typography>
             </div>
           </Grid>
-          {props.table_counts.map((item)=>(
+          {props.table_counts.filter((item)=>item.Visible_On_Landing).map((item)=>(
             <Grid item xs={4}>
               <div className={classes.centered}>
                 <span className={`mdi ${item.icon} mdi-24px`}></span>
@@ -218,6 +218,7 @@ export const SearchCard = ({ classes, width, ...props }) =>{
               id='metadata'
               search={props.search}
               searchChange={props.searchChange}
+              ui_content={props.ui_content}
             /> :
             <GenesetSearchBox
               id="signature"

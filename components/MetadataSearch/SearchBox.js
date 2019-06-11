@@ -14,7 +14,7 @@ export default class MetadataSearchBox extends React.Component {
             onChange={this.props.searchChange}
             value={this.props.search}
             className="active"
-            placeholder={config.placeholder}
+            placeholder={this.props.ui_content.content.metadata_placeholder || config.placeholder}
             style={{
               fontWeight: 500,
               color: 'rgba(0, 0, 0, 0.54)',
