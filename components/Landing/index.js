@@ -38,7 +38,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
 
 
   render() {
-    console.log(this.props.barcounts)
     return (
       <div>
         <Grid container

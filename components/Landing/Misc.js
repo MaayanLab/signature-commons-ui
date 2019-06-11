@@ -64,7 +64,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subheader">
+              <Typography variant="subheading">
                   Metadata Search
               </Typography>
             </Grid>
@@ -84,7 +84,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subheader">
+              <Typography variant="subheading">
                   Signature Search
               </Typography>
             </Grid>
@@ -103,7 +103,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subheader">
+              <Typography variant="subheading">
                   Browse Resources
               </Typography>
             </Grid>
@@ -123,7 +123,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subheader">
+              <Typography variant="subheading">
                   API
               </Typography>
             </Grid>
@@ -150,8 +150,8 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       {meta_counts.map((entry) => (
         <Grid item xs={4} sm={3} key={entry.name}>
           <div className={classes.centered}>
-            { entry.icon===undefined ? <span class={`mdi ${meta_default_icon} mdi-24px`}></span>:
-              <span class={`mdi ${entry.icon} mdi-24px`}></span>
+            { entry.icon===undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span>:
+              <span className={`mdi ${entry.icon} mdi-24px`}></span>
             }
             <Typography variant="subheading">
               {entry.counts}
@@ -184,8 +184,8 @@ export const StatDiv = ({ classes, width, ...props }) => {
           </Grid>
           <Grid item xs={4}>
             <div className={classes.centered}>
-              <span class="mdi mdi-library-books mdi-24px"></span>
-              <Typography variant="h5" component="h5">
+              <span className="mdi mdi-library-books mdi-24px"></span>
+              <Typography variant="title" component="h5">
                 {props.LibraryNumber}
               </Typography>
               Libraries
@@ -193,8 +193,8 @@ export const StatDiv = ({ classes, width, ...props }) => {
           </Grid>
           <Grid item xs={4}>
             <div className={classes.centered}>
-              <span class="mdi mdi-fingerprint mdi-24px"></span>
-              <Typography variant="h5" component="h5">
+              <span className="mdi mdi-fingerprint mdi-24px"></span>
+              <Typography variant="title" component="h5">
                 {props.SignatureNumber}
               </Typography>
               Signatures
@@ -202,8 +202,8 @@ export const StatDiv = ({ classes, width, ...props }) => {
           </Grid>
           <Grid item xs={4}>
             <div className={classes.centered}>
-              <span class="mdi mdi-web mdi-24px"></span>
-              <Typography variant="h5" component="h5">
+              <span className="mdi mdi-web mdi-24px"></span>
+              <Typography variant="title" component="h5">
                 {Object.keys(props.resource_signatures).length}
               </Typography>
               Resources
