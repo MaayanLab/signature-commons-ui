@@ -42,12 +42,13 @@ export async function get_library_resources() {
     if (resources[resource] === undefined) {
       if (resource_meta[resource] === undefined) {
         console.warn(`Resource not found: ${resource}, registering library as resource`)
+        const {response: Signature_Count} = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
         resources[resource] = {
           id: resource,
           meta: {
             name: resource,
             icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || ''}`,
-            Signature_Count: await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` }),
+            Signature_Count: Signature_Count.count,
           },
           libraries: [],
         }
@@ -100,7 +101,6 @@ export async function get_library_resources() {
 export async function get_signature_counts_per_resources(controller=null) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
   const { libraries, resources, library_resource } = await get_library_resources()
-
   const count_promises = Object.keys(library_resource).map(async (lib) => {
     // request details from GitHub’s API with Axios
 
