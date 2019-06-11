@@ -9,6 +9,7 @@ export const schemas = [
   require('../ui-schemas/library/lincs.json'),
   require('../ui-schemas/library/creeds.json'),
   require('../ui-schemas/library/enrichr.json'),
+  require('../ui-schemas/library/default.json'),
   require('../ui-schemas/signature/lincs.json'),
   require('../ui-schemas/signature/creeds.json'),
   require('../ui-schemas/signature/enrichr.json'),
