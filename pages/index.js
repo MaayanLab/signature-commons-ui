@@ -211,7 +211,6 @@ App.getInitialProps = async () => {
   const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()
   const { barcounts } = await get_barcounts()
-  console.log(barcounts)
   return {
     LibraryNumber,
     SignatureNumber,
