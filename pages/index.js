@@ -23,23 +23,13 @@ async function fetch_count(source) {
 
 async function get_counts() {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
-  const counting_fields = landing_ui.filter((item)=>item.Table_Count).map((item)=>item.Field_Name)
-  const count_promise = counting_fields.map( async (table)=> {
-    const count_stats = await fetch_count(table)
-    return {table: table, counts: count_stats}
+  const counting_fields = landing_ui.filter((item)=>item.Table_Count)
+  const count_promise = counting_fields.map( async (item)=> {
+    const count_stats = await fetch_count(item.Field_Name)
+    return {table: item.Field_Name, preferred_name: item.Preferred_Name, icon:item.MDI_Icon, counts: count_stats}
   })
-  const counts = await Promise.all(count_promise)
-  const table_mapping = {
-    "libraries": "LibraryNumber",
-    "signatures": "SignatureNumber",
-    "entities": "EntityNumber",
-    "resources": "ResourceNumber"
-  }
-  const counts_mapped = counts.reduce((accumulator, item)=>{
-    accumulator[table_mapping[item.table]] = item.counts
-    return(accumulator)
-  }, {})
-  return {...counts_mapped}
+  const table_counts = await Promise.all(count_promise)
+  return table_counts
 }
 
 async function get_metacounts() {
@@ -214,16 +204,15 @@ const App = (props) => (
 )
 
 App.getInitialProps = async () => {
-  const {LibraryNumber, SignatureNumber, EntityNumber} = await get_counts()
+  const table_counts = await get_counts()
   const { meta_counts } = await get_metacounts()
   const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources()
   const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()
   const { barcounts } = await get_barcounts()
+  const ui_content = await get_ui_content()
   return {
-    LibraryNumber,
-    SignatureNumber,
-    EntityNumber,
+    table_counts,
     meta_counts,
     resource_signatures,
     pie_fields_and_stats,
