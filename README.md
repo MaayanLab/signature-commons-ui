@@ -8,11 +8,6 @@ Before starting, install the project dependencies:
 npm install
 ```
 
-You'll also want to configure the prefix. To just use the production API use:
-```bash
-source .env.development
-```
-
 ### `npm run dev`
 
 Runs the app in the development mode.
@@ -26,3 +21,14 @@ Build and export the project as a series of .html files.
 
 ### `npm run deploy:[dev|production]`
 Export, build and deploy the docker image for release.
+
+## dotenv
+We use dotenv / next-dotenv to organize loading of environment variables--more specific settings will override less specific ones. i.e. `.env.development` settings take precedent over `.env`. You should define your own `.env.*.local` which are hidden by git (see [dotenv-load](https://github.com/formatlos/dotenv-load)).
+
+Furthermore, environment prefixes are important for NextJS.
+
+- `NEXT_PUBLIC_*`: available server / client side
+- `NEXT_SERVER_*`: available server side only
+- `NEXT_STATIC_*`: available during static rendering
+
+Other variables may not propagate, so ensure you use these prefixes.
