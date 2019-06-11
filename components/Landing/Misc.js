@@ -15,21 +15,6 @@ import ReactWordcloud from 'react-wordcloud'
 
 import { FindReplace,
   FileFind,
-  LibraryBooks,
-  Fingerprint,
-  Web,
-  Human,
-  TestTube,
-  ChartBubble,
-  Webhook,
-  Tilde,
-  EmoticonCryOutline,
-  DecagramOutline,
-  Dna,
-  CameraMeteringMatrix,
-  Hammer,
-  HexagonMultiple,
-  Axis,
   NearMe,
   Earth } from 'mdi-material-ui'
 
