@@ -53,7 +53,7 @@ export default withRouter((props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {props.ui_content.content.header || 'Signature Commons'}
           </Link>
           <Link
             to="/"

@@ -36,6 +36,7 @@ Refer to the image above for more information.
 
 | Field         | Value           | Remarks |
 | ------------- |---------------| ----------|
+| header | string | Header of the UI (Default: Signature Commons) |
 | metadata_placeholder | string | Placeholder for the metadata search box |
 | geneset_placeholder | string | Placeholder for the geneset search box |
 | up_genes_placeholder | string | Placeholder for the up genes search box |

@@ -169,7 +169,7 @@ export default class Home extends React.PureComponent {
     const CartActions = this.CartActions
 
     return (
-      <Base>
+      <Base ui_content={this.props.ui_content}>
         <style jsx>{`
         #Home {
           background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');

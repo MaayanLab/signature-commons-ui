@@ -45,7 +45,7 @@ export default withStyles(styles)(class Base extends React.PureComponent {
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>
-        <Header />
+        <Header ui_content={this.props.ui_content} />
         <main>
           <div className={classes.container}>
             {this.props.children}
