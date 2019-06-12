@@ -54,13 +54,13 @@ class AdminView extends React.PureComponent {
       signature_fields: null,
       pie_controller: null,
       pie_stats: null,
-      selected_field: 'Assay',
+      selected_field: Object.keys(props.pie_fields_and_stats)[0],
       per_resource_counts: null,
       status: null,
       controller: null,
       general_controller: null,
       token: token,
-      uid: '308de661-d3e2-11e8-8fe6-787b8ad942f3',
+      uid: Object.keys(props.signature_keys)[0],
       hash: window.location.hash,
     }
     this.filterHandler = this.filterHandler.bind(this)

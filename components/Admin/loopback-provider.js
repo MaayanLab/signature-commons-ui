@@ -63,14 +63,14 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
         if ('meta' in params.filter && 'fullTextSearch' in params.filter.meta) {
           where_clause = build_where(params.filter)
         }
+        let order_object = {}
+        order_object[field] = order
         const query = {
           filter: JSON.stringify({
             where: where_clause,
             skip: (page - 1) * perPage,
             limit: perPage,
-            order: [
-              field+' '+order,
-            ],
+            order: order_object,
           }),
         }
         url = `${apiUrl}/${resource}?${stringify(query)}`
@@ -91,6 +91,8 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
       case GET_MANY_REFERENCE: {
         const { page, perPage } = params.pagination
         const { field, order } = params.sort
+        let order_object = {}
+        order_object[field] = order
         const query = {
           filter: JSON.stringify({
             where: {
@@ -99,9 +101,7 @@ export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
             },
             skip: (page - 1) * perPage,
             limit: perPage - 1,
-            order: [
-              field+' '+order,
-            ],
+            order:order_object,
           }),
         }
         url = `${apiUrl}/${resource}?${stringify(query)}`

@@ -151,7 +151,7 @@ const PieChartGroup = withScreenSize(function({ classes, record={}, ...props }) 
                 <span className={classes.vertical20}>Signatures per </span>
                 <Selections
                   value={ selected_field}
-                  values={Object.keys( piefields).sort()}
+                  values={Object.keys(props.pie_fields_and_stats).sort()}
                   onChange={(e) => props.handleSelectField(e)}
                 />
               </div>:
@@ -182,7 +182,7 @@ const BarChartGroup = withScreenSize(function({ classes, record={}, ...props }) 
 })
 
 const StatCard = function({ classes, record={}, ...props }) {
-  const { stat_type, counts, new_entries } = props
+  const { stat_type, counts, icon, new_entries } = props
   const Icon = icon_mapper[stat_type]
   return (
     <Card className={`${classes.statCard} ${classes.GrayCardHeader}`}>
@@ -199,7 +199,7 @@ const StatCard = function({ classes, record={}, ...props }) {
           </Typography>
         </Grid>
         <Grid item xs={5}>
-          <Icon className={classes.bigIcon} />
+          <span className={`mdi ${icon} mdi-24px`}></span>
         </Grid>
       </Grid>
     </Card>
@@ -209,18 +209,11 @@ const StatCard = function({ classes, record={}, ...props }) {
 const StatRow = function({ classes, record={}, ...props }) {
   return (
     <Grid container spacing={24}>
-      <Grid item xs={6} md={3}>
-        <StatCard counts={props.LibraryNumber} stat_type="Libraries" classes={classes} new_entries={props.LibraryNumber}/>
-      </Grid>
-      <Grid item xs={6} md={3}>
-        <StatCard counts={props.SignatureNumber} stat_type="Signatures" classes={classes} new_entries={props.SignatureNumber}/>
-      </Grid>
-      <Grid item xs={6} md={3}>
-        <StatCard counts={props.EntityNumber} stat_type="Entities" classes={classes} new_entries={props.EntityNumber}/>
-      </Grid>
-      <Grid item xs={6} md={3}>
-        <StatCard counts={Object.keys(props.resource_signatures).length} stat_type="Resources" classes={classes} new_entries={Object.keys(props.resource_signatures).length}/>
-      </Grid>
+      {props.table_counts.filter((item)=>item.Visible_On_Admin).map((item)=>(
+        <Grid item xs={6} md={3}>
+          <StatCard counts={item.counts} icon={item.icon} stat_type={item.preferred_name} classes={classes} new_entries={item.counts}/>
+        </Grid>
+      ))}
     </Grid>
   )
 }
@@ -251,10 +244,16 @@ export const Dashboard = withStyles(landingStyle)( function({ classes, record={}
             {...props}/>
         </Grid>
         <Grid item xs={12}>
-          <BarChartGroup classes={classes}
-            name={'Libraries per year'}
-            bar_counts={props.version_counts}
-            {...props}/>
+          { props.ui_content.content["bar-chart"] !== undefined ? 
+              <BarChartGroup classes={classes}
+                name={props.ui_content.content["bar-chart"].Caption}
+                bar_counts={props.barcounts[props.ui_content.content["bar-chart"].Field_Name]}
+                {...props}/> :
+              <BarChartGroup classes={classes}
+                name={'Bar Chart'}
+                bar_counts={props.barcounts[Object.keys(props.barcounts)[0]]}
+                {...props}/>
+            }
         </Grid>
       </Grid>
     </div>
