@@ -2,18 +2,20 @@
   {
     "landing": true,
     "content": {
+      "header": "MCF10a Signature Commons",
       "metadata_placeholder": "Search over half a million signatures",
       "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
       "up_genes_placeholder": "Genes that are up-regulated in signature or overlap with gene set",
       "down_genes_placeholder": "Genes that are down-regulated in signature or overlap with gene set",
-      "text_1": "Explore an extensive collection of well-annotated gene-sets and signatures",
+      "text_1": "Explore an extensive collection of well-annotated MCF10a gene-sets and signatures",
       "text_2": "Search across a broad gathering of perturbations",
       "text_3": "Examine metadata:",
       "text_4": "Start using Signature Commons on your project",
       "resource_pie_caption": "Signatures per Resource",
       "bar-chart": {
-        "Field_Name": "Library_name",
-        "Caption": "Library names"
+        "Field_Name": "seqnames",
+        "Caption": "Seq Names",
+        "font_size": "6"
       }
     }
   },
@@ -32,6 +34,24 @@
       "bar-chart": {
         "Field_Name": "Version",
         "Caption": "Libraries per year"
+      }
+    }
+  },
+  {
+    "admin": true,
+    "content": {
+      "metadata_placeholder": "Search over half a million signatures",
+      "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
+      "up_genes_placeholder": "Genes that are up-regulated in signature or overlap with gene set",
+      "down_genes_placeholder": "Genes that are down-regulated in signature or overlap with gene set",
+      "text_1": "Explore an extensive collection of well-annotated MCF10a gene-sets and signatures",
+      "text_2": "Search across a broad gathering of perturbations",
+      "text_3": "Examine metadata:",
+      "text_4": "Start using Signature Commons on your project",
+      "resource_pie_caption": "Signatures per Resource",
+      "bar-chart": {
+        "Field_Name": "Library_name",
+        "Caption": "Library names"
       }
     }
   }

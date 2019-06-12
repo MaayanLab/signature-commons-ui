@@ -53,10 +53,10 @@
     "Visible_On_Admin": true 
   },
   {
-    "Field_Name": "Library_name",
+    "Field_Name": "seqnames",
     "Type": "string",
-    "Table": "libraries",
-    "Preferred_Name": "Library name",
+    "Table": "signatures",
+    "Preferred_Name": "Seq names",
     "Bar_Count": true
   }
 ]
