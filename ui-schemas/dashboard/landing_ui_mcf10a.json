@@ -46,8 +46,8 @@
   {
     "Field_Name": "resources",
     "Type": "table",
-    "Preferred_Name": "Resources",
-    "MDI_Icon": "mdi-web",
+    "Preferred_Name": "Assays",
+    "MDI_Icon": "mdi-test-tube-empty",
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true 

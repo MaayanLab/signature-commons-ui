@@ -41,10 +41,16 @@ Refer to the image above for more information.
 | geneset_placeholder | string | Placeholder for the geneset search box |
 | up_genes_placeholder | string | Placeholder for the up genes search box |
 | down_genes_placeholder | string | Placeholder for the down genes search box |
+| search_terms | array | Chip terms for metadata search |
+| geneset_terms | string | Tab-delimited gene terms for geneset search |
+| weighted_geneset_terms | string | Tab-delimited gene weighted terms for geneset search |
+| up_set_terms | string | Tab-delimited gene terms for up geneset |
+| down_set_terms | string | Tab-delimited gene terms for down geneset search |
 | text_1 | string | Text for text_1 |
 | text_2 | string | Text for text_2 |
 | text_3 | string | Text for text_3 |
 | text_4 | string | Text for text_4 |
+| change_resource | string | Change references to Resources with this name |
 | resource_pie_caption | string | Caption for resource pie chart |
 | bar-chart | object | Controls the barcharts |
 
