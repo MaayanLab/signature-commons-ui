@@ -35,41 +35,20 @@ export default class ResourcePage extends React.Component {
                       <div>
                         <span className="card-title">{this.props.resource.meta.name}</span>
                       </div>
-                      <div>
-                        <span>
-                          <b>Signature count:</b>&nbsp;
-                          {this.props.resource.meta.Signature_Count}
-                        </span>
-                      </div>
-                      <div>
-                        <span>
-                          <b>PMID:</b>&nbsp;
-                          <a
-                            href={'https://www.ncbi.nlm.nih.gov/pubmed/' + this.props.resource.meta.PMID}
-                          >
-                            {this.props.resource.meta.PMID}
-                          </a>
-                        </span>
-                      </div>
-                      <div>
-                        <span>
-                          <b>URL:</b>&nbsp;
-                          <a
-                            href={this.props.resource.meta.URL}
-                          >
-                            {this.props.resource.meta.URL}
-                          </a>
-                        </span>
-                      </div>
-                      <div>
-                        <p>{this.props.resource.meta.description}</p>
-                      </div>
+                      {Object.keys(this.props.resource.meta).filter((key)=>(["name", "icon"].indexOf(key)===-1)).map((key)=>(
+                        <div>
+                          <span>
+                            <b>{key.replace(/_/g, ' ')}:</b>&nbsp;
+                            {this.props.resource.meta[key]}
+                          </span>
+                        </div>
+                        ))}
                     </div>
                   </div>
                 </div>
                 <div className="card-action">
                   <Link
-                    to="/Resources"
+                    to={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
                     className="waves-effect waves-teal btn-flat"
                   >
                     BACK

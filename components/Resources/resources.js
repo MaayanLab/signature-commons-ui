@@ -34,7 +34,6 @@ export async function get_library_resources() {
   const resources = {}
   for (const lib of libraries) {
     const resource = lib.meta['Primary_Resource_Short_Version'] || lib.meta['Primary_Resource'] || lib.meta['Library_name']
-
     if (resource_meta[resource] === undefined) {
       console.error(`Resource not found: ${resource}`)
     }

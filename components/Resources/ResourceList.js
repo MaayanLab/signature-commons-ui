@@ -11,7 +11,7 @@ export default class ResourceList extends React.PureComponent {
           {sorted_resources.map((resource) => (
             <Link
               key={resource.id}
-              to={`/Resources/${resource.meta.name.replace(/ /g, '_')}`}
+              to={`/${this.props.ui_content.content.change_resource || 'Resources'}/${resource.meta.name.replace(/ /g, '_')}`}
             >
               <IconButton
                 alt={resource.meta.name}
