@@ -4,6 +4,7 @@ import config from '../../ui-schemas/MetadataSearch'
 
 export default class MetadataSearchBox extends React.Component {
   render() {
+    const examples = this.props.ui_content.content.search_terms || config.examples
     return (
       <form action="javascript:void(0);">
         <div className="input-field">
@@ -35,7 +36,7 @@ export default class MetadataSearchBox extends React.Component {
             </button>
           </Link>
         </div>
-        {config.examples.map((example) => (
+        {examples.map((example) => (
           <Link
             key={example}
             to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(example)}` }}
