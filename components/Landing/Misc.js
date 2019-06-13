@@ -174,7 +174,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
             </div>
           </Grid>
           {props.table_counts.filter((item)=>item.Visible_On_Landing).map((item)=>(
-            <Grid item xs={4}>
+            <Grid item xs={4} key={item.preferred_name}>
               <div className={classes.centered}>
                 <span className={`mdi ${item.icon} mdi-24px`}></span>
                 <Typography variant="title" component="h5">

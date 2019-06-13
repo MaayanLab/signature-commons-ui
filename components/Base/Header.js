@@ -20,10 +20,10 @@ export function Nav(props) {
         </Link>
       </li>
       <li
-        className={props.location.pathname === '/Resources' ? 'active' : ''}
+        className={props.location.pathname === `/${props.ui_content.content.change_resource || 'Resources'}` ? 'active' : ''}
       >
-        <Link to="/Resources">
-          Resources
+        <Link to={`/${props.ui_content.content.change_resource || 'Resources'}`}>
+          {props.ui_content.content.change_resource || 'Resources'}
         </Link>
       </li>
       <li>
@@ -65,9 +65,9 @@ export default withRouter((props) => {
             &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-          <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
+          <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} ui_content={props.ui_content} />
         </div>
-        <Nav className="sidenav" id="mobile-menu" location={props.location} />
+        <Nav className="sidenav" id="mobile-menu" location={props.location} ui_content={props.ui_content}/>
 
         {paths.length <= 2 ? null : (
           <div className="nav-wrapper grey">
