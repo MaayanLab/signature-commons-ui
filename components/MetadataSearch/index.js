@@ -53,7 +53,6 @@ export default class MetadataSearch extends React.Component {
   }
 
   render() {
-    console.log(this.props.ui_content)
     return (
       <div className="row">
         <div className="col s12 center">

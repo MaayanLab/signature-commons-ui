@@ -1,7 +1,7 @@
 import React from 'react'
 import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
-import { ShowMeta } from '../../components/ShowMeta'
+import ShowMeta from '../../components/ShowMeta'
 import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
