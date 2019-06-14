@@ -158,6 +158,8 @@ export const CountsDiv = ({ classes, width, ...props }) => {
 }
 
 export const StatDiv = ({ classes, width, ...props }) => {
+  const visible_stats = props.table_counts.filter((item)=>item.Visible_On_Landing)
+  const xs = visible_stats.length >= 3 ? 4 : 12/visible_stats.length
   return (
     <Grid container
       spacing={24}
@@ -173,8 +175,8 @@ export const StatDiv = ({ classes, width, ...props }) => {
               </Typography>
             </div>
           </Grid>
-          {props.table_counts.filter((item)=>item.Visible_On_Landing).map((item)=>(
-            <Grid item xs={4} key={item.preferred_name}>
+          {visible_stats.map((item)=>(
+            <Grid item xs={xs} key={item.preferred_name}>
               <div className={classes.centered}>
                 <span className={`mdi ${item.icon} mdi-24px`}></span>
                 <Typography variant="title" component="h5">
