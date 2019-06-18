@@ -36,7 +36,7 @@ export default class ResourcePage extends React.Component {
                         <span className="card-title">{this.props.resource.meta.name}</span>
                       </div>
                       {Object.keys(this.props.resource.meta).filter((key)=>(["name", "icon"].indexOf(key)===-1)).map((key)=>(
-                        <div>
+                        <div key={key}>
                           <span>
                             <b>{key.replace(/_/g, ' ')}:</b>&nbsp;
                             {this.props.resource.meta[key]}

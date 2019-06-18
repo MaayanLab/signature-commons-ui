@@ -21,7 +21,7 @@ async function fetch_count(source) {
   return (response.count)
 }
 
-async function get_counts(resource_count) {
+async function get_counts(resource_count, landing_ui_schema) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item)=>item.Table_Count)
   const resource_field = counting_fields.filter((item)=>item.Field_Name==='resources')
@@ -42,7 +42,7 @@ async function get_counts(resource_count) {
   return table_counts
 }
 
-async function get_metacounts() {
+async function get_metacounts(landing_ui_schema) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item)=>item.Meta_Count)
   
@@ -89,7 +89,7 @@ async function get_metacounts() {
   return { meta_counts }
 }
 
-async function get_pie_stats() {
+async function get_pie_stats(landing_ui_schema) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const pie_schema = landing_ui.filter((item)=>item.Pie_Count)
   const piefields = pie_schema.map((item)=>(item.Field_Name))
@@ -123,7 +123,7 @@ async function get_pie_stats() {
   return { pie_fields_and_stats }
 }
 
-async function get_barcounts() {
+async function get_barcounts(landing_ui_schema) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item)=>item.Bar_Count)
   const meta_promise = counting_fields.map( async (item)=> {
@@ -214,13 +214,14 @@ const App = (props) => (
 )
 
 App.getInitialProps = async () => {
-  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources()
-  const table_counts = await get_counts(Object.keys(resources).length)
-  const { meta_counts } = await get_metacounts()
-  const { pie_fields_and_stats } = await get_pie_stats()
-  const signature_keys = await get_signature_keys()
-  const { barcounts } = await get_barcounts()
   const ui_content = await get_ui_content()
+  const landing_ui_schema = '../ui-schemas/dashboard/landing_ui_mcf10a.json'
+  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources()
+  const table_counts = await get_counts(Object.keys(resources).length, landing_ui_schema)
+  const { meta_counts } = await get_metacounts(landing_ui_schema)
+  const { pie_fields_and_stats } = await get_pie_stats(landing_ui_schema)
+  const signature_keys = await get_signature_keys()
+  const { barcounts } = await get_barcounts(landing_ui_schema)
   return {
     table_counts,
     meta_counts,

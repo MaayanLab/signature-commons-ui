@@ -146,7 +146,7 @@
   {
     "Field_Name": "signatures",
     "Type": "table",
-    "Preferred_Name": "Signatures",
+    "Preferred_Name": "Sample Readouts",
     "MDI_Icon": "mdi-fingerprint",
     "Table_Count": true,
     "Visible_On_Landing": true,
