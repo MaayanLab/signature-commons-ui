@@ -1,0 +1,18 @@
+{
+  "match": {
+    "${$validator}": "/@dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "alt": "${meta[Object.keys(meta)[0]]}",
+      "src": "${PREFIX}/static/images/default-black.png"
+    },
+    "Info": {
+      "visibility": 1,
+      "type": "text-default",
+      "text": "${Object.keys(meta)[1]}: ${meta[Object.keys(meta)[1]]}"
+    }
+  }
+}
