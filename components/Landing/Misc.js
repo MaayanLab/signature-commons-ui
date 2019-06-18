@@ -22,9 +22,9 @@ import GenesetSearchBox from './GenesetSearchBox'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
-const meta_default_icon = "mdi-creation"
+const meta_default_icon = 'mdi-creation'
 
-export const BottomLinks = ( { classes, width, ...props } ) => {
+export const BottomLinks = ({ classes, width, ...props }) => {
   return (
     <Grid container
       spacing={24}
@@ -32,7 +32,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-           { props.ui_content.content.text_4 || 'Start using Signature Commons on your project'}
+            { props.ui_content.content.text_4 || 'Start using Signature Commons on your project'}
           </Typography>
         </div>
       </Grid>
@@ -44,7 +44,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
             direction={'column'}>
             <Grid item xs={12}>
               <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                onClick={(e)=>props.handleChange(e, 'metadata')}>
+                onClick={(e) => props.handleChange(e, 'metadata')}>
                 <FileFind className={classes.icon} />
               </Button>
             </Grid>
@@ -64,7 +64,7 @@ export const BottomLinks = ( { classes, width, ...props } ) => {
             direction={'column'}>
             <Grid item xs={12}>
               <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                onClick={(e)=>props.handleChange(e, 'signature')}>
+                onClick={(e) => props.handleChange(e, 'signature')}>
                 <FindReplace className={classes.icon} />
               </Button>
             </Grid>
@@ -123,7 +123,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   const { meta_counts } = props
   let sm = 3
   let xs = 4
-  if (meta_counts.length < 4 ){
+  if (meta_counts.length < 4) {
     sm = 12 / meta_counts.length
     xs = 12 / meta_counts.length
   }
@@ -141,7 +141,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       {meta_counts.map((entry) => (
         <Grid item xs={sm} sm={xs} key={entry.name}>
           <div className={classes.centered}>
-            { entry.icon===undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span>:
+            { entry.icon === undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span> :
               <span className={`mdi ${entry.icon} mdi-24px`}></span>
             }
             <Typography variant="subheading">
@@ -158,8 +158,8 @@ export const CountsDiv = ({ classes, width, ...props }) => {
 }
 
 export const StatDiv = ({ classes, width, ...props }) => {
-  const visible_stats = props.table_counts.filter((item)=>item.Visible_On_Landing)
-  const xs = visible_stats.length >= 3 ? 4 : 12/visible_stats.length
+  const visible_stats = props.table_counts.filter((item) => item.Visible_On_Landing)
+  const xs = visible_stats.length >= 3 ? 4 : 12 / visible_stats.length
   return (
     <Grid container
       spacing={24}
@@ -171,11 +171,11 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-               {props.ui_content.content.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
+                {props.ui_content.content.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
               </Typography>
             </div>
           </Grid>
-          {visible_stats.map((item)=>(
+          {visible_stats.map((item) => (
             <Grid item xs={xs} key={item.preferred_name}>
               <div className={classes.centered}>
                 <span className={`mdi ${item.icon} mdi-24px`}></span>
@@ -185,14 +185,14 @@ export const StatDiv = ({ classes, width, ...props }) => {
                 {item.preferred_name}
               </div>
             </Grid>
-            ))}
+          ))}
         </Grid>
       </Grid>
     </Grid>
   )
 }
 
-export const SearchCard = ({ classes, width, ...props }) =>{
+export const SearchCard = ({ classes, width, ...props }) => {
   return (
     <Card className={`${classes.paddedCard} ${classes.topCard}`}>
       <Grid container
@@ -249,9 +249,9 @@ const callbacks = {
   onWordClick: getCallback('onWordClick'),
 }
 
-export const WordCloud = function({ classes, record={}, ...props }) {
+export const WordCloud = function({ classes, record = {}, ...props }) {
   const { stats } = props
-  if (stats!==null) {
+  if (stats !== null) {
     const wordstats = Object.entries(stats).map(function(entry) {
       return ({ 'text': entry[0], 'value': entry[1] })
     })
@@ -269,6 +269,6 @@ export const WordCloud = function({ classes, record={}, ...props }) {
       </div>
     )
   } else {
-    return ( <div />)
+    return (<div />)
   }
 }

@@ -108,7 +108,7 @@ export async function query_overlap(props) {
     count: Object.keys(enriched_results).length,
     count_data,
     duration_data: duration_data,
-    duration: (Date.now() - start)/1000,
+    duration: (Date.now() - start) / 1000,
     duration_meta: duration_meta,
     controller: null,
   }
@@ -238,7 +238,7 @@ export async function query_rank(props) {
     count: Object.keys(enriched_results).length,
     count_data,
     duration_data: duration_data,
-    duration: (Date.now() - start)/1000,
+    duration: (Date.now() - start) / 1000,
     duration_meta: duration_meta,
     controller: null,
   }

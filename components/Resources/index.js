@@ -1,10 +1,7 @@
 import React from 'react'
-import { get_library_resources } from './resources'
 import ResourcePage from './ResourcePage'
 import ResourceList from './ResourceList'
 import { Route, Switch } from 'react-router-dom'
-import NProgress from 'nprogress'
-
 
 export default class Resources extends React.PureComponent {
   constructor(props) {

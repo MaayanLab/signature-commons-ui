@@ -24,7 +24,7 @@ export const iconOf = {
 export async function get_library_resources() {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
   const response = (await import('../../ui-schemas/resources/all.json')).default
-  const resource_meta = response.reduce((group, data)=>{
+  const resource_meta = response.reduce((group, data) => {
     group[data.Resource_Name] = data
     return group
   }, {})
@@ -41,7 +41,7 @@ export async function get_library_resources() {
     if (resources[resource] === undefined) {
       if (resource_meta[resource] === undefined) {
         console.warn(`Resource not found: ${resource}, registering library as resource`)
-        const {response: Signature_Count} = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
+        const { response: Signature_Count } = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
         resources[resource] = {
           id: resource,
           meta: {
@@ -97,7 +97,7 @@ export async function get_library_resources() {
   }
 }
 
-export async function get_signature_counts_per_resources(controller=null) {
+export async function get_signature_counts_per_resources(controller = null) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
   const { libraries, resources, library_resource } = await get_library_resources()
   const count_promises = Object.keys(library_resource).map(async (lib) => {
@@ -108,7 +108,7 @@ export async function get_signature_counts_per_resources(controller=null) {
       body: {
         fields: ['$validator'],
       },
-      signal: controller? controller.signal: null,
+      signal: controller ? controller.signal : null,
     })
 
     return {
@@ -136,6 +136,6 @@ export async function get_signature_counts_per_resources(controller=null) {
     resource_signatures: per_resource_counts, // for_sorting.slice(0,11)
     libraries,
     resources,
-    library_resource
+    library_resource,
   }
 }

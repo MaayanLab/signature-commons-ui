@@ -4,7 +4,6 @@ import GenesetSearchBox from './GenesetSearchBox'
 import uuid5 from 'uuid5'
 import NProgress from 'nprogress'
 import { query_overlap, query_rank } from './query'
-import { get_library_resources } from '../Resources/resources'
 import ResourceFilters from './ResourceFilters'
 import LibraryResults from './LibraryResults'
 import { resolve_entities } from './resolve'
@@ -37,7 +36,7 @@ export default class SignatureSearch extends React.Component {
     if (this.props.location.state) {
       this.setState({
         input: this.props.location.state.input,
-      }, ()=>{
+      }, () => {
         this.submit(this.state.input)
       })
     }

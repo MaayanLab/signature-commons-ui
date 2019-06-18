@@ -57,8 +57,8 @@ export const white = '#FFF'
 
 export const landingStyle = (theme) => ({
   KeyLabel: {
-    borderRight: "solid #c9c9c9",
-    borderWidth: "1px"
+    borderRight: 'solid #c9c9c9',
+    borderWidth: '1px',
   },
   toggleContainer: {
     height: 56,
