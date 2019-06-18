@@ -46,11 +46,11 @@ export function ShowMeta({value, highlight, classes}) {
     }
     return (
       <div>
-        {Object.keys(value).filter((key) => !key.startsWith('$')).map((key, ind) => (
+        {Object.keys(value).filter((key) => !key.startsWith('$')).sort().map((key, ind) => (
           <Grid container
                 spacing={24}
                 key={key}>
-            <Grid item xs={6} xl={2} md={3} className={classes.KeyLabel} style={{"text-align": "right"}}>
+            <Grid item xs={6} xl={2} md={3} className={classes.KeyLabel} style={{"textAlign": "right"}}>
               <Highlight
                 Component={(props) => <b {...props}>{props.children}</b>}
                 HighlightComponent={(props) => <i {...props}>{props.children}</i>}
