@@ -42,6 +42,8 @@ export default class SearchResults extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.search !== this.props.search) {
       this.performSearch("signatures")
+      this.performSearch("libraries")
+      this.performSearch("entities")
     }
   }
 
