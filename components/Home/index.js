@@ -102,7 +102,7 @@ export default class Home extends React.PureComponent {
 
   async fetch_stats(selected_field) {
     this.setState({
-      pie_stats: this.props.pie_fields_and_stats[selected_field],
+      pie_stats: this.props.pie_fields_and_stats[selected_field] || {},
     })
   }
 

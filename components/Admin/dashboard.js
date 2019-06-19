@@ -176,7 +176,9 @@ const BarChartGroup = withScreenSize(function({ classes, record={}, ...props }) 
     <Card className={classes.basicCard}>
       <span className={classes.vertical55}>{name}</span>
       <Divider />
-      <BarChart width={width} height={height} meta_counts={bar_counts} fontSize={fontSize}/>
+      { bar_counts !== undefined ?
+      <BarChart width={width} height={height} meta_counts={bar_counts} fontSize={fontSize}/>: null
+      }
     </Card>
   )
 })
