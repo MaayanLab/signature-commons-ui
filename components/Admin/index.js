@@ -54,7 +54,7 @@ class AdminView extends React.PureComponent {
       signature_fields: null,
       pie_controller: null,
       pie_stats: null,
-      selected_field: Object.keys(props.pie_fields_and_stats)[0],
+      selected_field: Object.keys(props.pie_fields_and_stats)[0] || '',
       per_resource_counts: null,
       status: null,
       controller: null,
@@ -439,7 +439,7 @@ class AdminView extends React.PureComponent {
 
   async fetch_stats(selected_field) {
     this.setState({
-      pie_stats: this.props.pie_fields_and_stats[selected_field],
+      pie_stats: this.props.pie_fields_and_stats[selected_field] || [],
     })
   }
 

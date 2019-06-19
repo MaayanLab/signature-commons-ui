@@ -69,21 +69,28 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 </div>
               </Grid>
               <Grid item xs={12} sm={6}>
-                { this.props.ui_content.content['bar-chart'] !== undefined ?
+                { this.props.ui_content.content['bar-chart'] !== undefined ? (
                   <div className={this.props.classes.centered}>
+                    {this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name] !== undefined ? (
                     <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name]}
-                      fontSize={this.props.ui_content.content['bar-chart'].font_size || 11}/>
+                      fontSize={this.props.ui_content.content['bar-chart'].font_size || 11}/>) : (
+                    null
+                    )}
                     <Typography variant="caption">
                       {this.props.ui_content.content['bar-chart'].Caption}
                     </Typography>
-                  </div> :
+                  </div>
+                ) : (
                   <div className={this.props.classes.centered}>
-                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/>
+                    {this.props.barcounts[Object.keys(this.props.barcounts)[0]] !== undefined ?
+                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/> :
+                      null
+                    }
                     <Typography variant="caption">
                       Bar Chart
                     </Typography>
                   </div>
-                }
+                )}
               </Grid>
             </Grid>
           </Grid>

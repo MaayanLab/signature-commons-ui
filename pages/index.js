@@ -79,16 +79,12 @@ async function get_metacounts(landing_ui_schema) {
   }, {})
   const meta_counts = landing_ui.filter((item) => item.Meta_Count).reduce((stat_list, item) => {
     const k = item.Type === 'object' ? `${item.Field_Name}.Name` : item.Field_Name
-    stat_list.push({
-      name: k.indexOf('PubChemID') !== -1 ? (
-        k.replace('Small_Molecule.', '')
-      ) : (
-        k.replace('.Name', '')
-      ),
-      counts: Object.keys(meta_stats[k]).length,
-      icon: item.MDI_Icon,
-      Preferred_Name: item.Preferred_Name,
-    })
+    stat_list.push({ name: k.indexOf('PubChemID') !== -1 ?
+                             k.replace('Small_Molecule.', '') :
+                             k.replace('.Name', ''),
+    counts: Object.keys((meta_stats || {})[k] || {}).length,
+    icon: item.MDI_Icon,
+    Preferred_Name: item.Preferred_Name })
     return (stat_list)
   }, [])
 
@@ -143,8 +139,8 @@ async function get_barcounts(landing_ui_schema) {
         },
       },
     })
-    const stats = Object.keys(meta_stats[item.Field_Name]).reduce((accumulator, bar) => {
-      const count = meta_stats[item.Field_Name][bar]
+    const stats = Object.keys((meta_stats || {})[item.Field_Name] || {}).reduce((accumulator, bar) => {
+      const count = ((meta_stats || {})[item.Field_Name] || {})[bar]
       if (bar === '2017b') {
         if (accumulator['2017'] === undefined) {
           accumulator['2017'] = count

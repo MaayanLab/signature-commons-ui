@@ -14,6 +14,7 @@ export const schemas = [
   require('../ui-schemas/signature/enrichr.json'),
   require('../ui-schemas/library/default.json'),
   require('../ui-schemas/signature/default.json'),
+  require('../ui-schemas/entities/default.json'),
 ]
 
 export const labels = {

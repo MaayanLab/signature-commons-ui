@@ -87,7 +87,7 @@
     "Preferred_Name": "RNA-seq Genes",
     "Table": "signatures",
     "MDI_Icon": "mdi-dna",
-    "Meta_Count": true,
+    "Meta_Count": false,
     "Pie_Count": false
   },
   {
@@ -96,7 +96,7 @@
     "Preferred_Name": "Consensus ATAC-seq peaks",
     "Table": "signatures",
     "MDI_Icon": "mdi-chart-bell-curve",
-    "Meta_Count": true,
+    "Meta_Count": false,
     "Pie_Count": false
   },
   {
