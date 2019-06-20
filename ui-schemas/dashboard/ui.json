@@ -17,6 +17,9 @@
       "resource_from_library": [
         "assay"
       ],
+      "signature_search": false,
+      "metadata_search": true,
+      "resources": true,
       "change_resource": "Assays",
       "search_terms": [
         "MCF10A",
