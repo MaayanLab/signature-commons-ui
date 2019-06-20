@@ -30,6 +30,7 @@ export default class SearchResults extends React.Component {
 
     this.state = {
       controller: undefined,
+      library_name: this.props.ui_content.content.library_name
     }
     this.performSearch = this.performSearch.bind(this)
   }
@@ -95,7 +96,7 @@ export default class SearchResults extends React.Component {
           const lib_meta = {"id": library_dict[r.library].id,
                             "dataset": library_dict[r.library].dataset,
                             "meta": {
-                              "Library_name": library_dict[r.library].meta.Library_name,
+                              [this.state.library_name]: library_dict[r.library].meta[this.state.library_name],
                               }
                             }
           r.library = lib_meta
