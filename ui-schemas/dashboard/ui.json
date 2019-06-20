@@ -13,6 +13,9 @@
       "text_3": "Examine metadata:",
       "text_4": "Start using Signature Commons on your project",
       "resource_pie_caption": "Signatures per Assay",
+      "renamed": {
+        "library_name": "assay"
+      },
       "change_resource": "Assays",
       "search_terms": [
         "MCF10A",
