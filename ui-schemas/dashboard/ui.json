@@ -1,6 +1,6 @@
 [
   {
-    "landing": true,
+    "landing": false,
     "content": {
       "landing": "../ui-schemas/dashboard/landing_ui_mcf10a.json",
       "header": "MCF10A Molecular Deep Dive",
@@ -37,7 +37,7 @@
     }
   },
   {
-    "landing": false,
+    "landing": true,
     "content": {
       "metadata_placeholder": "Search over half a million signatures",
       "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
@@ -48,6 +48,9 @@
       "text_3": "Examine metadata:",
       "text_4": "Start using Signature Commons on your project",
       "resource_pie_caption": "Signatures per Resource",
+      "signature_search": true,
+      "metadata_search": true,
+      "resources": true,
       "bar-chart": {
         "Field_Name": "Version",
         "Caption": "Libraries per year"
