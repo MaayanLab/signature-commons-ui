@@ -61,7 +61,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               spacing={24}
               alignItems={'center'}>
               <Grid item xs={12} sm={6}>
-                <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'}/>
+                <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_content={this.props.ui_content}/>
                 <div className={this.props.classes.centered}>
                   <Typography variant="caption">
                     {this.props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}
