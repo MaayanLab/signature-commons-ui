@@ -197,8 +197,6 @@ export default class Home extends React.PureComponent {
             component={this.metadata_search}
           />
           <Route
-            path="/Resources"
-          <Route
             path={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
             component={this.resources}
           />
