@@ -74,6 +74,7 @@ export default class MetadataSearch extends React.Component {
             libraries_total_count={this.state.libraries_total_count}
             entities_total_count={this.state.entities_total_count}
             search={this.state.currentSearch}
+            ui_content={this.props.ui_content}
           />
         )}
       </div>

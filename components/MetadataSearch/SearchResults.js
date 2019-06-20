@@ -94,7 +94,7 @@ export default class SearchResults extends React.Component {
         for (const r of results) {
           const lib_meta = {"id": library_dict[r.library].id,
                        "meta": {
-                          "Library_name": library_dict[r.library].meta.Library_name 
+                          [this.props.ui_content.content.Library_name]: library_dict[r.library].meta[this.props.ui_content.content.Library_name]
                         }
                       }
           r.library = lib_meta

@@ -6,6 +6,7 @@ import { Route, Switch } from 'react-router-dom'
 import { call } from '../../util/call'
 import Landing from '../Landing'
 import MetadataSearch from '../MetadataSearch'
+import MetaPages from '../MetaPages'
 import Resources from '../Resources'
 import SignatureSearch from '../SignatureSearch'
 import Upload from '../Upload'
@@ -146,6 +147,15 @@ export default class Home extends React.PureComponent {
     />
   )
 
+  meta_pages = (props) => (
+    <MetaPages
+      cart={this.state.cart}
+      updateCart={this.updateCart}
+      ui_content={this.props.ui_content}
+      {...props}
+    />
+  )
+
   resources = (props) => (
     <Resources
       cart={this.state.cart}
@@ -197,7 +207,13 @@ export default class Home extends React.PureComponent {
             component={this.metadata_search}
           />
           <Route
-            path="/Resources"
+            path="/Libraries"
+            component={this.meta_pages}
+          />
+          <Route
+            path="/Signatures"
+            component={this.meta_pages}
+          />
           <Route
             path={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
             component={this.resources}

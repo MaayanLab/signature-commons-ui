@@ -40,7 +40,7 @@
     "Field_Name": "probeset",
     "Type": "string",
     "Preferred_Name": "L1000 Probes",
-    "Table": "signatures",
+    "Table": "entities",
     "MDI_Icon": "mdi-dna",
     "Meta_Count": true,
     "Pie_Count": false

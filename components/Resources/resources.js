@@ -21,7 +21,7 @@ export const iconOf = {
   'CMAP': `static/images/clueio.ico`,
 }
 
-export async function get_library_resources() {
+export async function get_library_resources(lib_name_meta) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
   const response = (await import('../../ui-schemas/resources/all.json')).default
   const resource_meta = response.reduce((group, data)=>{
@@ -33,7 +33,7 @@ export async function get_library_resources() {
 
   const resources = {}
   for (const lib of libraries) {
-    const resource = lib.meta['Primary_Resource_Short_Version'] || lib.meta['Primary_Resource'] || lib.meta['Library_name']
+    const resource = lib.meta['Primary_Resource_Short_Version'] || lib.meta['Primary_Resource'] || lib.meta['Library_name'] || lib.meta[lib_name_meta]
     if (resource_meta[resource] === undefined) {
       console.error(`Resource not found: ${resource}`)
     }
@@ -54,6 +54,9 @@ export async function get_library_resources() {
         if (lib.meta['Description']) {
           resources[resource].meta.description = lib.meta['Description']
         }
+        if (lib.meta['description']) {
+          resources[resource].meta.description = lib.meta['description']
+        }
         if (lib.meta['PMID']) {
           resources[resource].meta['PMID'] = lib.meta['PMID']
         }
@@ -69,6 +72,9 @@ export async function get_library_resources() {
             Signature_Count: resource_meta[resource].Signature_Count, // Precomputed
           },
           libraries: [],
+        }
+        if (resource_meta[resource]['Description']) {
+          resources[resource].meta.description = resource_meta[resource]['Description']
         }
         if (resource_meta[resource]['Description']) {
           resources[resource].meta.description = resource_meta[resource]['Description']
@@ -97,9 +103,9 @@ export async function get_library_resources() {
   }
 }
 
-export async function get_signature_counts_per_resources(controller=null) {
+export async function get_signature_counts_per_resources(lib_name_meta=null, controller=null) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, library_resource } = await get_library_resources()
+  const { libraries, resources, library_resource } = await get_library_resources(lib_name_meta)
   const count_promises = Object.keys(library_resource).map(async (lib) => {
     // request details from GitHub’s API with Axios
 
