@@ -102,8 +102,8 @@
   {
     "Field_Name": "libraries",
     "Type": "table",
-    "Preferred_Name": "Libraries",
-    "MDI_Icon": "mdi-library-books",
+    "Preferred_Name": "Assays",
+    "MDI_Icon": "mdi-test-tube-empty",
     "Table_Count": true,
     "Visible_On_Landing": false,
     "Visible_On_Admin": true 
@@ -112,7 +112,7 @@
     "Field_Name": "signatures",
     "Type": "table",
     "Preferred_Name": "Experimental Readouts",
-    "MDI_Icon": "mdi-fingerprint",
+    "MDI_Icon": "mdi-flask",
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true 
