@@ -32,12 +32,12 @@ export const SignaturePostFilter = (props) => (
     <ReferenceInput label="Library"
       source="library"
       reference="libraries"
-      perPage={props.LibraryNumber}
-      sort={{ field: 'meta.Library_name', order: 'ASC' }}
+      perPage={props.librarynumber}
+      sort={{ field: `meta.${props.library_name}`, order: 'ASC' }}
       allowEmpty={false}
       alwaysOn
     >
-      <SelectInput optionText="meta.Library_name"/>
+      <SelectInput optionText={`meta.${props.library_name}`}/>
     </ReferenceInput>
     <TextInput label="Search" source="meta.fullTextSearch" alwaysOn />
   </Filter>
@@ -50,17 +50,17 @@ export const FullTextFilter = (props) => (
 )
 
 const ImageAvatar = withStyles(styles)(({ classes, ...props }) => (
-  <Avatar alt={props.record.meta.Library_name} src={`${process.env.PREFIX}/${props.record.meta.Icon}`} className={classes.avatar} mx="auto"/>
+  <Avatar alt={props.record.meta[props.library_name]} src={`${process.env.PREFIX}/${props.record.meta.Icon}`} className={classes.avatar} mx="auto"/>
 ))
 
 export const LibraryAvatar = withStyles(styles)(({ classes, record = {}, ...props }) => (
   <Chip
     avatar={
       <Avatar>
-        <ImageAvatar record={record} />
+        <ImageAvatar record={record} library_name={props.library_name}/>
       </Avatar>
     }
-    label={record.meta.Library_name}
+    label={record.meta[props.library_name]}
     className={classes.chip}
   />
 ))

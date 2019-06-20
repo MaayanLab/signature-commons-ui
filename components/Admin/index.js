@@ -94,7 +94,8 @@ class AdminView extends React.PureComponent {
     } else {
       return (
         <SignaturePostFilter
-          LibraryNumber={this.props.LibraryNumber}
+          librarynumber={Object.keys(this.props.libraries).length}
+          library_name={this.props.ui_content.content.library_name}
         />
       )
     }
@@ -118,10 +119,11 @@ class AdminView extends React.PureComponent {
         {...props}>
         <Datagrid>
           <LibraryAvatar
-            source={'meta.Library_name'}
+            source={`meta.${this.props.ui_content.content.library_name}`}
             title={'Library'}
             label={'Library'}
             textAlign="center"
+            library_name={this.props.ui_content.content.library_name}
           />
           <TextField
             source="id"
@@ -221,7 +223,7 @@ class AdminView extends React.PureComponent {
       </Edit>
     )
   }
-
+  // TODO: Make this less hacky (have it detect objects and arrays) 
   SignatureList(props) {
     return (
       <List
@@ -240,7 +242,7 @@ class AdminView extends React.PureComponent {
             linkType={false}
           >
             <TextField
-              source="meta.Library_name"
+              source={`meta.${this.props.ui_content.content.library_name}`}
               style={{ width: 150 }}/>
           </ReferenceField>
           {this.state.signature_fields.filter((k) => !k.includes('.')).map(function(k) {
