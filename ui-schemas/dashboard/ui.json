@@ -13,9 +13,10 @@
       "text_3": "Examine metadata:",
       "text_4": "Start using Signature Commons on your project",
       "resource_pie_caption": "Signatures per Assay",
-      "renamed": {
-        "library_name": "assay"
-      },
+      "library_name": "assay",
+      "resource_from_library": [
+        "assay"
+      ],
       "change_resource": "Assays",
       "search_terms": [
         "MCF10A",
@@ -23,6 +24,9 @@
         "EGF",
         "L1000"
       ],
+      "resource_list_style": {
+        "fontSize": 10
+      },
       "bar-chart": {
         "Field_Name": "ligand",
         "Caption": "Experimental sample readouts per ligand"
@@ -44,7 +48,13 @@
       "bar-chart": {
         "Field_Name": "Version",
         "Caption": "Libraries per year"
-      }
+      },
+      "library_name": "Library_name",
+      "resource_from_library": [
+        "Primary_Resource_Short_Version",
+        "Primary_Resource",
+        "Library_name"
+      ]
     }
   },
   {
