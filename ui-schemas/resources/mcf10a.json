@@ -7,31 +7,37 @@
     "Assay": {
       "visibility": 1,
       "type": "text",
+      "field": "assay",
       "text": "${meta['assay']}"
     },
     "Data Link": {
       "visibility": 1,
       "type": "text",
+      "field": "data_link",
       "text": "${meta['data_link']}"
     },
     "Description": {
       "visibility": 1,
       "type": "text",
+      "field": "description",
       "text": "${meta['description']}"
     },
     "Institution": {
       "visibility": 1,
       "type": "text",
+      "field": "institution",
       "text": "${meta['institution']}"
     },
     "LINCS center": {
       "visibility": 1,
       "type": "text",
+      "field": "LINCS_center",
       "text": "${meta['LINCS_center']}"
     },
     "Signature Count": {
       "visibility": 1,
       "type": "text",
+      "field": "Signature_Count",
       "text": "${meta['Signature_Count']}"
     }
   }

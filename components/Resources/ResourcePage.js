@@ -57,61 +57,63 @@ export default class ResourcePage extends React.Component {
               </div>
             </div>
           </div>
-
-          <div className="row">
-            <div className="col s12">
-              <ul
-                className="collapsible popout"
-              >
-                {this.props.resource.libraries.map((library) => (
-                  <li
-                    key={library.id}
-                  >
-                    <div
-                      className="page-header"
-                      style={{
-                        padding: 10,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        backgroundColor: 'rgba(255,255,255,1)',
-                      }}
+          {!this.props.resource.is_library?
+            <div className="row">
+              <div className="col s12">
+                <ul
+                  className="collapsible popout"
+                >
+                  {this.props.resource.libraries.map((library) => (
+                    <li
+                      key={library.id}
                     >
                       <div
+                        className="page-header"
                         style={{
+                          padding: 10,
                           display: 'flex',
-                          flexDirection: 'row',
-                        }}>
-                        <Label
-                          item={library}
-                          visibility={1}
-                        />
-                        &nbsp;
-                        <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                        <a
-                          href="javascript:void(0);"
-                          className="collapsible-header"
-                          style={{ border: 0 }}
-                        >
-                          <i className="material-icons">expand_more</i>
-                        </a>
-                      </div>
-                    </div>
-                    <div
-                      className="collapsible-body"
-                    >
-                      <ShowMeta
-                        value={{
-                          '@id': library.id,
-                          '@type': 'Library',
-                          'meta': library.meta,
+                          flexDirection: 'column',
+                          backgroundColor: 'rgba(255,255,255,1)',
                         }}
-                      />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                          }}>
+                          <Label
+                            item={library}
+                            visibility={1}
+                          />
+                          &nbsp;
+                          <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                          <a
+                            href="javascript:void(0);"
+                            className="collapsible-header"
+                            style={{ border: 0 }}
+                          >
+                            <i className="material-icons">expand_more</i>
+                          </a>
+                        </div>
+                      </div>
+                      <div
+                        className="collapsible-body"
+                      >
+                        <ShowMeta
+                          value={{
+                            '@id': library.id,
+                            '@type': 'Library',
+                            'meta': library.meta,
+                          }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div> :
+            null
+          }
         </div>
       </div>
     )

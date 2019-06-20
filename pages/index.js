@@ -216,8 +216,8 @@ const App = (props) => (
 App.getInitialProps = async () => {
   const ui_content = await get_ui_content()
   const landing_ui_schema = '../ui-schemas/dashboard/landing_ui_mcf10a.json'
-  const library_name = (ui_content.content.renamed && ui_content.content.renamed.library_name) ? ui_content.content.renamed.library_name: "Library_name"
-  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(library_name)
+  const resource_from_library = ui_content.content.resource_from_library
+  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(resource_from_library)
   const table_counts = await get_counts(Object.keys(resources).length, landing_ui_schema)
   const { meta_counts } = await get_metacounts(landing_ui_schema)
   const { pie_fields_and_stats } = await get_pie_stats(landing_ui_schema)

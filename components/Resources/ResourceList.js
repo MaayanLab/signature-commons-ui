@@ -16,6 +16,7 @@ export default class ResourceList extends React.PureComponent {
               <IconButton
                 alt={resource.meta.name}
                 img={resource.meta.icon}
+                style={this.props.ui_content.content.resource_list_style}
               />
             </Link>
           ))}
