@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 function escapedVariableRegExp(str, flags) {
   return new RegExp(str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), flags)
@@ -12,11 +12,11 @@ export function Highlight({
   highlight,
   props,
 }) {
-  if(Component === undefined) Component = (props) => <div {...props}>{props.children}</div>
-  if(TextComponent === undefined) TextComponent = (props) => <span {...props}>{props.children}</span>
-  if(HighlightComponent === undefined) HighlightComponent = (props) => <b {...props}>{props.children}</b>
+  if (Component === undefined) Component = (props) => <div {...props}>{props.children}</div>
+  if (TextComponent === undefined) TextComponent = (props) => <span {...props}>{props.children}</span>
+  if (HighlightComponent === undefined) HighlightComponent = (props) => <b {...props}>{props.children}</b>
 
-  if(highlight === undefined) {
+  if (highlight === undefined) {
     return (
       <Component {...props}>
         <TextComponent>{text}</TextComponent>
@@ -31,19 +31,19 @@ export function Highlight({
   return (
     <Component {...props}>
       {
-         text.split(
-          highlight_re
+        text.split(
+            highlight_re
         ).map((s, ind) =>
           <TextComponent key={ind}>{s}</TextComponent>
         ).reduce(
-          (prev, cur, ind) =>
-            [
-              prev,
-              <HighlightComponent key={ind + '.5'}>
-                {matches[n++]}
-              </HighlightComponent>,
-              cur,
-            ]
+            (prev, cur, ind) =>
+              [
+                prev,
+                <HighlightComponent key={ind + '.5'}>
+                  {matches[n++]}
+                </HighlightComponent>,
+                cur,
+              ]
         )
       }
     </Component>

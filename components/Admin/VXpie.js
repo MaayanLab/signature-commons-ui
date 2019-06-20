@@ -14,7 +14,7 @@ const colorrange = {
 }
 
 const handleClick = (e, label, resources, disabled) => {
-  if (disabled===undefined) {
+  if (disabled === undefined) {
     if (resources) {
       location.href = `#/Resources/${label}`
     } else {
@@ -78,7 +78,7 @@ export const DonutChart = withScreenSize(function({ ...props }) {
                 const [centroidX, centroidY] = pie.path.centroid(arc)
                 const { startAngle, endAngle } = arc
                 const hasSpaceForLabel = endAngle - startAngle >= 0.35
-                const angle = startAngle + (endAngle - startAngle)/2
+                const angle = startAngle + (endAngle - startAngle) / 2
                 return (
                   <Tippy
                     key={`tip-${arc.data.label}-${i}`}

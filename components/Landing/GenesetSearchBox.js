@@ -70,7 +70,7 @@ export default class GenesetSearchBox extends React.Component {
         <div className="input-field">
           <textarea
             id="geneset"
-            placeholder={this.props.ui_content.content.geneset_placeholder || "Genes that are regulated in signature or overlap with gene set."}
+            placeholder={this.props.ui_content.content.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set.'}
             style={{
               height: 200,
               overflow: 'auto',
@@ -111,7 +111,7 @@ export default class GenesetSearchBox extends React.Component {
         <div className="input-field">
           <textarea
             id="up_geneset"
-            placeholder={this.props.ui_content.content.up_genes_placeholder || "Genes that are up-regulated in signature or overlap with gene set."}
+            placeholder={this.props.ui_content.content.up_genes_placeholder || 'Genes that are up-regulated in signature or overlap with gene set.'}
             style={{
               height: 200,
               overflow: 'auto',
@@ -126,7 +126,7 @@ export default class GenesetSearchBox extends React.Component {
         <div className="input-field">
           <textarea
             id="down_geneset"
-            placeholder={this.props.ui_content.content.down_genes_placeholder || "Genes that are down-regulated in signature or overlap with gene set."}
+            placeholder={this.props.ui_content.content.down_genes_placeholder || 'Genes that are down-regulated in signature or overlap with gene set.'}
             style={{
               height: 200,
               overflow: 'auto',
@@ -143,7 +143,7 @@ export default class GenesetSearchBox extends React.Component {
   render() {
     return (
       <div className="row">
-        {this.state.input.type==='Overlap'? this.geneset(): this.up_down_geneset()}
+        {this.state.input.type === 'Overlap' ? this.geneset() : this.up_down_geneset()}
         <div className="col s12 center">
           <Link to={{
             pathname: `/SignatureSearch/${this.state.input.type}`,

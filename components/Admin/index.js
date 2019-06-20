@@ -49,7 +49,7 @@ import { MyLogin } from './Login.js'
 class AdminView extends React.PureComponent {
   constructor(props) {
     super(props)
-    const token = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_CREDS: ''
+    const token = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_CREDS : ''
     this.state = {
       signature_fields: null,
       pie_controller: null,
@@ -89,7 +89,7 @@ class AdminView extends React.PureComponent {
   // }
 
   filterForm(props) {
-    if (this.state.token===null) {
+    if (this.state.token === null) {
       return false
     } else {
       return (
@@ -105,7 +105,7 @@ class AdminView extends React.PureComponent {
     this.setState({
       selected_field: field,
       pie_stats: null,
-    }, ()=>{
+    }, () => {
       this.fetch_stats(this.state.selected_field)
     })
   }
@@ -142,7 +142,7 @@ class AdminView extends React.PureComponent {
                   source={'meta.' + k}
                 />
               )
-            } else if (k==='Weighted') {
+            } else if (k === 'Weighted') {
               return (
                 <BooleanField
                   key={k}
@@ -202,7 +202,7 @@ class AdminView extends React.PureComponent {
             source={'dataset_type'}
           />
           {Object.keys(this.props.library_fields).map(function(k) {
-            if (k!=='Description') {
+            if (k !== 'Description') {
               return (
                 <TextInput
                   key={k}
@@ -243,7 +243,7 @@ class AdminView extends React.PureComponent {
               source="meta.Library_name"
               style={{ width: 150 }}/>
           </ReferenceField>
-          {this.state.signature_fields.filter((k)=>!k.includes('.')).map(function(k) {
+          {this.state.signature_fields.filter((k) => !k.includes('.')).map(function(k) {
             if (['Gene', 'Disease', 'Cell_Line', 'Tissue', 'Small_Molecule'].includes(k)) {
               return (
                 <ArrayField
@@ -265,7 +265,7 @@ class AdminView extends React.PureComponent {
                   field={k}
                 />
               )
-            } else if (k==='Accession') {
+            } else if (k === 'Accession') {
               return (
                 <ArrayField
                   key={k}
@@ -277,7 +277,7 @@ class AdminView extends React.PureComponent {
                   </SingleFieldList>
                 </ArrayField>
               )
-            } else if (k==='GO') {
+            } else if (k === 'GO') {
               return (
                 <NameAccField
                   key={k}
@@ -285,7 +285,7 @@ class AdminView extends React.PureComponent {
                   field={k}
                 />
               )
-            } else if (k=='Description') {
+            } else if (k == 'Description') {
               return (
                 <Description
                   source={'meta.Description'}
@@ -293,7 +293,7 @@ class AdminView extends React.PureComponent {
                   label={'Description'}
                 />
               )
-            } else if (k!=='$validator') {
+            } else if (k !== '$validator') {
               return (
                 <TextField
                   key={k}
@@ -333,8 +333,8 @@ class AdminView extends React.PureComponent {
                   key={k}
                   label={k.replace(/_/g, ' ')}
                   source={'meta.' + k}
-                  format={(v)=>JSON.stringify(v, null, 2)}
-                  parse={(v)=>JSON.parse(v)}
+                  format={(v) => JSON.stringify(v, null, 2)}
+                  parse={(v) => JSON.parse(v)}
                 />
               )
             } else {
@@ -363,7 +363,7 @@ class AdminView extends React.PureComponent {
             source="id"
           />
           {Object.keys(this.props.entity_fields).map(function(k) {
-            if (k==='Synonyms') {
+            if (k === 'Synonyms') {
               return (
                 <TagsField
                   key={k}
@@ -372,7 +372,7 @@ class AdminView extends React.PureComponent {
                   field={k}
                 />
               )
-            } else if (k!=='$validator') {
+            } else if (k !== '$validator') {
               return (
                 <TextField
                   key={k}
@@ -399,14 +399,14 @@ class AdminView extends React.PureComponent {
             source={'$validator'}
           />
           {Object.keys(this.props.entity_fields).map(function(k) {
-            if (k==='Synonyms') {
+            if (k === 'Synonyms') {
               return (
                 <LongTextInput
                   key={k}
                   label={k.replace(/_/g, ' ')}
                   source={'meta.' + k}
-                  format={(v)=>JSON.stringify(v, null, 2)}
-                  parse={(v)=>JSON.parse(v)}
+                  format={(v) => JSON.stringify(v, null, 2)}
+                  parse={(v) => JSON.parse(v)}
                 />
               )
             } else {
@@ -567,7 +567,7 @@ class AdminView extends React.PureComponent {
     this.setState({
       counting_fields: fields,
     })
-    const object_fields = Object.keys(fields).filter((key)=>fields[key]=='object')
+    const object_fields = Object.keys(fields).filter((key) => fields[key] == 'object')
 
     // UNCOMMENT TO FETCH STUFF IN THE SERVER
     const headers = { 'Authorization': `Basic ${this.state.token}` }
@@ -582,13 +582,13 @@ class AdminView extends React.PureComponent {
       signal: this.state.general_controller.signal,
       headers,
     })
-    const meta_counts = Object.keys(meta_stats).filter((key)=>key.indexOf('.Name')>-1||
+    const meta_counts = Object.keys(meta_stats).filter((key) => key.indexOf('.Name') > -1 ||
                                                             // (key.indexOf(".PubChemID")>-1 &&
                                                             //  key.indexOf("Small_Molecule")>-1) ||
-                                                            (key.indexOf('.')===-1 && object_fields.indexOf(key)===-1))
-        .reduce((stat_list, k)=>{
-          stat_list.push({ name: k.indexOf('PubChemID')!==-1 ?
-                                                                            k.replace('Small_Molecule.', ''):
+                                                            (key.indexOf('.') === -1 && object_fields.indexOf(key) === -1))
+        .reduce((stat_list, k) => {
+          stat_list.push({ name: k.indexOf('PubChemID') !== -1 ?
+                                                                            k.replace('Small_Molecule.', '') :
                                                                             k.replace('.Name', ''),
           counts: Object.keys(meta_stats[k]).length })
           return (stat_list)
@@ -616,18 +616,18 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  httpClient(url, options = {}, type=GET_ONE) {
+  httpClient(url, options = {}, type = GET_ONE) {
     if (!(options.hasOwnProperty('method'))) {
       const link = decodeURI(url).split('%2C')
-      const url_params = link.filter((l)=> (l.includes('skip')||l.includes('limit')))
-          .map((l)=>(l.split('%3A')[1]))
-      const page = (url_params[0]/url_params[1]) + 1
+      const url_params = link.filter((l) => (l.includes('skip') || l.includes('limit')))
+          .map((l) => (l.split('%3A')[1]))
+      const page = (url_params[0] / url_params[1]) + 1
       this.setState({
         apipage: page,
       })
     }
 
-    if (this.state.controller!== null) {
+    if (this.state.controller !== null) {
       options['signal'] = this.state.controller.signal
     }
 
@@ -637,7 +637,7 @@ class AdminView extends React.PureComponent {
 
     const token = (options.token || this.state.token)
     options.headers.set('Authorization', `Basic ${token}`)
-    if (type===UPDATE) {
+    if (type === UPDATE) {
       return patchJson(url, options)
     } else {
       return fetchJson(url, options)
@@ -673,13 +673,13 @@ class AdminView extends React.PureComponent {
         // if(this.state.SignatureNumber==="Loading..."){
         //   this.fetch_count("signatures")
         // }
-        if (this.state.signature_fields===null) {
+        if (this.state.signature_fields === null) {
           this.fetch_sigfields()
         }
         // if(this.state.meta_counts===null){
         //   this.fetch_metacounts()
         // }
-        if (this.state.pie_stats===null) {
+        if (this.state.pie_stats === null) {
           this.fetch_stats(this.state.selected_field)
         }
         // Pre computed
@@ -756,7 +756,7 @@ class AdminView extends React.PureComponent {
         catchAll={this.NotFound}
         loginPage={MyLogin}
       >
-        {this.props.library_fields===null ? <div/>:
+        {this.props.library_fields === null ? <div/> :
             <Resource
               name="libraries"
               list={this.LibraryList}
@@ -764,7 +764,7 @@ class AdminView extends React.PureComponent {
               icon={LibraryBooks}
             />
         }
-        {this.state.signature_fields===null ? <div/>:
+        {this.state.signature_fields === null ? <div/> :
             <Resource
               name="signatures"
               edit={this.SignatureEdit}
@@ -772,7 +772,7 @@ class AdminView extends React.PureComponent {
               icon={Fingerprint}
             />
         }
-        {this.props.entity_fields===null ? <div/>:
+        {this.props.entity_fields === null ? <div/> :
             <Resource
               name="entities"
               edit={this.EntityEdit}

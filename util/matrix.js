@@ -27,7 +27,7 @@ export function matrix_slice(M, X_slice, Y_slice) {
   const Y = resolve_slice(Y_slice, M.length)
 
   let j = 0
-  let M_ = Array(Y.right - Y.left)
+  const M_ = Array(Y.right - Y.left)
   for (let y = Y.left; y < Y.right; y++) {
     let i = 0
     M_[j] = Array(X.right - X.left)
@@ -45,7 +45,7 @@ export function matrix_flatten(M) {
   const Y = M.length
 
   let i = 0
-  let M_ = Array(X * Y)
+  const M_ = Array(X * Y)
   for (let y = 0; y < Y; y++) {
     for (let x = 0; x < X; x++) {
       M_[i++] = M[y][x]
@@ -60,7 +60,7 @@ export function matrix_transpose(M) {
   const Y = M.length
 
   let j = 0
-  let M_ = Array(X)
+  const M_ = Array(X)
   for (let y = 0; y < Y; y++) {
     let i = 0
     M_[j] = Array(Y)

@@ -43,7 +43,7 @@ export async function get_library_resources(resource_from_library) {
     if (resources[resource] === undefined) {
       if (resource_meta[resource] === undefined) {
         console.warn(`Resource not found: ${resource}, registering library as resource`)
-        const {response: Signature_Count} = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
+        const { response: Signature_Count } = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
         resources[resource] = {
           id: resource,
           meta: {
@@ -141,6 +141,6 @@ export async function get_signature_counts_per_resources(resource_from_library) 
     resource_signatures, // for_sorting.slice(0,11)
     libraries,
     resources,
-    library_resource
+    library_resource,
   }
 }

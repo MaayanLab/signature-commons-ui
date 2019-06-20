@@ -25,29 +25,29 @@ export default class MetadataSearchResults extends React.Component {
       >
         {this.props.items.map((item, ind) => {
           let value = []
-          if(this.props.type==="Signature"){
+          if (this.props.type === 'Signature') {
             value = [
-                      {
-                        '@id': item.library.id,
-                        '@type': 'Library',
-                        'meta': item.library.meta,
-                      },
-                      {
-                        '@id': item.id,
-                        '@type': this.props.type,
-                        'meta': item.meta,
-                      },
-                    ]
-          }else {
+              {
+                '@id': item.library.id,
+                '@type': 'Library',
+                'meta': item.library.meta,
+              },
+              {
+                '@id': item.id,
+                '@type': this.props.type,
+                'meta': item.meta,
+              },
+            ]
+          } else {
             value = [
-                      {
-                        '@id': item.id,
-                        '@type': this.props.type,
-                        'meta': item.meta,
-                      },
-                    ]
+              {
+                '@id': item.id,
+                '@type': this.props.type,
+                'meta': item.meta,
+              },
+            ]
           }
-          return(
+          return (
             <li
               key={item.id}
             >
@@ -96,7 +96,8 @@ export default class MetadataSearchResults extends React.Component {
                 </div>
               </div>
             </li>
-          )})}
+          )
+        })}
       </ul>
     )
   }

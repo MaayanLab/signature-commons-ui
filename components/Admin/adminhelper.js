@@ -53,7 +53,7 @@ const ImageAvatar = withStyles(styles)(({ classes, ...props }) => (
   <Avatar alt={props.record.meta.Library_name} src={`${process.env.PREFIX}/${props.record.meta.Icon}`} className={classes.avatar} mx="auto"/>
 ))
 
-export const LibraryAvatar = withStyles(styles)(({ classes, record={}, ...props }) => (
+export const LibraryAvatar = withStyles(styles)(({ classes, record = {}, ...props }) => (
   <Chip
     avatar={
       <Avatar>
@@ -66,13 +66,13 @@ export const LibraryAvatar = withStyles(styles)(({ classes, record={}, ...props 
 ))
 LibraryAvatar.defaultProps = { label: 'Library' }
 
-export const Description = withStyles(styles)(({ classes, record={}, ...props }) => (
+export const Description = withStyles(styles)(({ classes, record = {}, ...props }) => (
   <p className={classes.Description}>{record.meta.Description}</p>
 ))
 Description.defaultProps = { label: 'Description' }
 
 function Chips(classes, record, props) {
-  const chips = record.meta[props.field].split(';').map((val)=>(
+  const chips = record.meta[props.field].split(';').map((val) => (
     <Chip
       key={val}
       label={val}
@@ -82,13 +82,13 @@ function Chips(classes, record, props) {
   return chips
 }
 
-export const SplitChip = withStyles(styles)(({ classes, record={}, ...props }) => (
+export const SplitChip = withStyles(styles)(({ classes, record = {}, ...props }) => (
   Chips(classes, record, props)
 ))
 
 
-export const TagsField = withStyles(styles)(function({ classes, record={}, ...props }) {
-  const chips = props.field in record.meta ? record.meta[props.field].map((val)=>(
+export const TagsField = withStyles(styles)(function({ classes, record = {}, ...props }) {
+  const chips = props.field in record.meta ? record.meta[props.field].map((val) => (
     <Chip
       key={val}
       label={val}
@@ -99,7 +99,7 @@ export const TagsField = withStyles(styles)(function({ classes, record={}, ...pr
 })
 TagsField.defaultProps = { addLabel: true }
 
-export const NameAccField = withStyles(styles)(function({ classes, record={}, ...props }) {
+export const NameAccField = withStyles(styles)(function({ classes, record = {}, ...props }) {
   const name = record.meta[props.field].Name
   const acc = record.meta[props.field].Accession
   const val = `${acc} (${name})`
@@ -113,7 +113,7 @@ export const NameAccField = withStyles(styles)(function({ classes, record={}, ..
 })
 NameAccField.defaultProps = { addLabel: true }
 
-export const BooleanField = withStyles(styles)( function({ classes, record={}, ...props }) {
+export const BooleanField = withStyles(styles)(function({ classes, record = {}, ...props }) {
   if (record.meta[props.field] === props.TrueValue) {
     return (<CheckIcon className={classes.icon}/>)
   } else {

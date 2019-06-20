@@ -1,9 +1,9 @@
 export function maybe_fix_obj(obj) {
   if (Array.isArray(obj)) {
     return obj.reduce((objs, v) => {
-      if (v.id !== undefined)
+      if (v.id !== undefined) {
         objs[v.id] = v
-      else if (v.uuid !== undefined) {
+      } else if (v.uuid !== undefined) {
         objs[v.uuid] = v
         objs[v.uuid].id = v.uuid
         delete objs[v.uuid].uuid
@@ -11,5 +11,5 @@ export function maybe_fix_obj(obj) {
       return objs
     }, {})
   }
-  return Object.keys(obj).reduce((objs, k) => ({...objs, [k]: {...obj[k], id: k}}), {})
+  return Object.keys(obj).reduce((objs, k) => ({ ...objs, [k]: { ...obj[k], id: k } }), {})
 }

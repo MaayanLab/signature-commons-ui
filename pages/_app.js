@@ -35,7 +35,7 @@ export default class extends App {
 
   async componentDidMount() {
     let { Component, pageProps } = this.props
-    if (process.env.NODE_ENV === 'development' && Object.keys(pageProps).length===0) {
+    if (process.env.NODE_ENV === 'development' && Object.keys(pageProps).length === 0) {
       pageProps = await Component.getInitialProps()
     }
     this.setState({
@@ -61,8 +61,8 @@ export default class extends App {
     }
     return (
       <Container className="root">
-        { Object.keys(pageProps).length>0 ?
-        <Component {...pageProps} />:
+        { Object.keys(pageProps).length > 0 ?
+        <Component {...pageProps} /> :
         <div>
         Loading Page...
         </div>
