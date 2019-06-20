@@ -1,12 +1,12 @@
 {
   "match": {
-    "${$validator}": "/dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json"
+    "${$validator}": "/@dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json"
   },
   "properties": {
     "Image": {
       "visibility": 1,
       "type": "img",
-      "alt": "${library.meta['Library_name']}",
+      "alt": "${library.meta['assay']}",
       "src": "${PREFIX}/static/images/default-black.png"
     },
     "Info": {
