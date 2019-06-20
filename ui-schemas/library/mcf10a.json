@@ -1,0 +1,29 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
+    "${dataset}": "MCF10A*"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/${meta['Icon']}",
+      "alt": "${meta['assay']}"
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['assay']}"
+    },
+    "Institution": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['institution']}"
+    },
+    "LINCS center": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['LINCS_center']}"
+    }
+  }
+}
