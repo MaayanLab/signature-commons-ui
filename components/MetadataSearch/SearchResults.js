@@ -92,11 +92,11 @@ export default class SearchResults extends React.Component {
         duration_meta = duration_meta_1 + duration_meta_2
         const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
         for (const r of results) {
-          const lib_meta = { 'id': library_dict[r.library].id,
-            'meta': {
-              'Library_name': library_dict[r.library].meta.Library_name,
-            },
-          }
+          const lib_meta = {"id": library_dict[r.library].id,
+                       "meta": {
+                          [this.props.ui_content.content.Library_name]: library_dict[r.library].meta[this.props.ui_content.content.Library_name]
+                        }
+                      }
           r.library = lib_meta
         }
       }

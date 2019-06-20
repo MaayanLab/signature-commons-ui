@@ -36,7 +36,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </Typography>
         </div>
       </Grid>
-      <Grid item xs={6} sm={3}>
+      <Grid item xs={6} sm={4}>
         <div className={classes.centered}>
           <Grid container
             spacing={8}
@@ -56,27 +56,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </Grid>
         </div>
       </Grid>
-      <Grid item xs={6} sm={3}>
-        <div className={classes.centered}>
-          <Grid container
-            spacing={8}
-            alignItems={'center'}
-            direction={'column'}>
-            <Grid item xs={12}>
-              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                onClick={(e) => props.handleChange(e, 'signature')}>
-                <FindReplace className={classes.icon} />
-              </Button>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="subheading">
-                  Signature Search
-              </Typography>
-            </Grid>
-          </Grid>
-        </div>
-      </Grid>
-      <Grid item xs={6} sm={3}>
+      <Grid item xs={6} sm={4}>
         <div className={classes.centered}>
           <Grid container
             spacing={8}
@@ -95,7 +75,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </Grid>
         </div>
       </Grid>
-      <Grid item xs={6} sm={3}>
+      <Grid item xs={6} sm={4}>
         <div className={classes.centered}>
           <Grid container
             spacing={8}
@@ -200,20 +180,6 @@ export const SearchCard = ({ classes, width, ...props }) => {
         direction={'column'}
         align="center"
         justify="center">
-        <Grid item xs={12}>
-          <div className={classes.toggleContainer}>
-            <ToggleButtonGroup value={props.searchType} exclusive onChange={props.handleChange}>
-              <ToggleButton value="metadata">
-                <FileFind />
-                Metadata Search
-              </ToggleButton>
-              <ToggleButton value="signature">
-                <FindReplace />
-                Signature Search
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </div>
-        </Grid>
         <Grid item xs={12}>
           {props.searchType == 'metadata' ?
             <SearchBox

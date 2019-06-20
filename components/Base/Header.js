@@ -6,13 +6,6 @@ export function Nav(props) {
   return (
     <ul {...props}>
       <li
-        className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
-      >
-        <Link to="/SignatureSearch">
-          Signature Search
-        </Link>
-      </li>
-      <li
         className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
       >
         <Link to="/MetadataSearch">
