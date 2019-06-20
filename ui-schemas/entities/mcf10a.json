@@ -1,0 +1,27 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json"
+  },
+  "properties": {
+    "Ensembl Gene ID": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['ensembl_gene_id']}"
+    },
+    "HGNC symbol": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['hgnc_symbol']}"
+    },
+    "seqnames": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['seqnames']}"
+    },
+    "geneChr": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['geneChr']}"
+    }
+  }
+}
