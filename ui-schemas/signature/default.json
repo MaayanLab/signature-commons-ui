@@ -1,7 +1,6 @@
 {
   "match": {
-    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
-    "dataset": "default"
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json"
   },
   "properties": {
     "Image": {
