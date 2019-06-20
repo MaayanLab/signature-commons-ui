@@ -1,6 +1,6 @@
 {
   "match": {
-    "${$validator}": "/@dcic/signature-commons-schema/(v[0-9]+/)?core/dataset.json",
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/dataset.json",
     "${dataset}": "lincs_clue"
   },
   "properties": {
