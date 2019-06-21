@@ -36,6 +36,12 @@ Refer to the image above for more information.
 
 | Field         | Value           | Remarks |
 | ------------- |---------------| ----------|
+| library_name | string | The field that we'll use as the library name (required) |
+| signature_search | boolean | tells the UI whether signature_search is activated |
+| metadata_search | boolean | tells the UI whether metadata_search is activated |
+| resources | boolean | tells the UI whether resources is activated |
+| change_resource | string | Change references to Resources with this name |
+| resource_list_style | object | JSS styling for resource page |
 | header | string | Header of the UI (Default: Signature Commons) |
 | metadata_placeholder | string | Placeholder for the metadata search box |
 | geneset_placeholder | string | Placeholder for the geneset search box |
@@ -50,7 +56,6 @@ Refer to the image above for more information.
 | text_2 | string | Text for text_2 |
 | text_3 | string | Text for text_3 |
 | text_4 | string | Text for text_4 |
-| change_resource | string | Change references to Resources with this name |
 | resource_pie_caption | string | Caption for resource pie chart |
 | bar-chart | object | Controls the barcharts |
 

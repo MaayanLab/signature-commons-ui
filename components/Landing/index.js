@@ -60,7 +60,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
             <Grid container
               spacing={24}
               alignItems={'center'}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm>
                 <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_content={this.props.ui_content}/>
                 <div className={this.props.classes.centered}>
                   <Typography variant="caption">
@@ -68,30 +68,32 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   </Typography>
                 </div>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                { this.props.ui_content.content['bar-chart'] !== undefined ? (
-                  <div className={this.props.classes.centered}>
-                    {this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name] !== undefined ? (
-                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name]}
-                      fontSize={this.props.ui_content.content['bar-chart'].font_size || 11}/>) : (
-                    null
-                    )}
-                    <Typography variant="caption">
-                      {this.props.ui_content.content['bar-chart'].Caption}
-                    </Typography>
-                  </div>
-                ) : (
-                  <div className={this.props.classes.centered}>
-                    {this.props.barcounts[Object.keys(this.props.barcounts)[0]] !== undefined ?
-                    <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/> :
+              { this.props.ui_content.content['bar-chart'] === undefined && (Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined)? null: 
+                <Grid item xs={12} sm>
+                  { this.props.ui_content.content['bar-chart'] !== undefined ? (
+                    <div className={this.props.classes.centered}>
+                      {this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name] !== undefined ? (
+                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name]}
+                        fontSize={this.props.ui_content.content['bar-chart'].font_size || 11}/>) : (
                       null
-                    }
-                    <Typography variant="caption">
-                      Bar Chart
-                    </Typography>
-                  </div>
-                )}
-              </Grid>
+                      )}
+                      <Typography variant="caption">
+                        {this.props.ui_content.content['bar-chart'].Caption}
+                      </Typography>
+                    </div>
+                  ) : (
+                    <div className={this.props.classes.centered}>
+                      {this.props.barcounts[Object.keys(this.props.barcounts)[0]] !== undefined ?
+                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/> :
+                        null
+                      }
+                      <Typography variant="caption">
+                        Bar Chart
+                      </Typography>
+                    </div>
+                  )}
+                </Grid>
+              }
             </Grid>
           </Grid>
           <Grid item xs={12} className={this.props.classes.stretched}>
@@ -99,38 +101,40 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           <Grid item xs={12} className={this.props.classes.stretched}>
             <CountsDiv {...this.props}/>
           </Grid>
-          <Grid item xs={12} className={this.props.classes.stretched}>
-            <Grid container
-              spacing={24}
-              alignItems={'center'}>
-              <Grid item xs={12}>
-                <div className={this.props.classes.centered}>
-                  <span className={this.props.classes.vertical20}>{this.props.ui_content.content.text_3 || 'Examine metadata:'}</span>
-                  <Selections
-                    value={this.props.selected_field}
-                    values={Object.keys(this.props.pie_fields_and_stats).sort()}
-                    onChange={(e) => this.props.handleSelectField(e)}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <div className={this.props.classes.centered}>
-                  <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
-                  <Typography variant="caption">
-                    Signatures per {this.props.selected_field.replace(/_/g, ' ')}
-                  </Typography>
-                </div>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <div className={this.props.classes.centered}>
-                  <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
-                  <Typography variant="caption">
-                    Top {this.props.selected_field.replace(/_/g, ' ')} terms
-                  </Typography>
-                </div>
+          { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null:
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <Grid container
+                spacing={24}
+                alignItems={'center'}>
+                <Grid item xs={12}>
+                  <div className={this.props.classes.centered}>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_content.content.text_3 || 'Examine metadata:'}</span>
+                    <Selections
+                      value={this.props.selected_field}
+                      values={Object.keys(this.props.pie_fields_and_stats).sort()}
+                      onChange={(e) => this.props.handleSelectField(e)}
+                    />
+                  </div>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <div className={this.props.classes.centered}>
+                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
+                    <Typography variant="caption">
+                      Signatures per {this.props.selected_field.replace(/_/g, ' ')}
+                    </Typography>
+                  </div>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <div className={this.props.classes.centered}>
+                    <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
+                    <Typography variant="caption">
+                      Top {this.props.selected_field.replace(/_/g, ' ')} terms
+                    </Typography>
+                  </div>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          }
           <Grid item xs={12}>
             <BottomLinks handleChange={this.handleChange}
               {...this.props} />
