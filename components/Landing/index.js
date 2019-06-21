@@ -70,7 +70,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   </Typography>
                 </div>
               </Grid>
-              { this.props.ui_content.content['bar-chart'] === undefined && (Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined)? null: 
+              { Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? null: 
                 <Grid item xs={12} sm>
                   { this.props.ui_content.content['bar-chart'] !== undefined ? (
                     <div className={this.props.classes.centered}>

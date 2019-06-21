@@ -220,38 +220,46 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
     <div className={classes.root}>
       <Title title="Signature Commons Dashboard" />
       <Grid container spacing={24}>
-        <Grid item xs={12}>
-          <StatRow classes={classes} {...props}/>
-        </Grid>
-        <Grid item xs={12} sm={6}>
+        { props.table_counts.length === 0 ? null:
+          <Grid item xs={12}>
+            <StatRow classes={classes} {...props}/>
+          </Grid>
+        }
+        <Grid item xs={12} sm>
           <PieChartGroup name={'Resource'}
             classes={classes}
             {...props}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <PieChartGroup name={props.selected_field}
-            classes={classes}
-            {...props}/>
-        </Grid>
-        <Grid item xs={12}>
-          <BarChartGroup classes={classes}
-            name={'Unique terms per field'}
-            bar_counts={props.meta_counts}
-            {...props}/>
-        </Grid>
-        <Grid item xs={12}>
-          { props.ui_content.content['bar-chart'] !== undefined ?
-              <BarChartGroup classes={classes}
-                name={props.ui_content.content['bar-chart'].Caption}
-                bar_counts={props.barcounts[props.ui_content.content['bar-chart'].Field_Name]}
-                {...props}/> :
-              <BarChartGroup classes={classes}
-                name={'Bar Chart'}
-                bar_counts={props.barcounts[Object.keys(props.barcounts)[0]]}
-                {...props}/>
-          }
-        </Grid>
+        { Object.keys(props.pie_fields_and_stats).length === 0 ? null:
+          <Grid item xs={12} sm>
+            <PieChartGroup name={props.selected_field}
+              classes={classes}
+              {...props}/>
+          </Grid>
+        }
+        { Object.keys(props.meta_counts).length === 0 ? null:
+          <Grid item xs={12}>
+            <BarChartGroup classes={classes}
+              name={'Unique terms per field'}
+              bar_counts={props.meta_counts}
+              {...props}/>
+          </Grid>
+        }
+        { Object.keys(props.barcounts).length === 0 || props.barcounts === undefined ? null: 
+          <Grid item xs={12}>
+            { props.ui_content.content['bar-chart'] !== undefined ?
+                <BarChartGroup classes={classes}
+                  name={props.ui_content.content['bar-chart'].Caption}
+                  bar_counts={props.barcounts[props.ui_content.content['bar-chart'].Field_Name]}
+                  {...props}/> :
+                <BarChartGroup classes={classes}
+                  name={'Bar Chart'}
+                  bar_counts={props.barcounts[Object.keys(props.barcounts)[0]]}
+                  {...props}/>
+            }
+          </Grid>
+        }
       </Grid>
     </div>
   )
