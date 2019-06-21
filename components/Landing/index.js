@@ -53,9 +53,11 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               submit={this.submit}
               {...this.props} />
           </Grid>
-          <Grid item xs={12} className={this.props.classes.stretched}>
-            <StatDiv {...this.props}/>
-          </Grid>
+          { this.props.table_counts.length === 0 ? null:
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <StatDiv {...this.props}/>
+            </Grid>
+          }
           <Grid item xs={12} className={this.props.classes.stretched}>
             <Grid container
               spacing={24}
@@ -98,9 +100,11 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           </Grid>
           <Grid item xs={12} className={this.props.classes.stretched}>
           </Grid>
-          <Grid item xs={12} className={this.props.classes.stretched}>
-            <CountsDiv {...this.props}/>
-          </Grid>
+          { Object.keys(this.props.meta_counts).length === 0 ? null:
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <CountsDiv {...this.props}/>
+            </Grid>
+          }
           { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null:
             <Grid item xs={12} className={this.props.classes.stretched}>
               <Grid container
