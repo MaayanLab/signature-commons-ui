@@ -28,6 +28,10 @@
       ],
       "resource_list_style": {
         "fontSize": 10
+      },
+      "bar-chart": {
+        "Field_Name": "ligand",
+        "Caption": "Experimental sample readouts per ligand"
       }
     }
   },

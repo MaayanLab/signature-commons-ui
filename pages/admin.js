@@ -83,6 +83,22 @@ async function get_ui_content() {
 export default class Admin extends React.Component {
   static async getInitialProps() {
     const ui_content = await get_ui_content()
+    // Check if it has library_name and resource_from_library
+    if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0 ){
+      return {
+        error: "ui schema is undefined"
+      }
+    }
+    if (ui_content.content.library_name === undefined ){
+      return {
+        error: "Missing library_name on ui schema"
+      }
+    }
+    if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0 ){
+      return {
+        error: "Missing/Empty resource_from_library"
+      }
+    }
     const resource_from_library = ui_content.content.resource_from_library
     const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(resource_from_library)
     const table_counts = await get_counts(Object.keys(resources).length, )
