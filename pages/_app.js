@@ -59,7 +59,6 @@ export default class extends App {
   render() {
     const { Component } = this.props
     const { pageProps } = this.state
-    console.log(this.state)
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
         <Container className="root">
