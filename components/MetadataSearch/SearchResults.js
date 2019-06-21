@@ -43,9 +43,6 @@ export default class SearchResults extends React.Component {
       librariesPage: 0,
       entitiesRowsPerPage: 10,
       entitiesPage: 0,
-      libraries: [],
-      entities: [],
-      signatures: []
     }
     this.performSearch = this.performSearch.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -81,7 +78,7 @@ export default class SearchResults extends React.Component {
       NProgress.start()
       this.setState({
         status: 'Searching...',
-        signatures: undefined,
+        [table]: undefined,
         [`${table}controller`]: controller,
       })
       const where = build_where(this.props.search)
@@ -221,7 +218,7 @@ export default class SearchResults extends React.Component {
                 rowsPerPage={this.state[`${name}RowsPerPage`]}
                 count={this.state[`${name}_count`]}
                 onChangePage={(event, page) => this.handleChangePage(event, page, name)}
-                onChangeRowsPerPage={e => this.handleChangeRowsPerPage(e, name)}
+                onChangeRowsPerPage={event => this.handleChangeRowsPerPage(event, name)}
               />
             </div>
         </div>
