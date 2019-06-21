@@ -18,6 +18,11 @@
       "type": "text",
       "text": "${meta['seqnames']}"
     },
+    "probeset": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['probeset']}"
+    },
     "geneChr": {
       "visibility": 1,
       "type": "text",

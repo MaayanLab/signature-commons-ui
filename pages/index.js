@@ -21,12 +21,14 @@ export async function fetch_count(source) {
   return (response.count)
 }
 
-export async function get_counts(resource_count) {
+export async function get_counts(resource_count, ui_content) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item) => item.Table_Count)
   const resource_field = counting_fields.filter((item) => item.Field_Name === 'resources')
+  ui_content.content.preferred_name = {}
   const count_promise = counting_fields.filter((item) => item.Field_Name !== 'resources').map(async (item) => {
     const count_stats = await fetch_count(item.Field_Name)
+    ui_content.content.preferred_name[item.Field_Name] = item.Preferred_Name
     return {
       table: item.Field_Name,
       preferred_name: item.Preferred_Name,
@@ -43,7 +45,7 @@ export async function get_counts(resource_count) {
     Visible_On_Landing: resource_field[0].Visible_On_Landing,
     counts: resource_count,
   }] : table_counts
-  return table_counts
+  return {table_counts, ui_content}
 }
 
 export async function get_metacounts() {
@@ -245,7 +247,7 @@ App.getInitialProps = async () => {
   }
   const resource_from_library = ui_content.content.resource_from_library
   const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(resource_from_library)
-  const table_counts = await get_counts(Object.keys(resources).length, )
+  const {table_counts, ui_content: ui_cont} = await get_counts(Object.keys(resources).length, ui_content)
   const { meta_counts } = await get_metacounts()
   const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()
@@ -260,7 +262,7 @@ App.getInitialProps = async () => {
     libraries,
     resources,
     library_resource,
-    ui_content,
+    ui_content: ui_cont,
   }
 }
 

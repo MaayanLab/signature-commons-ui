@@ -16,6 +16,11 @@
       "resource_from_library": [
         "assay"
       ],
+      "preferred_name_singular": {
+        "libraries": "Assay",
+        "signatures": "Experimental Readout",
+        "entities": "Entity"
+      },
       "signature_search": false,
       "metadata_search": true,
       "resources": true,
