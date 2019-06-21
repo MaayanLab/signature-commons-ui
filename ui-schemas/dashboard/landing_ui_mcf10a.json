@@ -134,12 +134,5 @@
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true 
-  },
-  {
-    "Field_Name": "seqnames",
-    "Type": "string",
-    "Table": "signatures",
-    "Preferred_Name": "Seq names",
-    "Bar_Count": true
   }
 ]

@@ -1,8 +1,7 @@
 [
   {
-    "landing": false,
+    "landing": true,
     "content": {
-      "landing": "../ui-schemas/dashboard/landing_ui_mcf10a.json",
       "header": "MCF10A Molecular Deep Dive",
       "metadata_placeholder": "Search over half a million signatures",
       "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
@@ -29,15 +28,26 @@
       ],
       "resource_list_style": {
         "fontSize": 10
-      },
-      "bar-chart": {
-        "Field_Name": "ligand",
-        "Caption": "Experimental sample readouts per ligand"
       }
     }
   },
   {
-    "landing": true,
+    "admin": true,
+    "content": {
+      "resource_pie_caption": "Signatures per Assay",
+      "change_resource": "Assays",
+      "bar-chart": {
+        "Field_Name": "ligand",
+        "Caption": "Experimental sample readouts per ligand"
+      },
+      "library_name": "assay",
+      "resource_from_library": [
+        "assay"
+      ]
+    }
+  },
+  {
+    "landing": false,
     "content": {
       "metadata_placeholder": "Search over half a million signatures",
       "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
@@ -64,17 +74,18 @@
     }
   },
   {
-    "admin": true,
+    "admin": false,
     "content": {
-      "resource_pie_caption": "Signatures per Assay",
-      "change_resource": "Assays",
+      "resource_pie_caption": "Signatures per Resource",
       "bar-chart": {
-        "Field_Name": "ligand",
-        "Caption": "Experimental sample readouts per ligand"
+        "Field_Name": "Version",
+        "Caption": "Libraries per year"
       },
-      "library_name": "assay",
+      "library_name": "Library_name",
       "resource_from_library": [
-        "assay"
+        "Primary_Resource_Short_Version",
+        "Primary_Resource",
+        "Library_name"
       ]
     }
   }
