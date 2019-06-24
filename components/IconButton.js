@@ -57,7 +57,7 @@ const IconButton = (props) => (
           <i className="material-icons left black-text">{props.icon}</i>
         )}
       </div>
-      <span style={{fontSize:10}}>
+      <span style={{ fontSize: 10 }}>
         {props.alt}
       </span>
       {props.counter === undefined ? null : (

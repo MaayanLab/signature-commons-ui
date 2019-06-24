@@ -79,13 +79,12 @@ export async function get_metacounts() {
     mapping = { ...item, ...mapping }
     return mapping
   }, {})
-  const object_fields = counting_fields.filter((item)=>item.Type==='object')
-  const meta_counts = landing_ui.filter((item)=>item.Meta_Count).reduce((stat_list, item)=>{
-    const k = item.Type==="object" ? `${item.Field_Name}.Name`: item.Field_Name
+  const meta_counts = landing_ui.filter((item) => item.Meta_Count).reduce((stat_list, item) => {
+    const k = item.Type === 'object' ? `${item.Field_Name}.Name` : item.Field_Name
     console.log(k)
     console.log(Object.keys((meta_stats[k])).length)
-    stat_list.push({ name: k.indexOf('PubChemID')!==-1 ?
-                             k.replace('Small_Molecule.', ''):
+    stat_list.push({ name: k.indexOf('PubChemID') !== -1 ?
+                             k.replace('Small_Molecule.', '') :
                              k.replace('.Name', ''),
     counts: Object.keys(meta_stats[k] || {}).length,
     icon: item.MDI_Icon,
