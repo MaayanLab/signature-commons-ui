@@ -6,7 +6,6 @@ import { Route, Switch } from 'react-router-dom'
 import { call } from '../../util/call'
 import Landing from '../Landing'
 import MetadataSearch from '../MetadataSearch'
-import MetaPages from '../MetaPages'
 import Resources from '../Resources'
 import SignatureSearch from '../SignatureSearch'
 import Upload from '../Upload'
@@ -140,15 +139,6 @@ export default class Home extends React.PureComponent {
 
   metadata_search = (props) => (
     <MetadataSearch
-      cart={this.state.cart}
-      updateCart={this.updateCart}
-      ui_content={this.props.ui_content}
-      {...props}
-    />
-  )
-
-  meta_pages = (props) => (
-    <MetaPages
       cart={this.state.cart}
       updateCart={this.updateCart}
       ui_content={this.props.ui_content}
