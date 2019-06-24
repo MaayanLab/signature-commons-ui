@@ -207,6 +207,7 @@ export default class SearchResults extends React.Component {
                 count={this.state[`${name}_count`]}
                 onChangePage={(event, page) => this.handleChangePage(event, page, name)}
                 onChangeRowsPerPage={event => this.handleChangeRowsPerPage(event, name)}
+                component="div"
               />
             </div>
         </div>
