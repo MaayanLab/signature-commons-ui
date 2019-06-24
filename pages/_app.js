@@ -38,12 +38,12 @@ export default class extends App {
     if (process.env.NODE_ENV === 'development' && Object.keys(pageProps).length === 0) {
       pageProps = await Component.getInitialProps()
     }
-    if (pageProps.error){
+    if (pageProps.error) {
       this.setState({
-        error: "error",
-        errorMessage: pageProps.error
+        error: 'error',
+        errorMessage: pageProps.error,
       })
-    }else{
+    } else {
       this.setState({
         pageProps,
       })

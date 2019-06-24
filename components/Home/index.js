@@ -192,19 +192,19 @@ export default class Home extends React.PureComponent {
             <Route
               path="/SignatureSearch"
               component={this.signature_search}
-            />: null
+            /> : null
           }
           {this.props.ui_content.content.metadata_search ?
             <Route
               path="/MetadataSearch"
               component={this.metadata_search}
-            />: null
+            /> : null
           }
           {this.props.ui_content.content.resources ?
             <Route
               path={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
               component={this.resources}
-            />: null
+            /> : null
           }
         </Switch>
       </Base>

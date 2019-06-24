@@ -220,7 +220,7 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
     <div className={classes.root}>
       <Title title="Signature Commons Dashboard" />
       <Grid container spacing={24}>
-        { props.table_counts.length === 0 ? null:
+        { props.table_counts.length === 0 ? null :
           <Grid item xs={12}>
             <StatRow classes={classes} {...props}/>
           </Grid>
@@ -231,14 +231,14 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
             {...props}
           />
         </Grid>
-        { Object.keys(props.pie_fields_and_stats).length === 0 ? null:
+        { Object.keys(props.pie_fields_and_stats).length === 0 ? null :
           <Grid item xs={12} sm>
             <PieChartGroup name={props.selected_field}
               classes={classes}
               {...props}/>
           </Grid>
         }
-        { Object.keys(props.meta_counts).length === 0 ? null:
+        { Object.keys(props.meta_counts).length === 0 ? null :
           <Grid item xs={12}>
             <BarChartGroup classes={classes}
               name={'Unique terms per field'}
@@ -246,7 +246,7 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
               {...props}/>
           </Grid>
         }
-        { Object.keys(props.barcounts).length === 0 || props.barcounts === undefined ? null: 
+        { Object.keys(props.barcounts).length === 0 || props.barcounts === undefined ? null :
           <Grid item xs={12}>
             { props.ui_content.content['bar-chart'] !== undefined ?
                 <BarChartGroup classes={classes}

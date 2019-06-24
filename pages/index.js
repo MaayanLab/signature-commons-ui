@@ -45,7 +45,7 @@ export async function get_counts(resource_count, ui_content) {
     Visible_On_Landing: resource_field[0].Visible_On_Landing,
     counts: resource_count,
   }] : table_counts
-  return {table_counts, ui_content}
+  return { table_counts, ui_content }
 }
 
 export async function get_metacounts() {
@@ -84,9 +84,9 @@ export async function get_metacounts() {
     stat_list.push({ name: k.indexOf('PubChemID') !== -1 ?
                              k.replace('Small_Molecule.', '') :
                              k.replace('.Name', ''),
-                     counts: Object.keys(meta_stats[k] || {}).length,
-                     icon: item.MDI_Icon,
-                     Preferred_Name: item.Preferred_Name})
+    counts: Object.keys(meta_stats[k] || {}).length,
+    icon: item.MDI_Icon,
+    Preferred_Name: item.Preferred_Name })
     return (stat_list)
   }, [])
 
@@ -141,13 +141,13 @@ export async function get_barcounts() {
         },
       },
     })
-    const stats = Object.keys(meta_stats[item.Field_Name] || {}).reduce((accumulator, bar)=>{
+    const stats = Object.keys(meta_stats[item.Field_Name] || {}).reduce((accumulator, bar) => {
       const count = meta_stats[item.Field_Name][bar]
-      if(bar==="2017b"){
-        if(accumulator["2017"]===undefined){
-          accumulator["2017"] = count
-        }else {
-          accumulator["2017"] = accumulator["2017"]+ count
+      if (bar === '2017b') {
+        if (accumulator['2017'] === undefined) {
+          accumulator['2017'] = count
+        } else {
+          accumulator['2017'] = accumulator['2017'] + count
         }
       } else {
         if (accumulator[bar] === undefined) {
@@ -219,35 +219,35 @@ const App = (props) => (
 )
 
 App.getInitialProps = async () => {
-  let ui_content = await get_ui_content()
+  const ui_content = await get_ui_content()
   // Check if it has library_name and resource_from_library
-  if ( ui_content.content === undefined || Object.keys(ui_content.content).length === 0 ){
+  if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
     return {
-      error: "ui schema is undefined"
+      error: 'ui schema is undefined',
     }
   }
-  if (ui_content.content.library_name === undefined ){
+  if (ui_content.content.library_name === undefined) {
     return {
-      error: "Missing library_name on ui schema"
+      error: 'Missing library_name on ui schema',
     }
   }
-  if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0 ){
+  if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0) {
     return {
-      error: "Missing/Empty resource_from_library"
+      error: 'Missing/Empty resource_from_library',
     }
   }
-  if (ui_content.content.signature_search === undefined){
+  if (ui_content.content.signature_search === undefined) {
     ui_content.content.signature_search = true
   }
-  if (ui_content.content.metadata_search === undefined){
+  if (ui_content.content.metadata_search === undefined) {
     ui_content.content.metadata_search = true
   }
-  if (ui_content.content.resources === undefined){
+  if (ui_content.content.resources === undefined) {
     ui_content.content.resources = true
   }
   const resource_from_library = ui_content.content.resource_from_library
   const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(resource_from_library)
-  const {table_counts, ui_content: ui_cont} = await get_counts(Object.keys(resources).length, ui_content)
+  const { table_counts, ui_content: ui_cont } = await get_counts(Object.keys(resources).length, ui_content)
   const { meta_counts } = await get_metacounts()
   const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()

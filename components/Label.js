@@ -14,7 +14,7 @@ export const schemas = [
   require('../ui-schemas/signature/creeds.json'),
   require('../ui-schemas/signature/enrichr.json'),
   require('../ui-schemas/signature/mcf10a.json'),
-  require('../ui-schemas/entities/sigcom.json'),
+  require('../ui-schemas/entities/mcf10a.json'),
 ]
 
 export const default_schemas = [
@@ -148,9 +148,9 @@ export function Label({ item, highlight, visibility }) {
       (schema) => objectMatch(schema.match, item)
   )
   // default if there is no match
-  if (matched_schemas.length<1) {
+  if (matched_schemas.length < 1) {
     matched_schemas = default_schemas.filter(
-      (schema) => objectMatch(schema.match, item)
+        (schema) => objectMatch(schema.match, item)
     )
     console.log(matched_schemas)
   }

@@ -39,9 +39,9 @@ export default class ResourcePage extends React.Component {
                       <ShowMeta
                         value={{
                           '@id': this.props.resource.id,
-                          '@type': this.props.ui_content.content.preferred_name_singular[this.props.ui_content.content.change_resource.toLowerCase()],
+                          '@type': this.props.ui_content.content.preferred_name_singular[(this.props.ui_content.content.change_resource || 'resources').toLowerCase()] || 'Resource',
                           'meta': Object.keys(this.props.resource.meta).filter((key) => (
-                            ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key)=>{
+                            ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
                             acc[key] = this.props.resource.meta[key]
                             return acc
                           }, {}),
@@ -61,7 +61,7 @@ export default class ResourcePage extends React.Component {
               </div>
             </div>
           </div>
-          {!this.props.resource.is_library?
+          {!this.props.resource.is_library ?
             <div className="row">
               <div className="col s12">
                 <ul

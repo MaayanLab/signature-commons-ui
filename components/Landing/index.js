@@ -53,7 +53,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               submit={this.submit}
               {...this.props} />
           </Grid>
-          { this.props.table_counts.length === 0 ? null:
+          { this.props.table_counts.length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
               <StatDiv {...this.props}/>
             </Grid>
@@ -70,7 +70,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   </Typography>
                 </div>
               </Grid>
-              { Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? null: 
+              { Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? null :
                 <Grid item xs={12} sm>
                   { this.props.ui_content.content['bar-chart'] !== undefined ? (
                     <div className={this.props.classes.centered}>
@@ -100,12 +100,12 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           </Grid>
           <Grid item xs={12} className={this.props.classes.stretched}>
           </Grid>
-          { Object.keys(this.props.meta_counts).length === 0 ? null:
+          { Object.keys(this.props.meta_counts).length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
               <CountsDiv {...this.props}/>
             </Grid>
           }
-          { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null:
+          { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
               <Grid container
                 spacing={24}

@@ -14,7 +14,7 @@ const colorrange = {
 }
 
 const handleClick = (e, label, resources, disabled, change_resource) => {
-  const resource_path = change_resource || "Resources"
+  const resource_path = change_resource || 'Resources'
   if (disabled === undefined) {
     if (resources) {
       location.href = `#/${resource_path}/${label.replace(/ /g, '_')}`
@@ -36,9 +36,9 @@ export const DonutChart = withScreenSize(function({ ...props }) {
     fontSize,
     resources,
     disabled,
-    ui_content
+    ui_content,
   } = props
-  const change_resource = ui_content ? ui_content.content.change_resource: undefined
+  const change_resource = ui_content ? ui_content.content.change_resource : undefined
   const dataLabels = data.map(function(d) {
     return (
       d.label

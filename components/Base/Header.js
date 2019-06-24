@@ -5,7 +5,7 @@ import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../.
 export function Nav(props) {
   return (
     <ul {...props}>
-      { props.ui_content.content.signature_search?
+      { props.ui_content.content.signature_search ?
         <li
           className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
         >
@@ -14,7 +14,7 @@ export function Nav(props) {
           </Link>
         </li> : null
       }
-      { props.ui_content.content.metadata_search?
+      { props.ui_content.content.metadata_search ?
         <li
           className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
         >
@@ -23,7 +23,7 @@ export function Nav(props) {
           </Link>
         </li> : null
       }
-      { props.ui_content.content.resources?
+      { props.ui_content.content.resources ?
         <li
           className={props.location.pathname === `/${props.ui_content.content.change_resource || 'Resources'}` ? 'active' : ''}
         >

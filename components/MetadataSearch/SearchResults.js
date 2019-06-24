@@ -2,11 +2,10 @@ import React from 'react'
 import NProgress from 'nprogress'
 import { fetch_meta_post } from '../../util/fetch/meta'
 import dynamic from 'next/dynamic'
-import Typography from '@material-ui/core/Typography'
-import SwipeableViews from 'react-swipeable-views';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import TablePagination from '@material-ui/core/TablePagination';
+import SwipeableViews from 'react-swipeable-views'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import TablePagination from '@material-ui/core/TablePagination'
 
 const MetaItem = dynamic(() => import('../../components/MetadataSearch/MetaItem'))
 
@@ -93,7 +92,7 @@ export default class SearchResults extends React.Component {
           filter: {
             where,
             limit: limit,
-            skip: skip
+            skip: skip,
           },
         },
         signal: controller.signal,
@@ -118,13 +117,13 @@ export default class SearchResults extends React.Component {
         duration_meta = duration_meta_1 + duration_meta_2
         const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
         for (const r of results) {
-          let lib_meta = {"id": library_dict[r.library].id,
-                            "dataset": library_dict[r.library].dataset,
-                            "meta": {
-                              [this.state.library_name]: library_dict[r.library].meta[this.state.library_name],
-                              "Icon": library_dict[r.library].meta["Icon"]
-                              }
-                            }
+          const lib_meta = { 'id': library_dict[r.library].id,
+            'dataset': library_dict[r.library].dataset,
+            'meta': {
+              [this.state.library_name]: library_dict[r.library].meta[this.state.library_name],
+              'Icon': library_dict[r.library].meta['Icon'],
+            },
+          }
           r.library = lib_meta
         }
       }
@@ -138,7 +137,6 @@ export default class SearchResults extends React.Component {
         [duration_meta_label]: duration_meta,
         [count_label]: contentRange.count,
       }, () => {
-        
         NProgress.done()
       })
     } catch (e) {
@@ -153,34 +151,34 @@ export default class SearchResults extends React.Component {
 
   handleChange(event, newValue) {
     this.setState({
-      index_value: newValue
+      index_value: newValue,
     })
   }
 
   handleChangeIndex(index) {
     this.setState({
-      index_value: newValue
+      index_value: newValue,
     })
   }
 
-  handleChangeRowsPerPage(e, name){
+  handleChangeRowsPerPage(e, name) {
     this.setState({
-      [`${name}RowsPerPage`]: e.target.value
-    }, ()=>{
+      [`${name}RowsPerPage`]: e.target.value,
+    }, () => {
       this.performSearch(name)
     })
   }
 
-  handleChangePage(event, page, name){
+  handleChangePage(event, page, name) {
     this.setState({
-      [`${name}Page`]: page
-    }, ()=>{
+      [`${name}Page`]: page,
+    }, () => {
       this.performSearch(name)
     })
   }
 
-  search_div(name, default_name, default_name_singular){
-    return(
+  search_div(name, default_name, default_name_singular) {
+    return (
       <div>
         <div className="col s12 center">
           {this.state[`${name}_count`] !== undefined ? (
@@ -195,21 +193,21 @@ export default class SearchResults extends React.Component {
           ) : null}
         </div>
         <div className="col s12">
-            <MetaItem
-              search={this.props.search}
-              items={this.state[name]}
-              type={this.props.ui_content.content.preferred_name_singular[name] || default_name_singular}
+          <MetaItem
+            search={this.props.search}
+            items={this.state[name]}
+            type={this.props.ui_content.content.preferred_name_singular[name] || default_name_singular}
+          />
+          <div align="right">
+            <TablePagination
+              page={this.state[`${name}Page`]}
+              rowsPerPage={this.state[`${name}RowsPerPage`]}
+              count={this.state[`${name}_count`]}
+              onChangePage={(event, page) => this.handleChangePage(event, page, name)}
+              onChangeRowsPerPage={(event) => this.handleChangeRowsPerPage(event, name)}
+              component="div"
             />
-            <div align="right">
-              <TablePagination
-                page={this.state[`${name}Page`]}
-                rowsPerPage={this.state[`${name}RowsPerPage`]}
-                count={this.state[`${name}_count`]}
-                onChangePage={(event, page) => this.handleChangePage(event, page, name)}
-                onChangeRowsPerPage={event => this.handleChangeRowsPerPage(event, name)}
-                component="div"
-              />
-            </div>
+          </div>
         </div>
       </div>
     )
@@ -226,22 +224,22 @@ export default class SearchResults extends React.Component {
           variant="fullWidth"
           centered
         >
-          <Tab label={ this.props.ui_content.content.preferred_name["signatures"] || 'Signatures' } />
-          <Tab label={ this.props.ui_content.content.preferred_name["libraries"] || 'Libraries' } />
-          <Tab label={ this.props.ui_content.content.preferred_name["entities"] || 'Entities' } />
+          <Tab label={ this.props.ui_content.content.preferred_name['signatures'] || 'Signatures' } />
+          <Tab label={ this.props.ui_content.content.preferred_name['libraries'] || 'Libraries' } />
+          <Tab label={ this.props.ui_content.content.preferred_name['entities'] || 'Entities' } />
         </Tabs>
         <SwipeableViews
-        index={this.state.index_value}
-        onChangeIndex={this.handleChangeIndex}
+          index={this.state.index_value}
+          onChangeIndex={this.handleChangeIndex}
         >
           { this.state.signatures === undefined ? <div /> :
-            this.search_div("signatures", "Signatures", "Signature")
+            this.search_div('signatures', 'Signatures', 'Signature')
           }
           { this.state.libraries === undefined ? <div /> :
-            this.search_div("libraries", "Libraries", "Library")
+            this.search_div('libraries', 'Libraries', 'Library')
           }
           { this.state.entities === undefined ? <div /> :
-            this.search_div("entities", "Entities", "entity")
+            this.search_div('entities', 'Entities', 'entity')
           }
         </SwipeableViews>
       </div>

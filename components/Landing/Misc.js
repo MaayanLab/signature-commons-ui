@@ -56,8 +56,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
             </Grid>
           </div>
-        </Grid>: null 
-      } 
+        </Grid> : null
+      }
       {props.ui_content.content.signature_search ?
         <Grid item xs={12} sm>
           <div className={classes.centered}>
@@ -78,8 +78,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
             </Grid>
           </div>
-        </Grid>: null 
-      } 
+        </Grid> : null
+      }
       {props.ui_content.content.resources ?
         <Grid item xs={12} sm>
           <div className={classes.centered}>
@@ -99,8 +99,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
             </Grid>
           </div>
-        </Grid>: null 
-      } 
+        </Grid> : null
+      }
       <Grid item xs={12} sm>
         <div className={classes.centered}>
           <Grid container
@@ -199,8 +199,8 @@ export const StatDiv = ({ classes, width, ...props }) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  const {signature_search, metadata_search} = props.ui_content.content
-  if (signature_search && metadata_search){
+  const { signature_search, metadata_search } = props.ui_content.content
+  if (signature_search && metadata_search) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <Grid container
@@ -241,8 +241,8 @@ export const SearchCard = ({ classes, width, ...props }) => {
         </Grid>
       </Card>
     )
-  }else if(signature_search){
-    return(
+  } else if (signature_search) {
+    return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <Grid container
           spacing={24}
@@ -251,17 +251,17 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <GenesetSearchBox
-                id="signature"
-                onSubmit={props.submit}
-                type={props.type}
-                {...props}
-              />
+              id="signature"
+              onSubmit={props.submit}
+              type={props.type}
+              {...props}
+            />
           </Grid>
         </Grid>
       </Card>
     )
-  } else if(metadata_search){
-    return(
+  } else if (metadata_search) {
+    return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <Grid container
           spacing={24}
@@ -270,11 +270,11 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <SearchBox
-                id='metadata'
-                search={props.search}
-                searchChange={props.searchChange}
-                ui_content={props.ui_content}
-              />
+              id='metadata'
+              search={props.search}
+              searchChange={props.searchChange}
+              ui_content={props.ui_content}
+            />
           </Grid>
         </Grid>
       </Card>

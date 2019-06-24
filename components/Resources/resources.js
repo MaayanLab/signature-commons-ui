@@ -26,7 +26,7 @@ export async function get_library_resources(resource_from_library) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
   const response = (await import('../../ui-schemas/resources/all.json')).default
   const resource_ui = (await import('../../ui-schemas/resources/mcf10a.json')).default // We used predefined schema to fetch resource meta
-  const resource_meta = response.reduce((group, data)=>{
+  const resource_meta = response.reduce((group, data) => {
     group[data.Resource_Name] = data
     return group
   }, {})
@@ -35,7 +35,7 @@ export async function get_library_resources(resource_from_library) {
 
   const resources = {}
   for (const lib of libraries) {
-    const resource = resource_from_library.map((res)=>(lib.meta[res])).filter((res_name)=>(res_name))[0] || null
+    const resource = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || null
     if (resource_meta[resource] === undefined) {
       console.error(`Resource not found: ${resource}`)
     }
@@ -45,7 +45,7 @@ export async function get_library_resources(resource_from_library) {
         console.warn(`Resource not found: ${resource}, registering library as resource`)
         const { response: Signature_Count } = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
         resources[resource] = {
-          id: resource,
+          id: lib.id,
           meta: {
             name: resource,
             icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
@@ -54,16 +54,16 @@ export async function get_library_resources(resource_from_library) {
           is_library: true,
           libraries: [],
         }
-        const r_meta = Object.entries(resource_ui.properties).map((entry)=>{
-            const prop = entry[1]
-            const field = prop.field
-            const text = makeTemplate(prop.text, lib)
-            return([field, text])
-          }).filter((entry)=>(entry[1]!=="undefined")).reduce((acc, entry)=>{
-            acc[entry[0]] = entry[1]
-            return acc
-          }, {})
-        resources[resource].meta = {...resources[resource].meta, ...r_meta}
+        const r_meta = Object.entries(resource_ui.properties).map((entry) => {
+          const prop = entry[1]
+          const field = prop.field
+          const text = makeTemplate(prop.text, lib)
+          return ([field, text])
+        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc, entry) => {
+          acc[entry[0]] = entry[1]
+          return acc
+        }, {})
+        resources[resource].meta = { ...resources[resource].meta, ...r_meta }
       } else {
         resources[resource] = {
           id: resource,
@@ -75,16 +75,16 @@ export async function get_library_resources(resource_from_library) {
           is_library: false,
           libraries: [],
         }
-        const r_meta = Object.entries(resource_ui.properties).map((entry)=>{
-            const prop = entry[1]
-            const field = prop.field
-            const text = makeTemplate(prop.text, lib)
-            return([field, text])
-          }).filter((entry)=>(entry[1]!=="undefined")).reduce((acc, entry)=>{
-            acc[entry[0]] = entry[1]
-            return acc
-          }, {})
-        resources[resource].meta = {...resources[resource].meta, ...r_meta}
+        const r_meta = Object.entries(resource_ui.properties).map((entry) => {
+          const prop = entry[1]
+          const field = prop.field
+          const text = makeTemplate(prop.text, lib)
+          return ([field, text])
+        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc, entry) => {
+          acc[entry[0]] = entry[1]
+          return acc
+        }, {})
+        resources[resource].meta = { ...resources[resource].meta, ...r_meta }
       }
     }
     resources[resource].libraries.push({ ...lib })
@@ -113,7 +113,7 @@ export async function get_signature_counts_per_resources(resource_from_library) 
       endpoint: `/libraries/${lib}/signatures/key_count`,
       body: {
         fields: ['$validator'],
-      }
+      },
     })
 
     return {
