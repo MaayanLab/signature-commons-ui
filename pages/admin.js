@@ -4,9 +4,9 @@ import dynamic from 'next/dynamic'
 import { fetch_meta } from '../util/fetch/meta'
 import { get_signature_counts_per_resources } from '../components/Resources/resources.js'
 import { get_metacounts,
-         get_pie_stats,
-         get_barcounts,
-       } from './index'
+  get_pie_stats,
+  get_barcounts,
+} from './index'
 
 // import HomePage from '../components/Home'
 const AdminPage = dynamic(() => import('../components/Admin'), { ssr: false })
@@ -17,12 +17,14 @@ async function fetch_count(source) {
   return (response.count)
 }
 
-export async function get_counts(resource_count) {
+export async function get_counts(resource_count, ui_content) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item) => item.Table_Count)
   const resource_field = counting_fields.filter((item) => item.Field_Name === 'resources')
+  ui_content.content.preferred_name = {}
   const count_promise = counting_fields.filter((item) => item.Field_Name !== 'resources').map(async (item) => {
     const count_stats = await fetch_count(item.Field_Name)
+    ui_content.content.preferred_name[item.Field_Name] = item.Preferred_Name
     return {
       table: item.Field_Name,
       preferred_name: item.Preferred_Name,
@@ -39,7 +41,7 @@ export async function get_counts(resource_count) {
     Visible_On_Admin: resource_field[0].Visible_On_Admin,
     counts: resource_count,
   }] : table_counts
-  return table_counts
+  return { table_counts, ui_content }
 }
 
 async function fetch_fields(source) {
@@ -84,24 +86,24 @@ export default class Admin extends React.Component {
   static async getInitialProps() {
     const ui_content = await get_ui_content()
     // Check if it has library_name and resource_from_library
-    if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0 ){
+    if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
       return {
-        error: "ui schema is undefined"
+        error: 'ui schema is undefined',
       }
     }
-    if (ui_content.content.library_name === undefined ){
+    if (ui_content.content.library_name === undefined) {
       return {
-        error: "Missing library_name on ui schema"
+        error: 'Missing library_name on ui schema',
       }
     }
-    if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0 ){
+    if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0) {
       return {
-        error: "Missing/Empty resource_from_library"
+        error: 'Missing/Empty resource_from_library',
       }
     }
     const resource_from_library = ui_content.content.resource_from_library
     const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(resource_from_library)
-    const table_counts = await get_counts(Object.keys(resources).length, )
+    const { table_counts, ui_content: ui_cont } = await get_counts(Object.keys(resources).length, ui_content)
     const { meta_counts } = await get_metacounts()
     const { pie_fields_and_stats } = await get_pie_stats()
     const signature_keys = await get_signature_keys()
@@ -118,7 +120,7 @@ export default class Admin extends React.Component {
       libraries,
       resources,
       library_resource,
-      ui_content,
+      ui_content: ui_cont,
       library_fields,
       entity_fields,
     }
