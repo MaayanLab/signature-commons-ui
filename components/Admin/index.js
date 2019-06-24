@@ -163,8 +163,8 @@ class AdminView extends React.PureComponent {
                 key={k}
                 label={k.replace(/_/g, ' ')}
                 source={'meta.' + k}
-                format={(v) => JSON.stringify(v, null, 2)}
-                parse={(v) => JSON.parse(v)}
+                format={(v) => typeof v === "object"? JSON.stringify(v, null, 2): v}
+                parse={(v) => typeof v === 'object'? JSON.parse(v||''): v}
               />
             )
           })}
@@ -231,8 +231,8 @@ class AdminView extends React.PureComponent {
                 key={k}
                 label={k.replace(/_/g, ' ')}
                 source={'meta.' + k}
-                format={(v) => JSON.stringify(v, null, 2)}
-                parse={(v) => JSON.parse(v)}
+                format={(v) => typeof v === "object"? JSON.stringify(v, null, 2): v}
+                parse={(v) => typeof v === 'object'? JSON.parse(v||''): v}
               />
             )
           })}
@@ -283,8 +283,8 @@ class AdminView extends React.PureComponent {
                 key={k}
                 label={k.replace(/_/g, ' ')}
                 source={'meta.' + k}
-                format={(v) => JSON.stringify(v, null, 2)}
-                parse={(v) => JSON.parse(v)}
+                format={(v) => typeof v === "object"? JSON.stringify(v, null, 2): v}
+                parse={(v) => typeof v === 'object'? JSON.parse(v||''): v}
               />
             )
           })}
