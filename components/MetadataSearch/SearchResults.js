@@ -86,13 +86,7 @@ export default class SearchResults extends React.Component {
       const start = Date.now()
       const limit = this.state[`${table}RowsPerPage`]
       const skip = this.state[`${table}RowsPerPage`] * this.state[`${table}Page`]
-      console.log(table, "before")
-      console.log("signatures")
-      console.log(this.state.signatures)
-      console.log("entities")
-      console.log(this.state.entities)
-      console.log("libraries")
-      console.log(this.state.libraries)
+
       const { duration: duration_meta_1, contentRange, response: results } = await fetch_meta_post({
         endpoint: `/${table}/find`,
         body: {
@@ -104,13 +98,7 @@ export default class SearchResults extends React.Component {
         },
         signal: controller.signal,
       })
-      console.log(table, "after")
-      console.log("signatures")
-      console.log(this.state.signatures)
-      console.log("entities")
-      console.log(this.state.entities)
-      console.log("libraries")
-      console.log(this.state.libraries)
+
       let duration_meta = duration_meta_1
       if (table === 'signatures') {
         const library_ids = [...new Set(results.map((sig) => sig.library))]
