@@ -3,16 +3,18 @@ import { range } from './range'
 
 export function count_first_na(L) {
   for (let i = 0; i < L.length; i++) {
-    if (L[i] != null)
+    if (L[i] != null) {
       return i
+    }
   }
   throw new Error('NaNs not identified')
 }
 
 export function dictzip(header, data) {
   const D = {}
-  for (let i = 0; i < Math.min(header.length, data.length); i++)
+  for (let i = 0; i < Math.min(header.length, data.length); i++) {
     D[header[i]] = data[i]
+  }
   return D
 }
 
@@ -20,8 +22,9 @@ export function *parse(matrix) {
   const border_x = count_first_na(matrix[0])
   const border_y = count_first_na(matrix_flatten(matrix_slice(matrix, 0, null)))
 
-  if (border_y <= 0 || border_x <= 0)
+  if (border_y <= 0 || border_x <= 0) {
     throw new Error('Invalid formatting')
+  }
 
   const header_x = matrix_flatten(matrix_slice(matrix, border_x, slice(null, border_y + 1)))
   const header_y = matrix_flatten(matrix_slice(matrix, slice(null, border_x + 1), border_y))
@@ -31,12 +34,12 @@ export function *parse(matrix) {
       yield {
         'meta': {
           ...dictzip(
-            header_x,
-            matrix_flatten(matrix_slice(matrix, x, slice(null, border_y + 1)))
+              header_x,
+              matrix_flatten(matrix_slice(matrix, x, slice(null, border_y + 1)))
           ),
           ...dictzip(
-            header_y,
-            matrix_flatten(matrix_slice(matrix, slice(null, border_x + 1), y))
+              header_y,
+              matrix_flatten(matrix_slice(matrix, slice(null, border_x + 1), y))
           ),
         },
         'data': matrix[y][x],
@@ -56,7 +59,7 @@ export function parse_csv(data) {
            m[2] || m[7] || m[12]
       try {
         r = JSON.parse(r)
-      } catch(e) {}
+      } catch (e) {}
 
       if (r === undefined || r.length === 0) {
         yield null

@@ -38,7 +38,7 @@ theme.shadows[4] = theme.shadows[0]
 
 export default class LibraryResults extends React.Component {
   check_column = ({ schema, prop, lib }) => {
-    if (schema.properties[prop].text===undefined) {
+    if (schema.properties[prop].text === undefined) {
       return false
     } else {
       const sig_keys = this.props.signature_keys[lib]
@@ -47,10 +47,10 @@ export default class LibraryResults extends React.Component {
         return true
       } else if (schema.properties[prop].columnType === 'meta') {
         return false
-      } else if (sig_keys.indexOf(col_src)>-1) {
+      } else if (sig_keys.indexOf(col_src) > -1) {
         return true
       } else {
-        const substring = sig_keys.filter((k)=>schema.properties[prop].text.indexOf(k)>-1)
+        const substring = sig_keys.filter((k) => schema.properties[prop].text.indexOf(k) > -1)
         if (substring.length > 0) {
           return true
         }
@@ -130,7 +130,7 @@ export default class LibraryResults extends React.Component {
     const data = sigs.map((sig) =>
       cols.map((col) => {
         let val = undefined
-        if (schema.properties[col].type=='object') {
+        if (schema.properties[col].type == 'object') {
           val = makeTemplate(schema.properties[col].text, sig, schema.properties[col].subfield)
         } else {
           val = makeTemplate(schema.properties[col].text, sig)

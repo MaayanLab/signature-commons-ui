@@ -76,7 +76,7 @@ export default class ResourceFilters extends React.Component {
         })}
         {sorted_resources.length >= config.maxResourcesBeforeCollapse ? (
           <IconButton
-            alt={this.state.show_all ? 'Less': 'More'}
+            alt={this.state.show_all ? 'Less' : 'More'}
             icon="more_horiz"
             onClick={this.toggle_show_all}
           />

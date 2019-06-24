@@ -1,47 +1,29 @@
 {
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
-    "${library.dataset}": "lincs_fwd"
+    "${library.dataset}": "MCF10A*"
   },
   "properties": {
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/static/images/creeds.png",
-      "alt": "CREEDS"
+      "src": "${PREFIX}/${library.meta['Icon']}",
+      "alt": "${library.meta['assay']}"
     },
-    "Assay": {
+    "Specimen Name": {
       "visibility": 1,
       "type": "text",
-      "text": "Microarray"
+      "text": "${meta['specimenName']}"
     },
-    "Disease": {
-      "visibility": 1,
-      "type": "object",
-      "text": "${meta.Disease}",
-      "subfield": "${meta.Disease[0].Name}"
-    },
-    "Drug": {
-      "visibility": 1,
-      "type": "object",
-      "text": "${meta.Small_Molecule}",
-      "subfield": "${meta.Small_Molecule[0].Name}"
-    },
-    "DrugBank": {
-      "visibility": 1,
-      "type": "object",
-      "text": "${meta.Small_Molecule}",
-      "subfield": "${meta.Small_Molecule[0].DrugBankID}"
-    },
-    "Organism": {
+    "Cell Type": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.Organism}"
+      "text": "${meta['cellType']}"
     },
-    "GEO Accession": {
+    "Ligand": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.geo_id}"
+      "text": "${meta['ligand']}"
     },
     "P-Value": {
       "visibility": 1,

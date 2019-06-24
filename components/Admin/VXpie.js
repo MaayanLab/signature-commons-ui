@@ -13,10 +13,11 @@ const colorrange = {
   'Gray': ['#717171', '#fefefe'],
 }
 
-const handleClick = (e, label, resources, disabled) => {
-  if (disabled===undefined) {
+const handleClick = (e, label, resources, disabled, change_resource) => {
+  const resource_path = change_resource || 'Resources'
+  if (disabled === undefined) {
     if (resources) {
-      location.href = `#/Resources/${label}`
+      location.href = `#/${resource_path}/${label.replace(/ /g, '_')}`
     } else {
       location.href = `#/MetadataSearch?q=${label}`
     }
@@ -35,7 +36,9 @@ export const DonutChart = withScreenSize(function({ ...props }) {
     fontSize,
     resources,
     disabled,
+    ui_content,
   } = props
+  const change_resource = ui_content ? ui_content.content.change_resource : undefined
   const dataLabels = data.map(function(d) {
     return (
       d.label
@@ -78,7 +81,7 @@ export const DonutChart = withScreenSize(function({ ...props }) {
                 const [centroidX, centroidY] = pie.path.centroid(arc)
                 const { startAngle, endAngle } = arc
                 const hasSpaceForLabel = endAngle - startAngle >= 0.35
-                const angle = startAngle + (endAngle - startAngle)/2
+                const angle = startAngle + (endAngle - startAngle) / 2
                 return (
                   <Tippy
                     key={`tip-${arc.data.label}-${i}`}
@@ -93,7 +96,7 @@ export const DonutChart = withScreenSize(function({ ...props }) {
                     <g key={`browser-${arc.data.label}-${i}`}>
                       <path d={pie.path(arc)}
                         fill={ordinalColorScale(dataLabels[i])}
-                        onClick={(e) => handleClick(e, arc.data.label, resources, disabled)}
+                        onClick={(e) => handleClick(e, arc.data.label, resources, disabled, change_resource)}
                       />
                       {hasSpaceForLabel && (
                         <text
