@@ -15,18 +15,20 @@ const TermQuery = dynamic(() => import('../components/TermQuery'), { ssr: false 
 const Tests = dynamic(() => import('../components/Tests'), { ssr: false })
 const Values = dynamic(() => import('../components/Values'), { ssr: false })
 
-async function fetch_count(source) {
+export async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   })
   return (response.count)
 }
 
-async function get_counts(resource_count, landing_ui_schema) {
+export async function get_counts(resource_count, ui_content) {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item) => item.Table_Count)
   const resource_field = counting_fields.filter((item) => item.Field_Name === 'resources')
+  ui_content.content.preferred_name = {}
   const count_promise = counting_fields.filter((item) => item.Field_Name !== 'resources').map(async (item) => {
     const count_stats = await fetch_count(item.Field_Name)
+    ui_content.content.preferred_name[item.Field_Name] = item.Preferred_Name
     return {
       table: item.Field_Name,
       preferred_name: item.Preferred_Name,
@@ -43,10 +45,10 @@ async function get_counts(resource_count, landing_ui_schema) {
     Visible_On_Landing: resource_field[0].Visible_On_Landing,
     counts: resource_count,
   }] : table_counts
-  return table_counts
+  return { table_counts, ui_content }
 }
 
-async function get_metacounts(landing_ui_schema) {
+export async function get_metacounts() {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item) => item.Meta_Count)
 
@@ -85,9 +87,9 @@ async function get_metacounts(landing_ui_schema) {
     stat_list.push({ name: k.indexOf('PubChemID')!==-1 ?
                              k.replace('Small_Molecule.', ''):
                              k.replace('.Name', ''),
-                     counts: Object.keys(meta_stats[k]).length,
-                     icon: item.MDI_Icon,
-                     Preferred_Name: item.Preferred_Name})
+    counts: Object.keys(meta_stats[k] || {}).length,
+    icon: item.MDI_Icon,
+    Preferred_Name: item.Preferred_Name })
     return (stat_list)
   }, [])
 
@@ -95,7 +97,7 @@ async function get_metacounts(landing_ui_schema) {
   return { meta_counts }
 }
 
-async function get_pie_stats(landing_ui_schema) {
+export async function get_pie_stats() {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const pie_schema = landing_ui.filter((item) => item.Pie_Count)
   const piefields = pie_schema.map((item) => (item.Field_Name))
@@ -129,7 +131,7 @@ async function get_pie_stats(landing_ui_schema) {
   return { pie_fields_and_stats }
 }
 
-async function get_barcounts(landing_ui_schema) {
+export async function get_barcounts() {
   const landing_ui = (await import('../ui-schemas/dashboard/landing_ui_mcf10a.json')).default
   const counting_fields = landing_ui.filter((item) => item.Bar_Count)
   const meta_promise = counting_fields.map(async (item) => {
@@ -142,13 +144,13 @@ async function get_barcounts(landing_ui_schema) {
         },
       },
     })
-    const stats = Object.keys(meta_stats[item.Field_Name] || {}).reduce((accumulator, bar)=>{
+    const stats = Object.keys(meta_stats[item.Field_Name] || {}).reduce((accumulator, bar) => {
       const count = meta_stats[item.Field_Name][bar]
-      if(bar==="2017b"){
-        if(accumulator["2017"]===undefined){
-          accumulator["2017"] = count
-        }else {
-          accumulator["2017"] = accumulator["2017"]+ count
+      if (bar === '2017b') {
+        if (accumulator['2017'] === undefined) {
+          accumulator['2017'] = count
+        } else {
+          accumulator['2017'] = accumulator['2017'] + count
         }
       } else {
         if (accumulator[bar] === undefined) {
@@ -170,7 +172,7 @@ async function get_barcounts(landing_ui_schema) {
   return { barcounts }
 }
 
-async function get_signature_keys() {
+export async function get_signature_keys() {
   const { response: libraries } = await fetch_meta({
     endpoint: '/libraries',
   })
@@ -192,7 +194,7 @@ async function get_signature_keys() {
   return signature_keys
 }
 
-async function get_ui_content() {
+export async function get_ui_content() {
   const ui_json = (await import('../ui-schemas/dashboard/ui.json')).default
   const ui_content = ui_json.filter((item) => item.landing)
   if (ui_content.length > 0) {
@@ -221,13 +223,38 @@ const App = (props) => (
 
 App.getInitialProps = async () => {
   const ui_content = await get_ui_content()
-  const landing_ui_schema = '../ui-schemas/dashboard/landing_ui_mcf10a.json'
-  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_content.content.Library_name)
-  const table_counts = await get_counts(Object.keys(resources).length, landing_ui_schema)
-  const { meta_counts } = await get_metacounts(landing_ui_schema)
-  const { pie_fields_and_stats } = await get_pie_stats(landing_ui_schema)
+  // Check if it has library_name and resource_from_library
+  if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
+    return {
+      error: 'ui schema is undefined',
+    }
+  }
+  if (ui_content.content.library_name === undefined) {
+    return {
+      error: 'Missing library_name on ui schema',
+    }
+  }
+  if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0) {
+    return {
+      error: 'Missing/Empty resource_from_library',
+    }
+  }
+  if (ui_content.content.signature_search === undefined) {
+    ui_content.content.signature_search = true
+  }
+  if (ui_content.content.metadata_search === undefined) {
+    ui_content.content.metadata_search = true
+  }
+  if (ui_content.content.resources === undefined) {
+    ui_content.content.resources = true
+  }
+  const resource_from_library = ui_content.content.resource_from_library
+  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(resource_from_library)
+  const { table_counts, ui_content: ui_cont } = await get_counts(Object.keys(resources).length, ui_content)
+  const { meta_counts } = await get_metacounts()
+  const { pie_fields_and_stats } = await get_pie_stats()
   const signature_keys = await get_signature_keys()
-  const { barcounts } = await get_barcounts(landing_ui_schema)
+  const { barcounts } = await get_barcounts()
   return {
     table_counts,
     meta_counts,
@@ -238,7 +265,7 @@ App.getInitialProps = async () => {
     libraries,
     resources,
     library_resource,
-    ui_content,
+    ui_content: ui_cont,
   }
 }
 

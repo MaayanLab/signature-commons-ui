@@ -45,6 +45,7 @@ const IconButton = (props) => (
     <div
       className="left icon-btn waves-effect waves-light"
       onClick={props.onClick}
+      style={props.style}
     >
       <div>
         {props.img !== undefined ? (

@@ -36,46 +36,72 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </Typography>
         </div>
       </Grid>
-      <Grid item xs={6} sm={4}>
-        <div className={classes.centered}>
-          <Grid container
-            spacing={8}
-            alignItems={'center'}
-            direction={'column'}>
-            <Grid item xs={12}>
-              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                onClick={(e) => props.handleChange(e, 'metadata')}>
-                <FileFind className={classes.icon} />
-              </Button>
+      {props.ui_content.content.metadata_search ?
+        <Grid item xs={12} sm>
+          <div className={classes.centered}>
+            <Grid container
+              spacing={8}
+              alignItems={'center'}
+              direction={'column'}>
+              <Grid item xs={12}>
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
+                  onClick={(e) => props.handleChange(e, 'metadata')}>
+                  <FileFind className={classes.icon} />
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="subheading">
+                    Metadata Search
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Typography variant="subheading">
-                  Metadata Search
-              </Typography>
+          </div>
+        </Grid> : null
+      }
+      {props.ui_content.content.signature_search ?
+        <Grid item xs={12} sm>
+          <div className={classes.centered}>
+            <Grid container
+              spacing={8}
+              alignItems={'center'}
+              direction={'column'}>
+              <Grid item xs={12}>
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
+                  onClick={(e) => props.handleChange(e, 'signature')}>
+                  <FindReplace className={classes.icon} />
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="subheading">
+                    Signature Search
+                </Typography>
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-      </Grid>
-      <Grid item xs={6} sm={4}>
-        <div className={classes.centered}>
-          <Grid container
-            spacing={8}
-            alignItems={'center'}
-            direction={'column'}>
-            <Grid item xs={12}>
-              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href="#/Resources">
-                <NearMe className={classes.icon} />
-              </Button>
+          </div>
+        </Grid> : null
+      }
+      {props.ui_content.content.resources ?
+        <Grid item xs={12} sm>
+          <div className={classes.centered}>
+            <Grid container
+              spacing={8}
+              alignItems={'center'}
+              direction={'column'}>
+              <Grid item xs={12}>
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href="#/Resources">
+                  <NearMe className={classes.icon} />
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="subheading">
+                    Browse Resources
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Typography variant="subheading">
-                  Browse Resources
-              </Typography>
-            </Grid>
-          </Grid>
-        </div>
-      </Grid>
-      <Grid item xs={6} sm={4}>
+          </div>
+        </Grid> : null
+      }
+      <Grid item xs={12} sm>
         <div className={classes.centered}>
           <Grid container
             spacing={8}
@@ -173,32 +199,89 @@ export const StatDiv = ({ classes, width, ...props }) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  return (
-    <Card className={`${classes.paddedCard} ${classes.topCard}`}>
-      <Grid container
-        spacing={24}
-        direction={'column'}
-        align="center"
-        justify="center">
-        <Grid item xs={12}>
-          {props.searchType == 'metadata' ?
-            <SearchBox
-              id='metadata'
-              search={props.search}
-              searchChange={props.searchChange}
-              ui_content={props.ui_content}
-            /> :
+  const { signature_search, metadata_search } = props.ui_content.content
+  if (signature_search && metadata_search) {
+    return (
+      <Card className={`${classes.paddedCard} ${classes.topCard}`}>
+        <Grid container
+          spacing={24}
+          direction={'column'}
+          align="center"
+          justify="center">
+          <Grid item xs={12}>
+            <div className={classes.toggleContainer}>
+              <ToggleButtonGroup value={props.searchType} exclusive onChange={props.handleChange}>
+                <ToggleButton value="metadata">
+                  <FileFind />
+                  Metadata Search
+                </ToggleButton>
+                <ToggleButton value="signature">
+                  <FindReplace />
+                  Signature Search
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            {props.searchType == 'metadata' ?
+              <SearchBox
+                id='metadata'
+                search={props.search}
+                searchChange={props.searchChange}
+                ui_content={props.ui_content}
+              /> :
+              <GenesetSearchBox
+                id="signature"
+                onSubmit={props.submit}
+                type={props.type}
+                {...props}
+              />
+            }
+          </Grid>
+        </Grid>
+      </Card>
+    )
+  } else if (signature_search) {
+    return (
+      <Card className={`${classes.paddedCard} ${classes.topCard}`}>
+        <Grid container
+          spacing={24}
+          direction={'column'}
+          align="center"
+          justify="center">
+          <Grid item xs={12}>
             <GenesetSearchBox
               id="signature"
               onSubmit={props.submit}
               type={props.type}
               {...props}
             />
-          }
+          </Grid>
         </Grid>
-      </Grid>
-    </Card>
-  )
+      </Card>
+    )
+  } else if (metadata_search) {
+    return (
+      <Card className={`${classes.paddedCard} ${classes.topCard}`}>
+        <Grid container
+          spacing={24}
+          direction={'column'}
+          align="center"
+          justify="center">
+          <Grid item xs={12}>
+            <SearchBox
+              id='metadata'
+              search={props.search}
+              searchChange={props.searchChange}
+              ui_content={props.ui_content}
+            />
+          </Grid>
+        </Grid>
+      </Card>
+    )
+  } else {
+    return (null)
+  }
 }
 
 export const ListItemLink = (props) => (

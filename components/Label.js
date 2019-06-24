@@ -8,10 +8,16 @@ export const schemas = [
   require('../ui-schemas/dataset/enrichr.json'),
   require('../ui-schemas/library/lincs.json'),
   require('../ui-schemas/library/creeds.json'),
+  require('../ui-schemas/library/mcf10a.json'),
   require('../ui-schemas/library/enrichr.json'),
   require('../ui-schemas/signature/lincs.json'),
   require('../ui-schemas/signature/creeds.json'),
   require('../ui-schemas/signature/enrichr.json'),
+  require('../ui-schemas/signature/mcf10a.json'),
+  require('../ui-schemas/entities/mcf10a.json'),
+]
+
+export const default_schemas = [
   require('../ui-schemas/library/default.json'),
   require('../ui-schemas/signature/default.json'),
   require('../ui-schemas/entities/default.json'),
@@ -138,9 +144,16 @@ export function objectMatch(m, o) {
 }
 
 export function Label({ item, highlight, visibility }) {
-  const matched_schemas = schemas.filter(
+  let matched_schemas = schemas.filter(
       (schema) => objectMatch(schema.match, item)
   )
+  // default if there is no match
+  if (matched_schemas.length < 1) {
+    matched_schemas = default_schemas.filter(
+        (schema) => objectMatch(schema.match, item)
+    )
+    console.log(matched_schemas)
+  }
   if (matched_schemas.length < 1) {
     console.error('Could not match ui-schema for item', item)
     return null

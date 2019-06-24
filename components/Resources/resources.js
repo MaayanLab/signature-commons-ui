@@ -1,4 +1,5 @@
 import { fetch_meta, fetch_meta_post } from '../../util/fetch/meta'
+import { makeTemplate } from '../../util/makeTemplate'
 
 export const primary_resources = [
   'CREEDS',
@@ -21,9 +22,10 @@ export const iconOf = {
   'CMAP': `static/images/clueio.ico`,
 }
 
-export async function get_library_resources(lib_name_meta) {
+export async function get_library_resources(resource_from_library) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
   const response = (await import('../../ui-schemas/resources/all.json')).default
+  const resource_ui = (await import('../../ui-schemas/resources/mcf10a.json')).default // We used predefined schema to fetch resource meta
   const resource_meta = response.reduce((group, data) => {
     group[data.Resource_Name] = data
     return group
@@ -33,7 +35,7 @@ export async function get_library_resources(lib_name_meta) {
 
   const resources = {}
   for (const lib of libraries) {
-    const resource = lib.meta['Primary_Resource_Short_Version'] || lib.meta['Primary_Resource'] || lib.meta['Library_name'] || lib.meta[lib_name_meta]
+    const resource = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || null
     if (resource_meta[resource] === undefined) {
       console.error(`Resource not found: ${resource}`)
     }
@@ -43,26 +45,25 @@ export async function get_library_resources(lib_name_meta) {
         console.warn(`Resource not found: ${resource}, registering library as resource`)
         const { response: Signature_Count } = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
         resources[resource] = {
-          id: resource,
+          id: lib.id,
           meta: {
             name: resource,
             icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
             Signature_Count: Signature_Count.count,
           },
+          is_library: true,
           libraries: [],
         }
-        if (lib.meta['Description']) {
-          resources[resource].meta.description = lib.meta['Description']
-        }
-        if (lib.meta['description']) {
-          resources[resource].meta.description = lib.meta['description']
-        }
-        if (lib.meta['PMID']) {
-          resources[resource].meta['PMID'] = lib.meta['PMID']
-        }
-        if (lib.meta['URL']) {
-          resources[resource].meta['URL'] = lib.meta['URL']
-        }
+        const r_meta = Object.entries(resource_ui.properties).map((entry) => {
+          const prop = entry[1]
+          const field = prop.field
+          const text = makeTemplate(prop.text, lib)
+          return ([field, text])
+        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc, entry) => {
+          acc[entry[0]] = entry[1]
+          return acc
+        }, {})
+        resources[resource].meta = { ...resources[resource].meta, ...r_meta }
       } else {
         resources[resource] = {
           id: resource,
@@ -71,20 +72,19 @@ export async function get_library_resources(lib_name_meta) {
             icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
             Signature_Count: resource_meta[resource].Signature_Count, // Precomputed
           },
+          is_library: false,
           libraries: [],
         }
-        if (resource_meta[resource]['Description']) {
-          resources[resource].meta.description = resource_meta[resource]['Description']
-        }
-        if (resource_meta[resource]['Description']) {
-          resources[resource].meta.description = resource_meta[resource]['Description']
-        }
-        if (resource_meta[resource]['PMID']) {
-          resources[resource].meta['PMID'] = resource_meta[resource]['PMID']
-        }
-        if (resource_meta[resource]['URL']) {
-          resources[resource].meta['URL'] = resource_meta[resource]['URL']
-        }
+        const r_meta = Object.entries(resource_ui.properties).map((entry) => {
+          const prop = entry[1]
+          const field = prop.field
+          const text = makeTemplate(prop.text, lib)
+          return ([field, text])
+        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc, entry) => {
+          acc[entry[0]] = entry[1]
+          return acc
+        }, {})
+        resources[resource].meta = { ...resources[resource].meta, ...r_meta }
       }
     }
     resources[resource].libraries.push({ ...lib })
@@ -103,9 +103,9 @@ export async function get_library_resources(lib_name_meta) {
   }
 }
 
-export async function get_signature_counts_per_resources(lib_name_meta=null, controller=null) {
+export async function get_signature_counts_per_resources(resource_from_library) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, library_resource } = await get_library_resources(lib_name_meta)
+  const { libraries, resources, library_resource } = await get_library_resources(resource_from_library)
   const count_promises = Object.keys(library_resource).map(async (lib) => {
     // request details from GitHub’s API with Axios
 
@@ -114,7 +114,6 @@ export async function get_signature_counts_per_resources(lib_name_meta=null, con
       body: {
         fields: ['$validator'],
       },
-      signal: controller ? controller.signal : null,
     })
 
     return {
@@ -124,7 +123,7 @@ export async function get_signature_counts_per_resources(lib_name_meta=null, con
   })
   const counts = await Promise.all(count_promises)
 
-  const per_resource_counts = counts.reduce((groups, resource) => {
+  const resource_signatures = counts.reduce((groups, resource) => {
     if (groups[resource.name] === undefined) {
       groups[resource.name] = resource.count
     } else {
@@ -132,14 +131,14 @@ export async function get_signature_counts_per_resources(lib_name_meta=null, con
     }
     return groups
   }, {})
-  // let for_sorting = Object.keys(per_resource_counts).map(resource=>({name: resource,
-  //                                                                    counts: per_resource_counts[resource]}))
+  // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
+  //                                                                    counts: resource_signatures[resource]}))
 
   // for_sorting.sort(function(a, b) {
   //     return b.counts - a.counts;
   // });
   return {
-    resource_signatures: per_resource_counts, // for_sorting.slice(0,11)
+    resource_signatures, // for_sorting.slice(0,11)
     libraries,
     resources,
     library_resource,

@@ -38,9 +38,16 @@ export default class extends App {
     if (process.env.NODE_ENV === 'development' && Object.keys(pageProps).length === 0) {
       pageProps = await Component.getInitialProps()
     }
-    this.setState({
-      pageProps,
-    })
+    if (pageProps.error) {
+      this.setState({
+        error: 'error',
+        errorMessage: pageProps.error,
+      })
+    } else {
+      this.setState({
+        pageProps,
+      })
+    }
   }
 
   componentDidCatch(error, errorInfo) {
@@ -55,7 +62,7 @@ export default class extends App {
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
         <Container className="root">
-          <Error code={this.props.errorCode} message={serializeError(this.props.error)} />
+          <Error code={this.props.errorCode} message={serializeError(this.props.error) || this.state.errorMessage} />
         </Container>
       )
     }

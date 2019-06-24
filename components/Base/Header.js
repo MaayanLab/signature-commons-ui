@@ -5,20 +5,33 @@ import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../.
 export function Nav(props) {
   return (
     <ul {...props}>
-      <li
-        className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
-      >
-        <Link to="/MetadataSearch">
-          Metadata Search
-        </Link>
-      </li>
-      <li
-        className={props.location.pathname === `/${props.ui_content.content.change_resource || 'Resources'}` ? 'active' : ''}
-      >
-        <Link to={`/${props.ui_content.content.change_resource || 'Resources'}`}>
-          {props.ui_content.content.change_resource || 'Resources'}
-        </Link>
-      </li>
+      { props.ui_content.content.signature_search ?
+        <li
+          className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
+        >
+          <Link to="/SignatureSearch">
+            Signature Search
+          </Link>
+        </li> : null
+      }
+      { props.ui_content.content.metadata_search ?
+        <li
+          className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
+        >
+          <Link to="/MetadataSearch">
+            Metadata Search
+          </Link>
+        </li> : null
+      }
+      { props.ui_content.content.resources ?
+        <li
+          className={props.location.pathname === `/${props.ui_content.content.change_resource || 'Resources'}` ? 'active' : ''}
+        >
+          <Link to={`/${props.ui_content.content.change_resource || 'Resources'}`}>
+            {props.ui_content.content.change_resource || 'Resources'}
+          </Link>
+        </li> : null
+      }
       <li>
         <a
           target="_blank"
