@@ -19,7 +19,8 @@
       "preferred_name_singular": {
         "libraries": "Assay",
         "signatures": "Experimental Readout",
-        "entities": "Entity"
+        "entities": "Entity",
+        "assays": "Assay"
       },
       "signature_search": false,
       "metadata_search": true,
@@ -73,6 +74,12 @@
       "bar-chart": {
         "Field_Name": "Version",
         "Caption": "Libraries per year"
+      },
+      "preferred_name_singular": {
+        "libraries": "Library",
+        "signatures": "Signature",
+        "entities": "Entity",
+        "resources": "Resource"
       },
       "library_name": "Library_name",
       "resource_from_library": [
