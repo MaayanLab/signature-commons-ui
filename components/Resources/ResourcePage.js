@@ -16,6 +16,7 @@ export default class ResourcePage extends React.Component {
   }
 
   render() {
+    console.log(this.props.resource)
     return (
       <div className="row">
         <div className="col s12">
@@ -35,14 +36,17 @@ export default class ResourcePage extends React.Component {
                       <div>
                         <span className="card-title">{this.props.resource.meta.name}</span>
                       </div>
-                      {Object.keys(this.props.resource.meta).filter((key) => (['name', 'icon'].indexOf(key) === -1)).map((key) => (
-                        <div key={key}>
-                          <span>
-                            <b>{key.replace(/_/g, ' ')}:</b>&nbsp;
-                            {this.props.resource.meta[key]}
-                          </span>
-                        </div>
-                      ))}
+                      <ShowMeta
+                        value={{
+                          '@id': this.props.resource.id,
+                          '@type': this.props.ui_content.content.preferred_name_singular[this.props.ui_content.content.change_resource.toLowerCase()],
+                          'meta': Object.keys(this.props.resource.meta).filter((key) => (
+                            ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key)=>{
+                            acc[key] = this.props.resource.meta[key]
+                            return acc
+                          }, {}),
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
