@@ -57,7 +57,7 @@
     }
   },
   {
-    "landing": false,
+    "landing": true,
     "content": {
       "metadata_placeholder": "Search over half a million signatures",
       "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
@@ -90,7 +90,7 @@
     }
   },
   {
-    "admin": false,
+    "admin": true,
     "content": {
       "resource_pie_caption": "Signatures per Resource",
       "bar-chart": {
