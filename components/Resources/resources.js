@@ -65,7 +65,6 @@ export async function get_library_resources(resource_from_library) {
 
   const resources = libraries.reduce((acc, lib) => {
     const resource_id = lib.resource
-    console.log(acc)
     const resource_name = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || null
     // lib resource matches with resource table
     if (resource_id) {
