@@ -23,72 +23,89 @@ export const iconOf = {
 }
 
 export async function get_library_resources(resource_from_library) {
-  // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const response = (await import('../../ui-schemas/resources/all.json')).default
-  const resource_ui = (await import('../../ui-schemas/resources/mcf10a.json')).default // We used predefined schema to fetch resource meta
+
+  // We used predefined schema to fetch resource meta
+  const resource_ui = (await import('../../ui-schemas/resources/sigcom.json')).default
+
+  // fetch resources on database
+  const { response } = await fetch_meta({
+    endpoint: '/resources',
+  })
+
+  // fetch libraries on database
+  const { response: libraries } = await fetch_meta({
+    endpoint: '/libraries',
+  })
+  const count_promises = libraries.map(async (lib) => {
+    // request details from GitHub’s API with Axios
+    const { response: stats } = await fetch_meta({
+      endpoint: `/libraries/${lib.id}/signatures/key_count`,
+      body: {
+        fields: ['$validator'],
+      },
+    })
+
+    return {
+      id: lib.id,
+      name: lib.meta.Library_name,
+      count: stats.$validator,
+    }
+  })
+  const counts = await Promise.all(count_promises)
+  const count_dict = counts.reduce((acc, item)=>{
+    acc[item.id] = item.count
+    return acc
+  }, {})
+
   const resource_meta = response.reduce((group, data) => {
-    group[data.Resource_Name] = data
+    group[data.id] = data
     return group
   }, {})
-  const { response: libraries } = await fetch_meta_post({ endpoint: '/libraries/find', body: {} })
-  const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
 
-  const resources = {}
-  for (const lib of libraries) {
-    const resource = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || null
-    if (resource_meta[resource] === undefined) {
-      console.error(`Resource not found: ${resource}`)
-    }
 
-    if (resources[resource] === undefined) {
-      if (resource_meta[resource] === undefined) {
-        console.warn(`Resource not found: ${resource}, registering library as resource`)
-        const { response: Signature_Count } = await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` })
-        resources[resource] = {
-          id: lib.id,
-          meta: {
-            name: resource,
-            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
-            Signature_Count: Signature_Count.count,
-          },
-          is_library: true,
-          libraries: [],
+  const resources = libraries.reduce((acc, lib) => {
+    const resource_id = lib.resource
+    console.log(acc)
+    const resource_name = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || null
+    // lib resource matches with resource table
+    if (resource_id) {
+      if (resource_id in resource_meta){
+        let resource = resource_meta[resource_id]
+        if (!(resource_name in acc)){
+          resource.libraries = []
+          acc[resource_name] = resource
         }
-        const r_meta = Object.entries(resource_ui.properties).map((entry) => {
-          const prop = entry[1]
-          const field = prop.field
-          const text = makeTemplate(prop.text, lib)
-          return ([field, text])
-        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc, entry) => {
-          acc[entry[0]] = entry[1]
-          return acc
-        }, {})
-        resources[resource].meta = { ...resources[resource].meta, ...r_meta }
+        acc[resource_name].libraries.push({...lib})
       } else {
-        resources[resource] = {
-          id: resource,
-          meta: {
-            name: resource,
-            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
-            Signature_Count: resource_meta[resource].Signature_Count, // Precomputed
-          },
-          is_library: false,
-          libraries: [],
-        }
-        const r_meta = Object.entries(resource_ui.properties).map((entry) => {
+        console.error(`Resource not found: ${resource_name}`)
+      }
+    } else {
+      acc[resource_name] = {
+        id: lib.id,
+        meta: {
+          name: resource_name,
+          icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
+          Signature_Count: count_dict[lib.id],
+        },
+        is_library: true,
+        libraries: [],
+      }
+      // Get metadata from library
+      const r_meta = Object.entries(resource_ui.properties).map((entry) => {
           const prop = entry[1]
           const field = prop.field
           const text = makeTemplate(prop.text, lib)
           return ([field, text])
-        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc, entry) => {
-          acc[entry[0]] = entry[1]
-          return acc
+        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc1, entry) => {
+          acc1[entry[0]] = entry[1]
+          return acc1
         }, {})
-        resources[resource].meta = { ...resources[resource].meta, ...r_meta }
-      }
+      acc[resource_name].meta = { ...resources[resource].meta, ...r_meta }
     }
-    resources[resource].libraries.push({ ...lib })
-  }
+    return acc
+  }, {})
+
+  const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
 
   const library_resource = Object.keys(resources).reduce((groups, resource) => {
     for (const library of resources[resource].libraries) {

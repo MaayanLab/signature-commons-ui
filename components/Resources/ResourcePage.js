@@ -34,7 +34,7 @@ export default class ResourcePage extends React.Component {
                     </div>
                     <div className="card-content col s11">
                       <div>
-                        <span className="card-title">{this.props.resource.meta.name}</span>
+                        <span className="card-title">{this.props.resource.meta.Resource_Name}</span>
                       </div>
                       <ShowMeta
                         value={{
