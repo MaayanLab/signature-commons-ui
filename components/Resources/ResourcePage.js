@@ -70,7 +70,8 @@ export default class ResourcePage extends React.Component {
                 <div className="card-action">
                   <Grid container justify="space-between">
                     <Grid item xs={1}>
-                      <Button style={{
+                      {this.props.ui_content.content.deactivate_download ? null:
+                        <Button style={{
                           input: {
                             display: 'none',
                             }
@@ -78,6 +79,7 @@ export default class ResourcePage extends React.Component {
                           onClick={e => this.handleDownload("resources", this.props.resource.id)}
                           className={`mdi mdi-download mdi-24px`}
                         >{''}</Button>
+                      }
                     </Grid>
                     <Grid item xs={1}>
                       <Link
@@ -122,14 +124,16 @@ export default class ResourcePage extends React.Component {
                           />
                           &nbsp;
                           <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                          <Button style={{
-                            input: {
-                              display: 'none',
-                              }
-                            }}
-                            onClick={e => this.handleDownload("libraries", library.id)}
-                            className={`mdi mdi-download mdi-24px`}
-                          >{''}</Button>
+                          {this.props.ui_content.content.deactivate_download ? null:
+                            <Button style={{
+                              input: {
+                                display: 'none',
+                                }
+                              }}
+                              onClick={e => this.handleDownload("libraries", library.id)}
+                              className={`mdi mdi-download mdi-24px`}
+                            >{''}</Button>
+                          }
                           <a
                             href="javascript:void(0);"
                             className="collapsible-header"

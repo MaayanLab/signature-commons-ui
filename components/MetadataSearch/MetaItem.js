@@ -87,7 +87,7 @@ export default class MetadataSearchResults extends React.Component {
                     visibility={1}
                   />
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                  {this.props.table_name === "entities"? null:
+                  {this.props.table_name === "entities" || this.props.deactivate_download ? null:
                     <Button style={{
                       input: {
                         display: 'none',

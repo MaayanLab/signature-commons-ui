@@ -199,6 +199,7 @@ export default class SearchResults extends React.Component {
             type={this.props.ui_content.content.preferred_name_singular[name] || default_name_singular}
             table_name={name}
             preferred_name={this.props.ui_content.content.preferred_name_singular}
+            deactivate_download={this.props.ui_content.content.deactivate_download}
           />
           <div align="right">
             <TablePagination
