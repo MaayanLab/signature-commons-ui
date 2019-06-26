@@ -5,6 +5,18 @@ import ShowMeta from '../../components/ShowMeta'
 import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
+import NProgress from 'nprogress'
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid'
+
+
+import {download_resource_json,
+        download_library_json} from '../MetadataSearch/download'
+
+const download = {
+  libraries: download_library_json,
+  resources: download_resource_json,
+}
 
 export default class ResourcePage extends React.Component {
   componentDidMount() {
@@ -15,8 +27,13 @@ export default class ResourcePage extends React.Component {
     return (e) => window.open(url, '_blank').focus()
   }
 
+  async handleDownload(type, id){
+    NProgress.start()
+    await download[type](id)
+    NProgress.done()
+  }
+
   render() {
-    console.log(this.props.resource)
     return (
       <div className="row">
         <div className="col s12">
@@ -51,12 +68,26 @@ export default class ResourcePage extends React.Component {
                   </div>
                 </div>
                 <div className="card-action">
-                  <Link
-                    to={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
-                    className="waves-effect waves-teal btn-flat"
-                  >
-                    BACK
-                  </Link>
+                  <Grid container justify="space-between">
+                    <Grid item xs={1}>
+                      <Button style={{
+                          input: {
+                            display: 'none',
+                            }
+                          }}
+                          onClick={e => this.handleDownload("resources", this.props.resource.id)}
+                          className={`mdi mdi-download mdi-24px`}
+                        >{''}</Button>
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Link
+                        to={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
+                        className="waves-effect waves-teal btn-flat"
+                      >
+                        BACK
+                      </Link>
+                    </Grid>
+                  </Grid>
                 </div>
               </div>
             </div>
@@ -91,6 +122,14 @@ export default class ResourcePage extends React.Component {
                           />
                           &nbsp;
                           <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                          <Button style={{
+                            input: {
+                              display: 'none',
+                              }
+                            }}
+                            onClick={e => this.handleDownload("libraries", library.id)}
+                            className={`mdi mdi-download mdi-24px`}
+                          >{''}</Button>
                           <a
                             href="javascript:void(0);"
                             className="collapsible-header"
