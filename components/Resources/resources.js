@@ -72,8 +72,10 @@ export async function get_library_resources(resource_from_library) {
         let resource = resource_meta[resource_id]
         if (!(resource_name in acc)){
           resource.libraries = []
+          resource.meta.Signature_Count = 0
           acc[resource_name] = resource
         }
+        resource.meta.Signature_Count = resource.meta.Signature_Count + count_dict[lib.id]
         acc[resource_name].libraries.push({...lib})
       } else {
         console.error(`Resource not found: ${resource_name}`)
