@@ -25,7 +25,7 @@ export const iconOf = {
 export async function get_library_resources(resource_from_library) {
 
   // We used predefined schema to fetch resource meta
-  const resource_ui = (await import('../../ui-schemas/resources/mcf10a.json')).default
+  const resource_ui = (await import('../../ui-schemas/resources/sigcom.json')).default
 
   // fetch resources on database
   const { response } = await fetch_meta({
@@ -116,34 +116,36 @@ export async function get_library_resources(resource_from_library) {
     libraries: library_dict,
     resources: resources,
     library_resource,
+    counts,
   }
 }
 
 export async function get_signature_counts_per_resources(resource_from_library) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, library_resource } = await get_library_resources(resource_from_library)
-  const count_promises = Object.keys(library_resource).map(async (lib) => {
-    // request details from GitHub’s API with Axios
+  const { libraries, resources, library_resource, counts } = await get_library_resources(resource_from_library)
+  // const count_promises = Object.keys(library_resource).map(async (lib) => {
+  //   // request details from GitHub’s API with Axios
 
-    const { response: stats } = await fetch_meta({
-      endpoint: `/libraries/${lib}/signatures/key_count`,
-      body: {
-        fields: ['$validator'],
-      },
-    })
+  //   const { response: stats } = await fetch_meta({
+  //     endpoint: `/libraries/${lib}/signatures/key_count`,
+  //     body: {
+  //       fields: ['$validator'],
+  //     },
+  //   })
 
-    return {
-      name: library_resource[lib],
-      count: stats.$validator,
-    }
-  })
-  const counts = await Promise.all(count_promises)
+  //   return {
+  //     name: library_resource[lib],
+  //     count: stats.$validator,
+  //   }
+  // })
+  // const counts = await Promise.all(count_promises)
 
-  const resource_signatures = counts.reduce((groups, resource) => {
-    if (groups[resource.name] === undefined) {
-      groups[resource.name] = resource.count
+  const resource_signatures = counts.reduce((groups, lib) => {
+    const resource_name = library_resource[lib.id]
+    if (groups[resource_name] === undefined) {
+      groups[resource_name] = lib.count
     } else {
-      groups[resource.name] = groups[resource.name] + resource.count
+      groups[resource_name] = groups[resource_name] + lib.count
     }
     return groups
   }, {})
