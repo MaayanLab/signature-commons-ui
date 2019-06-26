@@ -1,8 +1,16 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import Button from '@material-ui/core/Button';
+import {download_signature_json,
+        download_library_json} from './download'
 
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
 const Label = dynamic(() => import('../../components/Label'), { ssr: false })
+
+const download = {
+  libraries: download_library_json,
+  signatures: download_signature_json,
+}
 
 export default class MetadataSearchResults extends React.Component {
   constructor(props) {
@@ -15,6 +23,10 @@ export default class MetadataSearchResults extends React.Component {
       const M = await import('materialize-css')
       M.Collapsible.init(el)
     }
+  }
+
+  handleDownload(type, id){
+    download[type](id)
   }
 
   render() {
@@ -71,6 +83,16 @@ export default class MetadataSearchResults extends React.Component {
                     visibility={1}
                   />
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
+                  {this.props.table_name === "entities"? null:
+                    <Button style={{
+                      input: {
+                        display: 'none',
+                        }
+                      }}
+                      onClick={e => download[this.props.table_name](item.id)}
+                      className={`mdi mdi-download mdi-24px`}
+                    >{''}</Button>
+                  }
                   <a
                     href="javascript:void(0);"
                     className="collapsible-header"
