@@ -88,13 +88,13 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href="#/Resources">
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_content.content.change_resource || "Resources"}`}>
                   <NearMe className={classes.icon} />
                 </Button>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    Browse Resources
+                    {`Browse ${props.ui_content.content.change_resource || "Resources"}`}
                 </Typography>
               </Grid>
             </Grid>
