@@ -25,7 +25,7 @@ export const iconOf = {
 export async function get_library_resources(resource_from_library) {
 
   // We used predefined schema to fetch resource meta
-  const resource_ui = (await import('../../ui-schemas/resources/sigcom.json')).default
+  const resource_ui = (await import('../../ui-schemas/resources/mcf10a.json')).default
 
   // fetch resources on database
   const { response } = await fetch_meta({
@@ -82,12 +82,12 @@ export async function get_library_resources(resource_from_library) {
       acc[resource_name] = {
         id: lib.id,
         meta: {
-          name: resource_name,
-          icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
+          Resource_Name: resource_name,
+          icon: `${process.env.PREFIX}/${iconOf[resource_name] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
           Signature_Count: count_dict[lib.id],
         },
         is_library: true,
-        libraries: [],
+        libraries: [lib],
       }
       // Get metadata from library
       const r_meta = Object.entries(resource_ui.properties).map((entry) => {
@@ -99,7 +99,7 @@ export async function get_library_resources(resource_from_library) {
           acc1[entry[0]] = entry[1]
           return acc1
         }, {})
-      acc[resource_name].meta = { ...resources[resource].meta, ...r_meta }
+      acc[resource_name].meta = { ...acc[resource_name].meta, ...r_meta }
     }
     return acc
   }, {})
