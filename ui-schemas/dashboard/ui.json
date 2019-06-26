@@ -26,6 +26,7 @@
       "metadata_search": true,
       "resources": true,
       "change_resource": "Assays",
+      "Library_name": "assay",
       "search_terms": [
         "MCF10A",
         "IFNG",
@@ -49,6 +50,12 @@
       "bar-chart": {
         "Field_Name": "ligand",
         "Caption": "Experimental sample readouts per ligand"
+      },
+      "preferred_name_singular": {
+        "libraries": "Assay",
+        "signatures": "Experimental Readout",
+        "entities": "Entity",
+        "assays": "Assay"
       },
       "library_name": "assay",
       "resource_from_library": [

@@ -11,7 +11,6 @@ import { Admin,
   Resource,
   SimpleForm,
   TextField,
-  TextInput,
   AUTH_LOGIN,
   AUTH_LOGOUT,
   AUTH_ERROR,
@@ -114,7 +113,7 @@ class AdminView extends React.PureComponent {
           <LibraryAvatar
             source={`meta.${this.props.ui_content.content.library_name}`}
             title={'Library'}
-            label={'Library'}
+            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
             textAlign="center"
             library_name={this.props.ui_content.content.library_name}
           />
@@ -142,17 +141,17 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          <TextInput
+          <LongTextInput
             key={'$validator'}
             label={'Core Validator'}
             source={'$validator'}
           />
-          <TextInput
+          <LongTextInput
             key={'dataset'}
             label={'Dataset'}
             source={'dataset'}
           />
-          <TextInput
+          <LongTextInput
             key={'dataset_type'}
             label={'Dataset type'}
             source={'dataset_type'}
@@ -163,8 +162,8 @@ class AdminView extends React.PureComponent {
                 key={k}
                 label={k.replace(/_/g, ' ')}
                 source={'meta.' + k}
-                format={(v) => JSON.stringify(v, null, 2)}
-                parse={(v) => JSON.parse(v)}
+                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
+                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
               />
             )
           })}
@@ -189,6 +188,7 @@ class AdminView extends React.PureComponent {
             source="library"
             reference="libraries"
             linkType={false}
+            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
           >
             <TextField
               source={`meta.${this.props.ui_content.content.library_name}`}
@@ -215,14 +215,14 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          <TextInput
+          <LongTextInput
             key={'$validator'}
             label={'Core Validator'}
             source={'$validator'}
           />
-          <TextInput
+          <LongTextInput
             key={'library'}
-            label={'library'}
+            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
             source={'library'}
           />
           {this.state.signature_fields.map(function(k) {
@@ -231,8 +231,8 @@ class AdminView extends React.PureComponent {
                 key={k}
                 label={k.replace(/_/g, ' ')}
                 source={'meta.' + k}
-                format={(v) => JSON.stringify(v, null, 2)}
-                parse={(v) => JSON.parse(v)}
+                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
+                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
               />
             )
           })}
@@ -272,7 +272,7 @@ class AdminView extends React.PureComponent {
       <Edit {...props}>
         <SimpleForm>
           <DisabledInput source="id" />
-          <TextInput
+          <LongTextInput
             key={'$validator'}
             label={'Core Validator'}
             source={'$validator'}
@@ -283,8 +283,8 @@ class AdminView extends React.PureComponent {
                 key={k}
                 label={k.replace(/_/g, ' ')}
                 source={'meta.' + k}
-                format={(v) => JSON.stringify(v, null, 2)}
-                parse={(v) => JSON.parse(v)}
+                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
+                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
               />
             )
           })}

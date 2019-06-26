@@ -13,20 +13,35 @@
       "type": "text",
       "text": "${meta['hgnc_symbol']}"
     },
-    "seqnames": {
+    "MDD": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['seqnames']}"
+      "text": "${meta['MDD']}"
+    },
+    "Pathway": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Pathway']}"
     },
     "probeset": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['probeset']}"
     },
-    "geneChr": {
+    "Gene Title": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['geneChr']}"
+      "text": "${meta['pr_gene_title']}"
+    },
+    "histone": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['histone']}"
+    },
+    "idx": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['idx']}"
     }
   }
 }

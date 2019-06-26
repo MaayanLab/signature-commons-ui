@@ -6,13 +6,13 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "alt": "${meta['Library_name']}",
+      "alt": "${meta['assay']}",
       "src": "${PREFIX}/static/images/default-black.png"
     },
     "Library": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Library_name']}"
+      "text": "${meta['assay']}"
     }
   }
 }
