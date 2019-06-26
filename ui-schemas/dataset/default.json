@@ -1,0 +1,23 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/dataset.json"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "header-img",
+      "src": "${PREFIX}/static/images/default-black.png",
+      "alt": "Dataset"
+    },
+    "Libraries": {
+      "visibility": 1,
+      "type": "text",
+      "text": "1"
+    },
+    "Signatures": {
+      "visibility": 1,
+      "type": "text",
+      "text": "411643"
+    }
+  }
+}
