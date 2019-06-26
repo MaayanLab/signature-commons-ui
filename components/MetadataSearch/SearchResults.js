@@ -197,6 +197,8 @@ export default class SearchResults extends React.Component {
             search={this.props.search}
             items={this.state[name]}
             type={this.props.ui_content.content.preferred_name_singular[name] || default_name_singular}
+            table_name={name}
+            preferred_name={this.props.ui_content.content.preferred_name_singular}
           />
           <div align="right">
             <TablePagination

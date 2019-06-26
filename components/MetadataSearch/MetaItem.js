@@ -25,11 +25,11 @@ export default class MetadataSearchResults extends React.Component {
       >
         {this.props.items.map((item, ind) => {
           let value = []
-          if (this.props.type === 'Signature') {
+          if (this.props.table_name === 'signatures') {
             value = [
               {
                 '@id': item.library.id,
-                '@type': 'Library',
+                '@type': this.props.preferred_name["libraries"] || "Library",
                 'meta': item.library.meta,
               },
               {
