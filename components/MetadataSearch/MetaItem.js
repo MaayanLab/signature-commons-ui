@@ -1,6 +1,8 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Button from '@material-ui/core/Button';
+import NProgress from 'nprogress'
+
 import {download_signature_json,
         download_library_json} from './download'
 
@@ -25,8 +27,10 @@ export default class MetadataSearchResults extends React.Component {
     }
   }
 
-  handleDownload(type, id){
-    download[type](id)
+  async handleDownload(type, id){
+    NProgress.start()
+    await download[type](id)
+    NProgress.done()
   }
 
   render() {
@@ -89,7 +93,7 @@ export default class MetadataSearchResults extends React.Component {
                         display: 'none',
                         }
                       }}
-                      onClick={e => download[this.props.table_name](item.id)}
+                      onClick={e => this.handleDownload(this.props.table_name, item.id)}
                       className={`mdi mdi-download mdi-24px`}
                     >{''}</Button>
                   }
