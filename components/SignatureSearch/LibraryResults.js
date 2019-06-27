@@ -5,7 +5,7 @@ import MUIDataTable from 'mui-datatables'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import ShowMeta from '../../components/ShowMeta'
-import { Label, objectMatch, schemas } from '../../components/Label'
+import { Label, objectMatch } from '../../components/Label'
 import { makeTemplate } from '../../util/makeTemplate'
 
 const one_tailed_columns = [
@@ -61,7 +61,7 @@ export default class LibraryResults extends React.Component {
 
   render_table = ({ result }) => {
     const sigs = result.signatures
-    const schema = schemas.filter(
+    const schema = this.props.schemas.filter(
         (schema) => objectMatch(schema.match, sigs[0])
     )[0]
     const lib = sigs[0].library.id

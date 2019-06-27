@@ -18,6 +18,7 @@ export default class MetadataSearchResults extends React.Component {
   constructor(props) {
     super(props)
     this.initialize = this.initialize.bind(this)
+    console.log(props)
   }
 
   async initialize(el) {
@@ -85,6 +86,7 @@ export default class MetadataSearchResults extends React.Component {
                     item={item}
                     highlight={this.props.search}
                     visibility={1}
+                    schemas={this.props.schemas}
                   />
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                   {this.props.table_name === "entities" || this.props.deactivate_download ? null:

@@ -2,21 +2,6 @@ import React from 'react'
 import { Highlight } from './Highlight'
 import { makeTemplate } from '../util/makeTemplate'
 
-export const schemas = [
-  require('../ui-schemas/dataset/lincs.json'),
-  require('../ui-schemas/dataset/creeds.json'),
-  require('../ui-schemas/dataset/enrichr.json'),
-  require('../ui-schemas/library/lincs.json'),
-  require('../ui-schemas/library/creeds.json'),
-  require('../ui-schemas/library/mcf10a.json'),
-  require('../ui-schemas/library/enrichr.json'),
-  require('../ui-schemas/signature/lincs.json'),
-  require('../ui-schemas/signature/creeds.json'),
-  require('../ui-schemas/signature/enrichr.json'),
-  require('../ui-schemas/signature/mcf10a.json'),
-  require('../ui-schemas/entities/mcf10a.json'),
-]
-
 export const default_schemas = [
   require('../ui-schemas/library/default.json'),
   require('../ui-schemas/signature/default.json'),
@@ -120,6 +105,7 @@ export const labels = {
 }
 
 export function objectMatch(m, o) {
+  console.log(m,o)
   if (m === undefined) {
     return true
   }
@@ -143,7 +129,8 @@ export function objectMatch(m, o) {
   return true
 }
 
-export function Label({ item, highlight, visibility }) {
+export function Label({ item, highlight, visibility, schemas }) {
+
   let matched_schemas = schemas.filter(
       (schema) => objectMatch(schema.match, item)
   )
