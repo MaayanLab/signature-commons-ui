@@ -8,16 +8,6 @@
       "type": "header-img",
       "src": "${PREFIX}/static/images/default-black.png",
       "alt": "Dataset"
-    },
-    "Libraries": {
-      "visibility": 1,
-      "type": "text",
-      "text": "1"
-    },
-    "Signatures": {
-      "visibility": 1,
-      "type": "text",
-      "text": "411643"
     }
   }
 }

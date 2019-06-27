@@ -25,8 +25,12 @@
       "signature_search": false,
       "metadata_search": true,
       "resources": true,
+      "deactivate_download": true,
       "change_resource": "Assays",
       "Library_name": "assay",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
       "search_terms": [
         "MCF10A",
         "IFNG",
@@ -58,13 +62,16 @@
         "assays": "Assay"
       },
       "library_name": "assay",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
       "resource_from_library": [
         "assay"
       ]
     }
   },
   {
-    "landing": false,
+    "landing": true,
     "content": {
       "metadata_placeholder": "Search over half a million signatures",
       "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
@@ -89,6 +96,9 @@
         "resources": "Resource"
       },
       "library_name": "Library_name",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
       "resource_from_library": [
         "Primary_Resource_Short_Version",
         "Primary_Resource",
@@ -97,7 +107,7 @@
     }
   },
   {
-    "admin": false,
+    "admin": true,
     "content": {
       "resource_pie_caption": "Signatures per Resource",
       "bar-chart": {
@@ -109,7 +119,16 @@
         "Primary_Resource_Short_Version",
         "Primary_Resource",
         "Library_name"
-      ]
+      ],
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
+      "preferred_name_singular": {
+        "libraries": "Library",
+        "signatures": "Signature",
+        "entities": "Entity",
+        "resources": "Resource"
+      }
     }
   }
 ]
