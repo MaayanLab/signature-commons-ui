@@ -133,6 +133,7 @@ export default class Home extends React.PureComponent {
       resources={this.props.resources}
       library_resource={this.props.library_resource}
       ui_content={this.props.ui_content}
+      schemas={this.props.schemas}
       {...props}
     />
   )
@@ -142,6 +143,7 @@ export default class Home extends React.PureComponent {
       cart={this.state.cart}
       updateCart={this.updateCart}
       ui_content={this.props.ui_content}
+      schemas={this.props.schemas}
       {...props}
     />
   )
@@ -154,6 +156,7 @@ export default class Home extends React.PureComponent {
       resources={this.props.resources}
       library_resource={this.props.library_resource}
       ui_content={this.props.ui_content}
+      schemas={this.props.schemas}
       {...props}
     />
   )
