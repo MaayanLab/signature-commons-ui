@@ -197,6 +197,7 @@ export default class LibraryResults extends React.Component {
                 <Label
                   item={result.library}
                   visibility={1}
+                  schemas={this.props.schemas}
                 />
                 <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                 <div className="counter red lighten-1">
