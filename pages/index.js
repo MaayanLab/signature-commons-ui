@@ -244,12 +244,21 @@ export async function get_schemas(ui_content){
 }
 
 export async function get_ui_content() {
-  const ui_json = (await import('../ui-schemas/dashboard/ui.json')).default
-  const ui_content = ui_json.filter((item) => item.landing)
-  if (ui_content.length > 0) {
-    return ui_content[0]
+  const { response: ui_cont } = await fetch_meta_post({
+      endpoint: '/schemas/find',
+      body: {
+        filter: {
+          where: {
+            'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json",
+            'meta.landing': true,
+          }
+        },
+      },
+    })
+  if (ui_cont.length > 0) {
+    return {ui_content: ui_cont[0].meta}
   }
-  return { content: {} }
+  return { ui_content: {} }
 }
 
 const App = (props) => (
@@ -271,7 +280,7 @@ const App = (props) => (
 )
 
 App.getInitialProps = async () => {
-  const ui_content = await get_ui_content()
+  const {ui_content} = await get_ui_content()
   // Check if it has library_name and resource_from_library
   if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
     return {

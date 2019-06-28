@@ -82,18 +82,27 @@ async function get_signature_keys() {
   return signature_keys
 }
 
-async function get_ui_content() {
-  const ui_json = (await import('../ui-schemas/dashboard/ui.json')).default
-  const ui_content = ui_json.filter((item) => item.admin)
-  if (ui_content.length > 0) {
-    return ui_content[0]
+export async function get_ui_content() {
+  const { response: ui_cont } = await fetch_meta_post({
+      endpoint: '/schemas/find',
+      body: {
+        filter: {
+          where: {
+            'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json",
+            'meta.admin': true,
+          }
+        },
+      },
+    })
+  if (ui_cont.length > 0) {
+    return {ui_content: ui_cont[0]}
   }
-  return { content: {} }
+  return { ui_content: {} }
 }
 
 export default class Admin extends React.Component {
   static async getInitialProps() {
-    const ui_content = await get_ui_content()
+    const {ui_content} = await get_ui_content()
     // Check if it has library_name and resource_from_library
     if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
       return {
