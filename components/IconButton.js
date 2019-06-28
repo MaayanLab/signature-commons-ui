@@ -9,7 +9,6 @@ const IconButton = (props) => (
       justify-content: space-around;
       align-items: center;
       border-radius: 15px;
-      width: 100px;
       min-height: 100px;
       overflow: visible;
       color: black;
@@ -43,13 +42,14 @@ const IconButton = (props) => (
     }
     `}</style>
     <div
-      className="left icon-btn waves-effect waves-light"
+      className="icon-btn waves-effect waves-light"
       onClick={props.onClick}
       style={props.style}
     >
       <div>
         {props.img !== undefined ? (
           <img
+            className="icon-img"
             alt={props.alt}
             src={props.img}
           />
@@ -57,7 +57,7 @@ const IconButton = (props) => (
           <i className="material-icons left black-text">{props.icon}</i>
         )}
       </div>
-      <span style={{ fontSize: 10 }}>
+      <span>
         {props.alt}
       </span>
       {props.counter === undefined ? null : (
