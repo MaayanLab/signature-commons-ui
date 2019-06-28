@@ -121,6 +121,7 @@ export default class ResourcePage extends React.Component {
                           <Label
                             item={library}
                             visibility={1}
+                            schemas={this.props.schemas}
                           />
                           &nbsp;
                           <div style={{ flex: '1 0 auto' }}>&nbsp;</div>

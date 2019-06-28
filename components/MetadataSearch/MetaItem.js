@@ -2,6 +2,10 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import Button from '@material-ui/core/Button';
 import NProgress from 'nprogress'
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid'
 
 import {download_signature_json,
         download_library_json} from './download'
@@ -18,7 +22,6 @@ export default class MetadataSearchResults extends React.Component {
   constructor(props) {
     super(props)
     this.initialize = this.initialize.bind(this)
-    console.log(props)
   }
 
   async initialize(el) {
@@ -35,6 +38,24 @@ export default class MetadataSearchResults extends React.Component {
   }
 
   render() {
+    if (this.props.items.length === 0){
+      return(
+        <Grid container
+          spacing={24}
+          alignItems={'center'}
+          direction={'column'}>
+          <Grid item>
+            <Card style={{width:500, height: 100, margin: "50px 0", textAlign: "center", "verticalAlign": "middle"}}>
+              <CardContent>
+                <Typography variant="title" style={{padding:"20px 0"}}>
+                  No matches found
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+        )
+    }
     return (
       <ul
         className="collapsible popout"

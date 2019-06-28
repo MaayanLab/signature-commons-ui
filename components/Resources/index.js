@@ -27,6 +27,7 @@ export default class Resources extends React.PureComponent {
         resource={resource}
         cart={this.props.cart}
         ui_content={this.props.ui_content}
+        schemas={this.props.schemas}
         {...props}
       />
     )

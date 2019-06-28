@@ -8,6 +8,14 @@ export const default_schemas = [
   require('../ui-schemas/entities/default.json'),
 ]
 
+
+export const schemases = [
+  require('../ui-schemas/entities/mcf10a.json'),
+  require('../ui-schemas/library/mcf10a.json'),
+  require('../ui-schemas/resources/mcf10a.json'),
+  require('../ui-schemas/signature/mcf10a.json'),
+]
+
 export const labels = {
   'text': ({ label, prop, data, highlight }) => {
     const val = makeTemplate(prop.text, data)
@@ -105,14 +113,25 @@ export const labels = {
 }
 
 export function objectMatch(m, o) {
-  console.log(m,o)
   if (m === undefined) {
     return true
   }
   for (const k of Object.keys(m)) {
-    const K = makeTemplate(k, o)
+    let K
+    try{
+      K = makeTemplate(k, o)
+    }
+    catch{
+      return(false)
+    }
     if (typeof m[k] === 'string') {
-      const V = makeTemplate(m[k], o)
+      let V
+      try{
+        V = makeTemplate(m[k], o)
+      }
+      catch{
+        return(false)
+      }
       if (K.match(RegExp(V)) === null) {
         return false
       }
@@ -130,7 +149,6 @@ export function objectMatch(m, o) {
 }
 
 export function Label({ item, highlight, visibility, schemas }) {
-
   let matched_schemas = schemas.filter(
       (schema) => objectMatch(schema.match, item)
   )
@@ -139,7 +157,6 @@ export function Label({ item, highlight, visibility, schemas }) {
     matched_schemas = default_schemas.filter(
         (schema) => objectMatch(schema.match, item)
     )
-    console.log(matched_schemas)
   }
   if (matched_schemas.length < 1) {
     console.error('Could not match ui-schema for item', item)
