@@ -48,7 +48,7 @@ export default class MetadataSearchResults extends React.Component {
             <Card style={{width:500, height: 100, margin: "50px 0", textAlign: "center", "verticalAlign": "middle"}}>
               <CardContent>
                 <Typography variant="title" style={{padding:"20px 0"}}>
-                  No matches found
+                  No matching {this.props.type.toLowerCase()} found
                 </Typography>
               </CardContent>
             </Card>
