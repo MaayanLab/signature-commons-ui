@@ -1,14 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
 
 export default class ResourceList extends React.PureComponent {
   render() {
     const sorted_resources = [...this.props.resources].sort((r1, r2) => r1.meta.Resource_Name.localeCompare(r2.meta.Resource_Name))
+    const md = sorted_resources.length > 6 ? 2 : 4
+    const sm = sorted_resources.length > 6 ? 4 : 6
+    const xs = 12
     return (
-      <div className="row">
-        <div className="col offset-s2 s8">
-          {sorted_resources.map((resource) => (
+      <Grid
+        container
+        direction="row"
+      >
+        {sorted_resources.map((resource) => (
+          <Grid item xs={xs} sm={sm} md={md} key={resource.meta.Resource_Name}>
             <Link
               key={resource.id}
               to={`/${this.props.ui_content.content.change_resource || 'Resources'}/${resource.meta.Resource_Name.replace(/ /g, '_')}`}
@@ -19,9 +26,9 @@ export default class ResourceList extends React.PureComponent {
                 style={this.props.ui_content.content.resource_list_style}
               />
             </Link>
-          ))}
-        </div>
-      </div>
+          </Grid>
+        ))}
+      </Grid>
     )
   }
 }
