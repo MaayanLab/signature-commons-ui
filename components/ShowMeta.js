@@ -1,55 +1,87 @@
-import React from 'react';
-import { Highlight } from './Highlight';
+import React from 'react'
+import { Highlight } from './Highlight'
+import Grid from '@material-ui/core/Grid'
+import { withStyles } from '@material-ui/core/styles'
 
-export function ShowMeta({value, highlight}) {
-  if(typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
+import { landingStyle } from '../styles/jss/theme.js'
+
+function validURL(str) {
+  try{
+    const url = new URL(str)
+  }catch{
+    return false
+  }
+  return true;
+}
+
+export function ShowMeta({ value, highlight, classes }) {
+  if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
+    if(validURL(value)){
+      return (
+        <Highlight
+          Component={(props) => <a href={props.children} {...props}>{props.children}</a>}
+          text={value + ''}
+          highlight={highlight}
+        />
+      )
+    }
     return (
       <Highlight
         Component={(props) => <span {...props}>{props.children}</span>}
-        text={value+''}
+        text={value + ''}
         highlight={highlight}
       />
     )
-  } else if(Array.isArray(value)) {
+  } else if (Array.isArray(value)) {
     return (
-      <ul>
+      <Grid container
+        spacing={24}>
         {value.map((value, ind) => (
-          <li key={ind}>
-            <ShowMeta value={value} highlight={highlight} />
-          </li>
+          <Grid item xs={12} key={ind}>
+            <ShowMeta classes={classes} value={value} highlight={highlight} />
+          </Grid>
         ))}
-      </ul>
+      </Grid>
     )
-  } else if(typeof value === 'object') {
+  } else if (typeof value === 'object') {
     if (value['@id'] !== undefined && value['@type'] !== undefined && value.meta !== undefined) {
-      return ShowMeta({
-        value: {
-          [value['@type'] + ' (' + value['@id'] + ')']: value.meta,
-        },
-        highlight,
-      })
-    }
-    return (
-      <ul>
-        {Object.keys(value).filter((key) => !key.startsWith('$')).map((key, ind) => (
-          <li key={key}>
+      return (
+        <Grid container
+          spacing={24}>
+          <Grid item xs={12}>
             <Highlight
               Component={(props) => <b {...props}>{props.children}</b>}
               HighlightComponent={(props) => <i {...props}>{props.children}</i>}
-              text={key.replace(/_/g, ' ')+':'}
+              text={value['@type'] + ' (' + value['@id'] + '):'}
               highlight={highlight}
             />
-            &nbsp;
-            {typeof value[key] === 'object' ? (
-	            <div style={{ marginLeft: '5px' }}>
-                <ShowMeta value={value[key]} highlight={highlight} />
-              </div>
-            ) : (
-              <ShowMeta value={value[key]} highlight={highlight} />
-            )}
-          </li>
+          </Grid>
+          <Grid item xs={12}>
+            <ShowMeta classes={classes} value={value.meta} highlight={highlight} />
+          </Grid>
+        </Grid>
+      )
+    }
+    return (
+      <div>
+        {Object.keys(value).filter((key) =>  (!key.startsWith('$') && key.toLowerCase()!=="icon")).map((key, ind) => (
+          <Grid container
+            spacing={24}
+            key={key}>
+            <Grid item xs={6} xl={2} md={3} className={classes.KeyLabel} style={{ 'textAlign': 'right' }}>
+              <Highlight
+                Component={(props) => <b {...props}>{props.children}</b>}
+                HighlightComponent={(props) => <i {...props}>{props.children}</i>}
+                text={key.replace(/_/g, ' ')}
+                highlight={highlight}
+              />
+            </Grid>
+            <Grid item xs={6} xl={10} md={9}>
+              <ShowMeta classes={classes} value={value[key]} highlight={highlight} />
+            </Grid>
+          </Grid>
         ))}
-      </ul>
+      </div>
     )
   } else {
     console.error(value)
@@ -57,4 +89,4 @@ export function ShowMeta({value, highlight}) {
   }
 }
 
-export default ShowMeta
+export default withStyles(landingStyle)(ShowMeta)

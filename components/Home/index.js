@@ -17,7 +17,7 @@ export default class Home extends React.PureComponent {
     this.state = {
       cart: Set(),
       pie_stats: null,
-      selected_field: 'Assay',
+      selected_field: Object.keys(props.pie_fields_and_stats)[0],
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
@@ -28,7 +28,7 @@ export default class Home extends React.PureComponent {
     M.AutoInit()
     // const elems = document.querySelectorAll('.sidenav');
     // const instances = M.Sidenav.init(elems, {edge:"right"});
-    if (this.state.pie_stats===null) {
+    if (this.state.pie_stats === null) {
       this.fetch_stats(this.state.selected_field)
     }
   }
@@ -102,7 +102,7 @@ export default class Home extends React.PureComponent {
 
   async fetch_stats(selected_field) {
     this.setState({
-      pie_stats: this.props.pie_fields_and_stats[selected_field],
+      pie_stats: this.props.pie_fields_and_stats[selected_field] || {},
     })
   }
 
@@ -111,7 +111,7 @@ export default class Home extends React.PureComponent {
     this.setState({
       selected_field: field,
       pie_stats: null,
-    }, ()=>{
+    }, () => {
       this.fetch_stats(this.state.selected_field)
     })
   }
@@ -129,6 +129,11 @@ export default class Home extends React.PureComponent {
       cart={this.state.cart}
       updateCart={this.updateCart}
       signature_keys={this.props.signature_keys}
+      libraries={this.props.libraries}
+      resources={this.props.resources}
+      library_resource={this.props.library_resource}
+      ui_content={this.props.ui_content}
+      schemas={this.props.schemas}
       {...props}
     />
   )
@@ -137,6 +142,8 @@ export default class Home extends React.PureComponent {
     <MetadataSearch
       cart={this.state.cart}
       updateCart={this.updateCart}
+      ui_content={this.props.ui_content}
+      schemas={this.props.schemas}
       {...props}
     />
   )
@@ -145,6 +152,11 @@ export default class Home extends React.PureComponent {
     <Resources
       cart={this.state.cart}
       updateCart={this.updateCart}
+      libraries={this.props.libraries}
+      resources={this.props.resources}
+      library_resource={this.props.library_resource}
+      ui_content={this.props.ui_content}
+      schemas={this.props.schemas}
       {...props}
     />
   )
@@ -161,7 +173,7 @@ export default class Home extends React.PureComponent {
     const CartActions = this.CartActions
 
     return (
-      <Base>
+      <Base ui_content={this.props.ui_content}>
         <style jsx>{`
         #Home {
           background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
@@ -179,18 +191,24 @@ export default class Home extends React.PureComponent {
               {...this.props}
               {...router_props}/>}
           />
-          <Route
-            path="/SignatureSearch"
-            component={this.signature_search}
-          />
-          <Route
-            path="/MetadataSearch"
-            component={this.metadata_search}
-          />
-          <Route
-            path="/Resources"
-            component={this.resources}
-          />
+          {this.props.ui_content.content.signature_search ?
+            <Route
+              path="/SignatureSearch"
+              component={this.signature_search}
+            /> : null
+          }
+          {this.props.ui_content.content.metadata_search ?
+            <Route
+              path="/MetadataSearch"
+              component={this.metadata_search}
+            /> : null
+          }
+          {this.props.ui_content.content.resources ?
+            <Route
+              path={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
+              component={this.resources}
+            /> : null
+          }
         </Switch>
       </Base>
     )

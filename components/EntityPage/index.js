@@ -139,7 +139,7 @@ export default class EntityPage extends React.PureComponent {
 
       this.setState({
         signatures: enriched_signatures,
-        duration: (Date.now() - start)/1000,
+        duration: (Date.now() - start) / 1000,
         status: '',
         controller: null,
       })

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const IconButton = (props) => (
   <div>
@@ -9,7 +9,6 @@ const IconButton = (props) => (
       justify-content: space-around;
       align-items: center;
       border-radius: 15px;
-      width: 100px;
       min-height: 100px;
       overflow: visible;
       color: black;
@@ -43,12 +42,14 @@ const IconButton = (props) => (
     }
     `}</style>
     <div
-      className="left icon-btn waves-effect waves-light"
+      className="icon-btn waves-effect waves-light"
       onClick={props.onClick}
+      style={props.style}
     >
       <div>
         {props.img !== undefined ? (
           <img
+            className="icon-img"
             alt={props.alt}
             src={props.img}
           />

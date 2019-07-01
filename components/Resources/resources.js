@@ -1,4 +1,5 @@
 import { fetch_meta, fetch_meta_post } from '../../util/fetch/meta'
+import { makeTemplate } from '../../util/makeTemplate'
 
 export const primary_resources = [
   'CREEDS',
@@ -16,89 +17,106 @@ export const primary_two_tailed_resources = [
   'CMAP',
 ]
 
-export const renamed = {
-  'Human Phenotype Ontology': 'HPO',
-  'MGI Mammalian Phenotype': 'MGI-MP',
-  'Cancer Cell Line Encyclopedia': 'CCLE',
-  'NCI': 'NCI Pathways',
-  'Disease Signatures': 'CREEDS',
-  'Single Drug Perturbations': 'CREEDS',
-  'Single Gene Perturbations': 'CREEDS',
-  'clueio': 'CMAP',
-  'GEO': 'CREEDS',
-  'TRANSFAC AND JASPAR': 'TRANSFAC & JASPAR',
-  'ENCODE/ChEA': 'ENCODE',
-  'Gene Ontology Consortium': 'Gene Ontology',
-  'PubMed': 'Enrichr',
-}
-
 export const iconOf = {
   'CREEDS': `static/images/creeds.png`,
   'CMAP': `static/images/clueio.ico`,
 }
 
-export async function get_library_resources() {
-  // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const response = (await import('../../ui-schemas/resources/all.json')).default
-  const resource_meta = response.reduce((group, data)=>{
-    group[data.Resource_Name] = data
+export async function get_library_resources(resource_from_library, ui_content) {
+
+  // We used predefined schema to fetch resource meta
+  const { response: resource_schema } = await fetch_meta_post({
+        endpoint: '/schemas/find',
+        body: {
+          filter: {
+            where: {
+              'meta.$validator': ui_content.content.ui_schema,
+            }
+          },
+        },
+      })
+  const r_schema = resource_schema.filter((data)=>(data.meta.match['${$validator}'] === ui_content.content.match_resource_validator))
+  const resource_ui = r_schema[0].meta
+  // fetch resources on database
+  const { response } = await fetch_meta({
+    endpoint: '/resources',
+  })
+
+  // fetch libraries on database
+  const { response: libraries } = await fetch_meta({
+    endpoint: '/libraries',
+  })
+  const count_promises = libraries.map(async (lib) => {
+    // request details from GitHub’s API with Axios
+    const { response: stats } = await fetch_meta({
+      endpoint: `/libraries/${lib.id}/signatures/key_count`,
+      body: {
+        fields: ['$validator'],
+      },
+    })
+
+    return {
+      id: lib.id,
+      name: lib.meta.Library_name,
+      count: stats.$validator,
+    }
+  })
+  const counts = await Promise.all(count_promises)
+  const count_dict = counts.reduce((acc, item)=>{
+    acc[item.id] = item.count
+    return acc
+  }, {})
+
+  const resource_meta = response.reduce((group, data) => {
+    group[data.id] = data
     return group
   }, {})
-  const { response: libraries } = await fetch_meta_post({ endpoint: '/libraries/find', body: {} })
-  const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
 
-  const resources = {}
-  for (const lib of libraries) {
-    const resource = renamed[lib.meta['Primary_Resource'] || lib.meta['name']] || lib.meta['Primary_Resource'] || lib.meta['name'] || lib.meta['Library_name']
 
-    if (resource_meta[resource] === undefined) {
-      console.error(`Resource not found: ${resource}`)
-    }
-
-    if (resources[resource] === undefined) {
-      if (resource_meta[resource] === undefined) {
-        console.warn(`Resource not found: ${resource}, registering library as resource`)
-        resources[resource] = {
-          id: resource,
-          meta: {
-            name: resource,
-            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon'] || ''}`,
-            Signature_Count: await fetch_meta({ endpoint: `/libraries/${lib.id}/signatures/count` }),
-          },
-          libraries: [],
+  const resources = libraries.reduce((acc, lib) => {
+    const resource_id = lib.resource
+    const resource_name = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || null
+    // lib resource matches with resource table
+    if (resource_id) {
+      if (resource_id in resource_meta){
+        let resource = resource_meta[resource_id]
+        if (!(resource_name in acc)){
+          resource.libraries = []
+          resource.meta.Signature_Count = 0
+          acc[resource_name] = resource
         }
-        if (lib.meta['Description']) {
-          resources[resource].meta.description = lib.meta['Description']
-        }
-        if (lib.meta['PMID']) {
-          resources[resource].meta['PMID'] = lib.meta['PMID']
-        }
-        if (lib.meta['URL']) {
-          resources[resource].meta['URL'] = lib.meta['URL']
-        }
+        resource.meta.Signature_Count = resource.meta.Signature_Count + count_dict[lib.id]
+        acc[resource_name].libraries.push({...lib})
       } else {
-        resources[resource] = {
-          id: resource,
-          meta: {
-            name: resource,
-            icon: `${process.env.PREFIX}/${iconOf[resource] || lib.meta['Icon']}`,
-            Signature_Count: resource_meta[resource].Signature_Count, // Precomputed
-          },
-          libraries: [],
-        }
-        if (resource_meta[resource]['Description']) {
-          resources[resource].meta.description = resource_meta[resource]['Description']
-        }
-        if (resource_meta[resource]['PMID']) {
-          resources[resource].meta['PMID'] = resource_meta[resource]['PMID']
-        }
-        if (resource_meta[resource]['URL']) {
-          resources[resource].meta['URL'] = resource_meta[resource]['URL']
-        }
+        console.error(`Resource not found: ${resource_name}`)
       }
+    } else {
+      acc[resource_name] = {
+        id: lib.id,
+        meta: {
+          Resource_Name: resource_name,
+          icon: `${process.env.PREFIX}/${iconOf[resource_name] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
+          Signature_Count: count_dict[lib.id],
+        },
+        is_library: true,
+        libraries: [lib],
+      }
+      // Get metadata from library
+      const r_meta = Object.entries(resource_ui.properties).map((entry) => {
+          const prop = entry[1]
+          const field = prop.field
+          const text = makeTemplate(prop.text, lib)
+          return ([field, text])
+        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc1, entry) => {
+          acc1[entry[0]] = entry[1]
+          return acc1
+        }, {})
+      acc[resource_name].meta = { ...acc[resource_name].meta, ...r_meta }
     }
-    resources[resource].libraries.push({ ...lib })
-  }
+    return acc
+  }, {})
+
+  const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
 
   const library_resource = Object.keys(resources).reduce((groups, resource) => {
     for (const library of resources[resource].libraries) {
@@ -110,46 +128,49 @@ export async function get_library_resources() {
     libraries: library_dict,
     resources: resources,
     library_resource,
+    counts,
   }
 }
 
-export async function get_signature_counts_per_resources(controller=null) {
+export async function get_signature_counts_per_resources(resource_from_library, ui_content) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { library_resource } = await get_library_resources()
+  const { libraries, resources, library_resource, counts } = await get_library_resources(resource_from_library, ui_content)
+  // const count_promises = Object.keys(library_resource).map(async (lib) => {
+  //   // request details from GitHub’s API with Axios
 
-  const count_promises = Object.keys(library_resource).map(async (lib) => {
-    // request details from GitHub’s API with Axios
+  //   const { response: stats } = await fetch_meta({
+  //     endpoint: `/libraries/${lib}/signatures/key_count`,
+  //     body: {
+  //       fields: ['$validator'],
+  //     },
+  //   })
 
-    const { response: stats } = await fetch_meta({
-      endpoint: `/libraries/${lib}/signatures/key_count`,
-      body: {
-        fields: ['$validator'],
-      },
-      signal: controller? controller.signal: null,
-    })
+  //   return {
+  //     name: library_resource[lib],
+  //     count: stats.$validator,
+  //   }
+  // })
+  // const counts = await Promise.all(count_promises)
 
-    return {
-      name: library_resource[lib],
-      count: stats.$validator,
-    }
-  })
-  const counts = await Promise.all(count_promises)
-
-  const per_resource_counts = counts.reduce((groups, resource) => {
-    if (groups[resource.name] === undefined) {
-      groups[resource.name] = resource.count
+  const resource_signatures = counts.reduce((groups, lib) => {
+    const resource_name = library_resource[lib.id]
+    if (groups[resource_name] === undefined) {
+      groups[resource_name] = lib.count
     } else {
-      groups[resource.name] = groups[resource.name] + resource.count
+      groups[resource_name] = groups[resource_name] + lib.count
     }
     return groups
   }, {})
-  // let for_sorting = Object.keys(per_resource_counts).map(resource=>({name: resource,
-  //                                                                    counts: per_resource_counts[resource]}))
+  // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
+  //                                                                    counts: resource_signatures[resource]}))
 
   // for_sorting.sort(function(a, b) {
   //     return b.counts - a.counts;
   // });
   return {
-    resource_signatures: per_resource_counts, // for_sorting.slice(0,11)
+    resource_signatures, // for_sorting.slice(0,11)
+    libraries,
+    resources,
+    library_resource,
   }
 }

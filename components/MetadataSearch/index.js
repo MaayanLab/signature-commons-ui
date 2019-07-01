@@ -22,7 +22,9 @@ export default class MetadataSearch extends React.Component {
       search: '',
       currentSearch: '',
       controller: undefined,
-      total_count: undefined,
+      signatures_total_count: undefined,
+      libraries_total_count: undefined,
+      entities_total_count: undefined,
     }
 
     this.searchChange = this.searchChange.bind(this)
@@ -33,10 +35,14 @@ export default class MetadataSearch extends React.Component {
     this.setState({
       search: currentSearch,
     })
-    const { response } = await fetch_meta({ endpoint: '/signatures/count', body: {} })
+    const { response: signatures } = await fetch_meta({ endpoint: '/signatures/count', body: {} })
+    const { response: libraries } = await fetch_meta({ endpoint: '/libraries/count', body: {} })
+    const { response: entities } = await fetch_meta({ endpoint: '/entities/count', body: {} })
     this.setState({
       currentSearch,
-      total_count: response.count,
+      signatures_total_count: signatures.count,
+      libraries_total_count: libraries.count,
+      entities_total_count: entities.count,
     })
   }
 
@@ -59,12 +65,17 @@ export default class MetadataSearch extends React.Component {
           <SearchBox
             search={this.state.search}
             searchChange={this.searchChange}
+            ui_content={this.props.ui_content}
           />
         </div>
         {this.state.currentSearch === '' ? null : (
           <SearchResults
-            total_count={this.state.total_count}
+            signatures_total_count={this.state.signatures_total_count}
+            libraries_total_count={this.state.libraries_total_count}
+            entities_total_count={this.state.entities_total_count}
             search={this.state.currentSearch}
+            ui_content={this.props.ui_content}
+            schemas={this.props.schemas}
           />
         )}
       </div>
