@@ -82,6 +82,7 @@ async function get_signature_keys() {
   return signature_keys
 }
 
+
 export async function get_ui_content() {
   const { response: ui_cont } = await fetch_meta_post({
       endpoint: '/schemas/find',
@@ -95,14 +96,16 @@ export async function get_ui_content() {
       },
     })
   if (ui_cont.length > 0) {
-    return {ui_content: ui_cont[0]}
+    return {ui_content: ui_cont[0].meta}
   }
   return { ui_content: {} }
 }
 
+
 export default class Admin extends React.Component {
   static async getInitialProps() {
     const {ui_content} = await get_ui_content()
+    console.log(ui_content)
     // Check if it has library_name and resource_from_library
     if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
       return {
