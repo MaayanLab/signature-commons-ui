@@ -1,5 +1,7 @@
 import React from 'react'
 import { Redirect } from 'react-router'
+import Head from 'next/head'
+
 import { Admin,
   Datagrid,
   DisabledInput,
@@ -603,45 +605,52 @@ class AdminView extends React.PureComponent {
 
   render() {
     return (
-      <Admin title={'Signature Commons Dashboard'}
-        dataProvider={this.dataProvider}
-        authProvider={this.authProvider}
-        dashboard={(props) => <Dashboard
-          handleSelectField={this.handleSelectField}
-          {...this.state}
-          {...this.props}
-          {...props}/>}
-        catchAll={this.NotFound}
-        loginPage={MyLogin}
-      >
-        {this.props.library_fields === null ? <div/> :
-            <Resource
-              name="libraries"
-              list={this.LibraryList}
-              edit={this.LibraryEdit}
-              icon={LibraryBooks}
-              options={{ label: this.props.ui_content.content.preferred_name['libraries'] }}
-            />
-        }
-        {this.state.signature_fields === null ? <div/> :
-            <Resource
-              name="signatures"
-              edit={this.SignatureEdit}
-              list={this.SignatureList}
-              icon={Fingerprint}
-              options={{ label: this.props.ui_content.content.preferred_name['signatures'] }}
-            />
-        }
-        {this.props.entity_fields === null ? <div/> :
-            <Resource
-              name="entities"
-              edit={this.EntityEdit}
-              list={this.EntityList}
-              icon={BlurOn}
-              options={{ label: this.props.ui_content.content.preferred_name['entities'] }}
-            />
-        }
-      </Admin>
+      <div className="root">
+        <Head>
+          <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
+        </Head>
+        <main>
+          <Admin title={'Signature Commons Dashboard'}
+            dataProvider={this.dataProvider}
+            authProvider={this.authProvider}
+            dashboard={(props) => <Dashboard
+              handleSelectField={this.handleSelectField}
+              {...this.state}
+              {...this.props}
+              {...props}/>}
+            catchAll={this.NotFound}
+            loginPage={MyLogin}
+          >
+            {this.props.library_fields === null ? <div/> :
+                <Resource
+                  name="libraries"
+                  list={this.LibraryList}
+                  edit={this.LibraryEdit}
+                  icon={LibraryBooks}
+                  options={{ label: this.props.ui_content.content.preferred_name['libraries'] }}
+                />
+            }
+            {this.state.signature_fields === null ? <div/> :
+                <Resource
+                  name="signatures"
+                  edit={this.SignatureEdit}
+                  list={this.SignatureList}
+                  icon={Fingerprint}
+                  options={{ label: this.props.ui_content.content.preferred_name['signatures'] }}
+                />
+            }
+            {this.props.entity_fields === null ? <div/> :
+                <Resource
+                  name="entities"
+                  edit={this.EntityEdit}
+                  list={this.EntityList}
+                  icon={BlurOn}
+                  options={{ label: this.props.ui_content.content.preferred_name['entities'] }}
+                />
+            }
+          </Admin>
+        </main>
+      </div>
     )
   }
 }

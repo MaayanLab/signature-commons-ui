@@ -142,7 +142,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
                   onChange={(e) => props.handleSelectField(e)}
                 />
               </div> :
-              <span className={classes.vertical55}>Signatures per {name}</span>
+              <span className={classes.vertical55}>{props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}</span>
           }
           <Divider />
         </Grid>
@@ -172,22 +172,24 @@ const BarChartGroup = withScreenSize(function({ classes, record = {}, ...props }
 
 const StatCard = function({ classes, record = {}, ...props }) {
   const { stat_type, counts, icon } = props
+  console.log(icon)
   return (
     <Card className={`${classes.statCard} ${classes.GrayCardHeader}`}>
-      <Grid container spacing={24}>
-        <Grid item xs={7}>
+      <Grid container spacing={24}
+        justify="space-between">
+        <Grid item>
           <Typography variant="title" className={classes.whiteText}>
             {counts}
           </Typography>
-          <Typography variant="subheader">
+          <Typography variant="subheading" className={classes.whiteText}>
             {stat_type}
           </Typography>
           <Typography variant="button" className={classes.whiteText}>
               (0 new)
           </Typography>
         </Grid>
-        <Grid item xs={5}>
-          <span className={`mdi ${icon} mdi-24px`}></span>
+        <Grid item>
+          <span className={`mdi ${icon} mdi-48px`}></span>
         </Grid>
       </Grid>
     </Card>
@@ -199,8 +201,8 @@ const StatRow = function({ classes, record = {}, ...props }) {
     <Grid container spacing={24}>
       {props.table_counts.filter((item) => item.Visible_On_Admin).map((item) => (
         <Grid
-          key={item.preferred_name}
-          item xs={6} md={3}
+          key={`${item.preferred_name}-grid`}
+          item xs={6} md
         >
           <StatCard
             counts={item.counts}
