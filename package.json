@@ -62,7 +62,10 @@
     "deploy": "dotenv-load npm run export && npm run deploy:docker",
     "deploy:docker": "npm run build:docker && dotenv-load node ./bin/docker-deploy.js",
     "deploy:production": "NODE_ENV=production npm run deploy",
-    "deploy:dev": "NODE_ENV=development npm run deploy"
+    "deploy:dev": "NODE_ENV=development npm run deploy",
+    "version:major": "npm version --no-git-tag-version major",
+    "version:minor": "npm version --no-git-tag-version minor",
+    "version:patch": "npm version --no-git-tag-version patch"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -70,9 +73,9 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "dotenv-cli": "^2.0.0",
+    "eslint": "^5.16.0",
     "eslint-config-google": "^0.12.0",
     "eslint-plugin-react": "^7.12.4",
-    "eslint": "^5.16.0",
     "jest": "^24.7.1",
     "next-build-id": "^2.0.1",
     "node-sass": "^4.12.0",
