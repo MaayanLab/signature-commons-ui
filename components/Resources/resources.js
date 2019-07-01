@@ -141,7 +141,6 @@ export async function get_signature_counts_per_resources(ui_content) {
       acc = acc + count_dict[lib.id]
       return acc
     },0)
-    console.log(total_sigs)
     resource.meta.Signature_Count = total_sigs
     return(resource)
   }).reduce((acc, resource)=>{
