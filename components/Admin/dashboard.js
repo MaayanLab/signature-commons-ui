@@ -142,7 +142,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
                   onChange={(e) => props.handleSelectField(e)}
                 />
               </div> :
-              <span className={classes.vertical55}>Signatures per {name}</span>
+              <span className={classes.vertical55}>{props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}</span>
           }
           <Divider />
         </Grid>
