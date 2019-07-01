@@ -82,6 +82,7 @@ export async function get_library_resources(ui_content) {
         let resource = resource_meta[resource_id]
         if (!(resource_name in acc)){
           resource.libraries = []
+          resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon}`
           resource.meta.Signature_Count = 0
           acc[resource_name] = resource
         }
