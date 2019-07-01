@@ -46,26 +46,6 @@ export async function get_library_resources(ui_content) {
   const { response: libraries } = await fetch_meta({
     endpoint: '/libraries',
   })
-  const count_promises = libraries.map(async (lib) => {
-    // request details from GitHub’s API with Axios
-    const { response: stats } = await fetch_meta({
-      endpoint: `/libraries/${lib.id}/signatures/key_count`,
-      body: {
-        fields: ['$validator'],
-      },
-    })
-
-    return {
-      id: lib.id,
-      name: lib.meta.Library_name,
-      count: stats.$validator,
-    }
-  })
-  const counts = await Promise.all(count_promises)
-  const count_dict = counts.reduce((acc, item) => {
-    acc[item.id] = item.count
-    return acc
-  }, {})
 
   const resource_meta = response.reduce((group, data) => {
     group[data.id] = data
@@ -83,10 +63,8 @@ export async function get_library_resources(ui_content) {
         if (!(resource_name in acc)) {
           resource.libraries = []
           resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon}`
-          resource.meta.Signature_Count = 0
           acc[resource_name] = resource
         }
-        resource.meta.Signature_Count = resource.meta.Signature_Count + count_dict[lib.id]
         acc[resource_name].libraries.push({ ...lib })
       } else {
         console.error(`Resource not found: ${resource_name}`)
@@ -97,7 +75,6 @@ export async function get_library_resources(ui_content) {
         meta: {
           Resource_Name: resource_name,
           icon: `${process.env.PREFIX}/${iconOf[resource_name] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
-          Signature_Count: count_dict[lib.id],
         },
         is_library: true,
         libraries: [lib],
@@ -129,29 +106,48 @@ export async function get_library_resources(ui_content) {
     libraries: library_dict,
     resources: resources,
     library_resource,
-    counts,
   }
 }
 
 export async function get_signature_counts_per_resources(ui_content) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, library_resource, counts } = await get_library_resources(ui_content)
+  const { libraries, resources, library_resource } = await get_library_resources(ui_content)
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios
+  const count_promises = Object.keys(libraries).map(async (lib_key) => {
+    const lib = libraries[lib_key]
+    // request details from GitHub’s API with Axios
+    const { response: stats } = await fetch_meta({
+      endpoint: `/libraries/${lib_key}/signatures/key_count`,
+      body: {
+        fields: ['$validator'],
+      },
+    })
 
-  //   const { response: stats } = await fetch_meta({
-  //     endpoint: `/libraries/${lib}/signatures/key_count`,
-  //     body: {
-  //       fields: ['$validator'],
-  //     },
-  //   })
+    return {
+      id: lib.id,
+      name: lib.meta.Library_name,
+      count: stats.$validator,
+    }
+  })
+  const counts = await Promise.all(count_promises)
+  const count_dict = counts.reduce((acc, item) => {
+    acc[item.id] = item.count
+    return acc
+  }, {})
 
-  //   return {
-  //     name: library_resource[lib],
-  //     count: stats.$validator,
-  //   }
-  // })
-  // const counts = await Promise.all(count_promises)
+  const resources_with_counts = Object.values(resources).map((resource) => {
+    const total_sigs = resource.libraries.reduce((acc, lib) => {
+      acc = acc + count_dict[lib.id]
+      return acc
+    }, 0)
+    console.log(total_sigs)
+    resource.meta.Signature_Count = total_sigs
+    return (resource)
+  }).reduce((acc, resource) => {
+    acc[resource.meta.Resource_Name] = resource
+    return acc
+  }, {})
 
   const resource_signatures = counts.reduce((groups, lib) => {
     const resource_name = library_resource[lib.id]
@@ -171,7 +167,7 @@ export async function get_signature_counts_per_resources(ui_content) {
   return {
     resource_signatures, // for_sorting.slice(0,11)
     libraries,
-    resources,
+    resources: resources_with_counts,
     library_resource,
   }
 }
