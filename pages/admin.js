@@ -119,7 +119,6 @@ export default class Admin extends React.Component {
         error: 'Missing/Empty resource_from_library',
       }
     }
-    const resource_from_library = ui_content.content.resource_from_library
     const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_content)
     const { table_counts, ui_content: ui_cont } = await get_counts(Object.keys(resources).length, ui_content)
     const { meta_counts } = await get_metacounts(ui_cont)
