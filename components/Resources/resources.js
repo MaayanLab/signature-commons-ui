@@ -22,8 +22,8 @@ export const iconOf = {
   'CMAP': `static/images/clueio.ico`,
 }
 
-export async function get_library_resources(resource_from_library, ui_content) {
-
+export async function get_library_resources(ui_content) {
+  const resource_from_library = ui_content.content.resource_from_library
   // We used predefined schema to fetch resource meta
   const { response: resource_schema } = await fetch_meta_post({
         endpoint: '/schemas/find',
@@ -82,6 +82,7 @@ export async function get_library_resources(resource_from_library, ui_content) {
         let resource = resource_meta[resource_id]
         if (!(resource_name in acc)){
           resource.libraries = []
+          resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon}`
           resource.meta.Signature_Count = 0
           acc[resource_name] = resource
         }
@@ -132,9 +133,9 @@ export async function get_library_resources(resource_from_library, ui_content) {
   }
 }
 
-export async function get_signature_counts_per_resources(resource_from_library, ui_content) {
+export async function get_signature_counts_per_resources(ui_content) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, library_resource, counts } = await get_library_resources(resource_from_library, ui_content)
+  const { libraries, resources, library_resource, counts } = await get_library_resources(ui_content)
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios
 
