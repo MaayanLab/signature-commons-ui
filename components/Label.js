@@ -118,19 +118,17 @@ export function objectMatch(m, o) {
   }
   for (const k of Object.keys(m)) {
     let K
-    try{
+    try {
       K = makeTemplate(k, o)
-    }
-    catch{
-      return(false)
+    } catch {
+      return false
     }
     if (typeof m[k] === 'string') {
       let V
-      try{
+      try {
         V = makeTemplate(m[k], o)
-      }
-      catch{
-        return(false)
+      } catch {
+        return false
       }
       if (K.match(RegExp(V)) === null) {
         return false
@@ -167,7 +165,7 @@ export function Label({ item, highlight, visibility, schemas }) {
     <div>
       {Object.keys(schema.properties).filter(
           (prop) => {
-            return (schema.properties[prop].visibility >= visibility && objectMatch(schema.properties[prop].condition, item))
+            return schema.properties[prop].visibility >= visibility && objectMatch(schema.properties[prop].condition, item)
           }
       ).map((label) => (
         <span key={label}>

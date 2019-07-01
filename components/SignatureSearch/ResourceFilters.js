@@ -51,8 +51,8 @@ export default class ResourceFilters extends React.Component {
           if (!this.state.resourceAnchor) {
             this.setState({ resourceAnchor: ref })
           }
-      }}>
-      {sorted_resources.map((resource, ind) => {
+        }}>
+        {sorted_resources.map((resource, ind) => {
           const count = ((this.props.resource_signatures || {})[resource.meta.Resource_Name] || {}).count
           const btn = count === undefined ? (
             <IconButton

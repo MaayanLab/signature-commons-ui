@@ -14,21 +14,21 @@ const AdminPage = dynamic(() => import('../components/Admin'), { ssr: false })
 async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   })
-  return (response.count)
+  return response.count
 }
 
 export async function get_counts(resource_count, ui_content) {
   const { response: counting_fields } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_content.content.counting_validator,
-              'meta.Table_Count': true
-            }
-          },
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_content.content.counting_validator,
+          'meta.Table_Count': true,
         },
-      })
+      },
+    },
+  })
   const resource_field = counting_fields.filter((item) => item.meta.Field_Name === 'resources')
   ui_content.content.preferred_name = {}
   const count_promise = counting_fields.filter((item) => item.meta.Field_Name !== 'resources').map(async (item) => {
@@ -57,7 +57,7 @@ async function fetch_fields(source) {
   const { response: fields } = await fetch_meta({
     endpoint: `/${source}/key_count`,
   })
-  return (fields)
+  return fields
 }
 
 async function get_signature_keys() {
@@ -84,25 +84,25 @@ async function get_signature_keys() {
 
 export async function get_ui_content() {
   const { response: ui_cont } = await fetch_meta_post({
-      endpoint: '/schemas/find',
-      body: {
-        filter: {
-          where: {
-            'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json",
-            'meta.admin': true,
-          }
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json',
+          'meta.admin': true,
         },
       },
-    })
+    },
+  })
   if (ui_cont.length > 0) {
-    return {ui_content: ui_cont[0]}
+    return { ui_content: ui_cont[0] }
   }
   return { ui_content: {} }
 }
 
 export default class Admin extends React.Component {
   static async getInitialProps() {
-    const {ui_content} = await get_ui_content()
+    const { ui_content } = await get_ui_content()
     // Check if it has library_name and resource_from_library
     if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
       return {
@@ -119,7 +119,6 @@ export default class Admin extends React.Component {
         error: 'Missing/Empty resource_from_library',
       }
     }
-    const resource_from_library = ui_content.content.resource_from_library
     const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_content)
     const { table_counts, ui_content: ui_cont } = await get_counts(Object.keys(resources).length, ui_content)
     const { meta_counts } = await get_metacounts(ui_cont)

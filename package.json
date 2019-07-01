@@ -50,7 +50,7 @@
   },
   "scripts": {
     "test": "npm run lint && jest",
-    "lint": "eslint util/** pages/** styles/jss/** components/**",
+    "lint": "eslint next.config.js util/** pages/** styles/jss/** components/**",
     "lint:fix": "npm run lint -- --fix",
     "dev": "NODE_ENV=development dotenv-load next",
     "build": "NODE_ENV=production dotenv-load next build",

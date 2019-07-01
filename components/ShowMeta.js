@@ -6,17 +6,17 @@ import { withStyles } from '@material-ui/core/styles'
 import { landingStyle } from '../styles/jss/theme.js'
 
 function validURL(str) {
-  try{
-    const url = new URL(str)
-  }catch{
+  try {
+    new URL(str)
+  } catch {
     return false
   }
-  return true;
+  return true
 }
 
 export function ShowMeta({ value, highlight, classes }) {
   if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
-    if(validURL(value)){
+    if (validURL(value)) {
       return (
         <Highlight
           Component={(props) => <a href={props.children} {...props}>{props.children}</a>}
@@ -64,7 +64,7 @@ export function ShowMeta({ value, highlight, classes }) {
     }
     return (
       <div>
-        {Object.keys(value).filter((key) =>  (!key.startsWith('$') && key.toLowerCase()!=="icon")).map((key, ind) => (
+        {Object.keys(value).filter((key) => (!key.startsWith('$') && key.toLowerCase() !== 'icon')).map((key, ind) => (
           <Grid container
             spacing={24}
             key={key}>

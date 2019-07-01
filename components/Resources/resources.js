@@ -26,16 +26,16 @@ export async function get_library_resources(ui_content) {
   const resource_from_library = ui_content.content.resource_from_library
   // We used predefined schema to fetch resource meta
   const { response: resource_schema } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_content.content.ui_schema,
-            }
-          },
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_content.content.ui_schema,
         },
-      })
-  const r_schema = resource_schema.filter((data)=>(data.meta.match['${$validator}'] === ui_content.content.match_resource_validator))
+      },
+    },
+  })
+  const r_schema = resource_schema.filter((data) => (data.meta.match['${$validator}'] === ui_content.content.match_resource_validator))
   const resource_ui = r_schema[0].meta
   // fetch resources on database
   const { response } = await fetch_meta({
@@ -62,7 +62,7 @@ export async function get_library_resources(ui_content) {
     }
   })
   const counts = await Promise.all(count_promises)
-  const count_dict = counts.reduce((acc, item)=>{
+  const count_dict = counts.reduce((acc, item) => {
     acc[item.id] = item.count
     return acc
   }, {})
@@ -78,16 +78,16 @@ export async function get_library_resources(ui_content) {
     const resource_name = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || null
     // lib resource matches with resource table
     if (resource_id) {
-      if (resource_id in resource_meta){
-        let resource = resource_meta[resource_id]
-        if (!(resource_name in acc)){
+      if (resource_id in resource_meta) {
+        const resource = resource_meta[resource_id]
+        if (!(resource_name in acc)) {
           resource.libraries = []
           resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon}`
           resource.meta.Signature_Count = 0
           acc[resource_name] = resource
         }
         resource.meta.Signature_Count = resource.meta.Signature_Count + count_dict[lib.id]
-        acc[resource_name].libraries.push({...lib})
+        acc[resource_name].libraries.push({ ...lib })
       } else {
         console.error(`Resource not found: ${resource_name}`)
       }
@@ -104,14 +104,14 @@ export async function get_library_resources(ui_content) {
       }
       // Get metadata from library
       const r_meta = Object.entries(resource_ui.properties).map((entry) => {
-          const prop = entry[1]
-          const field = prop.field
-          const text = makeTemplate(prop.text, lib)
-          return ([field, text])
-        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc1, entry) => {
-          acc1[entry[0]] = entry[1]
-          return acc1
-        }, {})
+        const prop = entry[1]
+        const field = prop.field
+        const text = makeTemplate(prop.text, lib)
+        return ([field, text])
+      }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc1, entry) => {
+        acc1[entry[0]] = entry[1]
+        return acc1
+      }, {})
       acc[resource_name].meta = { ...acc[resource_name].meta, ...r_meta }
     }
     return acc

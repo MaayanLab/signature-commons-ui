@@ -113,7 +113,7 @@ class AdminView extends React.PureComponent {
           <LibraryAvatar
             source={`meta.${this.props.ui_content.content.library_name}`}
             title={'Library'}
-            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
+            label={this.props.ui_content.content.preferred_name_singular['libraries']}
             textAlign="center"
             library_name={this.props.ui_content.content.library_name}
           />
@@ -188,7 +188,7 @@ class AdminView extends React.PureComponent {
             source="library"
             reference="libraries"
             linkType={false}
-            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
+            label={this.props.ui_content.content.preferred_name_singular['libraries']}
           >
             <TextField
               source={`meta.${this.props.ui_content.content.library_name}`}
@@ -222,7 +222,7 @@ class AdminView extends React.PureComponent {
           />
           <LongTextInput
             key={'library'}
-            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
+            label={this.props.ui_content.content.preferred_name_singular['libraries']}
             source={'library'}
           />
           {this.state.signature_fields.map(function(k) {
@@ -452,7 +452,7 @@ class AdminView extends React.PureComponent {
                                                                             k.replace('Small_Molecule.', '') :
                                                                             k.replace('.Name', ''),
           counts: Object.keys(meta_stats[k]).length })
-          return (stat_list)
+          return stat_list
         },
         [])
     // const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
