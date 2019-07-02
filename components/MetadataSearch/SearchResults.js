@@ -6,6 +6,10 @@ import SwipeableViews from 'react-swipeable-views'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import TablePagination from '@material-ui/core/TablePagination'
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid'
 
 const MetaItem = dynamic(() => import('../../components/MetadataSearch/MetaItem'))
 
@@ -24,6 +28,12 @@ function build_where(q) {
       },
     }
   }
+}
+
+const default_singular_names = {
+  libraries: "Library",
+  signatures: "Signature",
+  entities: "Entities"
 }
 
 export default class SearchResults extends React.Component {
@@ -55,6 +65,7 @@ export default class SearchResults extends React.Component {
     this.performSearch('libraries')
     this.performSearch('entities')
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.search !== this.props.search) {
       this.performSearch('signatures')
@@ -64,6 +75,7 @@ export default class SearchResults extends React.Component {
         signaturesPage: 0,
         librariesPage: 0,
         entitiesPage: 0,
+        index_value: 0,
       })
     }
   }
@@ -177,7 +189,11 @@ export default class SearchResults extends React.Component {
     })
   }
 
-  search_div(name, default_name, default_name_singular) {
+  search_div(name) {
+    const default_name_singular = default_singular_names[name]
+    if (this.state[name] === undefined){
+      return <div />
+    }
     return (
       <div>
         <div className="col s12 center">
@@ -186,7 +202,7 @@ export default class SearchResults extends React.Component {
               <span className="grey-text">
                 Found {this.state[`${name}_count`]}
                 {this.props[`${name}_total_count`] !== undefined ? ` matches out of ${this.props[`${name}_total_count`]} ` : null}
-                { this.props.ui_content.content.preferred_name[name].toLowerCase() || default_name }
+                { this.props.ui_content.content.preferred_name[name].toLowerCase() || name }
                 {this.state[`${name}_duration_meta`] !== undefined ? ` in ${this.state[`${name}_duration_meta`].toPrecision(3)} seconds` : null}
               </span>
             </div>
@@ -218,6 +234,30 @@ export default class SearchResults extends React.Component {
   }
 
   render() {
+    const with_results = ["signatures", "libraries", "entities"].filter((name)=>this.state[`${name}_count`]!==undefined && this.state[`${name}_count`] > 0)
+    const defined_results = ["signatures", "libraries", "entities"].filter((name)=>this.state[`${name}_count`]!==undefined)
+    const total_results = defined_results.reduce((acc, name)=>{
+      acc = acc + this.state[`${name}_count`]
+      return acc
+    }, 0)
+    if (defined_results.length===3 && total_results===0){
+      return(
+        <Grid container
+          spacing={24}
+          alignItems={'center'}
+          direction={'column'}>
+          <Grid item>
+            <Card style={{width:500, height: 100, margin: "50px 0", textAlign: "center", "verticalAlign": "middle"}}>
+              <CardContent>
+                <Typography variant="title" style={{padding:"20px 0"}}>
+                  No matches found
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      )
+    }
     return (
       <div className="col s12">
         <Tabs
@@ -228,22 +268,22 @@ export default class SearchResults extends React.Component {
           variant="fullWidth"
           centered
         >
-          <Tab label={ this.props.ui_content.content.preferred_name['signatures'] || 'Signatures' } />
-          <Tab label={ this.props.ui_content.content.preferred_name['libraries'] || 'Libraries' } />
-          <Tab label={ this.props.ui_content.content.preferred_name['entities'] || 'Entities' } />
+          {this.state.signatures !== undefined && this.state.signatures.length > 0 ? 
+            <Tab label={ this.props.ui_content.content.preferred_name['signatures'] || 'Signatures' } />: null
+          }
+          {this.state.libraries !== undefined && this.state.libraries.length > 0 ? 
+            <Tab label={ this.props.ui_content.content.preferred_name['libraries'] || 'Libraries' } />: null
+          }
+          {this.state.entities !== undefined && this.state.entities.length > 0 ? 
+            <Tab label={ this.props.ui_content.content.preferred_name['entities'] || 'Entities' } />: null
+          }
         </Tabs>
         <SwipeableViews
           index={this.state.index_value}
           onChangeIndex={this.handleChangeIndex}
         >
-          { this.state.signatures === undefined ? <div /> :
-            this.search_div('signatures', 'Signatures', 'Signature')
-          }
-          { this.state.libraries === undefined ? <div /> :
-            this.search_div('libraries', 'Libraries', 'Library')
-          }
-          { this.state.entities === undefined ? <div /> :
-            this.search_div('entities', 'Entities', 'entity')
+          {
+            with_results.map((key)=>(this.search_div(key)))
           }
         </SwipeableViews>
       </div>
