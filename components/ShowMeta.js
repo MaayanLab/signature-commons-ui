@@ -17,9 +17,10 @@ function validURL(str) {
 export function ShowMeta({ value, highlight, classes }) {
   if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
     if(validURL(value)){
+      console.log(value)
       return (
         <Highlight
-          Component={(props) => <a href={props.children} {...props}>{props.children}</a>}
+          Component={(props) => <a href={value} {...props}>{value}</a>}
           text={value + ''}
           highlight={highlight}
         />
