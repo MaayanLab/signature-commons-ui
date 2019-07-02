@@ -14,16 +14,22 @@ function validURL(str) {
   return true;
 }
 
+function validAccession(str) {
+  return str.match(RegExp("^[A-Za-z]+:([A-Za-z]+:)?[A-Za-z0-9]+$"))
+}
+
 export function ShowMeta({ value, highlight, classes }) {
   if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
     if(validURL(value)){
-      return (
-        <Highlight
-          Component={(props) => <a href={value} {...props}>{value}</a>}
-          text={value + ''}
-          highlight={highlight}
-        />
-      )
+      if (! validAccession(value)){
+        return (
+          <Highlight
+            Component={(props) => <a href={value} {...props}>{value}</a>}
+            text={value + ''}
+            highlight={highlight}
+          />
+        )
+      }
     }
     return (
       <Highlight
