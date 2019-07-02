@@ -17,7 +17,6 @@ function validURL(str) {
 export function ShowMeta({ value, highlight, classes }) {
   if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
     if(validURL(value)){
-      console.log(value)
       return (
         <Highlight
           Component={(props) => <a href={value} {...props}>{value}</a>}
@@ -62,6 +61,13 @@ export function ShowMeta({ value, highlight, classes }) {
           </Grid>
         </Grid>
       )
+    }
+    if (value["Description"] !== undefined) {
+      const {Description, ...rest} = value
+      value = {Description, ...rest}
+    }else if (value["description"] !== undefined) {
+      const {description, ...rest} = value
+      value = {description, ...rest}
     }
     return (
       <div>
