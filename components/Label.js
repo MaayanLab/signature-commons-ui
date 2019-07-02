@@ -162,7 +162,12 @@ export function Label({ item, highlight, visibility, schemas }) {
     console.error('Could not match ui-schema for item', item)
     return null
   }
-  const schema = matched_schemas[0]
+  let schema = matched_schemas[0]
+  const img_keys = Object.keys(schema.properties).filter((key)=> (matched_schemas[0].properties[key].type==="img"))
+  if (img_keys.length > 0){
+    const {[img_keys[0]]: img, ...rest} = schema.properties
+    schema.properties = {[img_keys[0]]: img, ...rest}
+  }
   return (
     <div>
       {Object.keys(schema.properties).filter(
