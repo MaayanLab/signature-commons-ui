@@ -24,19 +24,6 @@ export const iconOf = {
 
 export async function get_library_resources(ui_content) {
   const resource_from_library = ui_content.content.resource_from_library
-  // We used predefined schema to fetch resource meta
-  const { response: resource_schema } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_content.content.ui_schema,
-            }
-          },
-        },
-      })
-  const r_schema = resource_schema.filter((data)=>(data.meta.match['${$validator}'] === ui_content.content.match_resource_validator))
-  const resource_ui = r_schema[0].meta
   // fetch resources on database
   const { response } = await fetch_meta({
     endpoint: '/resources',
@@ -70,26 +57,17 @@ export async function get_library_resources(ui_content) {
         console.error(`Resource not found: ${resource_name}`)
       }
     } else {
+      const {Icon, ...rest} = lib.meta
       acc[resource_name] = {
         id: lib.id,
         meta: {
           Resource_Name: resource_name,
-          icon: `${process.env.PREFIX}/${iconOf[resource_name] || lib.meta['Icon'] || 'static/images/default-black.png'}`,
+          icon: `${process.env.PREFIX}/${iconOf[resource_name] || Icon || 'static/images/default-black.png'}`,
+          ...rest
         },
         is_library: true,
         libraries: [lib],
       }
-      // Get metadata from library
-      const r_meta = Object.entries(resource_ui.properties).map((entry) => {
-          const prop = entry[1]
-          const field = prop.field
-          const text = makeTemplate(prop.text, lib)
-          return ([field, text])
-        }).filter((entry) => (entry[1] !== 'undefined')).reduce((acc1, entry) => {
-          acc1[entry[0]] = entry[1]
-          return acc1
-        }, {})
-      acc[resource_name].meta = { ...acc[resource_name].meta, ...r_meta }
     }
     return acc
   }, {})
@@ -118,7 +96,7 @@ export async function get_signature_counts_per_resources(ui_content) {
     const lib = libraries[lib_key]
     // request details from GitHub’s API with Axios
     const { response: stats } = await fetch_meta({
-      endpoint: `/libraries/${lib_key}/signatures/key_count`,
+      endpoint: `/libraries/${lib_key}/signatures/count`,
       body: {
         fields: ['$validator'],
       },
@@ -127,7 +105,7 @@ export async function get_signature_counts_per_resources(ui_content) {
     return {
       id: lib.id,
       name: lib.meta.Library_name,
-      count: stats.$validator,
+      count: stats.count,
     }
   })
   const counts = await Promise.all(count_promises)
@@ -147,13 +125,16 @@ export async function get_signature_counts_per_resources(ui_content) {
     acc[resource.meta.Resource_Name] = resource
     return acc
   }, {})
-
+  counts.reduce
   const resource_signatures = counts.reduce((groups, lib) => {
     const resource_name = library_resource[lib.id]
     if (groups[resource_name] === undefined) {
       groups[resource_name] = lib.count
     } else {
       groups[resource_name] = groups[resource_name] + lib.count
+    }
+    if(lib.count!== undefined){
+
     }
     return groups
   }, {})
