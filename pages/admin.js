@@ -30,7 +30,9 @@ export async function get_counts(resource_count, ui_content) {
         },
       })
   const resource_field = counting_fields.filter((item) => item.meta.Field_Name === 'resources')
-  ui_content.content.preferred_name = {}
+  if (ui_content.content.preferred_name === undefined){
+    ui_content.content.preferred_name = {}
+  }
   const count_promise = counting_fields.filter((item) => item.meta.Field_Name !== 'resources').map(async (item) => {
     const count_stats = await fetch_count(item.meta.Field_Name)
     ui_content.content.preferred_name[item.meta.Field_Name] = item.meta.Preferred_Name
