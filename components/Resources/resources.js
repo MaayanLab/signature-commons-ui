@@ -114,6 +114,11 @@ export async function get_signature_counts_per_resources(ui_content) {
     return acc
   }, {})
 
+  const total_count = counts.reduce((acc, item)=>{
+    acc = acc + item.count
+    return acc
+  }, 0)
+
   const resources_with_counts = Object.values(resources).map((resource) => {
     const total_sigs = resource.libraries.reduce((acc, lib)=>{
       acc = acc + count_dict[lib.id]
@@ -138,6 +143,7 @@ export async function get_signature_counts_per_resources(ui_content) {
     }
     return groups
   }, {})
+
   // let for_sorting = Object.keys(resource_signatures).map(resource=>({name: resource,
   //                                                                    counts: resource_signatures[resource]}))
 
@@ -145,7 +151,7 @@ export async function get_signature_counts_per_resources(ui_content) {
   //     return b.counts - a.counts;
   // });
   return {
-    resource_signatures, // for_sorting.slice(0,11)
+    resource_signatures: total_count === 0 ? undefined: resource_signatures, // for_sorting.slice(0,11)
     libraries,
     resources: resources_with_counts,
     library_resource,

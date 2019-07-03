@@ -62,14 +62,16 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
             <Grid container
               spacing={24}
               alignItems={'center'}>
-              <Grid item xs={12} sm>
-                <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_content={this.props.ui_content}/>
-                <div className={this.props.classes.centered}>
-                  <Typography variant="caption">
-                    {this.props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}
-                  </Typography>
-                </div>
-              </Grid>
+              { this.props.resource_signatures === undefined ? null :
+                <Grid item xs={12} sm>
+                  <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_content={this.props.ui_content}/>
+                  <div className={this.props.classes.centered}>
+                    <Typography variant="caption">
+                      {this.props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}
+                    </Typography>
+                  </div>
+                </Grid>
+              }
               { Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? null :
                 <Grid item xs={12} sm>
                   { this.props.ui_content.content['bar-chart'] !== undefined ? (
