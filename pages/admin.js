@@ -1,9 +1,12 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-import { fetch_meta } from '../util/fetch/meta'
+import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
 import { get_signature_counts_per_resources } from '../components/Resources/resources.js'
-
+import { get_metacounts,
+  get_pie_stats,
+  get_barcounts,
+} from './index'
 
 // import HomePage from '../components/Home'
 const AdminPage = dynamic(() => import('../components/Admin'), { ssr: false })
@@ -11,14 +14,50 @@ const AdminPage = dynamic(() => import('../components/Admin'), { ssr: false })
 async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   })
-  return (response.count)
+  return response.count
+}
+
+export async function get_counts(resource_count, ui_content) {
+  const { response: counting_fields } = await fetch_meta_post({
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_content.content.counting_validator,
+          'meta.Table_Count': true,
+        },
+      },
+    },
+  })
+  const resource_field = counting_fields.filter((item) => item.meta.Field_Name === 'resources')
+  ui_content.content.preferred_name = {}
+  const count_promise = counting_fields.filter((item) => item.meta.Field_Name !== 'resources').map(async (item) => {
+    const count_stats = await fetch_count(item.meta.Field_Name)
+    ui_content.content.preferred_name[item.meta.Field_Name] = item.meta.Preferred_Name
+    return {
+      table: item.meta.Field_Name,
+      preferred_name: item.meta.Preferred_Name,
+      icon: item.meta.MDI_Icon,
+      Visible_On_Admin: item.meta.Visible_On_Admin,
+      counts: count_stats,
+    }
+  })
+  let table_counts = await Promise.all(count_promise)
+  table_counts = resource_field.length > 0 ? [...table_counts, {
+    table: resource_field[0].meta.Field_Name,
+    preferred_name: resource_field[0].meta.Preferred_Name,
+    icon: resource_field[0].meta.MDI_Icon,
+    Visible_On_Admin: resource_field[0].meta.Visible_On_Admin,
+    counts: resource_count,
+  }] : table_counts
+  return { table_counts, ui_content }
 }
 
 async function fetch_fields(source) {
   const { response: fields } = await fetch_meta({
     endpoint: `/${source}/key_count`,
   })
-  return (fields)
+  return fields
 }
 
 async function get_signature_keys() {
@@ -43,111 +82,66 @@ async function get_signature_keys() {
   return signature_keys
 }
 
-async function get_versioncounts() {
-  const { response: libraries } = await fetch_meta({
-    endpoint: '/libraries',
-  })
-  const re = new RegExp('^[0-9]{4}')
-  const version_dumps = libraries.map((lib)=>lib['meta']['Version'].match(re)[0]).reduce((versions, version)=>{
-    if (versions[version]===undefined) {
-      versions[version] = 1
-    } else {
-      versions[version]++
-    }
-    return versions
-  }, {})
-  const version_counts = Object.keys(version_dumps).map((ver)=>({ name: ver, counts: version_dumps[ver] }))
-  return version_counts
-}
 
-async function get_metacounts() {
-  const counting_fields = (await import('../ui-schemas/dashboard/counting_fields.json')).default
-  const preferred_name = (await import('../ui-schemas/dashboard/preferred_name.json')).default
-  const object_fields = Object.keys(counting_fields).filter((key)=>counting_fields[key]=='object')
-  const { response: meta_stats } = await fetch_meta({
-    endpoint: '/signatures/value_count',
+export async function get_ui_content() {
+  const { response: ui_cont } = await fetch_meta_post({
+    endpoint: '/schemas/find',
     body: {
-      depth: 2,
       filter: {
-        fields: Object.keys(counting_fields),
+        where: {
+          'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json',
+          'meta.admin': true,
+        },
       },
     },
   })
-  const meta_counts = Object.keys(meta_stats).filter((key)=>key.indexOf('.Name')>-1||
-                                                      // (key.indexOf(".PubChemID")>-1 &&
-                                                      //  key.indexOf("Small_Molecule")>-1) ||
-                                                      (key.indexOf('.')===-1 && object_fields.indexOf(key)===-1))
-      .reduce((stat_list, k)=>{
-        stat_list.push({ name: k.indexOf('PubChemID')!==-1 ?
-                                                                      k.replace('Small_Molecule.', ''):
-                                                                      k.replace('.Name', ''),
-        counts: Object.keys(meta_stats[k]).length })
-        return (stat_list)
-      },
-      [])
-  meta_counts.sort((a, b) => parseFloat(b.counts) - parseFloat(a.counts))
-
-
-  return { meta_counts, counting_fields, preferred_name }
+  if (ui_cont.length > 0) {
+    return { ui_content: ui_cont[0].meta }
+  }
+  return { ui_content: {} }
 }
 
-async function get_pie_stats(counting_fields) {
-  const piefields = (await import('../ui-schemas/dashboard/pie_fields.json')).default
-  const { response: meta_stats } = await fetch_meta({
-    endpoint: '/signatures/value_count',
-    body: {
-      depth: 2,
-      filter: {
-        fields: Object.keys(piefields),
-      },
-    },
-  })
-  const pie_stats = Object.keys(piefields).map((key)=>{
-    if (counting_fields[key]==='object') {
-      return {
-        key: key,
-        stats: meta_stats[key+'.Name'],
-      }
-    } else {
-      return {
-        key: key,
-        stats: meta_stats[key],
-      }
-    }
-  })
-  const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {
-    piestats[stats.key] = stats.stats
-    return piestats
-  }, {})
-  return { piefields, pie_fields_and_stats }
-}
 
 export default class Admin extends React.Component {
   static async getInitialProps() {
-    const LibraryNumber = await fetch_count('libraries')
-    const SignatureNumber = await fetch_count('signatures')
-    const EntityNumber = await fetch_count('entities')
+    const { ui_content } = await get_ui_content()
+    // Check if it has library_name and resource_from_library
+    if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
+      return {
+        error: 'ui schema is undefined',
+      }
+    }
+    if (ui_content.content.library_name === undefined) {
+      return {
+        error: 'Missing library_name on ui schema',
+      }
+    }
+    if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0) {
+      return {
+        error: 'Missing/Empty resource_from_library',
+      }
+    }
+    const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_content)
+    const { table_counts, ui_content: ui_cont } = await get_counts(Object.keys(resources).length, ui_content)
+    const { meta_counts } = await get_metacounts(ui_cont)
+    const { pie_fields_and_stats } = await get_pie_stats(ui_cont)
+    const signature_keys = await get_signature_keys()
+    const { barcounts } = await get_barcounts(ui_cont)
     const library_fields = await fetch_fields('libraries')
     const entity_fields = await fetch_fields('entities')
-    const { meta_counts, counting_fields, preferred_name } = await get_metacounts(piefields)
-    const { resource_signatures } = await get_signature_counts_per_resources()
-    const { piefields, pie_fields_and_stats } = await get_pie_stats(counting_fields)
-    const signature_keys = await get_signature_keys()
-    const version_counts = await get_versioncounts()
     return {
-      LibraryNumber,
-      SignatureNumber,
-      EntityNumber,
+      table_counts,
+      meta_counts,
+      resource_signatures,
+      pie_fields_and_stats,
+      barcounts,
+      signature_keys,
+      libraries,
+      resources,
+      library_resource,
+      ui_content: ui_cont,
       library_fields,
       entity_fields,
-      meta_counts,
-      counting_fields,
-      preferred_name,
-      piefields,
-      pie_fields_and_stats,
-      resource_signatures,
-      signature_keys,
-      version_counts,
     }
   }
 

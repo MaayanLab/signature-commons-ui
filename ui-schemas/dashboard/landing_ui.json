@@ -1,0 +1,180 @@
+[
+  {
+    "Field_Name": "Antibody_Identifier",
+    "Type": "string",
+    "Preferred_Name": "Antibodies",
+    "MDI_Icon": "mdi-axis",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "Cell_Line",
+    "Type": "object",
+    "Preferred_Name": "Cell lines",
+    "MDI_Icon": "mdi-test-tube",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Disease",
+    "Type": "object",
+    "Preferred_Name": "Diseases",
+    "MDI_Icon": "mdi-emoticon-cry-outline",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "Metabolite",
+    "Type": "object",
+    "Preferred_Name": "Metabolites",
+    "MDI_Icon": "mdi-chart-bubble",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "MicroRNA",
+    "Type": "string",
+    "Preferred_Name": "MicroRNAs",
+    "MDI_Icon": "mdi-tilde",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "Phenotype",
+    "Type": "object",
+    "Preferred_Name": "Phenotypes",
+    "MDI_Icon": "mdi-human",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "Pathway",
+    "Type": "object",
+    "Preferred_Name": "Pathways",
+    "MDI_Icon": "mdi-webhook",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "Gene",
+    "Type": "object",
+    "Preferred_Name": "Genes",
+    "MDI_Icon": "mdi-dna",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "PTM",
+    "Type": "string",
+    "Preferred_Name": "PTMs",
+    "MDI_Icon": "mdi-hammer",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "Small_Molecule",
+    "Type": "object",
+    "Preferred_Name": "Small Molecules",
+    "MDI_Icon": "mdi-hexagon-multiple",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Tissue",
+    "Type": "object",
+    "Preferred_Name": "Tissues",
+    "MDI_Icon": "mdi-camera-metering-matrix",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Virus",
+    "Type": "object",
+    "Preferred_Name": "Viruses",
+    "MDI_Icon": "mdi-decagram-outline",
+    "Table": "signatures",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "Assay",
+    "Type": "string",
+    "Preferred_Name": "Assays",
+    "Table": "signatures",
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Readout",
+    "Type": "string",
+    "Preferred_Name": "Readouts",
+    "Table": "signatures",
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Organism",
+    "Type": "string",
+    "Preferred_Name": "Organisms",
+    "Table": "signatures",
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Perturbation_Type",
+    "Type": "string",
+    "Preferred_Name": "Perturbation Types",
+    "Table": "signatures",
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Program",
+    "Type": "string",
+    "Preferred_Name": "Programs",
+    "Table": "signatures",
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "libraries",
+    "Type": "table",
+    "Preferred_Name": "Libraries",
+    "MDI_Icon": "mdi-library-books",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "signatures",
+    "Type": "table",
+    "Preferred_Name": "Signatures",
+    "MDI_Icon": "mdi-fingerprint",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "entities",
+    "Type": "table",
+    "Preferred_Name": "Entities",
+    "MDI_Icon": "mdi-blur",
+    "Table_Count": true,
+    "Visible_On_Landing": false,
+    "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "resources",
+    "Type": "table",
+    "Preferred_Name": "Resources",
+    "MDI_Icon": "mdi-web",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "Version",
+    "Type": "string",
+    "Table": "libraries",
+    "Preferred_Name": "Library per year",
+    "Bar_Count": true
+  }
+]

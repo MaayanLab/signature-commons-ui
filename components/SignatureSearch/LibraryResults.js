@@ -5,7 +5,7 @@ import MUIDataTable from 'mui-datatables'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import ShowMeta from '../../components/ShowMeta'
-import { Label, objectMatch, schemas } from '../../components/Label'
+import { Label, objectMatch } from '../../components/Label'
 import { makeTemplate } from '../../util/makeTemplate'
 
 const one_tailed_columns = [
@@ -25,11 +25,6 @@ const two_tailed_columns = [
 
 const theme = createMuiTheme({
   overrides: {
-    MuiCheckbox: {
-      root: {
-        display: 'none',
-      },
-    },
     MUIDataTable: {
       responsiveScroll: {
         maxHeight: '500px',
@@ -42,22 +37,21 @@ const theme = createMuiTheme({
 theme.shadows[4] = theme.shadows[0]
 
 export default class LibraryResults extends React.Component {
-
-  check_column = ({schema, prop, lib}) => {
-    if (schema.properties[prop].text===undefined){
-      console.log(prop)
+  check_column = ({ schema, prop, lib }) => {
+    if (schema.properties[prop].text === undefined) {
       return false
-    }
-    else{
+    } else {
       const sig_keys = this.props.signature_keys[lib]
       const col_src = schema.properties[prop].text.replace(/meta\./g, '').replace(/meta\[\'/g, '').replace(/']/g, '').replace(/\${/g, '').replace(/}/g, '')
-      if (schema.properties[prop].columnType === "number"){
+      if (schema.properties[prop].columnType === 'number') {
         return true
-      }else if(sig_keys.indexOf(col_src)>-1){
+      } else if (schema.properties[prop].columnType === 'meta') {
+        return false
+      } else if (sig_keys.indexOf(col_src) > -1) {
         return true
-      }else{
-        const substring = sig_keys.filter((k)=>schema.properties[prop].text.indexOf(k)>-1)
-        if (substring.length > 0){
+      } else {
+        const substring = sig_keys.filter((k) => schema.properties[prop].text.indexOf(k) > -1)
+        if (substring.length > 0) {
           return true
         }
       }
@@ -67,13 +61,13 @@ export default class LibraryResults extends React.Component {
 
   render_table = ({ result }) => {
     const sigs = result.signatures
-    const schema = schemas.filter(
+    const schema = this.props.schemas.filter(
         (schema) => objectMatch(schema.match, sigs[0])
     )[0]
     const lib = sigs[0].library.id
     const cols = Object.keys(schema.properties).filter(
-        (prop) => { 
-          if (this.check_column({schema, prop, lib})) {
+        (prop) => {
+          if (this.check_column({ schema, prop, lib })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
                 return true
@@ -136,7 +130,7 @@ export default class LibraryResults extends React.Component {
     const data = sigs.map((sig) =>
       cols.map((col) => {
         let val = undefined
-        if (schema.properties[col].type=='object') {
+        if (schema.properties[col].type == 'object') {
           val = makeTemplate(schema.properties[col].text, sig, schema.properties[col].subfield)
         } else {
           val = makeTemplate(schema.properties[col].text, sig)
@@ -151,7 +145,6 @@ export default class LibraryResults extends React.Component {
         }
       })
     )
-    console.log(options)
     return (
       <MuiThemeProvider theme={theme}>
         <MUIDataTable
@@ -204,6 +197,7 @@ export default class LibraryResults extends React.Component {
                 <Label
                   item={result.library}
                   visibility={1}
+                  schemas={this.props.schemas}
                 />
                 <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                 <div className="counter red lighten-1">

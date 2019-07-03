@@ -5,7 +5,7 @@ export function range(start, end) {
   }
 
   function *_range() {
-    for(let i = start; i < end; i++) {
+    for (let i = start; i < end; i++) {
       yield i
     }
   }

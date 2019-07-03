@@ -5,27 +5,33 @@ import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../.
 export function Nav(props) {
   return (
     <ul {...props}>
-      <li
-        className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
-      >
-        <Link to="/SignatureSearch">
-          Signature Search
-        </Link>
-      </li>
-      <li
-        className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
-      >
-        <Link to="/MetadataSearch">
-          Metadata Search
-        </Link>
-      </li>
-      <li
-        className={props.location.pathname === '/Resources' ? 'active' : ''}
-      >
-        <Link to="/Resources">
-          Resources
-        </Link>
-      </li>
+      { props.ui_content.content.signature_search ?
+        <li
+          className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
+        >
+          <Link to="/SignatureSearch">
+            Signature Search
+          </Link>
+        </li> : null
+      }
+      { props.ui_content.content.metadata_search ?
+        <li
+          className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
+        >
+          <Link to="/MetadataSearch">
+            Metadata Search
+          </Link>
+        </li> : null
+      }
+      { props.ui_content.content.resources ?
+        <li
+          className={props.location.pathname === `/${props.ui_content.content.change_resource || 'Resources'}` ? 'active' : ''}
+        >
+          <Link to={`/${props.ui_content.content.change_resource || 'Resources'}`}>
+            {props.ui_content.content.change_resource || 'Resources'}
+          </Link>
+        </li> : null
+      }
       <li>
         <a
           target="_blank"
@@ -53,7 +59,7 @@ export default withRouter((props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {props.ui_content.content.header || 'Signature Commons'}
           </Link>
           <Link
             to="/"
@@ -65,9 +71,9 @@ export default withRouter((props) => {
             &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-          <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} />
+          <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} ui_content={props.ui_content} />
         </div>
-        <Nav className="sidenav" id="mobile-menu" location={props.location} />
+        <Nav className="sidenav" id="mobile-menu" location={props.location} ui_content={props.ui_content}/>
 
         {paths.length <= 2 ? null : (
           <div className="nav-wrapper grey">

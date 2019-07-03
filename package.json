@@ -40,6 +40,7 @@
     "react-plotly.js": "^2.2.0",
     "react-router-dom": "^4.3.1",
     "react-scroll-to-component": "^1.0.2",
+    "react-swipeable-views": "^0.13.3",
     "react-wordcloud": "^1.0.5",
     "serialize-error": "^4.1.0",
     "swagger-client": "^3.8.22",
@@ -49,7 +50,7 @@
   },
   "scripts": {
     "test": "npm run lint && jest",
-    "lint": "eslint util/** pages/** styles/jss/** components/**",
+    "lint": "eslint next.config.js util/** pages/** styles/jss/** components/**",
     "lint:fix": "npm run lint -- --fix",
     "dev": "NODE_ENV=development dotenv-load next",
     "build": "NODE_ENV=production dotenv-load next build",
@@ -61,7 +62,10 @@
     "deploy": "dotenv-load npm run export && npm run deploy:docker",
     "deploy:docker": "npm run build:docker && dotenv-load node ./bin/docker-deploy.js",
     "deploy:production": "NODE_ENV=production npm run deploy",
-    "deploy:dev": "NODE_ENV=development npm run deploy"
+    "deploy:dev": "NODE_ENV=development npm run deploy",
+    "version:major": "npm version --no-git-tag-version major",
+    "version:minor": "npm version --no-git-tag-version minor",
+    "version:patch": "npm version --no-git-tag-version patch"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -69,9 +73,9 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "dotenv-cli": "^2.0.0",
+    "eslint": "^5.16.0",
     "eslint-config-google": "^0.12.0",
     "eslint-plugin-react": "^7.12.4",
-    "eslint": "^5.16.0",
     "jest": "^24.7.1",
     "next-build-id": "^2.0.1",
     "node-sass": "^4.12.0",

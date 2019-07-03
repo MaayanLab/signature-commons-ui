@@ -56,6 +56,10 @@ export const black = '#000'
 export const white = '#FFF'
 
 export const landingStyle = (theme) => ({
+  KeyLabel: {
+    borderRight: 'solid #c9c9c9',
+    borderWidth: '1px',
+  },
   toggleContainer: {
     height: 56,
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
