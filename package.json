@@ -1,6 +1,6 @@
 {
   "name": "signature-commons-ui",
-  "version": "0.2.6",
+  "version": "0.2.8",
   "private": true,
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
   "dependencies": {
@@ -27,7 +27,7 @@
     "next": "^8.0.3",
     "next-env": "^1.1.0",
     "nprogress": "^0.2.0",
-    "plotly.js": "^1.47.4",
+    "plotly.js": "^1.48.3",
     "prop-types": "^15.6.2",
     "ra-data-simple-rest": "^2.6.0",
     "react": "^16.7.0",
