@@ -9,6 +9,11 @@ import MetadataSearch from '../MetadataSearch'
 import Resources from '../Resources'
 import SignatureSearch from '../SignatureSearch'
 import Upload from '../Upload'
+import dynamic from 'next/dynamic'
+import { base_url as meta_url } from '../../util/fetch/meta'
+import '../../styles/swagger.scss'
+
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
 
 export default class Home extends React.PureComponent {
@@ -169,6 +174,15 @@ export default class Home extends React.PureComponent {
     />
   )
 
+  api = (props) => (
+    <SwaggerUI
+      url={`${meta_url}/openapi.json`}
+      deepLinking={true}
+      displayOperationId={true}
+      filter={true}
+    />
+  )
+
   render() {
     const CartActions = this.CartActions
 
@@ -209,6 +223,10 @@ export default class Home extends React.PureComponent {
               component={this.resources}
             /> : null
           }
+          <Route
+            path="/API"
+            component={this.api}
+          />
         </Switch>
       </Base>
     )
