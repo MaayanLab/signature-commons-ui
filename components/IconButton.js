@@ -22,7 +22,7 @@ const IconButton = (props) => (
     .icon-btn > div > img {
       position: relative;
       top: 50%;
-      height: 24px;
+      height: 32px;
       max-width: 48px;
     }
     .icon-btn:hover {
