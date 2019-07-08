@@ -129,6 +129,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   const { meta_counts } = props
   let sm = 3
   let xs = 4
+  let md = 2
   if (meta_counts.length < 4) {
     sm = 12 / meta_counts.length
     xs = 12 / meta_counts.length
@@ -136,7 +137,8 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   return (
     <Grid container
       spacing={24}
-      alignItems={'center'}>
+      alignItems={'center'}
+      justify={'center'}>
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
@@ -145,7 +147,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
         </div>
       </Grid>
       {meta_counts.map((entry) => (
-        <Grid item xs={sm} sm={xs} key={entry.name}>
+        <Grid item xs={xs} sm={sm} md={md} lg key={entry.name}>
           <div className={classes.centered}>
             { entry.icon === undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span> :
               <span className={`mdi ${entry.icon} mdi-24px`}></span>
