@@ -36,9 +36,9 @@ export const UIValues = {
           down_set_terms: values.down_set_terms
         },
         nav: {
-          signature_search: values.signature_search || true,
-          metadata_search: values.metadata_search || true,
-          resources: values.resources || true
+          signature_search: values.signature_search !== undefined ? values.signature_search: true,
+          metadata_search: values.metadata_search !== undefined ? values.metadata_search: true,
+          resources: values.resources !== undefined ? values.resources: true
         },
         preferred_name_singular: values.preferred_name_singular || 
           {
@@ -54,8 +54,8 @@ export const UIValues = {
             entities: "Genes",
             resources: "Resources"
           },
-        deactivate_download: values.deactivate_download || false,
-        deactivate_wordcloud: values.deactivate_wordcloud || false,
+        deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
+        deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
         bar_chart: values.bar_chart,
         library_name: values.library_name || library_name,
         resource_name: values.resource_name,
