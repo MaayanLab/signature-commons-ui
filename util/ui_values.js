@@ -55,6 +55,7 @@ export const UIValues = {
             resources: "Resources"
           },
         deactivate_download: values.deactivate_download || false,
+        deactivate_wordcloud: values.deactivate_wordcloud || false,
         bar_chart: values.bar_chart,
         library_name: values.library_name || library_name,
         resource_name: values.resource_name,
