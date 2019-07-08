@@ -65,8 +65,11 @@ export default class LibraryResults extends React.Component {
         (schema) => objectMatch(schema.match, sigs[0])
     )[0]
     const lib = sigs[0].library.id
-    const cols = Object.keys(schema.properties).filter(
-        (prop) => {
+    const sorted_entries = Object.entries(schema.properties).sort((a,b) => a[1].priority - b[1].priority)
+    const cols = sorted_entries.filter(
+        (entry) => {
+          const prop = entry[0]
+          console.log(entry)
           if (this.check_column({ schema, prop, lib })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
@@ -80,7 +83,7 @@ export default class LibraryResults extends React.Component {
           }
           return false
         }
-    )
+    ).map((entry)=>entry[0])
     const options = {
       filter: true,
       filterType: 'dropdown',

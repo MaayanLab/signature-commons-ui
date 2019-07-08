@@ -142,7 +142,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
                   onChange={(e) => props.handleSelectField(e)}
                 />
               </div> :
-              <span className={classes.vertical55}>{props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}</span>
+              <span className={classes.vertical55}>{props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}</span>
           }
           <Divider />
         </Grid>
@@ -250,10 +250,10 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
         }
         { Object.keys(props.barcounts).length === 0 || props.barcounts === undefined ? null :
           <Grid item xs={12}>
-            { props.ui_content.content['bar-chart'] !== undefined ?
+            { props.ui_values.LandingText['bar-chart'] !== undefined ?
                 <BarChartGroup classes={classes}
-                  name={props.ui_content.content['bar-chart'].Caption}
-                  bar_counts={props.barcounts[props.ui_content.content['bar-chart'].Field_Name]}
+                  name={props.ui_values.LandingText['bar-chart'].Caption}
+                  bar_counts={props.barcounts[props.ui_values.LandingText['bar-chart'].Field_Name]}
                   {...props}/> :
                 <BarChartGroup classes={classes}
                   name={'Bar Chart'}

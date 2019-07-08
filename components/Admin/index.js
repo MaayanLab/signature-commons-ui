@@ -89,7 +89,7 @@ class AdminView extends React.PureComponent {
       return (
         <SignaturePostFilter
           librarynumber={Object.keys(this.props.libraries).length}
-          library_name={this.props.ui_content.content.library_name}
+          library_name={this.props.ui_values.library_name}
         />
       )
     }
@@ -113,11 +113,11 @@ class AdminView extends React.PureComponent {
         {...props}>
         <Datagrid>
           <LibraryAvatar
-            source={`meta.${this.props.ui_content.content.library_name}`}
+            source={`meta.${this.props.ui_values.library_name}`}
             title={'Library'}
-            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
+            label={this.props.ui_values.preferred_name_singular["libraries"]}
             textAlign="center"
-            library_name={this.props.ui_content.content.library_name}
+            library_name={this.props.ui_values.library_name}
           />
           <TextField
             source="id"
@@ -190,10 +190,10 @@ class AdminView extends React.PureComponent {
             source="library"
             reference="libraries"
             linkType={false}
-            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
+            label={this.props.ui_values.preferred_name_singular["libraries"]}
           >
             <TextField
-              source={`meta.${this.props.ui_content.content.library_name}`}
+              source={`meta.${this.props.ui_values.library_name}`}
               style={{ width: 150 }}/>
           </ReferenceField>
           {this.state.signature_fields.filter((k) => !k.includes('.')).map(function(k) {
@@ -224,7 +224,7 @@ class AdminView extends React.PureComponent {
           />
           <LongTextInput
             key={'library'}
-            label={this.props.ui_content.content.preferred_name_singular["libraries"]}
+            label={this.props.ui_values.preferred_name_singular["libraries"]}
             source={'library'}
           />
           {this.state.signature_fields.map(function(k) {
@@ -627,7 +627,7 @@ class AdminView extends React.PureComponent {
                   list={this.LibraryList}
                   edit={this.LibraryEdit}
                   icon={LibraryBooks}
-                  options={{ label: this.props.ui_content.content.preferred_name['libraries'] }}
+                  options={{ label: this.props.ui_values.preferred_name['libraries'] }}
                 />
             }
             {this.state.signature_fields === null ? <div/> :
@@ -636,7 +636,7 @@ class AdminView extends React.PureComponent {
                   edit={this.SignatureEdit}
                   list={this.SignatureList}
                   icon={Fingerprint}
-                  options={{ label: this.props.ui_content.content.preferred_name['signatures'] }}
+                  options={{ label: this.props.ui_values.preferred_name['signatures'] }}
                 />
             }
             {this.props.entity_fields === null ? <div/> :
@@ -645,7 +645,7 @@ class AdminView extends React.PureComponent {
                   edit={this.EntityEdit}
                   list={this.EntityList}
                   icon={BlurOn}
-                  options={{ label: this.props.ui_content.content.preferred_name['entities'] }}
+                  options={{ label: this.props.ui_values.preferred_name['entities'] }}
                 />
             }
           </Admin>

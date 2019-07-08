@@ -44,7 +44,7 @@ export default class SearchResults extends React.Component {
       librariescontroller: undefined,
       signaturescontroller: undefined,
       entitiescontroller: undefined,
-      library_name: this.props.ui_content.content.library_name,
+      library_name: this.props.ui_values.library_name,
       index_value: 0,
       signaturesRowsPerPage: 10,
       signaturesPage: 0,
@@ -190,6 +190,7 @@ export default class SearchResults extends React.Component {
   }
 
   search_div(name) {
+    console.log(name)
     const default_name_singular = default_singular_names[name]
     if (this.state[name] === undefined){
       return <div />
@@ -202,7 +203,7 @@ export default class SearchResults extends React.Component {
               <span className="grey-text">
                 Found {this.state[`${name}_count`]}
                 {this.props[`${name}_total_count`] !== undefined ? ` matches out of ${this.props[`${name}_total_count`]} ` : null}
-                { this.props.ui_content.content.preferred_name[name].toLowerCase() || name }
+                { this.props.ui_values.preferred_name[name].toLowerCase() || name }
                 {this.state[`${name}_duration_meta`] !== undefined ? ` in ${this.state[`${name}_duration_meta`].toPrecision(3)} seconds` : null}
               </span>
             </div>
@@ -212,10 +213,10 @@ export default class SearchResults extends React.Component {
           <MetaItem
             search={this.props.search}
             items={this.state[name]}
-            type={this.props.ui_content.content.preferred_name_singular[name] || default_name_singular}
+            type={this.props.ui_values.preferred_name_singular[name] || default_name_singular}
             table_name={name}
-            preferred_name={this.props.ui_content.content.preferred_name_singular}
-            deactivate_download={this.props.ui_content.content.deactivate_download}
+            preferred_name={this.props.ui_values.preferred_name_singular}
+            deactivate_download={this.props.ui_values.deactivate_download}
             schemas={this.props.schemas}
           />
           <div align="right">
@@ -269,13 +270,13 @@ export default class SearchResults extends React.Component {
           centered
         >
           {this.state.signatures !== undefined && this.state.signatures.length > 0 ? 
-            <Tab label={ this.props.ui_content.content.preferred_name['signatures'] || 'Signatures' } />: null
+            <Tab label={ this.props.ui_values.preferred_name['signatures'] || 'Signatures' } />: null
           }
           {this.state.libraries !== undefined && this.state.libraries.length > 0 ? 
-            <Tab label={ this.props.ui_content.content.preferred_name['libraries'] || 'Libraries' } />: null
+            <Tab label={ this.props.ui_values.preferred_name['libraries'] || 'Libraries' } />: null
           }
           {this.state.entities !== undefined && this.state.entities.length > 0 ? 
-            <Tab label={ this.props.ui_content.content.preferred_name['entities'] || 'Entities' } />: null
+            <Tab label={ this.props.ui_values.preferred_name['entities'] || 'Entities' } />: null
           }
         </Tabs>
         <SwipeableViews

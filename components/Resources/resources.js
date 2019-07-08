@@ -22,8 +22,7 @@ export const iconOf = {
   'CMAP': `static/images/clueio.ico`,
 }
 
-export async function get_library_resources(ui_content) {
-  const resource_from_library = ui_content.content.resource_from_library
+export async function get_library_resources(ui_values) {
   // fetch resources on database
   const { response } = await fetch_meta({
     endpoint: '/resources',
@@ -41,12 +40,18 @@ export async function get_library_resources(ui_content) {
 
 
   const resources = libraries.reduce((acc, lib) => {
+    let resource_name
     const resource_id = lib.resource
-    const resource_name = resource_from_library.map((res) => (lib.meta[res])).filter((res_name) => (res_name))[0] || lib.dataset
     // lib resource matches with resource table
     if (resource_id) {
       if (resource_id in resource_meta){
         let resource = resource_meta[resource_id]
+        if ("resource_name" in ui_values && ui_values.resource_name !== undefined) {
+          resource_name = resource.meta[ui_values.resource_name]
+        } else{
+          console.warn("source of resource name is not defined, using either Resource_Name or ids")
+          resource_name = resource.meta["Resource_Name"] || resource_id
+        }
         if (!(resource_name in acc)){
           resource.libraries = []
           resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon}`
@@ -57,6 +62,7 @@ export async function get_library_resources(ui_content) {
         console.error(`Resource not found: ${resource_name}`)
       }
     } else {
+      resource_name = lib.dataset
       const {Icon, ...rest} = lib.meta
       acc[resource_name] = {
         id: lib.id,
@@ -87,9 +93,9 @@ export async function get_library_resources(ui_content) {
   }
 }
 
-export async function get_signature_counts_per_resources(ui_content) {
+export async function get_signature_counts_per_resources(ui_values) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, library_resource } = await get_library_resources(ui_content)
+  const { libraries, resources, library_resource } = await get_library_resources(ui_values)
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios
   const count_promises = Object.keys(libraries).map(async (lib_key) => {
@@ -97,9 +103,6 @@ export async function get_signature_counts_per_resources(ui_content) {
     // request details from GitHub’s API with Axios
     const { response: stats } = await fetch_meta({
       endpoint: `/libraries/${lib_key}/signatures/count`,
-      body: {
-        fields: ['$validator'],
-      },
     })
 
     return {

@@ -64,25 +64,25 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               alignItems={'center'}>
               { this.props.resource_signatures === undefined ? null :
                 <Grid item xs={12} sm>
-                  <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_content={this.props.ui_content}/>
+                  <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_values={this.props.ui_values}/>
                   <div className={this.props.classes.centered}>
                     <Typography variant="caption">
-                      {this.props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}
+                      {this.props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}
                     </Typography>
                   </div>
                 </Grid>
               }
               { Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? null :
                 <Grid item xs={12} sm>
-                  { this.props.ui_content.content['bar-chart'] !== undefined ? (
+                  { this.props.ui_values.bar_chart !== undefined ? (
                     <div className={this.props.classes.centered}>
-                      {this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name] !== undefined ? (
-                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name]}
-                        fontSize={this.props.ui_content.content['bar-chart'].font_size || 11}/>) : (
+                      {this.props.barcounts[this.props.ui_values.bar_chart.Field_Name] !== undefined ? (
+                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_values.bar_chart.Field_Name]}
+                        fontSize={this.props.ui_values.bar_chart.font_size || 11}/>) : (
                       null
                       )}
                       <Typography variant="caption">
-                        {this.props.ui_content.content['bar-chart'].Caption}
+                        {this.props.ui_values.bar_chart.Caption}
                       </Typography>
                     </div>
                   ) : (
@@ -114,7 +114,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 alignItems={'center'}>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_content.content.text_3 || 'Examine metadata:'}</span>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
                     <Selections
                       value={this.props.selected_field}
                       values={Object.keys(this.props.pie_fields_and_stats).sort()}

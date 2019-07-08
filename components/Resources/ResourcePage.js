@@ -56,7 +56,7 @@ export default class ResourcePage extends React.Component {
                       <ShowMeta
                         value={{
                           '@id': this.props.resource.id,
-                          '@type': this.props.ui_content.content.preferred_name_singular[(this.props.ui_content.content.change_resource || 'resources').toLowerCase()] || 'Resource',
+                          '@type': this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
                           'meta': Object.keys(this.props.resource.meta).filter((key) => (
                             ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
                             acc[key] = this.props.resource.meta[key]
@@ -70,7 +70,7 @@ export default class ResourcePage extends React.Component {
                 <div className="card-action">
                   <Grid container justify="space-between">
                     <Grid item xs={1}>
-                      {this.props.ui_content.content.deactivate_download ? null:
+                      {this.props.ui_values.deactivate_download ? null:
                         <Button style={{
                           input: {
                             display: 'none',
@@ -83,7 +83,7 @@ export default class ResourcePage extends React.Component {
                     </Grid>
                     <Grid item xs={1}>
                       <Link
-                        to={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
+                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
                         className="waves-effect waves-teal btn-flat"
                       >
                         BACK
@@ -125,7 +125,7 @@ export default class ResourcePage extends React.Component {
                           />
                           &nbsp;
                           <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                          {this.props.ui_content.content.deactivate_download ? null:
+                          {this.props.ui_values.deactivate_download ? null:
                             <Button style={{
                               input: {
                                 display: 'none',

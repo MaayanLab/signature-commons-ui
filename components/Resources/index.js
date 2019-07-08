@@ -15,7 +15,7 @@ export default class Resources extends React.PureComponent {
   resource_list = (props) => (
     <ResourceList
       resources={Object.values(this.props.resources)}
-      ui_content={this.props.ui_content}
+      ui_values={this.props.ui_values}
       {...props}
     />
   )
@@ -26,7 +26,7 @@ export default class Resources extends React.PureComponent {
       <ResourcePage
         resource={resource}
         cart={this.props.cart}
-        ui_content={this.props.ui_content}
+        ui_values={this.props.ui_values}
         schemas={this.props.schemas}
         {...props}
       />
@@ -36,8 +36,8 @@ export default class Resources extends React.PureComponent {
   render() {
     return (
       <Switch>
-        <Route exact path={`/${this.props.ui_content.content.change_resource || 'Resources'}`}component={this.resource_list} />
-        <Route path={`/${this.props.ui_content.content.change_resource || 'Resources'}/:resource`} component={this.resource_page} />
+        <Route exact path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}component={this.resource_list} />
+        <Route path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/:resource`} component={this.resource_page} />
       </Switch>
     )
   }

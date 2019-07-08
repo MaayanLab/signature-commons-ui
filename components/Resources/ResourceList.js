@@ -18,12 +18,11 @@ export default class ResourceList extends React.PureComponent {
           <Grid item xs={xs} sm={sm} md={md} key={resource.meta.Resource_Name}>
             <Link
               key={resource.id}
-              to={`/${this.props.ui_content.content.change_resource || 'Resources'}/${resource.meta.Resource_Name.replace(/ /g, '_')}`}
+              to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${resource.meta.Resource_Name.replace(/ /g, '_')}`}
             >
               <IconButton
                 alt={resource.meta.Resource_Name}
                 img={resource.meta.icon}
-                style={this.props.ui_content.content.resource_list_style}
               />
             </Link>
           </Grid>

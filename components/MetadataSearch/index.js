@@ -65,7 +65,7 @@ export default class MetadataSearch extends React.Component {
           <SearchBox
             search={this.state.search}
             searchChange={this.searchChange}
-            ui_content={this.props.ui_content}
+            ui_values={this.props.ui_values}
           />
         </div>
         {this.state.currentSearch === '' ? null : (
@@ -74,7 +74,7 @@ export default class MetadataSearch extends React.Component {
             libraries_total_count={this.state.libraries_total_count}
             entities_total_count={this.state.entities_total_count}
             search={this.state.currentSearch}
-            ui_content={this.props.ui_content}
+            ui_values={this.props.ui_values}
             schemas={this.props.schemas}
           />
         )}

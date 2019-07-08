@@ -32,11 +32,11 @@ export const BottomLinks = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            { props.ui_content.content.text_4 || 'Start using Signature Commons on your project'}
+            { props.ui_values.LandingText.text_4 || 'Start using Signature Commons on your project'}
           </Typography>
         </div>
       </Grid>
-      {props.ui_content.content.metadata_search ?
+      {props.ui_values.nav.metadata_search ?
         <Grid item xs={12} sm>
           <div className={classes.centered}>
             <Grid container
@@ -58,7 +58,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </div>
         </Grid> : null
       }
-      {props.ui_content.content.signature_search ?
+      {props.ui_values.nav.signature_search ?
         <Grid item xs={12} sm>
           <div className={classes.centered}>
             <Grid container
@@ -80,7 +80,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </div>
         </Grid> : null
       }
-      {props.ui_content.content.resources ?
+      {props.ui_values.nav.resources ?
         <Grid item xs={12} sm>
           <div className={classes.centered}>
             <Grid container
@@ -88,13 +88,13 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_content.content.change_resource || "Resources"}`}>
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || "Resources"}`}>
                   <NearMe className={classes.icon} />
                 </Button>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    {`Browse ${props.ui_content.content.change_resource || "Resources"}`}
+                    {`Browse ${props.ui_values.preferred_name.resources || "Resources"}`}
                 </Typography>
               </Grid>
             </Grid>
@@ -140,7 +140,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            {props.ui_content.content.text_2 || 'Search across a broad gathering of perturbations'}
+            {props.ui_values.LandingText.text_2 || 'Search across a broad gathering of perturbations'}
           </Typography>
         </div>
       </Grid>
@@ -165,7 +165,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
 
 export const StatDiv = ({ classes, width, ...props }) => {
   const visible_stats = props.table_counts.filter((item) => item.Visible_On_Landing)
-  const xs = visible_stats.length >= 3 ? 4 : 12 / visible_stats.length
+  const xs = visible_stats.length <=4 ? 12 / visible_stats.length : 3
   return (
     <Grid container
       spacing={24}
@@ -177,7 +177,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-                {props.ui_content.content.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
+                {props.ui_values.LandingText.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
               </Typography>
             </div>
           </Grid>
@@ -199,7 +199,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  const { signature_search, metadata_search } = props.ui_content.content
+  const { signature_search, metadata_search } = props.ui_values.nav
   if (signature_search && metadata_search) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
@@ -228,7 +228,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
                 id='metadata'
                 search={props.search}
                 searchChange={props.searchChange}
-                ui_content={props.ui_content}
+                ui_values={props.ui_values}
               /> :
               <GenesetSearchBox
                 id="signature"
@@ -273,7 +273,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               id='metadata'
               search={props.search}
               searchChange={props.searchChange}
-              ui_content={props.ui_content}
+              ui_values={props.ui_values}
             />
           </Grid>
         </Grid>

@@ -3,43 +3,27 @@
     "landing": true,
     "content": {
       "header": "MCF10A Molecular Deep Dive",
-      "metadata_placeholder": "Search over half a million signatures",
-      "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
-      "up_genes_placeholder": "Genes that are up-regulated in signature or overlap with gene set",
-      "down_genes_placeholder": "Genes that are down-regulated in signature or overlap with gene set",
+      "metadata_placeholder": "Search over MCF10a datasets",
       "text_1": "Explore an extensive collection of well-annotated MCF10a datasets",
       "text_2": "Search across a broad gathering of perturbations",
-      "text_3": "Examine metadata:",
-      "text_4": "Start using Signature Commons on your project",
       "resource_pie_caption": "Sample Readout per Assay",
       "library_name": "assay",
-      "resource_from_library": [
-        "assay"
-      ],
       "preferred_name_singular": {
         "libraries": "Assay",
         "signatures": "Experimental Readout",
         "entities": "Entity",
-        "assays": "Assay"
+        "resources": "Assay"
       },
       "signature_search": false,
-      "metadata_search": true,
-      "resources": true,
       "deactivate_download": true,
-      "change_resource": "Assays",
-      "Library_name": "assay",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
-      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
       "search_terms": [
         "MCF10A",
         "IFNG",
         "EGF",
         "L1000"
       ],
-      "resource_list_style": {
-        "fontSize": 10
-      },
       "bar-chart": {
         "Field_Name": "ligand",
         "Caption": "Experimental sample readouts per ligand"
@@ -50,7 +34,6 @@
     "admin": true,
     "content": {
       "resource_pie_caption": "Signatures per Assay",
-      "change_resource": "Assays",
       "bar-chart": {
         "Field_Name": "ligand",
         "Caption": "Experimental sample readouts per ligand"
@@ -59,51 +42,23 @@
         "libraries": "Assay",
         "signatures": "Experimental Readout",
         "entities": "Entity",
-        "assays": "Assay"
+        "resources": "Assay"
       },
       "library_name": "assay",
-      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
-      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
-      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
-      "resource_from_library": [
-        "assay"
-      ]
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
     }
   },
   {
     "landing": true,
     "content": {
-      "metadata_placeholder": "Search over half a million signatures",
-      "geneset_placeholder": "Genes that are regulated in signature or overlap with gene set",
-      "up_genes_placeholder": "Genes that are up-regulated in signature or overlap with gene set",
-      "down_genes_placeholder": "Genes that are down-regulated in signature or overlap with gene set",
-      "text_1": "Explore an extensive collection of well-annotated gene-sets and signatures",
-      "text_2": "Search across a broad gathering of perturbations",
-      "text_3": "Examine metadata:",
-      "text_4": "Start using Signature Commons on your project",
-      "resource_pie_caption": "Signatures per Resource",
-      "signature_search": true,
-      "metadata_search": true,
-      "resources": true,
       "bar-chart": {
         "Field_Name": "Version",
         "Caption": "Libraries per year"
       },
-      "preferred_name_singular": {
-        "libraries": "Library",
-        "signatures": "Signature",
-        "entities": "Entity",
-        "resources": "Resource"
-      },
       "library_name": "Library_name",
+      "resource_name": "Resource_Name",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
-      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
-      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
-      "resource_from_library": [
-        "Primary_Resource_Short_Version",
-        "Primary_Resource",
-        "Library_name"
-      ]
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json"
     }
   },
   {
@@ -115,20 +70,8 @@
         "Caption": "Libraries per year"
       },
       "library_name": "Library_name",
-      "resource_from_library": [
-        "Primary_Resource_Short_Version",
-        "Primary_Resource",
-        "Library_name"
-      ],
-      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
-      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
-      "match_resource_validator": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
-      "preferred_name_singular": {
-        "libraries": "Library",
-        "signatures": "Signature",
-        "entities": "Entity",
-        "resources": "Resource"
-      }
+      "resource_name": "Resource_Name",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
     }
   }
 ]

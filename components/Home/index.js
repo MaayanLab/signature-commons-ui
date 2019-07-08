@@ -132,7 +132,7 @@ export default class Home extends React.PureComponent {
       libraries={this.props.libraries}
       resources={this.props.resources}
       library_resource={this.props.library_resource}
-      ui_content={this.props.ui_content}
+      ui_values={this.props.ui_values}
       schemas={this.props.schemas}
       {...props}
     />
@@ -142,7 +142,7 @@ export default class Home extends React.PureComponent {
     <MetadataSearch
       cart={this.state.cart}
       updateCart={this.updateCart}
-      ui_content={this.props.ui_content}
+      ui_values={this.props.ui_values}
       schemas={this.props.schemas}
       {...props}
     />
@@ -155,7 +155,7 @@ export default class Home extends React.PureComponent {
       libraries={this.props.libraries}
       resources={this.props.resources}
       library_resource={this.props.library_resource}
-      ui_content={this.props.ui_content}
+      ui_values={this.props.ui_values}
       schemas={this.props.schemas}
       {...props}
     />
@@ -173,7 +173,7 @@ export default class Home extends React.PureComponent {
     const CartActions = this.CartActions
 
     return (
-      <Base ui_content={this.props.ui_content}>
+      <Base ui_values={this.props.ui_values}>
         <style jsx>{`
         #Home {
           background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
@@ -191,21 +191,21 @@ export default class Home extends React.PureComponent {
               {...this.props}
               {...router_props}/>}
           />
-          {this.props.ui_content.content.signature_search ?
+          {this.props.ui_values.nav.signature_search ?
             <Route
               path="/SignatureSearch"
               component={this.signature_search}
             /> : null
           }
-          {this.props.ui_content.content.metadata_search ?
+          {this.props.ui_values.nav.metadata_search ?
             <Route
               path="/MetadataSearch"
               component={this.metadata_search}
             /> : null
           }
-          {this.props.ui_content.content.resources ?
+          {this.props.ui_values.nav.resources ?
             <Route
-              path={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
+              path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
               component={this.resources}
             /> : null
           }

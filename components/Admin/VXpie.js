@@ -13,8 +13,8 @@ const colorrange = {
   'Gray': ['#717171', '#fefefe'],
 }
 
-const handleClick = (e, label, resources, disabled, change_resource) => {
-  const resource_path = change_resource || 'Resources'
+const handleClick = (e, label, resources, disabled, resource_name) => {
+  const resource_path = resource_name || 'Resources'
   if (disabled === undefined) {
     if (resources) {
       location.href = `#/${resource_path}/${label.replace(/ /g, '_')}`
@@ -36,9 +36,9 @@ export const DonutChart = withScreenSize(function({ ...props }) {
     fontSize,
     resources,
     disabled,
-    ui_content,
+    ui_values,
   } = props
-  const change_resource = ui_content ? ui_content.content.change_resource : undefined
+  const resource_name = ui_values ? ui_values.preferred_name["resources"] : undefined
   const dataLabels = data.map(function(d) {
     return (
       d.label
@@ -96,7 +96,7 @@ export const DonutChart = withScreenSize(function({ ...props }) {
                     <g key={`browser-${arc.data.label}-${i}`}>
                       <path d={pie.path(arc)}
                         fill={ordinalColorScale(dataLabels[i])}
-                        onClick={(e) => handleClick(e, arc.data.label, resources, disabled, change_resource)}
+                        onClick={(e) => handleClick(e, arc.data.label, resources, disabled, resource_name)}
                       />
                       {hasSpaceForLabel && (
                         <text

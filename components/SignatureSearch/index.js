@@ -116,7 +116,7 @@ export default class SignatureSearch extends React.Component {
         <GenesetSearchBox
           input={this.state.input}
           onSubmit={this.submit}
-          ui_content={this.props.ui_content}
+          ui_values={this.props.ui_values}
           {...props}
         />
       )
@@ -148,7 +148,7 @@ export default class SignatureSearch extends React.Component {
     return (
       <div className="row">
         <Switch>
-          <Route exact path="/SignatureSearch" render={() => <Redirect to="/SignatureSearch/Overlap" />} />
+          <Route exact path="/SignatureSearch" render={() => <Redirect to="/" />} />
           <Route path="/SignatureSearch/:type/:input_signature/:resource" component={this.library_results} />
           <Route path="/SignatureSearch/:type/:input_signature" component={this.resource_filters} />
           <Route path="/SignatureSearch/:type" component={this.geneset_searchbox} />
