@@ -24,6 +24,13 @@
       "subfield": "${meta.Disease[0].Name}",
       "priority": 2
     },
+    "Gene": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Gene}",
+      "subfield": "${meta.Gene[0].Name}",
+      "priority": 2
+    },
     "Drug": {
       "visibility": 1,
       "type": "object",
