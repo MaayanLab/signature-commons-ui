@@ -8,22 +8,26 @@
       "visibility": 1,
       "type": "img",
       "src": "${PREFIX}/${meta['Icon']}",
-      "alt": "${meta['assay']}"
+      "alt": "${meta['assay']}",
+      "priority": 1
     },
     "Assay": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['assay']}"
+      "text": "${meta['assay']}",
+      "priority": 2
     },
     "Institution": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['institution']}"
+      "text": "${meta['institution']}",
+      "priority": 2
     },
     "LINCS center": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['LINCS_center']}"
+      "text": "${meta['LINCS_center']}",
+      "priority": 2
     }
   }
 }

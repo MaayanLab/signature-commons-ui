@@ -7,12 +7,14 @@
       "visibility": 1,
       "type": "img",
       "alt": "${meta['assay']}",
-      "src": "${PREFIX}/static/images/default-black.png"
+      "src": "${PREFIX}/static/images/default-black.png",
+      "priority": 1
     },
-    "Library": {
+    "Info": {
       "visibility": 1,
-      "type": "text",
-      "text": "${meta['assay']}"
+      "type": "text-default",
+      "text": "${Object.keys(meta)[0]}: ${meta[Object.keys(meta)[0]]}",
+      "priority": 2
     }
   }
 }

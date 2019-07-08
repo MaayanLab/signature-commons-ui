@@ -34,20 +34,20 @@ export const labels = {
     }
   },
   'object': ({ label, prop, data, highlight }) => {
-    const val = makeTemplate(prop.text, data, prop.subfield)
-    if (val === 'undefined') {
-      return null
-    } else {
-      return (
-        <Highlight
-          text={label + ': ' + val}
-          highlight={highlight}
-          props={{
-            className: 'chip grey white-text',
-          }}
-        />
-      )
-    }
+      const val = makeTemplate(prop.text, data, prop.subfield)
+      if (val === 'undefined') {
+        return null
+      } else {
+        return (
+          <Highlight
+            text={label + ': ' + val}
+            highlight={highlight}
+            props={{
+              className: 'chip grey white-text',
+            }}
+          />
+        )
+      }
   },
   'header-img': ({ label, prop, data, highlight }) => (
     <div
@@ -168,17 +168,18 @@ export function Label({ item, highlight, visibility, schemas }) {
     const {[img_keys[0]]: img, ...rest} = schema.properties
     schema.properties = {[img_keys[0]]: img, ...rest}
   }
+  const sorted_entries = Object.entries(schema.properties).sort((a,b) => a[1].priority - b[1].priority)
   return (
     <div>
-      {Object.keys(schema.properties).filter(
-          (prop) => {
-            return (schema.properties[prop].visibility >= visibility && objectMatch(schema.properties[prop].condition, item))
+      {sorted_entries.filter(
+          (entry) => {
+            return (entry[1].visibility >= visibility && objectMatch(entry[1].condition, item))
           }
-      ).map((label) => (
-        <span key={label}>
-          {labels[schema.properties[label].type]({
-            label: label,
-            prop: schema.properties[label],
+      ).map((entry) => (
+        <span key={entry[0]}>
+          {labels[entry[1].type]({
+            label: entry[0],
+            prop: entry[1],
             data: item,
             highlight: highlight,
           })}

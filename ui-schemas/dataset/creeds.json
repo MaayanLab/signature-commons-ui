@@ -12,17 +12,20 @@
       "style": {
         "maxHeight": "70px",
         "maxWidth": "70px"
-      }
+      },
+      "priority": 1
     },
     "Libraries": {
       "visibility": 1,
       "type": "text",
-      "text": "3"
+      "text": "3",
+      "priority": 2
     },
     "Signatures": {
       "visibility": 1,
       "type": "text",
-      "text": "7758"
+      "text": "7758",
+      "priority": 3
     }
   }
 }

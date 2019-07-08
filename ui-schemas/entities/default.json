@@ -7,12 +7,14 @@
       "visibility": 1,
       "type": "img",
       "alt": "${meta[Object.keys(meta)[0]]}",
-      "src": "${PREFIX}/static/images/default-black.png"
+      "src": "${PREFIX}/static/images/default-black.png",
+      "priority": 1
     },
     "Info": {
       "visibility": 1,
       "type": "text-default",
-      "text": "${Object.keys(meta)[1]}: ${meta[Object.keys(meta)[1]]}"
+      "text": "${Object.keys(meta)[1]}: ${meta[Object.keys(meta)[1]]}",
+      "priority": 2
     }
   }
 }

@@ -8,28 +8,33 @@
       "visibility": 1,
       "type": "img",
       "src": "${PREFIX}/static/images/clueio.ico",
-      "alt": "ConnectivityMap"
+      "alt": "ConnectivityMap",
+      "priority": 1
     },
     "Assay": {
       "visibility": 1,
       "type": "text",
-      "text": "L1000"
+      "text": "L1000",
+      "priority": 4
     },
     "Cell-line": {
       "visibility": 1,
       "type": "object",
       "text": "${meta.Cell_Line}",
-      "subfield": "${meta.Cell_Line[0].Name}"
+      "subfield": "${meta.Cell_Line[0].Name}",
+      "priority": 3
     },
     "Time point": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.pert_time} ${meta.pert_time_unit}"
+      "text": "${meta.pert_time} ${meta.pert_time_unit}",
+      "priority": 4
     },
     "Perturbation": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.pert_desc === '-666' ? meta.pert_id : meta.pert_desc}"
+      "text": "${meta.pert_desc === '-666' ? meta.pert_id : meta.pert_desc}",
+      "priority": 4
     },
     "Concentration": {
       "visibility": 1,
@@ -39,7 +44,8 @@
         }
       },
       "type": "text",
-      "text": "${meta.pert_dose} ${meta.pert_dose_unit}"
+      "text": "${meta.pert_dose} ${meta.pert_dose_unit}",
+      "priority": 4
     },
     "P-Value": {
       "visibility": 1,
@@ -54,7 +60,8 @@
         "sortDirection": "asc"
       },
       "type": "text",
-      "text": "${meta['p-value']}"
+      "text": "${meta['p-value']}",
+      "priority": 5
     },
     "Odds Ratio": {
       "visibility": 1,
@@ -65,7 +72,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta.oddsratio}"
+      "text": "${meta.oddsratio}",
+      "priority": 5
     },
     "Set Size": {
       "visibility": 1,
@@ -76,7 +84,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta.setsize}"
+      "text": "${meta.setsize}",
+      "priority": 5
     },
     "P-Up": {
       "visibility": 1,
@@ -87,7 +96,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta['p-up']}"
+      "text": "${meta['p-up']}",
+      "priority": 5
     },
     "P-Down": {
       "visibility": 1,
@@ -98,7 +108,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta['p-down']}"
+      "text": "${meta['p-down']}",
+      "priority": 5
     },
     "Z-Up": {
       "visibility": 1,
@@ -109,7 +120,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta['z-up']}"
+      "text": "${meta['z-up']}",
+      "priority": 5
     },
     "Z-Down": {
       "visibility": 1,
@@ -120,7 +132,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta['z-down']}"
+      "text": "${meta['z-down']}",
+      "priority": 5
     },
     "Log(p) Fisher": {
       "visibility": 1,
@@ -135,7 +148,8 @@
         "sortDirection": "desc"
       },
       "type": "text",
-      "text": "${meta['logp-fisher']}"
+      "text": "${meta['logp-fisher']}",
+      "priority": 5
     },
     "Log(p) Average":{
       "visibility": 1,
@@ -146,7 +160,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta['logp-avg']}"
+      "text": "${meta['logp-avg']}",
+      "priority": 5
     },
     "Direction": {
       "visibility": 1,
@@ -156,7 +171,8 @@
         }
       },
       "type": "text",
-      "text": "${meta['direction'] === 1 ? 'up' : 'down'}"
+      "text": "${meta['direction'] === 1 ? 'up' : 'down'}",
+      "priority": 4
     }
   }
 }

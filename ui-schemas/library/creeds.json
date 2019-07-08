@@ -8,12 +8,14 @@
       "visibility": 1,
       "type": "img",
       "src": "${PREFIX}/${meta['Icon']}",
-      "alt": "${meta['Primary_Resource']}"
+      "alt": "${meta['Primary_Resource']}",
+      "priority": 1
     },
     "Library": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Library_name']}"
+      "text": "${meta['Library_name']}",
+      "priority": 2
     }
   }
 }

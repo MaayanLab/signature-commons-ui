@@ -8,17 +8,20 @@
       "visibility": 1,
       "type": "header-img",
       "src": "${PREFIX}/static/images/clueio.png",
-      "alt": "ConnectivityMap"
+      "alt": "ConnectivityMap",
+      "priority": 1
     },
     "Libraries": {
       "visibility": 1,
       "type": "text",
-      "text": "1"
+      "text": "1",
+      "priority": 2
     },
     "Signatures": {
       "visibility": 1,
       "type": "text",
-      "text": "411643"
+      "text": "411643",
+      "priority": 3
     }
   }
 }

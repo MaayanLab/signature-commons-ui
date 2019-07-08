@@ -8,31 +8,36 @@
       "visibility": 1,
       "type": "text",
       "field": "Resource_Name",
-      "text": "${meta['Resource_Name']}"
+      "text": "${meta['Resource_Name']}",
+      "priority": 1
     },
     "Description": {
       "visibility": 1,
       "type": "text",
       "field": "Description",
-      "text": "${meta['Description']}"
+      "text": "${meta['Description']}",
+      "priority": 2
     },
     "PMID": {
       "visibility": 1,
       "type": "text",
       "field": "PMID",
-      "text": "${meta['PMID']}"
+      "text": "${meta['PMID']}",
+      "priority": 3
     },
     "URL": {
       "visibility": 1,
       "type": "text",
       "field": "URL",
-      "text": "${meta['URL']}"
+      "text": "${meta['URL']}",
+      "priority": 3
     },
     "Signature Count": {
       "visibility": 1,
       "type": "text",
       "field": "Signature_Count",
-      "text": "${meta['Signature_Count']}"
+      "text": "${meta['Signature_Count']}",
+      "priority": 3
     }
   }
 }

@@ -7,17 +7,20 @@
       "visibility": 1,
       "type": "img",
       "alt": "${library.meta['assay']}",
-      "src": "${PREFIX}/static/images/default-black.png"
+      "src": "${PREFIX}/static/images/default-black.png",
+      "priority": 1
     },
     "Info": {
       "visibility": 1,
       "type": "text-default",
-      "text": "${Object.keys(meta)[0]}: ${meta[Object.keys(meta)[0]]}"
+      "text": "${Object.keys(meta)[0]}: ${meta[Object.keys(meta)[0]]}",
+      "priority": 2
     },
     "Info 2": {
       "visibility": 1,
       "type": "text-default",
-      "text": "${Object.keys(meta)[1]}: ${meta[Object.keys(meta)[1]]}"
+      "text": "${Object.keys(meta)[1]}: ${meta[Object.keys(meta)[1]]}",
+      "priority": 2
     },
     "P-Value": {
       "visibility": 1,
@@ -32,7 +35,8 @@
         "sortDirection": "asc"
       },
       "type": "text",
-      "text": "${meta['p-value']}"
+      "text": "${meta['p-value']}",
+      "priority": 3
     },
     "Odds Ratio": {
       "visibility": 1,
@@ -43,7 +47,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta.oddsratio}"
+      "text": "${meta.oddsratio}",
+      "priority": 3
     },
     "Set Size": {
       "visibility": 1,
@@ -54,7 +59,8 @@
       },
       "columnType": "number",
       "type": "text",
-      "text": "${meta.setsize}"
+      "text": "${meta.setsize}",
+      "priority": 3
     }
   }
 }

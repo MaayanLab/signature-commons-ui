@@ -8,17 +8,20 @@
       "visibility": 1,
       "type": "header-img",
       "src": "${PREFIX}/static/images/enrichr.png",
-      "alt": "Enrichr"
+      "alt": "Enrichr",
+      "priority": 1
     },
     "Libraries": {
       "visibility": 1,
       "type": "text",
-      "text": "128"
+      "text": "128",
+      "priority": 2
     },
     "Signatures": {
       "visibility": 1,
       "type": "text",
-      "text": "234846"
+      "text": "234846",
+      "priority": 3
     }
   }
 }

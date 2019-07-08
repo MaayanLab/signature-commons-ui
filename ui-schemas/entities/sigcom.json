@@ -6,17 +6,20 @@
     "Name": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Name']}"
+      "text": "${meta['Name']}",
+      "priority": 1
     },
     "Gene ID": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Gene_ID']}"
+      "text": "${meta['Gene_ID']}",
+      "priority": 2
     },
     "Taxon ID": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Taxon_ID']}"
+      "text": "${meta['Taxon_ID']}",
+      "priority": 3
     }
   }
 }
