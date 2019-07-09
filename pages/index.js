@@ -132,10 +132,8 @@ export async function get_metacounts(ui_values) {
     return mapping
   }, {})
   const meta_counts = counting_fields.reduce((stat_list, item) => {
-    const k = item.meta.Type === 'object' ? `${item.meta.Field_Name}.Name` : item.meta.Field_Name
-    stat_list.push({ name: k.indexOf('PubChemID') !== -1 ?
-                             k.replace('Small_Molecule.', '') :
-                             k.replace('.Name', ''),
+    const k = item.meta.Field_Name
+    stat_list.push({ name: item.meta.Preferred_Name,
     counts: Object.keys(meta_stats[k] || {}).length,
     icon: item.meta.MDI_Icon,
     Preferred_Name: item.meta.Preferred_Name })
@@ -172,16 +170,9 @@ export async function get_pie_stats(ui_values) {
     },
   })
   const pie_stats = pie_schema.map((item) => {
-    if (item.meta.Type === 'object') {
-      return {
-        key: item.meta.Field_Name,
-        stats: meta_stats[item.meta.Field_Name + '.Name'],
-      }
-    } else {
-      return {
-        key: item.meta.Field_Name,
-        stats: meta_stats[item.meta.Field_Name],
-      }
+    return {
+      key: item.meta.Preferred_Name,
+      stats: meta_stats[item.meta.Field_Name],
     }
   })
   const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {
