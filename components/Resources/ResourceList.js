@@ -18,7 +18,7 @@ export default class ResourceList extends React.PureComponent {
           <Grid item xs={xs} sm={sm} md={md} key={resource.meta.Resource_Name}>
             <Link
               key={resource.id}
-              to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${resource.meta.Resource_Name.replace(/ /g, '_')}`}
+              to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${resource.meta.Resource_Name}`}
             >
               <IconButton
                 alt={resource.meta.Resource_Name}

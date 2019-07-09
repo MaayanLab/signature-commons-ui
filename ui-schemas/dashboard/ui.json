@@ -17,6 +17,7 @@
       "signature_search": false,
       "deactivate_download": true,
       "deactivate_wordcloud": true,
+      "resource_name_from_library": "assay",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [

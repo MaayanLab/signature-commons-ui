@@ -62,7 +62,7 @@ export async function get_library_resources(ui_values) {
         console.error(`Resource not found: ${resource_name}`)
       }
     } else {
-      resource_name = lib.meta[ui_values.library_name] || lib.dataset
+      resource_name = ui_values.resource_name_from_library ? lib.meta[ui_values.resource_name_from_library] : lib.dataset
       const {Icon, ...rest} = lib.meta
       acc[resource_name] = {
         id: lib.id,
