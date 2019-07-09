@@ -76,6 +76,8 @@ export const BarChart = ({ width, height, meta_counts, fontSize, ...props }) => 
             fill: black,
             fontSize: fontSize,
             textAnchor: 'middle',
+            width: '100px',
+            verticalAnchor: 'middle',
           })}
         />
       </svg>
