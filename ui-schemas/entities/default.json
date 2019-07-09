@@ -6,7 +6,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "alt": "${meta['Description'] || meta['description'] || meta[Object.keys(meta)[0]]}",
+      "alt": "${id}",
       "src": "${PREFIX}/static/images/default-black.png",
       "priority": 1
     }
