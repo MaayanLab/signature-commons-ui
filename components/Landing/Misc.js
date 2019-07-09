@@ -147,7 +147,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
         </div>
       </Grid>
       {meta_counts.map((entry) => (
-        <Grid item xs={xs} sm={sm} md={md} lg key={entry.name}>
+        <Grid item xs={xs} sm={sm} md={md} key={entry.name}>
           <div className={classes.centered}>
             { entry.icon === undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span> :
               <span className={`mdi ${entry.icon} mdi-24px`}></span>
