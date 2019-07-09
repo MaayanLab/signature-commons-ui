@@ -149,8 +149,8 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       {meta_counts.map((entry) => (
         <Grid item xs={xs} sm={sm} md={md} key={entry.name}>
           <div className={classes.centered}>
-            { entry.icon === undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span> :
-              <span className={`mdi ${entry.icon} mdi-24px`}></span>
+            { entry.icon === undefined ? <span className={`mdi ${meta_default_icon} mdi-36px`}></span> :
+              <span className={`mdi ${entry.icon} mdi-36px`}></span>
             }
             <Typography variant="subheading">
               {entry.counts}
@@ -186,7 +186,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           {visible_stats.map((item) => (
             <Grid item xs={xs} key={item.preferred_name}>
               <div className={classes.centered}>
-                <span className={`mdi ${item.icon} mdi-24px`}></span>
+                <span className={`mdi ${item.icon} mdi-36px`}></span>
                 <Typography variant="title" component="h5">
                   {item.counts}
                 </Typography>
