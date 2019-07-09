@@ -172,7 +172,6 @@ const BarChartGroup = withScreenSize(function({ classes, record = {}, ...props }
 
 const StatCard = function({ classes, record = {}, ...props }) {
   const { stat_type, counts, icon } = props
-  console.log(icon)
   return (
     <Card className={`${classes.statCard} ${classes.GrayCardHeader}`}>
       <Grid container spacing={24} 
