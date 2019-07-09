@@ -33,7 +33,7 @@ export async function get_library_resources(ui_values) {
     endpoint: '/libraries',
   })
 
-  const resource_meta = response.reduce((group, data) => {
+  const resource_meta = response.filter((resource) => !resource.meta.$hidden).reduce((group, data) => {
     group[data.id] = data
     return group
   }, {})
