@@ -6,15 +6,9 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "alt": "${meta['assay']}",
+      "alt": "${meta['Description'] || meta['description'] || meta[Object.keys(meta)[0]]}",
       "src": "${PREFIX}/static/images/default-black.png",
       "priority": 1
-    },
-    "Info": {
-      "visibility": 1,
-      "type": "text-default",
-      "text": "${Object.keys(meta)[0]}: ${meta[Object.keys(meta)[0]]}",
-      "priority": 2
     }
   }
 }
