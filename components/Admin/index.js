@@ -569,7 +569,7 @@ class AdminView extends React.PureComponent {
             catchAll={this.NotFound}
             loginPage={MyLogin}
           >
-            {this.props.library_fields === null ? <div/> :
+            {this.props.library_fields === null || this.props.table_counts.filter((entry)=> entry.table==="libraries").length === 0 ? <div/> :
                 <Resource
                   name="libraries"
                   list={this.LibraryList}
@@ -578,7 +578,7 @@ class AdminView extends React.PureComponent {
                   options={{ label: this.props.ui_values.preferred_name['libraries'] }}
                 />
             }
-            {this.state.signature_fields === null ? <div/> :
+            {this.state.signature_fields === null || this.props.table_counts.filter((entry)=> entry.table==="signatures").length === 0 ? <div/> :
                 <Resource
                   name="signatures"
                   edit={this.SignatureEdit}
@@ -587,7 +587,7 @@ class AdminView extends React.PureComponent {
                   options={{ label: this.props.ui_values.preferred_name['signatures'] }}
                 />
             }
-            {this.props.entity_fields === null ? <div/> :
+            {this.props.entity_fields === null || this.props.table_counts.filter((entry)=> entry.table==="entities").length === 0 ? <div/> :
                 <Resource
                   name="entities"
                   edit={this.EntityEdit}
