@@ -31,8 +31,8 @@
         "resources": "Dataset"
       },
       "bar_chart": {
-        "Field_Name": "Version",
-        "Caption": "Libraries per year"
+        "Field_Name": "types.description.value",
+        "Caption": "Data levels"
       },
       "library_name": "title",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"

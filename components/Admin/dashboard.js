@@ -227,12 +227,14 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
             <StatRow classes={classes} {...props}/>
           </Grid>
         }
-        <Grid item xs={12} sm>
-          <PieChartGroup name={'Resource'}
-            classes={classes}
-            {...props}
-          />
-        </Grid>
+        { props.resource_signatures === undefined? null:
+          <Grid item xs={12} sm>
+            <PieChartGroup name={'Resource'}
+              classes={classes}
+              {...props}
+            />
+          </Grid>
+        }
         { Object.keys(props.pie_fields_and_stats).length === 0 ? null :
           <Grid item xs={12} sm>
             <PieChartGroup name={props.selected_field}
