@@ -158,17 +158,13 @@ class AdminView extends React.PureComponent {
             label={'Dataset type'}
             source={'dataset_type'}
           />
-          {Object.keys(this.props.library_fields).map(function(k) {
-            return (
-              <LongTextInput
-                key={k}
-                label={k.replace(/_/g, ' ')}
-                source={'meta.' + k}
-                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
-              />
-            )
-          })}
+          <LongTextInput
+            key={"meta"}
+            label={"meta"}
+            source={'meta'}
+            format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
+            parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
+          />
         </SimpleForm>
       </Edit>
     )
@@ -227,17 +223,13 @@ class AdminView extends React.PureComponent {
             label={this.props.ui_values.preferred_name_singular["libraries"]}
             source={'library'}
           />
-          {this.state.signature_fields.map(function(k) {
-            return (
-              <LongTextInput
-                key={k}
-                label={k.replace(/_/g, ' ')}
-                source={'meta.' + k}
-                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
-              />
-            )
-          })}
+          <LongTextInput
+            key={"meta"}
+            label={"meta"}
+            source={'meta'}
+            format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
+            parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
+          />
         </SimpleForm>
       </Edit>
     )
@@ -279,17 +271,13 @@ class AdminView extends React.PureComponent {
             label={'Core Validator'}
             source={'$validator'}
           />
-          {Object.keys(this.props.entity_fields).map(function(k) {
-            return (
-              <LongTextInput
-                key={k}
-                label={k.replace(/_/g, ' ')}
-                source={'meta.' + k}
-                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
-              />
-            )
-          })}
+          <LongTextInput
+            key={"meta"}
+            label={"meta"}
+            source={'meta'}
+            format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
+            parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
+          />
         </SimpleForm>
       </Edit>
     )
@@ -422,45 +410,6 @@ class AdminView extends React.PureComponent {
     })
     this.setState({
       entity_fields: entity_fields,
-    })
-  }
-
-  async fetch_metacounts() {
-    const fields = (await import('../../ui-schemas/dashboard/counting_fields.json')).default
-    this.setState({
-      counting_fields: fields,
-    })
-    const object_fields = Object.keys(fields).filter((key) => fields[key] == 'object')
-
-    // UNCOMMENT TO FETCH STUFF IN THE SERVER
-    const headers = { 'Authorization': `Basic ${this.state.token}` }
-    const { response: meta_stats } = await fetch_meta({
-      endpoint: '/signatures/value_count',
-      body: {
-        depth: 2,
-        filter: {
-          fields: Object.keys(fields),
-        },
-      },
-      signal: this.state.general_controller.signal,
-      headers,
-    })
-    const meta_counts = Object.keys(meta_stats).filter((key) => key.indexOf('.Name') > -1 ||
-                                                            // (key.indexOf(".PubChemID")>-1 &&
-                                                            //  key.indexOf("Small_Molecule")>-1) ||
-                                                            (key.indexOf('.') === -1 && object_fields.indexOf(key) === -1))
-        .reduce((stat_list, k) => {
-          stat_list.push({ name: k.indexOf('PubChemID') !== -1 ?
-                                                                            k.replace('Small_Molecule.', '') :
-                                                                            k.replace('.Name', ''),
-          counts: Object.keys(meta_stats[k]).length })
-          return (stat_list)
-        },
-        [])
-    // const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
-    // meta_counts.sort((a, b) => a.name > b.name);
-    this.setState({
-      meta_counts: meta_counts,
     })
   }
 
