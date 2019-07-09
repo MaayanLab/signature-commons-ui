@@ -69,7 +69,6 @@ export default class LibraryResults extends React.Component {
     const cols = sorted_entries.filter(
         (entry) => {
           const prop = entry[0]
-          console.log(entry)
           if (this.check_column({ schema, prop, lib })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {

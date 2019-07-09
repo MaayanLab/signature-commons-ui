@@ -60,7 +60,6 @@ async function fetch_fields(source) {
   const { response: fields } = await fetch_meta({
     endpoint: `/${source}/key_count`,
   })
-  console.log(fields)
   const top_fields = Object.keys(fields).filter((field)=>field.indexOf(".")==-1)
   return (top_fields)
 }
