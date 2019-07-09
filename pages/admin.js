@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import { UIValues } from '../util/ui_values'
 
 import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
 import { get_signature_counts_per_resources } from '../components/Resources/resources.js'
@@ -96,7 +97,8 @@ export async function get_ui_values() {
         },
       },
     })
-  const ui_values = await UIValues["landing"](ui_val[0].meta.content)
+  console.log(ui_val)
+  const ui_values = await UIValues["admin"](ui_val[0].meta.content)
   return {ui_values}
 }
 
