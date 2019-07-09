@@ -1,4 +1,5 @@
 import React from 'react'
+import { animateScroll as scroll } from 'react-scroll'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -19,16 +20,23 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
       input: {},
       searchType: 'metadata',
       type: 'Overlap',
+      scroll: false
     }
     this.handleChange = this.handleChange.bind(this)
     this.searchChange = this.searchChange.bind(this)
+    this.scrollToTop = this.scrollToTop.bind(this);
   }
 
-  handleChange(event, searchType) {
+  scrollToTop() {
+    scroll.scrollToTop();
+  }
+
+  handleChange(event, searchType, scroll=false) {
     if (searchType) {
       this.setState({ searchType }, () => {
-        const element = document.getElementById('topcard')
-        element.scrollIntoView({ block: 'start', inline: 'center', behavior: 'smooth' })
+        if (scroll){
+          this.scrollToTop()
+        }
       })
     }
   }
@@ -44,7 +52,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           spacing={24}
           alignItems={'center'}
           direction={'column'}>
-          <Grid item xs={12} className={this.props.classes.stretched} id='topcard'>
+          <Grid item xs={12} className={this.props.classes.stretched}>
             <SearchCard search={this.state.search}
               searchChange={this.searchChange}
               handleChange={this.handleChange}

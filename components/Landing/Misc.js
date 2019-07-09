@@ -45,7 +45,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'metadata')}>
+                  onClick={(e) => props.handleChange(e, 'metadata', true)}>
                   <FileFind className={classes.icon} />
                 </Button>
               </Grid>
@@ -67,7 +67,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'signature')}>
+                  onClick={(e) => props.handleChange(e, 'signature', true)}>
                   <FindReplace className={classes.icon} />
                 </Button>
               </Grid>
