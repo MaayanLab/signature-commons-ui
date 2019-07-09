@@ -250,10 +250,10 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
         }
         { Object.keys(props.barcounts).length === 0 || props.barcounts === undefined ? null :
           <Grid item xs={12}>
-            { props.ui_values.LandingText['bar-chart'] !== undefined ?
+            { props.ui_values.bar_chart !== undefined ?
                 <BarChartGroup classes={classes}
-                  name={props.ui_values.LandingText['bar-chart'].Caption}
-                  bar_counts={props.barcounts[props.ui_values.LandingText['bar-chart'].Field_Name]}
+                  name={props.ui_values.bar_chart.Caption}
+                  bar_counts={props.barcounts[props.ui_values.bar_chart.Field_Name]}
                   {...props}/> :
                 <BarChartGroup classes={classes}
                   name={'Bar Chart'}

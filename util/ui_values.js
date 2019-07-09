@@ -85,19 +85,21 @@ export const UIValues = {
           header: values.header || "Signature Commons",
           resource_pie_caption: values.resource_pie_caption || "Signatures per Resource",
         },
-        preferred_name_singular: {
-          libraries: values.preferred_name_singular.libraries || "Dataset",
-          signatures: values.preferred_name_singular.signatures || "Signature",
-          entities: values.preferred_name_singular.entities || "Gene",
-          resources: values.preferred_name_singular.resources || "Resource"
-        },
-        preferred_name: {
-          libraries: values.preferred_name || "Datasets",
-          signatures: values.preferred_name || "Signatures",
-          entities: values.preferred_name || "Genes",
-          resources: values.preferred_name || "Resources"
-        },
-        barChart: values.barChart,
+        preferred_name_singular: values.preferred_name_singular || 
+          {
+            libraries: "Dataset",
+            signatures: "Signature",
+            entities: "Gene",
+            resources: "Resource"
+          },
+        preferred_name: values.preferred_name || 
+          {
+            libraries: "Datasets",
+            signatures: "Signatures",
+            entities: "Genes",
+            resources: "Resources"
+          },
+        bar_chart: values.bar_chart,
         library_name: values.library_name || library_name,
         resource_name: values.resource_name,
         counting_validator: values.counting_validator || "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
