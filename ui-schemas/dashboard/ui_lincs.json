@@ -11,6 +11,10 @@
       "deactivate_download": true,
       "deactivate_wordcloud": true,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "bar_chart": {
+        "Field_Name": "types.description.value",
+        "Caption": "Data levels"
+      },
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
         "LINCS",
@@ -25,6 +29,10 @@
       "preferred_name_singular": {
         "libraries": "Dataset",
         "resources": "Dataset"
+      },
+      "bar_chart": {
+        "Field_Name": "Version",
+        "Caption": "Libraries per year"
       },
       "library_name": "title",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"

@@ -1,0 +1,48 @@
+[
+  {
+    "Field_Name": "types.instrument.value",
+    "Type": "object",
+    "Preferred_Name": "Instrument",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-microscope",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "types.information.value",
+    "Type": "object",
+    "Preferred_Name": "Information",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-information-outline",
+    "Meta_Count": true,
+    "Pie_Count": false
+  },
+  {
+    "Field_Name": "types.description.value",
+    "Type": "object",
+    "Preferred_Name": "Data Level",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-animation-outline",
+    "Meta_Count": true,
+    "Pie_Count": false,
+    "Bar_Count": true
+  },
+  {
+    "Field_Name": "storedIn.name",
+    "Type": "object",
+    "Preferred_Name": "Source",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-database",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "libraries",
+    "Type": "table",
+    "Preferred_Name": "Datasets",
+    "MDI_Icon": "mdi-folder-text-outline",
+    "Table_Count": true,
+    "Visible_On_Landing": false,
+    "Visible_On_Admin": true 
+  }
+]
