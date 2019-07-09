@@ -183,8 +183,6 @@ export async function get_pie_stats(ui_values) {
     mapping = { ...item, ...mapping }
     return mapping
   }, {})
-  console.log(meta_stats)
-  console.log(piefields)
   const pie_stats = piefields.map((item) => {
     return {
       key: item.meta.Preferred_Name,

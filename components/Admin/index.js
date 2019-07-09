@@ -44,7 +44,6 @@ class AdminView extends React.PureComponent {
     super(props)
     const token = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_CREDS : ''
     this.state = {
-      signature_fields: null,
       pie_controller: null,
       pie_stats: null,
       selected_field: Object.keys(props.pie_fields_and_stats)[0] || '',
@@ -122,7 +121,7 @@ class AdminView extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.props.library_fields).map(function(k) {
+          {this.props.library_fields.map(function(k) {
             return (
               <DisplayField
                 key={k}
@@ -245,7 +244,7 @@ class AdminView extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.props.entity_fields).map(function(k) {
+          {this.props.entity_fields.map(function(k) {
             return (
               <DisplayField
                 key={k}

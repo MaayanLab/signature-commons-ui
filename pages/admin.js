@@ -60,7 +60,9 @@ async function fetch_fields(source) {
   const { response: fields } = await fetch_meta({
     endpoint: `/${source}/key_count`,
   })
-  return (fields)
+  console.log(fields)
+  const top_fields = Object.keys(fields).filter((field)=>field.indexOf(".")==-1)
+  return (top_fields)
 }
 
 async function get_signature_keys() {
@@ -79,7 +81,8 @@ async function get_signature_keys() {
   })
   const sigkeys = await Promise.all(signature_keys_promises)
   const signature_keys = sigkeys.reduce((keys, sig) => {
-    keys[sig.id] = sig.keys
+    const top_fields = sig.keys.filter((field)=>field.indexOf(".")==-1)
+    keys[sig.id] = top_fields
     return keys
   }, {})
   return signature_keys
@@ -97,7 +100,6 @@ export async function get_ui_values() {
         },
       },
     })
-  console.log(ui_val)
   const ui_values = await UIValues["admin"](ui_val[0].meta.content)
   return {ui_values}
 }
