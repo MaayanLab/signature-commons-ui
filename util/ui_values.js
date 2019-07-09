@@ -58,6 +58,7 @@ export const UIValues = {
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
         bar_chart: values.bar_chart,
         library_name: values.library_name || library_name,
+        resource_name_from_library: values.resource_name_from_library,
         resource_name: values.resource_name,
         counting_validator: values.counting_validator || "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
         ui_schema: values.ui_schema || "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
