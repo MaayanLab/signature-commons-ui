@@ -4,7 +4,7 @@
     "content": {
       "bar_chart": {
         "Field_Name": "Version",
-        "Caption": "Libraries per year"
+        "Caption": "Datasets per year"
       },
       "library_name": "Library_name",
       "resource_name": "Resource_Name",
@@ -18,7 +18,7 @@
       "resource_pie_caption": "Signatures per Resource",
       "bar_chart": {
         "Field_Name": "Version",
-        "Caption": "Libraries per year"
+        "Caption": "Datasets per year"
       },
       "library_name": "Library_name",
       "resource_name": "Resource_Name",

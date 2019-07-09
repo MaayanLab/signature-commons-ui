@@ -137,7 +137,7 @@
   {
     "Field_Name": "libraries",
     "Type": "table",
-    "Preferred_Name": "Libraries",
+    "Preferred_Name": "Datasets",
     "MDI_Icon": "mdi-library-books",
     "Table_Count": true,
     "Visible_On_Landing": true,
@@ -155,7 +155,7 @@
   {
     "Field_Name": "entities",
     "Type": "table",
-    "Preferred_Name": "Entities",
+    "Preferred_Name": "Genes",
     "MDI_Icon": "mdi-blur",
     "Table_Count": true,
     "Visible_On_Landing": false,
