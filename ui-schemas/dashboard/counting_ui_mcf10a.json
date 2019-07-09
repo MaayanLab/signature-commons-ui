@@ -133,6 +133,6 @@
     "MDI_Icon": "mdi-test-tube-empty",
     "Table_Count": true,
     "Visible_On_Landing": true,
-    "Visible_On_Admin": true 
+    "Visible_On_Admin": false 
   }
 ]
