@@ -1,0 +1,28 @@
+[
+  {
+    "landing": true,
+    "content": {
+      "bar_chart": {
+        "Field_Name": "Version",
+        "Caption": "Libraries per year"
+      },
+      "library_name": "Library_name",
+      "resource_name": "Resource_Name",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json"
+    }
+  },
+  {
+    "admin": true,
+    "content": {
+      "resource_pie_caption": "Signatures per Resource",
+      "bar_chart": {
+        "Field_Name": "Version",
+        "Caption": "Libraries per year"
+      },
+      "library_name": "Library_name",
+      "resource_name": "Resource_Name",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
+    }
+  }
+]

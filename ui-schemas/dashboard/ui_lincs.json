@@ -1,0 +1,33 @@
+[
+  {
+    "landing": true,
+    "content": {
+      "library_name": "title",
+      "preferred_name_singular": {
+        "libraries": "Dataset",
+        "resources": "Dataset"
+      },
+      "signature_search": false,
+      "deactivate_download": true,
+      "deactivate_wordcloud": true,
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+      "search_terms": [
+        "LINCS",
+        "Kinase",
+        "Mass spectrometer"
+      ]
+    }
+  },
+  {
+    "admin": true,
+    "content": {
+      "preferred_name_singular": {
+        "libraries": "Dataset",
+        "resources": "Dataset"
+      },
+      "library_name": "title",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
+    }
+  }
+]
