@@ -5,10 +5,16 @@
   "properties": {
     "Image": {
       "visibility": 1,
-      "type": "header-img",
+      "type": "img",
+      "alt": "${meta[Object.keys(meta)[0]]}",
       "src": "${PREFIX}/static/images/default-black.png",
-      "alt": "Dataset",
       "priority": 1
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Description || meta.description}",
+      "priority": 2
     }
   }
 }
