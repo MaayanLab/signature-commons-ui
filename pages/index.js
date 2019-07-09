@@ -145,7 +145,7 @@ export async function get_metacounts(ui_values) {
 }
 
 export async function get_pie_stats(ui_values) {
-  const { response: pie_schema } = await fetch_meta_post({
+  const { response: piefields } = await fetch_meta_post({
         endpoint: '/schemas/find',
         body: {
           filter: {
@@ -156,20 +156,36 @@ export async function get_pie_stats(ui_values) {
           },
         },
       })
-  const piefields = pie_schema.map((item) => (item.meta.Field_Name))
-  if (piefields.length === 0){
-    return ({pie_fields_and_stats: {}})
-  }
-  const { response: meta_stats } = await fetch_meta({
-    endpoint: '/signatures/value_count',
-    body: {
-      depth: 2,
-      filter: {
-        fields: piefields,
+  const per_table_fields = piefields.reduce((tables, item) => {
+    if (tables[item.meta.Table] === undefined) {
+      tables[item.meta.Table] = [item.meta.Field_Name]
+    } else {
+      tables[item.meta.Table] = [...tables[item.meta.Table], item.meta.Field_Name]
+    }
+    return tables
+  }, {})
+
+  const meta_promise = Object.keys(per_table_fields).map(async (table) => {
+    const { response: meta_stats } = await fetch_meta({
+      endpoint: `/${table}/value_count`,
+      body: {
+        depth: 2,
+        filter: {
+          fields: per_table_fields[table],
+        },
       },
-    },
+    })
+    return meta_stats
   })
-  const pie_stats = pie_schema.map((item) => {
+
+  const meta = await Promise.all(meta_promise)
+  const meta_stats = meta.reduce((mapping, item) => {
+    mapping = { ...item, ...mapping }
+    return mapping
+  }, {})
+  console.log(meta_stats)
+  console.log(piefields)
+  const pie_stats = piefields.map((item) => {
     return {
       key: item.meta.Preferred_Name,
       stats: meta_stats[item.meta.Field_Name],
