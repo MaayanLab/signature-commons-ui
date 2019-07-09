@@ -38,8 +38,6 @@ We can tell the UI which keys to count by creating a database entry on the schem
 
 The following table describe the fields for each entry
 
-We can change text contenct in the landing page by modifying the [ui.json](../../ui-schemas/dashboard/ui.json) file. Note the following fields:
-
 | Field         | Value           | Remarks |
 | ------------- |---------------| ----------|
 | landing | boolean | Use this ui for the landing page|
