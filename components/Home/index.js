@@ -9,7 +9,25 @@ import MetadataSearch from '../MetadataSearch'
 import Resources from '../Resources'
 import SignatureSearch from '../SignatureSearch'
 import Upload from '../Upload'
+import NProgress from 'nprogress'
+import { fetch_meta_post } from '../../util/fetch/meta'
 
+function build_where(q) {
+  if (q.indexOf(':') !== -1) {
+    const [key, ...value] = q.split(':')
+    return {
+      ['meta.' + key]: {
+        ilike: '%' + value.join(':') + '%',
+      },
+    }
+  } else {
+    return {
+      meta: {
+        fullTextSearch: q,
+      },
+    }
+  }
+}
 
 export default class Home extends React.PureComponent {
   constructor(props) {
@@ -34,6 +52,7 @@ export default class Home extends React.PureComponent {
     // metadata search
     this.searchChange = this.searchChange.bind(this)
     this.currentSearchChange = this.currentSearchChange.bind(this)
+    this.performSearch = this.performSearch.bind(this)
   }
 
   async componentDidMount() {
@@ -72,13 +91,110 @@ export default class Home extends React.PureComponent {
   }
 
   currentSearchChange(currentSearch) {
-    this.setState( prevState => ({
-      metadata_search: {
-        ...prevState.metadata_search,
-        currentSearch,
-        search: currentSearch
+    if(currentSearch !== this.state.currentSearch){
+      this.setState( prevState => ({
+        metadata_search: {
+          ...prevState.metadata_search,
+          currentSearch,
+          search: currentSearch
+        }
+      }), () => {
+        this.performSearch('signatures')
+        this.performSearch('libraries')
+        this.performSearch('entities')
+      })
+    }
+  }
+
+  async performSearch(table, page=0, rowsPerPage=10) {
+    if (this.state.metadata_search[`${table}_controller`] !== undefined) {
+      this.state.metadata_search[`${table}_controller`].abort()
+    }
+    try {
+      console.log("HERE")
+      const controller = new AbortController()
+      NProgress.start()
+      this.setState( prevState => ({
+            metadata_search: {
+              ...prevState.metadata_search,
+              [`${table}_status`]: 'Searching...',
+              [table]: undefined,
+              [`${table}_controller`]: controller,
+            }
+          }))
+      const where = build_where(this.state.metadata_search.search)
+
+      const start = Date.now()
+      const limit = rowsPerPage
+      const skip = rowsPerPage * page
+
+      const { duration: duration_meta_1, contentRange, response: results } = await fetch_meta_post({
+        endpoint: `/${table}/find`,
+        body: {
+          filter: {
+            where,
+            limit: limit,
+            skip: skip,
+          },
+        },
+        signal: controller.signal,
+      })
+
+      let duration_meta = duration_meta_1
+      if (table === 'signatures') {
+        const library_ids = [...new Set(results.map((sig) => sig.library))]
+        const { duration: duration_meta_2, response: libraries } = await fetch_meta_post({
+          endpoint: '/libraries/find',
+          body: {
+            filter: {
+              where: {
+                id: {
+                  inq: library_ids,
+                },
+              },
+            },
+          },
+          signal: controller.signal,
+        })
+        duration_meta = duration_meta_1 + duration_meta_2
+        const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
+        for (const r of results) {
+          const lib_meta = { 'id': library_dict[r.library].id,
+            'dataset': library_dict[r.library].dataset,
+            'meta': {
+              [this.state.library_name]: library_dict[r.library].meta[this.state.library_name],
+              'Icon': library_dict[r.library].meta['Icon'],
+            },
+          }
+          r.library = lib_meta
+        }
       }
-    }))
+      const duration_label = table + '_duration'
+      const duration_meta_label = table + '_duration_meta'
+      const count_label = table + '_count'
+      this.setState( prevState => ({
+        metadata_search: {
+          ...prevState.metadata_search,
+          [`${table}_status`]: 'Searching...',
+          [table]: results,
+          [duration_label]: (Date.now() - start) / 1000,
+          [duration_meta_label]: duration_meta,
+          [count_label]: contentRange.count,
+        }
+      }), () => {
+        NProgress.done()
+      })
+    } catch (e) {
+      NProgress.done()
+      if (e.code !== DOMException.ABORT_ERR) {
+        this.setState( prevState => ({
+            metadata_search: {
+              ...prevState.metadata_search,
+              [`${table}_status`]: e + '',
+          }
+        }))
+      }
+    }
   }
 
   updateCart(cart) {
@@ -180,6 +296,7 @@ export default class Home extends React.PureComponent {
       schemas={this.props.schemas}
       searchChange={this.searchChange}
       currentSearchChange={this.currentSearchChange}
+      performSearch={this.performSearch}
       {...props}
       {...this.state.metadata_search}
     />

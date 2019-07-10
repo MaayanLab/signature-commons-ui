@@ -42,12 +42,7 @@ export default class MetadataSearch extends React.Component {
         </div>
         {this.props.currentSearch === '' ? null : (
           <SearchResults
-            signatures_total_count={this.props.signatures_total_count}
-            libraries_total_count={this.props.libraries_total_count}
-            entities_total_count={this.props.entities_total_count}
-            search={this.props.currentSearch}
-            ui_values={this.props.ui_values}
-            schemas={this.props.schemas}
+            {...this.props}
           />
         )}
       </div>
