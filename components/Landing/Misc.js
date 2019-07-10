@@ -88,13 +88,13 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || "Resources"}`}>
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
                   <NearMe className={classes.icon} />
                 </Button>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    {`Browse ${props.ui_values.preferred_name.resources || "Resources"}`}
+                  {`Browse ${props.ui_values.preferred_name.resources || 'Resources'}`}
                 </Typography>
               </Grid>
             </Grid>
@@ -129,7 +129,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   const { meta_counts } = props
   let sm = 3
   let xs = 4
-  let md = 2
+  const md = 2
   if (meta_counts.length < 4) {
     sm = 12 / meta_counts.length
     xs = 12 / meta_counts.length
@@ -167,7 +167,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
 
 export const StatDiv = ({ classes, width, ...props }) => {
   const visible_stats = props.table_counts.filter((item) => item.Visible_On_Landing)
-  const xs = visible_stats.length <=4 ? 12 / visible_stats.length : 3
+  const xs = visible_stats.length <= 4 ? 12 / visible_stats.length : 3
   return (
     <Grid container
       spacing={24}

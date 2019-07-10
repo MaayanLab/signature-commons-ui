@@ -34,20 +34,20 @@ export const labels = {
     }
   },
   'object': ({ label, prop, data, highlight }) => {
-      const val = makeTemplate(prop.text, data, prop.subfield)
-      if (val === 'undefined') {
-        return null
-      } else {
-        return (
-          <Highlight
-            text={label + ': ' + val}
-            highlight={highlight}
-            props={{
-              className: 'chip grey white-text',
-            }}
-          />
-        )
-      }
+    const val = makeTemplate(prop.text, data, prop.subfield)
+    if (val === 'undefined') {
+      return null
+    } else {
+      return (
+        <Highlight
+          text={label + ': ' + val}
+          highlight={highlight}
+          props={{
+            className: 'chip grey white-text',
+          }}
+        />
+      )
+    }
   },
   'header-img': ({ label, prop, data, highlight }) => (
     <div
@@ -118,19 +118,17 @@ export function objectMatch(m, o) {
   }
   for (const k of Object.keys(m)) {
     let K
-    try{
+    try {
       K = makeTemplate(k, o)
-    }
-    catch{
-      return(false)
+    } catch {
+      return (false)
     }
     if (typeof m[k] === 'string') {
       let V
-      try{
+      try {
         V = makeTemplate(m[k], o)
-      }
-      catch{
-        return(false)
+      } catch {
+        return (false)
       }
       if (K.match(RegExp(V)) === null) {
         return false
@@ -162,13 +160,13 @@ export function Label({ item, highlight, visibility, schemas }) {
     console.error('Could not match ui-schema for item', item)
     return null
   }
-  let schema = matched_schemas[0]
-  const img_keys = Object.keys(schema.properties).filter((key)=> (matched_schemas[0].properties[key].type==="img"))
-  if (img_keys.length > 0){
-    const {[img_keys[0]]: img, ...rest} = schema.properties
-    schema.properties = {[img_keys[0]]: img, ...rest}
+  const schema = matched_schemas[0]
+  const img_keys = Object.keys(schema.properties).filter((key) => (matched_schemas[0].properties[key].type === 'img'))
+  if (img_keys.length > 0) {
+    const { [img_keys[0]]: img, ...rest } = schema.properties
+    schema.properties = { [img_keys[0]]: img, ...rest }
   }
-  const sorted_entries = Object.entries(schema.properties).sort((a,b) => a[1].priority - b[1].priority)
+  const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
   return (
     <div>
       {sorted_entries.filter(

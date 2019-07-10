@@ -65,7 +65,7 @@ export default class LibraryResults extends React.Component {
         (schema) => objectMatch(schema.match, sigs[0])
     )[0]
     const lib = sigs[0].library.id
-    const sorted_entries = Object.entries(schema.properties).sort((a,b) => a[1].priority - b[1].priority)
+    const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
     const cols = sorted_entries.filter(
         (entry) => {
           const prop = entry[0]
@@ -82,7 +82,7 @@ export default class LibraryResults extends React.Component {
           }
           return false
         }
-    ).map((entry)=>entry[0])
+    ).map((entry) => entry[0])
     const options = {
       filter: true,
       filterType: 'dropdown',

@@ -174,7 +174,7 @@ const StatCard = function({ classes, record = {}, ...props }) {
   const { stat_type, counts, icon } = props
   return (
     <Card className={`${classes.statCard} ${classes.GrayCardHeader}`}>
-      <Grid container spacing={24} 
+      <Grid container spacing={24}
         justify="space-between">
         <Grid item>
           <Typography variant="title" className={classes.whiteText}>
@@ -226,7 +226,7 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
             <StatRow classes={classes} {...props}/>
           </Grid>
         }
-        { props.resource_signatures === undefined? null:
+        { props.resource_signatures === undefined ? null :
           <Grid item xs={12} sm>
             <PieChartGroup name={'Resource'}
               classes={classes}

@@ -1,5 +1,4 @@
-import { fetch_meta, fetch_meta_post } from '../../util/fetch/meta'
-import { makeTemplate } from '../../util/makeTemplate'
+import { fetch_meta } from '../../util/fetch/meta'
 
 export const primary_resources = [
   'CREEDS',
@@ -44,32 +43,32 @@ export async function get_library_resources(ui_values) {
     const resource_id = lib.resource
     // lib resource matches with resource table
     if (resource_id) {
-      if (resource_id in resource_meta){
-        let resource = resource_meta[resource_id]
-        if ("resource_name" in ui_values && ui_values.resource_name !== undefined) {
+      if (resource_id in resource_meta) {
+        const resource = resource_meta[resource_id]
+        if ('resource_name' in ui_values && ui_values.resource_name !== undefined) {
           resource_name = resource.meta[ui_values.resource_name]
-        } else{
-          console.warn("source of resource name is not defined, using either Resource_Name or ids")
-          resource_name = resource.meta["Resource_Name"] || resource_id
+        } else {
+          console.warn('source of resource name is not defined, using either Resource_Name or ids')
+          resource_name = resource.meta['Resource_Name'] || resource_id
         }
-        if (!(resource_name in acc)){
+        if (!(resource_name in acc)) {
           resource.libraries = []
           resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon}`
           acc[resource_name] = resource
         }
-        acc[resource_name].libraries.push({...lib})
+        acc[resource_name].libraries.push({ ...lib })
       } else {
         console.error(`Resource not found: ${resource_name}`)
       }
     } else {
       resource_name = ui_values.resource_name_from_library ? lib.meta[ui_values.resource_name_from_library] : lib.dataset
-      const {Icon, ...rest} = lib.meta
+      const { Icon, ...rest } = lib.meta
       acc[resource_name] = {
         id: lib.id,
         meta: {
           Resource_Name: resource_name,
           icon: `${process.env.PREFIX}/${iconOf[resource_name] || Icon || 'static/images/default-black.png'}`,
-          ...rest
+          ...rest,
         },
         is_library: true,
         libraries: [lib],
@@ -112,24 +111,24 @@ export async function get_signature_counts_per_resources(ui_values) {
     }
   })
   const counts = await Promise.all(count_promises)
-  const count_dict = counts.reduce((acc, item)=>{
+  const count_dict = counts.reduce((acc, item) => {
     acc[item.id] = item.count
     return acc
   }, {})
 
-  const total_count = counts.reduce((acc, item)=>{
+  const total_count = counts.reduce((acc, item) => {
     acc = acc + item.count
     return acc
   }, 0)
 
   const resources_with_counts = Object.values(resources).map((resource) => {
-    const total_sigs = resource.libraries.reduce((acc, lib)=>{
+    const total_sigs = resource.libraries.reduce((acc, lib) => {
       acc = acc + count_dict[lib.id]
       return acc
-    },0)
+    }, 0)
     resource.meta.Signature_Count = total_sigs
-    return(resource)
-  }).reduce((acc, resource)=>{
+    return (resource)
+  }).reduce((acc, resource) => {
     acc[resource.meta.Resource_Name] = resource
     return acc
   }, {})
@@ -141,7 +140,7 @@ export async function get_signature_counts_per_resources(ui_values) {
     } else {
       groups[resource_name] = groups[resource_name] + lib.count
     }
-    if(lib.count!== undefined){
+    if (lib.count !== undefined) {
 
     }
     return groups
@@ -154,7 +153,7 @@ export async function get_signature_counts_per_resources(ui_values) {
   //     return b.counts - a.counts;
   // });
   return {
-    resource_signatures: total_count === 0 ? undefined: resource_signatures, // for_sorting.slice(0,11)
+    resource_signatures: total_count === 0 ? undefined : resource_signatures, // for_sorting.slice(0,11)
     libraries,
     resources: resources_with_counts,
     library_resource,

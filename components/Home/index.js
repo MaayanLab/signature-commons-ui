@@ -2,7 +2,7 @@ import { Set } from 'immutable'
 import M from 'materialize-css'
 import Base from '../../components/Base'
 import React from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import { call } from '../../util/call'
 import Landing from '../Landing'
 import MetadataSearch from '../MetadataSearch'
@@ -66,48 +66,48 @@ export default class Home extends React.PureComponent {
     if (this.state.pie_stats === null) {
       this.fetch_stats(this.state.selected_field)
     }
-    const signatures_table_stats = this.props.table_counts.filter((item) => item.table === "signatures")
-    const libraries_table_stats = this.props.table_counts.filter((item) => item.table === "libraries")
-    const entities_table_stats = this.props.table_counts.filter((item) => item.table === "entities")
-    this.setState( prevState => ({
+    const signatures_table_stats = this.props.table_counts.filter((item) => item.table === 'signatures')
+    const libraries_table_stats = this.props.table_counts.filter((item) => item.table === 'libraries')
+    const entities_table_stats = this.props.table_counts.filter((item) => item.table === 'entities')
+    this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
         signatures_total_count: signatures_table_stats.length > 0 ? signatures_table_stats[0].counts : undefined,
         libraries_total_count: libraries_table_stats.length > 0 ? libraries_table_stats[0].counts : undefined,
         entities_total_count: entities_table_stats.length > 0 ? entities_table_stats[0].counts : undefined,
-      }
+      },
     }))
   }
 
   componentDidUpdate() {
     M.AutoInit()
     M.updateTextFields()
-    if (this.state.metadata_search.search_status==="Initializing"){
+    if (this.state.metadata_search.search_status === 'Initializing') {
       NProgress.start()
-    }else if(this.state.metadata_search.completed_search===3){
+    } else if (this.state.metadata_search.completed_search === 3) {
       NProgress.done()
     }
   }
 
   searchChange(search) {
-    this.setState( prevState => ({
+    this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
-        search
-      }
+        search,
+      },
     }))
   }
 
   currentSearchChange(currentSearch) {
-    if(currentSearch!=='' && currentSearch !== this.state.metadata_search.currentSearch){
-      this.setState( prevState => ({
+    if (currentSearch !== '' && currentSearch !== this.state.metadata_search.currentSearch) {
+      this.setState((prevState) => ({
         metadata_search: {
           ...prevState.metadata_search,
           currentSearch: currentSearch,
           search: currentSearch,
           completed_search: 0,
-          search_status: "Initializing"
-        }
+          search_status: 'Initializing',
+        },
       }), () => {
         this.performSearch('signatures')
         this.performSearch('libraries')
@@ -116,39 +116,39 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  resetCurrentSearch(){
-    this.setState( prevState => ({
+  resetCurrentSearch() {
+    this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
         currentSearch: '',
         search: '',
-      }
+      },
     }))
   }
 
-  resetMetadataSearchStatus(){
-    this.setState( prevState => ({
+  resetMetadataSearchStatus() {
+    this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
         completed_search: 0,
-        search_status: ''
-      }
+        search_status: '',
+      },
     }))
   }
 
-  async performSearch(table, page=0, rowsPerPage=10, paginating=false) {
+  async performSearch(table, page = 0, rowsPerPage = 10, paginating = false) {
     if (this.state.metadata_search[`${table}_controller`] !== undefined) {
       this.state.metadata_search[`${table}_controller`].abort()
     }
     try {
       const controller = new AbortController()
-      this.setState( prevState => ({
-            metadata_search: {
-              ...prevState.metadata_search,
-              [`${table}_status`]: 'Searching...',
-              [`${table}_controller`]: controller,
-            }
-          }))
+      this.setState((prevState) => ({
+        metadata_search: {
+          ...prevState.metadata_search,
+          [`${table}_status`]: 'Searching...',
+          [`${table}_controller`]: controller,
+        },
+      }))
       const where = build_where(this.state.metadata_search.currentSearch)
 
       const start = Date.now()
@@ -199,7 +199,7 @@ export default class Home extends React.PureComponent {
       const duration_label = table + '_duration'
       const duration_meta_label = table + '_duration_meta'
       const count_label = table + '_count'
-      this.setState( prevState => ({
+      this.setState((prevState) => ({
         metadata_search: {
           ...prevState.metadata_search,
           [`${table}_status`]: '',
@@ -207,18 +207,18 @@ export default class Home extends React.PureComponent {
           [duration_label]: (Date.now() - start) / 1000,
           [duration_meta_label]: duration_meta,
           [count_label]: contentRange.count,
-          search_status: results.length > 0 ? "Matched": prevState.metadata_search.search_status,
+          search_status: results.length > 0 ? 'Matched' : prevState.metadata_search.search_status,
           completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
         },
       }))
     } catch (e) {
       NProgress.done()
       if (e.code !== DOMException.ABORT_ERR) {
-        this.setState( prevState => ({
-            metadata_search: {
-              ...prevState.metadata_search,
-              [`${table}_status`]: e + '',
-          }
+        this.setState((prevState) => ({
+          metadata_search: {
+            ...prevState.metadata_search,
+            [`${table}_status`]: e + '',
+          },
         }))
       }
     }
@@ -369,12 +369,12 @@ export default class Home extends React.PureComponent {
           <Route
             exact path="/"
             render={(router_props) => <Landing handleSelectField={this.handleSelectField}
-            searchChange={this.searchChange}
-            currentSearchChange={this.currentSearchChange}
-            resetCurrentSearch={this.resetCurrentSearch}
-            {...this.state}
-            {...this.props}
-            {...router_props}/>}
+              searchChange={this.searchChange}
+              currentSearchChange={this.currentSearchChange}
+              resetCurrentSearch={this.resetCurrentSearch}
+              {...this.state}
+              {...this.props}
+              {...router_props}/>}
           />
           {this.props.ui_values.nav.signature_search ?
             <Route

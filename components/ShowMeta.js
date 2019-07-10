@@ -6,22 +6,22 @@ import { withStyles } from '@material-ui/core/styles'
 import { landingStyle } from '../styles/jss/theme.js'
 
 function validURL(str) {
-  try{
-    const url = new URL(str)
-  }catch{
+  try {
+    new URL(str)
+  } catch {
     return false
   }
-  return true;
+  return true
 }
 
 function validAccession(str) {
-  return str.match(RegExp("^[A-Za-z]+:([A-Za-z]+:)?[A-Za-z0-9]+$"))
+  return str.match(RegExp('^[A-Za-z]+:([A-Za-z]+:)?[A-Za-z0-9]+$'))
 }
 
 export function ShowMeta({ value, highlight, classes }) {
   if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
-    if(validURL(value)){
-      if (! validAccession(value)){
+    if (validURL(value)) {
+      if (! validAccession(value)) {
         return (
           <Highlight
             Component={(props) => <a href={value} {...props}>{value}</a>}
@@ -68,16 +68,16 @@ export function ShowMeta({ value, highlight, classes }) {
         </Grid>
       )
     }
-    if (value["Description"] !== undefined) {
-      const {Description, ...rest} = value
-      value = {Description, ...rest}
-    }else if (value["description"] !== undefined) {
-      const {description, ...rest} = value
-      value = {description, ...rest}
+    if (value['Description'] !== undefined) {
+      const { Description, ...rest } = value
+      value = { Description, ...rest }
+    } else if (value['description'] !== undefined) {
+      const { description, ...rest } = value
+      value = { description, ...rest }
     }
     return (
       <div>
-        {Object.keys(value).filter((key) =>  (!key.startsWith('$') && key.toLowerCase()!=="icon")).map((key, ind) => (
+        {Object.keys(value).filter((key) => (!key.startsWith('$') && key.toLowerCase() !== 'icon')).map((key, ind) => (
           <Grid container
             spacing={24}
             key={key}>

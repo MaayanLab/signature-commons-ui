@@ -1,14 +1,14 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button'
 import NProgress from 'nprogress'
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
 
-import {download_signature_json,
-        download_library_json} from './download'
+import { download_signature_json,
+  download_library_json } from './download'
 
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
 const Label = dynamic(() => import('../../components/Label'), { ssr: false })
@@ -31,30 +31,30 @@ export default class MetadataSearchResults extends React.Component {
     }
   }
 
-  async handleDownload(type, id){
+  async handleDownload(type, id) {
     NProgress.start()
     await download[type](id)
     NProgress.done()
   }
 
   render() {
-    if (this.props.items.length === 0){
-      return(
+    if (this.props.items.length === 0) {
+      return (
         <Grid container
           spacing={24}
           alignItems={'center'}
           direction={'column'}>
           <Grid item>
-            <Card style={{width:500, height: 100, margin: "50px 0", textAlign: "center", "verticalAlign": "middle"}}>
+            <Card style={{ 'width': 500, 'height': 100, 'margin': '50px 0', 'textAlign': 'center', 'verticalAlign': 'middle' }}>
               <CardContent>
-                <Typography variant="title" style={{padding:"20px 0"}}>
+                <Typography variant="title" style={{ padding: '20px 0' }}>
                   No matching {this.props.type.toLowerCase()} found
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
-        )
+      )
     }
     return (
       <ul
@@ -67,7 +67,7 @@ export default class MetadataSearchResults extends React.Component {
             value = [
               {
                 '@id': item.library.id,
-                '@type': this.props.preferred_name["libraries"] || "Library",
+                '@type': this.props.preferred_name['libraries'] || 'Library',
                 'meta': item.library.meta,
               },
               {
@@ -110,14 +110,14 @@ export default class MetadataSearchResults extends React.Component {
                     schemas={this.props.schemas}
                   />
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                  {this.props.table_name === "entities" || this.props.deactivate_download ? null:
+                  {this.props.table_name === 'entities' || this.props.deactivate_download ? null :
                     <Button style={{
                       input: {
                         display: 'none',
-                        }
-                      }}
-                      onClick={e => this.handleDownload(this.props.table_name, item.id)}
-                      className={`mdi mdi-download mdi-24px`}
+                      },
+                    }}
+                    onClick={(e) => this.handleDownload(this.props.table_name, item.id)}
+                    className={`mdi mdi-download mdi-24px`}
                     >{''}</Button>
                   }
                   <a

@@ -1,6 +1,5 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import { fetch_meta } from '../../util/fetch/meta'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 const SearchResults = dynamic(() => import('../../components/MetadataSearch/SearchResults'))
@@ -22,14 +21,14 @@ export default class MetadataSearch extends React.Component {
 
   async componentDidMount() {
     const currentSearch = getParam(this.props.location.search, 'q')
-    if (currentSearch!==undefined){
+    if (currentSearch !== undefined) {
       this.props.currentSearchChange(currentSearch)
     }
     this.props.resetMetadataSearchStatus()
   }
 
   componentDidUpdate() {
-    if (this.props.completed_search === 3){
+    if (this.props.completed_search === 3) {
       this.props.resetMetadataSearchStatus()
     }
   }

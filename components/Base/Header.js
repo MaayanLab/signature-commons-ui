@@ -12,7 +12,7 @@ export function Nav(props) {
           <Link to={`/${props.ui_values.preferred_name.resources || 'Resources'}`}>
             {props.ui_values.preferred_name.resources || 'Resources'}
           </Link>
-        </li>: null
+        </li> : null
       }
       <li>
         <a

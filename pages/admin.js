@@ -20,18 +20,18 @@ async function fetch_count(source) {
 
 export async function get_counts(resource_count, ui_values) {
   const { response: counting_fields } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_values.counting_validator,
-              'meta.Table_Count': true
-            }
-          },
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Table_Count': true,
         },
-      })
+      },
+    },
+  })
   const resource_field = counting_fields.filter((item) => item.meta.Field_Name === 'resources')
-  if (ui_values.preferred_name === undefined){
+  if (ui_values.preferred_name === undefined) {
     ui_values.preferred_name = {}
   }
   const count_promise = counting_fields.filter((item) => item.meta.Field_Name !== 'resources').map(async (item) => {
@@ -60,7 +60,7 @@ async function fetch_fields(source) {
   const { response: fields } = await fetch_meta({
     endpoint: `/${source}/key_count`,
   })
-  const top_fields = Object.keys(fields).filter((field)=>field.indexOf(".")==-1)
+  const top_fields = Object.keys(fields).filter((field) => field.indexOf('.') == -1)
   return (top_fields)
 }
 
@@ -80,7 +80,7 @@ async function get_signature_keys() {
   })
   const sigkeys = await Promise.all(signature_keys_promises)
   const signature_keys = sigkeys.reduce((keys, sig) => {
-    const top_fields = sig.keys.filter((field)=>field.indexOf(".")==-1)
+    const top_fields = sig.keys.filter((field) => field.indexOf('.') == -1)
     keys[sig.id] = top_fields
     return keys
   }, {})
@@ -89,23 +89,23 @@ async function get_signature_keys() {
 
 export async function get_ui_values() {
   const { response: ui_val } = await fetch_meta_post({
-      endpoint: '/schemas/find',
-      body: {
-        filter: {
-          where: {
-            'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json",
-            'meta.admin': true,
-          }
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json',
+          'meta.admin': true,
         },
       },
-    })
-  const ui_values = await UIValues["admin"](ui_val[0].meta.content)
-  return {ui_values}
+    },
+  })
+  const ui_values = await UIValues['admin'](ui_val[0].meta.content)
+  return { ui_values }
 }
 
 export default class Admin extends React.Component {
   static async getInitialProps() {
-    const {ui_values} = await get_ui_values()
+    const { ui_values } = await get_ui_values()
     const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_values)
     const { table_counts, ui_values: ui_val } = await get_counts(Object.keys(resources).length, ui_values)
     const { meta_counts } = await get_metacounts(ui_val)
