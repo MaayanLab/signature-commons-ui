@@ -31,7 +31,7 @@ function build_where(q) {
 }
 
 const default_singular_names = {
-  libraries: "Library",
+  libraries: "Dataset",
   signatures: "Signature",
   entities: "Entities"
 }
