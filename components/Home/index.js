@@ -136,7 +136,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  async performSearch(table, page=0, rowsPerPage=10) {
+  async performSearch(table, page=0, rowsPerPage=10, paginating=false) {
     if (this.state.metadata_search[`${table}_controller`] !== undefined) {
       this.state.metadata_search[`${table}_controller`].abort()
     }
@@ -146,7 +146,7 @@ export default class Home extends React.PureComponent {
             metadata_search: {
               ...prevState.metadata_search,
               [`${table}_status`]: 'Searching...',
-              [table]: undefined,
+              [table]: paginating ? prevState.metadata_search[table]: undefined,
               [`${table}_controller`]: controller,
             }
           }))

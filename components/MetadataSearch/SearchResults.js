@@ -89,7 +89,7 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}RowsPerPage`]: e.target.value,
     }, () => {
-      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`])
+      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
@@ -97,7 +97,7 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}Page`]: page,
     }, () => {
-      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`])
+      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
