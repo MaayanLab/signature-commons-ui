@@ -1,4 +1,6 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
+
 import { animateScroll as scroll } from 'react-scroll'
 
 import Grid from '@material-ui/core/Grid'
@@ -16,7 +18,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
   constructor(props) {
     super(props)
     this.state = {
-      search: '',
       input: {},
       searchType: 'metadata',
       type: 'Overlap',
@@ -25,6 +26,10 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
     this.handleChange = this.handleChange.bind(this)
     this.searchChange = this.searchChange.bind(this)
     this.scrollToTop = this.scrollToTop.bind(this);
+  }
+
+  componentDidMount(){
+    this.props.resetCurrentSearch()
   }
 
   scrollToTop() {
@@ -41,11 +46,14 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
     }
   }
   searchChange(e) {
-    this.setState({ search: e.target.value })
+    this.props.searchChange(e.target.value)
   }
 
 
   render() {
+    if (this.props.metadata_search.completed_search === 3){
+      return <Redirect to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.metadata_search.currentSearch)}` }} />
+    }
     return (
       <div>
         <Grid container
@@ -53,13 +61,17 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           alignItems={'center'}
           direction={'column'}>
           <Grid item xs={12} className={this.props.classes.stretched}>
-            <SearchCard search={this.state.search}
+            <SearchCard 
+              search={this.props.metadata_search.search}
               searchChange={this.searchChange}
+              currentSearchChange={this.props.currentSearchChange}
               handleChange={this.handleChange}
               type={this.state.type}
               searchType={this.state.searchType}
               submit={this.submit}
-              {...this.props} />
+              ui_values={this.props.ui_values}
+              classes={this.props.classes}
+              />
           </Grid>
           { this.props.table_counts.length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>

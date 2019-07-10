@@ -17,45 +17,25 @@ function getParam(search, param) {
 export default class MetadataSearch extends React.Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      search: '',
-      currentSearch: '',
-      controller: undefined,
-      signatures_total_count: undefined,
-      libraries_total_count: undefined,
-      entities_total_count: undefined,
-    }
-
     this.searchChange = this.searchChange.bind(this)
   }
 
   async componentDidMount() {
     const currentSearch = getParam(this.props.location.search, 'q')
-    this.setState({
-      search: currentSearch,
-    })
-    const { response: signatures } = await fetch_meta({ endpoint: '/signatures/count', body: {} })
-    const { response: libraries } = await fetch_meta({ endpoint: '/libraries/count', body: {} })
-    const { response: entities } = await fetch_meta({ endpoint: '/entities/count', body: {} })
-    this.setState({
-      currentSearch,
-      signatures_total_count: signatures.count,
-      libraries_total_count: libraries.count,
-      entities_total_count: entities.count,
-    })
+    if (currentSearch!==undefined){
+      this.props.currentSearchChange(currentSearch)
+    }
+    this.props.resetMetadataSearchStatus()
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const prevSearch = getParam(prevProps.location.search, 'q')
-    const currentSearch = getParam(this.props.location.search, 'q')
-    if (prevSearch !== currentSearch) {
-      this.setState({ search: currentSearch, currentSearch })
+  componentDidUpdate() {
+    if (this.props.completed_search === 3){
+      this.props.resetMetadataSearchStatus()
     }
   }
 
   searchChange(e) {
-    this.setState({ search: e.target.value })
+    this.props.searchChange(e.target.value)
   }
 
   render() {
@@ -63,21 +43,15 @@ export default class MetadataSearch extends React.Component {
       <div className="row">
         <div className="col s12 center">
           <SearchBox
-            search={this.state.search}
+            search={this.props.search}
             searchChange={this.searchChange}
+            currentSearchChange={this.props.currentSearchChange}
             ui_values={this.props.ui_values}
           />
         </div>
-        {this.state.currentSearch === '' ? null : (
-          <SearchResults
-            signatures_total_count={this.state.signatures_total_count}
-            libraries_total_count={this.state.libraries_total_count}
-            entities_total_count={this.state.entities_total_count}
-            search={this.state.currentSearch}
-            ui_values={this.props.ui_values}
-            schemas={this.props.schemas}
-          />
-        )}
+        <SearchResults
+          {...this.props}
+        />
       </div>
     )
   }

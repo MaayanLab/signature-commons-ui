@@ -53,113 +53,30 @@ export default class SearchResults extends React.Component {
       entitiesRowsPerPage: 10,
       entitiesPage: 0,
     }
-    this.performSearch = this.performSearch.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleChangeIndex = this.handleChangeIndex.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
     this.handleChangePage = this.handleChangePage.bind(this)
   }
 
-  componentDidMount() {
-    this.performSearch('signatures')
-    this.performSearch('libraries')
-    this.performSearch('entities')
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.search !== this.props.search) {
-      this.performSearch('signatures')
-      this.performSearch('libraries')
-      this.performSearch('entities')
       this.setState({
+        signaturesRowsPerPage: 10,
         signaturesPage: 0,
+        librariesRowsPerPage: 10,
         librariesPage: 0,
+        entitiesRowsPerPage: 10,
         entitiesPage: 0,
         index_value: 0,
       })
     }
-  }
-
-  async performSearch(table) {
-    if (this.state[`${table}controller`] !== undefined) {
-      this.state[`${table}controller`].abort()
-    }
-    try {
-      const controller = new AbortController()
-      NProgress.start()
+    if (prevProps.search_status !== this.props.search_status && this.props.search_status === "Matched"){
       this.setState({
-        status: 'Searching...',
-        [table]: undefined,
-        [`${table}controller`]: controller,
+        index_value: 0,
       })
-      const where = build_where(this.props.search)
-
-      const start = Date.now()
-      const limit = this.state[`${table}RowsPerPage`]
-      const skip = this.state[`${table}RowsPerPage`] * this.state[`${table}Page`]
-
-      const { duration: duration_meta_1, contentRange, response: results } = await fetch_meta_post({
-        endpoint: `/${table}/find`,
-        body: {
-          filter: {
-            where,
-            limit: limit,
-            skip: skip,
-          },
-        },
-        signal: controller.signal,
-      })
-
-      let duration_meta = duration_meta_1
-      if (table === 'signatures') {
-        const library_ids = [...new Set(results.map((sig) => sig.library))]
-        const { duration: duration_meta_2, response: libraries } = await fetch_meta_post({
-          endpoint: '/libraries/find',
-          body: {
-            filter: {
-              where: {
-                id: {
-                  inq: library_ids,
-                },
-              },
-            },
-          },
-          signal: controller.signal,
-        })
-        duration_meta = duration_meta_1 + duration_meta_2
-        const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
-        for (const r of results) {
-          const lib_meta = { 'id': library_dict[r.library].id,
-            'dataset': library_dict[r.library].dataset,
-            'meta': {
-              [this.state.library_name]: library_dict[r.library].meta[this.state.library_name],
-              'Icon': library_dict[r.library].meta['Icon'],
-            },
-          }
-          r.library = lib_meta
-        }
-      }
-      const duration_label = table + '_duration'
-      const duration_meta_label = table + '_duration_meta'
-      const count_label = table + '_count'
-      this.setState({
-        [table]: results,
-        status: '',
-        [duration_label]: (Date.now() - start) / 1000,
-        [duration_meta_label]: duration_meta,
-        [count_label]: contentRange.count,
-      }, () => {
-        NProgress.done()
-      })
-    } catch (e) {
-      NProgress.done()
-      if (e.code !== DOMException.ABORT_ERR) {
-        this.setState({
-          status: e + '',
-        })
-      }
     }
-  }
+}
 
   handleChange(event, newValue) {
     this.setState({
@@ -177,7 +94,7 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}RowsPerPage`]: e.target.value,
     }, () => {
-      this.performSearch(name)
+      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
@@ -185,25 +102,25 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}Page`]: page,
     }, () => {
-      this.performSearch(name)
+      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
   search_div(name) {
     const default_name_singular = default_singular_names[name]
-    if (this.state[name] === undefined){
-      return <div />
+    if (this.props[name] === undefined){
+      return <div key={name} />
     }
     return (
-      <div>
+      <div key={name}>
         <div className="col s12 center">
-          {this.state[`${name}_count`] !== undefined ? (
+          {this.props[`${name}_count`] !== undefined ? (
             <div>
               <span className="grey-text">
-                Found {this.state[`${name}_count`]}
+                Found {this.props[`${name}_count`]}
                 {this.props[`${name}_total_count`] !== undefined ? ` matches out of ${this.props[`${name}_total_count`]} ` : null}
                 { this.props.ui_values.preferred_name[name].toLowerCase() || name }
-                {this.state[`${name}_duration_meta`] !== undefined ? ` in ${this.state[`${name}_duration_meta`].toPrecision(3)} seconds` : null}
+                {this.props[`${name}_duration_meta`] !== undefined ? ` in ${this.props[`${name}_duration_meta`].toPrecision(3)} seconds` : null}
               </span>
             </div>
           ) : null}
@@ -211,7 +128,7 @@ export default class SearchResults extends React.Component {
         <div className="col s12">
           <MetaItem
             search={this.props.search}
-            items={this.state[name]}
+            items={this.props[name]}
             type={this.props.ui_values.preferred_name_singular[name] || default_name_singular}
             table_name={name}
             preferred_name={this.props.ui_values.preferred_name_singular}
@@ -222,7 +139,7 @@ export default class SearchResults extends React.Component {
             <TablePagination
               page={this.state[`${name}Page`]}
               rowsPerPage={this.state[`${name}RowsPerPage`]}
-              count={this.state[`${name}_count`]}
+              count={this.props[`${name}_count`]}
               onChangePage={(event, page) => this.handleChangePage(event, page, name)}
               onChangeRowsPerPage={(event) => this.handleChangeRowsPerPage(event, name)}
               component="div"
@@ -234,13 +151,13 @@ export default class SearchResults extends React.Component {
   }
 
   render() {
-    const with_results = ["signatures", "libraries", "entities"].filter((name)=>this.state[`${name}_count`]!==undefined && this.state[`${name}_count`] > 0)
-    const defined_results = ["signatures", "libraries", "entities"].filter((name)=>this.state[`${name}_count`]!==undefined)
+    const defined_results = ["signatures", "libraries", "entities"].filter((name)=>this.props[`${name}_count`]!==undefined)
+    const with_results = defined_results.filter((name)=>this.props[`${name}_count`] > 0)
     const total_results = defined_results.reduce((acc, name)=>{
-      acc = acc + this.state[`${name}_count`]
+      acc = acc + this.props[`${name}_count`]
       return acc
     }, 0)
-    if (defined_results.length===3 && total_results===0){
+    if (defined_results.length===3 && total_results===0){ // zero results
       return(
         <Grid container
           spacing={24}
@@ -268,13 +185,13 @@ export default class SearchResults extends React.Component {
           variant="fullWidth"
           centered
         >
-          {this.state.signatures !== undefined && this.state.signatures.length > 0 ? 
+          {this.props.signatures !== undefined && this.props.signatures.length > 0 ? 
             <Tab label={ this.props.ui_values.preferred_name['signatures'] || 'Signatures' } />: null
           }
-          {this.state.libraries !== undefined && this.state.libraries.length > 0 ? 
+          {this.props.libraries !== undefined && this.props.libraries.length > 0 ? 
             <Tab label={ this.props.ui_values.preferred_name['libraries'] || 'Libraries' } />: null
           }
-          {this.state.entities !== undefined && this.state.entities.length > 0 ? 
+          {this.props.entities !== undefined && this.props.entities.length > 0 ? 
             <Tab label={ this.props.ui_values.preferred_name['entities'] || 'Entities' } />: null
           }
         </Tabs>
