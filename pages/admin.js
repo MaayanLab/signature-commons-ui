@@ -15,7 +15,7 @@ const AdminPage = dynamic(() => import('../components/Admin'), { ssr: false })
 async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   })
-  return (response.count)
+  return response.count
 }
 
 export async function get_counts(resource_count, ui_values) {

@@ -14,14 +14,12 @@ export function Nav(props) {
           </Link>
         </li> : null
       }
-      <li>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}
-        >
+      <li
+        className={props.location.pathname === '/API' ? 'active' : ''}
+      >
+        <Link to="/API">
           API
-        </a>
+        </Link>
       </li>
     </ul>
   )

@@ -29,6 +29,7 @@ function build_where(q) {
   }
 }
 
+
 export default class Home extends React.PureComponent {
   constructor(props) {
     super(props)
@@ -351,6 +352,15 @@ export default class Home extends React.PureComponent {
     />
   )
 
+  api = (props) => (
+    <SwaggerUI
+      url={`${meta_url}/openapi.json`}
+      deepLinking={true}
+      displayOperationId={true}
+      filter={true}
+    />
+  )
+
   render() {
     const CartActions = this.CartActions
 
@@ -394,6 +404,10 @@ export default class Home extends React.PureComponent {
               component={this.resources}
             /> : null
           }
+          <Route
+            path="/API"
+            component={this.api}
+          />
         </Switch>
       </Base>
     )

@@ -284,7 +284,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
       </Card>
     )
   } else {
-    return (null)
+    return null
   }
 }
 

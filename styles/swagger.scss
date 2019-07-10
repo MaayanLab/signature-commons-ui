@@ -1,0 +1,78 @@
+@import '~swagger-ui-react/swagger-ui.css';
+
+/* Swagger overrides */
+body {
+  background-color: #fff;
+  font-family: "Source Sans Pro", "Helvetica", "Arial", sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Source Sans Pro", "Helvetica", "Arial", sans-serif;
+}
+
+.hidden {
+  display: none;
+}
+
+.swagger-section .swagger-ui-wrap {
+  max-width: none;
+  width: auto;
+  font-family: "Source Sans Pro", "Helvetica", "Arial", sans-serif;
+}
+.swagger-ui .info {
+  background-size: 300px auto;
+  font-family: "Source Sans Pro", "Helvetica", "Arial", sans-serif;
+  line-height: 1.5;
+  color: #112e51;
+  padding: 1em 340px 2em 0;
+  margin: 40px auto 0px;
+  max-width: 1020px;
+}
+
+.swagger-ui .info a {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.info a:link {
+  color: #0071bc;
+}
+.info a:visited {
+  color: #4c2c92;
+}
+.swagger-section .swagger-ui-wrap .title {
+  font-size: 2.5em;
+  font-weight: bold;
+  padding-bottom: 0;
+}
+.swagger-section .swagger-ui-wrap .info p {
+  padding-bottom: 8px;
+  font-weight: bold;
+}
+
+.swagger-section .swagger-ui-wrap ol, .swagger-section .swagger-ui-wrap ul {
+  list-style: none;
+  padding: 0;
+}
+
+.scheme-container {
+  display: none;
+}
+
+.swagger-ui .servers > label {
+  margin: 0;
+}
+.swagger-ui .execute-wrapper .btn {
+  width: auto;
+}
+.swagger-ui .btn-group {
+  display: block;
+  text-align: right;
+}
+
+@media screen and (max-width: 800px) {
+  .swagger-section .swagger-ui-wrap .info_description,
+  .swagger-section .swagger-ui-wrap .info_description + p,
+  .swagger-section .swagger-ui-wrap .info_name {
+      width: 90%;
+  }
+}

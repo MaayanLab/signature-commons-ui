@@ -19,7 +19,7 @@ const Values = dynamic(() => import('../components/Values'), { ssr: false })
 export async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   })
-  return (response.count)
+  return response.count
 }
 
 export async function get_counts(resource_count, ui_values) {
