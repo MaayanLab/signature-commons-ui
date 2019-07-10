@@ -37,7 +37,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
         </div>
       </Grid>
       {props.ui_values.nav.metadata_search ?
-        <Grid item xs={12} sm>
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
@@ -59,7 +59,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
         </Grid> : null
       }
       {props.ui_values.nav.signature_search ?
-        <Grid item xs={12} sm>
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
@@ -81,7 +81,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
         </Grid> : null
       }
       {props.ui_values.nav.resources ?
-        <Grid item xs={12} sm>
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
@@ -101,7 +101,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </div>
         </Grid> : null
       }
-      <Grid item xs={12} sm>
+      <Grid item xs>
         <div className={classes.centered}>
           <Grid container
             spacing={8}
@@ -276,6 +276,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               id='metadata'
               search={props.search}
               searchChange={props.searchChange}
+              currentSearchChange={props.currentSearchChange}
               ui_values={props.ui_values}
             />
           </Grid>
