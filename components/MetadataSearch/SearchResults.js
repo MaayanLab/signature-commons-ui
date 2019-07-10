@@ -71,6 +71,11 @@ export default class SearchResults extends React.Component {
         index_value: 0,
       })
     }
+    if (prevProps.search_status !== this.props.search_status && this.props.search_status === "Matched"){
+      this.setState({
+        index_value: 0,
+      })
+    }
 }
 
   handleChange(event, newValue) {
@@ -152,7 +157,7 @@ export default class SearchResults extends React.Component {
       acc = acc + this.props[`${name}_count`]
       return acc
     }, 0)
-    if (defined_results.length===3 && total_results===0){
+    if (defined_results.length===3 && total_results===0){ // zero results
       return(
         <Grid container
           spacing={24}

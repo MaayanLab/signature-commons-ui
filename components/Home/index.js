@@ -146,7 +146,6 @@ export default class Home extends React.PureComponent {
             metadata_search: {
               ...prevState.metadata_search,
               [`${table}_status`]: 'Searching...',
-              [table]: paginating ? prevState.metadata_search[table]: undefined,
               [`${table}_controller`]: controller,
             }
           }))
