@@ -31,7 +31,7 @@ export default class MetadataSearchBox extends React.Component {
           <Link
             to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.search)}` }}
           >
-            <button className="btn waves-effect waves-light" type="submit" name="action">Search
+            <button className="btn waves-effect waves-light" type="submit" name="action" onClick={()=>{this.props.currentSearchChange(this.props.search)}}>Search
               <i className="material-icons right">send</i>
             </button>
           </Link>
@@ -40,6 +40,7 @@ export default class MetadataSearchBox extends React.Component {
           <Link
             key={example}
             to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(example)}` }}
+            onClick={()=>{this.props.currentSearchChange(example)}}
           >
             <div
               className="chip grey white-text waves-effect waves-light"

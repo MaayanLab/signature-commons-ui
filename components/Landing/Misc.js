@@ -230,6 +230,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
                 id='metadata'
                 search={props.search}
                 searchChange={props.searchChange}
+                currentSearchChange={props.currentSearchChange}
                 ui_values={props.ui_values}
               /> :
               <GenesetSearchBox

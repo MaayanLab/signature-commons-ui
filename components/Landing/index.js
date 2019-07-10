@@ -16,7 +16,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
   constructor(props) {
     super(props)
     this.state = {
-      search: '',
       input: {},
       searchType: 'metadata',
       type: 'Overlap',
@@ -41,7 +40,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
     }
   }
   searchChange(e) {
-    this.setState({ search: e.target.value })
+    this.props.searchChange(e.target.value)
   }
 
 
@@ -53,13 +52,17 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           alignItems={'center'}
           direction={'column'}>
           <Grid item xs={12} className={this.props.classes.stretched}>
-            <SearchCard search={this.state.search}
+            <SearchCard 
+              search={this.props.metadata_search.search}
               searchChange={this.searchChange}
+              currentSearchChange={this.props.currentSearchChange}
               handleChange={this.handleChange}
               type={this.state.type}
               searchType={this.state.searchType}
               submit={this.submit}
-              {...this.props} />
+              ui_values={this.props.ui_values}
+              classes={this.props.classes}
+              />
           </Grid>
           { this.props.table_counts.length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>

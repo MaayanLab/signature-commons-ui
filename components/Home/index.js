@@ -18,10 +18,22 @@ export default class Home extends React.PureComponent {
       cart: Set(),
       pie_stats: null,
       selected_field: Object.keys(props.pie_fields_and_stats)[0],
+      metadata_search: {
+        controller: undefined,
+        signatures_total_count: undefined,
+        libraries_total_count: undefined,
+        entities_total_count: undefined,
+        search: '',
+        currentSearch: '',
+      },
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
     this.handleSelectField = this.handleSelectField.bind(this)
+
+    // metadata search
+    this.searchChange = this.searchChange.bind(this)
+    this.currentSearchChange = this.currentSearchChange.bind(this)
   }
 
   async componentDidMount() {
@@ -31,12 +43,42 @@ export default class Home extends React.PureComponent {
     if (this.state.pie_stats === null) {
       this.fetch_stats(this.state.selected_field)
     }
+    const signatures_table_stats = this.props.table_counts.filter((item) => item.table === "signatures")
+    const libraries_table_stats = this.props.table_counts.filter((item) => item.table === "libraries")
+    const entities_table_stats = this.props.table_counts.filter((item) => item.table === "entities")
+    this.setState( prevState => ({
+      metadata_search: {
+        ...prevState.metadata_search,
+        signatures_total_count: signatures_table_stats.length > 0 ? signatures_table_stats[0].counts : undefined,
+        libraries_total_count: libraries_table_stats.length > 0 ? libraries_table_stats[0].counts : undefined,
+        entities_total_count: entities_table_stats.length > 0 ? entities_table_stats[0].counts : undefined,
+      }
+    }))
   }
-
 
   componentDidUpdate() {
     M.AutoInit()
     M.updateTextFields()
+
+  }
+
+  searchChange(search) {
+    this.setState( prevState => ({
+      metadata_search: {
+        ...prevState.metadata_search,
+        search
+      }
+    }))
+  }
+
+  currentSearchChange(currentSearch) {
+    this.setState( prevState => ({
+      metadata_search: {
+        ...prevState.metadata_search,
+        currentSearch,
+        search: currentSearch
+      }
+    }))
   }
 
   updateCart(cart) {
@@ -116,14 +158,6 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  landing = (props) => (
-    <Landing
-      handleSelectField={this.handleSelectField}
-      {...this.state}
-      {...props}
-    />
-  )
-
   signature_search = (props) => (
     <SignatureSearch
       cart={this.state.cart}
@@ -144,7 +178,10 @@ export default class Home extends React.PureComponent {
       updateCart={this.updateCart}
       ui_values={this.props.ui_values}
       schemas={this.props.schemas}
+      searchChange={this.searchChange}
+      currentSearchChange={this.currentSearchChange}
       {...props}
+      {...this.state.metadata_search}
     />
   )
 
@@ -187,9 +224,11 @@ export default class Home extends React.PureComponent {
           <Route
             exact path="/"
             render={(router_props) => <Landing handleSelectField={this.handleSelectField}
-              {...this.state}
-              {...this.props}
-              {...router_props}/>}
+            searchChange={this.searchChange}
+            currentSearchChange={this.currentSearchChange}
+            {...this.state}
+            {...this.props}
+            {...router_props}/>}
           />
           {this.props.ui_values.nav.signature_search ?
             <Route

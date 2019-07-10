@@ -195,7 +195,7 @@ export default class SearchResults extends React.Component {
       return <div />
     }
     return (
-      <div>
+      <div key={name}>
         <div className="col s12 center">
           {this.state[`${name}_count`] !== undefined ? (
             <div>
