@@ -1,4 +1,6 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
+
 import { animateScroll as scroll } from 'react-scroll'
 
 import Grid from '@material-ui/core/Grid'
@@ -26,6 +28,10 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
     this.scrollToTop = this.scrollToTop.bind(this);
   }
 
+  componentDidMount(){
+    this.props.resetCurrentSearch()
+  }
+
   scrollToTop() {
     scroll.scrollToTop();
   }
@@ -45,6 +51,9 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
 
 
   render() {
+    if (this.props.metadata_search.completed_search === 3){
+      return <Redirect to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.metadata_search.currentSearch)}` }} />
+    }
     return (
       <div>
         <Grid container

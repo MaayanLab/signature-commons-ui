@@ -22,7 +22,16 @@ export default class MetadataSearch extends React.Component {
 
   async componentDidMount() {
     const currentSearch = getParam(this.props.location.search, 'q')
-    this.props.currentSearchChange(currentSearch)
+    if (currentSearch!==undefined){
+      this.props.currentSearchChange(currentSearch)
+    }
+    this.props.resetMetadataSearchStatus()
+  }
+
+  componentDidUpdate() {
+    if (this.props.completed_search === 3){
+      this.props.resetMetadataSearchStatus()
+    }
   }
 
   searchChange(e) {
@@ -40,11 +49,9 @@ export default class MetadataSearch extends React.Component {
             ui_values={this.props.ui_values}
           />
         </div>
-        {this.props.currentSearch === '' ? null : (
-          <SearchResults
-            {...this.props}
-          />
-        )}
+        <SearchResults
+          {...this.props}
+        />
       </div>
     )
   }

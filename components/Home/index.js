@@ -2,7 +2,7 @@ import { Set } from 'immutable'
 import M from 'materialize-css'
 import Base from '../../components/Base'
 import React from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import { call } from '../../util/call'
 import Landing from '../Landing'
 import MetadataSearch from '../MetadataSearch'
@@ -43,6 +43,8 @@ export default class Home extends React.PureComponent {
         entities_total_count: undefined,
         search: '',
         currentSearch: '',
+        completed_search: 0,
+        search_status: '',
       },
     }
     this.updateCart = this.updateCart.bind(this)
@@ -53,6 +55,8 @@ export default class Home extends React.PureComponent {
     this.searchChange = this.searchChange.bind(this)
     this.currentSearchChange = this.currentSearchChange.bind(this)
     this.performSearch = this.performSearch.bind(this)
+    this.resetMetadataSearchStatus = this.resetMetadataSearchStatus.bind(this)
+    this.resetCurrentSearch = this.resetCurrentSearch.bind(this)
   }
 
   async componentDidMount() {
@@ -78,7 +82,11 @@ export default class Home extends React.PureComponent {
   componentDidUpdate() {
     M.AutoInit()
     M.updateTextFields()
-
+    if (this.state.metadata_search.search_status==="Initializing"){
+      NProgress.start()
+    }else if(this.state.metadata_search.completed_search===3){
+      NProgress.done()
+    }
   }
 
   searchChange(search) {
@@ -91,12 +99,14 @@ export default class Home extends React.PureComponent {
   }
 
   currentSearchChange(currentSearch) {
-    if(currentSearch !== this.state.currentSearch){
+    if(currentSearch!=='' && currentSearch !== this.state.metadata_search.currentSearch){
       this.setState( prevState => ({
         metadata_search: {
           ...prevState.metadata_search,
-          currentSearch,
-          search: currentSearch
+          currentSearch: currentSearch,
+          search: currentSearch,
+          completed_search: 0,
+          search_status: "Initializing"
         }
       }), () => {
         this.performSearch('signatures')
@@ -106,14 +116,32 @@ export default class Home extends React.PureComponent {
     }
   }
 
+  resetCurrentSearch(){
+    this.setState( prevState => ({
+      metadata_search: {
+        ...prevState.metadata_search,
+        currentSearch: '',
+        search: '',
+      }
+    }))
+  }
+
+  resetMetadataSearchStatus(){
+    this.setState( prevState => ({
+      metadata_search: {
+        ...prevState.metadata_search,
+        completed_search: 0,
+        search_status: ''
+      }
+    }))
+  }
+
   async performSearch(table, page=0, rowsPerPage=10) {
     if (this.state.metadata_search[`${table}_controller`] !== undefined) {
       this.state.metadata_search[`${table}_controller`].abort()
     }
     try {
-      console.log("HERE")
       const controller = new AbortController()
-      NProgress.start()
       this.setState( prevState => ({
             metadata_search: {
               ...prevState.metadata_search,
@@ -122,7 +150,7 @@ export default class Home extends React.PureComponent {
               [`${table}_controller`]: controller,
             }
           }))
-      const where = build_where(this.state.metadata_search.search)
+      const where = build_where(this.state.metadata_search.currentSearch)
 
       const start = Date.now()
       const limit = rowsPerPage
@@ -162,7 +190,7 @@ export default class Home extends React.PureComponent {
           const lib_meta = { 'id': library_dict[r.library].id,
             'dataset': library_dict[r.library].dataset,
             'meta': {
-              [this.state.library_name]: library_dict[r.library].meta[this.state.library_name],
+              [this.props.ui_values.library_name]: library_dict[r.library].meta[this.props.ui_values.library_name],
               'Icon': library_dict[r.library].meta['Icon'],
             },
           }
@@ -175,15 +203,15 @@ export default class Home extends React.PureComponent {
       this.setState( prevState => ({
         metadata_search: {
           ...prevState.metadata_search,
-          [`${table}_status`]: 'Searching...',
+          [`${table}_status`]: '',
           [table]: results,
           [duration_label]: (Date.now() - start) / 1000,
           [duration_meta_label]: duration_meta,
           [count_label]: contentRange.count,
-        }
-      }), () => {
-        NProgress.done()
-      })
+          search_status: results.length > 0 ? "Matched": prevState.metadata_search.search_status,
+          completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
+        },
+      }))
     } catch (e) {
       NProgress.done()
       if (e.code !== DOMException.ABORT_ERR) {
@@ -297,6 +325,7 @@ export default class Home extends React.PureComponent {
       searchChange={this.searchChange}
       currentSearchChange={this.currentSearchChange}
       performSearch={this.performSearch}
+      resetMetadataSearchStatus={this.resetMetadataSearchStatus}
       {...props}
       {...this.state.metadata_search}
     />
@@ -343,6 +372,7 @@ export default class Home extends React.PureComponent {
             render={(router_props) => <Landing handleSelectField={this.handleSelectField}
             searchChange={this.searchChange}
             currentSearchChange={this.currentSearchChange}
+            resetCurrentSearch={this.resetCurrentSearch}
             {...this.state}
             {...this.props}
             {...router_props}/>}

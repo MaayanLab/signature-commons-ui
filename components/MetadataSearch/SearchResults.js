@@ -104,7 +104,7 @@ export default class SearchResults extends React.Component {
   search_div(name) {
     const default_name_singular = default_singular_names[name]
     if (this.props[name] === undefined){
-      return <div />
+      return <div key={name} />
     }
     return (
       <div key={name}>
