@@ -38,7 +38,7 @@ export const DonutChart = withScreenSize(function({ ...props }) {
     disabled,
     ui_values,
   } = props
-  const resource_name = ui_values ? ui_values.preferred_name["resources"] : undefined
+  const resource_name = ui_values ? ui_values.preferred_name['resources'] : undefined
   const dataLabels = data.map(function(d) {
     return (
       d.label

@@ -1,7 +1,7 @@
 import React from 'react'
 
 const IconButton = (props) => (
-  <div style={{textAlign: "center"}}>
+  <div style={{ textAlign: 'center' }}>
     <style jsx>{`
     .icon-btn {
       display: flex;

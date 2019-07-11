@@ -114,7 +114,7 @@ class AdminView extends React.PureComponent {
           <LibraryAvatar
             source={`meta.${this.props.ui_values.library_name}`}
             title={'Library'}
-            label={this.props.ui_values.preferred_name_singular["libraries"]}
+            label={this.props.ui_values.preferred_name_singular['libraries']}
             textAlign="center"
             library_name={this.props.ui_values.library_name}
           />
@@ -158,8 +158,8 @@ class AdminView extends React.PureComponent {
             source={'dataset_type'}
           />
           <LongTextInput
-            key={"meta"}
-            label={"meta"}
+            key={'meta'}
+            label={'meta'}
             source={'meta'}
             format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
             parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
@@ -185,7 +185,7 @@ class AdminView extends React.PureComponent {
             source="library"
             reference="libraries"
             linkType={false}
-            label={this.props.ui_values.preferred_name_singular["libraries"]}
+            label={this.props.ui_values.preferred_name_singular['libraries']}
           >
             <TextField
               source={`meta.${this.props.ui_values.library_name}`}
@@ -219,12 +219,12 @@ class AdminView extends React.PureComponent {
           />
           <LongTextInput
             key={'library'}
-            label={this.props.ui_values.preferred_name_singular["libraries"]}
+            label={this.props.ui_values.preferred_name_singular['libraries']}
             source={'library'}
           />
           <LongTextInput
-            key={"meta"}
-            label={"meta"}
+            key={'meta'}
+            label={'meta'}
             source={'meta'}
             format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
             parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
@@ -271,8 +271,8 @@ class AdminView extends React.PureComponent {
             source={'$validator'}
           />
           <LongTextInput
-            key={"meta"}
-            label={"meta"}
+            key={'meta'}
+            label={'meta'}
             source={'meta'}
             format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
             parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
@@ -569,7 +569,7 @@ class AdminView extends React.PureComponent {
             catchAll={this.NotFound}
             loginPage={MyLogin}
           >
-            {this.props.library_fields === null || this.props.table_counts.filter((entry)=> entry.table==="libraries").length === 0 ? <div/> :
+            {this.props.library_fields === null || this.props.table_counts.filter((entry) => entry.table === 'libraries').length === 0 ? <div/> :
                 <Resource
                   name="libraries"
                   list={this.LibraryList}
@@ -578,7 +578,7 @@ class AdminView extends React.PureComponent {
                   options={{ label: this.props.ui_values.preferred_name['libraries'] }}
                 />
             }
-            {this.state.signature_fields === null || this.props.table_counts.filter((entry)=> entry.table==="signatures").length === 0 ? <div/> :
+            {this.state.signature_fields === null || this.props.table_counts.filter((entry) => entry.table === 'signatures').length === 0 ? <div/> :
                 <Resource
                   name="signatures"
                   edit={this.SignatureEdit}
@@ -587,7 +587,7 @@ class AdminView extends React.PureComponent {
                   options={{ label: this.props.ui_values.preferred_name['signatures'] }}
                 />
             }
-            {this.props.entity_fields === null || this.props.table_counts.filter((entry)=> entry.table==="entities").length === 0 ? <div/> :
+            {this.props.entity_fields === null || this.props.table_counts.filter((entry) => entry.table === 'entities').length === 0 ? <div/> :
                 <Resource
                   name="entities"
                   edit={this.EntityEdit}

@@ -19,24 +19,24 @@ const Values = dynamic(() => import('../components/Values'), { ssr: false })
 export async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   })
-  return (response.count)
+  return response.count
 }
 
 export async function get_counts(resource_count, ui_values) {
   const { response: counting_fields } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_values.counting_validator,
-              'meta.Table_Count': true
-            }
-          },
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Table_Count': true,
         },
-      }) 
+      },
+    },
+  })
   let table_counts
-  if (counting_fields.length > 0){
-    if (ui_values.preferred_name === undefined){
+  if (counting_fields.length > 0) {
+    if (ui_values.preferred_name === undefined) {
       ui_values.preferred_name = {}
     }
     const count_promise = counting_fields.filter((item) => item.meta.Field_Name !== 'resources').map(async (item) => {
@@ -52,7 +52,7 @@ export async function get_counts(resource_count, ui_values) {
     })
     table_counts = await Promise.all(count_promise)
     const resource_field = counting_fields.filter((item) => item.meta.Field_Name === 'resources')
-    if (resource_field.length > 0){
+    if (resource_field.length > 0) {
       table_counts = [...table_counts, {
         table: resource_field[0].meta.Field_Name,
         preferred_name: resource_field[0].meta.Preferred_Name,
@@ -62,25 +62,25 @@ export async function get_counts(resource_count, ui_values) {
       }]
       ui_values.preferred_name[resource_field[0].meta.Field_Name] = resource_field[0].meta.Preferred_Name
     }
-  }else {
-    if (ui_values.preferred_name !== undefined){
+  } else {
+    if (ui_values.preferred_name !== undefined) {
       const count_promise = Object.keys(ui_values.preferred_name).filter((key) => key !== 'resources').map(async (key) => {
         const count_stats = await fetch_count(key)
         return {
           table: key,
           preferred_name: ui_values.preferred_name[key],
           Visible_On_Landing: count_stats > 0,
-          icon: "mdi-arrow-top-right-thick",
+          icon: 'mdi-arrow-top-right-thick',
           counts: count_stats,
         }
       })
       table_counts = await Promise.all(count_promise)
-      if ("resources" in ui_values.preferred_name){
+      if ('resources' in ui_values.preferred_name) {
         table_counts = [...table_counts, {
-          table: "resources",
-          preferred_name: ui_values.preferred_name["resources"],
+          table: 'resources',
+          preferred_name: ui_values.preferred_name['resources'],
           Visible_On_Landing: resource_count > 0,
-          icon:"mdi-arrow-top-right-thick",
+          icon: 'mdi-arrow-top-right-thick',
           counts: resource_count,
         }]
       }
@@ -91,18 +91,18 @@ export async function get_counts(resource_count, ui_values) {
 
 export async function get_metacounts(ui_values) {
   const { response: counting_fields } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_values.counting_validator,
-              'meta.Meta_Count': true
-            }
-          },
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Meta_Count': true,
         },
-      })
-  if (counting_fields.length === 0){
-    return({meta_counts: {}})
+      },
+    },
+  })
+  if (counting_fields.length === 0) {
+    return ({ meta_counts: {} })
   }
 
   const meta_promise = counting_fields.map(async (entry) => {
@@ -126,9 +126,9 @@ export async function get_metacounts(ui_values) {
   const meta_counts = counting_fields.reduce((stat_list, item) => {
     const k = item.meta.Field_Name
     stat_list.push({ name: item.meta.Preferred_Name,
-    counts: Object.keys(meta_stats[k] || {}).length,
-    icon: item.meta.MDI_Icon,
-    Preferred_Name: item.meta.Preferred_Name })
+      counts: Object.keys(meta_stats[k] || {}).length,
+      icon: item.meta.MDI_Icon,
+      Preferred_Name: item.meta.Preferred_Name })
     return (stat_list)
   }, [])
 
@@ -138,16 +138,16 @@ export async function get_metacounts(ui_values) {
 
 export async function get_pie_stats(ui_values) {
   const { response: piefields } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_values.counting_validator,
-              'meta.Pie_Count': true
-            }
-          },
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Pie_Count': true,
         },
-      })
+      },
+    },
+  })
 
   const meta_promise = piefields.map(async (entry) => {
     const { response: meta_stats } = await fetch_meta({
@@ -182,16 +182,16 @@ export async function get_pie_stats(ui_values) {
 
 export async function get_barcounts(ui_values) {
   const { response: counting_fields } = await fetch_meta_post({
-        endpoint: '/schemas/find',
-        body: {
-          filter: {
-            where: {
-              'meta.$validator': ui_values.counting_validator,
-              'meta.Bar_Count': true
-            }
-          },
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Bar_Count': true,
         },
-      })
+      },
+    },
+  })
   const meta_promise = counting_fields.map(async (item) => {
     const { response: meta_stats } = await fetch_meta({
       endpoint: `/${item.meta.Table}/value_count`,
@@ -252,36 +252,36 @@ export async function get_signature_keys() {
   return signature_keys
 }
 
-export async function get_schemas(ui_values){
+export async function get_schemas(ui_values) {
   const { response: schema_db } = await fetch_meta_post({
-      endpoint: '/schemas/find',
-      body: {
-        filter: {
-          where: {
-            'meta.$validator': ui_values.ui_schema,
-          }
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.ui_schema,
         },
       },
-    })
-  const schemas = schema_db.map((schema)=>(schema.meta))
+    },
+  })
+  const schemas = schema_db.map((schema) => (schema.meta))
   return schemas
 }
 
 export async function get_ui_values() {
   const { response: ui_val } = await fetch_meta_post({
-      endpoint: '/schemas/find',
-      body: {
-        filter: {
-          where: {
-            'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json",
-            'meta.landing': true,
-          }
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json',
+          'meta.landing': true,
         },
       },
-    })
-  const values = ui_val.length > 0 ? ui_val[0].meta.content: {}
-  const ui_values = await UIValues["landing"](values)
-  return {ui_values}
+    },
+  })
+  const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
+  const ui_values = await UIValues['landing'](values)
+  return { ui_values }
 }
 
 const App = (props) => (
@@ -303,7 +303,7 @@ const App = (props) => (
 )
 
 App.getInitialProps = async () => {
-  const {ui_values} = await get_ui_values()
+  const { ui_values } = await get_ui_values()
   // Check if it has library_name and resource_from_library
   const schemas = await get_schemas(ui_values)
   const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_values)
@@ -323,7 +323,7 @@ App.getInitialProps = async () => {
     resources,
     library_resource,
     ui_values: ui_val,
-    schemas
+    schemas,
   }
 }
 

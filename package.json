@@ -1,6 +1,6 @@
 {
   "name": "signature-commons-ui",
-  "version": "0.2.6",
+  "version": "0.2.9",
   "private": true,
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
   "dependencies": {
@@ -27,7 +27,7 @@
     "next": "^8.0.3",
     "next-env": "^1.1.0",
     "nprogress": "^0.2.0",
-    "plotly.js": "^1.47.4",
+    "plotly.js": "^1.48.3",
     "prop-types": "^15.6.2",
     "ra-data-simple-rest": "^2.6.0",
     "react": "^16.7.0",
@@ -45,13 +45,14 @@
     "react-wordcloud": "^1.0.5",
     "serialize-error": "^4.1.0",
     "swagger-client": "^3.8.22",
+    "swagger-ui-react": "^3.23.0",
     "tween": "^0.9.0",
     "typescript": "^3.3.3333",
     "uuid5": "^1.0.2"
   },
   "scripts": {
     "test": "npm run lint && jest",
-    "lint": "eslint util/** pages/** styles/jss/** components/**",
+    "lint": "eslint next.config.js util/** pages/** styles/jss/** components/**",
     "lint:fix": "npm run lint -- --fix",
     "dev": "NODE_ENV=development dotenv-load next",
     "build": "NODE_ENV=production dotenv-load next build",
@@ -63,7 +64,10 @@
     "deploy": "dotenv-load npm run export && npm run deploy:docker",
     "deploy:docker": "npm run build:docker && dotenv-load node ./bin/docker-deploy.js",
     "deploy:production": "NODE_ENV=production npm run deploy",
-    "deploy:dev": "NODE_ENV=development npm run deploy"
+    "deploy:dev": "NODE_ENV=development npm run deploy",
+    "version:major": "npm version --no-git-tag-version major",
+    "version:minor": "npm version --no-git-tag-version minor",
+    "version:patch": "npm version --no-git-tag-version patch"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -71,9 +75,9 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "dotenv-cli": "^2.0.0",
+    "eslint": "^5.16.0",
     "eslint-config-google": "^0.12.0",
     "eslint-plugin-react": "^7.12.4",
-    "eslint": "^5.16.0",
     "jest": "^24.7.1",
     "next-build-id": "^2.0.1",
     "node-sass": "^4.12.0",

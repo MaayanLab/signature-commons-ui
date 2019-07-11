@@ -37,7 +37,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
         </div>
       </Grid>
       {props.ui_values.nav.metadata_search ?
-        <Grid item xs={12} sm>
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
@@ -59,7 +59,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
         </Grid> : null
       }
       {props.ui_values.nav.signature_search ?
-        <Grid item xs={12} sm>
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
@@ -81,27 +81,27 @@ export const BottomLinks = ({ classes, width, ...props }) => {
         </Grid> : null
       }
       {props.ui_values.nav.resources ?
-        <Grid item xs={12} sm>
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || "Resources"}`}>
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
                   <NearMe className={classes.icon} />
                 </Button>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    {`Browse ${props.ui_values.preferred_name.resources || "Resources"}`}
+                  {`Browse ${props.ui_values.preferred_name.resources || 'Resources'}`}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      <Grid item xs={12} sm>
+      <Grid item xs>
         <div className={classes.centered}>
           <Grid container
             spacing={8}
@@ -129,7 +129,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   const { meta_counts } = props
   let sm = 3
   let xs = 4
-  let md = 2
+  const md = 2
   if (meta_counts.length < 4) {
     sm = 12 / meta_counts.length
     xs = 12 / meta_counts.length
@@ -167,7 +167,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
 
 export const StatDiv = ({ classes, width, ...props }) => {
   const visible_stats = props.table_counts.filter((item) => item.Visible_On_Landing)
-  const xs = visible_stats.length <=4 ? 12 / visible_stats.length : 3
+  const xs = visible_stats.length <= 4 ? 12 / visible_stats.length : 3
   return (
     <Grid container
       spacing={24}
@@ -276,6 +276,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               id='metadata'
               search={props.search}
               searchChange={props.searchChange}
+              currentSearchChange={props.currentSearchChange}
               ui_values={props.ui_values}
             />
           </Grid>
@@ -283,7 +284,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
       </Card>
     )
   } else {
-    return (null)
+    return null
   }
 }
 

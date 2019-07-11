@@ -264,7 +264,7 @@ export default class DataProvider {
   fetch_resources = async () => {
     const { ui_values } = await get_ui_values()
     if (ui_values === undefined || Object.keys(ui_values).length === 0) {
-      console.error("UI Content is undefined")
+      console.error('UI Content is undefined')
     }
     const { libraries, resources, library_resource } = await get_library_resources(ui_values)
     for (const res of Object.values(resources)) {

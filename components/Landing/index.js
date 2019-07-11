@@ -21,25 +21,25 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
       input: {},
       searchType: 'metadata',
       type: 'Overlap',
-      scroll: false
+      scroll: false,
     }
     this.handleChange = this.handleChange.bind(this)
     this.searchChange = this.searchChange.bind(this)
-    this.scrollToTop = this.scrollToTop.bind(this);
+    this.scrollToTop = this.scrollToTop.bind(this)
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.resetCurrentSearch()
   }
 
   scrollToTop() {
-    scroll.scrollToTop();
+    scroll.scrollToTop()
   }
 
-  handleChange(event, searchType, scroll=false) {
+  handleChange(event, searchType, scroll = false) {
     if (searchType) {
       this.setState({ searchType }, () => {
-        if (scroll){
+        if (scroll) {
           this.scrollToTop()
         }
       })
@@ -51,7 +51,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
 
 
   render() {
-    if (this.props.metadata_search.completed_search === 3){
+    if (this.props.metadata_search.completed_search === 3) {
       return <Redirect to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.metadata_search.currentSearch)}` }} />
     }
     return (
@@ -61,7 +61,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           alignItems={'center'}
           direction={'column'}>
           <Grid item xs={12} className={this.props.classes.stretched}>
-            <SearchCard 
+            <SearchCard
               search={this.props.metadata_search.search}
               searchChange={this.searchChange}
               currentSearchChange={this.props.currentSearchChange}
@@ -71,7 +71,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               submit={this.submit}
               ui_values={this.props.ui_values}
               classes={this.props.classes}
-              />
+            />
           </Grid>
           { this.props.table_counts.length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
@@ -150,7 +150,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                     </Typography>
                   </div>
                 </Grid>
-                { this.props.ui_values.deactivate_wordcloud? null:
+                { this.props.ui_values.deactivate_wordcloud ? null :
                   <Grid item xs={12} sm>
                     <div className={this.props.classes.centered}>
                       <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
@@ -159,7 +159,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                       </Typography>
                     </div>
                   </Grid>
-              }
+                }
               </Grid>
             </Grid>
           }
