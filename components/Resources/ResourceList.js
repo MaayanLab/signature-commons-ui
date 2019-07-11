@@ -4,6 +4,11 @@ import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
 
 export default class ResourceList extends React.PureComponent {
+  
+  componentDidMount(){
+    window.scrollTo(0,0)
+  }
+
   render() {
     const sorted_resources = [...this.props.resources].sort((r1, r2) => r1.meta.Resource_Name.localeCompare(r2.meta.Resource_Name))
     const md = sorted_resources.length > 6 ? 2 : 4
