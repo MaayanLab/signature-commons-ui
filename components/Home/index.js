@@ -11,6 +11,11 @@ import SignatureSearch from '../SignatureSearch'
 import Upload from '../Upload'
 import NProgress from 'nprogress'
 import { fetch_meta_post } from '../../util/fetch/meta'
+import dynamic from 'next/dynamic'
+import { base_url as meta_url } from '../../util/fetch/meta'
+import '../../styles/swagger.scss'
+
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
 function build_where(q) {
   if (q.indexOf(':') !== -1) {
