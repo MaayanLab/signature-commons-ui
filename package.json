@@ -1,5 +1,5 @@
 {
-  "name": "signature-commons-ui",
+  "name": "@dcic/signature-commons-ui",
   "version": "0.2.6",
   "private": true,
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
