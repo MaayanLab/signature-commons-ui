@@ -18,6 +18,8 @@ const IconButton = (props) => (
     .icon-btn > span {
       line-height: 16px;
       text-align: center;
+      vertical-align: middle;
+      padding: 10px;
     }
     .icon-btn > div > img {
       position: relative;

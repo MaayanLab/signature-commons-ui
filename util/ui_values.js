@@ -57,6 +57,47 @@ export const UIValues = {
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
         bar_chart: values.bar_chart,
+        bar_chart_style: values.bar_chart_style || 
+          {
+            ResponsiveContainer: {
+              width: "100%",
+              height:350
+            },
+            Chart: {
+              margin: {
+                right: 50,
+                left: 50,
+                top: 20,
+                bottom: 20
+              }
+            },
+            XAxis: {
+              axisLine: false,
+              angle: 45,
+              height: 50,
+              textAnchor: "start",
+              interval: 0,
+              tick: {
+                fontSize: 10
+              },
+              tickLine: false
+            },
+            Bar: {
+              fill: "#75bef5"
+            }
+          },
+        pie_chart_style: {
+          Chart: {
+            width: 420,
+            height: 420
+          },
+          Pie: {
+            fill:"#75bef5"
+          },
+          Text_Label: {
+            fontSize: 10
+          }
+        },
         library_name: values.library_name || library_name,
         resource_name_from_library: values.resource_name_from_library,
         resource_name: values.resource_name,
@@ -101,6 +142,47 @@ export const UIValues = {
             resources: 'Resources',
           },
         bar_chart: values.bar_chart,
+        bar_chart_style: values.bar_chart_style || 
+          {
+            ResponsiveContainer: {
+              width: "100%",
+              height:350
+            },
+            Chart: {
+              margin: {
+                right: 50,
+                left: 50,
+                top: 20,
+                bottom: 20
+              }
+            },
+            XAxis: {
+              axisLine: false,
+              angle: 45,
+              height: 50,
+              textAnchor: "start",
+              interval: 0,
+              tick: {
+                fontSize: 10
+              },
+              tickLine: false
+            },
+            Bar: {
+              fill: "#75bef5"
+            }
+          },
+        pie_chart_style: {
+          Chart: {
+            width: 420,
+            height: 420
+          },
+          Pie: {
+            fill:"#75bef5"
+          },
+          Text_Label: {
+            fontSize: 10
+          }
+        },
         library_name: values.library_name || library_name,
         resource_name: values.resource_name,
         counting_validator: values.counting_validator || '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
