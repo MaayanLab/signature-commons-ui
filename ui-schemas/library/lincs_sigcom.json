@@ -1,0 +1,27 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
+    "${dataset}": "LDS*"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/static/images/default-black.png",
+      "alt": "${meta['title']}",
+      "priority": 1
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "alt": "${meta.types.method.value}",
+      "priority": 1
+    },
+    "Institute": {
+      "visibility": 1,
+      "type": "text",
+      "alt": "${meta.creators.affiliations.name}",
+      "priority": 1
+    }
+  }
+}

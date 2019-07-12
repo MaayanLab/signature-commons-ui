@@ -2,7 +2,7 @@
   {
     "Field_Name": "types.instrument.value",
     "Type": "object",
-    "Preferred_Name": "Instrument",
+    "Preferred_Name": "Instruments",
     "Table": "libraries",
     "MDI_Icon": "mdi-microscope",
     "Meta_Count": true,
@@ -11,7 +11,7 @@
   {
     "Field_Name": "types.information.value",
     "Type": "object",
-    "Preferred_Name": "Information",
+    "Preferred_Name": "Types",
     "Table": "libraries",
     "MDI_Icon": "mdi-information-outline",
     "Meta_Count": true,
@@ -20,21 +20,39 @@
   {
     "Field_Name": "types.description.value",
     "Type": "object",
-    "Preferred_Name": "Data Level",
+    "Preferred_Name": "Data Levels",
     "Table": "libraries",
     "MDI_Icon": "mdi-animation-outline",
     "Meta_Count": true,
-    "Pie_Count": false,
-    "Bar_Count": true
+    "Pie_Count": false
   },
   {
     "Field_Name": "storedIn.name",
     "Type": "object",
-    "Preferred_Name": "Source",
+    "Preferred_Name": "Sources",
     "Table": "libraries",
     "MDI_Icon": "mdi-database",
     "Meta_Count": true,
     "Pie_Count": true
+  },
+  {
+    "Field_Name": "creators.affiliations.name",
+    "Type": "object",
+    "Preferred_Name": "Institutes",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-certificate",
+    "Meta_Count": true,
+    "Pie_Count": false,
+    "Bar_Count": false
+  },
+  {
+    "Field_Name": "types.method.value",
+    "Type": "object",
+    "Preferred_Name": "Assays",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-test-tube",
+    "Meta_Count": true,
+    "Bar_Count": true
   },
   {
     "Field_Name": "libraries",
