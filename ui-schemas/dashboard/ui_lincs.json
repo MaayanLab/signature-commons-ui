@@ -44,6 +44,8 @@
         }
       },
       "resource_name_from_library": "title",
+      "resource_name": "${meta.name}",
+      "resource_icon": "${meta.extraProperties[0].values[0]}",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
         "LINCS",
@@ -89,6 +91,8 @@
         }
       },
       "resource_name_from_library": "title",
+      "resource_name": "${meta.name}",
+      "resource_icon": "${meta.extraProperties[0].values[0]}",
       "library_name": "title",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
     }

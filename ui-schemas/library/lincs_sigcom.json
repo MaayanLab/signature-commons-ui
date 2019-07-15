@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/static/images/default-black.png",
+      "src": "${PREFIX}/${meta.creators[0].affiliations[0].extraProperties[0].values[0]}",
       "alt": "${meta['title']}",
       "priority": 1
     },

@@ -33,17 +33,7 @@
     "Table": "libraries",
     "MDI_Icon": "mdi-database",
     "Meta_Count": true,
-    "Pie_Count": true
-  },
-  {
-    "Field_Name": "creators.affiliations.name",
-    "Type": "object",
-    "Preferred_Name": "Institutes",
-    "Table": "libraries",
-    "MDI_Icon": "mdi-certificate",
-    "Meta_Count": true,
-    "Pie_Count": false,
-    "Bar_Count": false
+    "Pie_Count": false
   },
   {
     "Field_Name": "types.method.value",
@@ -60,7 +50,16 @@
     "Preferred_Name": "Datasets",
     "MDI_Icon": "mdi-folder-text-outline",
     "Table_Count": true,
-    "Visible_On_Landing": false,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true 
+  },
+  {
+    "Field_Name": "resources",
+    "Type": "table",
+    "Preferred_Name": "Institutes",
+    "MDI_Icon": "mdi-certificate",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
     "Visible_On_Admin": true 
   }
 ]

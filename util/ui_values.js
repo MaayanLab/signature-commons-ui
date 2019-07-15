@@ -101,6 +101,7 @@ export const UIValues = {
         library_name: values.library_name || library_name,
         resource_name_from_library: values.resource_name_from_library,
         resource_name: values.resource_name,
+        resource_icon: values.resource_icon,
         counting_validator: values.counting_validator || '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
         ui_schema: values.ui_schema || '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
       }
@@ -173,7 +174,7 @@ export const UIValues = {
           },
         pie_chart_style: {
           Chart: {
-            width: 420,
+            width: "100%",
             height: 420
           },
           Pie: {
@@ -185,6 +186,7 @@ export const UIValues = {
         },
         library_name: values.library_name || library_name,
         resource_name: values.resource_name,
+        resource_icon: values.resource_icon,
         counting_validator: values.counting_validator || '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
       }
     )
