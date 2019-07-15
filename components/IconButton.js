@@ -1,6 +1,8 @@
 import React from 'react'
 
-const IconButton = (props) => (
+const IconButton = (props) => {
+  console.log(props.img)
+  return(
   <div style={{ textAlign: 'center' }}>
     <style jsx>{`
     .icon-btn {
@@ -71,6 +73,6 @@ const IconButton = (props) => (
       )}
     </div>
   </div>
-)
+)}
 
 export default IconButton
