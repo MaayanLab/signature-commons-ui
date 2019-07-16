@@ -54,7 +54,7 @@ export async function get_library_resources(ui_values) {
         }
         if (!(resource_name in acc)) {
           resource.libraries = []
-          resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon|| makeTemplate(ui_values.resource_icon, resource)}`
+          resource.meta.icon = `${process.env.PREFIX}/${resource.meta.icon|| makeTemplate(ui_values.resource_icon, resource)}`
           acc[resource_name] = resource
         }
         acc[resource_name].libraries.push({ ...lib })
@@ -128,7 +128,6 @@ export async function get_signature_counts_per_resources(ui_values) {
       return acc
     }, 0)
     resource.meta.Signature_Count = total_sigs
-    console.log(total_sigs)
     return (resource)
   }).reduce((acc, resource) => {
     acc[resource.meta.Resource_Name || makeTemplate(ui_values.resource_name, resource)] = resource
