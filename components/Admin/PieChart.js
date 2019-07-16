@@ -54,7 +54,6 @@ const ActiveShape = (props) => {
 export default class DonutChart extends PureComponent {
   constructor(props) {
     super(props)
-    console.log(props)
     this.state = {
       activeIndex: 0,
     }
