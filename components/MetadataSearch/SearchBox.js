@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import config from '../../ui-schemas/MetadataSearch'
 
 export default class MetadataSearchBox extends React.Component {
@@ -27,22 +28,25 @@ export default class MetadataSearchBox extends React.Component {
             }}
           />
           <span>&nbsp;&nbsp;</span>
-          <button className="btn waves-effect waves-light" type="submit" name="action" onClick={() => {
-            this.props.currentSearchChange(this.props.search)
-          }}>Search
+          <Link
+            to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.search)}` }}
+          >
+          <button className="btn waves-effect waves-light" type="submit" name="action">Search
             <i className="material-icons right">send</i>
           </button>
+          </Link>
         </div>
         {examples.map((example) => (
-          <a
-            className="chip grey white-text waves-effect waves-light"
-            onClick={() => {
-              this.props.currentSearchChange(example)
-            }}
+          <Link
             key={example}
+            to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(example)}` }}
           >
-            {example}
-          </a>
+            <div
+              className="chip grey white-text waves-effect waves-light"
+            >
+              {example}
+            </div>
+          </Link>
         ))}
       </form>
     )

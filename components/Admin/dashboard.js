@@ -8,8 +8,8 @@ import ListItem from '@material-ui/core/ListItem'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { DonutChart } from './VXpie.js'
-import { BarChart } from './VXbar.js'
+import DonutChart from './PieChart.js'
+import { BarChart } from './BarChart.js'
 import { withScreenSize } from '@vx/responsive'
 
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
@@ -77,27 +77,9 @@ export const PieChart = withStyles(landingStyle)(function({ classes, record = {}
 
   data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
   true_values.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-  let width = 220
-  let height = 220
-  let radius = 150
-  const fontSize = 7
-  if (props.cardheight == 300) {
-    radius = 200
-    width = 300
-    height = 300
-  }
   return (
-    <div><DonutChart width={width}
-      height={height}
-      radius={radius}
-      fontSize={fontSize}
-      margin={{
-        'top': 10,
-        'bottom': 10,
-        'left': 10,
-        'right': 10 }}
+    <div><DonutChart
       data={data}
-      true_values={true_values}
       {...props}/></div>
 
   )
@@ -135,7 +117,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
         <Grid item xs={12}>
           {name !== 'Resource' ?
               <div>
-                <span className={classes.vertical20}>Signatures per </span>
+                <span className={classes.vertical20}>Examine: </span>
                 <Selections
                   value={ selected_field}
                   values={Object.keys(props.pie_fields_and_stats).sort()}
@@ -147,7 +129,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} selected_field={selected_field} disabled/>
+          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} ui_values={props.ui_values} selected_field={selected_field} disabled/>
         </Grid>
       </Grid>
     </Card>
@@ -164,7 +146,7 @@ const BarChartGroup = withScreenSize(function({ classes, record = {}, ...props }
       <span className={classes.vertical55}>{name}</span>
       <Divider />
       { bar_counts !== undefined ?
-      <BarChart width={width} height={height} meta_counts={bar_counts} fontSize={fontSize}/> : null
+      <BarChart meta_counts={bar_counts} ui_values={props.ui_values}/> : null
       }
     </Card>
   )

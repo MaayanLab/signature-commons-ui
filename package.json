@@ -43,6 +43,7 @@
     "react-scroll-to-component": "^1.0.2",
     "react-swipeable-views": "^0.13.3",
     "react-wordcloud": "^1.0.5",
+    "recharts": "^1.6.2",
     "serialize-error": "^4.1.0",
     "swagger-client": "^3.8.22",
     "swagger-ui-react": "^3.23.0",

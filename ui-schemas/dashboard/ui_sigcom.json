@@ -7,7 +7,7 @@
         "Caption": "Datasets per year"
       },
       "library_name": "Library_name",
-      "resource_name": "Resource_Name",
+      "resource_name": "${meta.Resource_Name}",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json"
     }
@@ -21,7 +21,7 @@
         "Caption": "Datasets per year"
       },
       "library_name": "Library_name",
-      "resource_name": "Resource_Name",
+      "resource_name": "${meta.Resource_Name}",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
     }
   }

@@ -12,7 +12,7 @@ import { landingStyle } from '../../styles/jss/theme.js'
 
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
-import { BarChart } from '../Admin/VXbar.js'
+import { BarChart } from '../Admin/BarChart.js'
 
 export default withStyles(landingStyle)(class LandingPage extends React.Component {
   constructor(props) {
@@ -97,8 +97,8 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   { this.props.ui_values.bar_chart !== undefined ? (
                     <div className={this.props.classes.centered}>
                       {this.props.barcounts[this.props.ui_values.bar_chart.Field_Name] !== undefined ? (
-                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_values.bar_chart.Field_Name]}
-                        fontSize={this.props.ui_values.bar_chart.font_size || 11}/>) : (
+                      <BarChart meta_counts={this.props.barcounts[this.props.ui_values.bar_chart.Field_Name]}
+                        ui_values={this.props.ui_values}/>) : (
                       null
                       )}
                       <Typography variant="caption">
@@ -108,7 +108,8 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   ) : (
                     <div className={this.props.classes.centered}>
                       {this.props.barcounts[Object.keys(this.props.barcounts)[0]] !== undefined ?
-                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/> :
+                      <BarChart meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} 
+                        ui_values={this.props.ui_values}/> :
                         null
                       }
                       <Typography variant="caption">
@@ -144,9 +145,9 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 </Grid>
                 <Grid item xs={12} sm>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
-                      Signatures per {this.props.selected_field.replace(/_/g, ' ')}
+                      {`${this.props.pie_table} per ${this.props.pie_preferred_name}`}
                     </Typography>
                   </div>
                 </Grid>

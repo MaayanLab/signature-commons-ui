@@ -1,4 +1,5 @@
 import { fetch_meta } from '../../util/fetch/meta'
+import { makeTemplate } from '../../util/makeTemplate'
 
 export const primary_resources = [
   'CREEDS',
@@ -45,15 +46,15 @@ export async function get_library_resources(ui_values) {
     if (resource_id) {
       if (resource_id in resource_meta) {
         const resource = resource_meta[resource_id]
-        if ('resource_name' in ui_values && ui_values.resource_name !== undefined) {
-          resource_name = resource.meta[ui_values.resource_name]
+        if (ui_values.resource_name !== undefined) {
+          resource_name = makeTemplate(ui_values.resource_name, resource)
         } else {
           console.warn('source of resource name is not defined, using either Resource_Name or ids')
           resource_name = resource.meta['Resource_Name'] || resource_id
         }
         if (!(resource_name in acc)) {
           resource.libraries = []
-          resource.meta.icon = `${process.env.PREFIX}${resource.meta.icon}`
+          resource.meta.icon = `${process.env.PREFIX}/${resource.meta.icon|| makeTemplate(ui_values.resource_icon, resource)}`
           acc[resource_name] = resource
         }
         acc[resource_name].libraries.push({ ...lib })
@@ -129,7 +130,7 @@ export async function get_signature_counts_per_resources(ui_values) {
     resource.meta.Signature_Count = total_sigs
     return (resource)
   }).reduce((acc, resource) => {
-    acc[resource.meta.Resource_Name] = resource
+    acc[resource.meta.Resource_Name || makeTemplate(ui_values.resource_name, resource)] = resource
     return acc
   }, {})
   counts.reduce

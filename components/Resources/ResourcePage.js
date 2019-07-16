@@ -8,6 +8,7 @@ import M from 'materialize-css'
 import NProgress from 'nprogress'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
+import { makeTemplate } from '../../util/makeTemplate'
 
 
 import { download_resource_json,
@@ -51,7 +52,7 @@ export default class ResourcePage extends React.Component {
                     </div>
                     <div className="card-content col s11">
                       <div>
-                        <span className="card-title">{this.props.resource.meta.Resource_Name}</span>
+                        <span className="card-title">{this.props.resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, this.props.resource)}</span>
                       </div>
                       <ShowMeta
                         value={{

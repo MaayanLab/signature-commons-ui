@@ -297,7 +297,9 @@ class AdminView extends React.PureComponent {
 
   async fetch_stats(selected_field) {
     this.setState({
-      pie_stats: this.props.pie_fields_and_stats[selected_field] || [],
+      pie_stats: this.props.pie_fields_and_stats[selected_field].stats || {},
+      pie_table: this.props.pie_fields_and_stats[selected_field].table || '',
+      pie_preferred_name: this.props.pie_fields_and_stats[selected_field].Preferred_Name || '',
     })
   }
 
