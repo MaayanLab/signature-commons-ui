@@ -77,15 +77,6 @@ export const PieChart = withStyles(landingStyle)(function({ classes, record = {}
 
   data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
   true_values.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-  let width = 220
-  let height = 220
-  let radius = 150
-  const fontSize = 7
-  if (props.cardheight == 300) {
-    radius = 200
-    width = 300
-    height = 300
-  }
   return (
     <div><DonutChart
       data={data}
@@ -138,7 +129,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} selected_field={selected_field} disabled/>
+          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} ui_values={props.ui_values} selected_field={selected_field} disabled/>
         </Grid>
       </Grid>
     </Card>
@@ -150,7 +141,6 @@ const BarChartGroup = withScreenSize(function({ classes, record = {}, ...props }
   const width = props.screenWidth > 900 ? 1000 : 700
   const height = props.screenWidth > 900 ? 400 : 300
   const fontSize = props.screenWidth > 900 ? 11 : 8
-  console.log(props)
   return (
     <Card className={classes.basicCard}>
       <span className={classes.vertical55}>{name}</span>

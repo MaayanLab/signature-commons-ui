@@ -1,7 +1,7 @@
-// Taken from Rechart example
+// Code taken from Rechart example
 // http://recharts.org/en-US/examples/CustomActiveShapePieChart
 import React, { PureComponent } from 'react';
-import { PieChart as Chart, Pie, Sector } from 'recharts';
+import { PieChart as Chart, Pie, Sector, ResponsiveContainer } from 'recharts';
 
 const ActiveShape = (props) => {
   const RADIAN = Math.PI / 180;
@@ -54,6 +54,7 @@ const ActiveShape = (props) => {
 export default class DonutChart extends PureComponent {
   constructor(props) {
     super(props)
+    console.log(props)
     this.state = {
       activeIndex: 0,
     }
@@ -70,24 +71,37 @@ export default class DonutChart extends PureComponent {
     return <ActiveShape pie_chart_style={pie_chart_style} {...props}/>
   }
 
+  handleClick = (entry, index, e) => {
+    const {resources, disabled, ui_values} = this.props
+    const resource_path = ui_values.preferred_name["Resources"] || 'Resources'
+    if (disabled === undefined) {
+      if (resources) {
+        location.href = `#/${resource_path}/${entry.label.replace(/ /g, '_')}`
+      } else {
+        location.href = `#/MetadataSearch?q=${entry.label}`
+      }
+    }
+  };
+
   render() {
     const {pie_chart_style} = this.props.ui_values
     return (
-      <Chart {...pie_chart_style.Chart}>
-        <Pie
-          dataKey="value"
-          activeIndex={this.state.activeIndex}
-          activeShape={this.activeShape}
-          data={this.props.data}
-          onMouseEnter={this.onPieEnter}
-          cx={200}
-          cy={200}
-          innerRadius={80}
-          outerRadius={100}
-          fill="#75bef5"
-          {...pie_chart_style.Pie}
-        />
-      </Chart>
+      <ResponsiveContainer {...pie_chart_style.ResponsiveContainer}>
+        <Chart {...pie_chart_style.Chart}>
+          <Pie
+            dataKey="value"
+            activeIndex={this.state.activeIndex}
+            activeShape={this.activeShape}
+            data={this.props.data}
+            onMouseEnter={this.onPieEnter}
+            innerRadius={80}
+            outerRadius={100}
+            fill="#75bef5"
+            onClick={this.handleClick}
+            {...pie_chart_style.Pie}
+          />
+        </Chart>
+      </ResponsiveContainer>
     );
   }
 }

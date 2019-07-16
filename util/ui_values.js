@@ -87,9 +87,12 @@ export const UIValues = {
             }
           },
         pie_chart_style: {
+          ResponsiveContainer: {
+            width: "100%",
+            height: 350,
+            margin: "0 auto",
+          },
           Chart: {
-            width: 420,
-            height: 420
           },
           Pie: {
             fill:"#75bef5"
@@ -173,9 +176,15 @@ export const UIValues = {
             }
           },
         pie_chart_style: {
-          Chart: {
+          ResponsiveContainer: {
             width: "100%",
-            height: 420
+            height: 350,
+          },
+          Chart: {
+            margin: {
+                top: 0,
+                bottom: 0
+              }
           },
           Pie: {
             fill:"#75bef5"

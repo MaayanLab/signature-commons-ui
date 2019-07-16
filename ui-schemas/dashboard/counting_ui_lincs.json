@@ -36,6 +36,16 @@
     "Pie_Count": false
   },
   {
+    "Field_Name": "creators.affiliations.name",
+    "Type": "object",
+    "Preferred_Name": "Institutes",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-certificate",
+    "Meta_Count": false,
+    "Pie_Count": true,
+    "Bar_Count": false
+  },
+  {
     "Field_Name": "types.method.value",
     "Type": "object",
     "Preferred_Name": "Assays",
@@ -56,7 +66,7 @@
   {
     "Field_Name": "resources",
     "Type": "table",
-    "Preferred_Name": "Institutes",
+    "Preferred_Name": "Data and Signature Generation Centers",
     "MDI_Icon": "mdi-certificate",
     "Table_Count": true,
     "Visible_On_Landing": true,
