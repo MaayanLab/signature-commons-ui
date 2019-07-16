@@ -18,7 +18,7 @@ import { FindReplace,
   NearMe,
   Earth } from 'mdi-material-ui'
 
-import GenesetSearchBox from './GenesetSearchBox'
+import GenesetSearchBox from '../SignatureSearch/GenesetSearchBox'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
@@ -234,9 +234,11 @@ export const SearchCard = ({ classes, width, ...props }) => {
                 ui_values={props.ui_values}
               /> :
               <GenesetSearchBox
-                id="signature"
+                input={props.signature_search.input}
                 onSubmit={props.submit}
-                type={props.type}
+                ui_values={props.ui_values}
+                changeSignatureType={props.changeSignatureType}
+                updateSignatureInput={props.updateSignatureInput}
                 {...props}
               />
             }
@@ -254,11 +256,13 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <GenesetSearchBox
-              id="signature"
-              onSubmit={props.submit}
-              type={props.type}
-              {...props}
-            />
+                input={props.signature_search.input}
+                onSubmit={props.submit}
+                ui_values={props.ui_values}
+                changeSignatureType={props.changeSignatureType}
+                updateSignatureInput={props.updateSignatureInput}
+                {...props}
+              />
           </Grid>
         </Grid>
       </Card>

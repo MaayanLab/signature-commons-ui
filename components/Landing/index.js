@@ -58,9 +58,12 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               handleChange={this.props.handleChange}
               type={this.state.type}
               searchType={this.props.searchType}
-              submit={this.submit}
+              submit={this.props.submit}
+              changeSignatureType={this.props.changeSignatureType}
+              updateSignatureInput={this.props.updateSignatureInput}
               ui_values={this.props.ui_values}
               classes={this.props.classes}
+              signature_search={this.props.signature_search}
             />
           </Grid>
           { this.props.table_counts.length === 0 ? null :

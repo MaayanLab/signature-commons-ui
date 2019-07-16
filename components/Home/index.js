@@ -12,6 +12,10 @@ import Upload from '../Upload'
 import NProgress from 'nprogress'
 import { fetch_meta_post } from '../../util/fetch/meta'
 import { animateScroll as scroll } from 'react-scroll'
+import { resolve_entities } from '../SignatureSearch/resolve'
+import { query_overlap, query_rank } from '../SignatureSearch/query'
+import uuid5 from 'uuid5'
+
 
 function build_where(q) {
   if (q.indexOf(':') !== -1) {
@@ -155,7 +159,7 @@ export default class Home extends React.PureComponent {
 
   submit = (input) => {
     NProgress.start()
-    // TODO: register signature with metadata api
+    // TODO: register signature with metadata ap`i`
     // libraries={this.props.libraries}
     //   resources={this.props.resources}
     //   library_resource={this.props.library_resource}
@@ -166,7 +170,11 @@ export default class Home extends React.PureComponent {
     if (controller !== null) controller.abort()
     else controller = new AbortController()
     this.setState(() => ({
-      controller, input,
+      signature_search:{
+        ...this.state.signature_search,
+        controller,
+        input,
+      }
     }), async () => {
       if (input.type === 'Overlap') {
         const unresolved_entities = parse_entities(input.geneset)
@@ -213,7 +221,6 @@ export default class Home extends React.PureComponent {
         const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
         const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
         const signature_id = uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
-
         const results = await query_rank({
           ...this.state.signature_search,
           ...props,
@@ -461,6 +468,7 @@ export default class Home extends React.PureComponent {
       handleChange={this.handleChange}
       changeSignatureType={this.changeSignatureType}
       updateSignatureInput={this.updateSignatureInput}
+      submit={this.submit}
       {...props}
       {...this.state.signature_search}
     />
@@ -533,6 +541,9 @@ export default class Home extends React.PureComponent {
               searchChange={this.searchChange}
               currentSearchChange={this.currentSearchChange}
               resetCurrentSearch={this.resetCurrentSearch}
+              changeSignatureType={this.changeSignatureType}
+              updateSignatureInput={this.updateSignatureInput}
+              submit={this.submit}
               {...this.state}
               {...this.props}
               {...router_props}/>}

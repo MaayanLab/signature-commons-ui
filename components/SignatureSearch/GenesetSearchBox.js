@@ -10,15 +10,6 @@ const example_geneset_down = 'MAL EPCAM HDAC6 CAPN1 TNRC6B PKD1 RRS1 HP ANO10 CE
 export default class GenesetSearchBox extends React.Component {
   constructor(props) {
     super(props)
-    const input = {
-      type: this.props.match.params.type,
-    }
-    if (this.props.input.type === 'Overlap') {
-      input.geneset = ''
-    } else if (this.props.input.type === 'Rank') {
-      input.up_geneset = ''
-      input.down_geneset = ''
-    }
   }
 
   isEmpty = () => {
@@ -39,7 +30,8 @@ export default class GenesetSearchBox extends React.Component {
     <div className="row">
       <div className="col s12 center">
         <div className="switch">
-          <label>
+          <label style={{ color: '#FFF',
+            fontWeight: 'bold' }}>
             Gene Set or Full Signature
             <input
               type="checkbox"
@@ -62,6 +54,7 @@ export default class GenesetSearchBox extends React.Component {
             style={{
               height: 200,
               overflow: 'auto',
+              background: '#f7f7f7',
             }}
             value={this.props.input.geneset}
             onChange={(e) =>{
@@ -81,7 +74,8 @@ export default class GenesetSearchBox extends React.Component {
     <div className="row">
       <div className="col s12 center">
         <div className="switch">
-          <label>
+          <label style={{ color: '#FFF',
+            fontWeight: 'bold' }}>
             Gene Set or Full Signature
             <input
               type="checkbox"
@@ -104,6 +98,7 @@ export default class GenesetSearchBox extends React.Component {
             style={{
               height: 200,
               overflow: 'auto',
+              background: '#f7f7f7',
             }}
             value={this.props.input.up_geneset}
             onChange={(e) =>{
@@ -124,6 +119,7 @@ export default class GenesetSearchBox extends React.Component {
             style={{
               height: 200,
               overflow: 'auto',
+              background: '#f7f7f7',
             }}
             value={this.props.input.down_geneset}
             onChange={(e) =>{
