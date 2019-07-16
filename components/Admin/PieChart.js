@@ -86,7 +86,6 @@ export default class DonutChart extends PureComponent {
   render() {
     const {pie_chart_style} = this.props.ui_values
     return (
-      <ResponsiveContainer {...pie_chart_style.ResponsiveContainer}>
         <Chart {...pie_chart_style.Chart}>
           <Pie
             dataKey="value"
@@ -101,7 +100,6 @@ export default class DonutChart extends PureComponent {
             {...pie_chart_style.Pie}
           />
         </Chart>
-      </ResponsiveContainer>
     );
   }
 }

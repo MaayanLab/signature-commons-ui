@@ -117,7 +117,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
         <Grid item xs={12}>
           {name !== 'Resource' ?
               <div>
-                <span className={classes.vertical20}>Signatures per </span>
+                <span className={classes.vertical20}>Examine: </span>
                 <Selections
                   value={ selected_field}
                   values={Object.keys(props.pie_fields_and_stats).sort()}

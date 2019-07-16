@@ -128,7 +128,7 @@ export async function get_metacounts(ui_values) {
     stat_list.push({ name: item.meta.Preferred_Name,
       counts: Object.keys(meta_stats[k] || {}).length,
       icon: item.meta.MDI_Icon,
-      Preferred_Name: item.meta.Preferred_Name })
+      Preferred_Name: item.meta.Preferred_Name || item.meta.Field_Name })
     return (stat_list)
   }, [])
 
@@ -169,14 +169,17 @@ export async function get_pie_stats(ui_values) {
   }, {})
   const pie_stats = piefields.map((item) => {
     return {
-      key: item.meta.Preferred_Name,
+      key: item.meta.Preferred_Name || item.meta.Field_Name,
+      Preferred_Name: item.meta.Preferred_Name_Singular || item.meta.Preferred_Name || item.meta.Field_Name,
+      table: item.meta.Table,
       stats: meta_stats[item.meta.Field_Name],
     }
   })
   const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {
-    piestats[stats.key] = stats.stats
+    piestats[stats.key] = { stats: stats.stats, table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name }
     return piestats
   }, {})
+
   return { pie_fields_and_stats }
 }
 

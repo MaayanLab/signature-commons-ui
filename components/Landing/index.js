@@ -147,7 +147,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   <div className={this.props.classes.centered}>
                     <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
-                      Signatures per {this.props.selected_field.replace(/_/g, ' ')}
+                      {`${this.props.pie_table} per ${this.props.pie_preferred_name}`}
                     </Typography>
                   </div>
                 </Grid>
