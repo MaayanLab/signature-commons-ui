@@ -27,7 +27,14 @@ export default class MetadataSearch extends React.Component {
     this.props.resetMetadataSearchStatus()
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const currentSearch = getParam(this.props.location.search, 'q')
+    if (prevProps.currentSearch!== currentSearch){
+      this.props.currentSearchChange(currentSearch)
+    }
+     if (currentSearch !== undefined || currentSearch === "") {
+      this.props.currentSearchChange(currentSearch)
+      }
     if (this.props.completed_search === 3) {
       this.props.resetMetadataSearchStatus()
     }
