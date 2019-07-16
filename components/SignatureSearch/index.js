@@ -110,6 +110,7 @@ export default class SignatureSearch extends React.Component {
 
   geneset_searchbox = (props) => {
     if (this.props.location.state) {
+      console.log(this.props.location.state)
       return (<div />)
     } else {
       return (
@@ -117,6 +118,9 @@ export default class SignatureSearch extends React.Component {
           input={this.state.input}
           onSubmit={this.submit}
           ui_values={this.props.ui_values}
+          changeSignatureType={this.props.changeSignatureType}
+          updateSignatureInput={this.props.updateSignatureInput}
+          input={this.props.input}
           {...props}
         />
       )

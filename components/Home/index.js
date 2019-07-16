@@ -11,6 +11,7 @@ import SignatureSearch from '../SignatureSearch'
 import Upload from '../Upload'
 import NProgress from 'nprogress'
 import { fetch_meta_post } from '../../util/fetch/meta'
+import { animateScroll as scroll } from 'react-scroll'
 
 function build_where(q) {
   if (q.indexOf(':') !== -1) {
@@ -29,6 +30,17 @@ function build_where(q) {
   }
 }
 
+function parse_entities(input) {
+  return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
+      (lines, line) => {
+        const parsed = /^(.+?)(,(.+))?$/.exec(line)
+        if (parsed !== null) {
+          return [...lines, parsed[1]]
+        }
+        return lines
+      }, []
+  ))
+}
 
 export default class Home extends React.PureComponent {
   constructor(props) {
@@ -37,6 +49,7 @@ export default class Home extends React.PureComponent {
       cart: Set(),
       pie_stats: null,
       selected_field: Object.keys(props.pie_fields_and_stats)[0],
+      searchType: props.ui_values.nav.metadata_search ?'metadata': "signature",
       metadata_search: {
         controller: undefined,
         signatures_total_count: undefined,
@@ -47,10 +60,18 @@ export default class Home extends React.PureComponent {
         completed_search: 0,
         search_status: '',
       },
+      signature_search: {
+        input: {
+          type: "Overlap",
+          geneset: "",
+        },
+        controller: null,
+      }
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
     this.handleSelectField = this.handleSelectField.bind(this)
+    this.handleChange = this.handleChange.bind(this)
 
     // metadata search
     this.searchChange = this.searchChange.bind(this)
@@ -58,6 +79,10 @@ export default class Home extends React.PureComponent {
     this.performSearch = this.performSearch.bind(this)
     this.resetMetadataSearchStatus = this.resetMetadataSearchStatus.bind(this)
     this.resetCurrentSearch = this.resetCurrentSearch.bind(this)
+
+    // signature search
+    this.changeSignatureType = this.changeSignatureType.bind(this)
+    this.updateSignatureInput = this.updateSignatureInput.bind(this)
   }
 
   async componentDidMount() {
@@ -88,6 +113,125 @@ export default class Home extends React.PureComponent {
     } else if (this.state.metadata_search.completed_search === 3) {
       NProgress.done()
     }
+  }
+
+  handleChange(event, searchType, scrolling = false) {
+    console.log(searchType)
+    if (searchType) {
+      this.setState({ searchType }, () => {
+        if (scrolling) {
+          scroll.scrollToTop()
+        }
+      })
+    }
+  }
+
+  changeSignatureType(type, input_data={}){
+    const input = {
+      type
+    }
+    if (type === 'Overlap') {
+      input.geneset = input_data.geneset || ''
+    } else if (type === 'Rank') {
+      input.up_geneset = input_data.up_geneset || ''
+      input.down_geneset = input_data.down_geneset || ''
+    }
+    this.setState((prevState) => ({
+      signature_search: {
+        ...prevState.signature_search,
+        input,
+      },
+    }))
+  }
+
+  updateSignatureInput(input){
+    this.setState((prevState) => ({
+      signature_search: {
+        ...prevState.signature_search,
+        input,
+      },
+    }))
+  }
+
+  submit = (input) => {
+    NProgress.start()
+    // TODO: register signature with metadata api
+    // libraries={this.props.libraries}
+    //   resources={this.props.resources}
+    //   library_resource={this.props.library_resource}
+    const {libraries, resources, library_resource} = this.props
+    const props = {libraries, resources, library_resource}
+
+    let controller = this.state.signature_search.controller
+    if (controller !== null) controller.abort()
+    else controller = new AbortController()
+    this.setState(() => ({
+      controller, input,
+    }), async () => {
+      if (input.type === 'Overlap') {
+        const unresolved_entities = parse_entities(input.geneset)
+        const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
+        if (mismatched.count() > 0) {
+          M.toast({
+            html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
+            classes: 'rounded',
+            displayLength: 4000,
+          })
+        }
+
+        const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
+        const signature_id = uuid5(JSON.stringify(resolved_entities))
+
+        const results = await query_overlap({
+          ...this.state.signature_search,
+          ...props,
+          input: {
+            entities: resolved_entities,
+          },
+        })
+        this.setState((prevState) => ({
+          signature_search: {
+            ...prevState.signature_search,
+            ...results,
+            mismatched
+          },
+        }), () => NProgress.done())
+        this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
+      } else if (input.type === 'Rank') {
+        const unresolved_up_entities = parse_entities(input.up_geneset)
+        const unresolved_down_entities = parse_entities(input.down_geneset)
+        const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
+        const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
+        if (mismatched.count() > 0) {
+          M.toast({
+            html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
+            classes: 'rounded',
+            displayLength: 4000,
+          })
+        }
+
+        const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
+        const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
+        const signature_id = uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
+
+        const results = await query_rank({
+          ...this.state.signature_search,
+          ...props,
+          input: {
+            up_entities: resolved_up_entities,
+            down_entities: resolved_down_entities,
+          },
+        })
+        this.setState((prevState) => ({
+          signature_search: {
+            ...prevState.signature_search,
+            ...results,
+            mismatched
+          },
+        }), () => NProgress.done())
+        this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
+      }
+    })
   }
 
   searchChange(search) {
@@ -314,7 +458,11 @@ export default class Home extends React.PureComponent {
       library_resource={this.props.library_resource}
       ui_values={this.props.ui_values}
       schemas={this.props.schemas}
+      handleChange={this.handleChange}
+      changeSignatureType={this.changeSignatureType}
+      updateSignatureInput={this.updateSignatureInput}
       {...props}
+      {...this.state.signature_search}
     />
   )
 
@@ -381,6 +529,7 @@ export default class Home extends React.PureComponent {
           <Route
             exact path="/"
             render={(router_props) => <Landing handleSelectField={this.handleSelectField}
+              handleChange={this.handleChange}
               searchChange={this.searchChange}
               currentSearchChange={this.currentSearchChange}
               resetCurrentSearch={this.resetCurrentSearch}

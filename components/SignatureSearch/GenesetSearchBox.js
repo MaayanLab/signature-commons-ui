@@ -13,28 +13,24 @@ export default class GenesetSearchBox extends React.Component {
     const input = {
       type: this.props.match.params.type,
     }
-    if (this.props.match.params.type === 'Overlap') {
+    if (this.props.input.type === 'Overlap') {
       input.geneset = ''
-    } else if (this.props.match.params.type === 'Rank') {
+    } else if (this.props.input.type === 'Rank') {
       input.up_geneset = ''
       input.down_geneset = ''
-    }
-
-    this.state = {
-      input,
     }
   }
 
   isEmpty = () => {
-    if (this.state.input === undefined) return true
-    if (this.state.input.type === 'Overlap') {
-      if (this.state.input.geneset === undefined) return true
-      if (this.state.input.geneset === '') return true
-    } else if (this.state.input.type === 'Rank') {
-      if (this.state.input.up_geneset === '') return true
-      if (this.state.input.up_geneset === undefined) return true
-      if (this.state.input.down_geneset === '') return true
-      if (this.state.input.down_geneset === undefined) return true
+    if (this.props.input === undefined) return true
+    if (this.props.input.type === 'Overlap') {
+      if (this.props.input.geneset === undefined) return true
+      if (this.props.input.geneset === '') return true
+    } else if (this.props.input.type === 'Rank') {
+      if (this.props.input.up_geneset === '') return true
+      if (this.props.input.up_geneset === undefined) return true
+      if (this.props.input.down_geneset === '') return true
+      if (this.props.input.down_geneset === undefined) return true
     }
     return false
   }
@@ -43,27 +39,19 @@ export default class GenesetSearchBox extends React.Component {
     <div className="row">
       <div className="col s12 center">
         <div className="switch">
-          <Link
-            to="/SignatureSearch/Rank"
-            onClick={() => this.setState({
-              input: {
-                type: 'Rank',
-                up_geneset: '',
-                down_geneset: '',
-              },
-            })}
-          >
-            <label>
-              Gene Set or Full Signature
-              <input
-                type="checkbox"
-                checked={false}
-                onChange={() => null}
-              />
-              <span className="lever"></span>
-              Up and Down Gene Sets
-            </label>
-          </Link>
+          <label>
+            Gene Set or Full Signature
+            <input
+              type="checkbox"
+              checked={false}
+              onChange={() => {
+                this.props.changeSignatureType("Rank")
+                }
+              }
+            />
+            <span className="lever"></span>
+            Up and Down Gene Sets
+          </label>
         </div>
       </div>
       <div className="col s12">
@@ -75,8 +63,14 @@ export default class GenesetSearchBox extends React.Component {
               height: 200,
               overflow: 'auto',
             }}
-            value={this.state.input.geneset}
-            onChange={(e) => this.setState({ input: { ...this.state.input, geneset: e.target.value } })}
+            value={this.props.input.geneset}
+            onChange={(e) =>{
+              const input = {
+                ...this.props.input,
+                geneset: e.target.value
+              }
+              this.props.updateSignatureInput(input)
+            }}
           ></textarea>
         </div>
       </div>
@@ -87,26 +81,19 @@ export default class GenesetSearchBox extends React.Component {
     <div className="row">
       <div className="col s12 center">
         <div className="switch">
-          <Link
-            to="/SignatureSearch/Overlap"
-            onClick={() => this.setState({
-              input: {
-                type: 'Overlap',
-                geneset: '',
-              },
-            })}
-          >
-            <label>
-              Gene Set or Full Signature
-              <input
-                type="checkbox"
-                checked={true}
-                onChange={() => null}
-              />
-              <span className="lever"></span>
-              Up and Down Gene Sets
-            </label>
-          </Link>
+          <label>
+            Gene Set or Full Signature
+            <input
+              type="checkbox"
+              checked={true}
+              onChange={() => {
+                this.props.changeSignatureType("Overlap")
+                }
+              }
+            />
+            <span className="lever"></span>
+            Up and Down Gene Sets
+          </label>
         </div>
       </div>
       <div className="col s6">
@@ -118,8 +105,14 @@ export default class GenesetSearchBox extends React.Component {
               height: 200,
               overflow: 'auto',
             }}
-            value={this.state.input.up_geneset}
-            onChange={(e) => this.setState({ input: { ...this.state.input, up_geneset: e.target.value } })}
+            value={this.props.input.up_geneset}
+            onChange={(e) =>{
+              const input = {
+                ...this.props.input,
+                up_geneset: e.target.value
+              }
+              this.props.updateSignatureInput(input)
+            }}
           ></textarea>
         </div>
       </div>
@@ -132,8 +125,14 @@ export default class GenesetSearchBox extends React.Component {
               height: 200,
               overflow: 'auto',
             }}
-            value={this.state.input.down_geneset}
-            onChange={(e) => this.setState({ input: { ...this.state.input, down_geneset: e.target.value } })}
+            value={this.props.input.down_geneset}
+            onChange={(e) =>{
+              const input = {
+                ...this.props.input,
+                down_geneset: e.target.value
+              }
+              this.props.updateSignatureInput(input)
+            }}
           ></textarea>
         </div>
       </div>
@@ -143,14 +142,11 @@ export default class GenesetSearchBox extends React.Component {
   render() {
     return (
       <div className="row">
-        <Switch>
-          <Route path="/SignatureSearch/Overlap" component={this.geneset} />
-          <Route path="/SignatureSearch/Rank" component={this.up_down_geneset} />
-        </Switch>
+        {this.props.input.type==="Overlap" ? this.geneset(): this.up_down_geneset()}
         <div className="col s12 center">
           <button
             className={'btn waves-effect waves-light' + (this.isEmpty() ? ' disabled' : '')} type="submit" name="action"
-            onClick={call(this.props.onSubmit, this.state.input)}
+            onClick={call(this.props.onSubmit, this.props.input)}
           >
             Search
             <i className="material-icons right">send</i>
@@ -159,51 +155,45 @@ export default class GenesetSearchBox extends React.Component {
         </div>
         <div className="col s12 center">
           <div className="input-field">
-            <Link
-              to="/SignatureSearch/Overlap"
+            <a
               className="chip grey white-text waves-effect waves-light"
               onClick={() => {
-                this.setState({
-                  input: {
-                    type: 'Overlap',
-                    geneset: this.props.ui_values.LandingText.geneset_terms || example_geneset,
-                  },
-                })
+                const input = {
+                  type: 'Overlap',
+                  geneset: this.props.ui_values.LandingText.geneset_terms || example_geneset,
+                }
+                this.props.updateSignatureInput(input)
               }}
             >
               Example Crisp Gene Set
-            </Link>
+            </a>
 
-            <Link
-              to="/SignatureSearch/Overlap"
+            <a
               className="chip grey white-text waves-effect waves-light"
               onClick={() => {
-                this.setState({
-                  input: {
-                    type: 'Overlap',
-                    geneset: this.props.ui_values.LandingText.weighted_geneset_terms || example_geneset_weighted,
-                  },
-                })
+                const input = {
+                  type: 'Overlap',
+                  geneset: this.props.ui_values.LandingText.weighted_geneset_terms || example_geneset_weighted,
+                }
+                this.props.updateSignatureInput(input)
               }}
             >
               Example Weighted Signature
-            </Link>
+            </a>
 
-            <Link
-              to="/SignatureSearch/Rank"
+            <a
               className="chip grey white-text waves-effect waves-light"
               onClick={() => {
-                this.setState({
-                  input: {
-                    type: 'Rank',
-                    up_geneset: this.props.ui_values.LandingText.up_set_terms || example_geneset_up,
-                    down_geneset: this.props.ui_values.LandingText.down_set_terms || example_geneset_down,
-                  },
-                })
+                const input = {
+                  type: 'Rank',
+                  up_geneset: this.props.ui_values.LandingText.up_set_terms || example_geneset_up,
+                  down_geneset: this.props.ui_values.LandingText.down_set_terms || example_geneset_down,
+                }
+                this.props.updateSignatureInput(input)
               }}
             >
               Example Up and Down Sets
-            </Link>
+            </a>
           </div>
         </div>
       </div>

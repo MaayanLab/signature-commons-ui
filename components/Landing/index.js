@@ -23,7 +23,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
       type: 'Overlap',
       scroll: false,
     }
-    this.handleChange = this.handleChange.bind(this)
     this.searchChange = this.searchChange.bind(this)
     this.scrollToTop = this.scrollToTop.bind(this)
   }
@@ -36,15 +35,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
     scroll.scrollToTop()
   }
 
-  handleChange(event, searchType, scroll = false) {
-    if (searchType) {
-      this.setState({ searchType }, () => {
-        if (scroll) {
-          this.scrollToTop()
-        }
-      })
-    }
-  }
   searchChange(e) {
     this.props.searchChange(e.target.value)
   }
@@ -65,9 +55,9 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               search={this.props.metadata_search.search}
               searchChange={this.searchChange}
               currentSearchChange={this.props.currentSearchChange}
-              handleChange={this.handleChange}
+              handleChange={this.props.handleChange}
               type={this.state.type}
-              searchType={this.state.searchType}
+              searchType={this.props.searchType}
               submit={this.submit}
               ui_values={this.props.ui_values}
               classes={this.props.classes}
@@ -165,7 +155,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
             </Grid>
           }
           <Grid item xs={12}>
-            <BottomLinks handleChange={this.handleChange}
+            <BottomLinks handleChange={this.props.handleChange}
               {...this.props} />
           </Grid>
           <Grid item xs={12}>

@@ -311,7 +311,7 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
     wordstats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
 
     return (
-      <div style={{ width: 300, height: 300, display: 'block', margin: 'auto' }}>
+      <div style={{ width: 420, height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
           callbacks={callbacks}
           options={{
