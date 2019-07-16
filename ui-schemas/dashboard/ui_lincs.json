@@ -48,9 +48,9 @@
       "resource_icon": "${meta.extraProperties[0].values[0]}",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
-        "LINCS",
-        "Kinase",
-        "Mass spectrometer"
+        "MEMA",
+        "MCF10A",
+        "L1000"
       ]
     }
   },

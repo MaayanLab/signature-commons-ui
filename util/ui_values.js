@@ -90,9 +90,10 @@ export const UIValues = {
           ResponsiveContainer: {
             width: "100%",
             height: 350,
-            margin: "0 auto",
           },
           Chart: {
+            width: 420,
+            height: 420,
           },
           Pie: {
             fill:"#75bef5"
@@ -101,6 +102,7 @@ export const UIValues = {
             fontSize: 10
           }
         },
+        pie_caption: values.pie_caption || "Signatures per",
         library_name: values.library_name || library_name,
         resource_name_from_library: values.resource_name_from_library,
         resource_name: values.resource_name,
@@ -181,10 +183,8 @@ export const UIValues = {
             height: 350,
           },
           Chart: {
-            margin: {
-                top: 0,
-                bottom: 0
-              }
+            width: 420,
+            height: 420,
           },
           Pie: {
             fill:"#75bef5"
@@ -193,6 +193,7 @@ export const UIValues = {
             fontSize: 10
           }
         },
+        pie_caption: values.pie_caption || "Signatures per",
         library_name: values.library_name || library_name,
         resource_name: values.resource_name,
         resource_icon: values.resource_icon,
