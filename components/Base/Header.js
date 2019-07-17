@@ -2,46 +2,46 @@ import React from 'react'
 import { withRouter, Link } from 'react-router-dom'
 
 export function Nav(props) {
-  console.log(props.location.pathname)
+  const {ui_values, handleChange, staticContext, ...rest} = props
   return (
-    <ul {...props}>
-      {props.ui_values.nav.metadata_search ?
+    <ul {...rest}>
+      {ui_values.nav.metadata_search ?
         <li
-          className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
+          className={rest.location.pathname === '/MetadataSearch' ? 'active' : ''}
         >
-          <Link to={props.location.pathname === '/MetadataSearch' ? '/MetadataSearch' : '/'}
+          <Link to={rest.location.pathname === '/MetadataSearch' ? '/MetadataSearch' : '/'}
             onClick={(e) => {
-              props.handleChange(e, 'metadata', true)
+              handleChange(e, 'metadata', true)
             }}
           >
             Metadata Search
           </Link>
         </li> : null
       }
-      {props.ui_values.nav.signature_search ?
+      {ui_values.nav.signature_search ?
         <li
-          className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
+          className={rest.location.pathname === '/SignatureSearch' ? 'active' : ''}
         >
-          <Link to={props.location.pathname === '/SignatureSearch' ? '/SignatureSearch' : '/'}
+          <Link to={rest.location.pathname === '/SignatureSearch' ? '/SignatureSearch' : '/'}
             onClick={(e) => {
-              props.handleChange(e, 'signature', true)
+              handleChange(e, 'signature', true)
             }}
           >
             Signature Search
           </Link>
         </li> : null
       }
-      {props.ui_values.nav.resources ?
+      {ui_values.nav.resources ?
         <li
-          className={props.location.pathname === `/${props.ui_values.preferred_name.resources || 'Resources'}` ? 'active' : ''}
+          className={rest.location.pathname === `/${ui_values.preferred_name.resources || 'Resources'}` ? 'active' : ''}
         >
-          <Link to={`/${props.ui_values.preferred_name.resources || 'Resources'}`}>
-            {props.ui_values.preferred_name.resources || 'Resources'}
+          <Link to={`/${ui_values.preferred_name.resources || 'Resources'}`}>
+            {ui_values.preferred_name.resources || 'Resources'}
           </Link>
         </li> : null
       }
       <li
-        className={props.location.pathname === '/API' ? 'active' : ''}
+        className={rest.location.pathname === '/API' ? 'active' : ''}
       >
         <Link to="/API">
           API
