@@ -15,6 +15,8 @@ The following table describe the fields for each entry
 | Type           | string          | type of the field in the database (string, object)|
 | Table | string | Name of the field's table |
 | Preferred_Name | string          |Display name of the field|
+| Preferred_Name_Singular | string          |Used for pie chart captions|
+| Slice | int          |Used to tell how many slices to use for the piecharts|
 | MDI_Icon | string | Display icon (see [mdi-icon](https://materialdesignicons.com/) for more information) |
 | Meta_Count | boolean | Tells the UI to display the field as part of the meta counts |
 | Pie_Count | boolean | Tells the UI to display the field as part of the pie charts |
@@ -52,6 +54,7 @@ Refer to the image above for more information.
 | library_name | string | The field that we'll use as the library name (required) |
 | resource_name | string | The field that we'll use as the resource name |
 | resource_name_from_library | string | Alternatively, if resource table is empty, we can use this field to define which meta field in the library to use. Otherwise, we'll use the library's dataset as resource name |
+| resource_icon | string | location of the icon in the metadata |
 | signature_search | boolean | tells the UI whether signature_search is activated |
 | metadata_search | boolean | tells the UI whether metadata_search is activated |
 | resources | boolean | tells the UI whether resources is activated |
@@ -74,7 +77,10 @@ Refer to the image above for more information.
 | bar_chart | object | Controls the barcharts |
 | counting_validator | string | Name of the counting validator to use |
 | ui_schema| string | name of ui_schema validator to use |
-
+|deactivate_download | boolean | deactivate downloads for this instance|
+|deactivate_wordcloud | boolean | deactivate word cloud for this instance|
+| bar_chart_style | object | props to pass to rechart (see rechart, ../../util/ui_values.js and ../../ui_schema/dashboard for examples)|
+| pie_chart_style | object | props to pass to rechart (see rechart, ../../util/ui_values.js and ../../ui_schema/dashboard for examples)
 The bar_chart an object with the following fields
 
 | Field         | Value           | Remarks |
