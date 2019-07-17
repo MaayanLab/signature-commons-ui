@@ -27,6 +27,7 @@
     "Preferred_Name_Singular": "Experimental Condition",
     "Table": "signatures",
     "MDI_Icon": " mdi-test-tube-empty",
+    "Slice": 25,
     "Meta_Count": true,
     "Pie_Count": true
   },
@@ -37,6 +38,7 @@
     "Preferred_Name_Singular": "Time Point",
     "Table": "signatures",
     "MDI_Icon": "mdi-timer",
+    "Slice": 25,
     "Meta_Count": true,
     "Pie_Count": true
   },

@@ -299,6 +299,7 @@ class AdminView extends React.PureComponent {
     this.setState({
       pie_stats: this.props.pie_fields_and_stats[selected_field].stats || {},
       pie_table: this.props.pie_fields_and_stats[selected_field].table || '',
+      pie_slice: this.props.pie_fields_and_stats[selected_field].slice || 14,
       pie_preferred_name: this.props.pie_fields_and_stats[selected_field].Preferred_Name || '',
     })
   }

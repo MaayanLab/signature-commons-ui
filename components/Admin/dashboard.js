@@ -63,10 +63,11 @@ export const PieChart = withStyles(landingStyle)(function({ classes, record = {}
   const stats = Object.entries(props.stats).map(function(entry) {
     return ({ 'label': entry[0], 'value': entry[1] })
   })
+  const slice = props.slice || 14
   stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-  const included = stats.slice(0, 14)
+  const included = stats.slice(0, slice)
   const included_sum = sum(included, 'value')
-  const other = sum(stats.slice(14), 'value')
+  const other = sum(stats.slice(slice), 'value')
   const other_sum = included_sum > other || included_sum < included.length * 10 ? other : included_sum * 1.5
   const others = [{ 'label': 'others', 'value': other_sum }]
   const data = other_sum > 0 ? included.concat(others) : included
@@ -129,7 +130,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} ui_values={props.ui_values} selected_field={selected_field} disabled/>
+          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} slice={props.pie_slice} ui_values={props.ui_values} selected_field={selected_field} disabled/>
         </Grid>
       </Grid>
     </Card>

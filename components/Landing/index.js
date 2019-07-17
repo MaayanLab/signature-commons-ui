@@ -140,7 +140,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 </Grid>
                 <Grid item xs={12} sm>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'} ui_values={this.props.ui_values}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} slice={this.props.pie_slice} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
                       {`${this.props.pie_table} per ${this.props.pie_preferred_name}`}
                     </Typography>
