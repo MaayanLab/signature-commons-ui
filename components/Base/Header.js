@@ -9,8 +9,8 @@ export function Nav(props) {
         <li
           className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
         >
-          <Link to={props.location.pathname === '/MetadataSearch' ? '/MetadataSearch': '/'}
-            onClick={(e)=>{
+          <Link to={props.location.pathname === '/MetadataSearch' ? '/MetadataSearch' : '/'}
+            onClick={(e) => {
               props.resetCurrentSearch()
               props.handleChange(e, 'metadata', true)
             }}
@@ -24,7 +24,7 @@ export function Nav(props) {
           className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
         >
           <Link to={'/SignatureSearch'}
-            onClick={(e)=>{
+            onClick={(e) => {
               const type = props.input.type
               props.changeSignatureType(type)
               props.handleChange(e, 'signature', true)
