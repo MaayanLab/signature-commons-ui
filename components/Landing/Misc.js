@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
@@ -108,10 +109,11 @@ export const BottomLinks = ({ classes, width, ...props }) => {
             alignItems={'center'}
             direction={'column'}>
             <Grid item xs={12}>
-              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}>
-                <Earth className={classes.icon} />
-              </Button>
+              <Link to="/API">
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}>
+                  <Earth className={classes.icon} />
+                </Button>
+              </Link>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subheading">
