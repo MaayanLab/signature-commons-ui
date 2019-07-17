@@ -1,6 +1,6 @@
 # Modifying the landing page
 
-We can adapt the landing page for signature commons by modifying two json files in the ui-schemas [landing-ui.json](../../ui-schemas/dashboard/landing_ui.json) and [ui.json](../../ui-schemas/dashboard/ui.json).
+We can adapt the landing page for signature commons by modifying two json files in the ui-schemas [landing-ui.json](../../examples/dashboard/landing_ui.json) and [ui.json](../../examples/dashboard/ui.json).
 
 ![alt text](../../static/sigcom-landing.png)
 
@@ -25,7 +25,7 @@ The following table describe the fields for each entry
 | Visible_On_Landing | boolean | If Table_Count is true and this is true, the UI will display the stat on the landing page|
 | Visible_On_Admin | boolean | If Table_Count is true and this is true, the UI will display the stat on the Admin page|
 
-Sample entries can be found on [dashboard folder](../../ui-schemas/dashboard). Relevant files are named as ```counting_ui_*.json```. Note that each object in the list is an entry.
+Sample entries can be found on [examples folder](../../examples/dashboard). Relevant files are named as ```counting_ui_*.json```. Note that each object in the list is an entry.
 ```
 {
     id: some-uuid-here-to-display,
@@ -79,8 +79,10 @@ Refer to the image above for more information.
 | ui_schema| string | name of ui_schema validator to use |
 |deactivate_download | boolean | deactivate downloads for this instance|
 |deactivate_wordcloud | boolean | deactivate word cloud for this instance|
-| bar_chart_style | object | props to pass to rechart (see rechart, ../../util/ui_values.js and ../../ui_schema/dashboard for examples)|
-| pie_chart_style | object | props to pass to rechart (see rechart, ../../util/ui_values.js and ../../ui_schema/dashboard for examples)
+| bar_chart_style | object | props to pass to rechart (see rechart, ../../util/ui_values.js and ../../examples/dashboard for examples)|
+| pie_chart_style | object | props to pass to rechart (see rechart, ../../util/ui_values.js and ../../examples/dashboard for examples)|
+|maxResourcesToShow|int|The number of resources triggering More/Less activation at all|
+|maxResourcesToShow|number|The maximum resources to show before collapsing if More/Less is activated|
 The bar_chart an object with the following fields
 
 | Field         | Value           | Remarks |
@@ -88,7 +90,7 @@ The bar_chart an object with the following fields
 | Field_Name | string | Name of the field to create a bar chart (recall that we have a Bar_Count field in the landing-ui.json, we choose which field to construct a bar graph with this field)|
 | Caption | string | Caption of the bargraph |
 
-Sample entries can be found on [dashboard folder](../../ui-schemas/dashboard). Relevant files are named as ```ui_*.json```. Note that each object in the list is an entry.
+Sample entries can be found on [examples folder](../../examples/dashboard). Relevant files are named as ```ui_*.json```. Note that each object in the list is an entry.
 ```
 {
     id: some-uuid-here-to-display,

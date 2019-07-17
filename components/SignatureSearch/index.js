@@ -35,6 +35,7 @@ export default class SignatureSearch extends React.Component {
     <ResourceFilters
       resources={Object.values(this.props.resources || {})}
       resource_signatures={this.props.resource_signatures || {}}
+      ui_values={this.props.ui_values}
       {...props}
     />
   )

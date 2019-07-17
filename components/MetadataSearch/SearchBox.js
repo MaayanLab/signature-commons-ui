@@ -1,10 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import config from '../../ui-schemas/MetadataSearch'
 
 export default class MetadataSearchBox extends React.Component {
   render() {
-    const examples = this.props.ui_values.LandingText.search_terms || config.examples
+    const examples = this.props.ui_values.LandingText.search_terms
     return (
       <form action="javascript:void(0);">
         <div className="input-field">
@@ -15,7 +14,7 @@ export default class MetadataSearchBox extends React.Component {
             onChange={this.props.searchChange}
             value={this.props.search}
             className="active"
-            placeholder={this.props.ui_values.LandingText.metadata_placeholder || config.placeholder}
+            placeholder={this.props.ui_values.LandingText.metadata_placeholder}
             style={{
               fontWeight: 500,
               color: 'rgba(0, 0, 0, 0.54)',

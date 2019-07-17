@@ -3,17 +3,9 @@ import { Highlight } from './Highlight'
 import { makeTemplate } from '../util/makeTemplate'
 
 export const default_schemas = [
-  require('../ui-schemas/library/default.json'),
-  require('../ui-schemas/signature/default.json'),
-  require('../ui-schemas/entities/default.json'),
-]
-
-
-export const schemases = [
-  require('../ui-schemas/entities/mcf10a.json'),
-  require('../ui-schemas/library/mcf10a.json'),
-  require('../ui-schemas/resources/mcf10a.json'),
-  require('../ui-schemas/signature/mcf10a.json'),
+  require('../examples/library/default.json'),
+  require('../examples/signature/default.json'),
+  require('../examples/entities/default.json'),
 ]
 
 export const labels = {

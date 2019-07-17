@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
-import config from '../../ui-schemas/SignatureSearch.json'
 import { call } from '../../util/call'
 import M from 'materialize-css'
 
@@ -74,13 +73,13 @@ export default class ResourceFilters extends React.Component {
           )
           return (
             <Grid item xs={xs} sm={sm} md={md} key={resource.id}>
-              {this.state.show_all || ind < config.maxResourcesToShow || sorted_resources.length < config.maxResourcesBeforeCollapse ? (
+              {this.state.show_all || ind < this.props.ui_values.maxResourcesToShow || sorted_resources.length < this.props.ui_values.maxResourcesBeforeCollapse ? (
                 <div>{btn}</div>
               ) : null}
             </Grid>
           )
         })}
-        {sorted_resources.length >= config.maxResourcesBeforeCollapse ? (
+        {sorted_resources.length >= this.props.ui_values.maxResourcesBeforeCollapse ? (
           <Grid item xs={xs} sm={sm} md={md} key={resource.id}>
             <IconButton
               alt={this.state.show_all ? 'Less' : 'More'}
