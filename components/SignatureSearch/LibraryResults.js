@@ -91,7 +91,12 @@ export default class LibraryResults extends React.Component {
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => (
         <TableRow>
-          <TableCell colSpan={rowData.length}>
+          <TableCell colSpan={rowData.length}
+            style={{
+                    overflowWrap: "break-word",
+                    wordWrap: "break-word"
+                  }}
+          >
             <ShowMeta
               value={[
                 {
