@@ -93,9 +93,9 @@ export default class LibraryResults extends React.Component {
         <TableRow>
           <TableCell colSpan={rowData.length}
             style={{
-                    overflowWrap: "break-word",
-                    wordWrap: "break-word"
-                  }}
+              overflowWrap: 'break-word',
+              wordWrap: 'break-word',
+            }}
           >
             <ShowMeta
               value={[

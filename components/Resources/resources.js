@@ -54,7 +54,7 @@ export async function get_library_resources(ui_values) {
         }
         if (!(resource_name in acc)) {
           resource.libraries = []
-          resource.meta.icon = `${process.env.PREFIX}/${resource.meta.icon|| makeTemplate(ui_values.resource_icon, resource)}`
+          resource.meta.icon = `${process.env.PREFIX}/${resource.meta.icon || makeTemplate(ui_values.resource_icon, resource)}`
           acc[resource_name] = resource
         }
         acc[resource_name].libraries.push({ ...lib })

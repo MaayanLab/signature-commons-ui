@@ -1,17 +1,13 @@
 import React from 'react'
 import {
-  BarChart as Chart, Bar, Cell, XAxis, Tooltip, ResponsiveContainer, Text
-} from 'recharts';
+  BarChart as Chart, Bar, XAxis, Tooltip, ResponsiveContainer,
+} from 'recharts'
 
-
-// accessors
-const x = (d) => d.name.replace('_', ' ')
-const y = (d) => +d.counts
 
 export const BarChart = ({ meta_counts, ui_values, ...props }) => {
-  const {bar_chart_style} = {...ui_values}
+  const { bar_chart_style } = { ...ui_values }
   return (
-    <ResponsiveContainer 
+    <ResponsiveContainer
       {...bar_chart_style.ResponsiveContainer}>
       <Chart
         data={meta_counts}
@@ -22,5 +18,5 @@ export const BarChart = ({ meta_counts, ui_values, ...props }) => {
         <Bar dataKey="counts" {...bar_chart_style.Bar} />
       </Chart>
     </ResponsiveContainer>
-    );
+  )
 }

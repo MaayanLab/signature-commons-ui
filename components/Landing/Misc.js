@@ -10,7 +10,6 @@ import Button from '@material-ui/core/Button'
 
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
 
 import ReactWordcloud from 'react-wordcloud'
 
@@ -258,13 +257,13 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <GenesetSearchBox
-                input={props.signature_search.input}
-                onSubmit={props.submit}
-                ui_values={props.ui_values}
-                changeSignatureType={props.changeSignatureType}
-                updateSignatureInput={props.updateSignatureInput}
-                {...props}
-              />
+              input={props.signature_search.input}
+              onSubmit={props.submit}
+              ui_values={props.ui_values}
+              changeSignatureType={props.changeSignatureType}
+              updateSignatureInput={props.updateSignatureInput}
+              {...props}
+            />
           </Grid>
         </Grid>
       </Card>

@@ -1,9 +1,9 @@
 import React from 'react'
 
 const IconButton = (props) => {
-  return(
-  <div style={{ textAlign: 'center' }}>
-    <style jsx>{`
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <style jsx>{`
     .icon-btn {
       display: flex;
       flex-direction: column;
@@ -46,13 +46,13 @@ const IconButton = (props) => {
       vertical-align: middle;
     }
     `}</style>
-    <div
-      className="icon-btn waves-effect waves-light"
-      onClick={props.onClick}
-      style={props.style}
-    >
-      <div>
-        {props.img !== undefined ? (
+      <div
+        className="icon-btn waves-effect waves-light"
+        onClick={props.onClick}
+        style={props.style}
+      >
+        <div>
+          {props.img !== undefined ? (
           <img
             className="icon-img"
             alt={props.alt}
@@ -61,17 +61,18 @@ const IconButton = (props) => {
         ) : (
           <i className="material-icons left black-text">{props.icon}</i>
         )}
-      </div>
-      <span>
-        {props.alt}
-      </span>
-      {props.counter === undefined ? null : (
+        </div>
+        <span>
+          {props.alt}
+        </span>
+        {props.counter === undefined ? null : (
         <div className="counter red lighten-1">
           {props.counter}
         </div>
       )}
+      </div>
     </div>
-  </div>
-)}
+  )
+}
 
 export default IconButton

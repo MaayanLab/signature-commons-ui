@@ -22,7 +22,7 @@ export default class MetadataSearch extends React.Component {
 
   async componentDidMount() {
     const currentSearch = getParam(this.props.location.search, 'q')
-    if (currentSearch !== undefined || currentSearch === "") {
+    if (currentSearch !== undefined || currentSearch === '') {
       this.props.currentSearchChange(currentSearch)
     }
     this.props.resetMetadataSearchStatus()
@@ -30,11 +30,11 @@ export default class MetadataSearch extends React.Component {
 
   componentDidUpdate(prevProps) {
     const currentSearch = getParam(this.props.location.search, 'q')
-    if (prevProps.currentSearch!== currentSearch && currentSearch === ""){
+    if (prevProps.currentSearch !== currentSearch && currentSearch === '') {
       this.props.currentSearchChange(currentSearch)
     }
-   if (currentSearch !== undefined || currentSearch === "") {
-    this.props.currentSearchChange(currentSearch)
+    if (currentSearch !== undefined || currentSearch === '') {
+      this.props.currentSearchChange(currentSearch)
     }
     if (this.props.completed_search === 3) {
       this.props.resetMetadataSearchStatus()
@@ -47,7 +47,7 @@ export default class MetadataSearch extends React.Component {
 
   render() {
     const currentSearch = getParam(this.props.location.search, 'q')
-    if(currentSearch===""){
+    if (currentSearch === '') {
       this.props.handleChange({}, 'metadata', true)
       return <Redirect to={{ pathname: '/' }} />
     }

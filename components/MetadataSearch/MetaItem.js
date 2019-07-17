@@ -107,7 +107,7 @@ export default class MetadataSearchResults extends React.Component {
                     <Button
                       onClick={(e) => this.handleDownload(this.props.table_name, item.id)}
                     >
-                      <span class="mdi mdi-download mdi-24px"></span>
+                      <span className="mdi mdi-download mdi-24px"></span>
                     </Button>
                   }
                   <Label
@@ -131,8 +131,8 @@ export default class MetadataSearchResults extends React.Component {
               >
                 <div
                   style={{
-                    overflowWrap: "break-word",
-                    wordWrap: "break-word",
+                    overflowWrap: 'break-word',
+                    wordWrap: 'break-word',
                     height: '300px',
                     overflow: 'auto',
                   }}

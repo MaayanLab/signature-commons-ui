@@ -57,38 +57,38 @@ export const UIValues = {
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
         bar_chart: values.bar_chart,
-        bar_chart_style: values.bar_chart_style || 
+        bar_chart_style: values.bar_chart_style ||
           {
             ResponsiveContainer: {
-              width: "100%",
-              height:350
+              width: '100%',
+              height: 350,
             },
             Chart: {
               margin: {
                 right: 50,
                 left: 50,
                 top: 20,
-                bottom: 20
-              }
+                bottom: 20,
+              },
             },
             XAxis: {
               axisLine: false,
               angle: 45,
               height: 50,
-              textAnchor: "start",
+              textAnchor: 'start',
               interval: 0,
               tick: {
-                fontSize: 10
+                fontSize: 10,
               },
-              tickLine: false
+              tickLine: false,
             },
             Bar: {
-              fill: "#75bef5"
-            }
+              fill: '#75bef5',
+            },
           },
         pie_chart_style: {
           ResponsiveContainer: {
-            width: "100%",
+            width: '100%',
             height: 350,
           },
           Chart: {
@@ -96,13 +96,13 @@ export const UIValues = {
             height: 420,
           },
           Pie: {
-            fill:"#75bef5"
+            fill: '#75bef5',
           },
           Text_Label: {
-            fontSize: 10
-          }
+            fontSize: 10,
+          },
         },
-        pie_caption: values.pie_caption || "Signatures per",
+        pie_caption: values.pie_caption || 'Signatures per',
         library_name: values.library_name || library_name,
         resource_name_from_library: values.resource_name_from_library,
         resource_name: values.resource_name,
@@ -148,38 +148,38 @@ export const UIValues = {
             resources: 'Resources',
           },
         bar_chart: values.bar_chart,
-        bar_chart_style: values.bar_chart_style || 
+        bar_chart_style: values.bar_chart_style ||
           {
             ResponsiveContainer: {
-              width: "100%",
-              height:350
+              width: '100%',
+              height: 350,
             },
             Chart: {
               margin: {
                 right: 50,
                 left: 50,
                 top: 20,
-                bottom: 20
-              }
+                bottom: 20,
+              },
             },
             XAxis: {
               axisLine: false,
               angle: 45,
               height: 50,
-              textAnchor: "start",
+              textAnchor: 'start',
               interval: 0,
               tick: {
-                fontSize: 10
+                fontSize: 10,
               },
-              tickLine: false
+              tickLine: false,
             },
             Bar: {
-              fill: "#75bef5"
-            }
+              fill: '#75bef5',
+            },
           },
         pie_chart_style: {
           ResponsiveContainer: {
-            width: "100%",
+            width: '100%',
             height: 350,
           },
           Chart: {
@@ -187,13 +187,13 @@ export const UIValues = {
             height: 420,
           },
           Pie: {
-            fill:"#75bef5"
+            fill: '#75bef5',
           },
           Text_Label: {
-            fontSize: 10
-          }
+            fontSize: 10,
+          },
         },
-        pie_caption: values.pie_caption || "Signatures per",
+        pie_caption: values.pie_caption || 'Signatures per',
         library_name: values.library_name || library_name,
         resource_name: values.resource_name,
         resource_icon: values.resource_icon,

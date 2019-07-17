@@ -57,7 +57,7 @@ export default class Home extends React.PureComponent {
       cart: Set(),
       pie_stats: null,
       selected_field: Object.keys(props.pie_fields_and_stats)[0],
-      searchType: props.ui_values.nav.metadata_search ?'metadata': "signature",
+      searchType: props.ui_values.nav.metadata_search ? 'metadata' : 'signature',
       metadata_search: {
         controller: undefined,
         signatures_total_count: undefined,
@@ -70,11 +70,11 @@ export default class Home extends React.PureComponent {
       },
       signature_search: {
         input: {
-          type: "Overlap",
-          geneset: "",
+          type: 'Overlap',
+          geneset: '',
         },
         controller: null,
-      }
+      },
     }
     this.updateCart = this.updateCart.bind(this)
     this.CartActions = this.CartActions.bind(this)
@@ -133,9 +133,9 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  changeSignatureType(type, input_data={}){
+  changeSignatureType(type, input_data = {}) {
     const input = {
-      type
+      type,
     }
     if (type === 'Overlap') {
       input.geneset = input_data.geneset || ''
@@ -151,7 +151,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  updateSignatureInput(input){
+  updateSignatureInput(input) {
     this.setState((prevState) => ({
       signature_search: {
         ...prevState.signature_search,
@@ -166,18 +166,18 @@ export default class Home extends React.PureComponent {
     // libraries={this.props.libraries}
     //   resources={this.props.resources}
     //   library_resource={this.props.library_resource}
-    const {libraries, resources, library_resource} = this.props
-    const props = {libraries, resources, library_resource}
+    const { libraries, resources, library_resource } = this.props
+    const props = { libraries, resources, library_resource }
 
     let controller = this.state.signature_search.controller
     if (controller !== null) controller.abort()
     else controller = new AbortController()
     this.setState(() => ({
-      signature_search:{
+      signature_search: {
         ...this.state.signature_search,
         controller,
         input,
-      }
+      },
     }), async () => {
       if (input.type === 'Overlap') {
         const unresolved_entities = parse_entities(input.geneset)
@@ -204,7 +204,7 @@ export default class Home extends React.PureComponent {
           signature_search: {
             ...prevState.signature_search,
             ...results,
-            mismatched
+            mismatched,
           },
         }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -236,7 +236,7 @@ export default class Home extends React.PureComponent {
           signature_search: {
             ...prevState.signature_search,
             ...results,
-            mismatched
+            mismatched,
           },
         }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -527,7 +527,12 @@ export default class Home extends React.PureComponent {
     const CartActions = this.CartActions
 
     return (
-      <Base ui_values={this.props.ui_values}>
+      <Base ui_values={this.props.ui_values}
+        handleChange={this.handleChange}
+        resetCurrentSearch={this.resetCurrentSearch}
+        changeSignatureType={this.changeSignatureType}
+        input={this.state.signature_search.input}
+      >
         <style jsx>{`
         #Home {
           background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');

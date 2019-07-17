@@ -101,7 +101,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   ) : (
                     <div className={this.props.classes.centered}>
                       {this.props.barcounts[Object.keys(this.props.barcounts)[0]] !== undefined ?
-                      <BarChart meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} 
+                      <BarChart meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]}
                         ui_values={this.props.ui_values}/> :
                         null
                       }

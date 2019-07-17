@@ -1,26 +1,8 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import GenesetSearchBox from './GenesetSearchBox'
-import uuid5 from 'uuid5'
-import NProgress from 'nprogress'
-import { query_overlap, query_rank } from './query'
 import ResourceFilters from './ResourceFilters'
 import LibraryResults from './LibraryResults'
-import { resolve_entities } from './resolve'
-import { Set } from 'immutable'
-
-
-function parse_entities(input) {
-  return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
-      (lines, line) => {
-        const parsed = /^(.+?)(,(.+))?$/.exec(line)
-        if (parsed !== null) {
-          return [...lines, parsed[1]]
-        }
-        return lines
-      }, []
-  ))
-}
 
 export default class SignatureSearch extends React.Component {
   constructor(props) {
@@ -43,7 +25,6 @@ export default class SignatureSearch extends React.Component {
           ui_values={this.props.ui_values}
           changeSignatureType={this.props.changeSignatureType}
           updateSignatureInput={this.props.updateSignatureInput}
-          input={this.props.input}
           {...props}
         />
       )
@@ -79,7 +60,8 @@ export default class SignatureSearch extends React.Component {
             const type = this.props.input.type
             this.props.changeSignatureType(type)
             this.props.handleChange({}, 'signature', true)
-            return(<Redirect to="/" />)}} 
+            return (<Redirect to="/" />)
+          }}
           />
           <Route path="/SignatureSearch/:type/:input_signature/:resource" component={this.library_results} />
           <Route path="/SignatureSearch/:type/:input_signature" component={this.resource_filters} />
@@ -87,7 +69,8 @@ export default class SignatureSearch extends React.Component {
             const type = props.match.params.type
             this.props.changeSignatureType(type)
             this.props.handleChange({}, 'signature', true)
-            return(<Redirect to="/" />)}}  />
+            return (<Redirect to="/" />)
+          }} />
         </Switch>
       </div>
     )

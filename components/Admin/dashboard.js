@@ -138,9 +138,6 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
 
 const BarChartGroup = withScreenSize(function({ classes, record = {}, ...props }) {
   const { bar_counts, name } = props
-  const width = props.screenWidth > 900 ? 1000 : 700
-  const height = props.screenWidth > 900 ? 400 : 300
-  const fontSize = props.screenWidth > 900 ? 11 : 8
   return (
     <Card className={classes.basicCard}>
       <span className={classes.vertical55}>{name}</span>

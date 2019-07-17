@@ -148,8 +148,8 @@ export default class ResourcePage extends React.Component {
                       <div
                         className="collapsible-body"
                         style={{
-                          overflowWrap: "break-word",
-                          wordWrap: "break-word"
+                          overflowWrap: 'break-word',
+                          wordWrap: 'break-word',
                         }}
                       >
                         <ShowMeta

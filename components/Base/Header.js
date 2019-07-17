@@ -1,15 +1,20 @@
 import React from 'react'
 import { withRouter, Link } from 'react-router-dom'
-import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
 
 export function Nav(props) {
+  console.log(props.location.pathname)
   return (
     <ul {...props}>
       {props.ui_values.nav.metadata_search ?
         <li
           className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
         >
-          <Link to={'/MetadataSearch'}>
+          <Link to={props.location.pathname === '/MetadataSearch' ? '/MetadataSearch': '/'}
+            onClick={(e)=>{
+              props.resetCurrentSearch()
+              props.handleChange(e, 'metadata', true)
+            }}
+          >
             Metadata Search
           </Link>
         </li> : null
@@ -18,7 +23,13 @@ export function Nav(props) {
         <li
           className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
         >
-          <Link to={'/SignatureSearch'}>
+          <Link to={'/SignatureSearch'}
+            onClick={(e)=>{
+              const type = props.input.type
+              props.changeSignatureType(type)
+              props.handleChange(e, 'signature', true)
+            }}
+          >
             Signature Search
           </Link>
         </li> : null
@@ -69,9 +80,9 @@ export default withRouter((props) => {
             &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-          <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} ui_values={props.ui_values} />
+          <Nav id="nav-mobile" className="right hide-on-med-and-down" {...props} />
         </div>
-        <Nav className="sidenav" id="mobile-menu" location={props.location} ui_values={props.ui_values}/>
+        <Nav className="sidenav" id="mobile-menu" {...props}/>
 
         {paths.length <= 2 ? null : (
           <div className="nav-wrapper grey">
