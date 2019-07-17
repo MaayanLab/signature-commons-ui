@@ -134,6 +134,8 @@ export default class MetadataSearchResults extends React.Component {
               >
                 <div
                   style={{
+                    overflowWrap: "break-word",
+                    wordWrap: "break-word",
                     height: '300px',
                     overflow: 'auto',
                   }}
