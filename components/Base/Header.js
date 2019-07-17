@@ -23,7 +23,7 @@ export function Nav(props) {
         <li
           className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
         >
-          <Link to={'/SignatureSearch'}
+          <Link to={props.location.pathname === '/SignatureSearch' ? '/SignatureSearch' : '/'}
             onClick={(e) => {
               const type = props.input.type
               props.changeSignatureType(type)
