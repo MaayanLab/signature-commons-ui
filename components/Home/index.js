@@ -124,7 +124,6 @@ export default class Home extends React.PureComponent {
   }
 
   handleChange(event, searchType, scrolling = false) {
-    console.log(searchType)
     if (searchType) {
       this.setState({ searchType }, () => {
         if (scrolling) {
@@ -487,6 +486,7 @@ export default class Home extends React.PureComponent {
       searchChange={this.searchChange}
       currentSearchChange={this.currentSearchChange}
       performSearch={this.performSearch}
+      handleChange={this.handleChange}
       resetMetadataSearchStatus={this.resetMetadataSearchStatus}
       {...props}
       {...this.state.metadata_search}

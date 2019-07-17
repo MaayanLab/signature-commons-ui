@@ -34,7 +34,6 @@ export default class SignatureSearch extends React.Component {
 
   geneset_searchbox = (props) => {
     if (this.props.location.state) {
-      console.log(this.props.location.state)
       return (<div />)
     } else {
       return (
@@ -76,10 +75,19 @@ export default class SignatureSearch extends React.Component {
     return (
       <div className="row">
         <Switch>
-          <Route exact path="/SignatureSearch" render={() => <Redirect to="/" />} />
+          <Route exact path="/SignatureSearch" render={() => {
+            const type = this.props.input.type
+            this.props.changeSignatureType(type)
+            this.props.handleChange({}, 'signature', true)
+            return(<Redirect to="/" />)}} 
+          />
           <Route path="/SignatureSearch/:type/:input_signature/:resource" component={this.library_results} />
           <Route path="/SignatureSearch/:type/:input_signature" component={this.resource_filters} />
-          <Route path="/SignatureSearch/:type" component={this.geneset_searchbox} />
+          <Route path="/SignatureSearch/:type" render={(props) => {
+            const type = props.match.params.type
+            this.props.changeSignatureType(type)
+            this.props.handleChange({}, 'signature', true)
+            return(<Redirect to="/" />)}}  />
         </Switch>
       </div>
     )
