@@ -1,6 +1,7 @@
 import React from 'react'
 
-const IconButton = (props) => (
+const IconButton = (props) => {
+  return(
   <div style={{ textAlign: 'center' }}>
     <style jsx>{`
     .icon-btn {
@@ -18,21 +19,23 @@ const IconButton = (props) => (
     .icon-btn > span {
       line-height: 16px;
       text-align: center;
+      vertical-align: middle;
+      padding: 10px;
     }
     .icon-btn > div > img {
       position: relative;
-      top: 50%;
-      height: 32px;
-      max-width: 48px;
+      top: 30%;
+      height: 50px;
+      max-width: 60px;
     }
     .icon-btn:hover {
       background-color: #eee;
     }
     .icon-btn > .counter {
       position: absolute;
-      top: 0.3em;
+      top: -1em;
       font-size: 75%;
-      left: 5em;
+      left: 5.5em;
       line-height: 2.2em;
       z-index: 100;
       color: white;
@@ -69,6 +72,6 @@ const IconButton = (props) => (
       )}
     </div>
   </div>
-)
+)}
 
 export default IconButton

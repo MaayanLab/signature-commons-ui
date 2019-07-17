@@ -12,7 +12,7 @@ import { landingStyle } from '../../styles/jss/theme.js'
 
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
-import { BarChart } from '../Admin/VXbar.js'
+import { BarChart } from '../Admin/BarChart.js'
 
 export default withStyles(landingStyle)(class LandingPage extends React.Component {
   constructor(props) {
@@ -23,7 +23,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
       type: 'Overlap',
       scroll: false,
     }
-    this.handleChange = this.handleChange.bind(this)
     this.searchChange = this.searchChange.bind(this)
     this.scrollToTop = this.scrollToTop.bind(this)
   }
@@ -36,22 +35,13 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
     scroll.scrollToTop()
   }
 
-  handleChange(event, searchType, scroll = false) {
-    if (searchType) {
-      this.setState({ searchType }, () => {
-        if (scroll) {
-          this.scrollToTop()
-        }
-      })
-    }
-  }
   searchChange(e) {
     this.props.searchChange(e.target.value)
   }
 
 
   render() {
-    if (this.props.metadata_search.completed_search === 3) {
+    if (this.props.metadata_search.completed_search === 3 && this.props.metadata_search.currentSearch !== '') {
       return <Redirect to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.metadata_search.currentSearch)}` }} />
     }
     return (
@@ -65,12 +55,15 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               search={this.props.metadata_search.search}
               searchChange={this.searchChange}
               currentSearchChange={this.props.currentSearchChange}
-              handleChange={this.handleChange}
+              handleChange={this.props.handleChange}
               type={this.state.type}
-              searchType={this.state.searchType}
-              submit={this.submit}
+              searchType={this.props.searchType}
+              submit={this.props.submit}
+              changeSignatureType={this.props.changeSignatureType}
+              updateSignatureInput={this.props.updateSignatureInput}
               ui_values={this.props.ui_values}
               classes={this.props.classes}
+              signature_search={this.props.signature_search}
             />
           </Grid>
           { this.props.table_counts.length === 0 ? null :
@@ -97,8 +90,8 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   { this.props.ui_values.bar_chart !== undefined ? (
                     <div className={this.props.classes.centered}>
                       {this.props.barcounts[this.props.ui_values.bar_chart.Field_Name] !== undefined ? (
-                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_values.bar_chart.Field_Name]}
-                        fontSize={this.props.ui_values.bar_chart.font_size || 11}/>) : (
+                      <BarChart meta_counts={this.props.barcounts[this.props.ui_values.bar_chart.Field_Name]}
+                        ui_values={this.props.ui_values}/>) : (
                       null
                       )}
                       <Typography variant="caption">
@@ -108,7 +101,8 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   ) : (
                     <div className={this.props.classes.centered}>
                       {this.props.barcounts[Object.keys(this.props.barcounts)[0]] !== undefined ?
-                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/> :
+                      <BarChart meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} 
+                        ui_values={this.props.ui_values}/> :
                         null
                       }
                       <Typography variant="caption">
@@ -144,9 +138,9 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 </Grid>
                 <Grid item xs={12} sm>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
-                      Signatures per {this.props.selected_field.replace(/_/g, ' ')}
+                      {`${this.props.pie_table} per ${this.props.pie_preferred_name}`}
                     </Typography>
                   </div>
                 </Grid>
@@ -155,7 +149,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                     <div className={this.props.classes.centered}>
                       <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
                       <Typography variant="caption">
-                        Top {this.props.selected_field.replace(/_/g, ' ')} terms
+                        Top {this.props.pie_preferred_name} terms
                       </Typography>
                     </div>
                   </Grid>
@@ -164,7 +158,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
             </Grid>
           }
           <Grid item xs={12}>
-            <BottomLinks handleChange={this.handleChange}
+            <BottomLinks handleChange={this.props.handleChange}
               {...this.props} />
           </Grid>
           <Grid item xs={12}>

@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import { Redirect } from 'react-router-dom'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 const SearchResults = dynamic(() => import('../../components/MetadataSearch/SearchResults'))
@@ -21,13 +22,20 @@ export default class MetadataSearch extends React.Component {
 
   async componentDidMount() {
     const currentSearch = getParam(this.props.location.search, 'q')
-    if (currentSearch !== undefined) {
+    if (currentSearch !== undefined || currentSearch === "") {
       this.props.currentSearchChange(currentSearch)
     }
     this.props.resetMetadataSearchStatus()
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const currentSearch = getParam(this.props.location.search, 'q')
+    if (prevProps.currentSearch!== currentSearch && currentSearch === ""){
+      this.props.currentSearchChange(currentSearch)
+    }
+   if (currentSearch !== undefined || currentSearch === "") {
+    this.props.currentSearchChange(currentSearch)
+    }
     if (this.props.completed_search === 3) {
       this.props.resetMetadataSearchStatus()
     }
@@ -38,6 +46,11 @@ export default class MetadataSearch extends React.Component {
   }
 
   render() {
+    const currentSearch = getParam(this.props.location.search, 'q')
+    if(currentSearch===""){
+      this.props.handleChange({}, 'metadata', true)
+      return <Redirect to={{ pathname: '/' }} />
+    }
     return (
       <div className="row">
         <div className="col s12 center">

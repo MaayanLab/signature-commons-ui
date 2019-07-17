@@ -2,6 +2,9 @@
   {
     "landing": true,
     "content": {
+      "header": "Signature Commons-LINCS",
+      "metadata_placeholder": "Search over LINCS datasets",
+      "text_1": "Explore an extensive collection of LINCS datasets",
       "library_name": "title",
       "preferred_name_singular": {
         "libraries": "Dataset",
@@ -12,14 +15,42 @@
       "deactivate_wordcloud": true,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "bar_chart": {
-        "Field_Name": "types.description.value",
-        "Caption": "Data levels"
+        "Field_Name": "types.method.value",
+        "Caption": "Assays"
       },
+      "bar_chart_style": {
+        "ResponsiveContainer": {
+          "width": "100%",
+          "height":500
+        },
+        "Chart": {
+          "margin": {
+            "right": 50,
+            "left": 50
+          }
+        },
+        "XAxis": {
+          "axisLine": false,
+          "angle": 45,
+          "height": 180,
+          "textAnchor": "start",
+          "interval": 0,
+          "tick": {
+            "fontSize": 9
+          }
+        },
+        "Bar": {
+          "fill": "#75bef5"
+        }
+      },
+      "resource_name_from_library": "title",
+      "resource_name": "${meta.name}",
+      "resource_icon": "${meta.extraProperties[0].values[0]}",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
-        "LINCS",
-        "Kinase",
-        "Mass spectrometer"
+        "MEMA",
+        "MCF10A",
+        "L1000"
       ]
     }
   },
@@ -31,9 +62,37 @@
         "resources": "Dataset"
       },
       "bar_chart": {
-        "Field_Name": "types.description.value",
-        "Caption": "Data levels"
+        "Field_Name": "types.method.value",
+        "Caption": "Assays"
       },
+      "bar_chart_style": {
+        "ResponsiveContainer": {
+          "width": "100%",
+          "height":500
+        },
+        "Chart": {
+          "margin": {
+            "right": 50,
+            "left": 50
+          }
+        },
+        "XAxis": {
+          "axisLine": false,
+          "angle": 45,
+          "height": 180,
+          "textAnchor": "start",
+          "interval": 0,
+          "tick": {
+            "fontSize": 9
+          }
+        },
+        "Bar": {
+          "fill": "#75bef5"
+        }
+      },
+      "resource_name_from_library": "title",
+      "resource_name": "${meta.name}",
+      "resource_icon": "${meta.extraProperties[0].values[0]}",
       "library_name": "title",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
     }

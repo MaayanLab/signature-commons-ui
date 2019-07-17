@@ -132,13 +132,12 @@ export default class SearchResults extends React.Component {
   }
 
   render() {
-    const defined_results = ['signatures', 'libraries', 'entities'].filter((name) => this.props[`${name}_count`] !== undefined)
-    const with_results = defined_results.filter((name) => this.props[`${name}_count`] > 0)
-    const total_results = defined_results.reduce((acc, name) => {
+    const with_results = ['signatures', 'libraries', 'entities'].filter((name) => this.props[`${name}_count`] > 0)
+    const total_results = with_results.reduce((acc, name) => {
       acc = acc + this.props[`${name}_count`]
       return acc
     }, 0)
-    if (defined_results.length === 3 && total_results === 0) { // zero results
+    if (this.props.completed_search === 3 && total_results === 0) { // zero results
       return (
         <Grid container
           spacing={24}
