@@ -103,6 +103,13 @@ export default class MetadataSearchResults extends React.Component {
                     display: 'flex',
                     flexDirection: 'row',
                   }}>
+                  {this.props.table_name === 'entities' || this.props.deactivate_download ? null :
+                    <Button
+                      onClick={(e) => this.handleDownload(this.props.table_name, item.id)}
+                    >
+                      <span class="mdi mdi-download mdi-24px"></span>
+                    </Button>
+                  }
                   <Label
                     item={item}
                     highlight={this.props.search}
@@ -110,16 +117,6 @@ export default class MetadataSearchResults extends React.Component {
                     schemas={this.props.schemas}
                   />
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                  {this.props.table_name === 'entities' || this.props.deactivate_download ? null :
-                    <Button style={{
-                      input: {
-                        display: 'none',
-                      },
-                    }}
-                    onClick={(e) => this.handleDownload(this.props.table_name, item.id)}
-                    className={`mdi mdi-download mdi-24px`}
-                    >{''}</Button>
-                  }
                   <a
                     href="javascript:void(0);"
                     className="collapsible-header"
