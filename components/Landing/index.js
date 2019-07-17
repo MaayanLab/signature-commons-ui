@@ -41,7 +41,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
 
 
   render() {
-    if (this.props.metadata_search.completed_search === 3) {
+    if (this.props.metadata_search.completed_search === 3 && this.props.metadata_search.currentSearch !== '') {
       return <Redirect to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.metadata_search.currentSearch)}` }} />
     }
     return (
@@ -149,7 +149,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                     <div className={this.props.classes.centered}>
                       <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
                       <Typography variant="caption">
-                        Top {this.props.selected_field.replace(/_/g, ' ')} terms
+                        Top {this.props.pie_preferred_name} terms
                       </Typography>
                     </div>
                   </Grid>
