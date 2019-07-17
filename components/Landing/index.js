@@ -28,6 +28,8 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
   }
 
   componentDidMount() {
+    const type = this.props.signature_search.input.type
+    this.props.changeSignatureType(type)
     this.props.resetCurrentSearch()
   }
 

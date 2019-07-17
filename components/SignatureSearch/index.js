@@ -57,8 +57,6 @@ export default class SignatureSearch extends React.Component {
       <div className="row">
         <Switch>
           <Route exact path="/SignatureSearch" render={() => {
-            const type = this.props.input.type
-            this.props.changeSignatureType(type)
             this.props.handleChange({}, 'signature', true)
             return (<Redirect to="/" />)
           }}

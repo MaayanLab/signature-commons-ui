@@ -529,9 +529,6 @@ export default class Home extends React.PureComponent {
     return (
       <Base ui_values={this.props.ui_values}
         handleChange={this.handleChange}
-        resetCurrentSearch={this.resetCurrentSearch}
-        changeSignatureType={this.changeSignatureType}
-        input={this.state.signature_search.input}
       >
         <style jsx>{`
         #Home {
