@@ -15,7 +15,6 @@ import { animateScroll as scroll } from 'react-scroll'
 import { resolve_entities } from '../SignatureSearch/resolve'
 import { query_overlap, query_rank } from '../SignatureSearch/query'
 import uuid5 from 'uuid5'
-
 import dynamic from 'next/dynamic'
 import { base_url as meta_url } from '../../util/fetch/meta'
 import '../../styles/swagger.scss'
