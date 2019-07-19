@@ -124,9 +124,14 @@ export default class Home extends React.PureComponent {
     if (this.state.metadata_search.completed_search === 3) {
       NProgress.done()
       this.resetMetadataSearchStatus()
+
     }
     if (this.state.metadata_search.search_status === 'Matched' && 
       prevState.metadata_search.search_status!==this.state.metadata_search.search_status) {
+      this.props.history.push(`/MetadataSearch?q=${this.state.metadata_search.currentSearch}`)
+    }
+    if (prevState.metadata_search.search_status=== 'Initializing' && 
+      this.state.metadata_search.search_status===''){
       this.props.history.push(`/MetadataSearch?q=${this.state.metadata_search.currentSearch}`)
     }
   }

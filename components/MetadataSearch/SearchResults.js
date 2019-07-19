@@ -42,11 +42,9 @@ export default class SearchResults extends React.Component {
   }
 
   componentDidMount(){
-    if (this.props.withMatches.length > 0){
-      this.setState({
-        tabs: this.props.withMatches
-      })
-    }
+    this.setState({
+      tabs: this.props.withMatches
+    })
   }
 
   componentDidUpdate(prevProps, prevState) {
