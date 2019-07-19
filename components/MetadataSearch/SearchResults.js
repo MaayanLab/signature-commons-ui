@@ -41,6 +41,14 @@ export default class SearchResults extends React.Component {
     this.handleChangePage = this.handleChangePage.bind(this)
   }
 
+  componentDidMount(){
+    if (this.props.withMatches.length > 0){
+      this.setState({
+        tabs: this.props.withMatches
+      })
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.currentSearch !== this.props.currentSearch) {
       this.setState({
