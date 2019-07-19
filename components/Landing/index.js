@@ -30,7 +30,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
   componentDidMount() {
     const type = this.props.signature_search.input.type
     this.props.changeSignatureType(type)
-    this.props.resetCurrentSearch()
+    this.props.resetMetadataSearchResults()
   }
 
   scrollToTop() {
@@ -43,9 +43,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
 
 
   render() {
-    if (this.props.metadata_search.completed_search === 3 && this.props.metadata_search.currentSearch !== '') {
-      return <Redirect to={{ pathname: '/MetadataSearch', search: `?q=${encodeURIComponent(this.props.metadata_search.currentSearch)}` }} />
-    }
     return (
       <div>
         <Grid container

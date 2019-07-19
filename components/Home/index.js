@@ -67,6 +67,7 @@ export default class Home extends React.PureComponent {
         currentSearch: '',
         completed_search: 0,
         search_status: '',
+        withMatches:[],
       },
       signature_search: {
         input: {
@@ -80,6 +81,7 @@ export default class Home extends React.PureComponent {
     this.CartActions = this.CartActions.bind(this)
     this.handleSelectField = this.handleSelectField.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.resetMetadataSearchResults = this.resetMetadataSearchResults.bind(this)
 
     // metadata search
     this.searchChange = this.searchChange.bind(this)
@@ -113,13 +115,19 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     M.AutoInit()
     M.updateTextFields()
     if (this.state.metadata_search.search_status === 'Initializing') {
       NProgress.start()
-    } else if (this.state.metadata_search.completed_search === 3) {
+    }
+    if (this.state.metadata_search.completed_search === 3) {
       NProgress.done()
+      this.resetMetadataSearchStatus()
+    }
+    if (this.state.metadata_search.search_status === 'Matched' && 
+      prevState.metadata_search.search_status!==this.state.metadata_search.search_status) {
+      this.props.history.push(`/MetadataSearch?q=${this.state.metadata_search.currentSearch}`)
     }
   }
 
@@ -262,6 +270,7 @@ export default class Home extends React.PureComponent {
           search: currentSearch,
           completed_search: 0,
           search_status: 'Initializing',
+          withMatches: [],
         },
       }), () => {
         this.performSearch('signatures')
@@ -287,6 +296,22 @@ export default class Home extends React.PureComponent {
         ...prevState.metadata_search,
         completed_search: 0,
         search_status: '',
+      },
+    }))
+  }
+
+  resetMetadataSearchResults() {
+    this.setState((prevState) => ({
+      metadata_search: {
+        ...prevState.metadata_search,
+        entities: undefined,
+        signatures: undefined,
+        libraries: undefined,
+        completed_search: 0,
+        search_status: '',
+        search: '',
+        currentSearch: '',
+        withMatches: []
       },
     }))
   }
@@ -362,6 +387,7 @@ export default class Home extends React.PureComponent {
           [duration_label]: (Date.now() - start) / 1000,
           [duration_meta_label]: duration_meta,
           [count_label]: contentRange.count,
+          withMatches: results.length > 0 ? [...prevState.metadata_search.withMatches, table] : prevState.metadata_search.withMatches,
           search_status: results.length > 0 ? 'Matched' : prevState.metadata_search.search_status,
           completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
         },
@@ -550,6 +576,7 @@ export default class Home extends React.PureComponent {
               resetCurrentSearch={this.resetCurrentSearch}
               changeSignatureType={this.changeSignatureType}
               updateSignatureInput={this.updateSignatureInput}
+              resetMetadataSearchResults={this.resetMetadataSearchResults}
               submit={this.submit}
               {...this.state}
               {...this.props}

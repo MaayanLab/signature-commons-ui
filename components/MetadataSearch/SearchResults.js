@@ -33,6 +33,7 @@ export default class SearchResults extends React.Component {
       librariesPage: 0,
       entitiesRowsPerPage: 10,
       entitiesPage: 0,
+      tabs: ["signatures", "libraries", "entities"],
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleChangeIndex = this.handleChangeIndex.bind(this)
@@ -41,7 +42,7 @@ export default class SearchResults extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.search !== this.props.search) {
+    if (prevProps.currentSearch !== this.props.currentSearch) {
       this.setState({
         signaturesRowsPerPage: 10,
         signaturesPage: 0,
@@ -52,9 +53,10 @@ export default class SearchResults extends React.Component {
         index_value: 0,
       })
     }
-    if (prevProps.search_status !== this.props.search_status && this.props.search_status === 'Matched') {
+    if((this.props.withMatches.length>0 && prevProps.withMatches.length !== this.props.withMatches.length) || 
+      (prevProps.search_status !== '' && this.props.search_status ==='')){
       this.setState({
-        index_value: 0,
+        tabs: this.props.withMatches
       })
     }
   }
@@ -89,7 +91,7 @@ export default class SearchResults extends React.Component {
 
   search_div(name) {
     const default_name_singular = default_singular_names[name]
-    if (this.props[name] === undefined) {
+    if (this.props[name] === undefined || this.props[name].length === 0) {
       return <div key={name} />
     }
     return (
@@ -108,7 +110,7 @@ export default class SearchResults extends React.Component {
         </div>
         <div className="col s12">
           <MetaItem
-            search={this.props.search}
+            search={this.props.currentSearch}
             items={this.props[name]}
             type={this.props.ui_values.preferred_name_singular[name] || default_name_singular}
             table_name={name}
@@ -132,12 +134,7 @@ export default class SearchResults extends React.Component {
   }
 
   render() {
-    const with_results = ['signatures', 'libraries', 'entities'].filter((name) => this.props[`${name}_count`] > 0)
-    const total_results = with_results.reduce((acc, name) => {
-      acc = acc + this.props[`${name}_count`]
-      return acc
-    }, 0)
-    if (this.props.completed_search === 3 && total_results === 0) { // zero results
+    if (this.props.search_status === '' && this.state.tabs.length === 0) { // zero results
       return (
         <Grid container
           spacing={24}
@@ -165,22 +162,14 @@ export default class SearchResults extends React.Component {
           variant="fullWidth"
           centered
         >
-          {this.props.signatures !== undefined && this.props.signatures.length > 0 ?
-            <Tab label={ this.props.ui_values.preferred_name['signatures'] || 'Signatures' } /> : null
-          }
-          {this.props.libraries !== undefined && this.props.libraries.length > 0 ?
-            <Tab label={ this.props.ui_values.preferred_name['libraries'] || 'Libraries' } /> : null
-          }
-          {this.props.entities !== undefined && this.props.entities.length > 0 ?
-            <Tab label={ this.props.ui_values.preferred_name['entities'] || 'Entities' } /> : null
-          }
+          { this.state.tabs.map((key) => <Tab label={ this.props.ui_values.preferred_name[key] || key } />) }
         </Tabs>
         <SwipeableViews
           index={this.state.index_value}
           onChangeIndex={this.handleChangeIndex}
         >
           {
-            with_results.map((key) => (this.search_div(key)))
+            this.state.tabs.map((key) => (this.search_div(key)))
           }
         </SwipeableViews>
       </div>
