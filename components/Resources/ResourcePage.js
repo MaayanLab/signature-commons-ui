@@ -119,13 +119,6 @@ export default class ResourcePage extends React.Component {
                             display: 'flex',
                             flexDirection: 'row',
                           }}>
-                          <Label
-                            item={library}
-                            visibility={1}
-                            schemas={this.props.schemas}
-                          />
-                          &nbsp;
-                          <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                           {this.props.ui_values.deactivate_download ? null :
                             <Button style={{
                               input: {
@@ -133,9 +126,15 @@ export default class ResourcePage extends React.Component {
                               },
                             }}
                             onClick={(e) => this.handleDownload('libraries', library.id)}
-                            className={`mdi mdi-download mdi-24px`}
-                            >{''}</Button>
+                            ><span className="mdi mdi-download mdi-24px"></span></Button>
                           }
+                          <Label
+                            item={library}
+                            visibility={1}
+                            schemas={this.props.schemas}
+                          />
+                          &nbsp;
+                          <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
                           <a
                             href="javascript:void(0);"
                             className="collapsible-header"
