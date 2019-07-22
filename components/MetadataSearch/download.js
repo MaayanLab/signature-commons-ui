@@ -1,17 +1,70 @@
 import DataProvider from '../../util/fetch/model'
 import fileDownload from 'js-file-download'
+import { objectMatch, default_schemas } from '../Label'
+import { fetch_meta_post } from '../../util/fetch/meta'
+import { makeTemplate } from '../../util/makeTemplate'
 
-export async function download_signature_json(signature) {
+
+export async function get_concatenated_meta(data){
+  const { response: schema_db } = await fetch_meta_post({
+      endpoint: '/schemas/find',
+      body: {
+        filter: {
+          where: {
+            'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
+          },
+        },
+      },
+    })
+  const schemas = schema_db.map((schema) => (schema.meta))
+  let matched_schemas = schemas.filter(
+      (schema) => objectMatch(schema.match, data)
+  )
+  // default if there is no match
+  if (matched_schemas.length < 1) {
+    matched_schemas = default_schemas.filter(
+        (schema) => objectMatch(schema.match, data)
+    )
+  }
+  if (matched_schemas.length < 1) {
+    console.error('Could not match ui-schema for data', data)
+    return null
+  }
+  const schema = matched_schemas[0]
+  const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
+  const meta_list = sorted_entries.reduce((acc, entry)=>{
+    let val
+    if (entry[0]==="Description" || entry[0]==="description"){
+      val = 'undefined'
+    }
+    else if(entry[1].type === 'img' || entry[1].type === 'header-img'){
+      val = makeTemplate(entry[1].alt, data)
+    }else if(entry[1].type==='object'){
+      parent = makeTemplate(entry[1].text, data)
+      val = parent !== 'undefined' ? makeTemplate(entry[1].subfield, data): 'undefined'
+    }else {
+      val = makeTemplate(entry[1].text, data)
+    }
+    if ( val !== 'undefined' ){
+      val = val.replace(/_/g, ' ')
+      acc = [...acc, val]
+    }
+    return acc
+  }, [])
+  return (meta_list.join("_"))
+}
+
+export async function download_signature_json(signature, name=undefined) {
   const provider = new DataProvider()
   const data = await provider.serialize_signature(signature, {
     resource: true,
     library: true,
     data: true,
   })
-  fileDownload(JSON.stringify(data), 'signatures.json')
+  fileDownload(JSON.stringify(data), name || `${signature}.json`)
 }
 
-export async function download_library_json(library) {
+export async function download_library_json(library, name=undefined) {
   const provider = new DataProvider()
   const data = await provider.serialize_library(library, {
     resource: true,
@@ -19,23 +72,44 @@ export async function download_library_json(library) {
     signatures: true,
     data: true,
   })
-  fileDownload(JSON.stringify(data), 'library.json')
+  fileDownload(JSON.stringify(data), name || `${library}.json`)
 }
 
-export async function download_resource_json(resource) {
+export async function download_resource_json(resource, name=undefined) {
   const provider = new DataProvider()
   const data = await provider.serialize_resource(resource, {
     libraries: true,
     signatures: true,
     data: true,
   })
-  fileDownload(JSON.stringify(data), 'resource.json')
+  fileDownload(JSON.stringify(data), name || `${resource}.json`)
 }
 
-export async function download_tsv(lib) {
+export async function download_signatures_text(sig){
+  const provider = new DataProvider()
+  const signature = await provider.resolve_signature(sig)
+  const signature_data = await signature.data
+  const library = await signature.library
+  const data = signature._signature
+  data["library"] = library._library
+  await provider.fetch_entities()
+  const entities = await Promise.all(signature_data.map(async (entity) =>{
+      const entity_meta = await entity.meta
+      return(entity_meta.Name) // TODO: Use ui_schemas here
+    }))
+  const filename = await get_concatenated_meta(data)
+  if (data.library.dataset_type==="rank_matrix"){
+    fileDownload(entities.slice(0, 250).join('\n'), `${filename}.txt`)
+  }else{
+    fileDownload(entities.join('\n'), `${filename}.txt`)
+  }
+}
+
+
+export async function download_library_tsv(lib) {
   const provider = new DataProvider()
   const library = provider.resolve_library(lib)
-  const signatures = library.signatures
+  const signatures = await library.signatures
 
   const col_labels = new Set(['id'])
   const col_headers = {}
@@ -67,9 +141,10 @@ export async function download_tsv(lib) {
       }
     }
   }
-
+  console.log(col_headers)
   let result = ''
   for (const col_label of col_labels) {
+    console.log(col_label)
     result += `${'\t'.repeat(row_labels.length)}\t${col_headers[col_label].join('\t')}\n`
   }
   result += `${row_labels.join('\t')}\t${'\t'.repeat(signatures.length)}\n`

@@ -410,8 +410,17 @@ export default class DataProvider {
       for (const sig of response.signatures) {
         const signature = await this.resolve_signature(sig.uid)
         signature._fetched_data = true
-        const entities = await this.resolve_entities(sig.entities)
-        signature._data = entities
+        if (endpoint === 'set') {
+          const entities = await this.resolve_entities(sig.entities)
+          signature._data = entities
+        } else if (endpoint === 'rank') {
+          const ranks = sig.ranks
+          ranks.sort((a, b) => a - b)
+          const entities = await this.resolve_entities(ranks.map((rank) => response.entities[rank]).filter((ent) => ent !== undefined))
+          signature._data = entities
+        } else {
+          throw new Error(`endpoint ${endpoint} not recognized`)
+        }
       }
     }
   }
