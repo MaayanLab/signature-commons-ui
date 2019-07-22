@@ -8,6 +8,7 @@ import Landing from '../Landing'
 import MetadataSearch from '../MetadataSearch'
 import Resources from '../Resources'
 import SignatureSearch from '../SignatureSearch'
+import Collection from '../Collection'
 import Upload from '../Upload'
 import NProgress from 'nprogress'
 import { fetch_meta_post } from '../../util/fetch/meta'
@@ -555,6 +556,13 @@ export default class Home extends React.PureComponent {
     />
   )
 
+  collection = (props) => (
+    <Collection 
+      ui_values={this.props.ui_values}
+      {...props}
+    />
+    )
+
   render() {
     const CartActions = this.CartActions
 
@@ -605,6 +613,10 @@ export default class Home extends React.PureComponent {
               component={this.resources}
             /> : null
           }
+          <Route
+            path="/Library/:id"
+            component={this.collection}
+          />
           <Route
             path="/API"
             component={this.api}
