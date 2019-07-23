@@ -373,6 +373,7 @@ export default class Home extends React.PureComponent {
         for (const r of results) {
           const lib_meta = { 'id': library_dict[r.library].id,
             'dataset': library_dict[r.library].dataset,
+            'dataset_type': library_dict[r.library].dataset_type,
             'meta': {
               [this.props.ui_values.library_name]: library_dict[r.library].meta[this.props.ui_values.library_name],
               'Icon': library_dict[r.library].meta['Icon'],

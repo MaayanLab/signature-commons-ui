@@ -125,7 +125,7 @@ export async function download_resource_json(item, name=undefined) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_signatures_text(item, name=undefined){
+export async function get_signature(item, name){
   NProgress.start()
   let sig
   let filename = name
@@ -151,10 +151,21 @@ export async function download_signatures_text(item, name=undefined){
     }))
   NProgress.done()
   if (data.library.dataset_type==="rank_matrix"){
-    fileDownload(entities.slice(0, 250).join('\n'), `${filename}.txt`)
+    return {
+      data: entities.slice(0, 250).join('\n'),
+      filename: filename
+    }
   }else{
-    fileDownload(entities.join('\n'), `${filename}.txt`)
+    return {
+      data: entities.join('\n'),
+      filename: filename
+    }
   }
+}
+
+export async function download_signatures_text(item, name=undefined){
+  const {data, filename} = await get_signature(item, name)
+  fileDownload(data, `${filename}.txt`)
 }
 
 

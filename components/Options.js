@@ -6,7 +6,24 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import { get_concatenated_meta,
          download_signature_json,
-         download_signatures_text } from './MetadataSearch/download'
+         download_signatures_text,
+         get_signature } from './MetadataSearch/download'
+
+const FormData = require('form-data')
+const fetch = require('isomorphic-unfetch')
+
+async function submit_enrichr(item) {
+  const {data, filename} = await get_signature(item)
+  const formData = new FormData()
+  formData.append('list', data)
+  formData.append('description', filename+'')
+  const response = await (await fetch('http://amp.pharm.mssm.edu/Enrichr/addList', {
+    method: 'POST',
+    body: formData,
+  })).json()
+  window.location.href = `http://amp.pharm.mssm.edu/Enrichr/enrich?dataset=${response['shortId']}`
+}
+
 export default function Options({item, type}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   function handleClick(event) {
@@ -54,6 +71,7 @@ export default function Options({item, type}) {
           </MenuItem>
           <MenuItem onClick={()=>{
               handleClose()
+              submit_enrichr(item)
             }
           }>
             <Avatar alt="Enrichr" 
