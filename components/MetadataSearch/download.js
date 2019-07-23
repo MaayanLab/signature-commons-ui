@@ -125,7 +125,7 @@ export async function download_resource_json(item, name=undefined) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function get_signature(item, name){
+export async function get_signature(item, slice_rank=true, name){
   NProgress.start()
   let sig
   let filename = name
@@ -149,23 +149,31 @@ export async function get_signature(item, name){
       const entity_meta = await entity.meta
       return(entity_meta.Name) // TODO: Use ui_schemas here
     }))
+  console.log(entities)
+  console.log(signature_data)
+  console.log(signature)
   NProgress.done()
-  if (data.library.dataset_type==="rank_matrix"){
+  if (data.library.dataset_type==="rank_matrix" && slice_rank){
     return {
-      data: entities.slice(0, 250).join('\n'),
+      data: entities.slice(0, 250),
       filename: filename
     }
   }else{
     return {
-      data: entities.join('\n'),
+      data: entities,
       filename: filename
     }
   }
 }
 
 export async function download_signatures_text(item, name=undefined){
-  const {data, filename} = await get_signature(item, name)
-  fileDownload(data, `${filename}.txt`)
+  const {data, filename} = await get_signature(item, true, name)
+  fileDownload(data.join('\n'), `${filename}.txt`)
+}
+
+export async function download_ranked_signatures_text(item, name=undefined){
+  const {data, filename} = await get_signature(item, false, name)
+  fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.txt`)
 }
 
 

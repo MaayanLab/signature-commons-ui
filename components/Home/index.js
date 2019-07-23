@@ -521,6 +521,7 @@ export default class Home extends React.PureComponent {
       performSearch={this.performSearch}
       handleChange={this.handleChange}
       resetMetadataSearchStatus={this.resetMetadataSearchStatus}
+      resetMetadataSearchResults={this.resetMetadataSearchResults}
       {...props}
       {...this.state.metadata_search}
     />

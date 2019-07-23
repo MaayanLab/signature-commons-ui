@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import { get_concatenated_meta,
          download_signature_json,
          download_signatures_text,
+         download_ranked_signatures_text,
          get_signature } from './MetadataSearch/download'
 
 const FormData = require('form-data')
@@ -15,7 +16,7 @@ const fetch = require('isomorphic-unfetch')
 async function submit_enrichr(item) {
   const {data, filename} = await get_signature(item)
   const formData = new FormData()
-  formData.append('list', data)
+  formData.append('list', data.join('\n'))
   formData.append('description', filename+'')
   const response = await (await fetch('http://amp.pharm.mssm.edu/Enrichr/addList', {
     method: 'POST',
@@ -40,7 +41,7 @@ export default function Options({item, type}) {
     return (
       <div>
         <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-          <span class="mdi mdi-dots-vertical"></span>
+          <span className="mdi mdi-dots-vertical"></span>
         </Button>
         <Menu
           id="simple-menu"
@@ -54,7 +55,7 @@ export default function Options({item, type}) {
               download_signature_json(item)
             }
           }>
-            <span class="mdi mdi-json"></span>
+            <span className="mdi mdi-json"></span>
             &nbsp;
             <Typography variant="caption" display="block">
               Download information as JSON
@@ -65,12 +66,25 @@ export default function Options({item, type}) {
               download_signatures_text(item)
             }
           }>
-            <span class="mdi mdi-file-document-box"></span>
+            <span className="mdi mdi-file-document-box"></span>
             &nbsp;
             <Typography variant="caption" display="block">
               Download geneset as a text file
             </Typography>
           </MenuItem>
+          {item.library.dataset_type==="rank_matrix" ?
+            <MenuItem onClick={()=>{
+              handleClose()
+              download_ranked_signatures_text(item)
+            }
+            }>
+              <span className="mdi mdi-file-download"></span>
+              &nbsp;
+              <Typography variant="caption" display="block">
+                Download ranked geneset
+              </Typography>
+            </MenuItem>: null
+          }
           <MenuItem onClick={()=>{
               handleClose()
               submit_enrichr(item)
