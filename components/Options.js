@@ -21,7 +21,9 @@ async function submit_enrichr(item) {
     method: 'POST',
     body: formData,
   })).json()
-  window.location.href = `http://amp.pharm.mssm.edu/Enrichr/enrich?dataset=${response['shortId']}`
+  setTimeout(function(){
+        window.location.href = `http://amp.pharm.mssm.edu/Enrichr/enrich?dataset=${response['shortId']}`
+    }, 1000);
 }
 
 export default function Options({item, type}) {
