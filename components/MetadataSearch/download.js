@@ -3,6 +3,7 @@ import fileDownload from 'js-file-download'
 import { objectMatch, default_schemas } from '../Label'
 import { fetch_meta_post } from '../../util/fetch/meta'
 import { makeTemplate } from '../../util/makeTemplate'
+import NProgress from 'nprogress'
 
 
 export async function get_concatenated_meta(data){
@@ -54,17 +55,42 @@ export async function get_concatenated_meta(data){
   return (meta_list.join("_"))
 }
 
-export async function download_signature_json(signature, name=undefined) {
+export async function download_signature_json(item, name=undefined) {
+  NProgress.start()
+  let signature
+  let filename = name
+  if (typeof item === 'string'){
+    signature = item
+    filename = filename || `${signature}.json`
+  }else if (typeof item === 'object' && "id" in item){
+    signature = item.id
+    filename = await get_concatenated_meta(item)
+  }else{
+    console.error("Invalid item format", item)
+  }
   const provider = new DataProvider()
   const data = await provider.serialize_signature(signature, {
     resource: true,
     library: true,
     data: true,
   })
-  fileDownload(JSON.stringify(data), name || `${signature}.json`)
+  NProgress.done()
+  fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_library_json(library, name=undefined) {
+export async function download_library_json(item, name=undefined) {
+  NProgress.start()
+  let library
+  let filename = name
+  if (typeof item === 'string'){
+    library = item
+    filename = filename || `${library}.json`
+  }else if (typeof item === 'object' && "id" in item){
+    library = item.id
+    filename = await get_concatenated_meta(item)
+  }else{
+    console.error("Invalid item format", item)
+  }
   const provider = new DataProvider()
   const data = await provider.serialize_library(library, {
     resource: true,
@@ -72,20 +98,46 @@ export async function download_library_json(library, name=undefined) {
     signatures: true,
     data: true,
   })
-  fileDownload(JSON.stringify(data), name || `${library}.json`)
+  NProgress.done()
+  fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_resource_json(resource, name=undefined) {
+export async function download_resource_json(item, name=undefined) {
+  NProgress.start()
+  let resource
+  let filename = name
+  if (typeof item === 'string'){
+    resource = item
+    filename = filename || `${resource}.json`
+  }else if (typeof item === 'object' && "id" in item){
+    resource = item.id
+    filename = await get_concatenated_meta(item)
+  }else{
+    console.error("Invalid item format", item)
+  }
   const provider = new DataProvider()
   const data = await provider.serialize_resource(resource, {
     libraries: true,
     signatures: true,
     data: true,
   })
-  fileDownload(JSON.stringify(data), name || `${resource}.json`)
+  NProgress.done()
+  fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_signatures_text(sig){
+export async function download_signatures_text(item, name=undefined){
+  NProgress.start()
+  let sig
+  let filename = name
+  if (typeof item === 'string'){
+    sig = item
+    filename = filename || `${sig}.json`
+  }else if (typeof item === 'object' && "id" in item){
+    sig = item.id
+    filename = await get_concatenated_meta(item)
+  }else{
+    console.error("Invalid item format", item)
+  }
   const provider = new DataProvider()
   const signature = await provider.resolve_signature(sig)
   const signature_data = await signature.data
@@ -97,7 +149,7 @@ export async function download_signatures_text(sig){
       const entity_meta = await entity.meta
       return(entity_meta.Name) // TODO: Use ui_schemas here
     }))
-  const filename = await get_concatenated_meta(data)
+  NProgress.done()
   if (data.library.dataset_type==="rank_matrix"){
     fileDownload(entities.slice(0, 250).join('\n'), `${filename}.txt`)
   }else{
