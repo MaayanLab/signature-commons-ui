@@ -204,7 +204,7 @@ export default class Home extends React.PureComponent {
         }
 
         const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
-        const signature_id = uuid5(JSON.stringify(resolved_entities))
+        const signature_id = input.id || uuid5(JSON.stringify(resolved_entities))
 
         const results = await query_overlap({
           ...this.state.signature_search,
@@ -236,7 +236,7 @@ export default class Home extends React.PureComponent {
 
         const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
         const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
-        const signature_id = uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
+        const signature_id = input.id || uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
         const results = await query_rank({
           ...this.state.signature_search,
           ...props,
@@ -522,6 +522,7 @@ export default class Home extends React.PureComponent {
       handleChange={this.handleChange}
       resetMetadataSearchStatus={this.resetMetadataSearchStatus}
       resetMetadataSearchResults={this.resetMetadataSearchResults}
+      submit={this.submit}
       {...props}
       {...this.state.metadata_search}
     />

@@ -27,7 +27,18 @@ async function submit_enrichr(item) {
     }, 1000);
 }
 
-export default function Options({item, type}) {
+async function submit_sigcom(item, submit) {
+  const {data, filename} = await get_signature(item)
+  const input = {
+    id: item.id,
+    type: "Overlap",
+    geneset: data.join('\n')
+  }
+  console.log(input)
+  submit(input)
+}
+
+export default function Options({item, type, ...props}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -99,6 +110,22 @@ export default function Options({item, type}) {
               &nbsp;
             <Typography variant="caption" display="block">
               Pass to Enrichr
+            </Typography>
+          </MenuItem>
+          <MenuItem onClick={()=>{
+              handleClose()
+              submit_sigcom(item, props.submit)
+            }
+          }>
+            <Avatar alt="Signature Commons" 
+              src={`${process.env.PREFIX}/static/favicon.ico`}
+              style={{
+                width: 15,
+                height: 15,
+              }}/>
+              &nbsp;
+            <Typography variant="caption" display="block">
+              Pass to SigCom
             </Typography>
           </MenuItem>
         </Menu>

@@ -106,7 +106,7 @@ export default class MetadataSearchResults extends React.Component {
                     flexDirection: 'row',
                   }}>
                   {this.props.table_name === 'entities' || this.props.deactivate_download ? null :
-                    <Options type={this.props.table_name} item={item}/>
+                    <Options type={this.props.table_name} item={item} submit={this.props.submit}/>
                   }
                   <Label
                     item={item}

@@ -149,9 +149,6 @@ export async function get_signature(item, slice_rank=true, name){
       const entity_meta = await entity.meta
       return(entity_meta.Name) // TODO: Use ui_schemas here
     }))
-  console.log(entities)
-  console.log(signature_data)
-  console.log(signature)
   NProgress.done()
   if (data.library.dataset_type==="rank_matrix" && slice_rank){
     return {
