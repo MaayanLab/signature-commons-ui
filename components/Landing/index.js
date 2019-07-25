@@ -27,12 +27,6 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
     this.scrollToTop = this.scrollToTop.bind(this)
   }
 
-  componentDidMount() {
-    const type = this.props.signature_search.input.type
-    this.props.changeSignatureType(type)
-    this.props.resetMetadataSearchResults()
-  }
-
   scrollToTop() {
     scroll.scrollToTop()
   }

@@ -12,6 +12,8 @@ import { download_signature_json,
 
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
 const Label = dynamic(() => import('../../components/Label'), { ssr: false })
+const Options = dynamic(() => import('../../components/Options'), { ssr: false })
+
 
 const download = {
   libraries: download_library_json,
@@ -104,11 +106,7 @@ export default class MetadataSearchResults extends React.Component {
                     flexDirection: 'row',
                   }}>
                   {this.props.table_name === 'entities' || this.props.deactivate_download ? null :
-                    <Button
-                      onClick={(e) => this.handleDownload(this.props.table_name, item.id)}
-                    >
-                      <span className="mdi mdi-download mdi-24px"></span>
-                    </Button>
+                    <Options type={this.props.table_name} item={item} submit={this.props.submit}/>
                   }
                   <Label
                     item={item}

@@ -26,8 +26,12 @@ export async function fetch_data({ endpoint, body, signal }) {
     response_text = '{"signatures":[], "matchingEntities": [], "results": {}}'
   }
 
-  const response = JSON.parse(response_text)
-
+  let response
+  try{
+    response = JSON.parse(response_text)
+  }catch (e){
+    console.error(e)
+  }
   let contentRange = request.headers.get('Content-Range')
   if (contentRange !== null && !contentRange.startsWith('-')) {
     const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)
