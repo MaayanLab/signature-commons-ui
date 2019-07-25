@@ -394,7 +394,6 @@ export default class DataProvider {
       } else {
         throw new Error(`${dataset_type} not recognized`)
       }
-
       // construct request with signatures of interest
       const { response } = await fetch_data({
         endpoint: `/fetch/${endpoint}`,
@@ -404,7 +403,6 @@ export default class DataProvider {
           database: dataset,
         },
       })
-
       // resolve results
       // TODO: Deal with rank data differently?
       for (const sig of response.signatures) {
