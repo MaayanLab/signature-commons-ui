@@ -205,7 +205,7 @@ export default class Home extends React.PureComponent {
         }
 
         const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
-        const signature_id = uuid5(JSON.stringify(resolved_entities))
+        const signature_id = input.id || uuid5(JSON.stringify(resolved_entities))
 
         const results = await query_overlap({
           ...this.state.signature_search,
@@ -237,7 +237,7 @@ export default class Home extends React.PureComponent {
 
         const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
         const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
-        const signature_id = uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
+        const signature_id = input.id || uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
         const results = await query_rank({
           ...this.state.signature_search,
           ...props,
@@ -374,6 +374,7 @@ export default class Home extends React.PureComponent {
         for (const r of results) {
           const lib_meta = { 'id': library_dict[r.library].id,
             'dataset': library_dict[r.library].dataset,
+            'dataset_type': library_dict[r.library].dataset_type,
             'meta': {
               [this.props.ui_values.library_name]: library_dict[r.library].meta[this.props.ui_values.library_name],
               'Icon': library_dict[r.library].meta['Icon'],
@@ -474,10 +475,14 @@ export default class Home extends React.PureComponent {
 
   async fetch_stats(selected_field) {
     this.setState({
-      pie_stats: this.props.pie_fields_and_stats[selected_field].stats || {},
-      pie_table: this.props.pie_fields_and_stats[selected_field].table || '',
-      pie_slice: this.props.pie_fields_and_stats[selected_field].slice || 14,
-      pie_preferred_name: this.props.pie_fields_and_stats[selected_field].Preferred_Name || '',
+      pie_stats: this.props.pie_fields_and_stats[selected_field] ? 
+        this.props.pie_fields_and_stats[selected_field].stats: {},
+      pie_table: this.props.pie_fields_and_stats[selected_field] ? 
+        this.props.pie_fields_and_stats[selected_field].table : '',
+      pie_slice: this.props.pie_fields_and_stats[selected_field] ? 
+        this.props.pie_fields_and_stats[selected_field].slice : 14,
+      pie_preferred_name: this.props.pie_fields_and_stats[selected_field] ? 
+        this.props.pie_fields_and_stats[selected_field].Preferred_Name : '',
     })
   }
 
@@ -521,6 +526,8 @@ export default class Home extends React.PureComponent {
       performSearch={this.performSearch}
       handleChange={this.handleChange}
       resetMetadataSearchStatus={this.resetMetadataSearchStatus}
+      resetMetadataSearchResults={this.resetMetadataSearchResults}
+      submit={this.submit}
       {...props}
       {...this.state.metadata_search}
     />

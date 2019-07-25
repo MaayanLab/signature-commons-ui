@@ -123,6 +123,7 @@ export default class SearchResults extends React.Component {
             preferred_name={this.props.ui_values.preferred_name_singular}
             deactivate_download={this.props.ui_values.deactivate_download}
             schemas={this.props.schemas}
+            submit={this.props.submit}
           />
           <div align="right">
             <TablePagination
@@ -168,7 +169,7 @@ export default class SearchResults extends React.Component {
           variant="fullWidth"
           centered
         >
-          { this.state.tabs.map((key) => <Tab label={ this.props.ui_values.preferred_name[key] || key } />) }
+          { this.state.tabs.map((key) => <Tab key={key} label={ this.props.ui_values.preferred_name[key] || key } />) }
         </Tabs>
         <SwipeableViews
           index={this.state.index_value}

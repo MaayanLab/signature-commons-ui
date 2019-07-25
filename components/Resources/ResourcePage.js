@@ -1,4 +1,5 @@
 import React from 'react'
+import dynamic from 'next/dynamic'
 import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
 import ShowMeta from '../../components/ShowMeta'
@@ -9,6 +10,8 @@ import NProgress from 'nprogress'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeTemplate } from '../../util/makeTemplate'
+ 
+const Options = dynamic(() => import('../../components/Options'), { ssr: false })
 
 
 import { download_resource_json,
@@ -120,13 +123,7 @@ export default class ResourcePage extends React.Component {
                             flexDirection: 'row',
                           }}>
                           {this.props.ui_values.deactivate_download ? null :
-                            <Button style={{
-                              input: {
-                                display: 'none',
-                              },
-                            }}
-                            onClick={(e) => this.handleDownload('libraries', library.id)}
-                            ><span className="mdi mdi-download mdi-24px"></span></Button>
+                            <Options type={"libraries"} item={library}/>
                           }
                           <Label
                             item={library}

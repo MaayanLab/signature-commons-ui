@@ -37,6 +37,10 @@ export default class MetadataSearch extends React.Component {
     }
   }
 
+  componentWillUnmount(){
+    this.props.resetMetadataSearchResults()
+  }
+
   searchChange(e) {
     this.props.searchChange(e.target.value)
   }
