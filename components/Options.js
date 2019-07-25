@@ -4,11 +4,14 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { get_concatenated_meta,
-         download_signature_json,
+import Tooltip from '@material-ui/core/Tooltip';
+import { download_signature_json,
          download_signatures_text,
          download_ranked_signatures_text,
-         get_signature } from './MetadataSearch/download'
+         get_signature,
+         download_library_json,
+         download_library_gmt,
+         download_library_tsv } from './MetadataSearch/download'
 
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
@@ -34,9 +37,10 @@ async function submit_sigcom(item, submit) {
     type: "Overlap",
     geneset: data.join('\n')
   }
-  console.log(input)
   submit(input)
 }
+
+const Wire = ({ children, ...props }) => children(props);
 
 export default function Options({item, type, ...props}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -98,6 +102,22 @@ export default function Options({item, type, ...props}) {
           }
           <MenuItem onClick={()=>{
               handleClose()
+              submit_sigcom(item, props.submit)
+            }
+          }>
+            <img alt="Signature Commons" 
+              src={`${process.env.PREFIX}/static/favicon.ico`}
+              style={{
+                width: 12,
+                height: 12,
+              }}/>
+              &nbsp;
+            <Typography variant="caption" display="block">
+              Pass to SigCom
+            </Typography>
+          </MenuItem>
+          <MenuItem onClick={()=>{
+              handleClose()
               submit_enrichr(item)
             }
           }>
@@ -112,25 +132,58 @@ export default function Options({item, type, ...props}) {
               Pass to Enrichr
             </Typography>
           </MenuItem>
+        </Menu>
+      </div>
+    )
+  }else if (type === "libraries"){
+    return(
+      <div>
+        <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+          <span className="mdi mdi-dots-vertical"></span>
+        </Button>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
           <MenuItem onClick={()=>{
               handleClose()
-              submit_sigcom(item, props.submit)
+              download_library_json(item)
             }
           }>
-            <Avatar alt="Signature Commons" 
-              src={`${process.env.PREFIX}/static/favicon.ico`}
-              style={{
-                width: 15,
-                height: 15,
-              }}/>
-              &nbsp;
+            <span className="mdi mdi-json"></span>
+            &nbsp;
             <Typography variant="caption" display="block">
-              Pass to SigCom
+              Download information as JSON
+            </Typography>
+          </MenuItem>
+          <MenuItem onClick={()=>{
+              handleClose()
+              download_library_gmt(item)
+            }
+          }>
+            <span className="mdi mdi-file-document-box"></span>
+            &nbsp;
+            <Typography variant="caption" display="block">
+              Download gmt file
+            </Typography>
+          </MenuItem>
+          <MenuItem onClick={()=>{
+              handleClose()
+              download_library_tsv(item)
+            }
+          }>
+            <span className="mdi mdi-file-table"></span>
+            &nbsp;
+            <Typography variant="caption" display="block">
+              Download tsv file
             </Typography>
           </MenuItem>
         </Menu>
       </div>
-    )
+      )
   }else {
     return null
   }
