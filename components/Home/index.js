@@ -393,7 +393,8 @@ export default class Home extends React.PureComponent {
           [duration_label]: (Date.now() - start) / 1000,
           [duration_meta_label]: duration_meta,
           [count_label]: contentRange.count,
-          withMatches: results.length > 0 ? [...prevState.metadata_search.withMatches, table] : prevState.metadata_search.withMatches,
+          withMatches: results.length > 0 && prevState.metadata_search.withMatches.indexOf(table)===-1 ? 
+            [...prevState.metadata_search.withMatches, table] : prevState.metadata_search.withMatches,
           search_status: results.length > 0 ? 'Matched' : prevState.metadata_search.search_status,
           completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
         },
