@@ -136,6 +136,10 @@ export default class Home extends React.PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    NProgress.done()
+  }
+
   handleChange(event, searchType, scrolling = false) {
     if (searchType) {
       this.setState({ searchType }, () => {
@@ -160,6 +164,7 @@ export default class Home extends React.PureComponent {
       signature_search: {
         ...prevState.signature_search,
         input,
+        resource_signatures: undefined,
       },
     }))
   }
@@ -181,7 +186,6 @@ export default class Home extends React.PureComponent {
     //   library_resource={this.props.library_resource}
     const { libraries, resources, library_resource } = this.props
     const props = { libraries, resources, library_resource }
-
     let controller = this.state.signature_search.controller
     if (controller !== null) controller.abort()
     else controller = new AbortController()
@@ -205,7 +209,6 @@ export default class Home extends React.PureComponent {
 
         const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
         const signature_id = input.id || uuid5(JSON.stringify(resolved_entities))
-
         const results = await query_overlap({
           ...this.state.signature_search,
           ...props,

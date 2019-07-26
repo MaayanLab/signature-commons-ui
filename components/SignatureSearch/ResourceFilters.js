@@ -4,6 +4,8 @@ import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
 import M from 'materialize-css'
+import { get_signature } from '../MetadataSearch/download'
+import { fetch_meta } from '../../util/fetch/meta'
 
 export default class ResourceFilters extends React.Component {
   constructor(props) {
@@ -13,6 +15,51 @@ export default class ResourceFilters extends React.Component {
       show_all: false,
     }
   }
+
+  async componentDidMount(){
+    const input_signature = this.props.match.params.input_signature
+    const type = this.props.match.params.type
+    if (type === "Overlap" && this.props.input.geneset === ""){
+      try{
+        const { response: signature } = await fetch_meta({
+          endpoint: `/signatures/${input_signature}`
+        })
+        const {data, filename} = await get_signature(input_signature)
+        const input = {
+          type,
+          geneset: data.join("\n"),
+          id: input_signature,
+        }
+        this.props.submit(input)
+      }catch (e) {
+        console.warn("No such signature", input_signature)
+      }
+    }
+  }
+
+  async componentDidUpdate(prevProps){
+    const input_signature = this.props.match.params.input_signature
+    const type = this.props.match.params.type
+    if ( input_signature !== prevProps.match.params.input_signature){
+      if (type === "Overlap" && this.props.input.geneset === ""){
+        try{
+          const { response: signature } = await fetch_meta({
+            endpoint: `/signatures/${input_signature}`
+          })
+          const {data, filename} = await get_signature(input_signature)
+          const input = {
+            type,
+            geneset: data.join("\n"),
+            id: input_signature,
+          }
+          this.props.submit(input)
+        }catch (e) {
+          console.warn("No such signature", input_signature)
+        }
+      }
+    }
+  }
+
 
   toggle_show_all = () => this.setState({ show_all: !this.state.show_all })
 

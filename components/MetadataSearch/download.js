@@ -162,7 +162,6 @@ export async function get_signature(item, slice_rank=true, name){
   const data = signature._signature
   data["library"] = library._library
   await provider.fetch_entities()
-  console.log(signature)
   const entities = signature._data.map((entity) =>{
       return(makeTemplate(gene_name, entity._entity)) // TODO: Use ui_schemas here
     })
