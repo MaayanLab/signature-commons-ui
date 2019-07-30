@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
-
+import {similar_search_terms} from '../Home'
 const MetaItem = dynamic(() => import('../../components/MetadataSearch/MetaItem'))
 
 const default_singular_names = {
@@ -31,8 +31,8 @@ export default class SearchResults extends React.Component {
       signaturesPage: 0,
       librariesRowsPerPage: 10,
       librariesPage: 0,
-      entitiesRowsPerPage: 10,
       entitiesPage: 0,
+      entitiesRowsPerPage: 10,
       tabs: ['signatures', 'libraries', 'entities'],
     }
     this.handleChange = this.handleChange.bind(this)
@@ -52,13 +52,17 @@ export default class SearchResults extends React.Component {
       (prevProps.search_status !== '' && this.props.search_status === '')) {
       this.setState({
         tabs: this.props.withMatches,
+        index_value: 0,
+      })
+    }
+    if (!similar_search_terms(prevProps.currentSearchArray, this.props.currentSearchArray)){
+      this.setState({
         signaturesRowsPerPage: 10,
         signaturesPage: 0,
         librariesRowsPerPage: 10,
         librariesPage: 0,
         entitiesRowsPerPage: 10,
         entitiesPage: 0,
-        index_value: 0,
       })
     }
   }
@@ -79,7 +83,7 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}RowsPerPage`]: e.target.value,
     }, () => {
-      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
+      this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
@@ -87,7 +91,7 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}Page`]: page,
     }, () => {
-      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
+      this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
