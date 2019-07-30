@@ -156,6 +156,7 @@ export async function get_signature(item, slice_rank = true, name) {
   }
   const provider = new DataProvider()
   const signature = await provider.resolve_signature(sig)
+  await signature.data
   const library = await signature.library
   const data = signature._signature
   data['library'] = library._library
