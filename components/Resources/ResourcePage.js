@@ -123,7 +123,7 @@ export default class ResourcePage extends React.Component {
                             flexDirection: 'row',
                           }}>
                           {this.props.ui_values.deactivate_download ? null :
-                            <Options type="libraries" item={library}/>
+                            <Options type={'libraries'} item={library}/>
                           }
                           <Label
                             item={library}

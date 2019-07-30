@@ -21,21 +21,47 @@ import '../../styles/swagger.scss'
 
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
-function build_where(q) {
-  if (q.indexOf(':') !== -1) {
-    const [key, ...value] = q.split(':')
-    return {
-      ['meta.' + key]: {
-        ilike: '%' + value.join(':') + '%',
-      },
-    }
-  } else {
-    return {
-      meta: {
-        fullTextSearch: q,
-      },
+function build_where(queries) {
+  const where = {}
+  let andClauses = []
+  let orClauses = []
+
+  for (const q of queries) {
+    if (q.indexOf(':') !== -1) {
+      const [key, ...value] = q.split(':')
+      if (key.startsWith('!') || key.startsWith('-')) {
+        andClauses = [...andClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
+      } else if (key.toLowerCase().startsWith('or ')) {
+        orClauses = [...orClauses, { ['meta.' + key.substring(3).trim()]: { ilike: '%' + value.join(':') + '%' } }]
+      } else if (key.startsWith('|')) {
+        orClauses = [...orClauses, { ['meta.' + key.substring(1).trim()]: { ilike: '%' + value.join(':') + '%' } }]
+      } else {
+        andClauses = [...andClauses, { ['meta.' + key.trim()]: { ilike: '%' + value.join(':') + '%' } }]
+      }
+    } else {
+      // full text query
+      if (q.startsWith('!') || q.startsWith('-')) {
+        // and not
+        andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim().split(' ') } } }]
+      } else if (q.toLowerCase().startsWith('or ')) {
+        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim().split(' ') } } }]
+      } else if (q.startsWith('|')) {
+        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim().split(' ') } } }]
+      } else {
+        // and
+        andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim().split(' ') } } }]
+      }
     }
   }
+  if (orClauses.length > 0) {
+    if (andClauses.length > 0) {
+      orClauses = [...orClauses, { and: andClauses }]
+    }
+    where['or'] = orClauses
+  } else {
+    where['and'] = andClauses
+  }
+  return where
 }
 
 function parse_entities(input) {
@@ -48,6 +74,30 @@ function parse_entities(input) {
         return lines
       }, []
   ))
+}
+
+export function similar_search_terms(prevTerms, currTerms) {
+  if (currTerms.length !== prevTerms.length) {
+    return false
+  }
+  const same_terms = currTerms.filter((term) => prevTerms.indexOf(term) > -1)
+  if (same_terms.length === currTerms.length) {
+    return true
+  }
+  return false
+}
+
+export function get_formated_query(terms) {
+  if (Array.isArray(terms)) {
+    if (terms.length === 0) {
+      return ''
+    }
+    return `?q=${terms.join('%26')}`
+  } else if (typeof terms === 'string') {
+    return `?q=${terms}`
+  } else {
+    return `?q=${Object.keys(terms).join('%26')}`
+  }
 }
 
 export default class Home extends React.PureComponent {
@@ -64,7 +114,9 @@ export default class Home extends React.PureComponent {
         libraries_total_count: undefined,
         entities_total_count: undefined,
         search: '',
+        searchArray: [],
         currentSearch: '',
+        currentSearchArray: [],
         completed_search: 0,
         search_status: '',
         withMatches: [],
@@ -84,11 +136,10 @@ export default class Home extends React.PureComponent {
     this.resetMetadataSearchResults = this.resetMetadataSearchResults.bind(this)
 
     // metadata search
-    this.searchChange = this.searchChange.bind(this)
-    this.currentSearchChange = this.currentSearchChange.bind(this)
     this.performSearch = this.performSearch.bind(this)
     this.resetMetadataSearchStatus = this.resetMetadataSearchStatus.bind(this)
-    this.resetCurrentSearch = this.resetCurrentSearch.bind(this)
+    this.currentSearchArrayChange = this.currentSearchArrayChange.bind(this)
+    this.resetCurrentSearchArray = this.resetCurrentSearchArray.bind(this)
 
     // signature search
     this.changeSignatureType = this.changeSignatureType.bind(this)
@@ -119,7 +170,17 @@ export default class Home extends React.PureComponent {
     M.AutoInit()
     M.updateTextFields()
     if (this.state.metadata_search.search_status === 'Initializing') {
-      NProgress.start()
+      if (this.state.metadata_search.currentSearchArray.length === 0) {
+        this.setState((prevState) => ({
+          metadata_search: {
+            ...prevState.metadata_search,
+            search_status: '',
+          },
+        }))
+        this.props.history.push(`/`)
+      } else {
+        NProgress.start()
+      }
     }
     if (this.state.metadata_search.completed_search === 3) {
       NProgress.done()
@@ -127,11 +188,13 @@ export default class Home extends React.PureComponent {
     }
     if (this.state.metadata_search.search_status === 'Matched' &&
       prevState.metadata_search.search_status !== this.state.metadata_search.search_status) {
-      this.props.history.push(`/MetadataSearch?q=${this.state.metadata_search.currentSearch}`)
+      const query = get_formated_query(this.state.metadata_search.currentSearchArray)
+      this.props.history.push(`/MetadataSearch${query}`)
     }
     if (prevState.metadata_search.search_status === 'Initializing' &&
       this.state.metadata_search.search_status === '') {
-      this.props.history.push(`/MetadataSearch?q=${this.state.metadata_search.currentSearch}`)
+      const query = get_formated_query(this.state.metadata_search.currentSearchArray)
+      this.props.history.push(`/MetadataSearch${query}`)
     }
   }
 
@@ -259,40 +322,32 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  searchChange(search) {
-    this.setState((prevState) => ({
-      metadata_search: {
-        ...prevState.metadata_search,
-        search,
-      },
-    }))
-  }
-
-  currentSearchChange(currentSearch) {
-    if (currentSearch !== '' && currentSearch !== this.state.metadata_search.currentSearch) {
+  currentSearchArrayChange(currentSearchArray) {
+    if (!similar_search_terms(this.state.metadata_search.currentSearchArray, currentSearchArray)) {
       this.setState((prevState) => ({
         metadata_search: {
           ...prevState.metadata_search,
-          currentSearch: currentSearch,
-          search: currentSearch,
+          currentSearchArray: currentSearchArray,
+          searchArray: currentSearchArray,
           completed_search: 0,
           search_status: 'Initializing',
           withMatches: [],
         },
       }), () => {
-        this.performSearch('signatures')
-        this.performSearch('libraries')
-        this.performSearch('entities')
+        if (currentSearchArray.length > 0) {
+          this.performSearch(currentSearchArray, 'signatures')
+          this.performSearch(currentSearchArray, 'libraries')
+          this.performSearch(currentSearchArray, 'entities')
+        }
       })
     }
   }
 
-  resetCurrentSearch() {
+  resetCurrentSearchArray() {
     this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
-        currentSearch: '',
-        search: '',
+        currentSearchArray: [],
       },
     }))
   }
@@ -315,6 +370,7 @@ export default class Home extends React.PureComponent {
         signatures: undefined,
         libraries: undefined,
         completed_search: 0,
+        currentSearchArray: [],
         search_status: '',
         search: '',
         currentSearch: '',
@@ -323,7 +379,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  async performSearch(table, page = 0, rowsPerPage = 10, paginating = false) {
+  async performSearch(terms, table, page = 0, rowsPerPage = 10, paginating = false) {
     if (this.state.metadata_search[`${table}_controller`] !== undefined) {
       this.state.metadata_search[`${table}_controller`].abort()
     }
@@ -336,8 +392,7 @@ export default class Home extends React.PureComponent {
           [`${table}_controller`]: controller,
         },
       }))
-      const where = build_where(this.state.metadata_search.currentSearch)
-
+      const where = build_where(terms)
       const start = Date.now()
       const limit = rowsPerPage
       const skip = rowsPerPage * page
@@ -523,8 +578,7 @@ export default class Home extends React.PureComponent {
       updateCart={this.updateCart}
       ui_values={this.props.ui_values}
       schemas={this.props.schemas}
-      searchChange={this.searchChange}
-      currentSearchChange={this.currentSearchChange}
+      currentSearchArrayChange={this.currentSearchArrayChange}
       performSearch={this.performSearch}
       handleChange={this.handleChange}
       resetMetadataSearchStatus={this.resetMetadataSearchStatus}
@@ -586,9 +640,8 @@ export default class Home extends React.PureComponent {
             exact path="/"
             render={(router_props) => <Landing handleSelectField={this.handleSelectField}
               handleChange={this.handleChange}
-              searchChange={this.searchChange}
-              currentSearchChange={this.currentSearchChange}
-              resetCurrentSearch={this.resetCurrentSearch}
+              currentSearchArrayChange={this.currentSearchArrayChange}
+              resetCurrentSearchArray={this.resetCurrentSearchArray}
               changeSignatureType={this.changeSignatureType}
               updateSignatureInput={this.updateSignatureInput}
               resetMetadataSearchResults={this.resetMetadataSearchResults}

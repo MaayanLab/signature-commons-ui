@@ -48,8 +48,10 @@ export default class SearchResults extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.currentSearch !== this.props.currentSearch) {
+    if ((this.props.withMatches.length > 0 && prevProps.withMatches.length !== this.props.withMatches.length) ||
+      (prevProps.search_status !== '' && this.props.search_status === '')) {
       this.setState({
+        tabs: this.props.withMatches,
         signaturesRowsPerPage: 10,
         signaturesPage: 0,
         librariesRowsPerPage: 10,
@@ -57,12 +59,6 @@ export default class SearchResults extends React.Component {
         entitiesRowsPerPage: 10,
         entitiesPage: 0,
         index_value: 0,
-      })
-    }
-    if ((this.props.withMatches.length > 0 && prevProps.withMatches.length !== this.props.withMatches.length) ||
-      (prevProps.search_status !== '' && this.props.search_status === '')) {
-      this.setState({
-        tabs: this.props.withMatches,
       })
     }
   }
@@ -116,7 +112,7 @@ export default class SearchResults extends React.Component {
         </div>
         <div className="col s12">
           <MetaItem
-            search={this.props.currentSearch}
+            search={this.props.currentSearchArray}
             items={this.props[name]}
             type={this.props.ui_values.preferred_name_singular[name] || default_name_singular}
             table_name={name}
@@ -166,7 +162,6 @@ export default class SearchResults extends React.Component {
           onChange={this.handleChange}
           indicatorColor="primary"
           textColor="primary"
-          variant="fullWidth"
           centered
         >
           { this.state.tabs.map((key) => <Tab key={key} label={ this.props.ui_values.preferred_name[key] || key } />) }

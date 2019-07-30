@@ -162,7 +162,7 @@ class AdminView extends React.PureComponent {
             label={'meta'}
             source={'meta'}
             format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-            parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
+            parse={(v) => typeof v === 'string' ? JSON.parse(v || '') : v}
           />
         </SimpleForm>
       </Edit>
@@ -227,7 +227,7 @@ class AdminView extends React.PureComponent {
             label={'meta'}
             source={'meta'}
             format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-            parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
+            parse={(v) => typeof v === 'string' ? JSON.parse(v || '') : v}
           />
         </SimpleForm>
       </Edit>
@@ -275,7 +275,7 @@ class AdminView extends React.PureComponent {
             label={'meta'}
             source={'meta'}
             format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-            parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
+            parse={(v) => typeof v === 'string' ? JSON.parse(v || '') : v}
           />
         </SimpleForm>
       </Edit>

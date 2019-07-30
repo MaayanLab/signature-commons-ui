@@ -1,7 +1,8 @@
 import React from 'react'
 
-function escapedVariableRegExp(str, flags) {
-  return new RegExp(str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), flags)
+function escapedVariableRegExp(terms, flags) {
+  const terms_escaped = terms.map((term) => term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')
+  return new RegExp(terms_escaped, flags)
 }
 
 export function Highlight({

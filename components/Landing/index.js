@@ -44,10 +44,9 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
           direction={'column'}>
           <Grid item xs={12} className={this.props.classes.stretched}>
             <SearchCard
-              search={this.props.metadata_search.search}
-              searchChange={this.searchChange}
-              currentSearchChange={this.props.currentSearchChange}
+              currentSearchArrayChange={this.props.currentSearchArrayChange}
               handleChange={this.props.handleChange}
+              currentSearchArray={this.props.metadata_search.currentSearchArray}
               type={this.state.type}
               searchType={this.props.searchType}
               submit={this.props.submit}
