@@ -27,9 +27,9 @@ export async function fetch_data({ endpoint, body, signal }) {
   }
 
   let response
-  try{
+  try {
     response = JSON.parse(response_text)
-  }catch (e){
+  } catch (e) {
     console.error(e)
   }
   let contentRange = request.headers.get('Content-Range')

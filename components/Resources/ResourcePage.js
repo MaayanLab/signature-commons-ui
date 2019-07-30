@@ -10,7 +10,7 @@ import NProgress from 'nprogress'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeTemplate } from '../../util/makeTemplate'
- 
+
 const Options = dynamic(() => import('../../components/Options'), { ssr: false })
 
 
@@ -123,7 +123,7 @@ export default class ResourcePage extends React.Component {
                             flexDirection: 'row',
                           }}>
                           {this.props.ui_values.deactivate_download ? null :
-                            <Options type={"libraries"} item={library}/>
+                            <Options type={'libraries'} item={library}/>
                           }
                           <Label
                             item={library}

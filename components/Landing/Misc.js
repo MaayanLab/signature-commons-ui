@@ -229,9 +229,8 @@ export const SearchCard = ({ classes, width, ...props }) => {
             {props.searchType == 'metadata' ?
               <SearchBox
                 id='metadata'
-                search={props.search}
-                searchChange={props.searchChange}
-                currentSearchChange={props.currentSearchChange}
+                currentSearchArray={props.currentSearchArray}
+                currentSearchArrayChange={props.currentSearchArrayChange}
                 ui_values={props.ui_values}
               /> :
               <GenesetSearchBox
@@ -280,9 +279,9 @@ export const SearchCard = ({ classes, width, ...props }) => {
             <SearchBox
               id='metadata'
               search={props.search}
-              searchChange={props.searchChange}
-              currentSearchChange={props.currentSearchChange}
               ui_values={props.ui_values}
+              currentSearchArray={props.currentSearchArray}
+              currentSearchArrayChange={props.currentSearchArrayChange}
             />
           </Grid>
         </Grid>

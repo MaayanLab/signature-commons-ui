@@ -1,6 +1,5 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import Button from '@material-ui/core/Button'
 import NProgress from 'nprogress'
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
