@@ -67,7 +67,7 @@ export default class Home extends React.PureComponent {
         currentSearch: '',
         completed_search: 0,
         search_status: '',
-        withMatches:[],
+        withMatches: [],
       },
       signature_search: {
         input: {
@@ -124,14 +124,13 @@ export default class Home extends React.PureComponent {
     if (this.state.metadata_search.completed_search === 3) {
       NProgress.done()
       this.resetMetadataSearchStatus()
-
     }
-    if (this.state.metadata_search.search_status === 'Matched' && 
-      prevState.metadata_search.search_status!==this.state.metadata_search.search_status) {
+    if (this.state.metadata_search.search_status === 'Matched' &&
+      prevState.metadata_search.search_status !== this.state.metadata_search.search_status) {
       this.props.history.push(`/MetadataSearch?q=${this.state.metadata_search.currentSearch}`)
     }
-    if (prevState.metadata_search.search_status=== 'Initializing' && 
-      this.state.metadata_search.search_status===''){
+    if (prevState.metadata_search.search_status === 'Initializing' &&
+      this.state.metadata_search.search_status === '') {
       this.props.history.push(`/MetadataSearch?q=${this.state.metadata_search.currentSearch}`)
     }
   }
@@ -319,7 +318,7 @@ export default class Home extends React.PureComponent {
         search_status: '',
         search: '',
         currentSearch: '',
-        withMatches: []
+        withMatches: [],
       },
     }))
   }
@@ -396,7 +395,7 @@ export default class Home extends React.PureComponent {
           [duration_label]: (Date.now() - start) / 1000,
           [duration_meta_label]: duration_meta,
           [count_label]: contentRange.count,
-          withMatches: results.length > 0 && prevState.metadata_search.withMatches.indexOf(table)===-1 ? 
+          withMatches: results.length > 0 && prevState.metadata_search.withMatches.indexOf(table) === -1 ?
             [...prevState.metadata_search.withMatches, table] : prevState.metadata_search.withMatches,
           search_status: results.length > 0 ? 'Matched' : prevState.metadata_search.search_status,
           completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
@@ -478,13 +477,13 @@ export default class Home extends React.PureComponent {
 
   async fetch_stats(selected_field) {
     this.setState({
-      pie_stats: this.props.pie_fields_and_stats[selected_field] ? 
-        this.props.pie_fields_and_stats[selected_field].stats: {},
-      pie_table: this.props.pie_fields_and_stats[selected_field] ? 
+      pie_stats: this.props.pie_fields_and_stats[selected_field] ?
+        this.props.pie_fields_and_stats[selected_field].stats : {},
+      pie_table: this.props.pie_fields_and_stats[selected_field] ?
         this.props.pie_fields_and_stats[selected_field].table : '',
-      pie_slice: this.props.pie_fields_and_stats[selected_field] ? 
+      pie_slice: this.props.pie_fields_and_stats[selected_field] ?
         this.props.pie_fields_and_stats[selected_field].slice : 14,
-      pie_preferred_name: this.props.pie_fields_and_stats[selected_field] ? 
+      pie_preferred_name: this.props.pie_fields_and_stats[selected_field] ?
         this.props.pie_fields_and_stats[selected_field].Preferred_Name : '',
     })
   }

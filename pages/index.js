@@ -173,7 +173,7 @@ export async function get_pie_stats(ui_values) {
       Preferred_Name: item.meta.Preferred_Name_Singular || item.meta.Preferred_Name || item.meta.Field_Name,
       table: item.meta.Table,
       stats: meta_stats[item.meta.Field_Name],
-      slice: item.meta.Slice || 14
+      slice: item.meta.Slice || 14,
     }
   })
   const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {

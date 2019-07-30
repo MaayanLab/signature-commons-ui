@@ -33,7 +33,7 @@ export default class SearchResults extends React.Component {
       librariesPage: 0,
       entitiesRowsPerPage: 10,
       entitiesPage: 0,
-      tabs: ["signatures", "libraries", "entities"],
+      tabs: ['signatures', 'libraries', 'entities'],
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleChangeIndex = this.handleChangeIndex.bind(this)
@@ -41,9 +41,9 @@ export default class SearchResults extends React.Component {
     this.handleChangePage = this.handleChangePage.bind(this)
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.setState({
-      tabs: this.props.withMatches
+      tabs: this.props.withMatches,
     })
   }
 
@@ -59,10 +59,10 @@ export default class SearchResults extends React.Component {
         index_value: 0,
       })
     }
-    if((this.props.withMatches.length>0 && prevProps.withMatches.length !== this.props.withMatches.length) || 
-      (prevProps.search_status !== '' && this.props.search_status ==='')){
+    if ((this.props.withMatches.length > 0 && prevProps.withMatches.length !== this.props.withMatches.length) ||
+      (prevProps.search_status !== '' && this.props.search_status === '')) {
       this.setState({
-        tabs: this.props.withMatches
+        tabs: this.props.withMatches,
       })
     }
   }
