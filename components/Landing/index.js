@@ -1,5 +1,4 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
 
 import { animateScroll as scroll } from 'react-scroll'
 
@@ -69,7 +68,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               spacing={24}
               alignItems={'center'}>
               { this.props.resource_signatures === undefined ? null :
-                <Grid item xs={12} sm={Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? true: 6}>
+                <Grid item xs={12} sm={Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? true : 6}>
                   <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_values={this.props.ui_values}/>
                   <div className={this.props.classes.centered}>
                     <Typography variant="caption">
@@ -79,7 +78,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 </Grid>
               }
               { Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? null :
-                <Grid item xs={12} sm={this.props.resource_signatures === undefined ? true: 6}>
+                <Grid item xs={12} sm={this.props.resource_signatures === undefined ? true : 6}>
                   { this.props.ui_values.bar_chart !== undefined ? (
                     <div className={this.props.classes.centered}>
                       {this.props.barcounts[this.props.ui_values.bar_chart.Field_Name] !== undefined ? (

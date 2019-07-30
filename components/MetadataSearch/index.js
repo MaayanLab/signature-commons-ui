@@ -22,7 +22,7 @@ export default class MetadataSearch extends React.Component {
 
   async componentDidMount() {
     const currentSearch = getParam(this.props.location.search, 'q')
-    if (this.props.currentSearch !== currentSearch){
+    if (this.props.currentSearch !== currentSearch) {
       if (currentSearch !== undefined || currentSearch === '') {
         this.props.currentSearchChange(currentSearch)
       }
@@ -37,7 +37,7 @@ export default class MetadataSearch extends React.Component {
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.props.resetMetadataSearchResults()
   }
 
