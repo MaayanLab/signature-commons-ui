@@ -31,7 +31,7 @@ const Info = (props) => {
             <Typography variant="h6">
                 Exclude word from search
             </Typography>
-            <Typography component="body2">
+            <Typography component="p">
               {'Prefix query with "-" or "!", e.g.'} &nbsp;
               <Chip
                 label={'Query'}
@@ -45,7 +45,7 @@ const Info = (props) => {
             <Typography variant="h6">
                 Combine searches
             </Typography>
-            <Typography component="body2">
+            <Typography component="p">
               {'Prefix query "or " or "|", e.g.'} &nbsp;
               <Chip
                 label={'Query'}
@@ -59,7 +59,7 @@ const Info = (props) => {
             <Typography variant="h6">
                 Search for specific field
             </Typography>
-            <Typography component="body2">
+            <Typography component="p">
               {'Prefix query with "[desired_field]:", e.g.'}
               <Chip
                 label={'Name: A cool name'}
