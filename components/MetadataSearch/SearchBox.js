@@ -38,11 +38,11 @@ const Info = (props) => {
                 Exclude word from search
               </Typography>
               <Typography component="body2">
-                Prefix query with "-" or "!", e.g. 
+                Prefix query with "-" or "!", e.g. &nbsp;
                 <Chip
-                  label={"Imatinib"}
+                  label={"Query"}
                   onDelete={() => {}}
-                /> -STAT3
+                /> -Not this
               </Typography>
             </div>
           </li>
@@ -52,11 +52,11 @@ const Info = (props) => {
                 Combine searches
               </Typography>
               <Typography component="body2">
-                Prefix query "or " or "|", e.g. 
+                Prefix query "or " or "|", e.g. &nbsp;
                 <Chip
-                  label={"Imatinib"}
+                  label={"Query"}
                   onDelete={() => {}}
-                /> or STAT3
+                /> or This too
               </Typography>
             </div>
           </li>
@@ -68,9 +68,9 @@ const Info = (props) => {
               <Typography component="body2">
                 Prefix query with "[desired_field]:", e.g.
                 <Chip
-                  label={"Cell_Line: MCF-7"}
+                  label={"Name: A cool name"}
                   onDelete={() => {}}
-                /> Gene: Stat3
+                /> PMID: 12345
               </Typography>
             </div>
           </li>
