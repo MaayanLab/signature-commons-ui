@@ -12,6 +12,9 @@ import { download_signature_json,
   download_library_gmt,
   download_library_tsv } from './MetadataSearch/download'
 
+const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
+  || (window.location.origin + '/Enrichr')
+
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
@@ -20,12 +23,12 @@ async function submit_enrichr(item) {
   const formData = new FormData()
   formData.append('list', data.join('\n'))
   formData.append('description', filename + '')
-  const response = await (await fetch('http://amp.pharm.mssm.edu/Enrichr/addList', {
+  const response = await (await fetch(`${ENRICHR_URL}/addList`, {
     method: 'POST',
     body: formData,
   })).json()
   setTimeout(function() {
-    window.location.href = `http://amp.pharm.mssm.edu/Enrichr/enrich?dataset=${response['shortId']}`
+    window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
   }, 1000)
 }
 
