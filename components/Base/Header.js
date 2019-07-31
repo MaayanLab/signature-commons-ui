@@ -2,7 +2,7 @@ import React from 'react'
 import { withRouter, Link } from 'react-router-dom'
 
 export function Nav(props) {
-  const { ui_values, handleChange, ...rest } = props
+  const { ui_values, handleChange, staticContext, ...rest } = props
   return (
     <ul {...rest}>
       {ui_values.nav.metadata_search ?
