@@ -124,6 +124,7 @@ export default class SearchResults extends React.Component {
             deactivate_download={this.props.ui_values.deactivate_download}
             schemas={this.props.schemas}
             submit={this.props.submit}
+            ui_values={this.props.ui_values}
           />
           <div align="right">
             <TablePagination

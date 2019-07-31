@@ -81,7 +81,7 @@ export default function Options({ item, type, ...props }) {
             <span className="mdi mdi-file-document-box"></span>
             &nbsp;
             <Typography variant="caption" display="block">
-              Download geneset as a text file
+              {props.ui_values.downloads.geneset}
             </Typography>
           </MenuItem>
           {item.library.dataset_type === 'rank_matrix' ?
@@ -93,42 +93,46 @@ export default function Options({ item, type, ...props }) {
               <span className="mdi mdi-file-download"></span>
               &nbsp;
               <Typography variant="caption" display="block">
-                Download ranked geneset
+                {props.ui_values.downloads.ranked}
               </Typography>
             </MenuItem> : null
           }
-          <MenuItem onClick={() => {
-            handleClose()
-            submit_sigcom(item, props.submit)
+          { props.ui_values.downloads.sigcom ?
+            <MenuItem onClick={() => {
+              handleClose()
+              submit_sigcom(item, props.submit)
+            }
+            }>
+              <img alt="Signature Commons"
+                src={`${process.env.PREFIX}/static/favicon.ico`}
+                style={{
+                  width: 12,
+                  height: 12,
+                }}/>
+                &nbsp;
+              <Typography variant="caption" display="block">
+                Pass to SigCom
+              </Typography>
+            </MenuItem>: null
           }
-          }>
-            <img alt="Signature Commons"
-              src={`${process.env.PREFIX}/static/favicon.ico`}
-              style={{
-                width: 12,
-                height: 12,
-              }}/>
-              &nbsp;
-            <Typography variant="caption" display="block">
-              Pass to SigCom
-            </Typography>
-          </MenuItem>
-          <MenuItem onClick={() => {
-            handleClose()
-            submit_enrichr(item)
+          { props.ui_values.downloads.enrichr ?
+            <MenuItem onClick={() => {
+              handleClose()
+              submit_enrichr(item)
+            }
+            }>
+              <Avatar alt="Enrichr"
+                src={`${process.env.PREFIX}/static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
+                style={{
+                  width: 15,
+                  height: 15,
+                }}/>
+                &nbsp;
+              <Typography variant="caption" display="block">
+                Pass to Enrichr
+              </Typography>
+            </MenuItem>: null
           }
-          }>
-            <Avatar alt="Enrichr"
-              src={`${process.env.PREFIX}/static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
-              style={{
-                width: 15,
-                height: 15,
-              }}/>
-              &nbsp;
-            <Typography variant="caption" display="block">
-              Pass to Enrichr
-            </Typography>
-          </MenuItem>
         </Menu>
       </div>
     )
@@ -164,7 +168,7 @@ export default function Options({ item, type, ...props }) {
             <span className="mdi mdi-file-document-box"></span>
             &nbsp;
             <Typography variant="caption" display="block">
-              Download gmt file
+              { props.ui_values.downloads.gmt}
             </Typography>
           </MenuItem>
           <MenuItem onClick={() => {
@@ -175,7 +179,7 @@ export default function Options({ item, type, ...props }) {
             <span className="mdi mdi-file-table"></span>
             &nbsp;
             <Typography variant="caption" display="block">
-              Download tsv file
+              { props.ui_values.downloads.tsv }
             </Typography>
           </MenuItem>
         </Menu>
