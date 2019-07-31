@@ -23,7 +23,7 @@ export const UIValues = {
           text_1: values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures',
           text_2: values.text_2 || 'Search across a broad gathering of perturbations',
           text_3: values.text_3 || 'Examine metadata:',
-          text_4: values.text_4 || 'Start using Signature Commons on your project',
+          text_4: values.text_4 || 'Start using Signature Commons in your project',
           metadata_placeholder: values.metadata_placeholder || 'Search over half a million signatures',
           geneset_placeholder: values.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set',
           up_genes_placeholder: values.up_genes_placeholder || 'Genes that are up-regulated in signature or overlap with gene set',
