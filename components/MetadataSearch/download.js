@@ -242,10 +242,7 @@ export async function download_library_gmt(item, name = undefined) {
 
 export async function download_library_tsv(item, name = undefined) {
   NProgress.start()
-  console.time('fetch')
   const { dataset, filename } = await get_library_data(item, name)
-  console.timeEnd('fetch')
-  console.time('tsv')
   let columns = []
   const gmt = Object.keys(dataset).reduce((acc, sig) => {
     for (const entity of dataset[sig]) {
@@ -267,7 +264,6 @@ export async function download_library_tsv(item, name = undefined) {
     columns = [...columns, sig]
     return (acc)
   }, {})
-  console.timeEnd('tsv')
   NProgress.done()
   fileDownload(`${columns.join('\t')}\n${Object.values(gmt).join('\n')}`, `${filename}.tsv`)
 }
@@ -308,10 +304,8 @@ export async function download_library_tsv1(lib) {
       }
     }
   }
-  console.log(col_headers)
   let result = ''
   for (const col_label of col_labels) {
-    console.log(col_label)
     result += `${'\t'.repeat(row_labels.length)}\t${col_headers[col_label].join('\t')}\n`
   }
   result += `${row_labels.join('\t')}\t${'\t'.repeat(signatures.length)}\n`
