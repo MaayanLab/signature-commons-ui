@@ -28,7 +28,7 @@ async function submit_enrichr(item) {
     body: formData,
   })).json()
   setTimeout(function() {
-    window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
+    window.location.href = `${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank'
   }, 1000)
 }
 
