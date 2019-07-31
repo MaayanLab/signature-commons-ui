@@ -113,7 +113,7 @@ export default function Options({ item, type, ...props }) {
               <Typography variant="caption" display="block">
                 Pass to SigCom
               </Typography>
-            </MenuItem>: null
+            </MenuItem> : null
           }
           { props.ui_values.downloads.enrichr ?
             <MenuItem onClick={() => {
@@ -131,7 +131,7 @@ export default function Options({ item, type, ...props }) {
               <Typography variant="caption" display="block">
                 Pass to Enrichr
               </Typography>
-            </MenuItem>: null
+            </MenuItem> : null
           }
         </Menu>
       </div>

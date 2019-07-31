@@ -2,14 +2,8 @@ import React from 'react'
 import ChipInput from 'material-ui-chip-input'
 import { withStyles } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
-import Popper from '@material-ui/core/Popper';
-import Tooltip from '@material-ui/core/Tooltip';
-import Fade from '@material-ui/core/Fade';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Tooltip from '@material-ui/core/Tooltip'
+import Typography from '@material-ui/core/Typography'
 
 const styles = (theme) => ({
   info: {
@@ -21,73 +15,68 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.common.white,
     boxShadow: theme.shadows[1],
     maxWidth: 380,
-  }
+  },
 })
 
 const Info = (props) => {
-    const { classes } = props
-    return(
-      <div className={classes.info}>
-        <Typography variant="h5">
+  const { classes } = props
+  return (
+    <div className={classes.info}>
+      <Typography variant="h5">
           Search operators
-        </Typography>
-        <ul>
-          <li>
-            <div>
-              <Typography variant="h6">
+      </Typography>
+      <ul>
+        <li>
+          <div>
+            <Typography variant="h6">
                 Exclude word from search
-              </Typography>
-              <Typography component="body2">
-                Prefix query with "-" or "!", e.g. &nbsp;
-                <Chip
-                  label={"Query"}
-                  onDelete={() => {}}
-                /> -Not this
-              </Typography>
-            </div>
-          </li>
-          <li>
-            <div>
-              <Typography variant="h6">
+            </Typography>
+            <Typography component="body2">
+              {'Prefix query with "-" or "!", e.g.'} &nbsp;
+              <Chip
+                label={'Query'}
+                onDelete={() => {}}
+              /> -Not this
+            </Typography>
+          </div>
+        </li>
+        <li>
+          <div>
+            <Typography variant="h6">
                 Combine searches
-              </Typography>
-              <Typography component="body2">
-                Prefix query "or " or "|", e.g. &nbsp;
-                <Chip
-                  label={"Query"}
-                  onDelete={() => {}}
-                /> or This too
-              </Typography>
-            </div>
-          </li>
-          <li>
-            <div>
-              <Typography variant="h6">
+            </Typography>
+            <Typography component="body2">
+              {'Prefix query "or " or "|", e.g.'} &nbsp;
+              <Chip
+                label={'Query'}
+                onDelete={() => {}}
+              /> or This too
+            </Typography>
+          </div>
+        </li>
+        <li>
+          <div>
+            <Typography variant="h6">
                 Search for specific field
-              </Typography>
-              <Typography component="body2">
-                Prefix query with "[desired_field]:", e.g.
-                <Chip
-                  label={"Name: A cool name"}
-                  onDelete={() => {}}
-                /> PMID: 12345
-              </Typography>
-            </div>
-          </li>
-        </ul>
-      </div>
-    )
-  }
+            </Typography>
+            <Typography component="body2">
+              {'Prefix query with "[desired_field]:", e.g.'}
+              <Chip
+                label={'Name: A cool name'}
+                onDelete={() => {}}
+              /> {'PMID: 12345'}
+            </Typography>
+          </div>
+        </li>
+      </ul>
+    </div>
+  )
+}
 
 class MetadataSearchBox extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      open: false,
-      anchorEl: null,
-    }
     this.renderChips = this.renderChips.bind(this)
-    this.handleClick = this.handleClick.bind(this)
   }
 
   renderChips(
@@ -151,19 +140,9 @@ class MetadataSearchBox extends React.Component {
     )
   }
 
-  handleClick(e) {
-    const { currentTarget } = e;
-    this.setState({
-      anchorEl: currentTarget,
-      open: !this.state.open,
-    });
-  }
-
   render() {
     const examples = this.props.ui_values.LandingText.search_terms
-    const { open, anchorEl } = this.state
     const { classes } = this.props
-    const id = open ? 'simple-popper': null
     return (
       <form action="javascript:void(0);">
         <div className="input-field">

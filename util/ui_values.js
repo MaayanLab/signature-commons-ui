@@ -112,13 +112,13 @@ export const UIValues = {
         maxResourcesBeforeCollapse: values.maxResourcesBeforeCollapse || 60,
         maxResourcesToShow: values.maxResourcesToShow || 40,
         downloads: values.downloads || {
-          gmt: "Download gmt file",
-          tsv: "Download tsv file",
-          geneset: "Download geneset as a text file",
-          ranked: "Download ranked geneset",
+          gmt: 'Download gmt file',
+          tsv: 'Download tsv file',
+          geneset: 'Download geneset as a text file',
+          ranked: 'Download ranked geneset',
           sigcom: false,
-          enrichr: true
-        }
+          enrichr: true,
+        },
       }
     )
   },

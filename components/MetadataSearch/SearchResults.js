@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
-import {similar_search_terms} from '../Home'
+import { similar_search_terms } from '../Home'
 const MetaItem = dynamic(() => import('../../components/MetadataSearch/MetaItem'))
 
 const default_singular_names = {
@@ -55,7 +55,7 @@ export default class SearchResults extends React.Component {
         index_value: 0,
       })
     }
-    if (!similar_search_terms(prevProps.currentSearchArray, this.props.currentSearchArray)){
+    if (!similar_search_terms(prevProps.currentSearchArray, this.props.currentSearchArray)) {
       this.setState({
         signaturesRowsPerPage: 10,
         signaturesPage: 0,
