@@ -7,7 +7,6 @@ import Typography from '@material-ui/core/Typography'
 
 const styles = (theme) => ({
   info: {
-    ...theme.mixins.gutters(),
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2,
   },
@@ -31,8 +30,10 @@ const Info = (props) => {
             <Typography variant="h6">
                 Exclude word from search
             </Typography>
-            <Typography component="p">
+            <Typography variant="body2">
               {'Prefix query with "-" or "!", e.g.'} &nbsp;
+            </Typography>
+            <Typography variant="overline" gutterBottom>
               <Chip
                 label={'Query'}
                 onDelete={() => {}}
@@ -45,8 +46,10 @@ const Info = (props) => {
             <Typography variant="h6">
                 Combine searches
             </Typography>
-            <Typography component="p">
+            <Typography variant="body2">
               {'Prefix query "or " or "|", e.g.'} &nbsp;
+            </Typography>
+            <Typography variant="overline" gutterBottom>
               <Chip
                 label={'Query'}
                 onDelete={() => {}}
@@ -59,8 +62,10 @@ const Info = (props) => {
             <Typography variant="h6">
                 Search for specific field
             </Typography>
-            <Typography component="p">
+            <Typography variant="body2">
               {'Prefix query with "[desired_field]:", e.g.'}
+            </Typography>
+            <Typography variant="overline" gutterBottom>
               <Chip
                 label={'Name: A cool name'}
                 onDelete={() => {}}
