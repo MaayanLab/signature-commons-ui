@@ -75,7 +75,7 @@ export default class SearchResults extends React.Component {
 
   handleChangeIndex(index) {
     this.setState({
-      index_value: newValue,
+      index_value: index,
     })
   }
 
