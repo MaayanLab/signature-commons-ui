@@ -25,6 +25,7 @@ import CardHeader from '@material-ui/core/CardHeader'
 import BlurOn from '@material-ui/icons/BlurOn'
 import Fingerprint from '@material-ui/icons/Fingerprint'
 import LibraryBooks from '@material-ui/icons/LibraryBooks'
+import JssProvider from 'react-jss/lib/JssProvider';
 
 import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta'
 import { fetchJson, patchJson } from '../../util/fetch/fetch'
@@ -38,6 +39,7 @@ import { Dashboard } from './dashboard'
 
 import { MyLogin } from './Login.js'
 
+import { generateClassName } from './classNameGenerator.js'
 
 class AdminView extends React.PureComponent {
   constructor(props) {
@@ -561,45 +563,47 @@ class AdminView extends React.PureComponent {
           <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
         </Head>
         <main>
-          <Admin title={'Signature Commons Dashboard'}
-            dataProvider={this.dataProvider}
-            authProvider={this.authProvider}
-            dashboard={(props) => <Dashboard
-              handleSelectField={this.handleSelectField}
-              {...this.state}
-              {...this.props}
-              {...props}/>}
-            catchAll={this.NotFound}
-            loginPage={MyLogin}
-          >
-            {this.props.library_fields === null || this.props.table_counts.filter((entry) => entry.table === 'libraries').length === 0 ? <div/> :
-                <Resource
-                  name="libraries"
-                  list={this.LibraryList}
-                  edit={this.LibraryEdit}
-                  icon={LibraryBooks}
-                  options={{ label: this.props.ui_values.preferred_name['libraries'] }}
-                />
-            }
-            {this.state.signature_fields === null || this.props.table_counts.filter((entry) => entry.table === 'signatures').length === 0 ? <div/> :
-                <Resource
-                  name="signatures"
-                  edit={this.SignatureEdit}
-                  list={this.SignatureList}
-                  icon={Fingerprint}
-                  options={{ label: this.props.ui_values.preferred_name['signatures'] }}
-                />
-            }
-            {this.props.entity_fields === null || this.props.table_counts.filter((entry) => entry.table === 'entities').length === 0 ? <div/> :
-                <Resource
-                  name="entities"
-                  edit={this.EntityEdit}
-                  list={this.EntityList}
-                  icon={BlurOn}
-                  options={{ label: this.props.ui_values.preferred_name['entities'] }}
-                />
-            }
-          </Admin>
+          <JssProvider generateClassName={generateClassName}>
+            <Admin title={'Signature Commons Dashboard'}
+              dataProvider={this.dataProvider}
+              authProvider={this.authProvider}
+              dashboard={(props) => <Dashboard
+                handleSelectField={this.handleSelectField}
+                {...this.state}
+                {...this.props}
+                {...props}/>}
+              catchAll={this.NotFound}
+              loginPage={MyLogin}
+            >
+              {this.props.library_fields === null || this.props.table_counts.filter((entry) => entry.table === 'libraries').length === 0 ? <div/> :
+                  <Resource
+                    name="libraries"
+                    list={this.LibraryList}
+                    edit={this.LibraryEdit}
+                    icon={LibraryBooks}
+                    options={{ label: this.props.ui_values.preferred_name['libraries'] }}
+                  />
+              }
+              {this.state.signature_fields === null || this.props.table_counts.filter((entry) => entry.table === 'signatures').length === 0 ? <div/> :
+                  <Resource
+                    name="signatures"
+                    edit={this.SignatureEdit}
+                    list={this.SignatureList}
+                    icon={Fingerprint}
+                    options={{ label: this.props.ui_values.preferred_name['signatures'] }}
+                  />
+              }
+              {this.props.entity_fields === null || this.props.table_counts.filter((entry) => entry.table === 'entities').length === 0 ? <div/> :
+                  <Resource
+                    name="entities"
+                    edit={this.EntityEdit}
+                    list={this.EntityList}
+                    icon={BlurOn}
+                    options={{ label: this.props.ui_values.preferred_name['entities'] }}
+                  />
+              }
+            </Admin>
+          </JssProvider>
         </main>
       </div>
     )
