@@ -79,10 +79,11 @@ export default class ResourcePage extends React.Component {
                           input: {
                             display: 'none',
                           },
+                          paddingLeft: 20
                         }}
                         onClick={(e) => this.handleDownload('resources', this.props.resource.id)}
                         className={`mdi mdi-download mdi-24px`}
-                        >{''}</Button>
+                        />
                       }
                     </Grid>
                     <Grid item xs={1}>

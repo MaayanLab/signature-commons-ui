@@ -114,8 +114,11 @@ export const UIValues = {
         downloads: values.downloads || {
           gmt: 'Download gmt file',
           tsv: 'Download tsv file',
-          geneset: 'Download geneset as a text file',
-          ranked: 'Download ranked geneset',
+          geneset: 'Download gene set',
+          ranked: 'Download ranked signature',
+          signature_json: 'Download signature as json',
+          library_json: 'Download library as json',
+          resource_json: 'Download resource as json',
           sigcom: false,
           enrichr: true,
         },
