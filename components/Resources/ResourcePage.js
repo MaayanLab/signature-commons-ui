@@ -48,10 +48,15 @@ export default class ResourcePage extends React.Component {
                 <div className="row">
                   <div className="col s12">
                     <div className="card-image col s1">
-                      <IconButton
-                        img={this.props.resource.meta.icon}
-                        onClick={call(this.redirectLink, this.props.resource.meta.URL)}
-                      />
+                      <Link
+                          to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                          className="waves-effect waves-teal"
+                        >
+                        <IconButton
+                          img={this.props.resource.meta.icon}
+                          onClick={call(this.redirectLink, "/")}
+                        />
+                      </Link>
                     </div>
                     <div className="card-content col s11">
                       <div>

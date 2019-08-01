@@ -709,7 +709,7 @@ export default class Home extends React.PureComponent {
             /> : null
           }
           <Route
-            path="/Library/:id"
+            path="/Library"
             component={this.collection}
           />
           <Route
