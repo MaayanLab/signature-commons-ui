@@ -56,7 +56,7 @@ export default function Options({ item, type, ...props }) {
     return (
       <div>
         <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-          <span className="mdi mdi-dots-vertical"></span>
+          <span className="mdi mdi-24px mdi-dots-vertical"></span>
         </Button>
         <Menu
           id="simple-menu"
@@ -70,10 +70,10 @@ export default function Options({ item, type, ...props }) {
             download_signature_json(item)
           }
           }>
-            <span className="mdi mdi-json"></span>
+            <span className="mdi mdi-24px mdi-json"></span>
             &nbsp;
             <Typography variant="caption" display="block">
-              Download information as JSON
+              {props.ui_values.downloads.signature_json}
             </Typography>
           </MenuItem>
           <MenuItem onClick={() => {
@@ -81,7 +81,7 @@ export default function Options({ item, type, ...props }) {
             download_signatures_text(item)
           }
           }>
-            <span className="mdi mdi-file-document-box"></span>
+            <span className="mdi mdi-24px mdi-file-document-box"></span>
             &nbsp;
             <Typography variant="caption" display="block">
               {props.ui_values.downloads.geneset}
@@ -93,7 +93,7 @@ export default function Options({ item, type, ...props }) {
               download_ranked_signatures_text(item)
             }
             }>
-              <span className="mdi mdi-file-download"></span>
+              <span className="mdi mdi-24px mdi-file-download"></span>
               &nbsp;
               <Typography variant="caption" display="block">
                 {props.ui_values.downloads.ranked}
@@ -109,12 +109,12 @@ export default function Options({ item, type, ...props }) {
               <img alt="Signature Commons"
                 src={`${process.env.PREFIX}/static/favicon.ico`}
                 style={{
-                  width: 12,
-                  height: 12,
+                  width: 15,
+                  height: 15,
                 }}/>
-                &nbsp;
+                &nbsp;&nbsp;&nbsp;
               <Typography variant="caption" display="block">
-                Pass to SigCom
+                Perform signature search
               </Typography>
             </MenuItem> : null
           }
@@ -127,12 +127,12 @@ export default function Options({ item, type, ...props }) {
               <Avatar alt="Enrichr"
                 src={`${process.env.PREFIX}/static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
                 style={{
-                  width: 15,
-                  height: 15,
+                  width: 20,
+                  height: 20,
                 }}/>
-                &nbsp;
+                &nbsp;&nbsp;
               <Typography variant="caption" display="block">
-                Pass to Enrichr
+                Submit to Enrichr
               </Typography>
             </MenuItem> : null
           }
@@ -143,7 +143,7 @@ export default function Options({ item, type, ...props }) {
     return (
       <div>
         <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-          <span className="mdi mdi-dots-vertical"></span>
+          <span className="mdi mdi-24px mdi-dots-vertical"></span>
         </Button>
         <Menu
           id="simple-menu"
@@ -157,10 +157,10 @@ export default function Options({ item, type, ...props }) {
             download_library_json(item)
           }
           }>
-            <span className="mdi mdi-json"></span>
+            <span className="mdi mdi-24px mdi-json"></span>
             &nbsp;
             <Typography variant="caption" display="block">
-              Download information as JSON
+              {props.ui_values.downloads.library_json}
             </Typography>
           </MenuItem>
           <MenuItem onClick={() => {
@@ -168,7 +168,7 @@ export default function Options({ item, type, ...props }) {
             download_library_gmt(item)
           }
           }>
-            <span className="mdi mdi-file-document-box"></span>
+            <span className="mdi mdi-24px mdi-file-document-box"></span>
             &nbsp;
             <Typography variant="caption" display="block">
               { props.ui_values.downloads.gmt}
@@ -179,7 +179,7 @@ export default function Options({ item, type, ...props }) {
             download_library_tsv(item)
           }
           }>
-            <span className="mdi mdi-file-table"></span>
+            <span className="mdi mdi-24px mdi-file-table"></span>
             &nbsp;
             <Typography variant="caption" display="block">
               { props.ui_values.downloads.tsv }
