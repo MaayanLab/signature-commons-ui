@@ -338,6 +338,18 @@ export default class Home extends React.PureComponent {
           this.performSearch(currentSearchArray, 'signatures')
           this.performSearch(currentSearchArray, 'libraries')
           this.performSearch(currentSearchArray, 'entities')
+        } else {
+          // CurrentSearchArray is empty
+          if (this.state.entities_controller!== undefined){
+            this.state.entities_controller.abort()
+          }
+          if (this.state.signatures_controller!== undefined){
+            this.state.signatures_controller.abort()
+          }
+          if (this.state.libraries_controller!== undefined){
+            this.state.libraries_controller.abort()
+          }
+          NProgress.done()
         }
       })
     }
@@ -350,6 +362,16 @@ export default class Home extends React.PureComponent {
         currentSearchArray: [],
       },
     }))
+    if (this.state.entities_controller!== undefined){
+      this.state.entities_controller.abort()
+    }
+    if (this.state.signatures_controller!== undefined){
+      this.state.signatures_controller.abort()
+    }
+    if (this.state.libraries_controller!== undefined){
+      this.state.libraries_controller.abort()
+    }
+    NProgress.done()
   }
 
   resetMetadataSearchStatus() {
@@ -377,6 +399,16 @@ export default class Home extends React.PureComponent {
         withMatches: [],
       },
     }))
+    if (this.state.entities_controller!== undefined){
+      this.state.entities_controller.abort()
+    }
+    if (this.state.signatures_controller!== undefined){
+      this.state.signatures_controller.abort()
+    }
+    if (this.state.libraries_controller!== undefined){
+      this.state.libraries_controller.abort()
+    }
+    NProgress.done()
   }
 
   async performSearch(terms, table, page = 0, rowsPerPage = 10, paginating = false) {
