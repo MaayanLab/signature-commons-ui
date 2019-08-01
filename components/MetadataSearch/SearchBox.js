@@ -185,6 +185,7 @@ class MetadataSearchBox extends React.Component {
               const chips = this.props.currentSearchArray.filter((term) => term != chip)
               this.props.currentSearchArrayChange(chips)
             }}
+            blurBehavior="add"
           />
           <span>&nbsp;&nbsp;</span>
           <button className="btn waves-effect waves-light" type="submit" name="action"
