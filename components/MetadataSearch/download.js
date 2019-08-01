@@ -225,26 +225,47 @@ export async function get_library_data(item, name) {
 
   const provider = new DataProvider()
   const library = await provider.resolve_library(lib)
-  await library.meta
+  const library_id = await library.id
+  const library_meta = await library.meta
+  const library_validator = await library.validator
+  const library_dataset = await library.dataset
+  const library_dataset_type = await library.dataset_type
 
-  filename = get_concatenated_meta(library._library, schemas)
+  const library_object = {
+    id: library_id,
+    $validator: library_validator,
+    meta: library_meta,
+    dataset: library_dataset,
+    dataset_type: library_dataset_type
+  }
+
+  filename = get_concatenated_meta(library_object, schemas)
   const signatures = await library.signatures
 
   await provider.resolve_signatures(signatures)
   await provider.fetch_data_for_signatures(signatures)
   await provider.fetch_entities()
-  const mined_entity = {}
-  const dataset = signatures.reduce((acc, signature) => {
-    const data = signature._signature
-    data['library'] = library._library
-    const entities = signature._data.map((entity) => {
-      if (!(entity._entity.id in mined_entity)) {
-        mined_entity[entity._entity.id] = makeTemplate(gene_name, entity._entity) // Faster
-      }
-      return (mined_entity[entity._entity.id]) // TODO: Use ui_schemas here
-    })
-    const meta = get_concatenated_meta(data, schemas)
-    acc[`${meta}_${data.id}`] = entities
+  const dataset_mapped = await Promise.all(await signatures.map(async(signature)=>{
+    const signature_id = await signature.id
+    const signature_meta = await signature.meta
+    const signature_validator = await signature.validator
+
+    const signature_object = {
+      id: signature_id,
+      $validator: signature_validator,
+      meta: signature_meta,
+      library: library_object
+    }
+    const signature_data = await signature.data
+    const entities = await Promise.all(await signature_data.map( async (entity) => {
+      const entity_meta = await entity.meta
+      return (makeTemplate(gene_name, {meta: entity_meta})) // TODO: Use ui_schemas here
+    }))
+    const signame = `${signature_id}_${get_concatenated_meta(signature_object, schemas)}`
+    return({signame, entities})
+  }))
+  const dataset = dataset_mapped.reduce((acc, signature) => {
+    acc[signature.signame] = signature.entities 
     return acc
   }, {})
   return ({ dataset, filename })
