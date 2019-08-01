@@ -469,6 +469,10 @@ export class Resource {
   get id() {
     return Promise.resolve(this._resource.id)
   }
+  
+  get validator() {
+    return Promise.resolve(this._resource['$validator'])
+  }
 
   get libraries() {
     return (async () => {
@@ -513,6 +517,10 @@ export class Library {
 
   get id() {
     return Promise.resolve(this._library.id)
+  }
+
+  get validator() {
+    return Promise.resolve(this._library['$validator'])
   }
 
   get resource() {
@@ -595,6 +603,10 @@ export class Signature {
     return Promise.resolve(this._signature.id)
   }
 
+  get validator() {
+    return Promise.resolve(this._signature['$validator'])
+  }
+
   get library() {
     return (async () => {
       if (this._library !== undefined) {
@@ -651,6 +663,10 @@ export class Entity {
 
   get id() {
     return Promise.resolve(this._entity.id)
+  }
+
+  get validator() {
+    return Promise.resolve(this._entity['$validator'])
   }
 
   get meta() {
