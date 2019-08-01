@@ -1,15 +1,16 @@
 {
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json",
-    "${dataset}": "sigcom"
   },
   "properties": {
-    "Resource Name": {
+    "Image": {
       "visibility": 1,
-      "type": "text",
-      "field": "Resource_Name",
-      "text": "${meta['Resource_Name']}",
-      "priority": 1
+      "type": "img",
+      "src": "${PREFIX}/${meta['icon']}",
+      "alt": "${meta['Resource_Name']}",
+      "priority": 1,
+      "icon": true,
+      "name": true
     },
     "Description": {
       "visibility": 1,

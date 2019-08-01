@@ -9,13 +9,15 @@
       "type": "img",
       "src": "${PREFIX}/${meta['Icon']}",
       "alt": "${meta['Primary_Resource']}",
-      "priority": 1
+      "priority": 1,
+      "icon": true
     },
     "Library": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['Library_name']}",
-      "priority": 2
+      "priority": 2,
+      "name": true
     }
   }
 }

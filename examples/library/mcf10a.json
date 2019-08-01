@@ -9,7 +9,9 @@
       "type": "img",
       "src": "${PREFIX}/${meta['Icon']}",
       "alt": "${meta['assay']}",
-      "priority": 1
+      "priority": 1,
+      "icon": true,
+      "name": true
     },
     "Assay": {
       "visibility": 1,

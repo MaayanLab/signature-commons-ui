@@ -6,38 +6,31 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${meta['Icon']}",
-      "alt": "${meta['assay']}",
+      "src": "${PREFIX}/${meta.creators[0].affiliations[0].extraProperties[0].values[0]}",
+      "alt": "${meta.creators.affiliations.name}",
       "priority": 1,
       "icon": true,
       "name": true
     },
-    "Data Link": {
-      "visibility": 1,
-      "type": "text",
-      "field": "data_link",
-      "text": "${meta['data_link']}",
-      "priority": 3
-    },
     "Description": {
       "visibility": 1,
       "type": "text",
-      "field": "description",
-      "text": "${meta['description']}",
+      "field": "Description",
+      "text": "${meta['Description']}",
       "priority": 2
     },
-    "Institution": {
+    "PMID": {
       "visibility": 1,
       "type": "text",
-      "field": "institution",
-      "text": "${meta['institution']}",
+      "field": "PMID",
+      "text": "${meta['PMID']}",
       "priority": 3
     },
-    "LINCS center": {
+    "URL": {
       "visibility": 1,
       "type": "text",
-      "field": "LINCS_center",
-      "text": "${meta['LINCS_center']}",
+      "field": "URL",
+      "text": "${meta['URL']}",
       "priority": 3
     },
     "Signature Count": {
