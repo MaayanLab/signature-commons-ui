@@ -127,7 +127,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                     />
                   </div>
                 </Grid>
-                <Grid item xs={12} sm>
+                <Grid item xs md={6}>
                   <div className={this.props.classes.centered}>
                     <ChartCard cardheight={300} pie_stats={this.props.pie_stats} slice={this.props.pie_slice} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
@@ -136,7 +136,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                   </div>
                 </Grid>
                 { this.props.ui_values.deactivate_wordcloud ? null :
-                  <Grid item xs={12} sm>
+                  <Grid item xs md={6}>
                     <div className={this.props.classes.centered}>
                       <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
                       <Typography variant="caption">
