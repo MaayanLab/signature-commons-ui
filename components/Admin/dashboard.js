@@ -2,7 +2,6 @@ import React from 'react'
 import Card from '@material-ui/core/Card'
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import ListItem from '@material-ui/core/ListItem'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -157,15 +156,8 @@ const StatCard = function({ classes, record = {}, ...props }) {
       <Grid container spacing={24}
         justify="space-between">
         <Grid item>
-          <Typography variant="title" className={classes.whiteText}>
-            {counts}
-          </Typography>
-          <Typography variant="subheading" className={classes.whiteText}>
-            {stat_type}
-          </Typography>
-          <Typography variant="button" className={classes.whiteText}>
-              (0 new)
-          </Typography>
+          <h5 style={{ marginBottom: 0 }}>{counts}</h5>
+          <p style={{ marginTop: 0 }}>{stat_type}</p>
         </Grid>
         <Grid item>
           <span className={`mdi ${icon} mdi-48px`}></span>

@@ -1,6 +1,5 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import Button from '@material-ui/core/Button'
 import NProgress from 'nprogress'
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
@@ -106,7 +105,8 @@ export default class MetadataSearchResults extends React.Component {
                     flexDirection: 'row',
                   }}>
                   {this.props.table_name === 'entities' || this.props.deactivate_download ? null :
-                    <Options type={this.props.table_name} item={item} submit={this.props.submit}/>
+                    <Options type={this.props.table_name} item={item} ui_values={this.props.ui_values}
+                      submit={this.props.submit}/>
                   }
                   <Label
                     item={item}

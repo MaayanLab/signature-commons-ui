@@ -23,13 +23,13 @@ export const UIValues = {
           text_1: values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures',
           text_2: values.text_2 || 'Search across a broad gathering of perturbations',
           text_3: values.text_3 || 'Examine metadata:',
-          text_4: values.text_4 || 'Start using Signature Commons on your project',
+          text_4: values.text_4 || 'Start using Signature Commons in your project',
           metadata_placeholder: values.metadata_placeholder || 'Search over half a million signatures',
           geneset_placeholder: values.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set',
           up_genes_placeholder: values.up_genes_placeholder || 'Genes that are up-regulated in signature or overlap with gene set',
           down_genes_placeholder: values.down_genes_placeholder || 'Genes that are down-regulated in signature or overlap with gene set',
           resource_pie_caption: values.resource_pie_caption || 'Signatures per Resource',
-          search_terms: values.search_terms || ["MCF10A", "Imatinib", "ZNF830", "STAT3", "Neuropathy"],
+          search_terms: values.search_terms || ['MCF10A', 'Imatinib', 'ZNF830', 'STAT3', 'Neuropathy'],
           geneset_terms: values.geneset_terms,
           weighted_geneset_terms: values.weighted_geneset_terms,
           up_set_terms: values.up_set_terms,
@@ -110,7 +110,15 @@ export const UIValues = {
         counting_validator: values.counting_validator || '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
         ui_schema: values.ui_schema || '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
         maxResourcesBeforeCollapse: values.maxResourcesBeforeCollapse || 60,
-        maxResourcesToShow: values.maxResourcesToShow || 40
+        maxResourcesToShow: values.maxResourcesToShow || 40,
+        downloads: values.downloads || {
+          gmt: 'Download gmt file',
+          tsv: 'Download tsv file',
+          geneset: 'Download geneset as a text file',
+          ranked: 'Download ranked geneset',
+          sigcom: false,
+          enrichr: true,
+        },
       }
     )
   },

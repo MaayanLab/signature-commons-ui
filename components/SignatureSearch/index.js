@@ -14,7 +14,7 @@ export default class SignatureSearch extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.changeSignatureType("Overlap")
+    this.props.changeSignatureType('Overlap')
   }
 
   geneset_searchbox = (props) => {
@@ -39,6 +39,8 @@ export default class SignatureSearch extends React.Component {
       resources={Object.values(this.props.resources || {})}
       resource_signatures={this.props.resource_signatures || {}}
       ui_values={this.props.ui_values}
+      input={this.props.input}
+      submit={this.props.submit}
       {...props}
     />
   )

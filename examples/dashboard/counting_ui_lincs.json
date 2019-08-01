@@ -32,8 +32,8 @@
   {
     "Field_Name": "storedIn.name",
     "Type": "object",
-    "Preferred_Name": "Sources",
-    "Preferred_Name_Singular": "Source",
+    "Preferred_Name": "Repositories",
+    "Preferred_Name_Singular": "Repository",
     "Table": "libraries",
     "MDI_Icon": "mdi-database",
     "Meta_Count": true,

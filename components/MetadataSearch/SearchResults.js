@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
-
+import { similar_search_terms } from '../Home'
 const MetaItem = dynamic(() => import('../../components/MetadataSearch/MetaItem'))
 
 const default_singular_names = {
@@ -31,9 +31,9 @@ export default class SearchResults extends React.Component {
       signaturesPage: 0,
       librariesRowsPerPage: 10,
       librariesPage: 0,
-      entitiesRowsPerPage: 10,
       entitiesPage: 0,
-      tabs: ["signatures", "libraries", "entities"],
+      entitiesRowsPerPage: 10,
+      tabs: ['signatures', 'libraries', 'entities'],
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleChangeIndex = this.handleChangeIndex.bind(this)
@@ -41,14 +41,21 @@ export default class SearchResults extends React.Component {
     this.handleChangePage = this.handleChangePage.bind(this)
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.setState({
-      tabs: this.props.withMatches
+      tabs: this.props.withMatches,
     })
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.currentSearch !== this.props.currentSearch) {
+    if ((this.props.withMatches.length > 0 && prevProps.withMatches.length !== this.props.withMatches.length) ||
+      (prevProps.search_status !== '' && this.props.search_status === '')) {
+      this.setState({
+        tabs: this.props.withMatches,
+        index_value: 0,
+      })
+    }
+    if (!similar_search_terms(prevProps.currentSearchArray, this.props.currentSearchArray)) {
       this.setState({
         signaturesRowsPerPage: 10,
         signaturesPage: 0,
@@ -56,13 +63,6 @@ export default class SearchResults extends React.Component {
         librariesPage: 0,
         entitiesRowsPerPage: 10,
         entitiesPage: 0,
-        index_value: 0,
-      })
-    }
-    if((this.props.withMatches.length>0 && prevProps.withMatches.length !== this.props.withMatches.length) || 
-      (prevProps.search_status !== '' && this.props.search_status ==='')){
-      this.setState({
-        tabs: this.props.withMatches
       })
     }
   }
@@ -75,7 +75,7 @@ export default class SearchResults extends React.Component {
 
   handleChangeIndex(index) {
     this.setState({
-      index_value: newValue,
+      index_value: index,
     })
   }
 
@@ -83,7 +83,7 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}RowsPerPage`]: e.target.value,
     }, () => {
-      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
+      this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
@@ -91,7 +91,7 @@ export default class SearchResults extends React.Component {
     this.setState({
       [`${name}Page`]: page,
     }, () => {
-      this.props.performSearch(name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
+      this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
@@ -116,7 +116,7 @@ export default class SearchResults extends React.Component {
         </div>
         <div className="col s12">
           <MetaItem
-            search={this.props.currentSearch}
+            search={this.props.currentSearchArray}
             items={this.props[name]}
             type={this.props.ui_values.preferred_name_singular[name] || default_name_singular}
             table_name={name}
@@ -124,6 +124,7 @@ export default class SearchResults extends React.Component {
             deactivate_download={this.props.ui_values.deactivate_download}
             schemas={this.props.schemas}
             submit={this.props.submit}
+            ui_values={this.props.ui_values}
           />
           <div align="right">
             <TablePagination
@@ -166,7 +167,6 @@ export default class SearchResults extends React.Component {
           onChange={this.handleChange}
           indicatorColor="primary"
           textColor="primary"
-          variant="fullWidth"
           centered
         >
           { this.state.tabs.map((key) => <Tab key={key} label={ this.props.ui_values.preferred_name[key] || key } />) }
