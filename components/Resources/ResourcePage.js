@@ -79,17 +79,6 @@ export default class ResourcePage extends React.Component {
                 <div className="card-action">
                   <Grid container justify="space-between">
                     <Grid item xs={1}>
-                      {this.props.ui_values.deactivate_download ? null :
-                        <Button style={{
-                          input: {
-                            display: 'none',
-                          },
-                          paddingLeft: 20
-                        }}
-                        onClick={(e) => this.handleDownload('resources', this.props.resource.id)}
-                        className={`mdi mdi-download mdi-24px`}
-                        />
-                      }
                     </Grid>
                     <Grid item xs={1}>
                       <Link
@@ -128,9 +117,6 @@ export default class ResourcePage extends React.Component {
                             display: 'flex',
                             flexDirection: 'row',
                           }}>
-                          {this.props.ui_values.deactivate_download ? null :
-                            <Options type={'libraries'} item={library} ui_values={this.props.ui_values}/>
-                          }
                           <Label
                             item={library}
                             visibility={1}

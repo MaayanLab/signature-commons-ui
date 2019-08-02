@@ -67,7 +67,7 @@ export function get_concatenated_meta(data, schemas) {
   return (meta_list.join('_'))
 }
 
-export async function download_signature_json(item, name = undefined, ui_schemas=undefined) {
+export async function download_signature_json({ item, name, ui_schemas}) {
   NProgress.start()
   let signature
   let filename = name
@@ -91,7 +91,7 @@ export async function download_signature_json(item, name = undefined, ui_schemas
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_library_json(item, name = undefined, ui_schemas=undefined) {
+export async function download_library_json({ item, name, ui_schemas}) {
   NProgress.start()
   let library
   let filename = name
@@ -116,7 +116,7 @@ export async function download_library_json(item, name = undefined, ui_schemas=u
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_resource_json(item, name = undefined, ui_schemas=undefined) {
+export async function download_resource_json({ item, name, ui_schemas}) {
   NProgress.start()
   let resource
   let filename = name
@@ -197,14 +197,15 @@ export async function get_signature(item, slice_rank = true, name, ui_schemas=un
   }
 }
 
-export async function download_signatures_text(item, name = undefined, ui_schemas=undefined) {
+export async function download_signatures_text({ item, name, ui_schemas}) {
   NProgress.start()
+  console.log(ui_schemas)
   const { data, filename } = await get_signature(item, true, name, ui_schemas)
   NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
 }
 
-export async function download_ranked_signatures_text(item, name = undefined, ui_schemas=undefined) {
+export async function download_ranked_signatures_text({ item, name, ui_schemas}) {
   NProgress.start()
   const { data, filename } = await get_signature(item, false, name, ui_schemas)
   NProgress.done()
@@ -273,7 +274,7 @@ export async function get_library_data(item, name, ui_schemas=undefined) {
   return ({ dataset, filename })
 }
 
-export async function download_library_gmt(item, name = undefined, ui_schemas=undefined) {
+export async function download_library_gmt({ item, name, ui_schemas}) {
   NProgress.start()
   const { dataset, filename } = await get_library_data(item, name, ui_schemas)
   const gmt = Object.keys(dataset).map((key) =>
@@ -284,7 +285,7 @@ export async function download_library_gmt(item, name = undefined, ui_schemas=un
 }
 
 
-export async function download_library_tsv(item, name = undefined, ui_schemas=undefined) {
+export async function download_library_tsv({ item, name, ui_schemas}) {
   NProgress.start()
   const { dataset, filename } = await get_library_data(item, name, ui_schemas)
   let columns = []

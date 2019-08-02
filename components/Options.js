@@ -20,9 +20,9 @@ const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
-async function submit_enrichr(item) {
+async function submit_enrichr({item, ui_schemas}) {
   NProgress.start()
-  const { data, filename } = await get_signature(item)
+  const { data, filename } = await get_signature({item, ui_schemas})
   const formData = new FormData()
   formData.append('list', data.join('\n'))
   formData.append('description', filename + '')
@@ -34,8 +34,8 @@ async function submit_enrichr(item) {
   NProgress.done()
 }
 
-async function submit_sigcom(item, submit) {
-  const { data } = await get_signature(item)
+async function submit_sigcom(item, submit, ui_schemas) {
+  const { data } = await get_signature({item, ui_schemas})
   const input = {
     id: item.id,
     type: 'Overlap',
@@ -69,7 +69,7 @@ export default function Options({ item, type, ...props }) {
         >
           <MenuItem onClick={() => {
             handleClose()
-            download_signature_json(item)
+            download_signature_json({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-json"></span>
@@ -80,7 +80,7 @@ export default function Options({ item, type, ...props }) {
           </MenuItem>
           <MenuItem onClick={() => {
             handleClose()
-            download_signatures_text(item)
+            download_signatures_text({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-file-document-box"></span>
@@ -92,7 +92,7 @@ export default function Options({ item, type, ...props }) {
           {item.library.dataset_type === 'rank_matrix' ?
             <MenuItem onClick={() => {
               handleClose()
-              download_ranked_signatures_text(item)
+              download_ranked_signatures_text({item, ui_schemas:props.schemas})
             }
             }>
               <span className="mdi mdi-24px mdi-file-download"></span>
@@ -105,7 +105,7 @@ export default function Options({ item, type, ...props }) {
           { props.ui_values.downloads.sigcom ?
             <MenuItem onClick={() => {
               handleClose()
-              submit_sigcom(item, props.submit)
+              submit_sigcom(item, props.submit, ui_schemas=props.schemas)
             }
             }>
               <img alt="Signature Commons"
@@ -123,7 +123,7 @@ export default function Options({ item, type, ...props }) {
           { props.ui_values.downloads.enrichr ?
             <MenuItem onClick={() => {
               handleClose()
-              submit_enrichr(item)
+              submit_enrichr({item, ui_schemas:props.schemas})
             }
             }>
               <Avatar alt="Enrichr"
@@ -156,7 +156,7 @@ export default function Options({ item, type, ...props }) {
         >
           <MenuItem onClick={() => {
             handleClose()
-            download_library_json(item)
+            download_library_json({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-json"></span>
@@ -167,7 +167,7 @@ export default function Options({ item, type, ...props }) {
           </MenuItem>
           <MenuItem onClick={() => {
             handleClose()
-            download_library_gmt(item)
+            download_library_gmt({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-file-document-box"></span>
@@ -178,7 +178,7 @@ export default function Options({ item, type, ...props }) {
           </MenuItem>
           <MenuItem onClick={() => {
             handleClose()
-            download_library_tsv(item)
+            download_library_tsv({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-file-table"></span>
