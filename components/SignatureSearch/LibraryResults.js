@@ -7,6 +7,9 @@ import TableRow from '@material-ui/core/TableRow'
 import ShowMeta from '../../components/ShowMeta'
 import { Label, objectMatch } from '../../components/Label'
 import { makeTemplate } from '../../util/makeTemplate'
+import { RunningSum, dataFromResults } from '@dcic/signature-commons-ui-components-running-sum'
+import { fetch_data } from '../../util/fetch/data'
+import Lazy from '../Lazy'
 
 const one_tailed_columns = [
   'P-Value',
@@ -35,6 +38,27 @@ const theme = createMuiTheme({
 })
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
+
+export const rank_data_results = async ({ up, down, signature, database }) => {
+  const { response } = await fetch_data({
+    endpoint: '/fetch/rank',
+    body: {
+      entities: [],
+      signatures: [signature],
+      database,
+    },
+  })
+  return dataFromResults({
+    input: {
+      up,
+      down,
+    },
+    output: {
+      entities: response.entities,
+      ranks: response.signatures[0].ranks,
+    },
+  })
+}
 
 export default class LibraryResults extends React.Component {
   check_column = ({ schema, prop, lib }) => {
@@ -97,6 +121,20 @@ export default class LibraryResults extends React.Component {
               wordWrap: 'break-word',
             }}
           >
+            {(this.props.input.up_entities !== undefined) ? (
+              <Lazy>{
+                async () => (
+                  <RunningSum
+                    data={await rank_data_results({
+                      up: this.props.input.up_entities.map((ent) => ent.id),
+                      down: this.props.input.down_entities.map((ent) => ent.id),
+                      signature: sigs[rowMeta.dataIndex].id,
+                      database: sigs[rowMeta.dataIndex].library.dataset,
+                    })}
+                  />
+                )
+              }</Lazy>
+            ) : null}
             <ShowMeta
               value={[
                 {
@@ -165,6 +203,7 @@ export default class LibraryResults extends React.Component {
 
   render() {
     const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
+    console.log(this.props)
     return (
       <div className="col s12">
         <ul
