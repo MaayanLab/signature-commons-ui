@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import NProgress from 'nprogress'
+import Dialog from '@material-ui/core/Dialog'
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import IconButton from './IconButton'
 
 import { download_signature_json,
   download_signatures_text,
@@ -20,22 +25,46 @@ const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
-async function submit_enrichr({item, ui_schemas}) {
-  NProgress.start()
-  const { data, filename } = await get_signature({item, ui_schemas})
-  const formData = new FormData()
-  formData.append('list', data.join('\n'))
-  formData.append('description', filename + '')
-  const response = await (await fetch(`${ENRICHR_URL}/addList`, {
-    method: 'POST',
-    body: formData,
-  })).json()
-  window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
-  NProgress.done()
+
+const EnrichrDialog = (props) => {
+  const { classes,
+    handleDialogClose,
+    enrichr_status,
+    enrichr_open,
+    enrichr_ready,
+    enrichr_id,
+    ...other } = props
+  return(
+    <Dialog onClose={()=>handleDialogClose()}
+    aria-labelledby="simple-dialog-title"
+    style={{
+      padding: 20
+    }}
+    {...other}>
+      <DialogTitle id="simple-dialog-title">
+        <Typography variant="overline" align="center" gutterBottom>
+          {enrichr_status}
+        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        <a
+          href={`${ENRICHR_URL}/enrich?dataset=${enrichr_id}`}
+          target="_blank"
+          >
+          <IconButton
+            img={`${process.env.PREFIX}/static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
+          />
+          <Typography style={{fontSize: 15}} align="center" variant="caption" display="block">
+            Go to Enrichr
+          </Typography>
+        </a>
+      </DialogContent>
+    </Dialog>
+  )
 }
 
 async function submit_sigcom(item, submit, ui_schemas) {
-  const { data } = await get_signature({item, ui_schemas})
+  const { data } = await get_signature({item, slice_rank:true, ui_schemas})
   const input = {
     id: item.id,
     type: 'Overlap',
@@ -44,153 +73,214 @@ async function submit_sigcom(item, submit, ui_schemas) {
   submit(input)
 }
 
-export default function Options({ item, type, ...props }) {
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget)
+export default class Options extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      anchorEl: null,
+      enrichr_status: '',
+      enrichr_ready: false,
+      enrichr_open: false,
+      enrichr_id: '',
+    }
+    this.handleClick = this.handleClick.bind(this)
+    this.handleClose = this.handleClose.bind(this)
+    this.handleDialogClose = this.handleDialogClose.bind(this)
   }
 
-  function handleClose() {
-    setAnchorEl(null)
+  handleClick(event) {
+    this.setState({
+      anchorEl: event.currentTarget
+    })
   }
-  if (type === 'signatures') {
-    // TODO: Text here should be modified on the UI schemas + Enrichr link should be nullifiable
-    return (
-      <div>
-        <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-          <span className="mdi mdi-24px mdi-dots-vertical"></span>
-        </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={() => {
-            handleClose()
-            download_signature_json({item, ui_schemas:props.schemas})
-          }
-          }>
-            <span className="mdi mdi-24px mdi-json"></span>
-            &nbsp;
-            <Typography style={{fontSize: 15}} variant="caption" display="block">
-              {props.ui_values.downloads.signature_json}
-            </Typography>
-          </MenuItem>
-          <MenuItem onClick={() => {
-            handleClose()
-            download_signatures_text({item, ui_schemas:props.schemas})
-          }
-          }>
-            <span className="mdi mdi-24px mdi-file-document-box"></span>
-            &nbsp;
-            <Typography style={{fontSize: 15}} variant="caption" display="block">
-              {props.ui_values.downloads.geneset}
-            </Typography>
-          </MenuItem>
-          {item.library.dataset_type === 'rank_matrix' ?
-            <MenuItem onClick={() => {
-              handleClose()
-              download_ranked_signatures_text({item, ui_schemas:props.schemas})
-            }
-            }>
-              <span className="mdi mdi-24px mdi-file-download"></span>
-              &nbsp;
-              <Typography style={{fontSize: 15}} variant="caption" display="block">
-                {props.ui_values.downloads.ranked}
-              </Typography>
-            </MenuItem> : null
-          }
-          { props.ui_values.downloads.sigcom ?
-            <MenuItem onClick={() => {
-              handleClose()
-              submit_sigcom(item, props.submit, ui_schemas=props.schemas)
-            }
-            }>
-              <img alt="Signature Commons"
-                src={`${process.env.PREFIX}/static/favicon.ico`}
-                style={{
-                  width: 15,
-                  height: 15,
-                }}/>
-                &nbsp;&nbsp;&nbsp;
-              <Typography style={{fontSize: 15}} variant="caption" display="block">
-                Perform signature search
-              </Typography>
-            </MenuItem> : null
-          }
-          { props.ui_values.downloads.enrichr ?
-            <MenuItem onClick={() => {
-              handleClose()
-              submit_enrichr({item, ui_schemas:props.schemas})
-            }
-            }>
-              <Avatar alt="Enrichr"
-                src={`${process.env.PREFIX}/static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
-                style={{
-                  width: 20,
-                  height: 20,
-                }}/>
-                &nbsp;&nbsp;
-              <Typography style={{fontSize: 15}} variant="caption" display="block">
-                Submit to Enrichr
-              </Typography>
-            </MenuItem> : null
-          }
-        </Menu>
-      </div>
-    )
-  } else if (type === 'libraries') {
-    return (
-      <div>
-        <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-          <span className="mdi mdi-24px mdi-dots-vertical"></span>
-        </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={() => {
-            handleClose()
-            download_library_json({item, ui_schemas:props.schemas})
-          }
-          }>
-            <span className="mdi mdi-24px mdi-json"></span>
-            &nbsp;
-            <Typography style={{fontSize: 15}} variant="caption" display="block">
-              {props.ui_values.downloads.library_json}
-            </Typography>
-          </MenuItem>
-          <MenuItem onClick={() => {
-            handleClose()
-            download_library_gmt({item, ui_schemas:props.schemas})
-          }
-          }>
-            <span className="mdi mdi-24px mdi-file-document-box"></span>
-            &nbsp;
-            <Typography style={{fontSize: 15}} variant="caption" display="block">
-              { props.ui_values.downloads.gmt}
-            </Typography>
-          </MenuItem>
-          <MenuItem onClick={() => {
-            handleClose()
-            download_library_tsv({item, ui_schemas:props.schemas})
-          }
-          }>
-            <span className="mdi mdi-24px mdi-file-table"></span>
-            &nbsp;
-            <Typography style={{fontSize: 15}} variant="caption" display="block">
-              { props.ui_values.downloads.tsv }
-            </Typography>
-          </MenuItem>
-        </Menu>
-      </div>
-    )
-  } else {
-    return null
+
+  handleClose() {
+    this.setState({
+      anchorEl: null
+    })
+  }
+
+  handleDialogClose(){
+    this.setState({
+      enrichr_open: false
+    })
+  }
+
+  async submit_enrichr({item, ui_schemas}) {
+    NProgress.start()
+    
+    const { data, filename } = await get_signature({item, ui_schemas})
+    this.setState(() => ({
+      enrichr_status: "Sending to enrichr"
+    }), async () => {
+      const formData = new FormData()
+      formData.append('list', data.join('\n'))
+      formData.append('description', filename + '')
+      const response = await (await fetch(`${ENRICHR_URL}/addList`, {
+        method: 'POST',
+        body: formData,
+      })).json()
+      this.setState((prevState) =>({
+        enrichr_ready: true,
+        enrichr_status: "Analysis is ready",
+        enrichr_id: response['shortId'],
+        enrichr_open: true
+      }))
+      // window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
+      NProgress.done()
+    })
+  }
+
+  render(){
+      if (this.props.type === 'signatures') {
+        // TODO: Text here should be modified on the UI schemas + Enrichr link should be nullifiable
+        return (
+          <div>
+            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
+              <span className="mdi mdi-24px mdi-dots-vertical"></span>
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={this.state.anchorEl}
+              keepMounted
+              open={Boolean(this.state.anchorEl)}
+              onClose={this.handleClose}
+            >
+              <MenuItem onClick={() => {
+                this.handleClose()
+                download_signature_json({item: this.props.item, ui_schemas:this.props.schemas})
+              }
+              }>
+                <span className="mdi mdi-24px mdi-json"></span>
+                &nbsp;
+                <Typography style={{fontSize: 15}} variant="caption" display="block">
+                  {this.props.ui_values.downloads.signature_json}
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={() => {
+                this.handleClose()
+                download_signatures_text({item: this.props.item, ui_schemas:this.props.schemas})
+              }
+              }>
+                <span className="mdi mdi-24px mdi-file-document-box"></span>
+                &nbsp;
+                <Typography style={{fontSize: 15}} variant="caption" display="block">
+                  {this.props.ui_values.downloads.geneset}
+                </Typography>
+              </MenuItem>
+              {this.props.item.library.dataset_type === 'rank_matrix' ?
+                <MenuItem onClick={() => {
+                  this.handleClose()
+                  download_ranked_signatures_text({item: this.props.item, ui_schemas:this.props.schemas})
+                }
+                }>
+                  <span className="mdi mdi-24px mdi-file-download"></span>
+                  &nbsp;
+                  <Typography style={{fontSize: 15}} variant="caption" display="block">
+                    {this.props.ui_values.downloads.ranked}
+                  </Typography>
+                </MenuItem> : null
+              }
+              { this.props.ui_values.downloads.sigcom ?
+                <MenuItem onClick={() => {
+                  this.handleClose()
+                  submit_sigcom(this.props.item, props.submit, ui_schemas=this.props.schemas)
+                }
+                }>
+                  <img alt="Signature Commons"
+                    src={`${process.env.PREFIX}/static/favicon.ico`}
+                    style={{
+                      width: 15,
+                      height: 15,
+                    }}/>
+                    &nbsp;&nbsp;&nbsp;
+                  <Typography style={{fontSize: 15}} variant="caption" display="block">
+                    Perform signature search
+                  </Typography>
+                </MenuItem> : null
+              }
+              { this.props.ui_values.downloads.enrichr ?
+                <MenuItem onClick={() => {
+                  this.handleClose()
+                  this.setState({
+                    enrichr_status: "Fetching geneset...",
+                    enrichr_ready: false,
+                    enrichr_id: '',
+                  })
+                  this.submit_enrichr({item: this.props.item, ui_schemas:this.props.schemas})
+                }
+                }>
+                  <Avatar alt="Enrichr"
+                    src={`${process.env.PREFIX}/static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
+                    style={{
+                      width: 20,
+                      height: 20,
+                    }}/>
+                    &nbsp;&nbsp;
+                  <Typography style={{fontSize: 15}} variant="caption" display="block">
+                    Submit to Enrichr
+                  </Typography>
+                </MenuItem> : null
+              }
+            </Menu>
+            <EnrichrDialog
+            handleDialogClose={this.handleDialogClose}
+            open={this.state.enrichr_open}
+            {...this.state}
+            />
+          </div>
+        )
+      } else if (this.props.type === 'libraries') {
+        return (
+          <div>
+            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
+              <span className="mdi mdi-24px mdi-dots-vertical"></span>
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={this.state.anchorEl}
+              keepMounted
+              open={Boolean(this.state.anchorEl)}
+              onClose={this.handleClose}
+            >
+              <MenuItem onClick={() => {
+                this.handleClose()
+                download_library_json({item: this.props.item, ui_schemas:this.props.schemas})
+              }
+              }>
+                <span className="mdi mdi-24px mdi-json"></span>
+                &nbsp;
+                <Typography style={{fontSize: 15}} variant="caption" display="block">
+                  {this.props.ui_values.downloads.library_json}
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={() => {
+                this.handleClose()
+                download_library_gmt({item: this.props.item, ui_schemas:this.props.schemas})
+              }
+              }>
+                <span className="mdi mdi-24px mdi-file-document-box"></span>
+                &nbsp;
+                <Typography style={{fontSize: 15}} variant="caption" display="block">
+                  { this.props.ui_values.downloads.gmt}
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={() => {
+                this.handleClose()
+                download_library_tsv({item: this.props.item, ui_schemas:this.props.schemas})
+              }
+              }>
+                <span className="mdi mdi-24px mdi-file-table"></span>
+                &nbsp;
+                <Typography style={{fontSize: 15}} variant="caption" display="block">
+                  { this.props.ui_values.downloads.tsv }
+                </Typography>
+              </MenuItem>
+            </Menu>
+          </div>
+        )
+      } else {
+        return null
+      }
   }
 }
