@@ -67,7 +67,7 @@ export function get_concatenated_meta(data, schemas) {
   return (meta_list.join('_'))
 }
 
-export async function download_signature_json(item, name = undefined) {
+export async function download_signature_json({ item, name, ui_schemas}) {
   NProgress.start()
   let signature
   let filename = name
@@ -76,7 +76,7 @@ export async function download_signature_json(item, name = undefined) {
     filename = filename || signature
   } else if (typeof item === 'object' && 'id' in item) {
     signature = item.id
-    const schemas = await fetch_schemas()
+    const schemas = ui_schemas || await fetch_schemas()
     filename = get_concatenated_meta(item, schemas)
   } else {
     console.error('Invalid item format', item)
@@ -91,7 +91,7 @@ export async function download_signature_json(item, name = undefined) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_library_json(item, name = undefined) {
+export async function download_library_json({ item, name, ui_schemas}) {
   NProgress.start()
   let library
   let filename = name
@@ -100,7 +100,7 @@ export async function download_library_json(item, name = undefined) {
     filename = filename || library
   } else if (typeof item === 'object' && 'id' in item) {
     library = item.id
-    const schemas = await fetch_schemas()
+    const schemas = ui_schemas || await fetch_schemas()
     filename = get_concatenated_meta(item, schemas)
   } else {
     console.error('Invalid item format', item)
@@ -116,7 +116,7 @@ export async function download_library_json(item, name = undefined) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_resource_json(item, name = undefined) {
+export async function download_resource_json({ item, name, ui_schemas}) {
   NProgress.start()
   let resource
   let filename = name
@@ -125,7 +125,7 @@ export async function download_resource_json(item, name = undefined) {
     filename = filename || resource
   } else if (typeof item === 'object' && 'id' in item) {
     resource = item.id
-    const schemas = await fetch_schemas()
+    const schemas = ui_schemas || await fetch_schemas()
     filename = get_concatenated_meta(item, schemas)
   } else {
     console.error('Invalid item format', item)
@@ -140,11 +140,10 @@ export async function download_resource_json(item, name = undefined) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function get_signature(item, slice_rank = true, name) {
-  NProgress.start()
+export async function get_signature(item, slice_rank = true, name, ui_schemas=undefined) {
   let sig
   let filename = name
-  const schemas = await fetch_schemas()
+  const schemas = ui_schemas || await fetch_schemas()
   if (typeof item === 'string') {
     sig = item
     filename = filename || sig
@@ -185,7 +184,6 @@ export async function get_signature(item, slice_rank = true, name) {
     const entity_meta = await entity.meta
     return (makeTemplate(gene_name, {meta: entity_meta})) // TODO: Use ui_schemas here
   }))
-  NProgress.done()
   if (signature_object.library.dataset_type === 'rank_matrix' && slice_rank) {
     return {
       data: entities.slice(0, 250),
@@ -199,18 +197,23 @@ export async function get_signature(item, slice_rank = true, name) {
   }
 }
 
-export async function download_signatures_text(item, name = undefined) {
-  const { data, filename } = await get_signature(item, true, name)
+export async function download_signatures_text({ item, name, ui_schemas}) {
+  NProgress.start()
+  console.log(ui_schemas)
+  const { data, filename } = await get_signature(item, true, name, ui_schemas)
+  NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
 }
 
-export async function download_ranked_signatures_text(item, name = undefined) {
-  const { data, filename } = await get_signature(item, false, name)
+export async function download_ranked_signatures_text({ item, name, ui_schemas}) {
+  NProgress.start()
+  const { data, filename } = await get_signature(item, false, name, ui_schemas)
+  NProgress.done()
   fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.gmt`)
 }
 
-export async function get_library_data(item, name) {
-  const schemas = await fetch_schemas()
+export async function get_library_data(item, name, ui_schemas=undefined) {
+  const schemas = ui_schemas || await fetch_schemas()
   let lib
   let filename = name
   if (typeof item === 'string') {
@@ -271,9 +274,9 @@ export async function get_library_data(item, name) {
   return ({ dataset, filename })
 }
 
-export async function download_library_gmt(item, name = undefined) {
+export async function download_library_gmt({ item, name, ui_schemas}) {
   NProgress.start()
-  const { dataset, filename } = await get_library_data(item, name)
+  const { dataset, filename } = await get_library_data(item, name, ui_schemas)
   const gmt = Object.keys(dataset).map((key) =>
     `${key}\t\t${dataset[key].join('\t')}`
   )
@@ -282,9 +285,9 @@ export async function download_library_gmt(item, name = undefined) {
 }
 
 
-export async function download_library_tsv(item, name = undefined) {
+export async function download_library_tsv({ item, name, ui_schemas}) {
   NProgress.start()
-  const { dataset, filename } = await get_library_data(item, name)
+  const { dataset, filename } = await get_library_data(item, name, ui_schemas)
   let columns = []
   const gmt = Object.keys(dataset).reduce((acc, sig) => {
     for (const entity of dataset[sig]) {

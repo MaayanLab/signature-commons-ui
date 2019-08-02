@@ -41,6 +41,7 @@ export default class SignatureSearch extends React.Component {
       ui_values={this.props.ui_values}
       input={this.props.input}
       submit={this.props.submit}
+      signature_type={this.props.signature_type}
       {...props}
     />
   )

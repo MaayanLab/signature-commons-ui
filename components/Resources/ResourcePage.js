@@ -48,10 +48,15 @@ export default class ResourcePage extends React.Component {
                 <div className="row">
                   <div className="col s12">
                     <div className="card-image col s1">
-                      <IconButton
-                        img={this.props.resource.meta.icon}
-                        onClick={call(this.redirectLink, this.props.resource.meta.URL)}
-                      />
+                      <Link
+                          to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                          className="waves-effect waves-teal"
+                        >
+                        <IconButton
+                          img={this.props.resource.meta.icon}
+                          onClick={call(this.redirectLink, "/")}
+                        />
+                      </Link>
                     </div>
                     <div className="card-content col s11">
                       <div>
@@ -74,17 +79,6 @@ export default class ResourcePage extends React.Component {
                 <div className="card-action">
                   <Grid container justify="space-between">
                     <Grid item xs={1}>
-                      {this.props.ui_values.deactivate_download ? null :
-                        <Button style={{
-                          input: {
-                            display: 'none',
-                          },
-                          paddingLeft: 20
-                        }}
-                        onClick={(e) => this.handleDownload('resources', this.props.resource.id)}
-                        className={`mdi mdi-download mdi-24px`}
-                        />
-                      }
                     </Grid>
                     <Grid item xs={1}>
                       <Link
@@ -123,9 +117,6 @@ export default class ResourcePage extends React.Component {
                             display: 'flex',
                             flexDirection: 'row',
                           }}>
-                          {this.props.ui_values.deactivate_download ? null :
-                            <Options type={'libraries'} item={library} ui_values={this.props.ui_values}/>
-                          }
                           <Label
                             item={library}
                             visibility={1}

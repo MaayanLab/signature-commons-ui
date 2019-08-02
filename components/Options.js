@@ -4,6 +4,8 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
+import NProgress from 'nprogress'
+
 import { download_signature_json,
   download_signatures_text,
   download_ranked_signatures_text,
@@ -18,8 +20,9 @@ const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
-async function submit_enrichr(item) {
-  const { data, filename } = await get_signature(item)
+async function submit_enrichr({item, ui_schemas}) {
+  NProgress.start()
+  const { data, filename } = await get_signature({item, ui_schemas})
   const formData = new FormData()
   formData.append('list', data.join('\n'))
   formData.append('description', filename + '')
@@ -27,13 +30,12 @@ async function submit_enrichr(item) {
     method: 'POST',
     body: formData,
   })).json()
-  setTimeout(function() {
-    window.location.href = `${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank'
-  }, 1000)
+  window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
+  NProgress.done()
 }
 
-async function submit_sigcom(item, submit) {
-  const { data } = await get_signature(item)
+async function submit_sigcom(item, submit, ui_schemas) {
+  const { data } = await get_signature({item, ui_schemas})
   const input = {
     id: item.id,
     type: 'Overlap',
@@ -67,35 +69,35 @@ export default function Options({ item, type, ...props }) {
         >
           <MenuItem onClick={() => {
             handleClose()
-            download_signature_json(item)
+            download_signature_json({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-json"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               {props.ui_values.downloads.signature_json}
             </Typography>
           </MenuItem>
           <MenuItem onClick={() => {
             handleClose()
-            download_signatures_text(item)
+            download_signatures_text({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-file-document-box"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               {props.ui_values.downloads.geneset}
             </Typography>
           </MenuItem>
           {item.library.dataset_type === 'rank_matrix' ?
             <MenuItem onClick={() => {
               handleClose()
-              download_ranked_signatures_text(item)
+              download_ranked_signatures_text({item, ui_schemas:props.schemas})
             }
             }>
               <span className="mdi mdi-24px mdi-file-download"></span>
               &nbsp;
-              <Typography variant="caption" display="block">
+              <Typography style={{fontSize: 15}} variant="caption" display="block">
                 {props.ui_values.downloads.ranked}
               </Typography>
             </MenuItem> : null
@@ -103,7 +105,7 @@ export default function Options({ item, type, ...props }) {
           { props.ui_values.downloads.sigcom ?
             <MenuItem onClick={() => {
               handleClose()
-              submit_sigcom(item, props.submit)
+              submit_sigcom(item, props.submit, ui_schemas=props.schemas)
             }
             }>
               <img alt="Signature Commons"
@@ -113,7 +115,7 @@ export default function Options({ item, type, ...props }) {
                   height: 15,
                 }}/>
                 &nbsp;&nbsp;&nbsp;
-              <Typography variant="caption" display="block">
+              <Typography style={{fontSize: 15}} variant="caption" display="block">
                 Perform signature search
               </Typography>
             </MenuItem> : null
@@ -121,7 +123,7 @@ export default function Options({ item, type, ...props }) {
           { props.ui_values.downloads.enrichr ?
             <MenuItem onClick={() => {
               handleClose()
-              submit_enrichr(item)
+              submit_enrichr({item, ui_schemas:props.schemas})
             }
             }>
               <Avatar alt="Enrichr"
@@ -131,7 +133,7 @@ export default function Options({ item, type, ...props }) {
                   height: 20,
                 }}/>
                 &nbsp;&nbsp;
-              <Typography variant="caption" display="block">
+              <Typography style={{fontSize: 15}} variant="caption" display="block">
                 Submit to Enrichr
               </Typography>
             </MenuItem> : null
@@ -154,34 +156,34 @@ export default function Options({ item, type, ...props }) {
         >
           <MenuItem onClick={() => {
             handleClose()
-            download_library_json(item)
+            download_library_json({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-json"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               {props.ui_values.downloads.library_json}
             </Typography>
           </MenuItem>
           <MenuItem onClick={() => {
             handleClose()
-            download_library_gmt(item)
+            download_library_gmt({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-file-document-box"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               { props.ui_values.downloads.gmt}
             </Typography>
           </MenuItem>
           <MenuItem onClick={() => {
             handleClose()
-            download_library_tsv(item)
+            download_library_tsv({item, ui_schemas:props.schemas})
           }
           }>
             <span className="mdi mdi-24px mdi-file-table"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               { props.ui_values.downloads.tsv }
             </Typography>
           </MenuItem>
