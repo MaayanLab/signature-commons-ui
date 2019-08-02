@@ -31,6 +31,11 @@ const theme = createMuiTheme({
         minHeight: '500px',
       },
     },
+    MUIDataTableHeadCell: {
+      root: {
+        fontSize: 13,
+      }
+    }
   },
 })
 // Weird hack to remove table shadows
