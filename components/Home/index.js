@@ -8,6 +8,7 @@ import Landing from '../Landing'
 import MetadataSearch from '../MetadataSearch'
 import Resources from '../Resources'
 import SignatureSearch from '../SignatureSearch'
+import Collection from '../Collection'
 import Upload from '../Upload'
 import NProgress from 'nprogress'
 import { fetch_meta_post } from '../../util/fetch/meta'
@@ -256,6 +257,7 @@ export default class Home extends React.PureComponent {
         ...this.state.signature_search,
         controller,
         input,
+        signature_type: input.id === undefined? "original": ""
       },
     }), async () => {
       if (input.type === 'Overlap') {
@@ -283,6 +285,10 @@ export default class Home extends React.PureComponent {
             ...prevState.signature_search,
             ...results,
             mismatched,
+            input: {
+              ...prevState.signature_search.input,
+              id: signature_id
+            }
           },
         }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -315,6 +321,10 @@ export default class Home extends React.PureComponent {
             ...prevState.signature_search,
             ...results,
             mismatched,
+            input: {
+              ...prevState.signature_search.input,
+              id: signature_id
+            }
           },
         }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -411,7 +421,7 @@ export default class Home extends React.PureComponent {
     NProgress.done()
   }
 
-  async performSearch(terms, table, page = 0, rowsPerPage = 10, paginating = false) {
+  async performSearch(terms, table, page = 0, rowsPerPage = 10) {
     if (this.state.metadata_search[`${table}_controller`] !== undefined) {
       this.state.metadata_search[`${table}_controller`].abort()
     }
@@ -422,6 +432,7 @@ export default class Home extends React.PureComponent {
           ...prevState.metadata_search,
           [`${table}_status`]: 'Searching...',
           [`${table}_controller`]: controller,
+          search_status: page > 0 || rowsPerPage > 10 ? 'Initializing': prevState.search_status
         },
       }))
       const where = build_where(terms)
@@ -474,6 +485,14 @@ export default class Home extends React.PureComponent {
       const duration_label = table + '_duration'
       const duration_meta_label = table + '_duration_meta'
       const count_label = table + '_count'
+      let search_status
+      if (results.length > 0){
+        search_status = 'Matched'
+      }
+      if (page > 0 || rowsPerPage > 10){
+        search_status = ''
+        NProgress.done()
+      }
       this.setState((prevState) => ({
         metadata_search: {
           ...prevState.metadata_search,
@@ -484,7 +503,7 @@ export default class Home extends React.PureComponent {
           [count_label]: contentRange.count,
           withMatches: results.length > 0 && prevState.metadata_search.withMatches.indexOf(table) === -1 ?
             [...prevState.metadata_search.withMatches, table] : prevState.metadata_search.withMatches,
-          search_status: results.length > 0 ? 'Matched' : prevState.metadata_search.search_status,
+          search_status: search_status!== undefined ? search_status : prevState.metadata_search.search_status,
           completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
         },
       }))
@@ -651,6 +670,13 @@ export default class Home extends React.PureComponent {
     />
   )
 
+  collection = (props) => (
+    <Collection 
+      ui_values={this.props.ui_values}
+      {...props}
+    />
+    )
+
   render() {
     const CartActions = this.CartActions
 
@@ -700,6 +726,10 @@ export default class Home extends React.PureComponent {
               component={this.resources}
             /> : null
           }
+          <Route
+            path="/Library"
+            component={this.collection}
+          />
           <Route
             path="/API"
             component={this.api}

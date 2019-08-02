@@ -141,7 +141,6 @@ export async function download_resource_json(item, name = undefined) {
 }
 
 export async function get_signature(item, slice_rank = true, name) {
-  NProgress.start()
   let sig
   let filename = name
   const schemas = await fetch_schemas()
@@ -185,7 +184,6 @@ export async function get_signature(item, slice_rank = true, name) {
     const entity_meta = await entity.meta
     return (makeTemplate(gene_name, {meta: entity_meta})) // TODO: Use ui_schemas here
   }))
-  NProgress.done()
   if (signature_object.library.dataset_type === 'rank_matrix' && slice_rank) {
     return {
       data: entities.slice(0, 250),
@@ -200,12 +198,16 @@ export async function get_signature(item, slice_rank = true, name) {
 }
 
 export async function download_signatures_text(item, name = undefined) {
+  NProgress.start()
   const { data, filename } = await get_signature(item, true, name)
+  NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
 }
 
 export async function download_ranked_signatures_text(item, name = undefined) {
+  NProgress.start()
   const { data, filename } = await get_signature(item, false, name)
+  NProgress.done()
   fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.gmt`)
 }
 

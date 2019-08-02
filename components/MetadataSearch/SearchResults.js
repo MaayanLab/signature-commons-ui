@@ -9,6 +9,7 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
 import { similar_search_terms } from '../Home'
+
 const MetaItem = dynamic(() => import('../../components/MetadataSearch/MetaItem'))
 
 const default_singular_names = {
@@ -33,6 +34,7 @@ export default class SearchResults extends React.Component {
       librariesPage: 0,
       entitiesPage: 0,
       entitiesRowsPerPage: 10,
+      pagination: false,
       tabs: ['signatures', 'libraries', 'entities'],
     }
     this.handleChange = this.handleChange.bind(this)
@@ -48,14 +50,17 @@ export default class SearchResults extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if ((this.props.withMatches.length > 0 && prevProps.withMatches.length !== this.props.withMatches.length) ||
-      (prevProps.search_status !== '' && this.props.search_status === '')) {
-      this.setState({
-        tabs: this.props.withMatches,
-        index_value: 0,
-      })
+    const unchanged = similar_search_terms(prevProps.currentSearchArray, this.props.currentSearchArray)
+    if (!this.state.pagination){
+      if ((this.props.withMatches.length > 0 && prevProps.withMatches.length !== this.props.withMatches.length) ||
+        (prevProps.search_status !== '' && this.props.search_status === '')) {
+        this.setState({
+          tabs: this.props.withMatches,
+          index_value: 0,
+        })
+      }
     }
-    if (!similar_search_terms(prevProps.currentSearchArray, this.props.currentSearchArray)) {
+    if (!unchanged) {
       this.setState({
         signaturesRowsPerPage: 10,
         signaturesPage: 0,
@@ -63,6 +68,7 @@ export default class SearchResults extends React.Component {
         librariesPage: 0,
         entitiesRowsPerPage: 10,
         entitiesPage: 0,
+        pagination: false
       })
     }
   }
@@ -82,6 +88,7 @@ export default class SearchResults extends React.Component {
   handleChangeRowsPerPage(e, name) {
     this.setState({
       [`${name}RowsPerPage`]: e.target.value,
+      pagination: true
     }, () => {
       this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
@@ -90,6 +97,7 @@ export default class SearchResults extends React.Component {
   handleChangePage(event, page, name) {
     this.setState({
       [`${name}Page`]: page,
+      pagination: true
     }, () => {
       this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })

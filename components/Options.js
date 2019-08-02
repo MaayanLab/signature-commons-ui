@@ -4,6 +4,8 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
+import NProgress from 'nprogress'
+
 import { download_signature_json,
   download_signatures_text,
   download_ranked_signatures_text,
@@ -19,6 +21,7 @@ const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
 async function submit_enrichr(item) {
+  NProgress.start()
   const { data, filename } = await get_signature(item)
   const formData = new FormData()
   formData.append('list', data.join('\n'))
@@ -27,9 +30,8 @@ async function submit_enrichr(item) {
     method: 'POST',
     body: formData,
   })).json()
-  setTimeout(function() {
-    window.location.href = `${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank'
-  }, 1000)
+  window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
+  NProgress.done()
 }
 
 async function submit_sigcom(item, submit) {
@@ -72,7 +74,7 @@ export default function Options({ item, type, ...props }) {
           }>
             <span className="mdi mdi-24px mdi-json"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               {props.ui_values.downloads.signature_json}
             </Typography>
           </MenuItem>
@@ -83,7 +85,7 @@ export default function Options({ item, type, ...props }) {
           }>
             <span className="mdi mdi-24px mdi-file-document-box"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               {props.ui_values.downloads.geneset}
             </Typography>
           </MenuItem>
@@ -95,7 +97,7 @@ export default function Options({ item, type, ...props }) {
             }>
               <span className="mdi mdi-24px mdi-file-download"></span>
               &nbsp;
-              <Typography variant="caption" display="block">
+              <Typography style={{fontSize: 15}} variant="caption" display="block">
                 {props.ui_values.downloads.ranked}
               </Typography>
             </MenuItem> : null
@@ -113,7 +115,7 @@ export default function Options({ item, type, ...props }) {
                   height: 15,
                 }}/>
                 &nbsp;&nbsp;&nbsp;
-              <Typography variant="caption" display="block">
+              <Typography style={{fontSize: 15}} variant="caption" display="block">
                 Perform signature search
               </Typography>
             </MenuItem> : null
@@ -131,7 +133,7 @@ export default function Options({ item, type, ...props }) {
                   height: 20,
                 }}/>
                 &nbsp;&nbsp;
-              <Typography variant="caption" display="block">
+              <Typography style={{fontSize: 15}} variant="caption" display="block">
                 Submit to Enrichr
               </Typography>
             </MenuItem> : null
@@ -159,7 +161,7 @@ export default function Options({ item, type, ...props }) {
           }>
             <span className="mdi mdi-24px mdi-json"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               {props.ui_values.downloads.library_json}
             </Typography>
           </MenuItem>
@@ -170,7 +172,7 @@ export default function Options({ item, type, ...props }) {
           }>
             <span className="mdi mdi-24px mdi-file-document-box"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               { props.ui_values.downloads.gmt}
             </Typography>
           </MenuItem>
@@ -181,7 +183,7 @@ export default function Options({ item, type, ...props }) {
           }>
             <span className="mdi mdi-24px mdi-file-table"></span>
             &nbsp;
-            <Typography variant="caption" display="block">
+            <Typography style={{fontSize: 15}} variant="caption" display="block">
               { props.ui_values.downloads.tsv }
             </Typography>
           </MenuItem>
