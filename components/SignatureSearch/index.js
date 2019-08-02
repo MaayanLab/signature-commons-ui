@@ -55,6 +55,7 @@ export default class SignatureSearch extends React.Component {
       }
       signature_keys={this.props.signature_keys}
       schemas={this.props.schemas}
+      {...this.props}
       {...props}
     />
   )
