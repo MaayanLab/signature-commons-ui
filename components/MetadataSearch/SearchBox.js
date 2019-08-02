@@ -35,9 +35,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Query'}
+                label={'Imatinib'}
                 onDelete={() => {}}
-              /> -Not this
+              /> -Stat3
             </Typography>
           </div>
         </li>
@@ -51,9 +51,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Query'}
+                label={'Imatinib'}
                 onDelete={() => {}}
-              /> or This too
+              /> or Stat3
             </Typography>
           </div>
         </li>
@@ -67,7 +67,7 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Name: A cool name'}
+                label={'Disease: neuropathy'}
                 onDelete={() => {}}
               /> {'PMID: 12345'}
             </Typography>
