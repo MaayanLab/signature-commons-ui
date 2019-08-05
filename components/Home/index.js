@@ -323,14 +323,12 @@ export default class Home extends React.PureComponent {
           signature_search: {
             ...prevState.signature_search,
             ...results,
-            input: {
-              up_entities: resolved_up_entities,
-              down_entities: resolved_down_entities,
-            },
             mismatched,
             input: {
               ...prevState.signature_search.input,
-              id: signature_id
+              id: signature_id,
+              up_entities: resolved_up_entities,
+              down_entities: resolved_down_entities,
             }
           },
         }), () => NProgress.done())
