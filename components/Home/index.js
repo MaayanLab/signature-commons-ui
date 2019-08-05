@@ -135,6 +135,7 @@ export default class Home extends React.PureComponent {
     this.handleSelectField = this.handleSelectField.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.resetMetadataSearchResults = this.resetMetadataSearchResults.bind(this)
+    this.resetAllSearches = this.resetAllSearches.bind(this)
 
     // metadata search
     this.performSearch = this.performSearch.bind(this)
@@ -204,6 +205,7 @@ export default class Home extends React.PureComponent {
   handleChange(event, searchType, scrolling = false) {
     if (searchType) {
       this.setState({ searchType }, () => {
+        this.resetAllSearches()
         if (scrolling) {
           scroll.scrollToTop()
         }
@@ -212,6 +214,9 @@ export default class Home extends React.PureComponent {
   }
 
   changeSignatureType(type, input_data = {}) {
+    if (this.state.signature_search.controller!==null){
+      this.state.signature_search.controller.abort()
+    }
     const input = {
       type,
     }
@@ -332,7 +337,9 @@ export default class Home extends React.PureComponent {
           this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
         }
       } catch (e) {
-        NProgress.done()
+        if (this.state.metadata_search.currentSearchArray.length === 0){
+          NProgress.done()
+        }
         if (e.code !== DOMException.ABORT_ERR) {
           this.setState((prevState) => ({
             signature_search: {
@@ -380,6 +387,11 @@ export default class Home extends React.PureComponent {
         }
       })
     }
+  }
+
+  resetAllSearches() {
+    this.resetCurrentSearchArray()
+    this.changeSignatureType(this.state.signature_search.input.type)
   }
 
   resetCurrentSearchArray() {
@@ -634,6 +646,7 @@ export default class Home extends React.PureComponent {
       handleChange={this.handleChange}
       changeSignatureType={this.changeSignatureType}
       updateSignatureInput={this.updateSignatureInput}
+      resetAllSearches={this.resetAllSearches}
       submit={this.submit}
       {...props}
       {...this.state.signature_search}
@@ -649,8 +662,7 @@ export default class Home extends React.PureComponent {
       currentSearchArrayChange={this.currentSearchArrayChange}
       performSearch={this.performSearch}
       handleChange={this.handleChange}
-      resetMetadataSearchStatus={this.resetMetadataSearchStatus}
-      resetMetadataSearchResults={this.resetMetadataSearchResults}
+      resetAllSearches={this.resetAllSearches}
       submit={this.submit}
       {...props}
       {...this.state.metadata_search}
