@@ -318,8 +318,6 @@ export default class Home extends React.PureComponent {
               ...this.state.signature_search,
               ...props,
               input: {
-                ...prevState.signature_search.input,
-                id: signature_id,
                 up_entities: resolved_up_entities,
                 down_entities: resolved_down_entities,
               }
@@ -332,6 +330,8 @@ export default class Home extends React.PureComponent {
               input: {
                 ...prevState.signature_search.input,
                 id: signature_id,
+                up_entities: resolved_up_entities,
+                down_entities: resolved_down_entities,
               },
               status: "",
             },
