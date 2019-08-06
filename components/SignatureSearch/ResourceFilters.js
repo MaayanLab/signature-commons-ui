@@ -20,7 +20,7 @@ export default class ResourceFilters extends React.Component {
     const type = this.props.match.params.type
     if (type === 'Overlap' && this.props.input.id !== input_signature) {
       try {
-        const { data } = await get_signature(input_signature)
+        const { data } = await get_signature({item: input_signature})
         const input = {
           type,
           geneset: data.join('\n'),
@@ -39,7 +39,7 @@ export default class ResourceFilters extends React.Component {
     if (input_signature !== prevProps.match.params.input_signature) {
       if (type === 'Overlap' && this.props.input.id !== input_signature ) {
         try {
-          const { data } = await get_signature(input_signature)
+          const { data } = await get_signature({item: input_signature})
           const input = {
             type,
             geneset: data.join('\n'),

@@ -199,7 +199,6 @@ export async function get_signature({item, slice_rank, name, ui_schemas}) {
 
 export async function download_signatures_text({ item, name, ui_schemas}) {
   NProgress.start()
-  console.log(item)
   const { data, filename } = await get_signature({item, slice_rank:true, name, ui_schemas})
   NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
