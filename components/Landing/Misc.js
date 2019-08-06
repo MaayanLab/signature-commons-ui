@@ -230,11 +230,13 @@ export const SearchCard = ({ classes, width, ...props }) => {
               <SearchBox
                 id='metadata'
                 currentSearchArray={props.currentSearchArray}
+                search_status={props.search_status}
                 currentSearchArrayChange={props.currentSearchArrayChange}
                 ui_values={props.ui_values}
               /> :
               <GenesetSearchBox
                 input={props.signature_search.input}
+                status={props.signature_search.status}
                 onSubmit={props.submit}
                 ui_values={props.ui_values}
                 changeSignatureType={props.changeSignatureType}
@@ -257,6 +259,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <GenesetSearchBox
               input={props.signature_search.input}
+              status={props.signature_search.status}
               onSubmit={props.submit}
               ui_values={props.ui_values}
               changeSignatureType={props.changeSignatureType}
@@ -278,7 +281,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <SearchBox
               id='metadata'
-              search={props.search}
+              search_status={props.search_status}
               ui_values={props.ui_values}
               currentSearchArray={props.currentSearchArray}
               currentSearchArrayChange={props.currentSearchArrayChange}

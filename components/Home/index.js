@@ -260,7 +260,7 @@ export default class Home extends React.PureComponent {
         ...this.state.signature_search,
         controller,
         input,
-        status: "Initializing",
+        status: "Searching",
         signature_type: input.id === undefined? "original": ""
       },
     }), async () => {
@@ -361,7 +361,6 @@ export default class Home extends React.PureComponent {
         metadata_search: {
           ...prevState.metadata_search,
           currentSearchArray: currentSearchArray,
-          searchArray: currentSearchArray,
           completed_search: 0,
           search_status: 'Initializing',
           withMatches: [],
@@ -514,7 +513,7 @@ export default class Home extends React.PureComponent {
       const duration_label = table + '_duration'
       const duration_meta_label = table + '_duration_meta'
       const count_label = table + '_count'
-      let search_status
+      let search_status = "Initializing"
       if (results.length > 0){
         search_status = 'Matched'
       }
@@ -532,7 +531,7 @@ export default class Home extends React.PureComponent {
           [count_label]: contentRange.count,
           withMatches: results.length > 0 && prevState.metadata_search.withMatches.indexOf(table) === -1 ?
             [...prevState.metadata_search.withMatches, table] : prevState.metadata_search.withMatches,
-          search_status: search_status!== undefined ? search_status : prevState.metadata_search.search_status,
+          search_status: search_status,
           completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
         },
       }))

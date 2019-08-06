@@ -143,8 +143,17 @@ export default class GenesetSearchBox extends React.Component {
             className={'btn waves-effect waves-light' + (this.isEmpty() ? ' disabled' : '')} type="submit" name="action"
             onClick={call(this.props.onSubmit, this.props.input)}
           >
-            Search
-            <i className="material-icons right">send</i>
+            { this.props.status==="Searching" ? 
+                <React.Fragment>
+                  Searching &nbsp;
+                  <i className="mdi mdi-spin mdi-loading" />
+                </React.Fragment>: 
+                <React.Fragment>
+                  Search
+                  <i className="material-icons right">send</i>
+                </React.Fragment>
+            }
+
           </button>
           <br /><br />
         </div>

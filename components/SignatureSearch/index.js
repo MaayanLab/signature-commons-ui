@@ -17,23 +17,6 @@ export default class SignatureSearch extends React.Component {
     this.props.resetAllSearches()
   }
 
-  geneset_searchbox = (props) => {
-    if (this.props.location.state) {
-      return (<div />)
-    } else {
-      return (
-        <GenesetSearchBox
-          input={this.props.input}
-          onSubmit={this.props.submit}
-          ui_values={this.props.ui_values}
-          changeSignatureType={this.props.changeSignatureType}
-          updateSignatureInput={this.props.updateSignatureInput}
-          {...props}
-        />
-      )
-    }
-  }
-
   resource_filters = (props) => (
     <ResourceFilters
       resources={Object.values(this.props.resources || {})}
