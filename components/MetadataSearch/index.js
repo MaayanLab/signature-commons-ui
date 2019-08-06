@@ -22,7 +22,6 @@ function getParam(s, param) {
 export default class MetadataSearch extends React.Component {
   constructor(props) {
     super(props)
-    this.searchChange = this.searchChange.bind(this)
   }
 
   async componentDidMount() {
@@ -45,11 +44,7 @@ export default class MetadataSearch extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.resetMetadataSearchResults()
-  }
-
-  searchChange(e) {
-    this.props.searchChange(e.target.value)
+    this.props.resetAllSearches()
   }
 
   render() {
@@ -57,8 +52,7 @@ export default class MetadataSearch extends React.Component {
       <div className="row">
         <div className="col s12 center">
           <SearchBox
-            search={this.props.search}
-            searchChange={this.searchChange}
+            search_status={this.props.search_status}
             currentSearchArray={this.props.currentSearchArray}
             currentSearchChange={this.props.currentSearchChange}
             currentSearchArrayChange={this.props.currentSearchArrayChange}

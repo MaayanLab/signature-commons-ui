@@ -47,6 +47,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
               currentSearchArrayChange={this.props.currentSearchArrayChange}
               handleChange={this.props.handleChange}
               currentSearchArray={this.props.metadata_search.currentSearchArray}
+              search_status={this.props.metadata_search.search_status}
               type={this.state.type}
               searchType={this.props.searchType}
               submit={this.props.submit}

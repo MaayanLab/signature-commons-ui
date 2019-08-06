@@ -192,8 +192,17 @@ class MetadataSearchBox extends React.Component {
             style={{ marginBottom: 20 }}
             onClick={() =>
               this.props.currentSearchArrayChange(this.props.currentSearchArray)}
-          >Search
-            <i className="material-icons right">send</i>
+          >
+          { ["Initializing", "Matched"].indexOf(this.props.search_status) > -1 ? 
+            <React.Fragment>
+              Searching
+              <i className="mdi mdi-spin mdi-loading right" />
+            </React.Fragment>: 
+            <React.Fragment>
+              Search
+              <i className="material-icons right">send</i>
+            </React.Fragment>
+          }
           </button>
         </div>
         {examples.map((example) => (
