@@ -9,7 +9,22 @@
       "type": "img",
       "src": "${PREFIX}/static/images/clueio.ico",
       "alt": "ConnectivityMap",
-      "priority": 1
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "ConnectivityMap",
+      "priority": 1,
+      "parent": true
+    },
+    "Title": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.sig_id}",
+      "title": true,
+      "priority": 2
     },
     "Assay": {
       "visibility": 1,

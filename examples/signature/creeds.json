@@ -9,7 +9,22 @@
       "type": "img",
       "src": "${PREFIX}/static/images/creeds.png",
       "alt": "CREEDS",
-      "priority": 1
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "CREEDS",
+      "priority": 1,
+      "parent": true
+    },
+    "ID": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.ID}",
+      "priority": 1,
+      "title": true
     },
     "Assay": {
       "visibility": 1,

@@ -9,13 +9,22 @@
       "type": "img",
       "src": "${PREFIX}/${library.meta['Icon']}",
       "alt": "${library.meta['Library_name']}",
-      "priority": 1
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${library.meta['Library_name']}",
+      "priority": 1,
+      "parent": true
     },
     "Description": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['Original_String']}",
       "subfield": "${meta.Pathway.Name}",
+      "title": true,
       "priority": 2
     },
     "Gene": {

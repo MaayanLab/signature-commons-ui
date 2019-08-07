@@ -9,13 +9,22 @@
       "type": "img",
       "src": "${PREFIX}/${library.meta['Icon']}",
       "alt": "${library.meta['assay']}",
+      "priority": 1,
+      "icon": true
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${library.meta['assay']}",
+      "parent": true,
       "priority": 1
     },
     "Specimen Name": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['specimenName']}",
-      "priority": 2
+      "priority": 2,
+      "title": true
     },
     "Cell Type": {
       "visibility": 1,
