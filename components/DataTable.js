@@ -18,15 +18,15 @@ import red from '@material-ui/core/colors/red';
 import MUIDataTable from "mui-datatables"
 import { fetch_meta_post } from '../util/fetch/meta'
 import { makeTemplate } from '../util/makeTemplate'
-import { Highlight } from '../components/Highlight'
-import { default_schemas, objectMatch } from '../components/Label'
+import { Highlight } from './Highlight'
+import { default_schemas, objectMatch } from './Label'
 
 import { get_ui_values } from './index'
-import ShowMeta from '../components/ShowMeta'
+import ShowMeta from './ShowMeta'
 
 import sample_data from '../examples/sample_data.json'
 
-const Options = dynamic(() => import('../components/Options'), { ssr: false })
+const Options = dynamic(() => import('./Options'), { ssr: false })
 
 const styles = theme => ({
   expansion: {

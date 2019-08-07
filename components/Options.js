@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
+import {default as RoundButton} from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
@@ -136,9 +137,11 @@ export default class Options extends React.Component {
         // TODO: Text here should be modified on the UI schemas + Enrichr link should be nullifiable
         return (
           <div>
-            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
+            <RoundButton aria-controls="simple-menu" 
+              aria-haspopup="true"
+              onClick={this.handleClick}>
               <span className="mdi mdi-24px mdi-dots-vertical"></span>
-            </Button>
+            </RoundButton>
             <Menu
               id="simple-menu"
               anchorEl={this.state.anchorEl}
@@ -233,9 +236,9 @@ export default class Options extends React.Component {
       } else if (this.props.type === 'libraries') {
         return (
           <div>
-            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
+            <RoundButton aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
               <span className="mdi mdi-24px mdi-dots-vertical"></span>
-            </Button>
+            </RoundButton>
             <Menu
               id="simple-menu"
               anchorEl={this.state.anchorEl}
