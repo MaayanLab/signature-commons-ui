@@ -1,0 +1,199 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
+    "${library.dataset}": "enrichr_geneset",
+    "${library.meta.Library_name}": "LINCS*"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/${library.meta['Icon']}",
+      "alt": "${library.meta['Library_name']}",
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${library.meta['Library_name']}",
+      "priority": 1,
+      "parent": true
+    },
+    "Title": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Original_String']}",
+      "title": true,
+      "priority": 2
+    },
+    "Assay": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Assay}",
+      "priority": 4
+    },
+    "Cell-line": {
+      "visibility": 1,
+      "type": "object",
+      "text": "${meta.Cell_Line}",
+      "subfield": "${meta.Cell_Line[0].Name}",
+      "priority": 3
+    },
+    "Time point": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Time_Point}",
+      "priority": 4
+    },
+    "Perturbation": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Small_Molecule[0].Name || meta.Gene[0].Name}",
+      "priority": 4
+    },
+    "Concentration": {
+      "visibility": 1,
+      "condition": {
+        "${meta.pert_dose}": {
+          "ne": "-666"
+        }
+      },
+      "type": "text",
+      "text": "${meta.Small_Molecule[0].Concentration}",
+      "priority": 4
+    },
+    "P-Value": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-value']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "columnOptions": {
+        "sort": true,
+        "sortDirection": "asc"
+      },
+      "type": "text",
+      "text": "${meta['p-value']}",
+      "priority": 5
+    },
+    "Odds Ratio": {
+      "visibility": 1,
+      "condition": {
+        "${meta.oddsratio}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta.oddsratio}",
+      "priority": 5
+    },
+    "Set Size": {
+      "visibility": 1,
+      "condition": {
+        "${meta.setsize}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta.setsize}",
+      "priority": 5
+    },
+    "P-Up": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-up']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta['p-up']}",
+      "priority": 5
+    },
+    "P-Down": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-down']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta['p-down']}",
+      "priority": 5
+    },
+    "Z-Up": {
+      "visibility": 1,
+      "condition": {
+        "${meta['z-up']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta['z-up']}",
+      "priority": 5
+    },
+    "Z-Down": {
+      "visibility": 1,
+      "condition": {
+        "${meta['z-down']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta['z-down']}",
+      "priority": 5
+    },
+    "Log(p) Fisher": {
+      "visibility": 1,
+      "condition": {
+        "${meta['logp-fisher']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "columnOptions": {
+        "sort": true,
+        "sortDirection": "desc"
+      },
+      "type": "text",
+      "text": "${meta['logp-fisher']}",
+      "priority": 5
+    },
+    "Log(p) Average":{
+      "visibility": 1,
+      "condition": {
+        "${meta['logp-avg']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta['logp-avg']}",
+      "priority": 5
+    },
+    "Direction": {
+      "visibility": 1,
+      "condition": {
+        "${meta['logp-fisher']}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta['direction'] === 1 ? 'up' : 'down'}",
+      "priority": 4
+    }
+  }
+}
