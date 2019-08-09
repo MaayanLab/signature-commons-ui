@@ -323,6 +323,7 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
           callbacks={callbacks}
           options={{
             colors: ['#000'],
+            scale: "log",
             rotations: 3,
             rotationsAngles: [0, 90],
           }} />
