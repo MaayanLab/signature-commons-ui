@@ -61,7 +61,7 @@ export const UIValues = {
           {
             ResponsiveContainer: {
               width: '100%',
-              height: 350,
+              height: 420,
             },
             Chart: {
               margin: {
@@ -89,7 +89,7 @@ export const UIValues = {
         pie_chart_style: {
           ResponsiveContainer: {
             width: '100%',
-            height: 350,
+            height: 420,
           },
           Chart: {
             width: 420,
