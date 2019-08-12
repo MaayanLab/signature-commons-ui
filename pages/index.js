@@ -310,7 +310,7 @@ App.getInitialProps = async () => {
   const { ui_values } = await get_ui_values()
   // Check if it has library_name and resource_from_library
   const schemas = await get_schemas(ui_values)
-  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_values)
+  const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
   const { table_counts, ui_values: ui_val } = await get_counts(Object.keys(resources).length, ui_values)
   const { meta_counts } = await get_metacounts(ui_val)
   const { pie_fields_and_stats } = await get_pie_stats(ui_val)

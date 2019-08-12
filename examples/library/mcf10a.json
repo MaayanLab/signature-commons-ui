@@ -10,14 +10,14 @@
       "src": "${PREFIX}/${meta['Icon']}",
       "alt": "${meta['assay']}",
       "priority": 1,
-      "icon": true,
-      "name": true
+      "icon": true
     },
     "Assay": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['assay']}",
-      "priority": 2
+      "priority": 2,
+      "name": true
     },
     "Institution": {
       "visibility": 1,
