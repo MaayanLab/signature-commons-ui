@@ -108,9 +108,10 @@ export default class Options extends React.Component {
     NProgress.start()
 
     const { data, filename } = await get_signature({ item, ui_schemas })
-    this.setState(() => ({
+    this.setState({
+      enrichr_open: true,
       enrichr_status: 'Sending to enrichr',
-    }), async () => {
+    }, async () => {
       const formData = new FormData()
       formData.append('list', data.join('\n'))
       formData.append('description', filename + '')
@@ -122,7 +123,6 @@ export default class Options extends React.Component {
         enrichr_ready: true,
         enrichr_status: 'Analysis is ready',
         enrichr_id: response['shortId'],
-        enrichr_open: true,
       }))
       // window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
       NProgress.done()
