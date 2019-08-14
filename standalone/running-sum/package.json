@@ -1,0 +1,45 @@
+{
+  "name": "@dcic/signature-commons-ui-components-running-sum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.tsx",
+  "scripts": {
+    "build": "microbundle build --jsx React.createElement --globals react=React",
+    "dev": "parcel serve public/index.html -d build",
+    "prepublish": "npm run build"
+  },
+  "author": "Daniel J. B. Clarke <u8sand@gmail.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/react-dom": "^16.8.5",
+    "microbundle": "^0.11.0",
+    "parcel-bundler": "^1.12.3",
+    "react-dom": "^16.8.6",
+    "react": "^16.8.6",
+    "typescript": "^3.5.3"
+  },
+  "peerDependencies": {
+    "react": "^16.8.6"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.5.5",
+    "@types/d3": "^5.7.2",
+    "@types/d3-scale": "^2.1.1",
+    "@types/react": "^16.8.23",
+    "@types/styled-jsx": "^2.2.8",
+    "d3": "^5.9.7",
+    "d3-scale": "^3.0.0",
+    "dedent": "^0.7.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "save-svg-as-png": "^1.4.14",
+    "styled-jsx": "^3.2.1"
+  }
+}
