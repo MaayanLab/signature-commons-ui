@@ -140,7 +140,7 @@ export async function download_resource_json({ item, name, ui_schemas}) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function get_signature(item, slice_rank = true, name, ui_schemas=undefined) {
+export async function get_signature({item, slice_rank, name, ui_schemas}) {
   let sig
   let filename = name
   const schemas = ui_schemas || await fetch_schemas()
@@ -199,15 +199,15 @@ export async function get_signature(item, slice_rank = true, name, ui_schemas=un
 
 export async function download_signatures_text({ item, name, ui_schemas}) {
   NProgress.start()
-  console.log(ui_schemas)
-  const { data, filename } = await get_signature(item, true, name, ui_schemas)
+  console.log(item)
+  const { data, filename } = await get_signature({item, slice_rank:true, name, ui_schemas})
   NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
 }
 
 export async function download_ranked_signatures_text({ item, name, ui_schemas}) {
   NProgress.start()
-  const { data, filename } = await get_signature(item, false, name, ui_schemas)
+  const { data, filename } = await get_signature({item, slice_rank:false, name, ui_schemas})
   NProgress.done()
   fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.gmt`)
 }
