@@ -60,23 +60,26 @@ export default class SignatureSearch extends React.Component {
     />
   )
 
+  render_signature_search = () => {
+    this.props.handleChange({}, 'signature', true)
+    return <Redirect to="/" />
+  }
+
+  render_signature_search_type = (props) => {
+    const type = props.match.params.type
+    this.props.changeSignatureType(type)
+    this.props.handleChange({}, 'signature', true)
+    return <Redirect to="/" />
+  }
+
   render() {
     return (
       <div className="row">
         <Switch>
-          <Route exact path="/SignatureSearch" render={() => {
-            this.props.handleChange({}, 'signature', true)
-            return (<Redirect to="/" />)
-          }}
-          />
+          <Route exact path="/SignatureSearch" render={this.render_signature_search} />
           <Route path="/SignatureSearch/:type/:input_signature/:resource" component={this.library_results} />
           <Route path="/SignatureSearch/:type/:input_signature" component={this.resource_filters} />
-          <Route path="/SignatureSearch/:type" render={(props) => {
-            const type = props.match.params.type
-            this.props.changeSignatureType(type)
-            this.props.handleChange({}, 'signature', true)
-            return (<Redirect to="/" />)
-          }} />
+          <Route path="/SignatureSearch/:type" render={this.render_signature_search_type} />
         </Switch>
       </div>
     )
