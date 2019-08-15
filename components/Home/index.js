@@ -197,7 +197,7 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  changeSignatureType(type, input_data = {}) {
+  changeSignatureType = (type, input_data = {}) => {
     if (this.state.signature_search.controller!==null){
       this.state.signature_search.controller.abort()
     }
@@ -349,7 +349,7 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  currentSearchArrayChange(currentSearchArray) {
+  currentSearchArrayChange = (currentSearchArray) => {
     if (this.state.signature_search.controller !== null) {
       this.state.signature_search.controller.abort()
     }
@@ -385,12 +385,12 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  resetAllSearches() {
+  resetAllSearches = () => {
     this.resetCurrentSearchArray()
     this.changeSignatureType(this.state.signature_search.input.type)
   }
 
-  resetCurrentSearchArray() {
+  resetCurrentSearchArray = () => {
     this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
