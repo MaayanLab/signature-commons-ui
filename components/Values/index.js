@@ -6,16 +6,16 @@ import { fetch_meta } from '../../util/fetch/meta'
 export default class Query extends React.Component {
   constructor(props) {
     super(props)
+
     this.state = {
       endpoint: 'libraries',
       query: '{}',
       results: [],
       status: 'ready',
     }
-    this.submit = this.submit.bind(this)
   }
 
-  async submit() {
+  submit = async () => {
     try {
       this.setState({
         results: null,
@@ -39,7 +39,8 @@ export default class Query extends React.Component {
       })
     }
   }
-  render() {
+
+  render = () => {
     return (
       <div className="root">
         <main>

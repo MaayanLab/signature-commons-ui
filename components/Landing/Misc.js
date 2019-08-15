@@ -330,6 +330,6 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
       </div>
     )
   } else {
-    return (<div />)
+    return <div />
   }
 }

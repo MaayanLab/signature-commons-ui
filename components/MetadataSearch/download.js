@@ -67,7 +67,7 @@ export function get_concatenated_meta(data, schemas) {
   return (meta_list.join('_'))
 }
 
-export async function download_signature_json({ item, name, ui_schemas}) {
+export async function download_signature_json({ item, name, ui_schemas }) {
   NProgress.start()
   let signature
   let filename = name
@@ -91,7 +91,7 @@ export async function download_signature_json({ item, name, ui_schemas}) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_library_json({ item, name, ui_schemas}) {
+export async function download_library_json({ item, name, ui_schemas }) {
   NProgress.start()
   let library
   let filename = name
@@ -116,7 +116,7 @@ export async function download_library_json({ item, name, ui_schemas}) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_resource_json({ item, name, ui_schemas}) {
+export async function download_resource_json({ item, name, ui_schemas }) {
   NProgress.start()
   let resource
   let filename = name
@@ -140,7 +140,7 @@ export async function download_resource_json({ item, name, ui_schemas}) {
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function get_signature({item, slice_rank, name, ui_schemas}) {
+export async function get_signature({ item, slice_rank, name, ui_schemas }) {
   let sig
   let filename = name
   const schemas = ui_schemas || await fetch_schemas()
@@ -158,7 +158,7 @@ export async function get_signature({item, slice_rank, name, ui_schemas}) {
   const signature_id = await signature.id
   const signature_meta = await signature.meta
   const signature_validator = await signature.validator
-  
+
   const library = await signature.library
   const library_id = await library.id
   const library_meta = await library.meta
@@ -175,14 +175,14 @@ export async function get_signature({item, slice_rank, name, ui_schemas}) {
       $validator: library_validator,
       meta: library_meta,
       dataset: library_dataset,
-      dataset_type: library_dataset_type
-    }
+      dataset_type: library_dataset_type,
+    },
   }
   const signature_data = await signature.data
   await provider.fetch_entities()
-  const entities = await Promise.all(await signature_data.map( async (entity) => {
+  const entities = await Promise.all(await signature_data.map(async (entity) => {
     const entity_meta = await entity.meta
-    return (makeTemplate(gene_name, {meta: entity_meta})) // TODO: Use ui_schemas here
+    return (makeTemplate(gene_name, { meta: entity_meta })) // TODO: Use ui_schemas here
   }))
   if (signature_object.library.dataset_type === 'rank_matrix' && slice_rank) {
     return {
@@ -197,21 +197,21 @@ export async function get_signature({item, slice_rank, name, ui_schemas}) {
   }
 }
 
-export async function download_signatures_text({ item, name, ui_schemas}) {
+export async function download_signatures_text({ item, name, ui_schemas }) {
   NProgress.start()
   const { data, filename } = await get_signature({item, slice_rank:true, name, ui_schemas})
   NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
 }
 
-export async function download_ranked_signatures_text({ item, name, ui_schemas}) {
+export async function download_ranked_signatures_text({ item, name, ui_schemas }) {
   NProgress.start()
-  const { data, filename } = await get_signature({item, slice_rank:false, name, ui_schemas})
+  const { data, filename } = await get_signature({ item, slice_rank: false, name, ui_schemas })
   NProgress.done()
   fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.gmt`)
 }
 
-export async function get_library_data(item, name, ui_schemas=undefined) {
+export async function get_library_data(item, name, ui_schemas = undefined) {
   const schemas = ui_schemas || await fetch_schemas()
   let lib
   let filename = name
@@ -238,7 +238,7 @@ export async function get_library_data(item, name, ui_schemas=undefined) {
     $validator: library_validator,
     meta: library_meta,
     dataset: library_dataset,
-    dataset_type: library_dataset_type
+    dataset_type: library_dataset_type,
   }
 
   filename = get_concatenated_meta(library_object, schemas)
@@ -247,7 +247,7 @@ export async function get_library_data(item, name, ui_schemas=undefined) {
   await provider.resolve_signatures(signatures)
   await provider.fetch_data_for_signatures(signatures)
   await provider.fetch_entities()
-  const dataset_mapped = await Promise.all(await signatures.map(async(signature)=>{
+  const dataset_mapped = await Promise.all(await signatures.map(async (signature) => {
     const signature_id = await signature.id
     const signature_meta = await signature.meta
     const signature_validator = await signature.validator
@@ -256,24 +256,24 @@ export async function get_library_data(item, name, ui_schemas=undefined) {
       id: signature_id,
       $validator: signature_validator,
       meta: signature_meta,
-      library: library_object
+      library: library_object,
     }
     const signature_data = await signature.data
-    const entities = await Promise.all(await signature_data.map( async (entity) => {
+    const entities = await Promise.all(await signature_data.map(async (entity) => {
       const entity_meta = await entity.meta
-      return (makeTemplate(gene_name, {meta: entity_meta})) // TODO: Use ui_schemas here
+      return (makeTemplate(gene_name, { meta: entity_meta })) // TODO: Use ui_schemas here
     }))
     const signame = `${signature_id}_${get_concatenated_meta(signature_object, schemas)}`
-    return({signame, entities})
+    return ({ signame, entities })
   }))
   const dataset = dataset_mapped.reduce((acc, signature) => {
-    acc[signature.signame] = signature.entities 
+    acc[signature.signame] = signature.entities
     return acc
   }, {})
   return ({ dataset, filename })
 }
 
-export async function download_library_gmt({ item, name, ui_schemas}) {
+export async function download_library_gmt({ item, name, ui_schemas }) {
   NProgress.start()
   const { dataset, filename } = await get_library_data(item, name, ui_schemas)
   const gmt = Object.keys(dataset).map((key) =>
@@ -284,7 +284,7 @@ export async function download_library_gmt({ item, name, ui_schemas}) {
 }
 
 
-export async function download_library_tsv({ item, name, ui_schemas}) {
+export async function download_library_tsv({ item, name, ui_schemas }) {
   NProgress.start()
   const { dataset, filename } = await get_library_data(item, name, ui_schemas)
   let columns = []

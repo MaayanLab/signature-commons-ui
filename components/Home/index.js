@@ -130,25 +130,9 @@ export default class Home extends React.PureComponent {
         controller: null,
       },
     }
-    this.updateCart = this.updateCart.bind(this)
-    this.CartActions = this.CartActions.bind(this)
-    this.handleSelectField = this.handleSelectField.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.resetMetadataSearchResults = this.resetMetadataSearchResults.bind(this)
-    this.resetAllSearches = this.resetAllSearches.bind(this)
-
-    // metadata search
-    this.performSearch = this.performSearch.bind(this)
-    this.resetMetadataSearchStatus = this.resetMetadataSearchStatus.bind(this)
-    this.currentSearchArrayChange = this.currentSearchArrayChange.bind(this)
-    this.resetCurrentSearchArray = this.resetCurrentSearchArray.bind(this)
-
-    // signature search
-    this.changeSignatureType = this.changeSignatureType.bind(this)
-    this.updateSignatureInput = this.updateSignatureInput.bind(this)
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     M.AutoInit()
     // const elems = document.querySelectorAll('.sidenav');
     // const instances = M.Sidenav.init(elems, {edge:"right"});
@@ -168,7 +152,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate = (prevProps, prevState) => {
     M.AutoInit()
     M.updateTextFields()
     if (this.state.metadata_search.search_status === 'Initializing') {
@@ -198,11 +182,11 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     NProgress.done()
   }
 
-  handleChange(event, searchType, scrolling = false) {
+  handleChange = (event, searchType, scrolling = false) => {
     if (searchType) {
       this.setState({ searchType }, () => {
         this.resetAllSearches()
@@ -235,7 +219,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  updateSignatureInput(input) {
+  updateSignatureInput = (input) => {
     this.setState((prevState) => ({
       signature_search: {
         ...prevState.signature_search,
@@ -284,6 +268,24 @@ export default class Home extends React.PureComponent {
             input: {
               entities: resolved_entities,
             },
+            mismatched,
+            input: {
+              ...prevState.signature_search.input,
+              id: signature_id,
+            },
+          },
+        }), () => NProgress.done())
+        this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
+      } else if (input.type === 'Rank') {
+        const unresolved_up_entities = parse_entities(input.up_geneset)
+        const unresolved_down_entities = parse_entities(input.down_geneset)
+        const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
+        const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
+        if (mismatched.count() > 0) {
+          M.toast({
+            html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
+            classes: 'rounded',
+            displayLength: 4000,
           })
           this.setState((prevState) => ({
             signature_search: {
@@ -335,21 +337,14 @@ export default class Home extends React.PureComponent {
               },
               status: "",
             },
-          }), () => NProgress.done())
-          this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
-        }
-      } catch (e) {
-        if (this.state.metadata_search.currentSearchArray.length === 0){
-          NProgress.done()
-        }
-        if (e.code !== DOMException.ABORT_ERR) {
-          this.setState((prevState) => ({
-            signature_search: {
-              ...prevState.signature_search,
-              status: e + '',
+            mismatched,
+            input: {
+              ...prevState.signature_search.input,
+              id: signature_id,
             },
-          }))
-        }
+          },
+        }), () => NProgress.done())
+        this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
       }
     })
   }
@@ -375,13 +370,13 @@ export default class Home extends React.PureComponent {
           this.performSearch(currentSearchArray, 'entities')
         } else {
           // CurrentSearchArray is empty
-          if (this.state.entities_controller!== undefined){
+          if (this.state.entities_controller !== undefined) {
             this.state.entities_controller.abort()
           }
-          if (this.state.signatures_controller!== undefined){
+          if (this.state.signatures_controller !== undefined) {
             this.state.signatures_controller.abort()
           }
-          if (this.state.libraries_controller!== undefined){
+          if (this.state.libraries_controller !== undefined) {
             this.state.libraries_controller.abort()
           }
           NProgress.done()
@@ -402,19 +397,19 @@ export default class Home extends React.PureComponent {
         currentSearchArray: [],
       },
     }))
-    if (this.state.entities_controller!== undefined){
+    if (this.state.entities_controller !== undefined) {
       this.state.entities_controller.abort()
     }
-    if (this.state.signatures_controller!== undefined){
+    if (this.state.signatures_controller !== undefined) {
       this.state.signatures_controller.abort()
     }
-    if (this.state.libraries_controller!== undefined){
+    if (this.state.libraries_controller !== undefined) {
       this.state.libraries_controller.abort()
     }
     NProgress.done()
   }
 
-  resetMetadataSearchStatus() {
+  resetMetadataSearchStatus = () => {
     this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
@@ -424,7 +419,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  resetMetadataSearchResults() {
+  resetMetadataSearchResults = () => {
     this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
@@ -439,19 +434,19 @@ export default class Home extends React.PureComponent {
         withMatches: [],
       },
     }))
-    if (this.state.entities_controller!== undefined){
+    if (this.state.entities_controller !== undefined) {
       this.state.entities_controller.abort()
     }
-    if (this.state.signatures_controller!== undefined){
+    if (this.state.signatures_controller !== undefined) {
       this.state.signatures_controller.abort()
     }
-    if (this.state.libraries_controller!== undefined){
+    if (this.state.libraries_controller !== undefined) {
       this.state.libraries_controller.abort()
     }
     NProgress.done()
   }
 
-  async performSearch(terms, table, page = 0, rowsPerPage = 10) {
+  performSearch = async (terms, table, page = 0, rowsPerPage = 10) => {
     if (this.state.metadata_search[`${table}_controller`] !== undefined) {
       this.state.metadata_search[`${table}_controller`].abort()
     }
@@ -462,7 +457,7 @@ export default class Home extends React.PureComponent {
           ...prevState.metadata_search,
           [`${table}_status`]: 'Searching...',
           [`${table}_controller`]: controller,
-          search_status: page > 0 || rowsPerPage > 10 ? 'Initializing': prevState.search_status
+          search_status: page > 0 || rowsPerPage > 10 ? 'Initializing' : prevState.search_status,
         },
       }))
       const where = build_where(terms)
@@ -519,7 +514,7 @@ export default class Home extends React.PureComponent {
       if (results.length > 0){
         search_status = 'Matched'
       }
-      if (page > 0 || rowsPerPage > 10){
+      if (page > 0 || rowsPerPage > 10) {
         search_status = ''
         NProgress.done()
       }
@@ -550,11 +545,11 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  updateCart(cart) {
+  updateCart = (cart) => {
     this.setState({ cart })
   }
 
-  CartActions() {
+  CartActions = () => {
     return this.state.cart.count() <= 0 ? null : (
       <div className="fixed-action-btn">
         <a
@@ -611,7 +606,7 @@ export default class Home extends React.PureComponent {
     )
   }
 
-  async fetch_stats(selected_field) {
+  fetch_stats = async (selected_field) => {
     this.setState({
       pie_stats: this.props.pie_fields_and_stats[selected_field] ?
         this.props.pie_fields_and_stats[selected_field].stats : {},
@@ -624,7 +619,7 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  handleSelectField(e) {
+  handleSelectField = (e) => {
     const field = e.target.value
     this.setState({
       selected_field: field,
@@ -701,13 +696,13 @@ export default class Home extends React.PureComponent {
   )
 
   collection = (props) => (
-    <Collection 
+    <Collection
       ui_values={this.props.ui_values}
       {...props}
     />
-    )
+  )
 
-  render() {
+  render = () => {
     const CartActions = this.CartActions
 
     return (

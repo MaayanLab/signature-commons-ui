@@ -22,23 +22,22 @@ const download = {
 export default class MetadataSearchResults extends React.Component {
   constructor(props) {
     super(props)
-    this.initialize = this.initialize.bind(this)
   }
 
-  async initialize(el) {
+  initialize = async (el) => {
     if (el) {
       const M = await import('materialize-css')
       M.Collapsible.init(el)
     }
   }
 
-  async handleDownload(type, id) {
+  handleDownload = async (type, id) => {
     NProgress.start()
     await download[type](id)
     NProgress.done()
   }
 
-  render() {
+  render = () => {
     if (this.props.items.length === 0) {
       return (
         <Grid container

@@ -1,12 +1,9 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent';
+import CardContent from '@material-ui/core/CardContent'
 
-import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
-import { landingStyle } from '../../styles/jss/theme.js'
+import { fetch_meta } from '../../util/fetch/meta'
 import ShowMeta from '../../components/ShowMeta'
 
 import DataProvider from '../../util/fetch/model'
@@ -18,21 +15,18 @@ const provider = new DataProvider()
 
 
 export default class Library extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       id: undefined,
       collection_fields: {},
       controller: undefined,
     }
-    this.serialize_library = this.serialize_library.bind(this)
-    this.getCollectionField = this.getCollectionField.bind(this)
-    this.getValueCounts = this.getValueCounts.bind(this)
   }
 
-  async componentDidMount(){
+  componentDidMount = async () => {
     const id = this.props.match.params.id
-    const all_fields = schemas.reduce((acc,item)=>{
+    const all_fields = schemas.reduce((acc, item) => {
       acc[item.Field_Name] = item
       return acc
     }, {})
@@ -46,7 +40,7 @@ export default class Library extends React.Component {
     })
   }
 
-  async serialize_library(id){
+  serialize_library = async (id) => {
     const data = await provider.serialize_library(id, {
       resource: true,
       library: true,
@@ -58,26 +52,26 @@ export default class Library extends React.Component {
     })
   }
 
-  async getCollectionField(all_fields, id){
-    if(this.state.controller !== undefined){
+  getCollectionField = async (all_fields, id) => {
+    if (this.state.controller !== undefined) {
       this.state.controller.abort()
     }
     try {
       const controller = new AbortController()
       this.setState({
-        status: "Fetching...",
-        controller
+        status: 'Fetching...',
+        controller,
       })
       const { response: results } = await fetch_meta({
         endpoint: `/libraries/${id}/signatures/key_count`,
         signal: controller.signal,
       })
-      const collection_fields = Object.keys(results).filter((field)=>Object.keys(all_fields).indexOf(field)>-1)
+      const collection_fields = Object.keys(results).filter((field) => Object.keys(all_fields).indexOf(field) > -1)
       this.setState({
         collection_fields,
-        status: ''
+        status: '',
       })
-    } catch(e) {
+    } catch (e) {
       if (e.code !== DOMException.ABORT_ERR) {
         // TO DO display status upon fail
         this.setState((prevState) => ({
@@ -87,28 +81,28 @@ export default class Library extends React.Component {
     }
   }
 
-  async getValueCounts(id){
-    if(this.state.controller !== undefined){
+  getValueCounts = async (id) => {
+    if (this.state.controller !== undefined) {
       this.state.controller.abort()
     }
     try {
       const controller = new AbortController()
       this.setState({
-        status: "Fetching...",
-        controller
+        status: 'Fetching...',
+        controller,
       })
       const meta_promise = this.state.collection_fields.map(async (field) => {
-      const { response: meta_stats } = await fetch_meta({
-        endpoint: `/libraries/${id}/signatures/value_count`,
-        body: {
-          filter: {
-            fields: [field],
+        const { response: meta_stats } = await fetch_meta({
+          endpoint: `/libraries/${id}/signatures/value_count`,
+          body: {
+            filter: {
+              fields: [field],
+            },
           },
-        },
-        signal: controller.signal,
+          signal: controller.signal,
+        })
+        return meta_stats
       })
-      return meta_stats
-    })
       const meta = await Promise.all(meta_promise)
       const meta_stats = meta.reduce((mapping, item) => {
         mapping = { ...item, ...mapping }
@@ -123,7 +117,7 @@ export default class Library extends React.Component {
           Preferred_Name: item.Preferred_Name_Singular || item.Preferred_Name || item.Field_Name,
           table: item.Table,
           stats: meta_stats[item.Field_Name],
-          slice: item.Slice || 14
+          slice: item.Slice || 14,
         }
       })
       const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {
@@ -131,9 +125,9 @@ export default class Library extends React.Component {
         return piestats
       }, {})
       this.setState({
-        pie_fields_and_stats
+        pie_fields_and_stats,
       })
-    } catch(e) {
+    } catch (e) {
       if (e.code !== DOMException.ABORT_ERR) {
         // TO DO display status upon fail
         this.setState((prevState) => ({
@@ -143,11 +137,10 @@ export default class Library extends React.Component {
     }
   }
 
-  render(){
-    const { classes } = this.props
-    return(
+  render = () => {
+    return (
       <div>
-        {this.state.data === undefined ? null:
+        {this.state.data === undefined ? null :
           <Grid container
             spacing={24}
             alignItems={'center'}>
