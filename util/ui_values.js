@@ -1,21 +1,7 @@
 import { fetch_meta } from '../util/fetch/meta'
 
 export const UIValues = {
-  'landing': async (values) => {
-    let library_name
-    if (values.library_name === undefined) {
-      console.warn('library name is undefined, using key_count values')
-      const { response } = await fetch_meta({ endpoint: `/libraries/count` })
-      const { response: fields } = await fetch_meta({
-        endpoint: `/libraries/key_count`,
-      })
-      const field_candidate = Object.keys(fields).filter((key) => fields[key] === response.count && key.indexOf('validator') === -1)
-      if (field_candidate.length === 0) {
-        console.error('Error: No shared library key exist, please define library_name on your schema')
-      } else {
-        library_name = field_candidate[0]
-      }
-    }
+  'landing': (values) => {
     return (
       {
         LandingText: {
@@ -125,21 +111,7 @@ export const UIValues = {
       }
     )
   },
-  'admin': async (values) => {
-    let library_name
-    if (values.library_name === undefined) {
-      console.warn('library name is undefined, using key_count values')
-      const { response } = await fetch_meta({ endpoint: `/libraries/count` })
-      const { response: fields } = await fetch_meta({
-        endpoint: `/libraries/key_count`,
-      })
-      const field_candidate = Object.keys(fields).filter((key) => fields[key] === response.count && key.indexOf('validator') === -1)
-      if (field_candidate.length === 0) {
-        console.error('Error: No shared library key exist, please define library_name on your schema')
-      } else {
-        library_name = field_candidate[0]
-      }
-    }
+  'admin': (values) => {
     return (
       {
         LandingText: {

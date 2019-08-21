@@ -99,7 +99,7 @@ export async function get_ui_values() {
       },
     },
   })
-  const ui_values = await UIValues['admin'](ui_val[0].meta.content)
+  const ui_values = UIValues['admin'](ui_val[0].meta.content)
   return { ui_values }
 }
 

@@ -6,8 +6,12 @@
         "Field_Name": "Version",
         "Caption": "Datasets per year"
       },
-      "library_name": "Library_name",
-      "resource_name": "${meta.Resource_Name}",
+      "entity_name": [
+        "meta.Name"
+      ],
+      "entity_synonyms": [
+        "meta.Synonyms"
+      ],
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json"
     }
@@ -20,8 +24,6 @@
         "Field_Name": "Version",
         "Caption": "Datasets per year"
       },
-      "library_name": "Library_name",
-      "resource_name": "${meta.Resource_Name}",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
     }
   }

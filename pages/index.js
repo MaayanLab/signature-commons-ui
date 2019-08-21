@@ -284,7 +284,7 @@ export async function get_ui_values() {
     },
   })
   const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
-  const ui_values = await UIValues['landing'](values)
+  const ui_values = UIValues['landing'](values)
   return { ui_values }
 }
 

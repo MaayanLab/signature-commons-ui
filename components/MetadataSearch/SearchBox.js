@@ -118,7 +118,8 @@ class MetadataSearchBox extends React.Component {
       backgroundColor = '#FFEAD9'
       chip_value = value.substring(3)
     } else if (value.startsWith('|')) {
-      // not
+      // or
+      icon = 'mdi-equal-box mdi-rotate-90'
       backgroundColor = '#FFEAD9'
       chip_value = value.substring(1)
     }

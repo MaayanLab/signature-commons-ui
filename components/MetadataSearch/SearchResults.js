@@ -26,7 +26,6 @@ export default class SearchResults extends React.Component {
       librariescontroller: undefined,
       signaturescontroller: undefined,
       entitiescontroller: undefined,
-      library_name: this.props.ui_values.library_name,
       index_value: 0,
       signaturesRowsPerPage: 10,
       signaturesPage: 0,

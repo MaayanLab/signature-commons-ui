@@ -263,88 +263,77 @@ export default class Home extends React.PureComponent {
           const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
           const signature_id = input.id || uuid5(JSON.stringify(resolved_entities))
           const results = await query_overlap({
-            ...this.state.signature_search,
-            ...props,
-            input: {
-              entities: resolved_entities,
-            },
+          ...this.state.signature_search,
+          ...props,
+          input: {
+            entities: resolved_entities,
+          },
+        })
+        this.setState((prevState) => ({
+          signature_search: {
+            ...prevState.signature_search,
+            ...results,
             mismatched,
             input: {
               ...prevState.signature_search.input,
+              entities: resolved_entities,
               id: signature_id,
             },
+            status: "",
           },
         }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
-      } else if (input.type === 'Rank') {
-        const unresolved_up_entities = parse_entities(input.up_geneset)
-        const unresolved_down_entities = parse_entities(input.down_geneset)
-        const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
-        const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
-        if (mismatched.count() > 0) {
-          M.toast({
-            html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
-            classes: 'rounded',
-            displayLength: 4000,
+        } else if (input.type === 'Rank') {
+            const unresolved_up_entities = parse_entities(input.up_geneset)
+            const unresolved_down_entities = parse_entities(input.down_geneset)
+            const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
+            const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
+            if (mismatched.count() > 0) {
+              M.toast({
+                html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
+                classes: 'rounded',
+                displayLength: 4000,
+              })
+            }
+
+            const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
+            const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
+            const signature_id = input.id || uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
+            const results = await query_rank({
+            ...this.state.signature_search,
+            ...props,
+            input: {
+              up_entities: resolved_up_entities,
+              down_entities: resolved_down_entities,
+            },
           })
           this.setState((prevState) => ({
             signature_search: {
               ...prevState.signature_search,
               ...results,
-              mismatched,
               input: {
-                ...prevState.signature_search.input,
-                id: signature_id
+                up_entities: resolved_up_entities,
+                down_entities: resolved_down_entities,
+                id: signature_id,
               },
+              mismatched,
               status: "",
             },
           }), () => NProgress.done())
           this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
-        } else if (input.type === 'Rank') {
-          const unresolved_up_entities = parse_entities(input.up_geneset)
-          const unresolved_down_entities = parse_entities(input.down_geneset)
-          const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
-          const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
-          if (mismatched.count() > 0) {
-            M.toast({
-              html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
-              classes: 'rounded',
-              displayLength: 4000,
-            })
-          }
-
-          const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
-          const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
-          const signature_id = input.id || uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
-          const results = await query_rank({
-              ...this.state.signature_search,
-              ...props,
-              input: {
-                up_entities: resolved_up_entities,
-                down_entities: resolved_down_entities,
-              }
-            })
+        }
+      } catch (e) {
+        if (this.state.metadata_search.currentSearchArray.length === 0){
+          NProgress.done()
+        }
+        if (e.code !== DOMException.ABORT_ERR) {
           this.setState((prevState) => ({
             signature_search: {
               ...prevState.signature_search,
-              ...results,
-              mismatched,
-              input: {
-                ...prevState.signature_search.input,
-                id: signature_id,
-                up_entities: resolved_up_entities,
-                down_entities: resolved_down_entities,
-              },
-              status: "",
+              status: e + '',
             },
-            mismatched,
-            input: {
-              ...prevState.signature_search.input,
-              id: signature_id,
-            },
-          },
-        }), () => NProgress.done())
-        this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
+          }))
+        }
       }
     })
   }

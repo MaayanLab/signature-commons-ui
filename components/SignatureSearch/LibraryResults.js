@@ -226,7 +226,6 @@ export default class LibraryResults extends React.Component {
 
   render() {
     const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
-    console.log(sorted_results)
     return (
       <div className="col s12">
         <ul

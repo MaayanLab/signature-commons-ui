@@ -23,7 +23,7 @@ export const iconOf = {
   'CMAP': `static/images/clueio.ico`,
 }
 
-export async function get_library_resources(ui_values, schemas=undefined) {
+export async function get_library_resources(schemas=undefined) {
   // fetch schemas if missing
   let all_schemas
   if (schemas===undefined){
@@ -162,9 +162,25 @@ export async function get_library_resources(ui_values, schemas=undefined) {
   }
 }
 
-export async function get_signature_counts_per_resources(ui_values, schemas) {
+export async function get_signature_counts_per_resources(ui_values, schemas=undefined) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, library_resource } = await get_library_resources(ui_values, schemas)
+  let all_schemas
+  if (schemas===undefined){
+    const { response: res } = await fetch_meta({
+      endpoint: '/schemas',
+      body: {
+        filter: {
+          where: {
+            'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
+          },
+        },
+      },
+    })
+    all_schemas = res.map(r=>r.meta)
+  }else{
+    all_schemas = schemas
+  }
+  const { libraries, resources, library_resource } = await get_library_resources(all_schemas)
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios
   const count_promises = Object.keys(libraries).map(async (lib_key) => {
@@ -173,10 +189,31 @@ export async function get_signature_counts_per_resources(ui_values, schemas) {
     const { response: stats } = await fetch_meta({
       endpoint: `/libraries/${lib_key}/signatures/count`,
     })
+    // Match schema
+    let matched_schemas = all_schemas.filter(
+        (schema) => objectMatch(schema.match, lib)
+    )
+    if (matched_schemas.length === 0){
+      matched_schemas = default_schemas.filter(
+        (schema) => objectMatch(schema.match, lib)
+      )
+    }
+    if (matched_schemas.length < 1) {
+      console.error('Could not match ui-schema for', lib)
+      return null
+    }
+    let name_prop = Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].name)
+    let library_name
+    if (name_prop.length > 0){
+      library_name = makeTemplate(matched_schemas[0].properties[name_prop[0]].text, lib)
+    } else {
+      console.warn('source of resource name is not defined, using either Library_name or ids')
+      library_name = resource.meta['Library_name'] || lib.id
+    }
 
     return {
       id: lib.id,
-      name: lib.meta[ui_values.library_name],
+      name: library_name,
       count: stats.count,
     }
   })
@@ -199,7 +236,27 @@ export async function get_signature_counts_per_resources(ui_values, schemas) {
     resource.meta.Signature_Count = total_sigs
     return (resource)
   }).reduce((acc, resource) => {
-    acc[resource.meta.Resource_Name || makeTemplate(ui_values.resource_name, resource)] = resource
+    let resource_name
+    let matched_schemas = all_schemas.filter(
+        (schema) => objectMatch(schema.match, resource)
+    )
+    if (matched_schemas.length === 0){
+      matched_schemas = default_schemas.filter(
+        (schema) => objectMatch(schema.match, resource)
+      )
+    }
+    if (matched_schemas.length < 1) {
+      console.error('Could not match ui-schema for', resource)
+      return null
+    }
+    let name_prop = Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].name)
+    if (name_prop.length > 0){
+      resource_name = makeTemplate(matched_schemas[0].properties[name_prop[0]].text, resource)
+    } else {
+      console.warn('source of resource name is not defined, using either Resource_Name or ids')
+      resource_name = resource.meta['Resource_Name'] || resource_id
+    }
+    acc[resource_name] = resource
     return acc
   }, {})
   counts.reduce

@@ -1,7 +1,6 @@
 import { fetch_meta_post } from './meta'
 import { fetch_data } from './data'
 import { get_library_resources } from '../../components/Resources/resources'
-import { get_ui_values } from '../../pages/index'
 
 async function PromiseAllSeq(promises) {
   const resolved = []
@@ -262,11 +261,7 @@ export default class DataProvider {
   }
 
   fetch_resources = async () => {
-    const { ui_values } = await get_ui_values()
-    if (ui_values === undefined || Object.keys(ui_values).length === 0) {
-      console.error('UI Content is undefined')
-    }
-    const { libraries, resources, library_resource } = await get_library_resources(ui_values)
+    const { libraries, resources, library_resource } = await get_library_resources()
     for (const res of Object.values(resources)) {
       const resource = await this.resolve_resource(res)
       resource._fetched = true
