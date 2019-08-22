@@ -2,8 +2,15 @@ import React from 'react'
 import ResourcePage from './ResourcePage'
 import ResourceList from './ResourceList'
 import { Route, Switch } from 'react-router-dom'
+import { connect } from "react-redux";
 
-export default class Resources extends React.PureComponent {
+const mapStateToProps = (state, ownProps) => {
+  return { 
+    ...state.serverSideProps,
+  }
+};
+
+class Resources extends React.PureComponent {
   constructor(props) {
     super(props)
 
@@ -14,8 +21,6 @@ export default class Resources extends React.PureComponent {
 
   resource_list = (props) => (
     <ResourceList
-      resources={Object.values(this.props.resources)}
-      ui_values={this.props.ui_values}
       {...props}
     />
   )
@@ -42,3 +47,5 @@ export default class Resources extends React.PureComponent {
     )
   }
 }
+
+export default connect(mapStateToProps)(Resources)

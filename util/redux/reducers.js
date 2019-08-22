@@ -14,10 +14,11 @@ export const initialState = {
 };
 
 function rootReducer(state = initialState, action) {
+  console.log(action)
   if (action.type === action_definitions.INITIALIZE_SIGCOM) {
     return {
       ...state,
-      ...action.serverSideProps,
+      serverSideProps: action.serverSideProps,
     }
   }
   if (action.type === action_definitions.FETCH_METADATA) {

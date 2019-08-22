@@ -1,31 +1,26 @@
 import React from 'react'
 import { Set } from 'immutable'
-import { connect } from "react-redux";
 import { Route, Switch } from 'react-router-dom'
 import NProgress from 'nprogress'
 import dynamic from 'next/dynamic'
+import { connect } from "react-redux";
 
 import Base from '../../components/Base'
 import { call } from '../../util/call'
 import Landing from '../Landing'
+import Resources from '../Resources'
 import { base_url as meta_url } from '../../util/fetch/meta'
 import '../../styles/swagger.scss'
 
-import { initializeSigcom } from '../../util/redux/actions'
-
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
-const mapStateToProps = state => {
+
+const mapStateToProps = (state, ownProps) => {
   return { 
-    serverSideProps: state.serverSideProps,
+    ...state.serverSideProps,
   }
 };
 
-function mapDispatchToProps(dispatch) {
-  return {
-    initializeSigcom: serverSideProps => dispatch(initializeSigcom(serverSideProps)),
-  };
-}
 
 class Home extends React.PureComponent {
   constructor(props) {
@@ -35,9 +30,6 @@ class Home extends React.PureComponent {
     }
   }
 
-  componentDidMount = async () => {
-    
-  }
 
   // signature_search = (props) => (
   //   <SignatureSearch
@@ -111,45 +103,36 @@ class Home extends React.PureComponent {
     />
     )
 
-  render = () => {
-    if (this.props.serverSideProps===null){
-      return (<span>Loading...</span>)
-    }else {
-      return (<span>Loaded</span>)
-    }
-    // return (
-    //   <Base ui_values={this.props.ui_values}
-    //     handleChange={this.handleChange}
-    //   >
-    //     <style jsx>{`
-    //     #Home {
-    //       background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
-    //       background-attachment: fixed;
-    //       background-repeat: no-repeat;
-    //       background-position: left bottom;
-    //     }
-    //     `}</style>
-    //     <Switch>
-    //       <Route
-    //         exact path="/"
-    //         component={this.landing}
-    //       />
-    //       {this.props.ui_values.nav.resources ?
-    //         <Route
-    //           path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-    //           component={this.resources}
-    //         /> : null
-    //       }
-    //       <Route
-    //         path="/API"
-    //         component={this.api}
-    //       />
-    //     </Switch>
-    //   </Base>
-    // )
-  }
+  render = () => (
+    <Base ui_values={this.props.ui_values}
+      handleChange={this.handleChange}
+    >
+      <style jsx>{`
+      #Home {
+        background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-position: left bottom;
+      }
+      `}</style>
+      <Switch>
+        <Route
+          exact path="/"
+          component={props => (<span>Hi</span>)}//{this.landing}
+        />
+        {this.props.ui_values.nav.resources ?
+          <Route
+            path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+            component={this.resources}
+          /> : null
+        }
+        <Route
+          path="/API"
+          component={this.api}
+        />
+      </Switch>
+    </Base>
+  )
 }
-const options = {
-  forwardRef : true
-}
-export default connect(mapStateToProps, mapDispatchToProps, null, options )(Home)
+
+export default connect(mapStateToProps)(Home)

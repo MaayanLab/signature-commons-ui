@@ -14,8 +14,6 @@ import { withScreenSize } from '@vx/responsive'
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
 import { landingStyle } from '../../styles/jss/theme.js'
 
-import { Title } from 'react-admin'
-
 function sum(arr, prop) {
   let total = 0
   for (let i = 0, _len = arr.length; i < _len; i++) {
@@ -192,7 +190,6 @@ const StatRow = function({ classes, record = {}, ...props }) {
 export const Dashboard = withStyles(landingStyle)(function({ classes, record = {}, ...props }) {
   return (
     <div className={classes.root}>
-      <Title title="Signature Commons Dashboard" />
       <Grid container spacing={24}>
         { props.table_counts.length === 0 ? null :
           <Grid item xs={12}>

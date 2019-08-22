@@ -4,10 +4,14 @@ import { call } from '../../util/call'
 import ShowMeta from '../../components/ShowMeta'
 import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
-import M from 'materialize-css'
 import NProgress from 'nprogress'
 import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+
 import { makeTemplate } from '../../util/makeTemplate'
+import { connect } from 'react-redux';
 
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
@@ -17,10 +21,16 @@ const download = {
   resources: download_resource_json,
 }
 
-export default class ResourcePage extends React.Component {
-  componentDidMount() {
-    M.AutoInit()
+const mapStateToProps = (state, ownProps) => {
+  const {ui_values, resources, schemas} = state.serverSideProps
+  return { 
+    ui_values,
+    resources: Object.values(resources),
+    schemas
   }
+};
+
+class ResourcePage extends React.Component {
 
   redirectLink(url) {
     return (e) => window.open(url, '_blank').focus()
@@ -33,6 +43,39 @@ export default class ResourcePage extends React.Component {
   }
 
   render() {
+    // return (
+    //   <Grid
+    //     container
+    //     direction="row"
+    //   >
+    //     <Grid item xs={12}>
+    //       <Card>
+    //         <CardContent>
+    //           <Grid
+    //             container
+    //             direction="row"
+    //           >
+    //             <Grid item xs={1}>
+    //               <Link
+    //                 to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+    //                 className="waves-effect waves-teal"
+    //               >
+    //                 <IconButton
+    //                   img={this.props.resource.meta.icon}
+    //                   onClick={call(this.redirectLink, '/')}
+    //                 />
+    //               </Link>
+    //             </Grid>
+    //             <Grid item xs={11}>
+    //             </Grid>
+    //           </Grid>
+    //         </CardContent>
+    //         <CardActions>
+    //         </CardActions>
+    //       </Card>
+    //     </Grid>
+    //   </Grid>
+    // )
     return (
       <div className="row">
         <div className="col s12">
@@ -155,3 +198,6 @@ export default class ResourcePage extends React.Component {
     )
   }
 }
+
+export default connect(mapStateToProps)(ResourcePage)
+

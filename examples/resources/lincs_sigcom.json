@@ -18,7 +18,8 @@
       "type": "text",
       "field": "Description",
       "text": "${meta.description}",
-      "priority": 2
+      "priority": 2,
+      "description": true
     },
     "URL": {
       "visibility": 1,

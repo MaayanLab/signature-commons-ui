@@ -1,19 +1,22 @@
 import React from 'react'
 import { withRouter, Link } from 'react-router-dom'
+import { connect } from "react-redux";
+
+const mapStateToProps = (state, ownProps) => {
+  return { 
+    ui_values: state.serverSideProps.ui_values,
+  }
+};
 
 export function Nav(props) {
-  const { ui_values, handleChange, ...rest } = props
+  const { ui_values, ...rest } = props
   return (
     <ul {...rest}>
       {ui_values.nav.metadata_search ?
         <li
           className={rest.location.pathname === '/MetadataSearch' ? 'active' : ''}
         >
-          <Link to={rest.location.pathname === '/MetadataSearch' ? '/MetadataSearch' : '/'}
-            onClick={(e) => {
-              handleChange(e, 'metadata', true)
-            }}
-          >
+          <Link to={'/MetadataSearch'}>
             Metadata Search
           </Link>
         </li> : null
@@ -22,11 +25,7 @@ export function Nav(props) {
         <li
           className={rest.location.pathname === '/SignatureSearch' ? 'active' : ''}
         >
-          <Link to={rest.location.pathname === '/SignatureSearch' ? '/SignatureSearch' : '/'}
-            onClick={(e) => {
-              handleChange(e, 'signature', true)
-            }}
-          >
+          <Link to={'/SignatureSearch'}>
             Signature Search
           </Link>
         </li> : null
@@ -52,7 +51,7 @@ export function Nav(props) {
 }
 
 
-export default withRouter((props) => {
+const Header = (props) => {
   const paths = props.location.pathname.split('/')
   return (
     <header>
@@ -104,4 +103,6 @@ export default withRouter((props) => {
       </nav>
     </header>
   )
-})
+}
+
+export default connect(mapStateToProps)(withRouter((Header)))

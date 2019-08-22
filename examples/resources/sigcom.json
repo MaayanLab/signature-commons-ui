@@ -6,7 +6,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${meta['icon']}",
+      "src": "${PREFIX}${meta['icon']}",
       "alt": "${meta['Resource_Name']}",
       "text": "${meta['Resource_Name']}",
       "priority": 1,
@@ -17,8 +17,9 @@
       "visibility": 1,
       "type": "text",
       "field": "Description",
-      "text": "${meta['Description']}",
-      "priority": 2
+      "text": "${meta['description']}",
+      "priority": 2,
+      "description": true
     },
     "PMID": {
       "visibility": 1,

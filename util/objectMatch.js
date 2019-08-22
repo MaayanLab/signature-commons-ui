@@ -1,4 +1,11 @@
 import { makeTemplate } from "./makeTemplate"
+import { get_schemas } from "./helper/fetch_methods"
+
+export const default_schemas = [
+  require('../examples/library/default.json'),
+  require('../examples/signature/default.json'),
+  require('../examples/entities/default.json'),
+]
 
 export function objectMatch(m, o) {
   if (m === undefined) {
@@ -32,4 +39,21 @@ export function objectMatch(m, o) {
     }
   }
   return true
+}
+
+export async function findMatchedSchema(item, schemas=undefined){
+  if (schemas===undefined){
+    const { schemas: s } = await get_schemas()
+    schemas = s
+  }
+  const schemas_with_default = [...schemas, ...default_schemas]
+  const matched_schemas = schemas_with_default.filter(
+      (schema) => objectMatch(schema.match, item)
+  )
+
+  if (matched_schemas.length < 1) {
+    console.error('Could not match ui-schema for item', item)
+    return null
+  }
+  else return matched_schemas[0]
 }

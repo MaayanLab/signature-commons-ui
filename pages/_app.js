@@ -9,7 +9,8 @@ import NProgress from 'nprogress'
 import Error from './_error'
 import serializeError from 'serialize-error'
 import '../styles/index.scss'
-import withReduxStore from '../util/wrapper/with-redux-store'
+import withRedux from "next-redux-wrapper";
+import initializeStore from '../util/redux/store'
 
 NProgress.configure({ showSpinner: false })
 
@@ -18,8 +19,6 @@ Router.events.on('hashChangeStart', (url) => NProgress.start())
 Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('hashChangeComplete', (url) => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
-
-const store = dynamic(() => import('../util/redux/store'), { ssr: false })
 
 class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -65,7 +64,7 @@ class App_ extends App {
   }
 
   render() {
-    const { Component, reduxStore } = this.props
+    const { Component, store } = this.props
     const { pageProps, loaded } = this.state
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
@@ -75,7 +74,7 @@ class App_ extends App {
       )
     }
     return (
-      <Provider store={reduxStore}>
+      <Provider store={store}>
         <Container className="root">
           {loaded ? (
               <Component {...pageProps} />
@@ -90,4 +89,4 @@ class App_ extends App {
   }
 }
 
-export default withReduxStore(App_)
+export default withRedux(initializeStore)(App_);

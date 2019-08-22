@@ -25,7 +25,8 @@
       "type": "text",
       "field": "description",
       "text": "${meta['description']}",
-      "priority": 2
+      "priority": 2,
+      "description": true,
     },
     "Institution": {
       "visibility": 1,

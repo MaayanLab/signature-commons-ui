@@ -1,6 +1,7 @@
 import { action_definitions } from "./action-types";
 
 export function initializeSigcom(serverSideProps) {
+  console.log({type: action_definitions.INITIALIZE_SIGCOM, serverSideProps})
   return {type: action_definitions.INITIALIZE_SIGCOM, serverSideProps}
 }
 

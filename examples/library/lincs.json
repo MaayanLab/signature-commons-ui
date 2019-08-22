@@ -18,6 +18,13 @@
       "text": "${meta['Library_name']}",
       "priority": 2,
       "name": true
+    },
+    "Description": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta['Description']}",
+      "priority": 2,
+      "description": true
     }
   }
 }

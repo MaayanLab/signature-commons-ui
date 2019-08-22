@@ -16,16 +16,13 @@ const enhancers = storeEnhancers(
 );
 
 const store = createStore(
-  rootReducer,
-  enhancers,
-);
-
-sagaMiddleware.run(rootSaga);
-
-export default function initializeStore (initialState = initialState) {
-  return createStore(
     rootReducer,
     initialState,
     enhancers,
   )
+
+sagaMiddleware.run(rootSaga);
+
+export default function initializeStore (initialState = initialState) {
+  return store
 }
