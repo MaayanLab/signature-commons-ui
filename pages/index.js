@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+
 import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
 import { get_signature_counts_per_resources } from '../components/Resources/resources.js'
 import { UIValues } from '../util/ui_values'
@@ -312,11 +313,11 @@ App.getInitialProps = async () => {
   const schemas = await get_schemas(ui_values)
   const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
   const { table_counts, ui_values: ui_val } = await get_counts(Object.keys(resources).length, ui_values)
-  const { meta_counts } = await get_metacounts(ui_val)
-  const { pie_fields_and_stats } = await get_pie_stats(ui_val)
+  const { meta_counts } = {}//await get_metacounts(ui_val)
+  const { pie_fields_and_stats } = {} // await get_pie_stats(ui_val)
   const signature_keys = await get_signature_keys()
   const { barcounts } = await get_barcounts(ui_val)
-  return {
+  const serverSideProps = {
     table_counts,
     meta_counts,
     resource_signatures,
@@ -329,6 +330,7 @@ App.getInitialProps = async () => {
     ui_values: ui_val,
     schemas,
   }
+  return { serverSideProps } 
 }
 
 export default App

@@ -1,12 +1,10 @@
 import { action_definitions } from "./action-types";
 
-export function initializeSigcom(payload) {
-  console.log(payload)
-  return {type: action_definitions.INITIALIZE_SIGCOM, payload}
+export function initializeSigcom(serverSideProps) {
+  return {type: action_definitions.INITIALIZE_SIGCOM, serverSideProps}
 }
 
 export function fetchMetaData(payload) {
-  console.log(payload)
   return {type: action_definitions.FETCH_METADATA, payload}
 }
 
@@ -21,6 +19,27 @@ export function matchEntity(input) {
 export function findSignature(input) {
   return {type: action_definitions.FIND_SIGNATURES, input}
 }
+
 export function updateResolvedEntities(input){
   return {type: action_definitions.UPDATE_RESOLVED_ENTITIES, input}
+}
+
+export function fetchMetaDataSucceeded(results){
+  return {type: action_definitions.FETCH_METADATA_SUCCEEDED, results}
+}
+
+export function fetchMetaDataFailed(error){
+  return {type: action_definitions.FETCH_METADATA_FAILED, error}
+}
+
+export function matchFailed(error){
+  return {type: action_definitions.MATCH_FAILED, error}
+}
+
+export function findSignaturesSucceeded(signature_result) {
+  return {type: action_definitions.FIND_SIGNATURES_SUCCEEDED, signature_result}
+}
+
+export function findSignaturesFailed(error) {
+  return {type: action_definitions.FIND_SIGNATURES_FAILED, error}
 }

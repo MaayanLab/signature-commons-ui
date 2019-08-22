@@ -1,17 +1,25 @@
 import { Set } from 'immutable'
 import { action_definitions } from "./action-types";
 
-const initialState = {
-  search: '',
+export const initialState = {
+  serverSideProps: null,
+  search: [],
   results: {},
   completed: true,
   loading_metadata: false,
   loading_matches: false,
   loading_signature: false,
   signature_input: {},
+  signature_results: {},
 };
 
 function rootReducer(state = initialState, action) {
+  if (action.type === action_definitions.INITIALIZE_SIGCOM) {
+    return {
+      ...state,
+      ...action.serverSideProps,
+    }
+  }
   if (action.type === action_definitions.FETCH_METADATA) {
     return {
       ...state,

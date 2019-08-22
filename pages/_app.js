@@ -1,11 +1,15 @@
 
 import React from 'react'
 import App, { Container } from 'next/app'
+import { Provider } from "react-redux";
+import dynamic from 'next/dynamic'
+
 import Router from 'next/router'
 import NProgress from 'nprogress'
 import Error from './_error'
 import serializeError from 'serialize-error'
 import '../styles/index.scss'
+import withReduxStore from '../util/wrapper/with-redux-store'
 
 NProgress.configure({ showSpinner: false })
 
@@ -15,7 +19,9 @@ Router.events.on('routeChangeComplete', () => NProgress.done())
 Router.events.on('hashChangeComplete', (url) => NProgress.done())
 Router.events.on('routeChangeError', () => NProgress.done())
 
-export default class extends App {
+const store = dynamic(() => import('../util/redux/store'), { ssr: false })
+
+class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {}
     if (process.env.NODE_ENV === 'production' && Component.getInitialProps) {
@@ -59,7 +65,7 @@ export default class extends App {
   }
 
   render() {
-    const { Component } = this.props
+    const { Component, reduxStore } = this.props
     const { pageProps, loaded } = this.state
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
@@ -69,15 +75,19 @@ export default class extends App {
       )
     }
     return (
-      <Container className="root">
-        {loaded ? (
-          <Component {...pageProps} />
-        ) : (
-          <div>
-            Loading Page...
-          </div>
-        )}
-      </Container>
+      <Provider store={reduxStore}>
+        <Container className="root">
+          {loaded ? (
+              <Component {...pageProps} />
+          ) : (
+            <div>
+              Loading Page...
+            </div>
+          )}
+        </Container>
+      </Provider>
     )
   }
 }
+
+export default withReduxStore(App_)

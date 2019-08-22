@@ -8,6 +8,12 @@ import { build_where,
   find_synonyms,
   query_overlap,
   query_rank } from "../helper/fetch_methods"
+import { fetchMetaDataSucceeded,
+  fetchMetaDataFailed,
+  updateResolvedEntities,
+  matchFailed,
+  findSignaturesSucceeded,
+  findSignaturesFailed } from "../redux/actions"
 
 // Metadata Search
 export function* workFetchMetaData(action) {
@@ -29,17 +35,16 @@ export function* workFetchMetaData(action) {
           controller,
           search
         })
-        yield put({type: action_definitions.FETCH_METADATA_SUCCEEDED, results})
+        yield put(fetchMetaDataSucceeded(results))
       }
    } catch (error) {
       console.log(error)
-      yield put({type: action_definitions.FETCH_METADATA_FAILED, error})
+      yield put(fetchMetaDataFailed(error))
       controller.abort()
    } finally {
       if (yield cancelled()){
         controller.abort()
-        console.log("aborted")
-        yield put({type: action_definitions.FETCH_METADATA_FAILED, error: "aborted"})
+        yield put(fetchMetaDataFailed("aborted"))
       }
    }
 }
@@ -70,7 +75,7 @@ export function* workMatchEntities(action) {
           unresolved,
           mismatched
         }
-        yield put({type: action_definitions.UPDATE_RESOLVED_ENTITIES, input})
+        yield put(updateResolvedEntities(input))
       }else if (input.type === 'Rank'){
         const unresolved_entities = input.unresolved
         const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
@@ -96,17 +101,16 @@ export function* workMatchEntities(action) {
           mismatched,
           resolvable
         }
-        yield put({type: action_definitions.UPDATE_RESOLVED_ENTITIES, input})
+        yield put(updateResolvedEntities(input))
       }
    } catch (error) {
       console.log(error)
-      yield put({type: action_definitions.MATCH_FAILED, error})
+      yield put(matchFailed(error))
       controller.abort()
    } finally {
       if (yield cancelled()){
         controller.abort()
-        console.log("aborted")
-        yield put({type: action_definitions.MATCH_FAILED, error: "aborted"})
+        yield put(matchFailed("aborted"))
       }
    }
 }
@@ -129,17 +133,15 @@ export function* workFindSignature(action) {
       }else if (input.type==="Rank"){
         console.log(input)
         const signature_result = yield call(query_rank, { input, controller } )
-        yield put({type: action_definitions.FIND_SIGNATURES_SUCCEEDED, signature_result})
+        yield put(findSignaturesSucceeded(signature_result))
       }
    } catch (error) {
-      console.log(error)
-      yield put({type: action_definitions.FIND_SIGNATURES_FAILED, error})
+      yield put(findSignaturesFailed(error))
       controller.abort()
    } finally {
       if (yield cancelled()){
         controller.abort()
-        console.log("aborted")
-        yield put({type: action_definitions.FIND_SIGNATURES_FAILED, error: "aborted"})
+        yield put(findSignaturesFailed("aborted"))
       }
    }
 }
