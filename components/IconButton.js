@@ -12,8 +12,9 @@ const styles = theme => ({
     textTransform: 'none',
     width: 100,
     minHeight: 100,
-    overflow: "hidden",
-    textOverflow: 'ellipsis',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    overflow: 'visible',
   },
   image: {
     maxWidth: 60,

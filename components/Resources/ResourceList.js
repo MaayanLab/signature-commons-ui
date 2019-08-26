@@ -28,7 +28,7 @@ class ResourceList extends React.PureComponent {
 
   async componentDidMount() {
     window.scrollTo(0, 0)
-    const schema = await findMatchedSchema(this.props.resources[0])
+    const schema = await findMatchedSchema(this.props.resources[0], this.props.schemas)
     const name_props = Object.values(schema.properties).filter(prop=>prop.name)
     const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
     const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
@@ -57,7 +57,7 @@ class ResourceList extends React.PureComponent {
       description_prop,} = this.state
 
     if (sorted_resources.length === 0 ){
-      return <div />
+      return <div> hi</div>
     }
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
@@ -69,9 +69,12 @@ class ResourceList extends React.PureComponent {
         direction="row"
       >
         {sorted_resources.map((resource) => {
-          
           return (
-            <Grid item xs={xs} sm={sm} md={md} key={resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}>
+            <Grid item xs={xs} sm={sm} md={md} 
+                  justify="center"
+                  alignItems="center" 
+                  style={{textAlign: 'center',}}
+                  key={resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}>
               <Link
                 key={resource.id}
                 to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource)}`}

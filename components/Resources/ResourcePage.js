@@ -5,13 +5,22 @@ import ShowMeta from '../../components/ShowMeta'
 import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
 import NProgress from 'nprogress'
+import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
+import Button from '@material-ui/core/Button';
 
 import { makeTemplate } from '../../util/makeTemplate'
 import { connect } from 'react-redux';
+import { findMatchedSchema } from '../../util/objectMatch'
 
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
@@ -25,15 +34,45 @@ const mapStateToProps = (state, ownProps) => {
   const {ui_values, resources, schemas} = state.serverSideProps
   return { 
     ui_values,
-    resources: Object.values(resources),
+    resources,
     schemas
   }
 };
 
 class ResourcePage extends React.Component {
 
+  constructor(props){
+    super(props)
+    this.state = {
+      resource: null,
+      schema: null,
+      expanded_id: null,
+    }
+  }
   redirectLink(url) {
     return (e) => window.open(url, '_blank').focus()
+  }
+
+  async componentDidMount(){
+    const resource_name = this.props.match.params.resource
+    const resource = this.props.resources[resource_name]
+    console.log(this.props.resources)
+    const schema = await findMatchedSchema(resource, this.props.schemas)
+    const name_props = Object.values(schema.properties).filter(prop=>prop.name)
+    const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
+    const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
+    const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
+    const description_props = Object.values(schema.properties).filter(prop=>prop.description)
+    const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
+
+    this.setState({
+      schema,
+      resource,
+      icon_prop,
+      name_prop,
+      description_prop,
+    })
+
   }
 
   async handleDownload(type, id) {
@@ -42,159 +81,146 @@ class ResourcePage extends React.Component {
     NProgress.done()
   }
 
-  render() {
-    // return (
-    //   <Grid
-    //     container
-    //     direction="row"
-    //   >
-    //     <Grid item xs={12}>
-    //       <Card>
-    //         <CardContent>
-    //           <Grid
-    //             container
-    //             direction="row"
-    //           >
-    //             <Grid item xs={1}>
-    //               <Link
-    //                 to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-    //                 className="waves-effect waves-teal"
-    //               >
-    //                 <IconButton
-    //                   img={this.props.resource.meta.icon}
-    //                   onClick={call(this.redirectLink, '/')}
-    //                 />
-    //               </Link>
-    //             </Grid>
-    //             <Grid item xs={11}>
-    //             </Grid>
-    //           </Grid>
-    //         </CardContent>
-    //         <CardActions>
-    //         </CardActions>
-    //       </Card>
-    //     </Grid>
-    //   </Grid>
-    // )
-    return (
-      <div className="row">
-        <div className="col s12">
+  handleExpand = (e) =>{
+    const id = e.target.value
+    if (this.state.expanded_id===id){
+      // If you click the same card then collapse it
+      this.setState({
+        expanded_id: null
+      })
+    }else{
+      this.setState({
+        expanded_id: id
+      })
+    }
+  }
 
-          <div className="row">
-            <div className="col s12">
-              <div className="card">
-                <div className="row">
-                  <div className="col s12">
-                    <div className="card-image col s1">
-                      <Link
-                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                        className="waves-effect waves-teal"
-                      >
-                        <IconButton
-                          img={this.props.resource.meta.icon}
-                          onClick={call(this.redirectLink, '/')}
-                        />
-                      </Link>
-                    </div>
-                    <div className="card-content col s11">
-                      <div>
-                        <span className="card-title">{this.props.resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, this.props.resource)}</span>
-                      </div>
-                      <ShowMeta
-                        value={{
-                          '@id': this.props.resource.id,
-                          '@type': this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
-                          'meta': Object.keys(this.props.resource.meta).filter((key) => (
-                            ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
-                            acc[key] = this.props.resource.meta[key]
-                            return acc
-                          }, {}),
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="card-action">
-                  <Grid container justify="space-between">
-                    <Grid item xs={1}>
-                    </Grid>
-                    <Grid item xs={1}>
-                      <Link
-                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                        className="waves-effect waves-teal btn-flat"
-                      >
-                        BACK
-                      </Link>
-                    </Grid>
-                  </Grid>
-                </div>
-              </div>
-            </div>
-          </div>
-          {!this.props.resource.is_library ?
-            <div className="row">
-              <div className="col s12">
-                <ul
-                  className="collapsible popout"
-                >
-                  {this.props.resource.libraries.map((library) => (
-                    <li
-                      key={library.id}
+  render() {
+    if (this.state.resource===null){
+      return <div />
+    }
+    const {resource,
+      icon_prop,
+      name_prop,
+      description_prop,} = this.state
+    return (
+      <Grid
+        container
+        direction="row"
+      >
+        <Grid item xs={12}>
+          <Card>
+            <Grid
+                container
+                direction="row"
+              >
+                <Grid item xs={1}>
+                  <CardMedia style={{marginTop:-10}}>
+                    <Link
+                      to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                      className="waves-effect waves-teal"
                     >
-                      <div
-                        className="page-header"
-                        style={{
-                          padding: 10,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          backgroundColor: 'rgba(255,255,255,1)',
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                          }}>
-                          <Label
-                            item={library}
-                            visibility={1}
-                            schemas={this.props.schemas}
-                          />
-                          &nbsp;
-                          <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                          <a
-                            href="javascript:void(0);"
-                            className="collapsible-header"
-                            style={{ border: 0 }}
-                          >
-                            <i className="material-icons">expand_more</i>
-                          </a>
-                        </div>
-                      </div>
-                      <div
-                        className="collapsible-body"
-                        style={{
-                          overflowWrap: 'break-word',
-                          wordWrap: 'break-word',
-                        }}
-                      >
+                      <IconButton
+                        src={`${makeTemplate(icon_prop, resource)}`}
+                        description={"Go back to resource list"}
+                      />
+                    </Link>
+                  </CardMedia>
+                </Grid>
+                <Grid item xs={11}>
+                  <CardContent>
+                    <Grid
+                      container
+                      direction="row"
+                    >
+                      <Grid item xs={12}>
+                        <Typography variant="display1" gutterBottom>
+                          {makeTemplate(name_prop, resource)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
                         <ShowMeta
                           value={{
-                            '@id': library.id,
-                            '@type': 'Library',
-                            'meta': library.meta,
+                            '@id': resource.id,
+                            '@type': this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
+                            'meta': Object.keys(resource.meta).filter((key) => (
+                              ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
+                              acc[key] = resource.meta[key]
+                              return acc
+                            }, {}),
                           }}
                         />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                  <CardActions>
+                    <Grid container justify="space-between">
+                      <Grid item xs={1}>
+                      </Grid>
+                      <Grid item xs={1}>
+                        <Link
+                          to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                          className="waves-effect waves-teal btn-flat"
+                        >
+                          <span style={{color:"orange"}}>BACK</span>
+                        </Link>
+                      </Grid>
+                    </Grid>
+                  </CardActions>
+                </Grid>
+              </Grid>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
+          { !resource.is_library ?
+            <div style={{margin: '20px 0'}}>
+            {resource.libraries.map((library) => (
+              <Card key={library.id}>
+                <CardContent>
+                  <Grid
+                    container
+                    direction="row"
+                    justify="space-between"
+                  >
+                    <Grid item xs={11}>
+                      <Label
+                        item={library}
+                        visibility={1}
+                        schemas={this.props.schemas}
+                      />
+                    </Grid>
+                    <Grid item xs={1} style={{textAlign: "right"}}>
+                      <Button className={`mdi
+                        ${this.state.expanded_id===library.id ? 'mdi-chevron-up': 'mdi-chevron-down'}
+                        mdi-24px`}
+                        style={{padding: '0 20px'}}
+                        onClick={this.handleExpand}
+                        value={library.id}
+                        />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+                <Collapse in={this.state.expanded_id===library.id} timeout="auto" unmountOnExit>
+                  <CardContent>
+                    <ShowMeta
+                      value={{
+                        '@id': library.id,
+                        '@type': 'Library',
+                        'meta': library.meta,
+                      }}
+                    />
+                  </CardContent>
+                </Collapse>
+              </Card>
+            ))}
             </div> :
-            null
+            null 
           }
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     )
   }
 }
