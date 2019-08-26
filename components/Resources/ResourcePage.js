@@ -1,4 +1,5 @@
 import React from 'react'
+import isUUID from 'validator/lib/isUUID';
 import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
 import ShowMeta from '../../components/ShowMeta'
@@ -17,6 +18,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import Button from '@material-ui/core/Button';
+
+import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
 
 import { makeTemplate } from '../../util/makeTemplate'
 import { connect } from 'react-redux';
@@ -54,9 +57,29 @@ class ResourcePage extends React.Component {
   }
 
   async componentDidMount(){
-    const resource_name = this.props.match.params.resource
-    const resource = this.props.resources[resource_name]
-    console.log(this.props.resources)
+    let res = this.props.match.params.resource.replace(/_/g, ' ')
+    let resource
+    console.log(res)
+    if (isUUID(res+'')){
+      // uuid fetch resource
+      const {response} = await fetch_meta({
+        endpoint: `/resources/${res}`
+      })
+      resource = response
+      const {response: libraries} = await fetch_meta_post({
+        endpoint: `/libraries/find`,
+        body: {
+          filter: {
+            where: {
+              resource: res,
+            }
+          }
+        },
+      })
+      resource.libraries = libraries
+    } else {
+      resource = this.props.resources[res]
+    }
     const schema = await findMatchedSchema(resource, this.props.schemas)
     const name_props = Object.values(schema.properties).filter(prop=>prop.name)
     const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
@@ -73,6 +96,50 @@ class ResourcePage extends React.Component {
       description_prop,
     })
 
+  }
+
+  async componentDidUpdate(prevProps){
+    let res = this.props.match.params.resource.replace(/_/g, ' ')
+    let prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
+    if (res!=prevRes){
+      let resource
+      console.log(res)
+      if (isUUID(res+'')){
+        // uuid fetch resource
+        const {response} = await fetch_meta({
+          endpoint: `/resources/${res}`
+        })
+        resource = response
+        const {response: libraries} = await fetch_meta_post({
+          endpoint: `/libraries/find`,
+          body: {
+            filter: {
+              where: {
+                resource: res,
+              }
+            }
+          },
+        })
+        resource.libraries = libraries
+      } else {
+        resource = this.props.resources[res]
+      }
+      const schema = await findMatchedSchema(resource, this.props.schemas)
+      const name_props = Object.values(schema.properties).filter(prop=>prop.name)
+      const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
+      const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
+      const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
+      const description_props = Object.values(schema.properties).filter(prop=>prop.description)
+      const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
+
+      this.setState({
+        schema,
+        resource,
+        icon_prop,
+        name_prop,
+        description_prop,
+      })
+    }
   }
 
   async handleDownload(type, id) {

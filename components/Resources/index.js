@@ -26,16 +26,12 @@ class Resources extends React.PureComponent {
   )
 
   resource_page = (props) => {
-    const resource = this.props.resources[props.match.params.resource.replace(/_/g, ' ')]
-    return resource === undefined ? null : (
-      <ResourcePage
-        resource={resource}
-        cart={this.props.cart}
-        ui_values={this.props.ui_values}
-        schemas={this.props.schemas}
-        {...props}
-      />
-    )
+    return(<ResourcePage
+      cart={this.props.cart}
+      ui_values={this.props.ui_values}
+      schemas={this.props.schemas}
+      {...props}
+    />)
   }
 
   render() {

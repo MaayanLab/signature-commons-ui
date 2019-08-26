@@ -35,7 +35,6 @@ class ResourceList extends React.PureComponent {
     const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
     const description_props = Object.values(schema.properties).filter(prop=>prop.description)
     const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
-    console.log(description_props[0])
     const sorted_resources = [...this.props.resources].sort((r1, r2) => {
       const r1_name = makeTemplate(name_prop, r1)
       const r2_name = makeTemplate(name_prop, r2)
@@ -77,7 +76,7 @@ class ResourceList extends React.PureComponent {
                   key={resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}>
               <Link
                 key={resource.id}
-                to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource)}`}
+                to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource).replace(/ /g, '_')}`}
               >
                 <IconButton
                   alt={makeTemplate(name_prop, resource)}

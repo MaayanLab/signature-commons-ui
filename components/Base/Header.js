@@ -80,7 +80,7 @@ const Header = (props) => {
         </div>
         <Nav className="sidenav" id="mobile-menu" {...props}/>
 
-        {paths.length <= 2 ? null : (
+        {paths.length <= 3 ? null : (
           <div className="nav-wrapper grey">
             <div className="row">
               <div className="col s12">
