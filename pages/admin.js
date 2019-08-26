@@ -7,7 +7,7 @@ import { get_signature_counts_per_resources } from '../util/helper/resources.js'
 import { get_metacounts,
   get_pie_stats,
   get_barcounts,
-} from './index'
+} from '../util/helper/server_side.js'
 
 // import HomePage from '../components/Home'
 const AdminPage = dynamic(() => import('../components/Admin'), { ssr: false })
