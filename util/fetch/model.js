@@ -1,6 +1,6 @@
 import { fetch_meta_post } from './meta'
 import { fetch_data } from './data'
-import { get_library_resources } from '../../components/Resources/resources'
+import { get_library_resources } from '../helper/resources.js'
 
 async function PromiseAllSeq(promises) {
   const resolved = []

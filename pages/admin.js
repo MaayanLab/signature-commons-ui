@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { UIValues } from '../util/ui_values'
 
 import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
-import { get_signature_counts_per_resources } from '../components/Resources/resources.js'
+import { get_signature_counts_per_resources } from '../util/helper/resources.js'
 import { get_metacounts,
   get_pie_stats,
   get_barcounts,

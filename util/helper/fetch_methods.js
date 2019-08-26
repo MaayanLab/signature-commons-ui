@@ -243,19 +243,19 @@ export async function find_synonyms(props) {
   return { term: props.term, synonyms }
 }
 
-export async function get_schemas(){
-  const { response: res } = await fetch_meta({
-      endpoint: '/schemas',
-      body: {
-        filter: {
-          where: {
-            'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
-          },
+export async function get_schemas(schema_validator) {
+  const { response: schema_db } = await fetch_meta_post({
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': schema_validator || '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
         },
       },
-    })
-  const schemas = res.map(s=>s.meta)
-  return { schemas }
+    },
+  })
+  const schemas = schema_db.map((schema) => (schema.meta))
+  return schemas
 }
 
 export async function query_overlap(props){
@@ -263,6 +263,7 @@ export async function query_overlap(props){
     libraries,
     library_resource,
     schemas,
+    schema_validator,
     controller
   } = props
 
@@ -272,7 +273,7 @@ export async function query_overlap(props){
   let count_data = 0
 
   if (libraries === undefined || library_resource === undefined){
-    const {libraries: l, library_resource: lr} = await get_library_resources(schemas)
+    const {libraries: l, library_resource: lr} = await get_library_resources({schema_validator, schemas})
     libraries = l
     library_resource = lr
   }
@@ -394,6 +395,7 @@ export async function query_rank(props) {
     libraries,
     library_resource,
     schemas,
+    schema_validator,
     controller
   } = props
 
@@ -403,7 +405,7 @@ export async function query_rank(props) {
   let count_data = 0
 
   if (libraries === undefined || library_resource === undefined){
-    const {libraries: l, library_resource: lr} = await get_library_resources(schemas)
+    const {libraries: l, library_resource: lr} = await get_library_resources({schema_validator, schemas})
     libraries = l
     library_resource = lr
   }
@@ -542,6 +544,7 @@ export async function metadataSearcher(props) {
     libraries,
     library_resource,
     schemas,
+    schema_validator,
     controller,
     limit,
     skip,
@@ -551,7 +554,7 @@ export async function metadataSearcher(props) {
   let count_meta = 0
 
   if (libraries === undefined || library_resource === undefined){
-    const {libraries: l, library_resource: lr} = await get_library_resources(schemas)
+    const {libraries: l, library_resource: lr} = await get_library_resources({schema_validator, schemas})
     libraries = l
     library_resource = lr
   }

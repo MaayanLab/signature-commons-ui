@@ -125,14 +125,14 @@ export function* workFindSignature(action) {
    }
   const controller = new AbortController()
   try {
-      let { input } = action
+      let { input, props } = action
       if (input.type==="Overlap"){
         console.log(input)
-        const signature_result = yield call(query_overlap, { input, controller } )
+        const signature_result = yield call(query_overlap, { input, controller, ...props } )
         yield put({type: action_definitions.FIND_SIGNATURES_SUCCEEDED, signature_result})
       }else if (input.type==="Rank"){
         console.log(input)
-        const signature_result = yield call(query_rank, { input, controller } )
+        const signature_result = yield call(query_rank, { input, controller, ...props } )
         yield put(findSignaturesSucceeded(signature_result))
       }
    } catch (error) {

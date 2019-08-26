@@ -2,7 +2,8 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 
 import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
-import { get_signature_counts_per_resources } from '../components/Resources/resources.js'
+import { get_schemas } from '../util/helper/fetch_methods.js'
+import { get_signature_counts_per_resources } from '../util/helper/resources.js'
 import { UIValues } from '../util/ui_values'
 import { initializeSigcom } from '../util/redux/actions'
 import { connect } from "react-redux";
@@ -259,21 +260,6 @@ export async function get_signature_keys() {
   return signature_keys
 }
 
-export async function get_schemas(ui_values) {
-  const { response: schema_db } = await fetch_meta_post({
-    endpoint: '/schemas/find',
-    body: {
-      filter: {
-        where: {
-          'meta.$validator': ui_values.ui_schema,
-        },
-      },
-    },
-  })
-  const schemas = schema_db.map((schema) => (schema.meta))
-  return schemas
-}
-
 export async function get_ui_values() {
   const { response: ui_val } = await fetch_meta_post({
     endpoint: '/schemas/find',
@@ -303,7 +289,7 @@ class App extends React.Component {
   static async getInitialProps() {
     const { ui_values } = await get_ui_values()
     // Check if it has library_name and resource_from_library
-    const schemas = await get_schemas(ui_values)
+    const schemas = await get_schemas(ui_values.ui_schema)
     const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
     const { table_counts, ui_values: ui_val } = await get_counts(Object.keys(resources).length, ui_values)
     // const { meta_counts } = {}//await get_metacounts(ui_val)
