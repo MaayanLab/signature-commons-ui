@@ -201,7 +201,12 @@ export const StatDiv = ({ classes, width, ...props }) => {
   )
 }
 
+const toggleSearch = (e) => {
+  console.log(e.target.value)
+}
+
 export const SearchCard = ({ classes, width, ...props }) => {
+  const {searchType} = props
   const { signature_search, metadata_search } = props.ui_values.nav
   if (signature_search && metadata_search) {
     return (
@@ -213,12 +218,12 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <div className={classes.toggleContainer}>
-              <ToggleButtonGroup value={props.searchType} exclusive onChange={props.handleChange}>
-                <ToggleButton value="metadata">
+              <ToggleButtonGroup value={searchType} exclusive onChange={toggleSearch}>
+                <ToggleButton value="MetadataSearch">
                   <FileFind />
                   Metadata Search
                 </ToggleButton>
-                <ToggleButton value="signature">
+                <ToggleButton value="SignatureSearch">
                   <FindReplace />
                   Signature Search
                 </ToggleButton>
@@ -226,21 +231,14 @@ export const SearchCard = ({ classes, width, ...props }) => {
             </div>
           </Grid>
           <Grid item xs={12}>
-            {props.searchType == 'metadata' ?
+            {props.searchType == 'MetadataSearch' ?
               <SearchBox
-                id='metadata'
-                currentSearchArray={props.currentSearchArray}
-                search_status={props.search_status}
-                currentSearchArrayChange={props.currentSearchArrayChange}
+                id='MetadataSearch'
                 ui_values={props.ui_values}
               /> :
               <GenesetSearchBox
-                input={props.signature_search.input}
-                status={props.signature_search.status}
-                onSubmit={props.submit}
+                input={{type:'Overlap'}}
                 ui_values={props.ui_values}
-                changeSignatureType={props.changeSignatureType}
-                updateSignatureInput={props.updateSignatureInput}
                 {...props}
               />
             }
@@ -258,12 +256,8 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <GenesetSearchBox
-              input={props.signature_search.input}
-              status={props.signature_search.status}
-              onSubmit={props.submit}
+              input={{type:'Overlap'}}
               ui_values={props.ui_values}
-              changeSignatureType={props.changeSignatureType}
-              updateSignatureInput={props.updateSignatureInput}
               {...props}
             />
           </Grid>
@@ -280,11 +274,8 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <SearchBox
-              id='metadata'
-              search_status={props.search_status}
+              id='MetadataSearch'
               ui_values={props.ui_values}
-              currentSearchArray={props.currentSearchArray}
-              currentSearchArrayChange={props.currentSearchArrayChange}
             />
           </Grid>
         </Grid>

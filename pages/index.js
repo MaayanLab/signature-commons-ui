@@ -63,10 +63,10 @@ class App extends React.Component {
     // const { barcounts } = await get_barcounts(ui_val)
     const serverSideProps = {
       table_counts,
-      // meta_counts,
+      meta_counts: {},
       resource_signatures,
-      // pie_fields_and_stats,
-      // barcounts,
+      pie_fields_and_stats: {},
+      barcounts: {},
       // signature_keys,
       libraries,
       resources,

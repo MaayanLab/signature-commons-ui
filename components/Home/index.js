@@ -116,10 +116,6 @@ class Home extends React.PureComponent {
       }
       `}</style>
       <Switch>
-        <Route
-          exact path="/"
-          component={props => (<span>Hi</span>)}//{this.landing}
-        />
         {this.props.ui_values.nav.resources ?
           <Route
             path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
@@ -129,6 +125,14 @@ class Home extends React.PureComponent {
         <Route
           path="/API"
           component={this.api}
+        />
+        <Route
+          path="/not-found"
+          component={(props)=><div />}//{this.landing}
+        />
+        <Route
+          path="/"
+          component={this.landing}//{this.landing}
         />
       </Switch>
     </Base>

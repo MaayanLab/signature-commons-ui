@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
+import { fetchMetaData } from "../../util/redux/actions";
 
 const styles = (theme) => ({
   info: {
@@ -81,6 +82,17 @@ const Info = (props) => {
 class MetadataSearchBox extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      search: [],
+    }
+    this.performSearch = this.performSearch.bind(this);
+  }
+
+  performSearch(search) {
+    this.props.fetchMetaData({ search });
+    this.setState({
+      search
+    })
   }
 
   renderChips = (
@@ -129,8 +141,8 @@ class MetadataSearchBox extends React.Component {
         avatar={<span className={`mdi ${icon} mdi-24px`}/>}
         label={chip_value}
         onDelete={() => {
-          const chips = this.props.currentSearchArray.filter((term) => term != value)
-          this.props.currentSearchArrayChange(chips)
+          const search = this.state.search.filter((term) => term != value)
+          this.performSearch(search)
         }}
         style={{
           pointerEvents: isDisabled ? 'none' : undefined,
@@ -150,9 +162,9 @@ class MetadataSearchBox extends React.Component {
         <div className="input-field">
           <span className="mdi mdi-magnify mdi-36px"></span>
           <ChipInput
-            placeholder={this.props.currentSearchArray.length > 0 ? 'Add filter' :
+            placeholder={this.state.search.length > 0 ? 'Add filter' :
                 this.props.ui_values.LandingText.metadata_placeholder}
-            value={this.props.currentSearchArray}
+            value={this.state.search}
             chipRenderer={this.renderChips}
             disableUnderline
             alwaysShowPlaceholder
@@ -171,16 +183,16 @@ class MetadataSearchBox extends React.Component {
               minheight: '35px',
               marginBottom: 0,
               width: '430px',
-              padding: this.props.currentSearchArray.length === 0 ? '8px 8px 0 60px' : '8px 8px 0 8px',
+              padding: this.state.search.length === 0 ? '8px 8px 0 60px' : '8px 8px 0 8px',
               background: '#f7f7f7',
             }}
             onAdd={(chip) => {
-              const chips = [...this.props.currentSearchArray, chip]
-              this.props.currentSearchArrayChange(chips)
+              const search = [...this.state.search, chip]
+              this.performSearch(search)
             }}
             onDelete={(chip, index) => {
-              const chips = this.props.currentSearchArray.filter((term) => term != chip)
-              this.props.currentSearchArrayChange(chips)
+              const search = this.state.search.filter((term) => term != chip)
+              this.performSearch(search)
             }}
             blurBehavior="add"
           />
@@ -188,7 +200,8 @@ class MetadataSearchBox extends React.Component {
           <button className="btn waves-effect waves-light" type="submit" name="action"
             style={{ marginBottom: 20 }}
             onClick={() =>
-              this.props.currentSearchArrayChange(this.props.currentSearchArray)}
+              this.performSearch(this.state.search)
+            }
           >
           { ["Initializing", "Matched"].indexOf(this.props.search_status) > -1 ? 
             <React.Fragment>
@@ -207,7 +220,7 @@ class MetadataSearchBox extends React.Component {
             key={example}
             className="chip grey white-text waves-effect waves-light"
 
-            onClick={() => this.props.currentSearchArrayChange([example])}
+            onClick={() => this.performSearch([example])}
           >
             {example}
           </a>
