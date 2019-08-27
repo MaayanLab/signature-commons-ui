@@ -1,5 +1,4 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
 import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
 import ShowMeta from '../../components/ShowMeta'
@@ -7,12 +6,8 @@ import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
 import NProgress from 'nprogress'
-import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import { makeTemplate } from '../../util/makeTemplate'
-
-const Options = dynamic(() => import('../../components/Options'), { ssr: false })
-
 
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
@@ -49,12 +44,12 @@ export default class ResourcePage extends React.Component {
                   <div className="col s12">
                     <div className="card-image col s1">
                       <Link
-                          to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                          className="waves-effect waves-teal"
-                        >
+                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                        className="waves-effect waves-teal"
+                      >
                         <IconButton
                           img={this.props.resource.meta.icon}
-                          onClick={call(this.redirectLink, "/")}
+                          onClick={call(this.redirectLink, '/')}
                         />
                       </Link>
                     </div>

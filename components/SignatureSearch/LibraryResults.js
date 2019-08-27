@@ -37,8 +37,8 @@ const theme = createMuiTheme({
     MUIDataTableHeadCell: {
       root: {
         fontSize: 13,
-      }
-    }
+      },
+    },
   },
 })
 // Weird hack to remove table shadows
@@ -189,7 +189,12 @@ export default class LibraryResults extends React.Component {
           return ''
         }
         try {
-          return JSON.parse(val)
+          const val_parsed = JSON.parse(val)
+          if (val_parsed === null) {
+            return NaN
+          } else {
+            return val_parsed
+          }
         } catch (e) {
           return val
         }
@@ -208,7 +213,6 @@ export default class LibraryResults extends React.Component {
 
   render() {
     const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
-    console.log(this.props)
     return (
       <div className="col s12">
         <ul

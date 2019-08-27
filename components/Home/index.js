@@ -130,24 +130,9 @@ export default class Home extends React.PureComponent {
         controller: null,
       },
     }
-    this.updateCart = this.updateCart.bind(this)
-    this.CartActions = this.CartActions.bind(this)
-    this.handleSelectField = this.handleSelectField.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.resetMetadataSearchResults = this.resetMetadataSearchResults.bind(this)
-
-    // metadata search
-    this.performSearch = this.performSearch.bind(this)
-    this.resetMetadataSearchStatus = this.resetMetadataSearchStatus.bind(this)
-    this.currentSearchArrayChange = this.currentSearchArrayChange.bind(this)
-    this.resetCurrentSearchArray = this.resetCurrentSearchArray.bind(this)
-
-    // signature search
-    this.changeSignatureType = this.changeSignatureType.bind(this)
-    this.updateSignatureInput = this.updateSignatureInput.bind(this)
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     M.AutoInit()
     // const elems = document.querySelectorAll('.sidenav');
     // const instances = M.Sidenav.init(elems, {edge:"right"});
@@ -167,7 +152,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate = (prevProps, prevState) => {
     M.AutoInit()
     M.updateTextFields()
     if (this.state.metadata_search.search_status === 'Initializing') {
@@ -199,11 +184,11 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     NProgress.done()
   }
 
-  handleChange(event, searchType, scrolling = false) {
+  handleChange = (event, searchType, scrolling = false) => {
     if (searchType) {
       this.setState({ searchType }, () => {
         if (scrolling) {
@@ -213,7 +198,7 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  changeSignatureType(type, input_data = {}) {
+  changeSignatureType = (type, input_data = {}) => {
     const input = {
       type,
     }
@@ -232,7 +217,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  updateSignatureInput(input) {
+  updateSignatureInput = (input) => {
     this.setState((prevState) => ({
       signature_search: {
         ...prevState.signature_search,
@@ -257,7 +242,7 @@ export default class Home extends React.PureComponent {
         ...this.state.signature_search,
         controller,
         input,
-        signature_type: input.id === undefined? "original": ""
+        signature_type: input.id === undefined ? 'original' : '',
       },
     }), async () => {
       if (input.type === 'Overlap') {
@@ -290,8 +275,8 @@ export default class Home extends React.PureComponent {
             mismatched,
             input: {
               ...prevState.signature_search.input,
-              id: signature_id
-            }
+              id: signature_id,
+            },
           },
         }), () => NProgress.done())
         this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -337,7 +322,7 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  currentSearchArrayChange(currentSearchArray) {
+  currentSearchArrayChange = (currentSearchArray) => {
     if (!similar_search_terms(this.state.metadata_search.currentSearchArray, currentSearchArray)) {
       this.setState((prevState) => ({
         metadata_search: {
@@ -355,13 +340,13 @@ export default class Home extends React.PureComponent {
           this.performSearch(currentSearchArray, 'entities')
         } else {
           // CurrentSearchArray is empty
-          if (this.state.entities_controller!== undefined){
+          if (this.state.entities_controller !== undefined) {
             this.state.entities_controller.abort()
           }
-          if (this.state.signatures_controller!== undefined){
+          if (this.state.signatures_controller !== undefined) {
             this.state.signatures_controller.abort()
           }
-          if (this.state.libraries_controller!== undefined){
+          if (this.state.libraries_controller !== undefined) {
             this.state.libraries_controller.abort()
           }
           NProgress.done()
@@ -370,26 +355,26 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  resetCurrentSearchArray() {
+  resetCurrentSearchArray = () => {
     this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
         currentSearchArray: [],
       },
     }))
-    if (this.state.entities_controller!== undefined){
+    if (this.state.entities_controller !== undefined) {
       this.state.entities_controller.abort()
     }
-    if (this.state.signatures_controller!== undefined){
+    if (this.state.signatures_controller !== undefined) {
       this.state.signatures_controller.abort()
     }
-    if (this.state.libraries_controller!== undefined){
+    if (this.state.libraries_controller !== undefined) {
       this.state.libraries_controller.abort()
     }
     NProgress.done()
   }
 
-  resetMetadataSearchStatus() {
+  resetMetadataSearchStatus = () => {
     this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
@@ -399,7 +384,7 @@ export default class Home extends React.PureComponent {
     }))
   }
 
-  resetMetadataSearchResults() {
+  resetMetadataSearchResults = () => {
     this.setState((prevState) => ({
       metadata_search: {
         ...prevState.metadata_search,
@@ -414,19 +399,19 @@ export default class Home extends React.PureComponent {
         withMatches: [],
       },
     }))
-    if (this.state.entities_controller!== undefined){
+    if (this.state.entities_controller !== undefined) {
       this.state.entities_controller.abort()
     }
-    if (this.state.signatures_controller!== undefined){
+    if (this.state.signatures_controller !== undefined) {
       this.state.signatures_controller.abort()
     }
-    if (this.state.libraries_controller!== undefined){
+    if (this.state.libraries_controller !== undefined) {
       this.state.libraries_controller.abort()
     }
     NProgress.done()
   }
 
-  async performSearch(terms, table, page = 0, rowsPerPage = 10) {
+  performSearch = async (terms, table, page = 0, rowsPerPage = 10) => {
     if (this.state.metadata_search[`${table}_controller`] !== undefined) {
       this.state.metadata_search[`${table}_controller`].abort()
     }
@@ -437,7 +422,7 @@ export default class Home extends React.PureComponent {
           ...prevState.metadata_search,
           [`${table}_status`]: 'Searching...',
           [`${table}_controller`]: controller,
-          search_status: page > 0 || rowsPerPage > 10 ? 'Initializing': prevState.search_status
+          search_status: page > 0 || rowsPerPage > 10 ? 'Initializing' : prevState.search_status,
         },
       }))
       const where = build_where(terms)
@@ -491,10 +476,10 @@ export default class Home extends React.PureComponent {
       const duration_meta_label = table + '_duration_meta'
       const count_label = table + '_count'
       let search_status
-      if (results.length > 0){
+      if (results.length > 0) {
         search_status = 'Matched'
       }
-      if (page > 0 || rowsPerPage > 10){
+      if (page > 0 || rowsPerPage > 10) {
         search_status = ''
         NProgress.done()
       }
@@ -508,7 +493,7 @@ export default class Home extends React.PureComponent {
           [count_label]: contentRange.count,
           withMatches: results.length > 0 && prevState.metadata_search.withMatches.indexOf(table) === -1 ?
             [...prevState.metadata_search.withMatches, table] : prevState.metadata_search.withMatches,
-          search_status: search_status!== undefined ? search_status : prevState.metadata_search.search_status,
+          search_status: search_status !== undefined ? search_status : prevState.metadata_search.search_status,
           completed_search: prevState.metadata_search.completed_search + 1, // If this reach 3 then we finished searching all 3 tables
         },
       }))
@@ -525,11 +510,11 @@ export default class Home extends React.PureComponent {
     }
   }
 
-  updateCart(cart) {
+  updateCart = (cart) => {
     this.setState({ cart })
   }
 
-  CartActions() {
+  CartActions = () => {
     return this.state.cart.count() <= 0 ? null : (
       <div className="fixed-action-btn">
         <a
@@ -586,7 +571,7 @@ export default class Home extends React.PureComponent {
     )
   }
 
-  async fetch_stats(selected_field) {
+  fetch_stats = async (selected_field) => {
     this.setState({
       pie_stats: this.props.pie_fields_and_stats[selected_field] ?
         this.props.pie_fields_and_stats[selected_field].stats : {},
@@ -599,7 +584,7 @@ export default class Home extends React.PureComponent {
     })
   }
 
-  handleSelectField(e) {
+  handleSelectField = (e) => {
     const field = e.target.value
     this.setState({
       selected_field: field,
@@ -676,13 +661,13 @@ export default class Home extends React.PureComponent {
   )
 
   collection = (props) => (
-    <Collection 
+    <Collection
       ui_values={this.props.ui_values}
       {...props}
     />
-    )
+  )
 
-  render() {
+  render = () => {
     const CartActions = this.CartActions
 
     return (

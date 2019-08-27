@@ -10,15 +10,13 @@ export default class Upload extends React.Component {
       file: '',
       parsed: '',
     }
-
-    this.get_file = this.get_file.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     M.AutoInit()
   }
 
-  get_file(e) {
+  get_file = (e) => {
     try {
       const loader = new FileReader()
       loader.onload = (evt) => {
@@ -33,7 +31,7 @@ export default class Upload extends React.Component {
     }
   }
 
-  process() {
+  process = () => {
     try {
       this.setState({
         parsed: JSON.stringify([...parse_file(this.state.file)]),
@@ -43,7 +41,7 @@ export default class Upload extends React.Component {
     }
   }
 
-  render() {
+  render = () => {
     return (
       <main id={this.props.id}>
         <style jsx>{`

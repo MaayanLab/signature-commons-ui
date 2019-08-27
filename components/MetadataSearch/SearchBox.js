@@ -81,20 +81,16 @@ const Info = (props) => {
 class MetadataSearchBox extends React.Component {
   constructor(props) {
     super(props)
-    this.renderChips = this.renderChips.bind(this)
   }
 
-  renderChips(
+  renderChips = (
       {
         value,
-        isFocused,
         isDisabled,
-        handleClick,
-        handleDelete,
         className,
       },
       key
-  ) {
+  ) => {
     let backgroundColor = '#e0e0e0'
     const fontColor = '#000'
     let icon = 'mdi-code-equal' // mdi-code-not-equal
