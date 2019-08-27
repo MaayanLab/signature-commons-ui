@@ -147,6 +147,7 @@ export default class Options extends React.Component {
   handleSubmitSigcom = () => {
     this.handleClose()
     submit_sigcom(this.props.item, props.submit, ui_schemas = this.props.schemas)
+    submit_sigcom(this.props.item, this.props.submit, this.props.schemas)
   }
 
   handleSubmitEnrichr = () => {
