@@ -318,6 +318,7 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
       <div style={{ width: 420, height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
           callbacks={callbacks}
+          scale={'log'}
           options={{
             colors: ['#000'],
             rotations: 3,
