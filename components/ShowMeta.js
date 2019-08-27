@@ -49,7 +49,7 @@ export function ShowMeta({ value, highlight, classes }) {
         ))}
       </Grid>
     )
-  } else if (typeof value === 'object') {
+  } else if (typeof value === 'object' && value !== null) {
     if (value['@id'] !== undefined && value['@type'] !== undefined && value.meta !== undefined) {
       return (
         <Grid container

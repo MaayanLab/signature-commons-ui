@@ -46,10 +46,11 @@ export default class SignatureSearch extends React.Component {
     />
   )
 
-  library_results = (props) => (
+  library_results = (props) => {
+    return(
     <LibraryResults
       results={
-        (((this.props.resource_signatures || {})[props.match.params.resource.replace('_', ' ')] || {}).libraries || []).map(
+        (((this.props.resource_signatures || {})[props.match.params.resource.replace(/_/g, ' ')] || {}).libraries || []).map(
             (lib) => this.props.library_signatures[lib]
         )
       }
@@ -58,7 +59,7 @@ export default class SignatureSearch extends React.Component {
       {...this.props}
       {...props}
     />
-  )
+  )}
 
   render_signature_search = () => {
     this.props.handleChange({}, 'signature', true)
