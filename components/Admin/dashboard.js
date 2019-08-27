@@ -42,7 +42,9 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
           className: classes.menu,
         },
       }}
+      style={{marginTop:-5}}
       margin="normal"
+
       onChange={props.onChange}
     >
       {props.values.map(function(k) {
