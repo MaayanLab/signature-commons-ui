@@ -37,7 +37,7 @@ export default class ResourceFilters extends React.Component {
     const input_signature = this.props.match.params.input_signature
     const type = this.props.match.params.type
     if (input_signature !== prevProps.match.params.input_signature) {
-      if (type === 'Overlap' && this.props.input.id !== input_signature ) {
+      if (type === 'Overlap' && this.props.input.id !== input_signature) {
         try {
           const { data } = await get_signature(input_signature)
           const input = {

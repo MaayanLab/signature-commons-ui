@@ -22,10 +22,9 @@ function getParam(s, param) {
 export default class MetadataSearch extends React.Component {
   constructor(props) {
     super(props)
-    this.searchChange = this.searchChange.bind(this)
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     const currentSearchArray = getParam(this.props.location.search, 'q')
     if (!similar_search_terms(this.props.currentSearchArray, currentSearchArray)) {
       if (currentSearchArray.length > 0) {
@@ -34,7 +33,7 @@ export default class MetadataSearch extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate = (prevProps) => {
     const currentSearchArray = getParam(this.props.location.search, 'q')
     const oldSearchArray = getParam(prevProps.location.search, 'q')
     if (!similar_search_terms(oldSearchArray, currentSearchArray)) {
@@ -44,15 +43,15 @@ export default class MetadataSearch extends React.Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     this.props.resetMetadataSearchResults()
   }
 
-  searchChange(e) {
+  searchChange = (e) => {
     this.props.searchChange(e.target.value)
   }
 
-  render() {
+  render = () => {
     return (
       <div className="row">
         <div className="col s12 center">
