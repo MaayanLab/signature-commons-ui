@@ -469,7 +469,7 @@ export class Resource {
   get id() {
     return Promise.resolve(this._resource.id)
   }
-  
+
   get validator() {
     return Promise.resolve(this._resource['$validator'])
   }

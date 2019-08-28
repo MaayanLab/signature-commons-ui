@@ -25,7 +25,7 @@ import CardHeader from '@material-ui/core/CardHeader'
 import BlurOn from '@material-ui/icons/BlurOn'
 import Fingerprint from '@material-ui/icons/Fingerprint'
 import LibraryBooks from '@material-ui/icons/LibraryBooks'
-import JssProvider from 'react-jss/lib/JssProvider';
+import JssProvider from 'react-jss/lib/JssProvider'
 
 import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta'
 import { fetchJson, patchJson } from '../../util/fetch/fetch'
@@ -58,21 +58,11 @@ class AdminView extends React.PureComponent {
       signature_fields: props.signature_keys[Object.keys(props.signature_keys)[0]],
       hash: window.location.hash,
     }
-    this.filterHandler = this.filterHandler.bind(this)
-    this.hashChangeHandler = this.hashChangeHandler.bind(this)
-    this.LibraryList = this.LibraryList.bind(this)
-    this.LibraryEdit = this.LibraryEdit.bind(this)
-    this.EntityList = this.EntityList.bind(this)
-    this.EntityEdit = this.EntityEdit.bind(this)
-    this.SignatureList = this.SignatureList.bind(this)
-    this.SignatureEdit = this.SignatureEdit.bind(this)
-    this.httpClient = this.httpClient.bind(this)
-    this.filterForm = this.filterForm.bind(this)
-    this.authProvider = this.authProvider.bind(this)
-    this.NotFound = this.NotFound.bind(this)
-    this.handleSelectField = this.handleSelectField.bind(this)
     this.dataProvider = loopbackProvider(base_url, this.httpClient)
   }
+
+  longTextInputFormat = (v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v
+  longTextInputParse = (v) => typeof v === 'string' ? JSON.parse(v || '') : v
 
   // const httpClient = (url, options = {}) => {
   //   if (!options.headers) {
@@ -83,7 +73,7 @@ class AdminView extends React.PureComponent {
   //   return fetchUtils.fetchJson(url, options);
   // }
 
-  filterForm(props) {
+  filterForm = (props) => {
     if (this.state.token === null) {
       return false
     } else {
@@ -96,7 +86,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  handleSelectField(e) {
+  handleSelectField = (e) => {
     const field = e.target.value
     this.setState({
       selected_field: field,
@@ -106,7 +96,7 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  LibraryList(props) {
+  LibraryList = (props) => {
     return (
       <List
         title="Libraries"
@@ -139,7 +129,7 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  LibraryEdit(props) {
+  LibraryEdit = (props) => {
     return (
       <Edit {...props}>
         <SimpleForm>
@@ -163,15 +153,15 @@ class AdminView extends React.PureComponent {
             key={'meta'}
             label={'meta'}
             source={'meta'}
-            format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-            parse={(v) => typeof v === 'string' ? JSON.parse(v || '') : v}
+            format={this.longTextInputFormat}
+            parse={this.longTextInputParse}
           />
         </SimpleForm>
       </Edit>
     )
   }
   // TODO: Make this less hacky (have it detect objects and arrays)
-  SignatureList(props) {
+  SignatureList = (props) => {
     return (
       <List
         {...props}
@@ -209,7 +199,7 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  SignatureEdit(props) {
+  SignatureEdit = (props) => {
     return (
       <Edit {...props}>
         <SimpleForm>
@@ -228,15 +218,15 @@ class AdminView extends React.PureComponent {
             key={'meta'}
             label={'meta'}
             source={'meta'}
-            format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-            parse={(v) => typeof v === 'string' ? JSON.parse(v || '') : v}
+            format={this.longTextInputFormat}
+            parse={this.longTextInputParse}
           />
         </SimpleForm>
       </Edit>
     )
   }
 
-  EntityList(props) {
+  EntityList = (props) => {
     return (
       <List
         title="Entities"
@@ -262,7 +252,7 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  EntityEdit(props) {
+  EntityEdit = (props) => {
     return (
       <Edit {...props}>
         <SimpleForm>
@@ -276,28 +266,15 @@ class AdminView extends React.PureComponent {
             key={'meta'}
             label={'meta'}
             source={'meta'}
-            format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-            parse={(v) => typeof v === 'string' ? JSON.parse(v || '') : v}
+            format={this.longTextInputFormat}
+            parse={this.longTextInputParse}
           />
         </SimpleForm>
       </Edit>
     )
   }
 
-  NotFound(props) {
-    if (this.state.token) {
-      return (
-        <Card>
-          <CardHeader title="Oop! I don't know what you are looking for" />
-          <CardContent>Check your link, please.</CardContent>
-        </Card>
-      )
-    } else {
-      return <Redirect to='/' />
-    }
-  }
-
-  async fetch_stats(selected_field) {
+  fetch_stats = async (selected_field) => {
     this.setState({
       pie_stats: this.props.pie_fields_and_stats[selected_field].stats || {},
       pie_table: this.props.pie_fields_and_stats[selected_field].table || '',
@@ -306,7 +283,7 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  async filterHandler(uid) {
+  filterHandler = async (uid) => {
     // console.log(e)
     // this.setState({
     //   SignatureList: <LinearProgress />
@@ -356,7 +333,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  hashChangeHandler() {
+  hashChangeHandler = () => {
     const hash = decodeURI(window.location.hash)
     this.setState({
       hash: hash,
@@ -374,7 +351,7 @@ class AdminView extends React.PureComponent {
       }
     }
   }
-  // async fetch_count(source) {
+  // fetch_count = async (source) => {
   //   const headers = {'Authorization': `Basic ${this.state.token}`}
   //   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   //                                           signal: this.state.general_controller.signal,
@@ -393,7 +370,7 @@ class AdminView extends React.PureComponent {
   //     })
   //   }
   // }
-  async fetch_libraryfields() {
+  fetch_libraryfields = async () => {
     const headers = { 'Authorization': `Basic ${this.state.token}` }
     const { response: library_fields } = await fetch_meta({
       endpoint: `/libraries/key_count`,
@@ -405,7 +382,7 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  async fetch_entityfields() {
+  fetch_entityfields = async () => {
     const headers = { 'Authorization': `Basic ${this.state.token}` }
     const { response: entity_fields } = await fetch_meta({
       endpoint: `/entities/key_count`,
@@ -417,12 +394,12 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     window.addEventListener('hashchange', this.hashChangeHandler)
     this.fetch_stats(this.state.selected_field)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     if (this.state.pie_controller) {
       this.state.pie_controller.abort()
     }
@@ -431,7 +408,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  httpClient(url, options = {}, type = GET_ONE) {
+  httpClient = (url, options = {}, type = GET_ONE) => {
     if (!(options.hasOwnProperty('method'))) {
       const link = decodeURI(url).split('%2C')
       const url_params = link.filter((l) => (l.includes('skip') || l.includes('limit')))
@@ -459,7 +436,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  async authProvider(type, params) {
+  authProvider = async (type, params) => {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
       const headers = { 'Authorization': `Basic ${token}` }
@@ -556,7 +533,7 @@ class AdminView extends React.PureComponent {
     return Promise.reject()
   }
 
-  render() {
+  render = () => {
     return (
       <div className="root">
         <Head>

@@ -37,21 +37,17 @@ export default class SearchResults extends React.Component {
       pagination: false,
       tabs: ['signatures', 'libraries', 'entities'],
     }
-    this.handleChange = this.handleChange.bind(this)
-    this.handleChangeIndex = this.handleChangeIndex.bind(this)
-    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
-    this.handleChangePage = this.handleChangePage.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     this.setState({
       tabs: this.props.withMatches,
     })
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate = (prevProps, prevState) => {
     const unchanged = similar_search_terms(prevProps.currentSearchArray, this.props.currentSearchArray)
-    if (!this.state.pagination){
+    if (!this.state.pagination) {
       if ((this.props.withMatches.length > 0 && prevProps.withMatches.length !== this.props.withMatches.length) ||
         (prevProps.search_status !== '' && this.props.search_status === '')) {
         this.setState({
@@ -68,42 +64,42 @@ export default class SearchResults extends React.Component {
         librariesPage: 0,
         entitiesRowsPerPage: 10,
         entitiesPage: 0,
-        pagination: false
+        pagination: false,
       })
     }
   }
 
-  handleChange(event, newValue) {
+  handleChange = (event, newValue) => {
     this.setState({
       index_value: newValue,
     })
   }
 
-  handleChangeIndex(index) {
+  handleChangeIndex = (index) => {
     this.setState({
       index_value: index,
     })
   }
 
-  handleChangeRowsPerPage(e, name) {
+  handleChangeRowsPerPage = (e, name) => {
     this.setState({
       [`${name}RowsPerPage`]: e.target.value,
-      pagination: true
+      pagination: true,
     }, () => {
       this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
-  handleChangePage(event, page, name) {
+  handleChangePage = (event, page, name) => {
     this.setState({
       [`${name}Page`]: page,
-      pagination: true
+      pagination: true,
     }, () => {
       this.props.performSearch(this.props.currentSearchArray, name, this.state[`${name}Page`], this.state[`${name}RowsPerPage`], true)
     })
   }
 
-  search_div(name) {
+  search_div = (name) => {
     const default_name_singular = default_singular_names[name]
     if (this.props[name] === undefined || this.props[name].length === 0) {
       return <div key={name} />
@@ -149,7 +145,7 @@ export default class SearchResults extends React.Component {
     )
   }
 
-  render() {
+  render = () => {
     if (this.props.search_status === '' && this.state.tabs.length === 0) { // zero results
       return (
         <Grid container
@@ -177,15 +173,18 @@ export default class SearchResults extends React.Component {
           textColor="primary"
           centered
         >
-          { this.state.tabs.map((key) => <Tab key={key} label={ this.props.ui_values.preferred_name[key] || key } />) }
+          {this.state.tabs.map((key) => (
+            <Tab
+              key={key}
+              label={this.props.ui_values.preferred_name[key] || key}
+            />
+          ))}
         </Tabs>
         <SwipeableViews
           index={this.state.index_value}
           onChangeIndex={this.handleChangeIndex}
         >
-          {
-            this.state.tabs.map((key) => (this.search_div(key)))
-          }
+          {this.state.tabs.map((key) => this.search_div(key))}
         </SwipeableViews>
       </div>
     )

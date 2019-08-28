@@ -6,7 +6,6 @@ import Library from './Library'
 
 
 export default withStyles(landingStyle)(class Collection extends React.Component {
-
   library = (props) => (
     <Library
       {...this.props}
@@ -14,14 +13,17 @@ export default withStyles(landingStyle)(class Collection extends React.Component
     />
   )
 
-  render(){
+  library_redirect = () => (
+    <Redirect
+      to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+    />
+  )
+
+  render() {
     return (
       <div className="row">
         <Switch>
-          <Route exact path="/Library" render={() => {
-            return (<Redirect to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`} />)
-          }}
-          />
+          <Route exact path="/Library" render={this.library_redirect} />
           <Route path="/Library/:id/" component={this.library} />
         </Switch>
       </div>

@@ -22,20 +22,18 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
       type: 'Overlap',
       scroll: false,
     }
-    this.searchChange = this.searchChange.bind(this)
-    this.scrollToTop = this.scrollToTop.bind(this)
   }
 
-  scrollToTop() {
+  scrollToTop = () => {
     scroll.scrollToTop()
   }
 
-  searchChange(e) {
+  searchChange = (e) => {
     this.props.searchChange(e.target.value)
   }
 
 
-  render() {
+  render = () => {
     return (
       <div>
         <Grid container
@@ -128,7 +126,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                     />
                   </div>
                 </Grid>
-                <Grid item xs md={this.props.ui_values.deactivate_wordcloud? 12: 6}>
+                <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
                   <div className={this.props.classes.centered}>
                     <ChartCard cardheight={300} pie_stats={this.props.pie_stats} slice={this.props.pie_slice} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
