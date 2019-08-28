@@ -234,7 +234,7 @@ export default class Home extends React.PureComponent {
     const { libraries, resources, library_resource } = this.props
     const props = { libraries, resources, library_resource }
     let controller = this.state.signature_search.controller
-    if (controller !== null) controller.abort()
+    if (controller !== null && controller!==undefined) controller.abort()
     controller = new AbortController()
     this.setState(() => ({
       signature_search: {
@@ -264,24 +264,6 @@ export default class Home extends React.PureComponent {
             input: {
               entities: resolved_entities,
             },
-            mismatched,
-            input: {
-              ...prevState.signature_search.input,
-              id: signature_id,
-            },
-          },
-        }), () => NProgress.done())
-        this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
-      } else if (input.type === 'Rank') {
-        const unresolved_up_entities = parse_entities(input.up_geneset)
-        const unresolved_down_entities = parse_entities(input.down_geneset)
-        const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
-        const { matched: entities, mismatched } = await resolve_entities({ entities: unresolved_entities, controller })
-        if (mismatched.count() > 0) {
-          M.toast({
-            html: `The entities: ${[...mismatched].join(', ')} were dropped because they could not be recognized`,
-            classes: 'rounded',
-            displayLength: 4000,
           })
           this.setState((prevState) => ({
             signature_search: {
@@ -290,9 +272,9 @@ export default class Home extends React.PureComponent {
               mismatched,
               input: {
                 ...prevState.signature_search.input,
-                id: signature_id
+                entities: resolved_entities,
+                id: signature_id,
               },
-              status: "",
             },
           }), () => NProgress.done())
           this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -313,13 +295,13 @@ export default class Home extends React.PureComponent {
           const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
           const signature_id = input.id || uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
           const results = await query_rank({
-              ...this.state.signature_search,
-              ...props,
-              input: {
-                up_entities: resolved_up_entities,
-                down_entities: resolved_down_entities,
-              }
-            })
+            ...this.state.signature_search,
+            ...props,
+            input: {
+              up_entities: resolved_up_entities,
+              down_entities: resolved_down_entities,
+            },
+          })
           this.setState((prevState) => ({
             signature_search: {
               ...prevState.signature_search,
@@ -331,7 +313,6 @@ export default class Home extends React.PureComponent {
                 up_entities: resolved_up_entities,
                 down_entities: resolved_down_entities,
               },
-              status: "",
             },
           }), () => NProgress.done())
           this.props.history.push(`/SignatureSearch/${input.type}/${signature_id}`)
@@ -412,6 +393,44 @@ export default class Home extends React.PureComponent {
         search_status: '',
       },
     }))
+  }
+
+  resetAllSearches = () => {
+    this.setState((prevState) => ({
+      metadata_search: {
+        signatures_total_count: undefined,
+        libraries_total_count: undefined,
+        entities_total_count: undefined,
+        search: '',
+        searchArray: [],
+        currentSearch: '',
+        currentSearchArray: [],
+        completed_search: 0,
+        search_status: '',
+        withMatches: [],
+      },
+      signature_search: {
+        input: {
+          type: 'Overlap',
+          geneset: '',
+        },
+      },
+    }))
+    if (this.state.signature_search.controller !== null &&
+        this.state.signature_search.controller !== undefined
+      ) {
+      this.state.signature_search.controller.abort()
+    }
+    if (this.state.metadata_search.entities_controller !== undefined) {
+      this.state.metadata_search.entities_controller.abort()
+    }
+    if (this.state.metadata_search.signatures_controller !== undefined) {
+      this.state.metadata_search.signatures_controller.abort()
+    }
+    if (this.state.metadata_search.libraries_controller !== undefined) {
+      this.state.metadata_search.libraries_controller.abort()
+    }
+    NProgress.done()
   }
 
   resetMetadataSearchResults = () => {
