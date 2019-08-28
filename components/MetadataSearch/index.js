@@ -1,7 +1,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { similar_search_terms } from '../Home'
-const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
+const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/MetadataSearchBox'))
 const SearchResults = dynamic(() => import('../../components/MetadataSearch/SearchResults'))
 
 function getParam(s, param) {
@@ -51,7 +51,7 @@ export default class MetadataSearch extends React.Component {
     return (
       <div className="row">
         <div className="col s12 center">
-          <SearchBox
+          <MetadataSearchBox
             search_status={this.props.search_status}
             currentSearchArray={this.props.currentSearchArray}
             currentSearchChange={this.props.currentSearchChange}

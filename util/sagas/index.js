@@ -24,18 +24,15 @@ export function* workFetchMetaData(action) {
    try {
       let search
       let params
-      if (action.payload!==undefined) search = action.payload.search
-      if (search!== undefined){
-        params = {
-          endpoint: `/libraries`,
-          signal: controller.signal,
-        }
-        const {response: libraries} = yield call(fetch_meta, params)
+      if (action.search!==undefined) search = action.search
+      if (search!== undefined && search.length!==0){
         const results = yield call(metadataSearcher, {
           controller,
           search
         })
         yield put(fetchMetaDataSucceeded(results))
+      } if (search.length===0){
+        yield put(fetchMetaDataSucceeded({}))
       }
    } catch (error) {
       console.log(error)

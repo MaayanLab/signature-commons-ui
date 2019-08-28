@@ -88,6 +88,42 @@ export async function search_signature_meta_per_library({library, controller, ..
   return {library, signatures, count: contentRange.count, duration}
 }
 
+export function format_bulk_signature_meta_per_library(props){
+  let {limit, skip, search, where, libraries} = props
+  if (limit===undefined) limit = 5
+  if (where===undefined && search!==undefined) where = build_where([search])
+  if (where===undefined && search===undefined) where = {}
+  const bulk_params = Object.keys(libraries).map(lib=>{
+    let where_with_lib
+    if (where.and !== undefined){
+      where_with_lib = {
+        and: [
+          ...where.and,
+          {library: lib}
+        ]
+      }
+    } else {
+      where_with_lib = {
+        and: [
+          ...where,
+          {library: lib}
+        ]
+      }
+    }
+    return({
+      operationId: "Signature.find",
+      parameters: {
+        filter:{
+          where: where_with_lib,
+          limit,
+          skip
+        },
+        contentRange: true,
+      }
+  })})
+  return bulk_params
+}
+
 export function parse_entities(input) {
   return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
       (lines, line) => {
@@ -552,33 +588,43 @@ export async function metadataSearcher(props) {
   const start = new Date()
   let duration_meta = 0
   let count_meta = 0
-
   if (libraries === undefined || library_resource === undefined){
     const {libraries: l, library_resource: lr} = await get_library_resources({schema_validator, schemas})
     libraries = l
     library_resource = lr
   }
-  const where = build_where([search])
-  const lib_sigs = await Promise.all(await Object.keys(libraries).map(async (library)=>{
-    const res = await search_signature_meta_per_library({
-      library,
-      controller,
-      where,
-      search,
-      limit,
-      skip,
-    })
-    return res
-  }))
-  const library_signatures = lib_sigs.filter(item=>item!==null).reduce((acc,item)=>{
-    const {library: libid, signatures, count, duration: duration_meta_n} = item
-    duration_meta = duration_meta + duration_meta_n
+  const where = build_where(search)
+  const bulk_params = format_bulk_signature_meta_per_library({
+    where,
+    search,
+    libraries,
+    limit,
+    skip
+  })
+  console.log(bulk_params)
+  const {response: lib_sigs, duration} = await fetch_meta_post({
+    endpoint: '/bulk',
+    body: bulk_params,
+    signal: controller.signal,
+  })
+
+  const library_signatures = lib_sigs.filter(item=>item.response.length>0).map(
+    item=>({library: item.response[0].library, ...item})).reduce((acc,item)=>{
+    let {library: libid, response: signatures, contentRange} = item
+    if (contentRange !== null || contentRange!==undefined) {
+      const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)
+      contentRange = {
+        start: Number(contentRangeMatch[1]),
+        end: Number(contentRangeMatch[2]),
+        count: Number(contentRangeMatch[3]),
+      }
+    }
     acc = {
       ...acc,
       [libid]: {
         library: libraries[libid],
         signatures,
-        count
+        count: contentRange.count
       }
     }
     return acc
@@ -607,9 +653,8 @@ export async function metadataSearcher(props) {
     library_signatures,
     resource_signatures,
     count,
-    duration_meta: duration_meta,
+    duration_meta: duration,
     duration: (Date.now() - start) / 1000,
-    duration_meta: duration_meta,
     controller: null,
   }
 }

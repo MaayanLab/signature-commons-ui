@@ -4,7 +4,7 @@ import { action_definitions } from "./action-types";
 export const initialState = {
   serverSideProps: null,
   search: [],
-  results: {},
+  metadata_results: {},
   completed: true,
   loading_metadata: false,
   loading_matches: false,
@@ -30,7 +30,7 @@ function rootReducer(state = initialState, action) {
   }
   if (action.type === action_definitions.FETCH_METADATA_SUCCEEDED) {
     return Object.assign({}, state, {
-      results: action.results,
+      metadata_results: action.results,
       completed: true,
       loading_metadata: false
     });

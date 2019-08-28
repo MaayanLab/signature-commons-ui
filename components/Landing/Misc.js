@@ -20,7 +20,7 @@ import { FindReplace,
 
 import GenesetSearchBox from '../SignatureSearch/GenesetSearchBox'
 
-const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
+const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/MetadataSearchBox'))
 
 const meta_default_icon = 'mdi-creation'
 
@@ -232,7 +232,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
           </Grid>
           <Grid item xs={12}>
             {props.searchType == 'MetadataSearch' ?
-              <SearchBox
+              <MetadataSearchBox
                 id='MetadataSearch'
                 ui_values={props.ui_values}
               /> :
@@ -273,7 +273,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
           align="center"
           justify="center">
           <Grid item xs={12}>
-            <SearchBox
+            <MetadataSearchBox
               id='MetadataSearch'
               ui_values={props.ui_values}
             />

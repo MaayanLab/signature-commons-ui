@@ -5,8 +5,8 @@ export function initializeSigcom(serverSideProps) {
   return {type: action_definitions.INITIALIZE_SIGCOM, serverSideProps}
 }
 
-export function fetchMetaData(payload) {
-  return {type: action_definitions.FETCH_METADATA, payload}
+export function fetchMetaData(search) {
+  return {type: action_definitions.FETCH_METADATA, search}
 }
 
 export function initializeSignatureSearch(input){
