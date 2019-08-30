@@ -4,12 +4,14 @@ import { Route, Switch } from 'react-router-dom'
 import NProgress from 'nprogress'
 import dynamic from 'next/dynamic'
 import { connect } from "react-redux";
+import { MuiThemeProvider } from '@material-ui/core'
 
 import Base from '../../components/Base'
 import { call } from '../../util/call'
 import Landing from '../Landing'
 import Resources from '../Resources'
 import { base_url as meta_url } from '../../util/fetch/meta'
+import theme from '../../util/theme-provider'
 import '../../styles/swagger.scss'
 
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
@@ -104,38 +106,40 @@ class Home extends React.PureComponent {
     )
 
   render = () => (
-    <Base ui_values={this.props.ui_values}
-      handleChange={this.handleChange}
-    >
-      <style jsx>{`
-      #Home {
-        background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-position: left bottom;
-      }
-      `}</style>
-      <Switch>
-        {this.props.ui_values.nav.resources ?
-          <Route
-            path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-            component={this.resources}
-          /> : null
+    <MuiThemeProvider theme={theme}>
+      <Base ui_values={this.props.ui_values}
+        handleChange={this.handleChange}
+      >
+        <style jsx>{`
+        #Home {
+          background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
+          background-attachment: fixed;
+          background-repeat: no-repeat;
+          background-position: left bottom;
         }
-        <Route
-          path="/API"
-          component={this.api}
-        />
-        <Route
-          path="/not-found"
-          component={(props)=><div />}//{this.landing}
-        />
-        <Route
-          path="/"
-          component={this.landing}//{this.landing}
-        />
-      </Switch>
-    </Base>
+        `}</style>
+        <Switch>
+          {this.props.ui_values.nav.resources ?
+            <Route
+              path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+              component={this.resources}
+            /> : null
+          }
+          <Route
+            path="/API"
+            component={this.api}
+          />
+          <Route
+            path="/not-found"
+            component={(props)=><div />}//{this.landing}
+          />
+          <Route
+            path="/"
+            component={this.landing}//{this.landing}
+          />
+        </Switch>
+      </Base>
+    </MuiThemeProvider>
   )
 }
 
