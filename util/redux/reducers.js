@@ -6,7 +6,7 @@ export const initialState = {
   search: [],
   metadata_results: {},
   completed: true,
-  loading_metadata: false,
+  loading: false,
   loading_matches: false,
   loading_signature: false,
   signature_input: {},
@@ -24,22 +24,29 @@ function rootReducer(state = initialState, action) {
   if (action.type === action_definitions.FETCH_METADATA) {
     return {
       ...state,
-      search: action.payload,
-      loading_metadata: true
+      search: action.search,
+      loading: true
     }
   }
   if (action.type === action_definitions.FETCH_METADATA_SUCCEEDED) {
     return Object.assign({}, state, {
       metadata_results: action.results,
       completed: true,
-      loading_metadata: false
+      loading: false
     });
   }
   if (action.type === action_definitions.FETCH_METADATA_FAILED) {
     return Object.assign({}, state, {
       results: {},
       completed: false,
-      loading_metadata: false
+      loading: false,
+    });
+  }
+  if (action.type === action_definitions.FETCH_METADATA_ABORTED) {
+    return Object.assign({}, state, {
+      results: {},
+      completed: false,
+      loading: true,
     });
   }
   if (action.type === action_definitions.INITIALIZE_SIGNATURE_SEARCH) {

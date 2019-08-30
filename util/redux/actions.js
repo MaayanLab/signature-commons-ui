@@ -29,10 +29,13 @@ export function fetchMetaDataSucceeded(results){
   return {type: action_definitions.FETCH_METADATA_SUCCEEDED, results}
 }
 
-export function fetchMetaDataFailed(error){
+export function fetchMetaDataFailed(error, loading){
   return {type: action_definitions.FETCH_METADATA_FAILED, error}
 }
 
+export function fetchMetaDataAborted(error){
+  return {type: action_definitions.FETCH_METADATA_ABORTED, error}
+}
 export function matchFailed(error){
   return {type: action_definitions.MATCH_FAILED, error}
 }

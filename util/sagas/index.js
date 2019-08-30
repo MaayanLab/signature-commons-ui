@@ -13,7 +13,8 @@ import { fetchMetaDataSucceeded,
   updateResolvedEntities,
   matchFailed,
   findSignaturesSucceeded,
-  findSignaturesFailed } from "../redux/actions"
+  findSignaturesFailed,
+  fetchMetaDataAborted } from "../redux/actions"
 
 // Metadata Search
 export function* workFetchMetaData(action) {
@@ -41,7 +42,7 @@ export function* workFetchMetaData(action) {
    } finally {
       if (yield cancelled()){
         controller.abort()
-        yield put(fetchMetaDataFailed("aborted"))
+        yield put(fetchMetaDataAborted("aborted"))
       }
    }
 }
