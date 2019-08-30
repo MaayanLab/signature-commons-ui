@@ -61,7 +61,7 @@ export async function get_library_resources({schema_validator, schemas, ...props
         let icon_prop =Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].icon)
 
         if (icon_prop.length > 0){
-          icon_src = makeTemplate(matched_schemas[0].properties[name_prop[0]].src, resource)
+          icon_src = makeTemplate(matched_schemas[0].properties[icon_prop[0]].src, resource)
           icon_src = icon_src === 'undefined' ? `${process.env.PREFIX}/static/images/default-black.png`: icon_src
         } else {
           console.warn('source of lib icon is not defined, using default')
