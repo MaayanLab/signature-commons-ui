@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${meta['Icon']}",
+      "src": "${PREFIX}/${meta['icon']}",
       "alt": "${meta['assay']}",
       "priority": 1,
       "icon": true

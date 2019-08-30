@@ -18,96 +18,97 @@
       "type": "text",
       "text": "${library.meta['Library_name']}",
       "priority": 1,
-      "parent": true
+      "subtitle": true
     },
     "Description": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['Original_String']}",
-      "subfield": "${meta.Pathway.Name}",
-      "title": true,
+      "name": true,
       "priority": 2
     },
     "Gene": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Gene}",
-      "subfield": "${meta.Gene[0].Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Gene[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-dna"
     },
     "Disease": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Disease}",
-      "subfield": "${meta.Disease[0].Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Disease[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-emoticon-cry-outline"
     },
     "Pathway": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Pathway}",
-      "subfield": "${meta.Pathway.Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Pathway.Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-webhook"
     },
     "Metabolite": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Metabolite}",
-      "subfield": "${meta.Metabolite.Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Metabolite.Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-chart-bubble"
     },
     "MicroRNA": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.MicroRNA}",
-      "priority": 3
+      "priority": 3,
+      "MDI_Icon": "mdi-tilde"
     },
     "Antibody_Identifier": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Antibody_Identifier}",
-      "priority": 3
+      "priority": 3,
+      "MDI_Icon": "mdi-axis"
     },
     "Phenotype": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Phenotype}",
-      "subfield": "${meta.Phenotype[0].Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Phenotype[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-human"
     },
     "PTM": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.PTM}",
-      "priority": 3
+      "priority": 3,
+      "MDI_Icon": "mdi-hammer"
     },
     "Small Molecule": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Small_Molecule}",
-      "subfield": "${meta.Small_Molecule[0].Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Small_Molecule[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-hexagon-multiple"
     },
     "Virus": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Virus}",
-      "subfield": "${meta.Virus[0].Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Virus[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-decagram-outline"
     },
     "Cell-line": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Cell_Line}",
-      "subfield": "${meta.Cell_Line[0].Name}",
+      "type": "text",
+      "text": "${meta.Cell_Line[0].Name}",
       "priority": 4
     },
     "Tissue": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Tissue}",
-      "subfield": "${meta.Tissue[0].Name}",
-      "priority": 4
+      "type": "text",
+      "text": "${meta.Tissue[0].Name}",
+      "priority": 4,
+      "MDI_Icon": "mdi-camera-metering-matrix"
     },
     "Assay": {
       "visibility": 1,
@@ -118,7 +119,8 @@
       },
       "type": "text",
       "text": "${meta.Assay}",
-      "priority": 5
+      "priority": 5,
+      "MDI_Icon": "mdi-flask-outline"
     },
     "Organism": {
       "visibility": 1,
@@ -129,7 +131,8 @@
       },
       "type": "text",
       "text": "${meta.Organism}",
-      "priority": 5
+      "priority": 5,
+      "MDI_Icon": "mdi-human-child"
     },
     "P-Value": {
       "visibility": 1,
@@ -145,6 +148,8 @@
       },
       "type": "text",
       "text": "${meta['p-value']}",
+      "sortable": true,
+      "score": true,
       "priority": 6
     },
     "Odds Ratio": {
@@ -157,6 +162,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}",
+      "sortable": true,
+      "score": true,
       "priority": 6
     },
     "Set Size": {
@@ -169,6 +176,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.setsize}",
+      "sortable": true,
+      "score": true,
       "priority": 6
     }
   }

@@ -17,39 +17,42 @@
       "type": "text",
       "text": "ConnectivityMap",
       "priority": 1,
-      "parent": true
+      "subtitle": true
     },
-    "Title": {
+    "Signature ID": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.sig_id}",
-      "title": true,
+      "name": true,
       "priority": 2
     },
     "Assay": {
       "visibility": 1,
       "type": "text",
       "text": "L1000",
-      "priority": 4
+      "priority": 4,
+      "MDI_Icon": "mdi-flask-outline"
     },
     "Cell-line": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Cell_Line}",
-      "subfield": "${meta.Cell_Line[0].Name}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Cell_Line[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-test-tube"
     },
     "Time point": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.pert_time} ${meta.pert_time_unit}",
-      "priority": 4
+      "priority": 4,
+      "MDI_Icon": "mdi-timer"
     },
     "Perturbation": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.pert_desc === '-666' ? meta.pert_id : meta.pert_desc}",
-      "priority": 4
+      "priority": 4,
+      "MDI_Icon": "mdi-microscope"
     },
     "Concentration": {
       "visibility": 1,
@@ -60,7 +63,8 @@
       },
       "type": "text",
       "text": "${meta.pert_dose} ${meta.pert_dose_unit}",
-      "priority": 4
+      "priority": 4,
+      "MDI_Icon": "mdi-eyedropper"
     },
     "P-Value": {
       "visibility": 1,
@@ -76,6 +80,8 @@
       },
       "type": "text",
       "text": "${meta['p-value']}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "Odds Ratio": {
@@ -88,6 +94,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "Set Size": {
@@ -100,6 +108,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.setsize}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "P-Up": {
@@ -112,6 +122,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['p-up']}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "P-Down": {
@@ -124,6 +136,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['p-down']}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "Z-Up": {
@@ -136,6 +150,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['z-up']}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "Z-Down": {
@@ -148,6 +164,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['z-down']}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "Log(p) Fisher": {
@@ -164,6 +182,8 @@
       },
       "type": "text",
       "text": "${meta['logp-fisher']}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "Log(p) Average":{
@@ -176,6 +196,8 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['logp-avg']}",
+      "sortable": true,
+      "score": true,
       "priority": 5
     },
     "Direction": {

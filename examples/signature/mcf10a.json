@@ -16,7 +16,7 @@
       "visibility": 1,
       "type": "text",
       "text": "${library.meta['assay']}",
-      "parent": true,
+      "subtitle": true,
       "priority": 1
     },
     "Specimen Name": {
@@ -24,7 +24,7 @@
       "type": "text",
       "text": "${meta['specimenName']}",
       "priority": 2,
-      "title": true
+      "name": true
     },
     "Cell Type": {
       "visibility": 1,
