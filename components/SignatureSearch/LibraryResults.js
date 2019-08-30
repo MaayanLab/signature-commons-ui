@@ -1,6 +1,5 @@
 import React from 'react'
 import M from 'materialize-css'
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core'
 import MUIDataTable from 'mui-datatables'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
@@ -214,13 +213,11 @@ export default class LibraryResults extends React.Component {
       })
     )
     return (
-      <MuiThemeProvider theme={theme}>
-        <MUIDataTable
-          options={options}
-          columns={columns}
-          data={data}
-        />
-      </MuiThemeProvider>
+      <MUIDataTable
+        options={options}
+        columns={columns}
+        data={data}
+      />
     )
   }
 
