@@ -28,9 +28,9 @@ const styles = theme => ({
 
 
 const InformativeButton = (props) => {
-  let {classes, counter, alt, src, description} = props
+  let {classes, counter, title, alt, src, description} = props
   return(
-    <Tooltip title={description} placement="bottom">
+    <Tooltip title={description||''} placement="bottom">
       <Button className={classes.button}>
         <Badge className={classes.margin} badgeContent={counter===undefined ? 0: counter} color="secondary">
           <Grid container>
@@ -39,7 +39,7 @@ const InformativeButton = (props) => {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="caption" gutterBottom>
-                {alt}
+                {title || alt}
               </Typography>
             </Grid>
           </Grid>
