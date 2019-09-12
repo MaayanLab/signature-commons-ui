@@ -173,7 +173,7 @@ export class SearchBox extends React.Component {
               onClick={() =>
                 this.props.searchFunction(this.props.search)
               }>
-              { this.props.loading ? 
+              { this.props.loading || !this.props.completed ? 
                 <React.Fragment>
                   Searching &nbsp;
                   <span className="mdi mdi-spin mdi-loading right" />
@@ -190,7 +190,9 @@ export class SearchBox extends React.Component {
       <Grid item xs={12}>
         {this.props.examples.map((example) => (
           <Chip label={example} className={this.props.classes.defaultChip}
-            onClick={() => this.props.searchFunction([example])}/>
+            onClick={() =>
+              this.props.searchFunction([example])
+            }/>
         ))}
       </Grid>
     </Grid>

@@ -4,152 +4,135 @@ import { fetch_data } from "../fetch/data"
 import { get_library_resources } from "./resources"
 import { UIValues } from '../ui_values'
 import { makeTemplate } from "../makeTemplate"
+import { build_where, parse_entities, maybe_fix_obj} from "./misc"
 
-export function build_where(queries) {
-  const where = {}
-  let andClauses = []
-  let orClauses = []
+export function format_bulk_metadata_search_count_per_parent({operationId,
+  parent,
+  parent_ids,
+  params,
+  search,
+  where,
+  ...props}){
 
-  for (const q of queries) {
-    if (q.indexOf(':') !== -1) {
-      const [key, ...value] = q.split(':')
-      if (key.startsWith('!') || key.startsWith('-')) {
-        andClauses = [...andClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
-      } else if (key.toLowerCase().startsWith('or ')) {
-        orClauses = [...orClauses, { ['meta.' + key.substring(3).trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      } else if (key.startsWith('|')) {
-        orClauses = [...orClauses, { ['meta.' + key.substring(1).trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      } else {
-        andClauses = [...andClauses, { ['meta.' + key.trim()]: { ilike: '%' + value.join(':') + '%' } }]
+  if (where===undefined && search!==undefined) where = build_where(search)
+  if (where===undefined && search===undefined) where = {}
+  
+  let bulk_params  
+  bulk_params = parent_ids.map(parent_id=>{
+    let where_with_parent
+    if (where.and !== undefined){
+      where_with_parent = {
+        and: [
+          ...where.and,
+          {[parent]: parent_id}
+        ]
       }
     } else {
-      // full text query
-      if (q.startsWith('!') || q.startsWith('-')) {
-        // and not
-        andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim().split(' ') } } }]
-      } else if (q.toLowerCase().startsWith('or ')) {
-        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim().split(' ') } } }]
-      } else if (q.startsWith('|')) {
-        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim().split(' ') } } }]
-      } else {
-        // and
-        andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim().split(' ') } } }]
+      where_with_parent = {
+        and: [
+          ...where,
+          {[parent]: parent_id}
+        ]
+      }
+    }
+    console.log(operationId)
+    return({
+      operationId,
+      parameters: {
+        where: where_with_parent,
+        ...params
+      }
+  })})
+  return bulk_params
+}
+
+// operationID: see sigcom-api
+// filter: filter to use
+// parent: parent of the table in hierarchy i.e resource -> library -> signature
+// parent_ids: available ids 
+// params: other params
+// controller: abort controller
+export async function fetch_bulk_counts_per_parent({table,
+  operationId,
+  filter,
+  parent,
+  parent_ids,
+  params,
+  controller,
+  search,
+  ...props}){
+  const bulk_params = format_bulk_metadata_search_count_per_parent({operationId,
+    parent,
+    parent_ids,
+    params,
+    search
+  })
+  const {response: bulk_counts, duration} = await fetch_meta_post({
+    endpoint: '/bulk',
+    body: bulk_params,
+    signal: controller.signal,
+  })
+  let count = 0
+  const count_per_parent = bulk_counts.map((c, ind)=>{
+    const parent_id = parent_ids[ind]
+    const {response: percount} = c
+    count = count + percount.count
+    return {parent_id, count: percount}
+  }).reduce((acc, item)=>({
+    ...acc,
+    [item.parent_id]: item.count
+  }),{})
+  return {table, count, count_per_parent}
+}
+
+export async function metadataSearcher({search,
+  table,
+  parent,
+  parent_ids,
+  limit,
+  skip,
+  where,
+  controller}) {
+  if (limit===undefined) limit = 10
+  if (where===undefined && search!==undefined) where = build_where(search)
+  if (where===undefined && search===undefined) where = {}
+  if (parent_ids!==undefined) {
+    if (where.and !== undefined){
+      where = {
+        and: [
+          ...where.and,
+          {
+            [parent]: {
+              "inq": parent_ids
+            }
+          }
+        ]
+      }
+    } else {
+      where = {
+        and: [
+          ...where,
+          {
+            [parent]: {
+              "inq": parent_ids
+            }
+          }
+        ]
       }
     }
   }
-  if (orClauses.length > 0) {
-    if (andClauses.length > 0) {
-      orClauses = [...orClauses, { and: andClauses }]
-    }
-    where['or'] = orClauses
-  } else {
-    where['and'] = andClauses
-  }
-  return where
-}
-
-export async function search_signature_meta_per_library({library, controller, ...props}){
-  let {limit, skip, search, where} = props
-  if (limit===undefined) limit = 5
-  if (where===undefined && search!==undefined) where = build_where([search])
-  if (where===undefined && search===undefined) where = {}
-  if (where.and !== undefined){
-    where = {
-      and: [
-        ...where.and,
-        {library: library}
-      ]
-    }
-  } else {
-    where = {
-      and: [
-        ...where,
-        {library: library}
-      ]
-    }
-  }
-  const {response: signatures, contentRange, duration} = await fetch_meta_post({
-    endpoint: `/signatures/find`,
+  const {response: matches, contentRange, duration} = await fetch_meta_post({
+    endpoint: `/${table}/find`,
     body: {
       filter: {
-        where: {
-          ...where,
-          library: library.id,
-        },
+        where,
         limit,
         skip,
       },
     },
     signal: controller.signal,
   })
-  if (signatures.length===0){
-    return null
-  }
-  return {library, signatures, count: contentRange.count, duration}
-}
-
-export function format_bulk_signature_meta_per_library(props){
-  let {limit, skip, search, where, libraries} = props
-  if (limit===undefined) limit = 5
-  if (where===undefined && search!==undefined) where = build_where([search])
-  if (where===undefined && search===undefined) where = {}
-  const bulk_params = Object.keys(libraries).map(lib=>{
-    let where_with_lib
-    if (where.and !== undefined){
-      where_with_lib = {
-        and: [
-          ...where.and,
-          {library: lib}
-        ]
-      }
-    } else {
-      where_with_lib = {
-        and: [
-          ...where,
-          {library: lib}
-        ]
-      }
-    }
-    return({
-      operationId: "Signature.find",
-      parameters: {
-        filter:{
-          where: where_with_lib,
-          limit,
-          skip
-        },
-        contentRange: true,
-      }
-  })})
-  return bulk_params
-}
-
-export function parse_entities(input) {
-  return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
-      (lines, line) => {
-        const parsed = /^(.+?)(,(.+))?$/.exec(line)
-        if (parsed !== null) {
-          return [...lines, parsed[1]]
-        }
-        return lines
-      }, []
-  ))
-}
-
-export function maybe_fix_obj(obj) {
-  if (Array.isArray(obj)) {
-    return obj.reduce((objs, v) => {
-      if (v.id !== undefined) {
-        objs[v.id] = v
-      } else if (v.uuid !== undefined) {
-        objs[v.uuid] = v
-        objs[v.uuid].id = v.uuid
-        delete objs[v.uuid].uuid
-      }
-      return objs
-    }, {})
-  }
-  return Object.keys(obj).reduce((objs, k) => ({ ...objs, [k]: { ...obj[k], id: k } }), {})
+  return {table, matches, count: contentRange.count, duration}
 }
 
 export async function resolve_entities(props) {
@@ -571,90 +554,6 @@ export async function query_rank(props) {
     duration_data: duration_data,
     duration: (Date.now() - start) / 1000,
     duration_meta: duration_meta,
-    controller: null,
-  }
-}
-
-export async function metadataSearcher(props) {
-  let { search,
-    libraries,
-    library_resource,
-    schemas,
-    schema_validator,
-    controller,
-    limit,
-    skip,
-  } = props
-  const start = new Date()
-  let duration_meta = 0
-  let count_meta = 0
-  if (libraries === undefined || library_resource === undefined){
-    const {libraries: l, library_resource: lr} = await get_library_resources({schema_validator, schemas})
-    libraries = l
-    library_resource = lr
-  }
-  const where = build_where(search)
-  const bulk_params = format_bulk_signature_meta_per_library({
-    where,
-    search,
-    libraries,
-    limit,
-    skip
-  })
-  console.log(bulk_params)
-  const {response: lib_sigs, duration} = await fetch_meta_post({
-    endpoint: '/bulk',
-    body: bulk_params,
-    signal: controller.signal,
-  })
-
-  const library_signatures = lib_sigs.filter(item=>item.response.length>0).map(
-    item=>({library: item.response[0].library, ...item})).reduce((acc,item)=>{
-    let {library: libid, response: signatures, contentRange} = item
-    if (contentRange !== null || contentRange!==undefined) {
-      const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)
-      contentRange = {
-        start: Number(contentRangeMatch[1]),
-        end: Number(contentRangeMatch[2]),
-        count: Number(contentRangeMatch[3]),
-      }
-    }
-    acc = {
-      ...acc,
-      [libid]: {
-        library: libraries[libid],
-        signatures,
-        count: contentRange.count
-      }
-    }
-    return acc
-  }, {})
-  let count = 0
-
-  const resource_signatures = Object.keys(library_signatures).reduce((acc, libid)=>{
-    const resource = library_resource[libid]
-    if (resource===undefined) return acc
-    if (acc[resource]===undefined){
-      acc[resource] = {
-        libraries: Set(),
-        count: 0,
-      }
-    }
-    acc[resource] = {
-      ...acc[resource],
-      libraries: acc[resource].libraries.add(libid),
-      count: acc[resource].count + library_signatures[libid].count,
-    }
-    count = count + library_signatures[libid].count
-    return acc
-  }, {})
-
-  return {
-    library_signatures,
-    resource_signatures,
-    count,
-    duration_meta: duration,
-    duration: (Date.now() - start) / 1000,
     controller: null,
   }
 }

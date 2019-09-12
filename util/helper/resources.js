@@ -30,6 +30,7 @@ export async function get_library_resources({schema_validator, schemas, ...props
     group[data.id] = data
     return group
   }, {})
+  const resources_id = {}
   const resources = libraries.reduce((acc, lib) => {
     let resource_name
     let icon_src
@@ -58,6 +59,7 @@ export async function get_library_resources({schema_validator, schemas, ...props
           console.warn('source of resource name is not defined, using either Resource_Name or ids')
           resource_name = resource.meta['Resource_Name'] || resource_id
         }
+
         let icon_prop =Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].icon)
 
         if (icon_prop.length > 0){
@@ -73,6 +75,7 @@ export async function get_library_resources({schema_validator, schemas, ...props
           acc[resource_name] = resource
         }
         acc[resource_name].libraries.push({ ...lib })
+        resources_id[resource_id] = resource_name
       } else {
         console.error(`Resource not found: ${resource_name}`)
       }
@@ -134,6 +137,7 @@ export async function get_library_resources({schema_validator, schemas, ...props
     libraries: library_dict,
     resources: resources,
     library_resource,
+    resources_id,
   }
 }
 
@@ -143,7 +147,7 @@ export async function get_signature_counts_per_resources(ui_values, schemas=unde
     schemas = await get_schemas(schema_validator)
   }
 
-  const { libraries, resources, library_resource } = await get_library_resources({schemas,
+  const { libraries, resources, resources_id, library_resource } = await get_library_resources({schemas,
     schema_validator: ui_values.ui_schema})
 
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
@@ -249,5 +253,6 @@ export async function get_signature_counts_per_resources(ui_values, schemas=unde
     libraries,
     resources: resources_with_counts,
     library_resource,
+    resources_id,
   }
 }

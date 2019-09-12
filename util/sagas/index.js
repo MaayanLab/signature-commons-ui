@@ -1,4 +1,4 @@
-import { put, takeLatest, take, cancelled, all, call, cancel } from 'redux-saga/effects'
+import { put, takeLatest, takeEvery, take, cancelled, all, call, cancel, select } from 'redux-saga/effects'
 import { Set } from 'immutable'
 import { action_definitions } from "../redux/action-types"
 import { fetch_meta } from "../fetch/meta"
@@ -7,16 +7,132 @@ import { build_where,
   resolve_entities,
   find_synonyms,
   query_overlap,
-  query_rank } from "../helper/fetch_methods"
-import { fetchMetaDataSucceeded,
+  query_rank,
+  fetch_bulk_counts_per_parent } from "../helper/fetch_methods"
+import { fetchMetaDataFromSearchBoxSucceeded,
+  fetchMetaDataFromSearchBoxFailed,
+  fetchMetaDataFromSearchBoxAborted,
+  fetchMetaDataCountSucceeded,
+  fetchMetaDataCountFailed,
+  fetchMetaDataCountAborted,
+  fetchMetaDataSucceeded,
   fetchMetaDataFailed,
+  fetchMetaDataAborted,
   updateResolvedEntities,
   matchFailed,
   findSignaturesSucceeded,
-  findSignaturesFailed,
-  fetchMetaDataAborted } from "../redux/actions"
+  findSignaturesFailed } from "../redux/actions"
+import { getParentInfo } from "./selectors"
+
 
 // Metadata Search
+export function* workFetchMetaDataFromSearchBox(action) {
+  console.log(action.type)
+   if (action.type !== action_definitions.FETCH_METADATA_FROM_SEARCH_BOX){
+    return
+   }
+   const controller = new AbortController()
+   try {
+      const operationIds = {
+        libraries: "Library.count",
+        signatures: "Signature.count"
+       }
+      if (action.search.length === 0){
+        yield put(fetchMetaDataFromSearchBoxSucceeded({}, {}, action.table))
+      }else{
+        const {search} = action
+        const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getParentInfo)
+        const count_calls = Object.keys(parents).map(table=>call(fetch_bulk_counts_per_parent, {
+            table,
+            operationId: operationIds[table],
+            parent: parents[table],
+            parent_ids: Object.keys(selected_parent_ids_mapping[table]),
+            search,
+            controller,
+          }))
+        const match_calls = Object.keys(parents).map(table=>call(metadataSearcher, {
+            table,
+            operationId: operationIds[table],
+            parent: parents[table],
+            parent_ids: Object.keys(selected_parent_ids_mapping[table]).length < Object.keys(parent_ids_mapping[table]) ? 
+              Object.keys(selected_parent_ids_mapping[table]): undefined,
+            search,
+            controller,
+          }))
+        const results = yield all([...count_calls, ...match_calls])
+        console.log(results)
+        let table_count = {}
+        let table_count_per_parent = {}
+        let metadata_results = {}
+        for (const item of results){
+          const {table, count, count_per_parent, matches} = item
+          if (matches !== undefined){
+            metadata_results[table] = matches
+          }else{
+            table_count[table] = count
+            table_count_per_parent[table] = count_per_parent
+          }
+        }
+        console.log(table_count_per_parent)
+        yield put(fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results))
+      }
+   } catch (error) {
+      console.log(error)
+      yield put(fetchMetaDataFromSearchBoxFailed(error))
+      controller.abort()
+   } finally {
+      if (yield cancelled()){
+        controller.abort()
+        yield put(fetchMetaDataFromSearchBoxAborted("aborted"))
+      }
+   }
+}
+
+function* watchFetchMetaDataFromSearchBox() {
+  const ask = yield takeLatest([action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
+      action_definitions.FIND_SIGNATURES,
+      action_definitions.MATCH_ENTITY],
+    workFetchMetaDataFromSearchBox)
+}
+
+export function* workFetchMetaDataCount(action) {
+  console.log(action.type)
+   if (action.type !== action_definitions.FETCH_METADATA_COUNT){
+    return
+   }
+   const controller = new AbortController()
+   try {
+      const operationIds = {
+        libraries: "Library.count",
+        signatures: "Signature.count"
+       }
+      if (action.search.length === 0){
+        yield put(fetchMetaDataCountSucceeded({}, {}, action.table))
+      }else{
+        const {table, count, count_per_parent} = yield call(fetch_bulk_counts_per_parent, {
+          ...action,
+          operationId: operationIds[action.table],
+          controller,
+        })
+        yield put(fetchMetaDataCountSucceeded(count, count_per_parent, table))
+      }
+   } catch (error) {
+      console.log(error)
+      yield put(fetchMetaDataCountFailed(error))
+      controller.abort()
+   } finally {
+      if (yield cancelled()){
+        controller.abort()
+        yield put(fetchMetaDataCountAborted("aborted"))
+      }
+   }
+}
+
+function* watchFetchMetaDataCount() {
+  const cancel_task = yield takeLatest([action_definitions.FIND_SIGNATURES, action_definitions.MATCH_ENTITY], workFetchMetaDataCount)
+  const task = yield takeEvery(action_definitions.FETCH_METADATA_COUNT, workFetchMetaDataCount)
+}
+
 export function* workFetchMetaData(action) {
    if (action.type !== action_definitions.FETCH_METADATA){
     return
@@ -114,6 +230,10 @@ export function* workMatchEntities(action) {
 }
 
 function* watchMatchEntities() {
+  // const task = yield takeEvery([action_definitions.FETCH_METADATA_COUNT], workMatchEntities)
+  // for (const t in task){
+  //   yield cancel(task)
+  // }
   yield takeLatest([action_definitions.FIND_SIGNATURES, action_definitions.MATCH_ENTITY, action_definitions.FETCH_METADATA], workMatchEntities)
 }
 
@@ -145,6 +265,10 @@ export function* workFindSignature(action) {
 }
 
 function* watchFindSignature() {
+  // const task = yield takeEvery([action_definitions.FETCH_METADATA_COUNT], workMatchEntities)
+  // for (const t in task){
+  //   yield cancel(task)
+  // }
   yield takeLatest([action_definitions.FIND_SIGNATURES, action_definitions.MATCH_ENTITY, action_definitions.FETCH_METADATA], workFindSignature)
 }
 
@@ -153,5 +277,7 @@ export default function* rootSaga() {
       watchFetchMetaData(),
       watchMatchEntities(),
       watchFindSignature(),
+      watchFetchMetaDataCount(),
+      watchFetchMetaDataFromSearchBox(),
     ]);
 }

@@ -95,6 +95,7 @@ export const UIValues = {
         ui_schema: values.ui_schema || '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
         maxResourcesBeforeCollapse: values.maxResourcesBeforeCollapse || 60,
         maxResourcesToShow: values.maxResourcesToShow || 40,
+        score_icon: values.score_icon || 'mdi-trophy-award',
         downloads: values.downloads || {
           gmt: 'Download gmt file',
           tsv: 'Download tsv file',

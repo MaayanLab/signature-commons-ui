@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Chip from '@material-ui/core/Chip'
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
-import { fetchMetaData } from "../../util/redux/actions";
+import { fetchMetaDataFromSearchBox } from "../../util/redux/actions";
 import { connect } from "react-redux";
 import { SearchBox } from "./SearchBox"
 
@@ -45,25 +45,30 @@ const styles = (theme) => ({
 
 function mapDispatchToProps(dispatch) {
   return {
-    searchFunction : search => dispatch(fetchMetaData(search))
+    searchFunction : (search) => 
+      dispatch(fetchMetaDataFromSearchBox(search))
   };
 }
 
 const mapStateToProps = state => {
   return { loading: state.loading,
+    completed: state.completed,
     examples: state.serverSideProps.ui_values.LandingText.search_terms,
     placeholder: state.serverSideProps.ui_values.LandingText.metadata_placeholder,
     search: state.search,
+    operationIDs: state.operationIDs
   };
 };
 
 
 class MetadataSearchBox extends React.Component {
 
+
   render() {
     return (
       <SearchBox 
         {...this.props}
+        searchFunction={this.props.searchFunction}
       />
     )
   }
