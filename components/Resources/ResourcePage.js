@@ -21,7 +21,7 @@ const download = {
 export default class ResourcePage extends React.Component {
   constructor(props){
     super(props)
-    const childCount = this.props.resource.is_library ? 0: this.props.resource.libraries.length
+    const childCount = props.resource.is_library ? 0: props.resource.libraries.length
     this.state = {
       page: 0,
       childCount,
@@ -56,8 +56,11 @@ export default class ResourcePage extends React.Component {
 
   render() {
     const {page, perPage, childCount} = this.state
+    const resource = this.props.resource
     const start = page*perPage
     const end = (page+1)*perPage
+    let resource_name = resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)
+    resource_name = resource_name === undefined || resource_name === 'undefined' ? resource.id : resource_name      
     return (
       <div className="row">
         <div className="col s12">
@@ -73,22 +76,22 @@ export default class ResourcePage extends React.Component {
                         className="waves-effect waves-teal"
                       >
                         <IconButton
-                          img={this.props.resource.meta.icon}
+                          img={resource.meta.icon}
                           onClick={call(this.redirectLink, '/')}
                         />
                       </Link>
                     </div>
                     <div className="card-content col s11">
                       <div>
-                        <span className="card-title">{this.props.resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, this.props.resource)}</span>
+                        <span className="card-title">{resource_name}</span>
                       </div>
                       <ShowMeta
                         value={{
-                          '@id': this.props.resource.id,
+                          '@id': resource.id,
                           '@type': this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
-                          'meta': Object.keys(this.props.resource.meta).filter((key) => (
+                          'meta': Object.keys(resource.meta).filter((key) => (
                             ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
-                            acc[key] = this.props.resource.meta[key]
+                            acc[key] = resource.meta[key]
                             return acc
                           }, {}),
                         }}
@@ -113,13 +116,13 @@ export default class ResourcePage extends React.Component {
               </div>
             </div>
           </div>
-          {!this.props.resource.is_library ?
+          {!resource.is_library ?
             <div className="row">
               <div className="col s12">
                 <ul
                   className="collapsible popout"
                 >
-                  {this.props.resource.libraries.slice(start,end).map((library) => (
+                  {resource.libraries.slice(start,end).map((library) => (
                     <li
                       key={library.id}
                     >

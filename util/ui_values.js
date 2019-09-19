@@ -36,7 +36,7 @@ export const UIValues = {
           down_set_terms: values.down_set_terms,
         },
         nav: {
-          signature_search: values.signature_search !== undefined ? values.signature_search : true,
+          signature_search: values.signature_search !== undefined ? values.signature_search : false,
           metadata_search: values.metadata_search !== undefined ? values.metadata_search : true,
           resources: values.resources !== undefined ? values.resources : true,
         },
