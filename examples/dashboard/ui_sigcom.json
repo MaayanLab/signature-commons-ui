@@ -6,6 +6,7 @@
         "Field_Name": "Version",
         "Caption": "Datasets per year"
       },
+      "signature_search": true,
       "library_name": "Library_name",
       "resource_name": "${meta.Resource_Name}",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",

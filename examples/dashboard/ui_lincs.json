@@ -11,8 +11,8 @@
         "resources": "Dataset"
       },
       "signature_search": false,
-      "deactivate_download": true,
-      "deactivate_wordcloud": true,
+      "deactivate_download": false,
+      "deactivate_wordcloud": false,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "bar_chart": {
         "Field_Name": "types.method.value",
@@ -50,7 +50,8 @@
       "search_terms": [
         "MEMA",
         "MCF10A",
-        "L1000"
+        "L1000",
+        "imatinib"
       ]
     }
   },

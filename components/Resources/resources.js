@@ -63,6 +63,7 @@ export async function get_library_resources(ui_values) {
       }
     } else {
       resource_name = ui_values.resource_name_from_library ? lib.meta[ui_values.resource_name_from_library] : lib.dataset
+      resource_name = resource_name || lib.dataset
       const { Icon, ...rest } = lib.meta
       acc[resource_name] = {
         id: lib.id,

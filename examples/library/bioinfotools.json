@@ -1,29 +1,52 @@
 {
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
-    "${dataset}": "LDS*"
   },
   "properties": {
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${meta.creators[0].affiliations[0].extraProperties[0].values[0]}",
-      "alt": "${meta['title']}",
+      "src": "${meta.icon}",
+      "alt": "${meta.tool_name}",
       "priority": 1,
       "icon": true,
       "name": true
     },
-    "Assay": {
+    "Journal": {
       "visibility": 1,
       "type": "text",
-      "alt": "${meta.types.method.value}",
-      "priority": 1
+      "text": "${meta.journal_name}",
+      "priority": 2
     },
-    "Institute": {
+    "Tool Name": {
       "visibility": 1,
       "type": "text",
-      "alt": "${meta.creators.affiliations.name}",
-      "priority": 1
+      "text": "${meta.tool_name}",
+      "priority": 3
+    },
+    "Last Author": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.last_author.name}",
+      "priority": 4
+    },
+    "Institution": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.institution}",
+      "priority": 5
+    },
+    "Publication year": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.pub_year}",
+      "priority": 6
+    },
+    "Status": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.up_down}",
+      "priority": 7
     }
   }
 }
