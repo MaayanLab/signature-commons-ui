@@ -98,25 +98,39 @@ export async function get_signature_counts_per_resources(ui_values) {
   const { libraries, resources, library_resource } = await get_library_resources(ui_values)
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios
-  const count_promises = Object.keys(libraries).map(async (lib_key) => {
-    const lib = libraries[lib_key]
-    // request details from GitHub’s API with Axios
-    const { response: stats } = await fetch_meta({
-      endpoint: `/libraries/${lib_key}/signatures/count`,
-    })
-
-    return {
-      id: lib.id,
-      name: lib.meta[ui_values.library_name],
-      count: stats.count,
-    }
+  const { response } = await fetch_meta({
+    endpoint: `/signatures/count`,
   })
-  const counts = await Promise.all(count_promises)
+  console.log(resources)
+  let counts
+  if(response.count>0){
+    const count_promises = Object.keys(libraries).map(async (lib_key) => {
+      const lib = libraries[lib_key]
+      // request details from GitHub’s API with Axios
+      const { response: stats } = await fetch_meta({
+        endpoint: `/libraries/${lib_key}/signatures/count`,
+      })
+
+      return {
+        id: lib.id,
+        name: lib.meta[ui_values.library_name],
+        count: stats.count,
+      }
+    })
+    counts = await Promise.all(count_promises)
+    
+  }else {
+    return {
+      libraries,
+      resources,
+      library_resource,
+    }
+  }
   const count_dict = counts.reduce((acc, item) => {
     acc[item.id] = item.count
     return acc
   }, {})
-
+  console.log(count_dict)
   const total_count = counts.reduce((acc, item) => {
     acc = acc + item.count
     return acc

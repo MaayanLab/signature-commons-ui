@@ -8,6 +8,7 @@ import M from 'materialize-css'
 import NProgress from 'nprogress'
 import Grid from '@material-ui/core/Grid'
 import { makeTemplate } from '../../util/makeTemplate'
+import TablePagination from '@material-ui/core/TablePagination'
 
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
@@ -18,6 +19,15 @@ const download = {
 }
 
 export default class ResourcePage extends React.Component {
+  constructor(props){
+    super(props)
+    const childCount = this.props.resource.is_library ? 0: this.props.resource.libraries.length
+    this.state = {
+      page: 0,
+      childCount,
+      perPage: 10
+    }
+  }
   componentDidMount() {
     M.AutoInit()
   }
@@ -32,7 +42,22 @@ export default class ResourcePage extends React.Component {
     NProgress.done()
   }
 
+  handleChangeRowsPerPage = (e, name) => {
+    this.setState({
+      perPage: e.target.value,
+    })
+  }
+
+  handleChangePage = (event, page, name) => {
+    this.setState({
+      page: page
+    })
+  }
+
   render() {
+    const {page, perPage, childCount} = this.state
+    const start = page*perPage
+    const end = (page+1)*perPage
     return (
       <div className="row">
         <div className="col s12">
@@ -94,7 +119,7 @@ export default class ResourcePage extends React.Component {
                 <ul
                   className="collapsible popout"
                 >
-                  {this.props.resource.libraries.map((library) => (
+                  {this.props.resource.libraries.slice(start,end).map((library) => (
                     <li
                       key={library.id}
                     >
@@ -146,6 +171,16 @@ export default class ResourcePage extends React.Component {
                     </li>
                   ))}
                 </ul>
+              </div>
+              <div align="right">
+                <TablePagination
+                  page={page}
+                  rowsPerPage={perPage}
+                  count={childCount}
+                  onChangePage={(event, page) => this.handleChangePage(event, page)}
+                  onChangeRowsPerPage={(event) => this.handleChangeRowsPerPage(event)}
+                  component="div"
+                />
               </div>
             </div> :
             null

@@ -12,8 +12,10 @@ export default class ResourceList extends React.PureComponent {
 
   render() {
     const sorted_resources = [...this.props.resources].sort((r1, r2) => {
-      const r1_name = r1.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, r1)
-      const r2_name = r2.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, r2)
+      let r1_name = r1.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, r1)
+      r1_name = r1_name === undefined || r1_name === 'undefined' ? r1.id : r1_name
+      let r2_name = r2.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, r2)
+      r2_name = r2_name === undefined || r2_name === 'undefined' ? r2.id : r2_name
       return (r1_name.localeCompare(r2_name))
     })
     const md = sorted_resources.length > 6 ? 2 : 4
@@ -25,19 +27,23 @@ export default class ResourceList extends React.PureComponent {
         container
         direction="row"
       >
-        {sorted_resources.map((resource) => (
-          <Grid item xs={xs} sm={sm} md={md} key={resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}>
-            <Link
-              key={resource.id}
-              to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}`}
-            >
-              <IconButton
-                alt={resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}
-                img={resource.meta.icon}
-              />
-            </Link>
-          </Grid>
-        ))}
+        {sorted_resources.map((resource) => {
+          let resource_name = resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)
+          resource_name = resource_name === undefined || resource_name === 'undefined' ? resource.id : resource_name
+          return(
+            <Grid item xs={xs} sm={sm} md={md} key={resource_name}>
+              <Link
+                key={resource.id}
+                to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${resource_name}`}
+              >
+                <IconButton
+                  alt={resource_name}
+                  img={resource.meta.icon}
+                />
+              </Link>
+            </Grid>
+          )
+        })}
       </Grid>
     )
   }

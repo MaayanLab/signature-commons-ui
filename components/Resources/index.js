@@ -22,6 +22,7 @@ export default class Resources extends React.PureComponent {
 
   resource_page = (props) => {
     const resource = this.props.resources[props.match.params.resource.replace(/_/g, ' ')]
+    console.log(resource)
     return resource === undefined ? null : (
       <ResourcePage
         resource={resource}
