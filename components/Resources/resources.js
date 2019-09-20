@@ -102,7 +102,6 @@ export async function get_signature_counts_per_resources(ui_values) {
   const { response } = await fetch_meta({
     endpoint: `/signatures/count`,
   })
-  console.log(resources)
   let counts
   if(response.count>0){
     const count_promises = Object.keys(libraries).map(async (lib_key) => {
@@ -114,12 +113,11 @@ export async function get_signature_counts_per_resources(ui_values) {
 
       return {
         id: lib.id,
-        name: lib.meta[ui_values.library_name],
+        name: lib.meta[ui_values.library_name] || lib.dataset,
         count: stats.count,
       }
     })
     counts = await Promise.all(count_promises)
-    
   }else {
     return {
       libraries,
@@ -131,7 +129,6 @@ export async function get_signature_counts_per_resources(ui_values) {
     acc[item.id] = item.count
     return acc
   }, {})
-  console.log(count_dict)
   const total_count = counts.reduce((acc, item) => {
     acc = acc + item.count
     return acc
@@ -150,7 +147,7 @@ export async function get_signature_counts_per_resources(ui_values) {
   }, {})
   counts.reduce
   const resource_signatures = counts.reduce((groups, lib) => {
-    const resource_name = library_resource[lib.id]
+    const resource_name = library_resource[lib.id] || lib.dataset
     if (groups[resource_name] === undefined) {
       groups[resource_name] = lib.count
     } else {

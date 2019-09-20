@@ -11,7 +11,13 @@ export default class ResourceList extends React.PureComponent {
   }
 
   render() {
-    const sorted_resources = [...this.props.resources].sort((r1, r2) => {
+    let { resources } = this.props
+    const lib_res = resources.filter(r=>r.is_library)
+    const parents = resources.filter(r=>!r.is_library)
+    if ( parents.length!==resources.length || lib_res.length !== resources.length){
+      resources = parents
+    }
+    const sorted_resources = [...resources].sort((r1, r2) => {
       let r1_name = r1.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, r1)
       r1_name = r1_name === undefined || r1_name === 'undefined' ? r1.id : r1_name
       let r2_name = r2.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, r2)
