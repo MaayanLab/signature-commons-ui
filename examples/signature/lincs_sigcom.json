@@ -8,7 +8,7 @@
       "visibility": 1,
       "type": "img",
       "src": "${PREFIX}/static/images/lincs/LINCS.ico",
-      "alt": "${meta.libraryid}",
+      "alt": "${meta.platform || meta.signatureid}",
       "priority": 1
     },
     "Signature ID": {

@@ -1,12 +1,13 @@
 {
   "match": {
-    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json"
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
+    "${dataset_type}": "geneset_library"
   },
   "properties": {
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${meta.creators[0].affiliations[0].extraProperties[0].values[0] || 'static/images/lincs/LINCS.ico'}",
+      "src": "${PREFIX}/${meta.creators[0].affiliations[0].extraProperties[0].values[0]}",
       "alt": "${meta.title || meta.libraryName}",
       "priority": 1,
       "icon": true,
