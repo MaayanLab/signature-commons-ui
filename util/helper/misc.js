@@ -82,3 +82,10 @@ export function build_where(queries) {
   }
   return where
 }
+
+export const diffList = (prevList, currList) =>{
+  if (prevList.length !== currList.length) return true
+  const diff = prevList.filter(s=>currList.indexOf(s)===-1)
+  if (diff.length>0) return true
+  return false
+}

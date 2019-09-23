@@ -37,45 +37,41 @@ export function* workFetchMetaDataFromSearchBox(action) {
         libraries: "Library.count",
         signatures: "Signature.count"
        }
-      if (action.search.length === 0){
-        yield put(fetchMetaDataFromSearchBoxSucceeded({}, {}, action.table))
-      }else{
-        const {search} = action
-        const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getParentInfo)
-        const count_calls = Object.keys(parents).map(table=>call(fetch_bulk_counts_per_parent, {
-            table,
-            operationId: operationIds[table],
-            parent: parents[table],
-            parent_ids: Object.keys(selected_parent_ids_mapping[table]),
-            search,
-            controller,
-          }))
-        const match_calls = Object.keys(parents).map(table=>call(metadataSearcher, {
-            table,
-            operationId: operationIds[table],
-            parent: parents[table],
-            parent_ids: Object.keys(selected_parent_ids_mapping[table]).length < Object.keys(parent_ids_mapping[table]) ? 
-              Object.keys(selected_parent_ids_mapping[table]): undefined,
-            search,
-            controller,
-          }))
-        const results = yield all([...count_calls, ...match_calls])
-        console.log(results)
-        let table_count = {}
-        let table_count_per_parent = {}
-        let metadata_results = {}
-        for (const item of results){
-          const {table, count, count_per_parent, matches} = item
-          if (matches !== undefined){
-            metadata_results[table] = matches
-          }else{
-            table_count[table] = count
-            table_count_per_parent[table] = count_per_parent
-          }
+      const {search} = action
+      const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getParentInfo)
+      const count_calls = Object.keys(parents).map(table=>call(fetch_bulk_counts_per_parent, {
+          table,
+          operationId: operationIds[table],
+          parent: parents[table],
+          parent_ids: Object.keys(selected_parent_ids_mapping[table]).length > 0 ? Object.keys(selected_parent_ids_mapping[table]): Object.keys(parent_ids_mapping[table]), // Use selected if it exists
+          search,
+          controller,
+        }))
+      const match_calls = Object.keys(parents).map(table=>call(metadataSearcher, {
+          table,
+          operationId: operationIds[table],
+          parent: parents[table],
+          parents_meta: parent_ids_mapping[table],
+          parent_ids: Object.keys(selected_parent_ids_mapping[table]).length > 0 ? Object.keys(selected_parent_ids_mapping[table]):undefined,
+          search,
+          controller,
+        }))
+      const results = yield all([...count_calls, ...match_calls])
+      console.log(results)
+      let table_count = {}
+      let table_count_per_parent = {}
+      let metadata_results = {}
+      for (const item of results){
+        const {table, count, count_per_parent, matches} = item
+        if (matches !== undefined){
+          metadata_results[table] = matches
+        }else{
+          table_count[table] = count
+          table_count_per_parent[table] = count_per_parent
         }
-        console.log(table_count_per_parent)
-        yield put(fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results))
       }
+      console.log(table_count_per_parent)
+      yield put(fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results))
    } catch (error) {
       console.log(error)
       yield put(fetchMetaDataFromSearchBoxFailed(error))

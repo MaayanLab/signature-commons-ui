@@ -7,7 +7,7 @@ export const initialState = {
   selected_parent_ids: {},
   parent_ids_mapping: {},
   parents_mapping: {},
-  metadata_table: 'signatures',
+  current_table: 'signatures',
   metadata_results: {},
   completed: true,
   loading: false,
@@ -37,8 +37,8 @@ function rootReducer(state = initialState, action) {
         libraries: Object.keys(resources).length > 0 ? resources: libraries,
       },
       selected_parent_ids: {
-        signatures: libraries,
-        libraries: Object.keys(resources).length > 0 ? resources: libraries,
+        signatures: [],
+        libraries: [],
       },
       parents_mapping: {
         signatures: "library",
@@ -49,7 +49,7 @@ function rootReducer(state = initialState, action) {
   if (action.type === action_definitions.CHANGE_METADATA_SEARCH_TABLE) {
     return {
       ...state,
-      metadata_table: action.table
+      current_table: action.table
     }
   }
 

@@ -17,10 +17,14 @@ export function format_bulk_metadata_search_count_per_parent({operationId,
   if (where===undefined && search!==undefined) where = build_where(search)
   if (where===undefined && search===undefined) where = {}
   
-  let bulk_params  
+  let bulk_params
   bulk_params = parent_ids.map(parent_id=>{
     let where_with_parent
-    if (where.and !== undefined){
+    if (search.length===0){
+      where_with_parent = {
+        [parent]: parent_id
+      }
+    } else if (where.and !== undefined){
       where_with_parent = {
         and: [
           ...where.and,
@@ -35,7 +39,6 @@ export function format_bulk_metadata_search_count_per_parent({operationId,
         ]
       }
     }
-    console.log(operationId)
     return({
       operationId,
       parameters: {
@@ -57,6 +60,7 @@ export async function fetch_bulk_counts_per_parent({table,
   filter,
   parent,
   parent_ids,
+  parents_meta,
   params,
   controller,
   search,
@@ -89,6 +93,7 @@ export async function metadataSearcher({search,
   table,
   parent,
   parent_ids,
+  parents_meta,
   limit,
   skip,
   where,
@@ -121,7 +126,7 @@ export async function metadataSearcher({search,
       }
     }
   }
-  const {response: matches, contentRange, duration} = await fetch_meta_post({
+  let {response: matches, contentRange, duration} = await fetch_meta_post({
     endpoint: `/${table}/find`,
     body: {
       filter: {
@@ -132,6 +137,8 @@ export async function metadataSearcher({search,
     },
     signal: controller.signal,
   })
+  console.log(matches)
+  matches = matches.map(m=>m[parent]=parents_meta[m[parent]])
   return {table, matches, count: contentRange.count, duration}
 }
 

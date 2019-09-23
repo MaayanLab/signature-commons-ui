@@ -75,7 +75,7 @@ export async function get_library_resources({schema_validator, schemas, ...props
           acc[resource_name] = resource
         }
         acc[resource_name].libraries.push({ ...lib })
-        resources_id[resource_id] = resource_name
+        resources_id[resource_id] = resource
       } else {
         console.error(`Resource not found: ${resource_name}`)
       }
