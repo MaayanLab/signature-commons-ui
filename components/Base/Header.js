@@ -9,7 +9,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export function Nav(props) {
-  const { ui_values, ...rest } = props
+  const { ui_values, dispatch, ...rest } = props
   return (
     <ul {...rest}>
       {ui_values.nav.metadata_search ?

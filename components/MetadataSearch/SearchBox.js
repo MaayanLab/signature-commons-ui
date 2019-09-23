@@ -70,6 +70,60 @@ import Icon from '@material-ui/core/Icon';
     )
   }
 
+const Input = (props) => (
+  <ChipInput
+    className={props.classes.ChipInput}
+    placeholder={props.search.length > 0 ? 'Add filter' :
+        props.placeholder}
+    value={props.search}
+    chipRenderer={props.renderChips || props.renderChips}
+    disableUnderline
+    alwaysShowPlaceholder
+    InputProps={{
+      inputProps: {
+        style: {
+          border: 'none',
+          fontSize: props.small ? 12: 15,
+          textAlign: props.search.length === 0 ? 'center': 'left',
+        },
+      },
+      ...props.InputProps
+    }}
+    style={props.small ? {
+        fontWeight: 500,
+        color: 'rgba(0, 0, 0, 0.54)',
+        borderRadius: '2px',
+        border: 0,
+        minheight: 35,
+        marginBottom: 0,
+        width: '100%',
+        padding: '5px 5px 0 5px',
+        background: '#f7f7f7',
+        ...props.ChipInputStyle
+      } :
+      {
+        fontWeight: 500,
+        color: 'rgba(0, 0, 0, 0.54)',
+        borderRadius: '2px',
+        border: 0,
+        minheight: 35,
+        marginBottom: 0,
+        width:  430,
+        padding: '5px 5px 0 5px',
+        background: '#f7f7f7',
+        ...props.ChipInputStyle
+      }}
+    onAdd={(chip) => {
+      const search = [...props.search, chip]
+      props.searchFunction(search)
+    }}
+    onDelete={(chip, index) => {
+      const search = props.search.filter((term) => term != chip)
+      props.searchFunction(search)
+    }}
+    blurBehavior="add"
+  />
+)
 
 export class SearchBox extends React.Component {
 
@@ -112,91 +166,90 @@ export class SearchBox extends React.Component {
     )
   }
 
-  render = () => (
-    <Grid container
-      spacing={24}
-      alignItems={'center'}>
-      <Grid item xs={12}>
+  render = () => {
+    if (this.props.small){
+      return (
+        <Grid container
+          alignItems={'center'}>
+          <Grid item xs={12}>
+            <Grid container
+              alignItems={'center'}>
+              <Grid item xs={12}>
+                <Input renderChips={this.renderChips} {...this.props} />
+              </Grid>
+              <Grid item xs={12} style={{textAlign: "center"}}>
+                <Button variant="contained"
+                  color="primary"
+                  style={{ marginTop: 5, fontSize: 10, padding: 3 }}
+                  onClick={() =>
+                    this.props.searchFunction(this.props.search)
+                  }>
+                  { this.props.loading || !this.props.completed ? 
+                    <React.Fragment>
+                      Searching &nbsp;
+                      <span className="mdi mdi-spin mdi-loading right" />
+                    </React.Fragment>: 
+                    <React.Fragment>
+                      Search &nbsp;
+                      <span className="mdi mdi-send right" />
+                    </React.Fragment>
+                  }
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      )
+    }else {
+      return (
         <Grid container
           spacing={24}
           alignItems={'center'}>
           <Grid item xs={12}>
-            <Tooltip title={this.props.Info || <Info {...this.props}/>}
-              interactive placement="left-start" 
-              classes={{ tooltip: this.props.classes.tooltip }}>
-              <Button className={this.props.classes.tooltipButton} >
-                <span className="mdi mdi-information mdi-24px" />
-              </Button>
-            </Tooltip>
-            <ChipInput
-              className={this.props.classes.ChipInput}
-              placeholder={this.props.search.length > 0 ? 'Add filter' :
-                  this.props.placeholder}
-              value={this.props.search}
-              chipRenderer={this.props.renderChips || this.renderChips}
-              disableUnderline
-              alwaysShowPlaceholder
-              InputProps={{
-                inputProps: {
-                  style: {
-                    border: 'none',
-                  },
-                },
-                ...this.props.InputProps
-              }}
-              style={{
-                fontWeight: 500,
-                color: 'rgba(0, 0, 0, 0.54)',
-                borderRadius: '2px',
-                border: 0,
-                minheight: '35px',
-                marginBottom: 0,
-                width: '430px',
-                padding: this.props.search.length === 0 ? '8px 8px 0 60px' : '8px 8px 0 8px',
-                background: '#f7f7f7',
-                ...this.props.ChipInputStyle
-              }}
-              onAdd={(chip) => {
-                const search = [...this.props.search, chip]
-                this.props.searchFunction(search)
-              }}
-              onDelete={(chip, index) => {
-                const search = this.props.search.filter((term) => term != chip)
-                this.props.searchFunction(search)
-              }}
-              blurBehavior="add"
-            />
-            <span>&nbsp;&nbsp;</span>
-            <Button variant="contained"
-              color="primary"
-              style={{ marginTop: 10 }}
-              onClick={() =>
-                this.props.searchFunction(this.props.search)
-              }>
-              { this.props.loading || !this.props.completed ? 
-                <React.Fragment>
-                  Searching &nbsp;
-                  <span className="mdi mdi-spin mdi-loading right" />
-                </React.Fragment>: 
-                <React.Fragment>
-                  Search &nbsp;
-                  <span className="mdi mdi-send right" />
-                </React.Fragment>
-              }
-            </Button>
+            <Grid container
+              spacing={24}
+              alignItems={'center'}>
+              <Grid item xs={12}>
+                <Tooltip title={this.props.Info || <Info {...this.props}/>}
+                  interactive placement="left-start" 
+                  classes={{ tooltip: this.props.classes.tooltip }}>
+                  <Button className={this.props.classes.tooltipButton} >
+                    <span className="mdi mdi-information mdi-24px" />
+                  </Button>
+                </Tooltip>
+                <Input renderChips={this.renderChips} {...this.props} />
+                <span>&nbsp;&nbsp;</span>
+                <Button variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    this.props.searchFunction(this.props.search)
+                  }>
+                  { this.props.loading || !this.props.completed ? 
+                    <React.Fragment>
+                      Searching &nbsp;
+                      <span className="mdi mdi-spin mdi-loading right" />
+                    </React.Fragment>: 
+                    <React.Fragment>
+                      Search &nbsp;
+                      <span className="mdi mdi-send right" />
+                    </React.Fragment>
+                  }
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            {this.props.examples.map((example) => (
+              <Chip label={example} key={example} className={this.props.classes.defaultChip}
+                onClick={() =>
+                  this.props.searchFunction([example])
+                }/>
+            ))}
           </Grid>
         </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        {this.props.examples.map((example) => (
-          <Chip label={example} className={this.props.classes.defaultChip}
-            onClick={() =>
-              this.props.searchFunction([example])
-            }/>
-        ))}
-      </Grid>
-    </Grid>
-  )
+      )
+    }
+  }
 }
 
 SearchBox.propTypes = {

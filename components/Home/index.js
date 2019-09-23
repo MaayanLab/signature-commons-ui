@@ -10,6 +10,7 @@ import Base from '../../components/Base'
 import { call } from '../../util/call'
 import Landing from '../Landing'
 import Resources from '../Resources'
+import MetadataSearch from '../MetadataSearch'
 import { base_url as meta_url } from '../../util/fetch/meta'
 import theme from '../../util/theme-provider'
 import '../../styles/swagger.scss'
@@ -105,6 +106,12 @@ class Home extends React.PureComponent {
     />
     )
 
+  metadata_search = (props) => (
+    <MetadataSearch 
+      {...props}
+    />
+    )
+
   render = () => (
     <MuiThemeProvider theme={theme}>
       <Base ui_values={this.props.ui_values}
@@ -119,6 +126,12 @@ class Home extends React.PureComponent {
         }
         `}</style>
         <Switch>
+          {this.props.ui_values.nav.metadata_search ?
+            <Route
+              path={"/MetadataSearch/Search"}
+              component={this.metadata_search}
+            /> : null
+          }
           {this.props.ui_values.nav.resources ?
             <Route
               path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}

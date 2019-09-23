@@ -176,6 +176,7 @@ export default class Options extends React.Component {
   }
 
   render = () => {
+    console.log(this.props.item)
     if (this.props.type === 'signatures') {
       // TODO: Text here should be modified on the UI schemas + Enrichr link should be nullifiable
       return (
