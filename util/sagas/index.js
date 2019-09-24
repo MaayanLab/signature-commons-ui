@@ -24,6 +24,11 @@ import { fetchMetaDataFromSearchBoxSucceeded,
   findSignaturesFailed } from "../redux/actions"
 import { getParentInfo } from "./selectors"
 
+export const operationIds = {
+  libraries: "Library.count",
+  signatures: "Signature.count"
+ }
+
 
 // Metadata Search
 export function* workFetchMetaDataFromSearchBox(action) {
@@ -33,10 +38,6 @@ export function* workFetchMetaDataFromSearchBox(action) {
    }
    const controller = new AbortController()
    try {
-      const operationIds = {
-        libraries: "Library.count",
-        signatures: "Signature.count"
-       }
       const {search} = action
       const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getParentInfo)
       const count_calls = Object.keys(parents).map(table=>call(fetch_bulk_counts_per_parent, {
@@ -57,7 +58,6 @@ export function* workFetchMetaDataFromSearchBox(action) {
           controller,
         }))
       const results = yield all([...count_calls, ...match_calls])
-      console.log(results)
       let table_count = {}
       let table_count_per_parent = {}
       let metadata_results = {}
@@ -85,68 +85,60 @@ export function* workFetchMetaDataFromSearchBox(action) {
 }
 
 function* watchFetchMetaDataFromSearchBox() {
-  const ask = yield takeLatest([action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-      action_definitions.FIND_SIGNATURES,
-      action_definitions.MATCH_ENTITY],
+  const ask = yield takeLatest([action_definitions.FIND_SIGNATURES,
+        action_definitions.MATCH_ENTITY,
+        action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
+      ],
     workFetchMetaDataFromSearchBox)
 }
 
-export function* workFetchMetaDataCount(action) {
-  console.log(action.type)
-   if (action.type !== action_definitions.FETCH_METADATA_COUNT){
-    return
-   }
-   const controller = new AbortController()
-   try {
-      const operationIds = {
-        libraries: "Library.count",
-        signatures: "Signature.count"
-       }
-      if (action.search.length === 0){
-        yield put(fetchMetaDataCountSucceeded({}, {}, action.table))
-      }else{
-        const {table, count, count_per_parent} = yield call(fetch_bulk_counts_per_parent, {
-          ...action,
-          operationId: operationIds[action.table],
-          controller,
-        })
-        yield put(fetchMetaDataCountSucceeded(count, count_per_parent, table))
-      }
-   } catch (error) {
-      console.log(error)
-      yield put(fetchMetaDataCountFailed(error))
-      controller.abort()
-   } finally {
-      if (yield cancelled()){
-        controller.abort()
-        yield put(fetchMetaDataCountAborted("aborted"))
-      }
-   }
-}
-
-function* watchFetchMetaDataCount() {
-  const cancel_task = yield takeLatest([action_definitions.FIND_SIGNATURES, action_definitions.MATCH_ENTITY], workFetchMetaDataCount)
-  const task = yield takeEvery(action_definitions.FETCH_METADATA_COUNT, workFetchMetaDataCount)
-}
 
 export function* workFetchMetaData(action) {
    if (action.type !== action_definitions.FETCH_METADATA){
     return
    } 
+   
    const controller = new AbortController()
    try {
-      let search
-      let params
-      if (action.search!==undefined) search = action.search
-      if (search!== undefined && search.length!==0){
-        const results = yield call(metadataSearcher, {
+      const {search, filter, paginating, table} = action
+      const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getParentInfo)
+      const match_calls = call(metadataSearcher, {
+          table,
+          operationId: operationIds[table],
+          parent: parents[table],
+          parents_meta: parent_ids_mapping[table],
+          parent_ids: Object.keys(selected_parent_ids_mapping[table]).length > 0 ? Object.keys(selected_parent_ids_mapping[table]):undefined,
+          search,
           controller,
-          search
+          ...filter,
         })
-        yield put(fetchMetaDataSucceeded(results))
-      } if (search.length===0){
-        yield put(fetchMetaDataSucceeded({}))
+      let results
+      if (!paginating){
+        const count_calls = call(fetch_bulk_counts_per_parent, {
+          table,
+          operationId: operationIds[table],
+          parent: parents[table],
+          parent_ids: Object.keys(selected_parent_ids_mapping[table]).length > 0 ? Object.keys(selected_parent_ids_mapping[table]): Object.keys(parent_ids_mapping[table]), // Use selected if it exists
+          search,
+          controller,
+        })
+        results = yield all([count_calls, match_calls])
+      }else {
+        results = yield all([match_calls])
       }
+      let table_count = undefined
+      let table_count_per_parent = undefined
+      let metadata_results = {}
+      for (const item of results){
+        const {table, count, count_per_parent, matches} = item
+        if (matches !== undefined){
+          metadata_results = matches
+        }else{
+          table_count = count
+          table_count_per_parent = count_per_parent
+        }
+      }
+      yield put(fetchMetaDataSucceeded(action.table, table_count, table_count_per_parent, metadata_results, paginating))
    } catch (error) {
       console.log(error)
       yield put(fetchMetaDataFailed(error))
@@ -160,7 +152,11 @@ export function* workFetchMetaData(action) {
 }
 
 function* watchFetchMetaData() {
-  const task = yield takeLatest([action_definitions.FIND_SIGNATURES, action_definitions.MATCH_ENTITY, action_definitions.FETCH_METADATA], workFetchMetaData)
+  const task = yield takeLatest([action_definitions.FIND_SIGNATURES,
+      action_definitions.MATCH_ENTITY,
+      action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
+      action_definitions.FETCH_METADATA,
+    ], workFetchMetaData)
 }
 
 // Match Entities
@@ -273,7 +269,6 @@ export default function* rootSaga() {
       watchFetchMetaData(),
       watchMatchEntities(),
       watchFindSignature(),
-      watchFetchMetaDataCount(),
       watchFetchMetaDataFromSearchBox(),
     ]);
 }

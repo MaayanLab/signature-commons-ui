@@ -30,42 +30,56 @@ export function fetchMetaDataFromSearchBoxAborted(type, error){
   return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_ABORTED, error}
 }
 
+// change parent
+export function filterMetadataSearch(search, filter, paginating, table){
+  return {type: action_definitions.FILTER_METADATA_SEARCH, search, filter, paginating, table}
+}
 
+
+// Paginate
+export function paginateMetaData(search, filter, table) {
+  return {type: action_definitions.PAGINATE_METADATA, search, filter, table}
+}
+
+export function paginateMetaDataSucceeded(results){
+  return {type: action_definitions.PAGINATE_METADATA_SUCCEEDED,
+    table,
+    table_count,
+    table_count_per_parent,
+    metadata_results
+  }
+}
+
+export function paginateMetaDataFailed(error, loading){
+  return {type: action_definitions.PAGINATE_METADATA_FAILED, error}
+}
 
 
 
 
 
 // Metadata search
-export function fetchMetaDataCount({table, parent, parent_ids, filter, params, search, controller}) {
-  return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-    filter,
-    table,
-    parent,
-    parent_ids,
-    params,
+export function fetchMetaData(search, filter, paginating, table) {
+  return {type: action_definitions.FETCH_METADATA,
     search,
-    controller}
+    filter,
+    paginating,
+    table}
 }
 
-export function fetchMetaDataCountSucceeded(count, count_per_parent, table, all=false){
-  return {type: action_definitions.FETCH_METADATA_COUNT_SUCCEEDED, count, count_per_parent, table, all}
-}
-
-export function fetchMetaDataCountFailed(error, loading){
-  return {type: action_definitions.FETCH_METADATA_COUNT_FAILED, error}
-}
-
-export function fetchMetaDataCountAborted(type, error){
-  return {type: action_definitions.FETCH_METADATA_COUNT_ABORTED, error}
-}
-
-export function fetchMetaData(search) {
-  return {type: action_definitions.FETCH_METADATA, search}
-}
-
-export function fetchMetaDataSucceeded(results){
-  return {type: action_definitions.FETCH_METADATA_SUCCEEDED, results}
+export function fetchMetaDataSucceeded(table,
+    table_count,
+    table_count_per_parent,
+    metadata_results,
+    paginating
+    ){
+  return {type: action_definitions.FETCH_METADATA_SUCCEEDED,
+    table,
+    table_count,
+    table_count_per_parent,
+    metadata_results,
+    paginating
+  }
 }
 
 export function fetchMetaDataFailed(error, loading){

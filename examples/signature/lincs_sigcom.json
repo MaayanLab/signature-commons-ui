@@ -1,70 +1,51 @@
+
 {
   "match": {
-    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
-    "${library.dataset}": "lincs_clue"
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json"
   },
   "properties": {
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/static/images/clueio.ico",
-      "alt": "ConnectivityMap",
-      "priority": 1,
-      "icon": true
-    },
-    "Library": {
-      "visibility": 1,
-      "type": "text",
-      "text": "ConnectivityMap",
-      "priority": 1,
-      "subtitle": true
+      "src": "${PREFIX}/static/images/lincs/LINCS.ico",
+      "alt": "${meta.platform || meta.signatureid}",
+      "priority": 1
     },
     "Signature ID": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.sig_id}",
-      "name": true,
-      "priority": 2
-    },
-    "Assay": {
-      "visibility": 1,
-      "type": "text",
-      "text": "L1000",
-      "priority": 4,
-      "MDI_Icon": "mdi-flask-outline"
+      "text": "${meta.signatureid}",
+      "priority": 4
     },
     "Cell-line": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.Cell_Line[0].Name}",
-      "priority": 3,
-      "MDI_Icon": "mdi-test-tube"
+      "text": "${meta.cellline}",
+      "priority": 3
     },
-    "Time point": {
+    "Tissue": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.pert_time} ${meta.pert_time_unit}",
-      "priority": 4,
-      "MDI_Icon": "mdi-timer"
+      "text": "${meta.tissue}",
+      "priority": 3
     },
-    "Perturbation": {
+    "Compound": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.pert_desc === '-666' ? meta.pert_id : meta.pert_desc}",
-      "priority": 4,
-      "MDI_Icon": "mdi-microscope"
+      "text": "${meta.compound}",
+      "priority": 4
     },
     "Concentration": {
       "visibility": 1,
-      "condition": {
-        "${meta.pert_dose}": {
-          "ne": "-666"
-        }
-      },
       "type": "text",
-      "text": "${meta.pert_dose} ${meta.pert_dose_unit}",
-      "priority": 4,
-      "MDI_Icon": "mdi-eyedropper"
+      "text": "${meta.concentration}",
+      "priority": 4
+    },
+    "Organism": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.organism}",
+      "priority": 4
     },
     "P-Value": {
       "visibility": 1,
@@ -80,8 +61,6 @@
       },
       "type": "text",
       "text": "${meta['p-value']}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "Odds Ratio": {
@@ -94,8 +73,6 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "Set Size": {
@@ -108,8 +85,6 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.setsize}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "P-Up": {
@@ -122,8 +97,6 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['p-up']}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "P-Down": {
@@ -136,8 +109,6 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['p-down']}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "Z-Up": {
@@ -150,8 +121,6 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['z-up']}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "Z-Down": {
@@ -164,8 +133,6 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['z-down']}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "Log(p) Fisher": {
@@ -182,8 +149,6 @@
       },
       "type": "text",
       "text": "${meta['logp-fisher']}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "Log(p) Average":{
@@ -196,8 +161,6 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta['logp-avg']}",
-      "sortable": true,
-      "score": true,
       "priority": 5
     },
     "Direction": {
@@ -209,8 +172,7 @@
       },
       "type": "text",
       "text": "${meta['direction'] === 1 ? 'up' : 'down'}",
-      "priority": 4,
-      "MDI_Icon": "mdi-arrow-up-down-bold-outline"
+      "priority": 4
     }
   }
 }

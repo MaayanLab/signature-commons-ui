@@ -128,7 +128,7 @@ class Home extends React.PureComponent {
         <Switch>
           {this.props.ui_values.nav.metadata_search ?
             <Route
-              path={"/MetadataSearch/Search"}
+              path={"/MetadataSearch/:table"}
               component={this.metadata_search}
             /> : null
           }

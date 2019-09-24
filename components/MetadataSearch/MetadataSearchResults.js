@@ -1,10 +1,12 @@
 import React from 'react'
 
+import TablePagination from '@material-ui/core/TablePagination'
+
 import { makeTemplate } from '../../util/makeTemplate'
 import {findMatchedSchema} from '../../util/objectMatch'
 import { diffList } from "../../util/helper/misc"
-
 import { connect } from "react-redux";
+import { fetchMetaData } from "../../util/redux/actions";
 
 import DataTable from "./DataTable"
 
@@ -35,7 +37,6 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
     let scores= {}
     let tags = []
     const processed = {id: data.id}
-    console.log(data)
     for (const label of Object.keys(properties)){
       const prop = properties[label]
       const val = value_by_type[prop.type]({label, prop, data, highlight})
@@ -54,8 +55,6 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
           icon: prop.MDI_Icon || 'mdi-star'
         }
       }else {
-        console.log(val)
-        console.log(prop)
         if ( val !== null) tags = [...tags, {
           label,
           value: val,
@@ -79,7 +78,18 @@ const mapStateToProps = state => {
     ui_values:state.serverSideProps.ui_values,
     parent: state.parents_mapping[state.current_table],
     current_table: state.current_table,
+    loading: state.loading,
+    completed: state.completed,
+    paginating: state.paginating,
+    count: state.table_count[state.current_table]
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    searchFunction : (search, filter, paginating, table) => 
+      dispatch(fetchMetaData(search, filter, paginating, table)),
+  };
 }
 
 class MetadataSearchResults extends React.Component {
@@ -87,7 +97,9 @@ class MetadataSearchResults extends React.Component {
     super(props)
     this.state = {
       collection: [],
-      sorted: null
+      sorted: null,
+      page:0,
+      perPage:10,
     }
   }
 
@@ -108,28 +120,70 @@ class MetadataSearchResults extends React.Component {
     })
   }
 
+  handleChangeRowsPerPage = (e) => {
+    this.setState({
+      perPage: e.target.value,
+    }, () => {
+      const {page, perPage} = this.state
+      const {searchFunction, current_table, search} = this.props
+      const filter = {
+        limit: perPage,
+        skip: page * perPage
+      }
+      searchFunction(search, filter, true, current_table)
+    })
+  }
+
+  handleChangePage = (event, page) => {
+    this.setState({
+      page,
+    }, () => {
+      const {page, perPage} = this.state
+      const {searchFunction, current_table, search} = this.props
+      const filter = {
+        limit: perPage,
+        skip: page * perPage
+      }
+      searchFunction(search, filter, true, current_table)
+    })
+  }
+
+
+
   componentDidUpdate = (prevProps) => {
     const old = prevProps.data || []
     const curr = this.props.data || []
     const old_list = old.map(i=>i.id)
     const new_list = curr.map(i=>i.id)
-    console.log(diffList(old_list, new_list))
     if (diffList(old_list, new_list)){
       const collection = this.props.data.map(data=>get_card_data(data, this.props.schemas))
-      console.log(collection)
       this.setState({
-        collection
+        collection,
       })
     }
   }
 
   render = () => (
-    <DataTable schemas={this.props.schemas}
-      {...this.props}
-      {...this.state}
-      sortingFunction={this.sortBy}
-    />
+    <React.Fragment>
+      <DataTable schemas={this.props.schemas}
+        ui_values={this.props.ui_values}
+        {...this.state}
+        loaded={this.props.completed && !this.props.loading && !this.props.paginating}
+        sortingFunction={this.sortBy}
+      />
+      <div align="right">
+        <TablePagination
+          page={this.state.page}
+          rowsPerPage={this.state.perPage}
+          count={this.props.count || 0}
+          onChangePage={(event, page) => this.handleChangePage(event, page)}
+          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          component="div"
+        />
+      </div>
+    </React.Fragment>
+
   )
 }
 
-export default connect(mapStateToProps)(MetadataSearchResults)
+export default connect(mapStateToProps, mapDispatchToProps)(MetadataSearchResults)

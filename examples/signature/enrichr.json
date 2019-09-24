@@ -101,7 +101,8 @@
       "visibility": 1,
       "type": "text",
       "text": "${meta.Cell_Line[0].Name}",
-      "priority": 4
+      "priority": 4,
+      "MDI_Icon": "mdi-test-tube"
     },
     "Tissue": {
       "visibility": 1,

@@ -12,11 +12,11 @@ import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { makeTemplate } from '../../util/makeTemplate'
 import { Highlight } from '../Highlight'
 import {findMatchedSchema} from '../../util/objectMatch'
-
 import ShowMeta from '../ShowMeta'
 
 import IconButton from '../IconButton'
@@ -85,12 +85,12 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
         <Grid container>
           <Grid item md={11} sm={10} xs={9}>
             <Grid container>
-              <Grid item lg={1} sm={2} xs={3} style={{textAlign: "center"}}>
+              <Grid item md={2} xs={4} style={{textAlign: "center"}}>
                 <CardMedia style={{marginTop:-30}} {...data.processed.icon}>
                   <IconButton {...data.processed.icon} title={' '}/>
                 </CardMedia>
               </Grid>
-              <Grid item lg={11} sm={10} xs={9}>
+              <Grid item md={10} xs={8}>
                 <Grid container>
                   <Grid item xs={12}>
                     <Typography variant="subtitle1">
@@ -146,10 +146,11 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
 
 class DataTable extends React.Component {
   render() {
-    console.log(this.props.collection)
-    if (this.props.collection===undefined || this.props.collection.length===0){
-      return (<span>Loading...</span>)
+    if (!this.props.loaded ){
+      return <div style={{textAlign: "center", marginTop: 20}}><CircularProgress /></div>
     }
+    if (this.props.collection.length===0)
+      return(<span>No Results</span>)
     return(
       <div style={{
         maxWidth: '100%',

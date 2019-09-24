@@ -137,8 +137,11 @@ export async function metadataSearcher({search,
     },
     signal: controller.signal,
   })
-  console.log(matches)
-  matches = matches.map(m=>m[parent]=parents_meta[m[parent]])
+  matches = matches.map(m=>{
+    const parent_name = parent === "id" ? "resource": parent
+    m[parent_name]=parents_meta[m[parent_name]]
+    return m
+  })
   return {table, matches, count: contentRange.count, duration}
 }
 

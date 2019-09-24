@@ -1,0 +1,55 @@
+[
+  {
+    "Field_Name": "institution",
+    "Preferred_Name": "Institutions",
+    "Preferred_Name_Singular": "Institution",
+    "Type": "string",
+    "MDI_Icon": "mdi-certificate",
+    "Table": "libraries",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "journal_name",
+    "Preferred_Name": "Journals",
+    "Preferred_Name_Singular": "Journal",
+    "Type": "string",
+    "MDI_Icon": "mdi-file-document",
+    "Table": "libraries",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "authors",
+    "Preferred_Name": "Authors",
+    "Preferred_Name_Singular": "Author",
+    "Type": "object",
+    "MDI_Icon": "mdi-fountain-pen-tip",
+    "Table": "libraries",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "libraries",
+    "Type": "table",
+    "Preferred_Name": "Tools",
+    "MDI_Icon": "mdi-tools",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "resources",
+    "Type": "table",
+    "Preferred_Name": "Journals",
+    "MDI_Icon": "mdi-web",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "pub_year",
+    "Type": "string",
+    "Table": "libraries",
+    "Preferred_Name": "Publication Year",
+    "Bar_Count": true
+  }
+]
