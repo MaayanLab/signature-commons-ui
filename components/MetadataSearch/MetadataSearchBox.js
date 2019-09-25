@@ -6,6 +6,8 @@ import Chip from '@material-ui/core/Chip'
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import { fetchMetaDataFromSearchBox } from "../../util/redux/actions";
+import { URLFormatter } from "../../util/helper/misc";
+
 import { connect } from "react-redux";
 import { SearchBox } from "./SearchBox"
 
@@ -43,12 +45,12 @@ const styles = (theme) => ({
   },
 })
 
-function mapDispatchToProps(dispatch) {
-  return {
-    searchFunction : (search) => 
-      dispatch(fetchMetaDataFromSearchBox(search))
-  };
-}
+// function mapDispatchToProps(dispatch) {
+//   return {
+//     searchFunction : (search) => 
+//       dispatch(fetchMetaDataFromSearchBox(search))
+//   };
+// }
 
 const mapStateToProps = state => {
   return { loading: state.loading,
@@ -56,22 +58,31 @@ const mapStateToProps = state => {
     examples: state.serverSideProps.ui_values.LandingText.search_terms,
     placeholder: state.serverSideProps.ui_values.LandingText.metadata_placeholder,
     search: state.search,
-    operationIDs: state.operationIDs
+    operationIDs: state.operationIDs,
+    preferred_name: state.serverSideProps.ui_values.preferred_name,
   };
 };
 
 
 class MetadataSearchBox extends React.Component {
 
+  searchFunction = (search) => {
+    const query = URLFormatter({search})
+    this.props.history.push({
+      pathname: `/MetadataSearch/${this.props.preferred_name[this.props.match.params.table]}`,
+      search: `?q=${query}`
+    })
+  }
 
   render() {
     return (
       <SearchBox 
         {...this.props}
-        searchFunction={this.props.searchFunction}
+        searchFunction={this.searchFunction}
       />
     )
   }
 }
+export default connect(mapStateToProps)(withStyles(styles)(MetadataSearchBox))
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(MetadataSearchBox))
+// export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(MetadataSearchBox))

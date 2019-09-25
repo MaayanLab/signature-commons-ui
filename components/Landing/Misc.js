@@ -235,6 +235,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               <MetadataSearchBox
                 id='MetadataSearch'
                 ui_values={props.ui_values}
+                {...props}
               /> :
               <GenesetSearchBox
                 input={{type:'Overlap'}}
@@ -276,6 +277,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             <MetadataSearchBox
               id='MetadataSearch'
               ui_values={props.ui_values}
+              {...props}
             />
           </Grid>
         </Grid>

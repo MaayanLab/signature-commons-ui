@@ -10,8 +10,12 @@ export function changeMetadataSearchTable(table){
 }
 
 // Metadata search using search box
-export function fetchMetaDataFromSearchBox(search) {
-  return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX, search}
+export function fetchMetaDataFromSearchBox({search, filters, skip, limit}) {
+  return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
+    search,
+    filters,
+    skip,
+    limit}
 }
 
 export function fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results){
@@ -37,8 +41,8 @@ export function filterMetadataSearch(search, filter, paginating, table){
 
 
 // Paginate
-export function paginateMetaData(search, filter, table) {
-  return {type: action_definitions.PAGINATE_METADATA, search, filter, table}
+export function paginateMetaData(search, filters, skip, limit, table) {
+  return {type: action_definitions.PAGINATE_METADATA, search, filters, skip, limit, table}
 }
 
 export function paginateMetaDataSucceeded(results){

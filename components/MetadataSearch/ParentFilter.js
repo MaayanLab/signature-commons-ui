@@ -100,6 +100,7 @@ class ParentFilter extends React.Component {
 
   componentDidMount(){
     const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    console.log(this.props.reverse_preferred_name)
     this.getMapping(current_table)
   }
 

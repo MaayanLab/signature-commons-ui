@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import { fetchMetaDataFromSearchBox,
   changeMetadataSearchTable,
  } from "../../util/redux/actions";
+import { ReadURLParams, diffList, URLFormatter } from "../../util/helper/misc";
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import ParentFilter from './ParentFilter'
@@ -39,13 +40,15 @@ const mapStateToProps = state => {
     current_table: state.current_table,
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
+    filter_mapper: state.filter_mapper,
+    pagination_mapper: state.pagination_mapper,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    searchFunction : (search) => 
-      dispatch(fetchMetaDataFromSearchBox(search)),
+    searchFunction : ({search, filters, skip, limit}) => 
+      dispatch(fetchMetaDataFromSearchBox({search, filters, skip, limit})),
     changeTab: (newTable) =>
       dispatch(changeMetadataSearchTable(newTable))
   };
@@ -61,30 +64,59 @@ class MetadataSearch extends React.Component {
 
   componentDidMount() {
     const newTable = this.props.reverse_preferred_name[this.props.match.params.table]
+    this.props.changeTab(newTable)
     this.setState({
       index_value: this.props.tables.indexOf(newTable),
     })
-    this.props.changeTab(newTable)
-    this.props.searchFunction(this.props.search)
+    const param_str = this.props.location.search
+    const params = ReadURLParams(param_str)
+    this.props.searchFunction({...params})
   }
 
   componentDidUpdate(prevProps) {
     const prevTable = this.props.reverse_preferred_name[prevProps.match.params.table]
     const newTable = this.props.reverse_preferred_name[this.props.match.params.table]
+    const param_str = this.props.location.search
+    const params = ReadURLParams(param_str)
+    const old_param_str = prevProps.location.search
+    const old_params = ReadURLParams(old_param_str)
+    
     if (prevTable!==newTable){
       this.props.changeTab(newTable)
       this.setState({
         index_value: this.props.tables.indexOf(newTable),
       })
     }
+    if (param_str!==old_param_str){
+      // search has changed
+      console.log(old_params)
+      console.log(params)
+      if (diffList(old_params.search, params.search)){
+        this.props.searchFunction({...params})
+      }
+    }
   }
 
 
   handleChange = (event, newIndex) => {
     const newTable = this.props.tables[newIndex]
-    this.props.history.push(`/MetadataSearch/${this.props.preferred_name[newTable]}`)
     this.setState({
       index_value: newIndex,
+    }, ()=>{
+      const param_str = this.props.location.search
+      const {search} = ReadURLParams(param_str)
+      const {skip, limit} = this.props.pagination_mapper[newTable] || {}
+      const params = {
+        search,
+        limit,
+        skip,
+        filters: this.props.filter_mapper[newTable]
+      }
+      const query = URLFormatter({...params})
+      this.props.history.push({
+        pathname: `/MetadataSearch/${this.props.preferred_name[newTable]}`,
+        search: `?q=${query}`
+      })
     })
   }
 
@@ -138,10 +170,7 @@ class MetadataSearch extends React.Component {
           <Grid container
             spacing={24}>
             <Grid item xs={12}>
-              <MetadataSearchBox
-                id='MetadataSearch'
-                small
-              />
+              <Route path="/MetadataSearch/:table" component={this.searchBox} />
             </Grid>
             <Grid item xs={12}>
               <Route path="/MetadataSearch/:table" component={this.parentFilter} />

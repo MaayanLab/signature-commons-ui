@@ -80,6 +80,7 @@ export function build_where(queries) {
   } else {
     where['and'] = andClauses
   }
+
   return where
 }
 
@@ -88,4 +89,38 @@ export const diffList = (prevList, currList) =>{
   const diff = prevList.filter(s=>currList.indexOf(s)===-1)
   if (diff.length>0) return true
   return false
+}
+
+// What it should do:
+// 1. Modify where clause via searchbox
+// 2. Add filter (parent and meta) (parents for now)
+// 3. Add pages
+export const URLFormatter = ({
+  search,
+  filters, // dictionary where the key is the field and the value is the filter values
+  for_count,
+  skip,
+  limit,
+}) => {
+  if (filters!==undefined){
+    return JSON.stringify({
+      search,
+      skip,
+      limit,
+      ...filters,
+    })
+  }else{
+    return JSON.stringify({
+      search,
+      skip,
+      limit
+    })
+  }
+}
+
+export const ReadURLParams = (params_str) => {
+  const searchParams = new URLSearchParams(params_str);
+  const params = JSON.parse(searchParams.get("q"))
+  console.log(params)
+  return {...params}
 }

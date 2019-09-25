@@ -3,8 +3,10 @@ import { action_definitions } from "./action-types";
 
 export const initialState = {
   serverSideProps: null,
-  search: ["stat3"],
+  search: [],
   selected_parent_ids: {},
+  filter_mapper: {},
+  pagination_mapper: {},
   parent_ids_mapping: {},
   parents_mapping: {},
   current_table: 'signatures',
@@ -70,6 +72,8 @@ function rootReducer(state = initialState, action) {
       loading: true,
       table_count: {},
       table_count_per_parent: {},
+      filter_mapper: {},
+      pagination_mapper: {},
       failed: false,
       completed: false,
     }

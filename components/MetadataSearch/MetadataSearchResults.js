@@ -120,6 +120,10 @@ class MetadataSearchResults extends React.Component {
     })
   }
 
+  onChipClick = (value) => {
+    const search = [...this.props.search, value]
+  }
+
   handleChangeRowsPerPage = (e) => {
     this.setState({
       perPage: e.target.value,

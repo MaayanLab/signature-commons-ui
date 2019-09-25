@@ -92,37 +92,40 @@ export async function fetch_bulk_counts_per_parent({table,
 export async function metadataSearcher({search,
   table,
   parent,
-  parent_ids,
   parents_meta,
-  limit,
-  skip,
   where,
+  search_filters,
   controller}) {
-  if (limit===undefined) limit = 10
+  console.log(search_filters)
+  let {limit, skip, filters} = search_filters
+  if (limit===undefined) limit = 10  
   if (where===undefined && search!==undefined) where = build_where(search)
   if (where===undefined && search===undefined) where = {}
-  if (parent_ids!==undefined) {
-    if (where.and !== undefined){
-      where = {
-        and: [
-          ...where.and,
-          {
-            [parent]: {
-              "inq": parent_ids
+  
+  if (filters!==undefined){
+    for (const [key, val] of Object.entries(filters)){
+      if (where.and !== undefined){
+        where = {
+          and: [
+            ...where.and,
+            {
+              [key]: {
+                "inq": val
+              }
             }
-          }
-        ]
-      }
-    } else {
-      where = {
-        and: [
-          ...where,
-          {
-            [parent]: {
-              "inq": parent_ids
+          ]
+        }
+      } else {
+        where = {
+          and: [
+            ...where,
+            {
+              [key]: {
+                "inq": val
+              }
             }
-          }
-        ]
+          ]
+        }
       }
     }
   }

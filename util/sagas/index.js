@@ -22,7 +22,7 @@ import { fetchMetaDataFromSearchBoxSucceeded,
   matchFailed,
   findSignaturesSucceeded,
   findSignaturesFailed } from "../redux/actions"
-import { getParentInfo } from "./selectors"
+import { getStateFromStore } from "./selectors"
 
 export const operationIds = {
   libraries: "Library.count",
@@ -38,8 +38,12 @@ export function* workFetchMetaDataFromSearchBox(action) {
    }
    const controller = new AbortController()
    try {
-      const {search} = action
-      const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getParentInfo)
+      const {type, search, ...current_table_filters} = action
+      const { parents_mapping: parents,
+        parent_ids_mapping,
+        selected_parent_ids: selected_parent_ids_mapping,
+        current_table} = yield select(getStateFromStore)
+      console.log(parents)
       const count_calls = Object.keys(parents).map(table=>call(fetch_bulk_counts_per_parent, {
           table,
           operationId: operationIds[table],
@@ -48,15 +52,20 @@ export function* workFetchMetaDataFromSearchBox(action) {
           search,
           controller,
         }))
-      const match_calls = Object.keys(parents).map(table=>call(metadataSearcher, {
+      const match_calls = Object.keys(parents).map(table=>{
+        let search_filters = {}
+        if (table === current_table) search_filters = {...current_table_filters}
+        console.log(current_table_filters)
+        return call(metadataSearcher, {
           table,
           operationId: operationIds[table],
           parent: parents[table],
           parents_meta: parent_ids_mapping[table],
-          parent_ids: Object.keys(selected_parent_ids_mapping[table]).length > 0 ? Object.keys(selected_parent_ids_mapping[table]):undefined,
           search,
+          search_filters,
           controller,
-        }))
+        })
+      })
       const results = yield all([...count_calls, ...match_calls])
       let table_count = {}
       let table_count_per_parent = {}
@@ -101,7 +110,7 @@ export function* workFetchMetaData(action) {
    const controller = new AbortController()
    try {
       const {search, filter, paginating, table} = action
-      const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getParentInfo)
+      const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getStateFromStore)
       const match_calls = call(metadataSearcher, {
           table,
           operationId: operationIds[table],
