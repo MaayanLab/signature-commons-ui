@@ -6,7 +6,8 @@
     "Type": "string",
     "MDI_Icon": "mdi-certificate",
     "Table": "libraries",
-    "Meta_Count": true
+    "Meta_Count": true,
+    "Pie_Count": true
   },
   {
     "Field_Name": "journal_name",
@@ -17,6 +18,15 @@
     "Table": "libraries",
     "Meta_Count": true,
     "Pie_Count": true
+  },
+  {
+    "Field_Name": "Pubmed",
+    "Preferred_Name": "PMIDs",
+    "Preferred_Name_Singular": "PMID",
+    "Type": "string",
+    "MDI_Icon": "mdi-page-next",
+    "Table": "libraries",
+    "Meta_Count": true
   },
   {
     "Field_Name": "authors",
