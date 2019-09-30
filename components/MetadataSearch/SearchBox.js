@@ -84,7 +84,7 @@ const Input = (props) => (
         style: {
           border: 'none',
           fontSize: props.small ? 12: 15,
-          textAlign: props.search.length === 0 ? 'center': 'left',
+          textAlign: 'left',
         },
       },
       ...props.InputProps
@@ -109,7 +109,7 @@ const Input = (props) => (
         minheight: 35,
         marginBottom: 0,
         width:  430,
-        padding: '5px 5px 0 5px',
+        padding: '5px 5px 0 25px',
         background: '#f7f7f7',
         ...props.ChipInputStyle
       }}
