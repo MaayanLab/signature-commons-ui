@@ -31,11 +31,16 @@ export const operationIds = {
  }
 
 export function* workResetSigcom(action) {
-  return
+  if (action.type !== action_definitions.RESET_SIGCOM){
+    console.log(action.type)
+    return
+   }
 }
 
 function* watchResetSigcom() {
-  const task = yield takeLatest([action_definitions.FIND_SIGNATURES,
+  const task = yield takeLatest([
+      action_definitions.RESET_SIGCOM,
+      action_definitions.FIND_SIGNATURES,
       action_definitions.MATCH_ENTITY,
       action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
       action_definitions.FETCH_METADATA,
@@ -99,6 +104,7 @@ export function* workFetchMetaDataFromSearchBox(action) {
    } finally {
       if (yield cancelled()){
         controller.abort()
+        console.log("Aborted")
         yield put(fetchMetaDataFromSearchBoxAborted("aborted"))
       }
    }
