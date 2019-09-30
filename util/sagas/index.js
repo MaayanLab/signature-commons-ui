@@ -21,6 +21,7 @@ import { fetchMetaDataFromSearchBoxSucceeded,
   updateResolvedEntities,
   matchFailed,
   findSignaturesSucceeded,
+  resetSigcom,
   findSignaturesFailed } from "../redux/actions"
 import { getStateFromStore } from "./selectors"
 
@@ -29,7 +30,17 @@ export const operationIds = {
   signatures: "Signature.count"
  }
 
+export function* workResetSigcom(action) {
+  return
+}
 
+function* watchResetSigcom() {
+  const task = yield takeLatest([action_definitions.FIND_SIGNATURES,
+      action_definitions.MATCH_ENTITY,
+      action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
+      action_definitions.FETCH_METADATA,
+    ], workResetSigcom)
+}
 // Metadata Search
 export function* workFetchMetaDataFromSearchBox(action) {
   console.log(action.type)
@@ -279,5 +290,6 @@ export default function* rootSaga() {
       watchMatchEntities(),
       watchFindSignature(),
       watchFetchMetaDataFromSearchBox(),
+      watchResetSigcom(),
     ]);
 }

@@ -64,6 +64,18 @@ function rootReducer(state = initialState, action) {
     }
   }
 
+  if (action.type === action_definitions.RESET_SIGCOM) {
+    return {
+      ...state,
+      search: [],
+      table_count: {},
+      table_count_per_parent: {},
+      filter_mapper: {},
+      pagination_mapper: {},
+      loading: false,
+      completed: true,
+    }
+  }
 
   if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX) {
     return {
@@ -79,7 +91,6 @@ function rootReducer(state = initialState, action) {
     }
   }
   if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_SUCCEEDED) {
-    console.log(action)
     return {
       ...state,
       completed: true,

@@ -8,7 +8,7 @@ import { withStyles } from '@material-ui/core/styles'
 
 import { landingStyle } from '../../styles/jss/theme.js'
 import { connect } from 'react-redux';
-
+import { resetSigcom } from "../../util/redux/actions";
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
 import { BarChart } from '../Admin/BarChart.js'
@@ -18,6 +18,12 @@ const mapStateToProps = (state, ownProps) => {
    ...state.serverSideProps
   }
 };
+
+function mapDispatchToProps(dispatch) {
+  return {
+    resetSigcom : () => dispatch(resetSigcom()),
+  };
+}
 
 
 class LandingPage extends React.Component {
@@ -29,6 +35,10 @@ class LandingPage extends React.Component {
       type: 'Overlap',
       scroll: false,
     }
+  }
+
+  componentDidMount() {
+    this.props.resetSigcom()
   }
 
   scrollToTop = () => {
@@ -293,4 +303,4 @@ class LandingPage extends React.Component {
   // }
 }
 
-export default connect(mapStateToProps)(withStyles(landingStyle)(LandingPage))
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(landingStyle)(LandingPage))
