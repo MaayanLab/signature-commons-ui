@@ -135,10 +135,6 @@ class MetadataSearch extends React.Component {
   )
 
   data_table = (props) => {
-    const current_table = this.props.reverse_preferred_name[props.match.params.table]
-    if (this.props.tables.indexOf(current_table) === -1){
-      this.props.history.push(`/not-found`)
-    }
     return(
       <React.Fragment>
         <Tabs
@@ -163,6 +159,13 @@ class MetadataSearch extends React.Component {
   }
 
   render = () => {
+    const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    console.log(this.props.match.params.table)
+    console.log(current_table)
+    console.log(this.props)
+    if (current_table === undefined){
+      return <Redirect to="/not-found" />
+    }
     return(
       <Grid container
         spacing={24}>

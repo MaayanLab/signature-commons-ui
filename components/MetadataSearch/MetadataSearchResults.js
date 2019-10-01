@@ -174,6 +174,7 @@ class MetadataSearchResults extends React.Component {
         {...this.state}
         loaded={this.props.completed && !this.props.loading && !this.props.paginating}
         sortingFunction={this.sortBy}
+        current_table={this.props.match.params.table}
       />
       <div align="right">
         <TablePagination
