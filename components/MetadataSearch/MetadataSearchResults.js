@@ -74,14 +74,13 @@ const mapStateToProps = state => {
   return {
     schemas: state.serverSideProps.schemas,
     data: state.metadata_results[state.current_table],
-    search: state.search,
     ui_values:state.serverSideProps.ui_values,
-    parent: state.parents_mapping[state.current_table],
     current_table: state.current_table,
     loading: state.loading,
     completed: state.completed,
     paginating: state.paginating,
-    count: state.table_count[state.current_table]
+    count: state.table_count[state.current_table],
+    reverse_preferred_name: state.reverse_preferred_name
   }
 }
 
@@ -174,7 +173,7 @@ class MetadataSearchResults extends React.Component {
         {...this.state}
         loaded={this.props.completed && !this.props.loading && !this.props.paginating}
         sortingFunction={this.sortBy}
-        current_table={this.props.match.params.table}
+        current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
       />
       <div align="right">
         <TablePagination

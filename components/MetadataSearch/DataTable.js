@@ -78,7 +78,6 @@ const styles = theme => ({
 export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) => {
   const score_icon = ui_values.score_icon || 'mdi-trophy-award'
   const default_tag_icon = 'mdi-arrow-top-right-thick'
-  console.log(data)
   return(
     <Card>
       <CardContent>
@@ -105,7 +104,7 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
                   <Grid item xs={12}>
                   </Grid>
                   <Grid item xs={12}>
-                    {data.processed.tags.map(tag=><Chip className={classes.chip}
+                    {data.processed.tags.map(tag=><Chip className={classes.chip} key={tag.label}
                       avatar={<Icon className={`${classes.icon} mdi ${tag.icon || default_tag_icon} mdi-18px`} />}
                       label={<Highlight
                           Component={(props) => <span {...props}>{props.children}</span>}
@@ -123,7 +122,7 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
               <Grid item>
                 {props.current_table === "libraries" ? null:
                   <Options type={props.current_table} item={data.original} ui_values={ui_values}
-                    submit={()=>{console.log(submitted)}} schemas={schemas}/>
+                    submit={()=>{console.log("submitted")}} schemas={schemas}/>
                 }
               </Grid>
               { data.processed.scores !== undefined ?
