@@ -59,6 +59,7 @@ export default class Filter extends React.Component {
           <FormGroup>
             {sorted.map(({name, count})=>(
               <FormControlLabel
+                key={name}
                 control={
                   <Checkbox checked={this.props.selected[name]}
                     onChange={()=>this.props.toggleSelect(name)}
