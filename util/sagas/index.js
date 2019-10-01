@@ -30,21 +30,23 @@ export const operationIds = {
   signatures: "Signature.count"
  }
 
+const allWatchedActions = [
+  action_definitions.FIND_SIGNATURES,
+  action_definitions.MATCH_ENTITY,
+  action_definitions.FETCH_METADATA,
+  action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
+  action_definitions.RESET_SIGCOM]
+
+function* cancelWorkerSaga (task) {
+    yield cancel(task)
+}
+
 export function* workResetSigcom(action) {
-  if (action.type !== action_definitions.RESET_SIGCOM){
-    console.log(action.type)
-    return
-   }
+  return
 }
 
 function* watchResetSigcom() {
-  const task = yield takeLatest([
-      action_definitions.RESET_SIGCOM,
-      action_definitions.FIND_SIGNATURES,
-      action_definitions.MATCH_ENTITY,
-      action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-      action_definitions.FETCH_METADATA,
-    ], workResetSigcom)
+  const task = yield takeLatest(allWatchedActions, workResetSigcom)
 }
 // Metadata Search
 export function* workFetchMetaDataFromSearchBox(action) {
@@ -111,11 +113,7 @@ export function* workFetchMetaDataFromSearchBox(action) {
 }
 
 function* watchFetchMetaDataFromSearchBox() {
-  const ask = yield takeLatest([action_definitions.FIND_SIGNATURES,
-        action_definitions.MATCH_ENTITY,
-        action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-      ],
-    workFetchMetaDataFromSearchBox)
+  const ask = yield takeLatest(allWatchedActions, workFetchMetaDataFromSearchBox)
 }
 
 
@@ -178,11 +176,7 @@ export function* workFetchMetaData(action) {
 }
 
 function* watchFetchMetaData() {
-  const task = yield takeLatest([action_definitions.FIND_SIGNATURES,
-      action_definitions.MATCH_ENTITY,
-      action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-      action_definitions.FETCH_METADATA,
-    ], workFetchMetaData)
+  const task = yield takeLatest(allWatchedActions, workFetchMetaData)
 }
 
 // Match Entities
@@ -252,7 +246,7 @@ function* watchMatchEntities() {
   // for (const t in task){
   //   yield cancel(task)
   // }
-  yield takeLatest([action_definitions.FIND_SIGNATURES, action_definitions.MATCH_ENTITY, action_definitions.FETCH_METADATA], workMatchEntities)
+  yield takeLatest(allWatchedActions, workMatchEntities)
 }
 
 export function* workFindSignature(action) {
@@ -287,7 +281,7 @@ function* watchFindSignature() {
   // for (const t in task){
   //   yield cancel(task)
   // }
-  yield takeLatest([action_definitions.FIND_SIGNATURES, action_definitions.MATCH_ENTITY, action_definitions.FETCH_METADATA], workFindSignature)
+  yield takeLatest(allWatchedActions, workFindSignature)
 }
 
 export default function* rootSaga() {
