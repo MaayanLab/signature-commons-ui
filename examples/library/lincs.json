@@ -24,7 +24,20 @@
       "type": "text",
       "text": "${meta['Description']}",
       "priority": 2,
-      "description": true
+      "description": true,
+      "subtitle": true
+    },
+    "Assay": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Assay}",
+      "priority": 3,
+      "MDI_Icon": "mdi-flask-outline"
     }
   }
 }

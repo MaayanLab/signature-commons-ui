@@ -120,7 +120,7 @@
       },
       "type": "text",
       "text": "${meta.Assay}",
-      "priority": 5,
+      "priority": 1,
       "MDI_Icon": "mdi-flask-outline"
     },
     "Organism": {

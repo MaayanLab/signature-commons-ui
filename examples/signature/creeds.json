@@ -30,7 +30,7 @@
       "visibility": 1,
       "type": "text",
       "text": "Microarray",
-      "priority": 3,
+      "priority": 1,
       "MDI_Icon": "mdi-flask-outline"
     },
     "Disease": {

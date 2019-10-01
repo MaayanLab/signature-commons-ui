@@ -30,7 +30,7 @@
       "visibility": 1,
       "type": "text",
       "text": "L1000",
-      "priority": 4,
+      "priority": 1,
       "MDI_Icon": "mdi-flask-outline"
     },
     "Cell-line": {
