@@ -97,7 +97,7 @@ const Input = (props) => (
         minheight: 35,
         marginBottom: 0,
         width: '100%',
-        padding: '5px 5px 0 5px',
+        padding: '5px 5px 0 10px',
         background: '#f7f7f7',
         ...props.ChipInputStyle
       } :

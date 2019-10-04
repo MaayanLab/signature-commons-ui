@@ -40,50 +40,6 @@ export function maybe_fix_obj(obj) {
   return Object.keys(obj).reduce((objs, k) => ({ ...objs, [k]: { ...obj[k], id: k } }), {})
 }
 
-export function build_where(queries) {
-  const where = {}
-  let andClauses = []
-  let orClauses = []
-
-  for (const q of queries) {
-    if (q.indexOf(':') !== -1) {
-      const [key, ...value] = q.split(':')
-      if (key.startsWith('!') || key.startsWith('-')) {
-        andClauses = [...andClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
-      } else if (key.toLowerCase().startsWith('or ')) {
-        orClauses = [...orClauses, { ['meta.' + key.substring(3).trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      } else if (key.startsWith('|')) {
-        orClauses = [...orClauses, { ['meta.' + key.substring(1).trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      } else {
-        andClauses = [...andClauses, { ['meta.' + key.trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      }
-    } else {
-      // full text query
-      if (q.startsWith('!') || q.startsWith('-')) {
-        // and not
-        andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim().split(' ') } } }]
-      } else if (q.toLowerCase().startsWith('or ')) {
-        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim().split(' ') } } }]
-      } else if (q.startsWith('|')) {
-        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim().split(' ') } } }]
-      } else {
-        // and
-        andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim().split(' ') } } }]
-      }
-    }
-  }
-  if (orClauses.length > 0) {
-    if (andClauses.length > 0) {
-      orClauses = [...orClauses, { and: andClauses }]
-    }
-    where['or'] = orClauses
-  } else {
-    where['and'] = andClauses
-  }
-
-  return where
-}
-
 export const diffList = (prevList, currList) =>{
   if (prevList.length !== currList.length) return true
   const diff = prevList.filter(s=>currList.indexOf(s)===-1)
@@ -96,31 +52,41 @@ export const diffList = (prevList, currList) =>{
 // 2. Add filter (parent and meta) (parents for now)
 // 3. Add pages
 export const URLFormatter = ({
+  current_table,
   search,
   filters, // dictionary where the key is the field and the value is the filter values
   for_count,
   skip,
   limit,
 }) => {
-  if (filters!==undefined){
+  if (filters!==undefined || skip!== undefined || limit!==undefined){
     return JSON.stringify({
       search,
-      skip,
-      limit,
-      ...filters,
+      [current_table]: {
+        skip,
+        limit,
+        filters
+      }
     })
   }else{
     return JSON.stringify({
-      search,
-      skip,
-      limit
+      search
     })
   }
 }
 
-export const ReadURLParams = (params_str) => {
+export const ReadURLParams = (params_str, reverse_preferred_name) => {
   const searchParams = new URLSearchParams(params_str);
-  const params = JSON.parse(searchParams.get("q"))
-  console.log(params)
+  const p = JSON.parse(searchParams.get("q"))
+  const {search, ...rest} = p || {search:[]}
+  let params = {search}
+  for (const [k,v] of Object.entries(reverse_preferred_name)){
+    if (rest[k]!==undefined) {
+      params = {
+        ...params,
+        [reverse_preferred_name[k]]: v
+      }
+    }
+  }
   return {...params}
 }

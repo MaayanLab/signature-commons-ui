@@ -4,52 +4,279 @@ import { fetch_data } from "../fetch/data"
 import { get_library_resources } from "./resources"
 import { UIValues } from '../ui_values'
 import { makeTemplate } from "../makeTemplate"
-import { build_where, parse_entities, maybe_fix_obj} from "./misc"
+import { parse_entities, maybe_fix_obj} from "./misc"
 
-export function format_bulk_metadata_search_count_per_parent({operationId,
-  parent,
-  parent_ids,
-  params,
-  search,
-  where,
-  ...props}){
+export const operationIds = {
+  libraries: {
+    count: "Library.count",
+    find: "Library.find",
+    value_count: "Library.value_count"
+  },
+  signatures: {
+    count: "Signature.count",
+    find: "Signature.find",
+    value_count: "Signature.value_count"
+  }
+ }
 
-  if (where===undefined && search!==undefined) where = build_where(search)
-  if (where===undefined && search===undefined) where = {}
-  
-  let bulk_params
-  bulk_params = parent_ids.map(parent_id=>{
-    let where_with_parent
-    if (search.length===0){
-      where_with_parent = {
-        [parent]: parent_id
-      }
-    } else if (where.and !== undefined){
-      where_with_parent = {
-        and: [
-          ...where.and,
-          {[parent]: parent_id}
-        ]
+export function build_where({search, parent, filters}) {
+  const where = {}
+  let andClauses = []
+  let orClauses = []
+
+  for (const q of search) {
+    if (q.indexOf(':') !== -1) {
+      const [key, ...value] = q.split(':')
+      if (key.startsWith('!') || key.startsWith('-')) {
+        andClauses = [...andClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
+      } else if (key.toLowerCase().startsWith('or ')) {
+        orClauses = [...orClauses, { ['meta.' + key.substring(3).trim()]: { ilike: '%' + value.join(':') + '%' } }]
+      } else if (key.startsWith('|')) {
+        orClauses = [...orClauses, { ['meta.' + key.substring(1).trim()]: { ilike: '%' + value.join(':') + '%' } }]
+      } else {
+        andClauses = [...andClauses, { ['meta.' + key.trim()]: { ilike: '%' + value.join(':') + '%' } }]
       }
     } else {
-      where_with_parent = {
-        and: [
-          ...where,
-          {[parent]: parent_id}
-        ]
+      // full text query
+      if (q.startsWith('!') || q.startsWith('-')) {
+        // and not
+        andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim() } } }]
+      } else if (q.toLowerCase().startsWith('or ')) {
+        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim() } } }]
+      } else if (q.startsWith('|')) {
+        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim() } } }]
+      } else {
+        // and
+        andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim() } } }]
       }
     }
-    return({
-      operationId,
-      parameters: {
-        where: where_with_parent,
-        ...params
+  }
+  if (orClauses.length > 0) {
+    if (andClauses.length > 0) {
+      orClauses = [...orClauses, { and: andClauses }]
+    }
+    where['or'] = orClauses
+  } else {
+    where['and'] = andClauses
+  }
+
+  if (filters!==undefined){
+    if (where.and === undefined){
+      where = {
+        and: [...where]
       }
-  })})
-  return bulk_params
+    }
+    for (const [filter, values] of Object.entries(filters)){
+      if (filter===parent) {
+        where = {
+          and: [...where.and, {inq: [...values]}]
+        }
+      }
+    }
+  }
+
+  return where
 }
 
-// operationID: see sigcom-api
+export const format_bulk_param_search = ({
+  operationId,
+  parent,
+  parent_ids,
+  value_count,
+  filters,
+  search,
+  where,
+  limit,
+  skip,
+  fields,
+  global_count,
+  parent_count,
+  ...props
+}) => {
+  if (limit===undefined) limit = 10
+  if (where===undefined && search!==undefined) where = build_where({search, parent, filters})
+  if (where===undefined && search===undefined) where = {}
+  if (global_count===undefined) global_count = true
+  let params = []
+  
+  if (operationId.includes(".find")){
+    params = [... params, 
+      {
+      operationId,
+      parameters: {
+        filter: {
+            where,
+            limit,
+            skip
+          },
+        }
+      }
+    ]
+  }else if (operationId.includes(".value_count") && fields!== undefined){
+    params = [... params, 
+      {
+      operationId,
+      parameters: {
+        filter: {
+            where,
+            fields,
+          },
+        }
+      }
+    ]
+  }else if (operationId.includes(".count")){
+    if (global_count){
+      // Always true when counting
+      params = [...params,
+        {
+          operationId,
+          parameters: {
+            where
+          }
+        }
+      ]
+    }
+    // count per parent
+    if (parent_count){
+      if (where.and === undefined){
+        where = {
+          and: [...where]
+        }
+      }
+      let p =  parent_ids
+      if (filters!==undefined){
+        p = filters[parent] || parent_ids
+      }
+      const plist = p.map(pid => ({
+        operationId,
+        parameters: {
+          where: {
+            and: [...where.and,
+              {[parent]: pid}
+            ]
+          }
+        }
+        }))
+      params = [...params, ...plist]
+    }
+  }
+
+  return params
+}
+
+// {
+//   query: {
+//     search: [],
+//     filters,
+//     limit,
+//     skip
+//   },
+//   aggregate: {
+//     count: {
+//      parent_count: true,
+//      global_count: true
+//    },
+//     value_count: {
+//        fields: []
+//     }
+//   }
+// }
+export const fetch_metadata = async ({
+  table,
+  search_params,
+  parent,
+  parent_ids,
+  controller,
+  ...props
+}) => {
+  const { query, aggregate } = search_params
+  console.log(search_params)
+  let bulk_params = []
+  if (query!==undefined){
+    const operationId = operationIds[table].find
+    const query_params = format_bulk_param_search({operationId, parent, parent_ids, ...query})
+    bulk_params = [...bulk_params, ...query_params]
+  }
+  if (aggregate!==undefined){
+    const {count, value_count} = aggregate
+    const operationId = operationIds[table].value_count
+    if (value_count!==undefined){
+      const value_count_params = format_bulk_param_search({operationId, parent, parent_ids, ...query, ...value_count})
+      bulk_params = [...bulk_params, ...value_count_params]
+    }
+    if (count !== undefined){
+      const operationId = operationIds[table].count
+      const count_params = format_bulk_param_search({operationId, parent, parent_ids, ...query, ...count})
+      bulk_params = [...bulk_params, ...count_params]
+    }
+  }
+  // Fetch
+  let {response: bulk_response, duration} = await fetch_meta_post({
+    endpoint: '/bulk',
+    body: bulk_params,
+    signal: controller.signal,
+  })
+
+  // Process Data
+  // Order
+  // [
+  //   {Metadata_Result},
+  //   {value_count},
+  //   {count},
+  //   {count_per_parent}
+  // ]
+  let metadata_search_result = {table}
+  if (query!==undefined){
+    const [matches, ...rest] = bulk_response
+    metadata_search_result = {
+      ...metadata_search_result,
+      matches: matches.response
+    }
+    bulk_response = rest
+  }
+  if (aggregate!==undefined){
+    const {count, value_count} = aggregate
+    if (value_count!==undefined){
+      const [value_count, ...rest] = bulk_response
+      metadata_search_result = {
+        ...metadata_search_result,
+        value_count: value_count.response
+      }
+      bulk_response = rest 
+    }
+    if (count!==undefined){
+      const {global_count, parent_count} = count
+      if (global_count){
+        const [c, ...rest] = bulk_response
+        metadata_search_result = {
+          ...metadata_search_result,
+          count: c.response.count
+        }
+        bulk_response = rest
+      }
+      if (parent_count){
+        const c = bulk_response
+        const count_per_parent = c.map((c, ind)=>{
+          const parent_id = parent_ids[ind]
+          const {response: count} = c
+          return {parent_id, count}
+        }).reduce((acc, item)=>({
+          ...acc,
+          [item.parent_id]: item.count
+        }),{})
+        metadata_search_result = {
+          ...metadata_search_result,
+          count_per_parent
+        }
+      }
+    }
+  }
+  console.log(metadata_search_result)
+  return metadata_search_result
+}
+
+
+// operationId: see sigcom-api
 // filter: filter to use
 // parent: parent of the table in hierarchy i.e resource -> library -> signature
 // parent_ids: available ids 
@@ -57,19 +284,18 @@ export function format_bulk_metadata_search_count_per_parent({operationId,
 // controller: abort controller
 export async function fetch_bulk_counts_per_parent({table,
   operationId,
-  filter,
   parent,
   parent_ids,
-  parents_meta,
-  params,
+  filters,
   controller,
   search,
   ...props}){
   const bulk_params = format_bulk_metadata_search_count_per_parent({operationId,
     parent,
     parent_ids,
-    params,
-    search
+    filters,
+    controller,
+    search,
   })
   const {response: bulk_counts, duration} = await fetch_meta_post({
     endpoint: '/bulk',

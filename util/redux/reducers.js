@@ -78,14 +78,45 @@ function rootReducer(state = initialState, action) {
   }
 
   if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX) {
+    const {search, ...tables} = action.params
+    const table_filters = Object.entries(tables).map(([table, values])=>{
+      return {
+        table,
+        filters: values===undefined ?  undefined:values.filters
+      }
+    }).reduce((acc, item)=>{
+      acc = {
+        ...acc,
+        [item.table]: {...item.filters}
+      }
+      return acc
+    },{})
+    const table_pages = Object.entries(tables).map(([table, values])=>{
+      return {
+        table,
+        skip: values===undefined ?  undefined:values.skip,
+        limit: values===undefined ?  undefined:values.limit
+      }
+    }).reduce((acc, item)=>{
+      const {table, skip, limit} = item
+      acc = {
+        ...acc,
+        [table]: {skip, limit}
+      }
+      return acc
+    },{})
     return {
       ...state,
-      search: action.search,
+      search: search,
       loading: true,
       table_count: {},
       table_count_per_parent: {},
-      filter_mapper: {},
-      pagination_mapper: {},
+      filter_mapper: {
+        ...table_filters,
+      },
+      pagination_mapper: {
+        ...table_pages,
+      },
       failed: false,
       completed: false,
     }
@@ -117,21 +148,22 @@ function rootReducer(state = initialState, action) {
       failed: false,
     });
   }
-
-
-  if (action.type === action_definitions.FETCH_METADATA_COUNT) {
-    return {
-      ...state,
-      search: action.search,
-      loading: true,
-      failed: false,
-    }
-  }
   if (action.type === action_definitions.FETCH_METADATA) {
+    const {params, table} = action
     return {
       ...state,
-      search: action.search,
-      paginating: action.paginating,
+      search: params.search,
+      pagination_mapper: {
+        ...state.pagination_mapper,
+        [table]: {
+          skip: params[table] !== undefined ? params[table].skip : undefined,
+          limit: params[table] !== undefined ? params[table].limit : undefined
+        }
+      },
+      filter_mapper: {
+        ...state.filter_mapper,
+        [table]: params[table] !== undefined ? params[table].filter : undefined
+      },
       loading: true,
       failed: false,
     }

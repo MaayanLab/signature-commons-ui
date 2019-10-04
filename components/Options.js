@@ -204,7 +204,7 @@ export default class Options extends React.Component {
                 {this.props.ui_values.downloads.geneset}
               </Typography>
             </MenuItem>
-            {this.props.item.library.dataset_type === 'rank_matrix' ?
+            {this.props.item.library && this.props.item.library.dataset_type === 'rank_matrix' ?
                 <MenuItem onClick={this.handleDownloadRanked}>
                   <span className="mdi mdi-24px mdi-file-download"></span>
                   &nbsp;

@@ -2,7 +2,8 @@ import { put, takeLatest, takeEvery, take, cancelled, all, call, cancel, select 
 import { Set } from 'immutable'
 import { action_definitions } from "../redux/action-types"
 import { fetch_meta } from "../fetch/meta"
-import { build_where,
+import { operationIds,
+  fetch_metadata,
   metadataSearcher,
   resolve_entities,
   find_synonyms,
@@ -25,10 +26,7 @@ import { fetchMetaDataFromSearchBoxSucceeded,
   findSignaturesFailed } from "../redux/actions"
 import { getStateFromStore } from "./selectors"
 
-export const operationIds = {
-  libraries: "Library.count",
-  signatures: "Signature.count"
- }
+
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -56,49 +54,103 @@ export function* workFetchMetaDataFromSearchBox(action) {
    }
    const controller = new AbortController()
    try {
-      const {type, search, ...current_table_filters} = action
+      const {params} = action
+      
       const { parents_mapping: parents,
-        parent_ids_mapping,
-        selected_parent_ids: selected_parent_ids_mapping,
-        current_table} = yield select(getStateFromStore)
-      console.log(parents)
-      const count_calls = Object.keys(parents).map(table=>call(fetch_bulk_counts_per_parent, {
+        parent_ids_mapping
+      } = yield select(getStateFromStore)
+      
+      // const a = yield call(fetch_metadata, {
+      //   table: "signatures",
+      //   search_params: {
+      //     query: {
+      //       search: params.search,
+      //     },
+      //     aggregate: {
+      //       count: {
+      //         parent_count: true,
+      //         global_count: true
+      //       },
+      //       value_count: {
+      //         fields: ["meta.Assay"]
+      //       }
+      //     }
+      //   },
+      //   parent: parents["signatures"],
+      //   parent_ids: Object.keys(parent_ids_mapping["signatures"]),
+      //   controller
+      // })
+      Object.keys(parents).map(table=>{
+        const { [parents[table]]: parent_ids, ...filters } = params[table].filters || {}
+        let search_params = {
+          query: {
+            search: params.search,
+            ...params[table]
+          }
+        }
+        if (params.aggregate!==undefined){
+          search_params = {
+            ...search_params,
+            aggregate: {
+              count: {
+                parent_count: true,
+                global_count: true
+              },
+              value_count: {
+                fields: [...params[table].aggregate.fields]
+              }
+            }
+          }
+        }
+        return(call(fetch_metadata, {
           table,
-          operationId: operationIds[table],
           parent: parents[table],
-          parent_ids: Object.keys(selected_parent_ids_mapping[table]).length > 0 ? Object.keys(selected_parent_ids_mapping[table]): Object.keys(parent_ids_mapping[table]), // Use selected if it exists
-          search,
-          controller,
+          parent_ids: parent_ids || Object.keys(parent_ids_mapping[table]),
+          search_params,
+          controller
         }))
-      const match_calls = Object.keys(parents).map(table=>{
-        let search_filters = {}
-        if (table === current_table) search_filters = {...current_table_filters}
-        console.log(current_table_filters)
-        return call(metadataSearcher, {
-          table,
-          operationId: operationIds[table],
-          parent: parents[table],
-          parents_meta: parent_ids_mapping[table],
-          search,
-          search_filters,
-          controller,
-        })
       })
       const results = yield all([...count_calls, ...match_calls])
-      let table_count = {}
-      let table_count_per_parent = {}
-      let metadata_results = {}
-      for (const item of results){
-        const {table, count, count_per_parent, matches} = item
-        if (matches !== undefined){
-          metadata_results[table] = matches
-        }else{
-          table_count[table] = count
-          table_count_per_parent[table] = count_per_parent
-        }
-      }
-      console.log(table_count_per_parent)
-      yield put(fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results))
+      console.log(results)
+      // const count_calls = Object.keys(parents).map(table=>{
+      //   const { [parents[table]]: parent_ids, ...filters } = params.filters || {}
+      //   return call(fetch_bulk_counts_per_parent, {
+      //           table,
+      //           operationId: operationIds[table],
+      //           parent: parents[table],
+      //           parent_ids: parent_ids || Object.keys(parent_ids_mapping[table]),
+      //           filters,
+      //           search: params.search,
+      //           controller,
+      //         })
+      // })
+
+      // const match_calls = Object.keys(parents).map(table=>{
+      //   const search_filters = params[table] || {}
+      //   return call(metadataSearcher, {
+      //     table,
+      //     operationId: operationIds[table],
+      //     parent: parents[table],
+      //     parents_meta: parent_ids_mapping[table],
+      //     search: params.search,
+      //     search_filters,
+      //     controller,
+      //   })
+      // })
+      // const results = yield all([...count_calls, ...match_calls])
+      // let table_count = {}
+      // let table_count_per_parent = {}
+      // let metadata_results = {}
+      // for (const item of results){
+      //   const {table, count, count_per_parent, matches} = item
+      //   if (matches !== undefined){
+      //     metadata_results[table] = matches
+      //   }else{
+      //     table_count[table] = count
+      //     table_count_per_parent[table] = count_per_parent
+      //   }
+      // }
+      // yield put(fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results))
    } catch (error) {
       console.log(error)
       yield put(fetchMetaDataFromSearchBoxFailed(error))
@@ -124,18 +176,23 @@ export function* workFetchMetaData(action) {
    
    const controller = new AbortController()
    try {
-      const {search, filter, paginating, table} = action
-      const { parents, parent_ids_mapping, selected_parent_ids_mapping} = yield select(getStateFromStore)
+      const {params, table} = action
+      const { parents_mapping: parents,
+        parent_ids_mapping
+      } = yield select(getStateFromStore)
+
+      const search_filters = params[table] || {}
+      
       const match_calls = call(metadataSearcher, {
           table,
           operationId: operationIds[table],
           parent: parents[table],
           parents_meta: parent_ids_mapping[table],
-          parent_ids: Object.keys(selected_parent_ids_mapping[table]).length > 0 ? Object.keys(selected_parent_ids_mapping[table]):undefined,
-          search,
+          search: params.search,
+          search_filters,
           controller,
-          ...filter,
         })
+
       let results
       if (!paginating){
         const count_calls = call(fetch_bulk_counts_per_parent, {

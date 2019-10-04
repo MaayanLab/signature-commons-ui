@@ -13,12 +13,9 @@ export function changeMetadataSearchTable(table){
 }
 
 // Metadata search using search box
-export function fetchMetaDataFromSearchBox({search, filters, skip, limit}) {
+export function fetchMetaDataFromSearchBox(params) {
   return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-    search,
-    filters,
-    skip,
-    limit}
+    params}
 }
 
 export function fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results){
@@ -38,40 +35,40 @@ export function fetchMetaDataFromSearchBoxAborted(type, error){
 }
 
 // change parent
-export function filterMetadataSearch(search, filter, paginating, table){
-  return {type: action_definitions.FILTER_METADATA_SEARCH, search, filter, paginating, table}
-}
+// export function filterMetadataSearch(search, filter, paginating, table){
+//   return {type: action_definitions.FILTER_METADATA_SEARCH, search, filter, paginating, table}
+// }
 
 
-// Paginate
-export function paginateMetaData(search, filters, skip, limit, table) {
-  return {type: action_definitions.PAGINATE_METADATA, search, filters, skip, limit, table}
-}
+// // Paginate
+// export function paginateMetaData(params, table) {
+//   return {type: action_definitions.PAGINATE_METADATA, search, filters, skip, limit, table}
+// }
 
-export function paginateMetaDataSucceeded(results){
-  return {type: action_definitions.PAGINATE_METADATA_SUCCEEDED,
-    table,
-    table_count,
-    table_count_per_parent,
-    metadata_results
-  }
-}
+// export function paginateMetaDataSucceeded(results){
+//   return {type: action_definitions.PAGINATE_METADATA_SUCCEEDED,
+//     table,
+//     table_count,
+//     table_count_per_parent,
+//     metadata_results
+//   }
+// }
 
-export function paginateMetaDataFailed(error, loading){
-  return {type: action_definitions.PAGINATE_METADATA_FAILED, error}
-}
+// export function paginateMetaDataFailed(error, loading){
+//   return {type: action_definitions.PAGINATE_METADATA_FAILED, error}
+// }
 
 
 
 
 
 // Metadata search
-export function fetchMetaData(search, filter, paginating, table) {
+export function fetchMetaData(params, table, paginating=false) {
   return {type: action_definitions.FETCH_METADATA,
-    search,
-    filter,
-    paginating,
-    table}
+    params,
+    table,
+    paginating
+  }
 }
 
 export function fetchMetaDataSucceeded(table,

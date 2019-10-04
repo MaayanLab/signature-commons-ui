@@ -58,7 +58,6 @@ const mapStateToProps = state => {
     examples: state.serverSideProps.ui_values.LandingText.search_terms,
     placeholder: state.serverSideProps.ui_values.LandingText.metadata_placeholder,
     search: state.search,
-    operationIDs: state.operationIDs,
     preferred_name: state.serverSideProps.ui_values.preferred_name,
   };
 };
@@ -67,11 +66,10 @@ const mapStateToProps = state => {
 class MetadataSearchBox extends React.Component {
 
   searchFunction = (search) => {
-    const query = URLFormatter({search})
-    console.log(this.props.match.params.table)
-    const table = this.props.match.params.table || this.props.preferred_name["signatures"]
+    const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+    const query = URLFormatter({search, current_table})
     this.props.history.push({
-      pathname: `/MetadataSearch/${table}`,
+      pathname: `/MetadataSearch/${current_table}`,
       search: `?q=${query}`
     })
   }

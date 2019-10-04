@@ -7,6 +7,7 @@ import {findMatchedSchema} from '../../util/objectMatch'
 import { diffList } from "../../util/helper/misc"
 import { connect } from "react-redux";
 import { fetchMetaData } from "../../util/redux/actions";
+import { URLFormatter, ReadURLParams } from "../../util/helper/misc";
 
 import DataTable from "./DataTable"
 
@@ -80,15 +81,9 @@ const mapStateToProps = state => {
     completed: state.completed,
     paginating: state.paginating,
     count: state.table_count[state.current_table],
-    reverse_preferred_name: state.reverse_preferred_name
+    reverse_preferred_name: state.reverse_preferred_name,
+    preferred_name: state.serverSideProps.ui_values.preferred_name,
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    searchFunction : (search, filter, paginating, table) => 
-      dispatch(fetchMetaData(search, filter, paginating, table)),
-  };
 }
 
 class MetadataSearchResults extends React.Component {
@@ -124,16 +119,24 @@ class MetadataSearchResults extends React.Component {
   }
 
   handleChangeRowsPerPage = (e) => {
+    const param_str = this.props.location.search
     this.setState({
       perPage: e.target.value,
     }, () => {
       const {page, perPage} = this.state
-      const {searchFunction, current_table, search} = this.props
-      const filter = {
+      const param_str = this.props.location.search
+      let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+      params = {
+        ...params,
         limit: perPage,
         skip: page * perPage
       }
-      searchFunction(search, filter, true, current_table)
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+      const query = URLFormatter({...params, current_table})
+      this.props.history.push({
+        pathname: `/MetadataSearch/${current_table}`,
+        search: `?q=${query}`
+      })
     })
   }
 
@@ -142,12 +145,19 @@ class MetadataSearchResults extends React.Component {
       page,
     }, () => {
       const {page, perPage} = this.state
-      const {searchFunction, current_table, search} = this.props
-      const filter = {
+      const param_str = this.props.location.search
+      let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+      params = {
+        ...params,
         limit: perPage,
         skip: page * perPage
       }
-      searchFunction(search, filter, true, current_table)
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+      const query = URLFormatter({...params, current_table})
+      this.props.history.push({
+        pathname: `/MetadataSearch/${current_table}`,
+        search: `?q=${query}`
+      })
     })
   }
 
@@ -190,4 +200,4 @@ class MetadataSearchResults extends React.Component {
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MetadataSearchResults)
+export default connect(mapStateToProps)(MetadataSearchResults)
