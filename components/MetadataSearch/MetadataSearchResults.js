@@ -138,7 +138,12 @@ class MetadataSearchResults extends React.Component {
       const query = URLFormatter({...params, current_table})
       this.props.history.push({
         pathname: `/MetadataSearch/${current_table}`,
-        search: `?q=${query}`
+        search: `?q=${query}`,
+        state: {
+          new_search: false,
+          pagination: true,
+          new_filter: false
+        }
       })
     })
   }
@@ -159,7 +164,12 @@ class MetadataSearchResults extends React.Component {
       const query = URLFormatter({...params, current_table})
       this.props.history.push({
         pathname: `/MetadataSearch/${current_table}`,
-        search: `?q=${query}`
+        search: `?q=${query}`,
+        state: {
+          new_search: false,
+          pagination: true,
+          new_filter: false
+        }
       })
     })
   }

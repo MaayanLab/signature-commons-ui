@@ -39,13 +39,10 @@ const mapStateToProps = state => {
   const preferred_name = state.serverSideProps.ui_values.preferred_name
   return {
     search: state.search,
-    table_count: state.table_count,
+    models: state.models,
     tables: Object.keys(state.parents_mapping),
-    currentTable: state.currentTable,
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
-    filter_mapper: state.filter_mapper,
-    pagination_mapper: state.pagination_mapper,
   }
 }
 
@@ -69,7 +66,6 @@ class MetadataSearch extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props)
     const newTable = this.props.reverse_preferred_name[this.props.match.params.table]
     this.props.changeTab(newTable)
     this.setState({
@@ -108,7 +104,21 @@ class MetadataSearch extends React.Component {
     console.log(params)
     this.props.searchBoxFunction(params, newTable)
   }
-
+  componentDidUpdate(prevProps) {
+      const prev_table = this.props.reverse_preferred_name[prevProps.match.params.table]
+      const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+      const old_param_str = prevProps.location.search
+      const current_param_str = this.props.location.search
+      if (prev_table !== current_table){
+        const params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+        
+      }
+      // const param_str = this.props.location.search
+      // const params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+      // const old_param_str = prevProps.location.search
+      // const old_params = ReadURLParams(old_param_str, this.props.reverse_preferred_name)
+      // const state = this.props.location.state || { new_search: true}
+  }
   // componentDidUpdate(prevProps) {
   //   const prevTable = this.props.reverse_preferred_name[prevProps.match.params.table]
   //   const newTable = this.props.reverse_preferred_name[this.props.match.params.table]
@@ -182,13 +192,17 @@ class MetadataSearch extends React.Component {
           centered
         >
           {this.props.tables.map((table) => {
-            const count = this.props.table_count[table]===undefined ? '': ` (${this.props.table_count[table]})`
+            const model = this.props.models[table]
+            let count = ''
+            if (model!==undefined){
+              count = model.results!==undefined && model.results.count!==undefined? ` (${model.results.count})` : ''
+            }
             return(
-            <Tab
-                key={table}
-                label={`${this.props.preferred_name[table]}${count}`}
-              />
-            )})}
+              <Tab
+                  key={table}
+                  label={`${this.props.preferred_name[table]}${count}`}
+                />
+              )})}
         </Tabs>
         <MetadataSearchResults {...props}/>
       </React.Fragment>
