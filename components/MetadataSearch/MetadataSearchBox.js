@@ -70,7 +70,12 @@ class MetadataSearchBox extends React.Component {
     const query = URLFormatter({search, current_table})
     this.props.history.push({
       pathname: `/MetadataSearch/${current_table}`,
-      search: `?q=${query}`
+      search: `?q=${query}`,
+      state: {
+        new_search: true,
+        pagination: false,
+        new_filter: false
+      }
     })
   }
 

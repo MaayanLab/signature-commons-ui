@@ -1,16 +1,21 @@
 import { Set } from 'immutable'
 import { action_definitions } from "./action-types";
+import Model from "../helper/model"
 
 export const initialState = {
   serverSideProps: null,
   search: [],
   selected_parent_ids: {},
-  filter_mapper: {},
-  pagination_mapper: {},
   parent_ids_mapping: {},
   parents_mapping: {},
   current_table: 'signatures',
-  metadata_results: {},
+  filter_mapper: {},
+  pagination_mapper: {},
+  metadata_results: {
+    signatures: null,
+    libraries: null,
+  },
+  models: {},
   completed: true,
   loading: false,
   failed: false,
@@ -68,10 +73,7 @@ function rootReducer(state = initialState, action) {
     return {
       ...state,
       search: [],
-      table_count: {},
-      table_count_per_parent: {},
-      filter_mapper: {},
-      pagination_mapper: {},
+      model: {},
       loading: false,
       completed: true,
     }
@@ -79,131 +81,28 @@ function rootReducer(state = initialState, action) {
 
   if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX) {
     const {search, ...tables} = action.params
-    const table_filters = Object.entries(tables).map(([table, values])=>{
-      return {
-        table,
-        filters: values===undefined ?  undefined:values.filters
-      }
-    }).reduce((acc, item)=>{
-      acc = {
-        ...acc,
-        [item.table]: {...item.filters}
-      }
-      return acc
-    },{})
-    const table_pages = Object.entries(tables).map(([table, values])=>{
-      return {
-        table,
-        skip: values===undefined ?  undefined:values.skip,
-        limit: values===undefined ?  undefined:values.limit
-      }
-    }).reduce((acc, item)=>{
-      const {table, skip, limit} = item
-      acc = {
-        ...acc,
-        [table]: {skip, limit}
-      }
-      return acc
-    },{})
     return {
       ...state,
       search: search,
       loading: true,
-      table_count: {},
-      table_count_per_parent: {},
-      filter_mapper: {
-        ...table_filters,
-      },
-      pagination_mapper: {
-        ...table_pages,
-      },
+      models: Object.keys(state.parents_mapping).reduce((acc,table)=>{
+        acc = {
+          ...acc,
+          [table]: new Model(table, state.parents_mapping[table], state.parent_ids_mapping[table])
+        }
+        return acc
+      },{}),
       failed: false,
       completed: false,
     }
   }
-  if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_SUCCEEDED) {
+  if (action.type === action_definitions.FETCH_METADATA_SUCCEEDED) {
     return {
       ...state,
       completed: true,
       loading: false,
       failed: false,
-      table_count: action.table_count,
-      table_count_per_parent: action.table_count_per_parent,
-      metadata_results: action.metadata_results,
-    }
-  }
-  if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_FAILED) {
-    return Object.assign({}, state, {
-      results: {},
-      completed: false,
-      failed: true,
-      loading: false,
-    });
-  }
-  if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_ABORTED) {
-    return Object.assign({}, state, {
-      results: {},
-      completed: false,
-      loading: true,
-      failed: false,
-    });
-  }
-  if (action.type === action_definitions.FETCH_METADATA) {
-    const {params, table} = action
-    return {
-      ...state,
-      search: params.search,
-      pagination_mapper: {
-        ...state.pagination_mapper,
-        [table]: {
-          skip: params[table] !== undefined ? params[table].skip : undefined,
-          limit: params[table] !== undefined ? params[table].limit : undefined
-        }
-      },
-      filter_mapper: {
-        ...state.filter_mapper,
-        [table]: params[table] !== undefined ? params[table].filter : undefined
-      },
-      loading: true,
-      failed: false,
-    }
-  }
-  if (action.type === action_definitions.FETCH_METADATA_SUCCEEDED) {
-    const { table,
-      table_count,
-      table_count_per_parent,
-      metadata_results,
-      paginating} = action
-    if (paginating){
-      return {
-        ...state,
-        loading: false,
-        failed: false,
-        paginating: false,
-        metadata_results: {
-          ...state.metadata_results,
-          [table]: metadata_results,
-        },
-      }
-    }else {
-      return {
-        ...state,
-        loading: false,
-        failed: false,
-        paginating: false,
-        table_count: {
-          ...state.table_count,
-          [table]: table_count,
-        },
-        table_count_per_parent: {
-          ...state.table_count_per_parent,
-          [table]: table_count_per_parent,
-        },
-        metadata_results: {
-          ...state.metadata_results,
-          [table]: metadata_results,
-        },
-      }
+      models: action.models
     }
   }
   if (action.type === action_definitions.FETCH_METADATA_FAILED) {

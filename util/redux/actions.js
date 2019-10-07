@@ -13,25 +13,9 @@ export function changeMetadataSearchTable(table){
 }
 
 // Metadata search using search box
-export function fetchMetaDataFromSearchBox(params) {
+export function fetchMetaDataFromSearchBox(params, currentTable) {
   return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-    params}
-}
-
-export function fetchMetaDataFromSearchBoxSucceeded(table_count, table_count_per_parent, metadata_results){
-  return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_SUCCEEDED,
-    table_count,
-    table_count_per_parent,
-    metadata_results
-  }
-}
-
-export function fetchMetaDataFromSearchBoxFailed(error, loading){
-  return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_FAILED, error}
-}
-
-export function fetchMetaDataFromSearchBoxAborted(type, error){
-  return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX_ABORTED, error}
+    params, currentTable}
 }
 
 // change parent
@@ -71,18 +55,9 @@ export function fetchMetaData(params, table, paginating=false) {
   }
 }
 
-export function fetchMetaDataSucceeded(table,
-    table_count,
-    table_count_per_parent,
-    metadata_results,
-    paginating
-    ){
+export function fetchMetaDataSucceeded(models){
   return {type: action_definitions.FETCH_METADATA_SUCCEEDED,
-    table,
-    table_count,
-    table_count_per_parent,
-    metadata_results,
-    paginating
+    models
   }
 }
 

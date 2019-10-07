@@ -14,22 +14,25 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import ParentFilter from './ParentFilter'
 
-// const MetadataSearchBox = dynamic(() => import('./MetadataSearchBox'))
-const SearchResults = dynamic(() => import('../../components/MetadataSearch/SearchResults'))
-
-function getParam(s, param) {
-  const search = s
-  const params = new URLSearchParams(search)
-  let val = params.get(param)
-  if (val === undefined || val === null || val === '') {
-    val = []
-  } else {
-    val = val.split('&')
-    if (val.filter((v) => v.trim() === '').length === val.length) {
-      val = []
-    }
-  }
-  return val
+const operationMapper = {
+  new_search: (table, currentTable) => ({
+    metadata_search: table===currentTable,
+    per_parent_count: table===currentTable,
+    value_count: table===currentTable,
+    count: true
+  }),
+  pagination: (table, currentTable) => ({
+    metadata_search: table===currentTable,
+    per_parent_count: false,
+    value_count: false,
+    count: false
+  }),
+  new_filter: (table, currentTable) => ({
+    metadata_search: table===currentTable,
+    per_parent_count: table===currentTable,
+    value_count: table===currentTable,
+    count: table===currentTable,
+  }),
 }
 
 const mapStateToProps = state => {
@@ -38,7 +41,7 @@ const mapStateToProps = state => {
     search: state.search,
     table_count: state.table_count,
     tables: Object.keys(state.parents_mapping),
-    current_table: state.current_table,
+    currentTable: state.currentTable,
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
     filter_mapper: state.filter_mapper,
@@ -48,8 +51,8 @@ const mapStateToProps = state => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    searchBoxFunction : (params) => 
-      dispatch(fetchMetaDataFromSearchBox(params)),
+    searchBoxFunction : (params, currentTable) => 
+      dispatch(fetchMetaDataFromSearchBox(params, currentTable)),
     searchFunction: (params, table, paginating=false) =>
       dispatch(fetchMetaData(params,table, paginating)),
     changeTab: (newTable) =>
@@ -66,40 +69,70 @@ class MetadataSearch extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this.props)
     const newTable = this.props.reverse_preferred_name[this.props.match.params.table]
     this.props.changeTab(newTable)
     this.setState({
       index_value: this.props.tables.indexOf(newTable),
     })
     const param_str = this.props.location.search
-    console.log(this.props.reverse_preferred_name)
-    const params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-    this.props.searchBoxFunction({...params})
-  }
-
-  componentDidUpdate(prevProps) {
-    const prevTable = this.props.reverse_preferred_name[prevProps.match.params.table]
-    const newTable = this.props.reverse_preferred_name[this.props.match.params.table]
-    const param_str = this.props.location.search
-    const params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-    const old_param_str = prevProps.location.search
-    const old_params = ReadURLParams(old_param_str, this.props.reverse_preferred_name)
-    
-    if (prevTable!==newTable){
-      this.props.changeTab(newTable)
-      this.setState({
-        index_value: this.props.tables.indexOf(newTable),
-      })
-    }
-    if (param_str!==old_param_str){
-      // search has changed
-      if (diffList(old_params.search, params.search)){
-        this.props.searchBoxFunction(params)
-      } else {
-        // this.props.searchFunction(params, newTable)
+    let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+    console.log(params)
+    const {new_search, pagination, new_filter} = this.props.location.state || { new_search: true}
+    for (const table of this.props.tables){
+      let operations
+      if (new_search){
+        operations = operationMapper.new_search(table, newTable)
+      }else if (pagination){
+        operations = operationMapper.pagination(table, newTable)
+      }else if (new_filter){
+        operations = operationMapper.new_filter(table, newTable)
+      }
+      if (params[table]){
+        params = {
+          ...params,
+          [table]: {
+            ...params[table],
+            operations
+          }
+        }
+      }else{
+        params = {
+          ...params,
+          [table]: {
+            operations
+          }
+        }
       }
     }
+    console.log(params)
+    this.props.searchBoxFunction(params, newTable)
   }
+
+  // componentDidUpdate(prevProps) {
+  //   const prevTable = this.props.reverse_preferred_name[prevProps.match.params.table]
+  //   const newTable = this.props.reverse_preferred_name[this.props.match.params.table]
+  //   const param_str = this.props.location.search
+  //   const params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+  //   const old_param_str = prevProps.location.search
+  //   const old_params = ReadURLParams(old_param_str, this.props.reverse_preferred_name)
+  //   const state = this.props.location.state || { new_search: true}
+
+  //   if (prevTable!==newTable){
+  //     this.props.changeTab(newTable)
+  //     this.setState({
+  //       index_value: this.props.tables.indexOf(newTable),
+  //     })
+  //   }
+  //   if (param_str!==old_param_str){
+  //     // search has changed
+  //     if (diffList(old_params.search, params.search)){
+  //       this.props.searchBoxFunction(params, newTable)
+  //     } else {
+  //       // this.props.searchFunction(params, newTable)
+  //     }
+  //   }
+  // }
 
 
   handleChange = (event, newIndex) => {
@@ -163,9 +196,9 @@ class MetadataSearch extends React.Component {
   }
 
   render = () => {
-    const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    const currentTable = this.props.reverse_preferred_name[this.props.match.params.table]
 
-    if (current_table === undefined){
+    if (currentTable === undefined){
       return <Redirect to="/not-found" />
     }
     // else if (this.props.location.search===""){

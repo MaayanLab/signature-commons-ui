@@ -74,13 +74,11 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
 const mapStateToProps = state => {
   return {
     schemas: state.serverSideProps.schemas,
-    data: state.metadata_results[state.current_table],
+    models: state.models,
     ui_values:state.serverSideProps.ui_values,
-    current_table: state.current_table,
     loading: state.loading,
     completed: state.completed,
     paginating: state.paginating,
-    count: state.table_count[state.current_table],
     reverse_preferred_name: state.reverse_preferred_name,
     preferred_name: state.serverSideProps.ui_values.preferred_name,
   }
@@ -98,11 +96,16 @@ class MetadataSearchResults extends React.Component {
   }
 
   componentDidMount = () => {
-    const coll = this.props.data || []
-    const collection = coll.map(data=>get_card_data(data, this.props.schemas))
-    this.setState({
-      collection
-    })
+    const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    if (this.props.models[current_table]){
+      const coll = this.props.models[current_table].results.metadata_search || []
+      const collection = coll.map(data=>get_card_data(data, this.props.schemas))
+      console.log(coll)
+      this.setState({
+        collection,
+        current_table
+      })
+    }
   }
 
   sortBy = (sorted) => {
@@ -164,40 +167,41 @@ class MetadataSearchResults extends React.Component {
 
 
   componentDidUpdate = (prevProps) => {
-    const old = prevProps.data || []
-    const curr = this.props.data || []
-    const old_list = old.map(i=>i.id)
-    const new_list = curr.map(i=>i.id)
-    if (diffList(old_list, new_list)){
-      const collection = this.props.data.map(data=>get_card_data(data, this.props.schemas))
+    const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    if (prevProps.completed===false && this.props.completed===true){
+      const c = this.props.models[current_table].results.metadata_search || []
+      const collection = c.map(data=>get_card_data(data, this.props.schemas))
       this.setState({
         collection,
+        current_table
       })
     }
   }
 
-  render = () => (
-    <React.Fragment>
-      <DataTable schemas={this.props.schemas}
-        ui_values={this.props.ui_values}
-        {...this.state}
-        loaded={this.props.completed && !this.props.loading && !this.props.paginating}
-        sortingFunction={this.sortBy}
-        current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
-      />
-      <div align="right">
-        <TablePagination
-          page={this.state.page}
-          rowsPerPage={this.state.perPage}
-          count={this.props.count || 0}
-          onChangePage={(event, page) => this.handleChangePage(event, page)}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          component="div"
+  render = () => {
+    const model = this.props.models[this.props.reverse_preferred_name[this.props.match.params.table]]
+    return(
+      <React.Fragment>
+        <DataTable schemas={this.props.schemas}
+          ui_values={this.props.ui_values}
+          {...this.state}
+          loaded={this.props.completed && !this.props.loading && !this.props.paginating}
+          sortingFunction={this.sortBy}
+          current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
         />
-      </div>
-    </React.Fragment>
-
-  )
+        <div align="right">
+          <TablePagination
+            page={this.state.page}
+            rowsPerPage={this.state.perPage}
+            count={ model !== undefined ? model.results.count || 0 : 0}
+            onChangePage={(event, page) => this.handleChangePage(event, page)}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            component="div"
+          />
+        </div>
+      </React.Fragment>
+    )
+  }
 }
 
 export default connect(mapStateToProps)(MetadataSearchResults)
