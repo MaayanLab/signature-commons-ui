@@ -21,7 +21,7 @@ export default class extends App {
     if (process.env.NODE_ENV === 'production' && Component.getInitialProps) {
       pageProps = await Component.getInitialProps(ctx)
     }
-    return { pageProps }
+    return { pageProps, loaded: true }
   }
 
   constructor(props) {
@@ -29,13 +29,14 @@ export default class extends App {
     this.state = {
       error: undefined,
       errorInfo: undefined,
+      loaded: false,
       pageProps: {},
     }
   }
 
   async componentDidMount() {
     let { Component, pageProps } = this.props
-    if (process.env.NODE_ENV === 'development' && Object.keys(pageProps).length === 0) {
+    if (process.env.NODE_ENV === 'development' && Component.getInitialProps && !this.state.loaded) {
       pageProps = await Component.getInitialProps()
     }
     if (pageProps.error) {
@@ -46,6 +47,7 @@ export default class extends App {
     } else {
       this.setState({
         pageProps,
+        loaded: true,
       })
     }
   }
@@ -58,7 +60,7 @@ export default class extends App {
 
   render() {
     const { Component } = this.props
-    const { pageProps } = this.state
+    const { pageProps, loaded } = this.state
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
         <Container className="root">
@@ -68,12 +70,13 @@ export default class extends App {
     }
     return (
       <Container className="root">
-        { Object.keys(pageProps).length > 0 ?
-        <Component {...pageProps} /> :
-        <div>
-        Loading Page...
-        </div>
-        }
+        {loaded ? (
+          <Component {...pageProps} />
+        ) : (
+          <div>
+            Loading Page...
+          </div>
+        )}
       </Container>
     )
   }

@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { animateScroll as scroll } from 'react-scroll'
+
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
@@ -9,49 +11,50 @@ import { landingStyle } from '../../styles/jss/theme.js'
 
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
-import { BarChart } from '../Admin/VXbar.js'
+import { BarChart } from '../Admin/BarChart.js'
 
 export default withStyles(landingStyle)(class LandingPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      search: '',
       input: {},
       searchType: 'metadata',
       type: 'Overlap',
-    }
-    this.handleChange = this.handleChange.bind(this)
-    this.searchChange = this.searchChange.bind(this)
-  }
-
-  handleChange(event, searchType) {
-    if (searchType) {
-      this.setState({ searchType }, () => {
-        const element = document.getElementById('topcard')
-        element.scrollIntoView({ block: 'start', inline: 'center', behavior: 'smooth' })
-      })
+      scroll: false,
     }
   }
-  searchChange(e) {
-    this.setState({ search: e.target.value })
+
+  scrollToTop = () => {
+    scroll.scrollToTop()
+  }
+
+  searchChange = (e) => {
+    this.props.searchChange(e.target.value)
   }
 
 
-  render() {
+  render = () => {
     return (
       <div>
         <Grid container
           spacing={24}
           alignItems={'center'}
           direction={'column'}>
-          <Grid item xs={12} className={this.props.classes.stretched} id='topcard'>
-            <SearchCard search={this.state.search}
-              searchChange={this.searchChange}
-              handleChange={this.handleChange}
+          <Grid item xs={12} className={this.props.classes.stretched}>
+            <SearchCard
+              currentSearchArrayChange={this.props.currentSearchArrayChange}
+              handleChange={this.props.handleChange}
+              currentSearchArray={this.props.metadata_search.currentSearchArray}
+              search_status={this.props.metadata_search.search_status}
               type={this.state.type}
-              searchType={this.state.searchType}
-              submit={this.submit}
-              {...this.props} />
+              searchType={this.props.searchType}
+              submit={this.props.submit}
+              changeSignatureType={this.props.changeSignatureType}
+              updateSignatureInput={this.props.updateSignatureInput}
+              ui_values={this.props.ui_values}
+              classes={this.props.classes}
+              signature_search={this.props.signature_search}
+            />
           </Grid>
           { this.props.table_counts.length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
@@ -62,31 +65,34 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
             <Grid container
               spacing={24}
               alignItems={'center'}>
-              <Grid item xs={12} sm>
-                <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_content={this.props.ui_content}/>
-                <div className={this.props.classes.centered}>
-                  <Typography variant="caption">
-                    {this.props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}
-                  </Typography>
-                </div>
-              </Grid>
+              { this.props.resource_signatures === undefined ? null :
+                <Grid item xs={12} sm={Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? true : 6}>
+                  <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_values={this.props.ui_values}/>
+                  <div className={this.props.classes.centered}>
+                    <Typography variant="caption">
+                      {this.props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}
+                    </Typography>
+                  </div>
+                </Grid>
+              }
               { Object.keys(this.props.barcounts).length === 0 || this.props.barcounts === undefined ? null :
-                <Grid item xs={12} sm>
-                  { this.props.ui_content.content['bar-chart'] !== undefined ? (
+                <Grid item xs={12} sm={this.props.resource_signatures === undefined ? true : 6}>
+                  { this.props.ui_values.bar_chart !== undefined ? (
                     <div className={this.props.classes.centered}>
-                      {this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name] !== undefined ? (
-                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[this.props.ui_content.content['bar-chart'].Field_Name]}
-                        fontSize={this.props.ui_content.content['bar-chart'].font_size || 11}/>) : (
+                      {this.props.barcounts[this.props.ui_values.bar_chart.Field_Name] !== undefined ? (
+                      <BarChart meta_counts={this.props.barcounts[this.props.ui_values.bar_chart.Field_Name]}
+                        ui_values={this.props.ui_values}/>) : (
                       null
                       )}
                       <Typography variant="caption">
-                        {this.props.ui_content.content['bar-chart'].Caption}
+                        {this.props.ui_values.bar_chart.Caption}
                       </Typography>
                     </div>
                   ) : (
                     <div className={this.props.classes.centered}>
                       {this.props.barcounts[Object.keys(this.props.barcounts)[0]] !== undefined ?
-                      <BarChart width={300} height={320} meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]} fontSize={11}/> :
+                      <BarChart meta_counts={this.props.barcounts[Object.keys(this.props.barcounts)[0]]}
+                        ui_values={this.props.ui_values}/> :
                         null
                       }
                       <Typography variant="caption">
@@ -112,7 +118,7 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                 alignItems={'center'}>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_content.content.text_3 || 'Examine metadata:'}</span>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
                     <Selections
                       value={this.props.selected_field}
                       values={Object.keys(this.props.pie_fields_and_stats).sort()}
@@ -120,27 +126,29 @@ export default withStyles(landingStyle)(class LandingPage extends React.Componen
                     />
                   </div>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} color={'Blue'}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.pie_stats} slice={this.props.pie_slice} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
-                      Signatures per {this.props.selected_field.replace(/_/g, ' ')}
+                      {`${this.props.pie_table} per ${this.props.pie_preferred_name}`}
                     </Typography>
                   </div>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <div className={this.props.classes.centered}>
-                    <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
-                    <Typography variant="caption">
-                      Top {this.props.selected_field.replace(/_/g, ' ')} terms
-                    </Typography>
-                  </div>
-                </Grid>
+                { this.props.ui_values.deactivate_wordcloud ? null :
+                  <Grid item xs md={6}>
+                    <div className={this.props.classes.centered}>
+                      <WordCloud classes={this.props.classes} stats={this.props.pie_stats}/>
+                      <Typography variant="caption">
+                        Top {this.props.pie_preferred_name} terms
+                      </Typography>
+                    </div>
+                  </Grid>
+                }
               </Grid>
             </Grid>
           }
           <Grid item xs={12}>
-            <BottomLinks handleChange={this.handleChange}
+            <BottomLinks handleChange={this.props.handleChange}
               {...this.props} />
           </Grid>
           <Grid item xs={12}>

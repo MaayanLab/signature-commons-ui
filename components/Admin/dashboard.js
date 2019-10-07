@@ -2,14 +2,13 @@ import React from 'react'
 import Card from '@material-ui/core/Card'
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import ListItem from '@material-ui/core/ListItem'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { DonutChart } from './VXpie.js'
-import { BarChart } from './VXbar.js'
+import DonutChart from './PieChart.js'
+import { BarChart } from './BarChart.js'
 import { withScreenSize } from '@vx/responsive'
 
 import { cardChartStyle } from '../../styles/jss/components/ChartStyle.js'
@@ -43,7 +42,9 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
           className: classes.menu,
         },
       }}
+      style={{marginTop:-5}}
       margin="normal"
+
       onChange={props.onChange}
     >
       {props.values.map(function(k) {
@@ -63,10 +64,11 @@ export const PieChart = withStyles(landingStyle)(function({ classes, record = {}
   const stats = Object.entries(props.stats).map(function(entry) {
     return ({ 'label': entry[0], 'value': entry[1] })
   })
+  const slice = props.slice || 14
   stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-  const included = stats.slice(0, 14)
+  const included = stats.slice(0, slice)
   const included_sum = sum(included, 'value')
-  const other = sum(stats.slice(14), 'value')
+  const other = sum(stats.slice(slice), 'value')
   const other_sum = included_sum > other || included_sum < included.length * 10 ? other : included_sum * 1.5
   const others = [{ 'label': 'others', 'value': other_sum }]
   const data = other_sum > 0 ? included.concat(others) : included
@@ -77,27 +79,9 @@ export const PieChart = withStyles(landingStyle)(function({ classes, record = {}
 
   data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
   true_values.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-  let width = 220
-  let height = 220
-  let radius = 150
-  const fontSize = 7
-  if (props.cardheight == 300) {
-    radius = 200
-    width = 300
-    height = 300
-  }
   return (
-    <div><DonutChart width={width}
-      height={height}
-      radius={radius}
-      fontSize={fontSize}
-      margin={{
-        'top': 10,
-        'bottom': 10,
-        'left': 10,
-        'right': 10 }}
+    <div><DonutChart
       data={data}
-      true_values={true_values}
       {...props}/></div>
 
   )
@@ -135,19 +119,19 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
         <Grid item xs={12}>
           {name !== 'Resource' ?
               <div>
-                <span className={classes.vertical20}>Signatures per </span>
+                <span className={classes.vertical20}>Examine: </span>
                 <Selections
                   value={ selected_field}
                   values={Object.keys(props.pie_fields_and_stats).sort()}
                   onChange={(e) => props.handleSelectField(e)}
                 />
               </div> :
-              <span className={classes.vertical55}>{props.ui_content.content.resource_pie_caption || 'Signatures per Resource'}</span>
+              <span className={classes.vertical55}>{props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}</span>
           }
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} selected_field={selected_field} disabled/>
+          <ChartCard cardheight={cardheight} pie_stats={pie_stats} color={'Blue'} slice={props.pie_slice} ui_values={props.ui_values} selected_field={selected_field} disabled/>
         </Grid>
       </Grid>
     </Card>
@@ -156,15 +140,12 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
 
 const BarChartGroup = withScreenSize(function({ classes, record = {}, ...props }) {
   const { bar_counts, name } = props
-  const width = props.screenWidth > 900 ? 1000 : 700
-  const height = props.screenWidth > 900 ? 400 : 300
-  const fontSize = props.screenWidth > 900 ? 11 : 8
   return (
     <Card className={classes.basicCard}>
       <span className={classes.vertical55}>{name}</span>
       <Divider />
       { bar_counts !== undefined ?
-      <BarChart width={width} height={height} meta_counts={bar_counts} fontSize={fontSize}/> : null
+      <BarChart meta_counts={bar_counts} ui_values={props.ui_values}/> : null
       }
     </Card>
   )
@@ -172,21 +153,13 @@ const BarChartGroup = withScreenSize(function({ classes, record = {}, ...props }
 
 const StatCard = function({ classes, record = {}, ...props }) {
   const { stat_type, counts, icon } = props
-  console.log(icon)
   return (
     <Card className={`${classes.statCard} ${classes.GrayCardHeader}`}>
       <Grid container spacing={24}
         justify="space-between">
         <Grid item>
-          <Typography variant="title" className={classes.whiteText}>
-            {counts}
-          </Typography>
-          <Typography variant="subheading" className={classes.whiteText}>
-            {stat_type}
-          </Typography>
-          <Typography variant="button" className={classes.whiteText}>
-              (0 new)
-          </Typography>
+          <h5 style={{ marginBottom: 0 }}>{counts}</h5>
+          <p style={{ marginTop: 0 }}>{stat_type}</p>
         </Grid>
         <Grid item>
           <span className={`mdi ${icon} mdi-48px`}></span>
@@ -227,12 +200,14 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
             <StatRow classes={classes} {...props}/>
           </Grid>
         }
-        <Grid item xs={12} sm>
-          <PieChartGroup name={'Resource'}
-            classes={classes}
-            {...props}
-          />
-        </Grid>
+        { props.resource_signatures === undefined ? null :
+          <Grid item xs={12} sm>
+            <PieChartGroup name={'Resource'}
+              classes={classes}
+              {...props}
+            />
+          </Grid>
+        }
         { Object.keys(props.pie_fields_and_stats).length === 0 ? null :
           <Grid item xs={12} sm>
             <PieChartGroup name={props.selected_field}
@@ -250,10 +225,10 @@ export const Dashboard = withStyles(landingStyle)(function({ classes, record = {
         }
         { Object.keys(props.barcounts).length === 0 || props.barcounts === undefined ? null :
           <Grid item xs={12}>
-            { props.ui_content.content['bar-chart'] !== undefined ?
+            { props.ui_values.bar_chart !== undefined ?
                 <BarChartGroup classes={classes}
-                  name={props.ui_content.content['bar-chart'].Caption}
-                  bar_counts={props.barcounts[props.ui_content.content['bar-chart'].Field_Name]}
+                  name={props.ui_values.bar_chart.Caption}
+                  bar_counts={props.barcounts[props.ui_values.bar_chart.Field_Name]}
                   {...props}/> :
                 <BarChartGroup classes={classes}
                   name={'Bar Chart'}

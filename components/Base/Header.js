@@ -1,45 +1,51 @@
 import React from 'react'
 import { withRouter, Link } from 'react-router-dom'
-import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
 
 export function Nav(props) {
+  const { ui_values, handleChange, ...rest } = props
   return (
-    <ul {...props}>
-      { props.ui_content.content.signature_search ?
+    <ul {...rest}>
+      {ui_values.nav.metadata_search ?
         <li
-          className={props.location.pathname === '/SignatureSearch' ? 'active' : ''}
+          className={rest.location.pathname === '/MetadataSearch' ? 'active' : ''}
         >
-          <Link to="/SignatureSearch">
-            Signature Search
-          </Link>
-        </li> : null
-      }
-      { props.ui_content.content.metadata_search ?
-        <li
-          className={props.location.pathname === '/MetadataSearch' ? 'active' : ''}
-        >
-          <Link to="/MetadataSearch">
+          <Link to={rest.location.pathname === '/MetadataSearch' ? '/MetadataSearch' : '/'}
+            onClick={(e) => {
+              handleChange(e, 'metadata', true)
+            }}
+          >
             Metadata Search
           </Link>
         </li> : null
       }
-      { props.ui_content.content.resources ?
+      {ui_values.nav.signature_search ?
         <li
-          className={props.location.pathname === `/${props.ui_content.content.change_resource || 'Resources'}` ? 'active' : ''}
+          className={rest.location.pathname === '/SignatureSearch' ? 'active' : ''}
         >
-          <Link to={`/${props.ui_content.content.change_resource || 'Resources'}`}>
-            {props.ui_content.content.change_resource || 'Resources'}
+          <Link to={rest.location.pathname === '/SignatureSearch' ? '/SignatureSearch' : '/'}
+            onClick={(e) => {
+              handleChange(e, 'signature', true)
+            }}
+          >
+            Signature Search
           </Link>
         </li> : null
       }
-      <li>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}
+      {ui_values.nav.resources ?
+        <li
+          className={rest.location.pathname === `/${ui_values.preferred_name.resources || 'Resources'}` ? 'active' : ''}
         >
+          <Link to={`/${ui_values.preferred_name.resources || 'Resources'}`}>
+            {ui_values.preferred_name.resources || 'Resources'}
+          </Link>
+        </li> : null
+      }
+      <li
+        className={rest.location.pathname === '/API' ? 'active' : ''}
+      >
+        <Link to="/API">
           API
-        </a>
+        </Link>
       </li>
     </ul>
   )
@@ -59,7 +65,7 @@ export default withRouter((props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {props.ui_content.content.header || 'Signature Commons'}
+            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {props.ui_values.LandingText.header || 'Signature Commons'}
           </Link>
           <Link
             to="/"
@@ -71,9 +77,9 @@ export default withRouter((props) => {
             &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-          <Nav id="nav-mobile" className="right hide-on-med-and-down" location={props.location} ui_content={props.ui_content} />
+          <Nav id="nav-mobile" className="right hide-on-med-and-down" {...props} />
         </div>
-        <Nav className="sidenav" id="mobile-menu" location={props.location} ui_content={props.ui_content}/>
+        <Nav className="sidenav" id="mobile-menu" {...props}/>
 
         {paths.length <= 2 ? null : (
           <div className="nav-wrapper grey">

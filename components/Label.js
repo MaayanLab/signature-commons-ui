@@ -3,17 +3,9 @@ import { Highlight } from './Highlight'
 import { makeTemplate } from '../util/makeTemplate'
 
 export const default_schemas = [
-  require('../ui-schemas/library/default.json'),
-  require('../ui-schemas/signature/default.json'),
-  require('../ui-schemas/entities/default.json'),
-]
-
-
-export const schemases = [
-  require('../ui-schemas/entities/mcf10a.json'),
-  require('../ui-schemas/library/mcf10a.json'),
-  require('../ui-schemas/resources/mcf10a.json'),
-  require('../ui-schemas/signature/mcf10a.json'),
+  require('../examples/library/default.json'),
+  require('../examples/signature/default.json'),
+  require('../examples/entities/default.json'),
 ]
 
 export const labels = {
@@ -121,14 +113,14 @@ export function objectMatch(m, o) {
     try {
       K = makeTemplate(k, o)
     } catch {
-      return false
+      return (false)
     }
     if (typeof m[k] === 'string') {
       let V
       try {
         V = makeTemplate(m[k], o)
       } catch {
-        return false
+        return (false)
       }
       if (K.match(RegExp(V)) === null) {
         return false
@@ -161,17 +153,23 @@ export function Label({ item, highlight, visibility, schemas }) {
     return null
   }
   const schema = matched_schemas[0]
+  const img_keys = Object.keys(schema.properties).filter((key) => (matched_schemas[0].properties[key].type === 'img'))
+  if (img_keys.length > 0) {
+    const { [img_keys[0]]: img, ...rest } = schema.properties
+    schema.properties = { [img_keys[0]]: img, ...rest }
+  }
+  const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
   return (
     <div>
-      {Object.keys(schema.properties).filter(
-          (prop) => {
-            return schema.properties[prop].visibility >= visibility && objectMatch(schema.properties[prop].condition, item)
+      {sorted_entries.filter(
+          (entry) => {
+            return (entry[1].visibility >= visibility && objectMatch(entry[1].condition, item))
           }
-      ).map((label) => (
-        <span key={label}>
-          {labels[schema.properties[label].type]({
-            label: label,
-            prop: schema.properties[label],
+      ).map((entry) => (
+        <span key={entry[0]}>
+          {labels[entry[1].type]({
+            label: entry[0],
+            prop: entry[1],
             data: item,
             highlight: highlight,
           })}

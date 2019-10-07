@@ -1,0 +1,20 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/dataset.json"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "alt": "${meta[Object.keys(meta)[0]]}",
+      "src": "${PREFIX}/static/images/default-black.png",
+      "priority": 1
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Description || meta.description}",
+      "priority": 2
+    }
+  }
+}

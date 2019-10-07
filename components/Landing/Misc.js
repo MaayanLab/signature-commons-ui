@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
@@ -9,7 +10,6 @@ import Button from '@material-ui/core/Button'
 
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-import { base_scheme as meta_base_scheme, base_url as meta_base_url } from '../../util/fetch/meta'
 
 import ReactWordcloud from 'react-wordcloud'
 
@@ -18,7 +18,7 @@ import { FindReplace,
   NearMe,
   Earth } from 'mdi-material-ui'
 
-import GenesetSearchBox from './GenesetSearchBox'
+import GenesetSearchBox from '../SignatureSearch/GenesetSearchBox'
 
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 
@@ -32,12 +32,12 @@ export const BottomLinks = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            { props.ui_content.content.text_4 || 'Start using Signature Commons on your project'}
+            { props.ui_values.LandingText.text_4 || 'Start using Signature Commons on your project'}
           </Typography>
         </div>
       </Grid>
-      {props.ui_content.content.metadata_search ?
-        <Grid item xs={12} sm>
+      {props.ui_values.nav.metadata_search ?
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
@@ -45,7 +45,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'metadata')}>
+                  onClick={(e) => props.handleChange(e, 'metadata', true)}>
                   <FileFind className={classes.icon} />
                 </Button>
               </Grid>
@@ -58,8 +58,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </div>
         </Grid> : null
       }
-      {props.ui_content.content.signature_search ?
-        <Grid item xs={12} sm>
+      {props.ui_values.nav.signature_search ?
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
@@ -67,7 +67,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'signature')}>
+                  onClick={(e) => props.handleChange(e, 'signature', true)}>
                   <FindReplace className={classes.icon} />
                 </Button>
               </Grid>
@@ -80,38 +80,39 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </div>
         </Grid> : null
       }
-      {props.ui_content.content.resources ?
-        <Grid item xs={12} sm>
+      {props.ui_values.nav.resources ?
+        <Grid item xs>
           <div className={classes.centered}>
             <Grid container
               spacing={8}
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_content.content.change_resource || 'Resources'}`}>
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
                   <NearMe className={classes.icon} />
                 </Button>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                  {`Browse ${props.ui_content.content.change_resource || 'Resources'}`}
+                  {`Browse ${props.ui_values.preferred_name.resources || 'Resources'}`}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      <Grid item xs={12} sm>
+      <Grid item xs>
         <div className={classes.centered}>
           <Grid container
             spacing={8}
             alignItems={'center'}
             direction={'column'}>
             <Grid item xs={12}>
-              <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                href={`${meta_base_scheme}://petstore.swagger.io/?url=${meta_base_url}/openapi.json`}>
-                <Earth className={classes.icon} />
-              </Button>
+              <Link to="/API">
+                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}>
+                  <Earth className={classes.icon} />
+                </Button>
+              </Link>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subheading">
@@ -129,6 +130,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   const { meta_counts } = props
   let sm = 3
   let xs = 4
+  const md = 2
   if (meta_counts.length < 4) {
     sm = 12 / meta_counts.length
     xs = 12 / meta_counts.length
@@ -136,19 +138,20 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   return (
     <Grid container
       spacing={24}
-      alignItems={'center'}>
+      alignItems={'center'}
+      justify={'center'}>
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            {props.ui_content.content.text_2 || 'Search across a broad gathering of perturbations'}
+            {props.ui_values.LandingText.text_2 || 'Search across a broad gathering of perturbations'}
           </Typography>
         </div>
       </Grid>
       {meta_counts.map((entry) => (
-        <Grid item xs={sm} sm={xs} key={entry.name}>
+        <Grid item xs={xs} sm={sm} md={md} key={entry.name}>
           <div className={classes.centered}>
-            { entry.icon === undefined ? <span className={`mdi ${meta_default_icon} mdi-24px`}></span> :
-              <span className={`mdi ${entry.icon} mdi-24px`}></span>
+            { entry.icon === undefined ? <span className={`mdi ${meta_default_icon} mdi-36px`}></span> :
+              <span className={`mdi ${entry.icon} mdi-36px`}></span>
             }
             <Typography variant="subheading">
               {entry.counts}
@@ -165,7 +168,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
 
 export const StatDiv = ({ classes, width, ...props }) => {
   const visible_stats = props.table_counts.filter((item) => item.Visible_On_Landing)
-  const xs = visible_stats.length >= 3 ? 4 : 12 / visible_stats.length
+  const xs = visible_stats.length <= 4 ? 12 / visible_stats.length : 3
   return (
     <Grid container
       spacing={24}
@@ -177,14 +180,14 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-                {props.ui_content.content.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
+                {props.ui_values.LandingText.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
               </Typography>
             </div>
           </Grid>
           {visible_stats.map((item) => (
             <Grid item xs={xs} key={item.preferred_name}>
               <div className={classes.centered}>
-                <span className={`mdi ${item.icon} mdi-24px`}></span>
+                <span className={`mdi ${item.icon} mdi-36px`}></span>
                 <Typography variant="title" component="h5">
                   {item.counts}
                 </Typography>
@@ -199,7 +202,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  const { signature_search, metadata_search } = props.ui_content.content
+  const { signature_search, metadata_search } = props.ui_values.nav
   if (signature_search && metadata_search) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
@@ -226,14 +229,18 @@ export const SearchCard = ({ classes, width, ...props }) => {
             {props.searchType == 'metadata' ?
               <SearchBox
                 id='metadata'
-                search={props.search}
-                searchChange={props.searchChange}
-                ui_content={props.ui_content}
+                currentSearchArray={props.currentSearchArray}
+                search_status={props.search_status}
+                currentSearchArrayChange={props.currentSearchArrayChange}
+                ui_values={props.ui_values}
               /> :
               <GenesetSearchBox
-                id="signature"
+                input={props.signature_search.input}
+                status={props.signature_search.status}
                 onSubmit={props.submit}
-                type={props.type}
+                ui_values={props.ui_values}
+                changeSignatureType={props.changeSignatureType}
+                updateSignatureInput={props.updateSignatureInput}
                 {...props}
               />
             }
@@ -251,9 +258,12 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <GenesetSearchBox
-              id="signature"
+              input={props.signature_search.input}
+              status={props.signature_search.status}
               onSubmit={props.submit}
-              type={props.type}
+              ui_values={props.ui_values}
+              changeSignatureType={props.changeSignatureType}
+              updateSignatureInput={props.updateSignatureInput}
               {...props}
             />
           </Grid>
@@ -271,9 +281,10 @@ export const SearchCard = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <SearchBox
               id='metadata'
-              search={props.search}
-              searchChange={props.searchChange}
-              ui_content={props.ui_content}
+              search_status={props.search_status}
+              ui_values={props.ui_values}
+              currentSearchArray={props.currentSearchArray}
+              currentSearchArrayChange={props.currentSearchArrayChange}
             />
           </Grid>
         </Grid>
@@ -307,9 +318,10 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
     wordstats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
 
     return (
-      <div style={{ width: 300, height: 300, display: 'block', margin: 'auto' }}>
+      <div style={{ width: 420, height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
           callbacks={callbacks}
+          scale={'log'}
           options={{
             colors: ['#000'],
             rotations: 3,
@@ -318,6 +330,6 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
       </div>
     )
   } else {
-    return (<div />)
+    return <div />
   }
 }

@@ -21,13 +21,16 @@ export async function fetch_data({ endpoint, body, signal }) {
     throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
   }
 
-  let response_text = await request.text()
+  let response_text = (await request.text()).replace(/Infinity/g, 'null')
   if (response_text === '') { // normalize empty responses
     response_text = '{"signatures":[], "matchingEntities": [], "results": {}}'
   }
-
-  const response = JSON.parse(response_text)
-
+  let response
+  try {
+    response = JSON.parse(response_text)
+  } catch (e) {
+    console.error(e)
+  }
   let contentRange = request.headers.get('Content-Range')
   if (contentRange !== null && !contentRange.startsWith('-')) {
     const contentRangeMatch = /^(\d+)-(\d+)\/(\d+)$/.exec(contentRange)

@@ -1,6 +1,5 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import Button from '@material-ui/core/Button'
 import NProgress from 'nprogress'
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
@@ -12,6 +11,8 @@ import { download_signature_json,
 
 const ShowMeta = dynamic(() => import('../../components/ShowMeta'), { ssr: false })
 const Label = dynamic(() => import('../../components/Label'), { ssr: false })
+const Options = dynamic(() => import('../../components/Options'), { ssr: false })
+
 
 const download = {
   libraries: download_library_json,
@@ -21,23 +22,22 @@ const download = {
 export default class MetadataSearchResults extends React.Component {
   constructor(props) {
     super(props)
-    this.initialize = this.initialize.bind(this)
   }
 
-  async initialize(el) {
+  initialize = async (el) => {
     if (el) {
       const M = await import('materialize-css')
       M.Collapsible.init(el)
     }
   }
 
-  async handleDownload(type, id) {
+  handleDownload = async (type, id) => {
     NProgress.start()
     await download[type](id)
     NProgress.done()
   }
 
-  render() {
+  render = () => {
     if (this.props.items.length === 0) {
       return (
         <Grid container
@@ -103,6 +103,10 @@ export default class MetadataSearchResults extends React.Component {
                     display: 'flex',
                     flexDirection: 'row',
                   }}>
+                  {this.props.table_name === 'entities' || this.props.table_name === 'libraries' || this.props.deactivate_download ? null :
+                    <Options type={this.props.table_name} item={item} ui_values={this.props.ui_values}
+                      submit={this.props.submit} schemas={this.props.schemas}/>
+                  }
                   <Label
                     item={item}
                     highlight={this.props.search}
@@ -110,16 +114,6 @@ export default class MetadataSearchResults extends React.Component {
                     schemas={this.props.schemas}
                   />
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                  {this.props.table_name === 'entities' || this.props.deactivate_download ? null :
-                    <Button style={{
-                      input: {
-                        display: 'none',
-                      },
-                    }}
-                    onClick={(e) => this.handleDownload(this.props.table_name, item.id)}
-                    className={`mdi mdi-download mdi-24px`}
-                    >{''}</Button>
-                  }
                   <a
                     href="javascript:void(0);"
                     className="collapsible-header"
@@ -134,6 +128,8 @@ export default class MetadataSearchResults extends React.Component {
               >
                 <div
                   style={{
+                    overflowWrap: 'break-word',
+                    wordWrap: 'break-word',
                     height: '300px',
                     overflow: 'auto',
                   }}

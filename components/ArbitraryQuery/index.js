@@ -18,10 +18,9 @@ export default class ArbitraryQuery extends React.Component {
       meta_duration: 0,
       data_duration: 0,
     }
-    this.submit = this.submit.bind(this)
   }
 
-  async submit() {
+  submit = async () => {
     try {
       this.setState({
         entities_results: null,
@@ -99,7 +98,7 @@ export default class ArbitraryQuery extends React.Component {
       })
     }
   }
-  render() {
+  render = () => {
     return (
       <div className="root">
         <main>

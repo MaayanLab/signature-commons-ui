@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import { UIValues } from '../util/ui_values'
 
 import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
 import { get_signature_counts_per_resources } from '../components/Resources/resources.js'
@@ -17,23 +18,25 @@ async function fetch_count(source) {
   return response.count
 }
 
-export async function get_counts(resource_count, ui_content) {
+export async function get_counts(resource_count, ui_values) {
   const { response: counting_fields } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {
       filter: {
         where: {
-          'meta.$validator': ui_content.content.counting_validator,
+          'meta.$validator': ui_values.counting_validator,
           'meta.Table_Count': true,
         },
       },
     },
   })
   const resource_field = counting_fields.filter((item) => item.meta.Field_Name === 'resources')
-  ui_content.content.preferred_name = {}
+  if (ui_values.preferred_name === undefined) {
+    ui_values.preferred_name = {}
+  }
   const count_promise = counting_fields.filter((item) => item.meta.Field_Name !== 'resources').map(async (item) => {
     const count_stats = await fetch_count(item.meta.Field_Name)
-    ui_content.content.preferred_name[item.meta.Field_Name] = item.meta.Preferred_Name
+    ui_values.preferred_name[item.meta.Field_Name] = item.meta.Preferred_Name
     return {
       table: item.meta.Field_Name,
       preferred_name: item.meta.Preferred_Name,
@@ -50,14 +53,15 @@ export async function get_counts(resource_count, ui_content) {
     Visible_On_Admin: resource_field[0].meta.Visible_On_Admin,
     counts: resource_count,
   }] : table_counts
-  return { table_counts, ui_content }
+  return { table_counts, ui_values }
 }
 
 async function fetch_fields(source) {
   const { response: fields } = await fetch_meta({
     endpoint: `/${source}/key_count`,
   })
-  return fields
+  const top_fields = Object.keys(fields).filter((field) => field.indexOf('.') == -1)
+  return (top_fields)
 }
 
 async function get_signature_keys() {
@@ -76,15 +80,15 @@ async function get_signature_keys() {
   })
   const sigkeys = await Promise.all(signature_keys_promises)
   const signature_keys = sigkeys.reduce((keys, sig) => {
-    keys[sig.id] = sig.keys
+    const top_fields = sig.keys.filter((field) => field.indexOf('.') == -1)
+    keys[sig.id] = top_fields
     return keys
   }, {})
   return signature_keys
 }
 
-
-export async function get_ui_content() {
-  const { response: ui_cont } = await fetch_meta_post({
+export async function get_ui_values() {
+  const { response: ui_val } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {
       filter: {
@@ -95,38 +99,19 @@ export async function get_ui_content() {
       },
     },
   })
-  if (ui_cont.length > 0) {
-    return { ui_content: ui_cont[0].meta }
-  }
-  return { ui_content: {} }
+  const ui_values = await UIValues['admin'](ui_val[0].meta.content)
+  return { ui_values }
 }
-
 
 export default class Admin extends React.Component {
   static async getInitialProps() {
-    const { ui_content } = await get_ui_content()
-    // Check if it has library_name and resource_from_library
-    if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
-      return {
-        error: 'ui schema is undefined',
-      }
-    }
-    if (ui_content.content.library_name === undefined) {
-      return {
-        error: 'Missing library_name on ui schema',
-      }
-    }
-    if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0) {
-      return {
-        error: 'Missing/Empty resource_from_library',
-      }
-    }
-    const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_content)
-    const { table_counts, ui_content: ui_cont } = await get_counts(Object.keys(resources).length, ui_content)
-    const { meta_counts } = await get_metacounts(ui_cont)
-    const { pie_fields_and_stats } = await get_pie_stats(ui_cont)
+    const { ui_values } = await get_ui_values()
+    const { resource_signatures, libraries, resources, library_resource } = await get_signature_counts_per_resources(ui_values)
+    const { table_counts, ui_values: ui_val } = await get_counts(Object.keys(resources).length, ui_values)
+    const { meta_counts } = await get_metacounts(ui_val)
+    const { pie_fields_and_stats } = await get_pie_stats(ui_val)
     const signature_keys = await get_signature_keys()
-    const { barcounts } = await get_barcounts(ui_cont)
+    const { barcounts } = await get_barcounts(ui_val)
     const library_fields = await fetch_fields('libraries')
     const entity_fields = await fetch_fields('entities')
     return {
@@ -139,7 +124,7 @@ export default class Admin extends React.Component {
       libraries,
       resources,
       library_resource,
-      ui_content: ui_cont,
+      ui_values: ui_val,
       library_fields,
       entity_fields,
     }

@@ -6,9 +6,9 @@ import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
 import NProgress from 'nprogress'
-import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
-
+import { makeTemplate } from '../../util/makeTemplate'
+import TablePagination from '@material-ui/core/TablePagination'
 
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
@@ -19,6 +19,15 @@ const download = {
 }
 
 export default class ResourcePage extends React.Component {
+  constructor(props){
+    super(props)
+    const childCount = props.resource.is_library ? 0: props.resource.libraries.length
+    this.state = {
+      page: 0,
+      childCount,
+      perPage: 10
+    }
+  }
   componentDidMount() {
     M.AutoInit()
   }
@@ -33,7 +42,25 @@ export default class ResourcePage extends React.Component {
     NProgress.done()
   }
 
+  handleChangeRowsPerPage = (e, name) => {
+    this.setState({
+      perPage: e.target.value,
+    })
+  }
+
+  handleChangePage = (event, page, name) => {
+    this.setState({
+      page: page
+    })
+  }
+
   render() {
+    const {page, perPage, childCount} = this.state
+    const resource = this.props.resource
+    const start = page*perPage
+    const end = (page+1)*perPage
+    let resource_name = resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)
+    resource_name = resource_name === undefined || resource_name === 'undefined' ? resource.id : resource_name      
     return (
       <div className="row">
         <div className="col s12">
@@ -44,22 +71,27 @@ export default class ResourcePage extends React.Component {
                 <div className="row">
                   <div className="col s12">
                     <div className="card-image col s1">
-                      <IconButton
-                        img={this.props.resource.meta.icon}
-                        onClick={call(this.redirectLink, this.props.resource.meta.URL)}
-                      />
+                      <Link
+                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                        className="waves-effect waves-teal"
+                      >
+                        <IconButton
+                          img={resource.meta.icon}
+                          onClick={call(this.redirectLink, '/')}
+                        />
+                      </Link>
                     </div>
                     <div className="card-content col s11">
                       <div>
-                        <span className="card-title">{this.props.resource.meta.Resource_Name}</span>
+                        <span className="card-title">{resource_name}</span>
                       </div>
                       <ShowMeta
                         value={{
-                          '@id': this.props.resource.id,
-                          '@type': this.props.ui_content.content.preferred_name_singular[(this.props.ui_content.content.change_resource || 'resources').toLowerCase()] || 'Resource',
-                          'meta': Object.keys(this.props.resource.meta).filter((key) => (
+                          '@id': resource.id,
+                          '@type': this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
+                          'meta': Object.keys(resource.meta).filter((key) => (
                             ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
-                            acc[key] = this.props.resource.meta[key]
+                            acc[key] = resource.meta[key]
                             return acc
                           }, {}),
                         }}
@@ -70,20 +102,10 @@ export default class ResourcePage extends React.Component {
                 <div className="card-action">
                   <Grid container justify="space-between">
                     <Grid item xs={1}>
-                      {this.props.ui_content.content.deactivate_download ? null :
-                        <Button style={{
-                          input: {
-                            display: 'none',
-                          },
-                        }}
-                        onClick={(e) => this.handleDownload('resources', this.props.resource.id)}
-                        className={`mdi mdi-download mdi-24px`}
-                        >{''}</Button>
-                      }
                     </Grid>
                     <Grid item xs={1}>
                       <Link
-                        to={`/${this.props.ui_content.content.change_resource || 'Resources'}`}
+                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
                         className="waves-effect waves-teal btn-flat"
                       >
                         BACK
@@ -94,13 +116,13 @@ export default class ResourcePage extends React.Component {
               </div>
             </div>
           </div>
-          {!this.props.resource.is_library ?
+          {!resource.is_library ?
             <div className="row">
               <div className="col s12">
                 <ul
                   className="collapsible popout"
                 >
-                  {this.props.resource.libraries.map((library) => (
+                  {resource.libraries.slice(start,end).map((library) => (
                     <li
                       key={library.id}
                     >
@@ -125,16 +147,6 @@ export default class ResourcePage extends React.Component {
                           />
                           &nbsp;
                           <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                          {this.props.ui_content.content.deactivate_download ? null :
-                            <Button style={{
-                              input: {
-                                display: 'none',
-                              },
-                            }}
-                            onClick={(e) => this.handleDownload('libraries', library.id)}
-                            className={`mdi mdi-download mdi-24px`}
-                            >{''}</Button>
-                          }
                           <a
                             href="javascript:void(0);"
                             className="collapsible-header"
@@ -146,6 +158,10 @@ export default class ResourcePage extends React.Component {
                       </div>
                       <div
                         className="collapsible-body"
+                        style={{
+                          overflowWrap: 'break-word',
+                          wordWrap: 'break-word',
+                        }}
                       >
                         <ShowMeta
                           value={{
@@ -158,6 +174,16 @@ export default class ResourcePage extends React.Component {
                     </li>
                   ))}
                 </ul>
+              </div>
+              <div align="right">
+                <TablePagination
+                  page={page}
+                  rowsPerPage={perPage}
+                  count={childCount}
+                  onChangePage={(event, page) => this.handleChangePage(event, page)}
+                  onChangeRowsPerPage={(event) => this.handleChangeRowsPerPage(event)}
+                  component="div"
+                />
               </div>
             </div> :
             null

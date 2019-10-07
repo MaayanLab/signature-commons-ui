@@ -14,16 +14,22 @@ function validURL(str) {
   return true
 }
 
+function validAccession(str) {
+  return str.match(RegExp('^[A-Za-z]+:([A-Za-z]+:)?[A-Za-z0-9]+$'))
+}
+
 export function ShowMeta({ value, highlight, classes }) {
   if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
     if (validURL(value)) {
-      return (
-        <Highlight
-          Component={(props) => <a href={props.children} {...props}>{props.children}</a>}
-          text={value + ''}
-          highlight={highlight}
-        />
-      )
+      if (! validAccession(value)) {
+        return (
+          <Highlight
+            Component={(props) => <a href={value} {...props}>{value}</a>}
+            text={value + ''}
+            highlight={highlight}
+          />
+        )
+      }
     }
     return (
       <Highlight
@@ -43,7 +49,7 @@ export function ShowMeta({ value, highlight, classes }) {
         ))}
       </Grid>
     )
-  } else if (typeof value === 'object') {
+  } else if (typeof value === 'object' && value !== null) {
     if (value['@id'] !== undefined && value['@type'] !== undefined && value.meta !== undefined) {
       return (
         <Grid container
@@ -61,6 +67,13 @@ export function ShowMeta({ value, highlight, classes }) {
           </Grid>
         </Grid>
       )
+    }
+    if (value['Description'] !== undefined) {
+      const { Description, ...rest } = value
+      value = { Description, ...rest }
+    } else if (value['description'] !== undefined) {
+      const { description, ...rest } = value
+      value = { description, ...rest }
     }
     return (
       <div>

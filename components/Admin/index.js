@@ -25,6 +25,7 @@ import CardHeader from '@material-ui/core/CardHeader'
 import BlurOn from '@material-ui/icons/BlurOn'
 import Fingerprint from '@material-ui/icons/Fingerprint'
 import LibraryBooks from '@material-ui/icons/LibraryBooks'
+import JssProvider from 'react-jss/lib/JssProvider'
 
 import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta'
 import { fetchJson, patchJson } from '../../util/fetch/fetch'
@@ -38,13 +39,13 @@ import { Dashboard } from './dashboard'
 
 import { MyLogin } from './Login.js'
 
+import { generateClassName } from './classNameGenerator.js'
 
 class AdminView extends React.PureComponent {
   constructor(props) {
     super(props)
     const token = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_CREDS : ''
     this.state = {
-      signature_fields: null,
       pie_controller: null,
       pie_stats: null,
       selected_field: Object.keys(props.pie_fields_and_stats)[0] || '',
@@ -57,21 +58,11 @@ class AdminView extends React.PureComponent {
       signature_fields: props.signature_keys[Object.keys(props.signature_keys)[0]],
       hash: window.location.hash,
     }
-    this.filterHandler = this.filterHandler.bind(this)
-    this.hashChangeHandler = this.hashChangeHandler.bind(this)
-    this.LibraryList = this.LibraryList.bind(this)
-    this.LibraryEdit = this.LibraryEdit.bind(this)
-    this.EntityList = this.EntityList.bind(this)
-    this.EntityEdit = this.EntityEdit.bind(this)
-    this.SignatureList = this.SignatureList.bind(this)
-    this.SignatureEdit = this.SignatureEdit.bind(this)
-    this.httpClient = this.httpClient.bind(this)
-    this.filterForm = this.filterForm.bind(this)
-    this.authProvider = this.authProvider.bind(this)
-    this.NotFound = this.NotFound.bind(this)
-    this.handleSelectField = this.handleSelectField.bind(this)
     this.dataProvider = loopbackProvider(base_url, this.httpClient)
   }
+
+  longTextInputFormat = (v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v
+  longTextInputParse = (v) => typeof v === 'string' ? JSON.parse(v || '') : v
 
   // const httpClient = (url, options = {}) => {
   //   if (!options.headers) {
@@ -82,20 +73,20 @@ class AdminView extends React.PureComponent {
   //   return fetchUtils.fetchJson(url, options);
   // }
 
-  filterForm(props) {
+  filterForm = (props) => {
     if (this.state.token === null) {
       return false
     } else {
       return (
         <SignaturePostFilter
           librarynumber={Object.keys(this.props.libraries).length}
-          library_name={this.props.ui_content.content.library_name}
+          library_name={this.props.ui_values.library_name}
         />
       )
     }
   }
 
-  handleSelectField(e) {
+  handleSelectField = (e) => {
     const field = e.target.value
     this.setState({
       selected_field: field,
@@ -105,7 +96,7 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  LibraryList(props) {
+  LibraryList = (props) => {
     return (
       <List
         title="Libraries"
@@ -113,16 +104,16 @@ class AdminView extends React.PureComponent {
         {...props}>
         <Datagrid>
           <LibraryAvatar
-            source={`meta.${this.props.ui_content.content.library_name}`}
+            source={`meta.${this.props.ui_values.library_name}`}
             title={'Library'}
-            label={this.props.ui_content.content.preferred_name_singular['libraries']}
+            label={this.props.ui_values.preferred_name_singular['libraries']}
             textAlign="center"
-            library_name={this.props.ui_content.content.library_name}
+            library_name={this.props.ui_values.library_name}
           />
           <TextField
             source="id"
           />
-          {Object.keys(this.props.library_fields).map(function(k) {
+          {this.props.library_fields.map(function(k) {
             return (
               <DisplayField
                 key={k}
@@ -138,7 +129,7 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  LibraryEdit(props) {
+  LibraryEdit = (props) => {
     return (
       <Edit {...props}>
         <SimpleForm>
@@ -158,23 +149,19 @@ class AdminView extends React.PureComponent {
             label={'Dataset type'}
             source={'dataset_type'}
           />
-          {Object.keys(this.props.library_fields).map(function(k) {
-            return (
-              <LongTextInput
-                key={k}
-                label={k.replace(/_/g, ' ')}
-                source={'meta.' + k}
-                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
-              />
-            )
-          })}
+          <LongTextInput
+            key={'meta'}
+            label={'meta'}
+            source={'meta'}
+            format={this.longTextInputFormat}
+            parse={this.longTextInputParse}
+          />
         </SimpleForm>
       </Edit>
     )
   }
   // TODO: Make this less hacky (have it detect objects and arrays)
-  SignatureList(props) {
+  SignatureList = (props) => {
     return (
       <List
         {...props}
@@ -190,10 +177,10 @@ class AdminView extends React.PureComponent {
             source="library"
             reference="libraries"
             linkType={false}
-            label={this.props.ui_content.content.preferred_name_singular['libraries']}
+            label={this.props.ui_values.preferred_name_singular['libraries']}
           >
             <TextField
-              source={`meta.${this.props.ui_content.content.library_name}`}
+              source={`meta.${this.props.ui_values.library_name}`}
               style={{ width: 150 }}/>
           </ReferenceField>
           {this.state.signature_fields.filter((k) => !k.includes('.')).map(function(k) {
@@ -212,7 +199,7 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  SignatureEdit(props) {
+  SignatureEdit = (props) => {
     return (
       <Edit {...props}>
         <SimpleForm>
@@ -224,26 +211,22 @@ class AdminView extends React.PureComponent {
           />
           <LongTextInput
             key={'library'}
-            label={this.props.ui_content.content.preferred_name_singular['libraries']}
+            label={this.props.ui_values.preferred_name_singular['libraries']}
             source={'library'}
           />
-          {this.state.signature_fields.map(function(k) {
-            return (
-              <LongTextInput
-                key={k}
-                label={k.replace(/_/g, ' ')}
-                source={'meta.' + k}
-                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
-              />
-            )
-          })}
+          <LongTextInput
+            key={'meta'}
+            label={'meta'}
+            source={'meta'}
+            format={this.longTextInputFormat}
+            parse={this.longTextInputParse}
+          />
         </SimpleForm>
       </Edit>
     )
   }
 
-  EntityList(props) {
+  EntityList = (props) => {
     return (
       <List
         title="Entities"
@@ -253,7 +236,7 @@ class AdminView extends React.PureComponent {
           <TextField
             source="id"
           />
-          {Object.keys(this.props.entity_fields).map(function(k) {
+          {this.props.entity_fields.map(function(k) {
             return (
               <DisplayField
                 key={k}
@@ -269,7 +252,7 @@ class AdminView extends React.PureComponent {
     )
   }
 
-  EntityEdit(props) {
+  EntityEdit = (props) => {
     return (
       <Edit {...props}>
         <SimpleForm>
@@ -279,42 +262,28 @@ class AdminView extends React.PureComponent {
             label={'Core Validator'}
             source={'$validator'}
           />
-          {Object.keys(this.props.entity_fields).map(function(k) {
-            return (
-              <LongTextInput
-                key={k}
-                label={k.replace(/_/g, ' ')}
-                source={'meta.' + k}
-                format={(v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v}
-                parse={(v) => typeof v === 'object' ? JSON.parse(v || '') : v}
-              />
-            )
-          })}
+          <LongTextInput
+            key={'meta'}
+            label={'meta'}
+            source={'meta'}
+            format={this.longTextInputFormat}
+            parse={this.longTextInputParse}
+          />
         </SimpleForm>
       </Edit>
     )
   }
 
-  NotFound(props) {
-    if (this.state.token) {
-      return (
-        <Card>
-          <CardHeader title="Oop! I don't know what you are looking for" />
-          <CardContent>Check your link, please.</CardContent>
-        </Card>
-      )
-    } else {
-      return <Redirect to='/' />
-    }
-  }
-
-  async fetch_stats(selected_field) {
+  fetch_stats = async (selected_field) => {
     this.setState({
-      pie_stats: this.props.pie_fields_and_stats[selected_field] || [],
+      pie_stats: this.props.pie_fields_and_stats[selected_field].stats || {},
+      pie_table: this.props.pie_fields_and_stats[selected_field].table || '',
+      pie_slice: this.props.pie_fields_and_stats[selected_field].slice || 14,
+      pie_preferred_name: this.props.pie_fields_and_stats[selected_field].Preferred_Name || '',
     })
   }
 
-  async filterHandler(uid) {
+  filterHandler = async (uid) => {
     // console.log(e)
     // this.setState({
     //   SignatureList: <LinearProgress />
@@ -364,7 +333,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  hashChangeHandler() {
+  hashChangeHandler = () => {
     const hash = decodeURI(window.location.hash)
     this.setState({
       hash: hash,
@@ -382,7 +351,7 @@ class AdminView extends React.PureComponent {
       }
     }
   }
-  // async fetch_count(source) {
+  // fetch_count = async (source) => {
   //   const headers = {'Authorization': `Basic ${this.state.token}`}
   //   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
   //                                           signal: this.state.general_controller.signal,
@@ -401,7 +370,7 @@ class AdminView extends React.PureComponent {
   //     })
   //   }
   // }
-  async fetch_libraryfields() {
+  fetch_libraryfields = async () => {
     const headers = { 'Authorization': `Basic ${this.state.token}` }
     const { response: library_fields } = await fetch_meta({
       endpoint: `/libraries/key_count`,
@@ -413,7 +382,7 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  async fetch_entityfields() {
+  fetch_entityfields = async () => {
     const headers = { 'Authorization': `Basic ${this.state.token}` }
     const { response: entity_fields } = await fetch_meta({
       endpoint: `/entities/key_count`,
@@ -425,51 +394,12 @@ class AdminView extends React.PureComponent {
     })
   }
 
-  async fetch_metacounts() {
-    const fields = (await import('../../ui-schemas/dashboard/counting_fields.json')).default
-    this.setState({
-      counting_fields: fields,
-    })
-    const object_fields = Object.keys(fields).filter((key) => fields[key] == 'object')
-
-    // UNCOMMENT TO FETCH STUFF IN THE SERVER
-    const headers = { 'Authorization': `Basic ${this.state.token}` }
-    const { response: meta_stats } = await fetch_meta({
-      endpoint: '/signatures/value_count',
-      body: {
-        depth: 2,
-        filter: {
-          fields: Object.keys(fields),
-        },
-      },
-      signal: this.state.general_controller.signal,
-      headers,
-    })
-    const meta_counts = Object.keys(meta_stats).filter((key) => key.indexOf('.Name') > -1 ||
-                                                            // (key.indexOf(".PubChemID")>-1 &&
-                                                            //  key.indexOf("Small_Molecule")>-1) ||
-                                                            (key.indexOf('.') === -1 && object_fields.indexOf(key) === -1))
-        .reduce((stat_list, k) => {
-          stat_list.push({ name: k.indexOf('PubChemID') !== -1 ?
-                                                                            k.replace('Small_Molecule.', '') :
-                                                                            k.replace('.Name', ''),
-          counts: Object.keys(meta_stats[k]).length })
-          return stat_list
-        },
-        [])
-    // const meta_counts = (await import("../../ui-schemas/dashboard/saved_counts.json")).default
-    // meta_counts.sort((a, b) => a.name > b.name);
-    this.setState({
-      meta_counts: meta_counts,
-    })
-  }
-
-  componentDidMount() {
+  componentDidMount = () => {
     window.addEventListener('hashchange', this.hashChangeHandler)
     this.fetch_stats(this.state.selected_field)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     if (this.state.pie_controller) {
       this.state.pie_controller.abort()
     }
@@ -478,7 +408,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  httpClient(url, options = {}, type = GET_ONE) {
+  httpClient = (url, options = {}, type = GET_ONE) => {
     if (!(options.hasOwnProperty('method'))) {
       const link = decodeURI(url).split('%2C')
       const url_params = link.filter((l) => (l.includes('skip') || l.includes('limit')))
@@ -506,7 +436,7 @@ class AdminView extends React.PureComponent {
     }
   }
 
-  async authProvider(type, params) {
+  authProvider = async (type, params) => {
     if (type === AUTH_LOGIN) {
       const token = Buffer.from(`${params.username}:${params.password}`).toString('base64')
       const headers = { 'Authorization': `Basic ${token}` }
@@ -603,52 +533,54 @@ class AdminView extends React.PureComponent {
     return Promise.reject()
   }
 
-  render() {
+  render = () => {
     return (
       <div className="root">
         <Head>
           <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
         </Head>
         <main>
-          <Admin title={'Signature Commons Dashboard'}
-            dataProvider={this.dataProvider}
-            authProvider={this.authProvider}
-            dashboard={(props) => <Dashboard
-              handleSelectField={this.handleSelectField}
-              {...this.state}
-              {...this.props}
-              {...props}/>}
-            catchAll={this.NotFound}
-            loginPage={MyLogin}
-          >
-            {this.props.library_fields === null ? <div/> :
-                <Resource
-                  name="libraries"
-                  list={this.LibraryList}
-                  edit={this.LibraryEdit}
-                  icon={LibraryBooks}
-                  options={{ label: this.props.ui_content.content.preferred_name['libraries'] }}
-                />
-            }
-            {this.state.signature_fields === null ? <div/> :
-                <Resource
-                  name="signatures"
-                  edit={this.SignatureEdit}
-                  list={this.SignatureList}
-                  icon={Fingerprint}
-                  options={{ label: this.props.ui_content.content.preferred_name['signatures'] }}
-                />
-            }
-            {this.props.entity_fields === null ? <div/> :
-                <Resource
-                  name="entities"
-                  edit={this.EntityEdit}
-                  list={this.EntityList}
-                  icon={BlurOn}
-                  options={{ label: this.props.ui_content.content.preferred_name['entities'] }}
-                />
-            }
-          </Admin>
+          <JssProvider generateClassName={generateClassName}>
+            <Admin title={'Signature Commons Dashboard'}
+              dataProvider={this.dataProvider}
+              authProvider={this.authProvider}
+              dashboard={(props) => <Dashboard
+                handleSelectField={this.handleSelectField}
+                {...this.state}
+                {...this.props}
+                {...props}/>}
+              catchAll={this.NotFound}
+              loginPage={MyLogin}
+            >
+              {this.props.library_fields === null || this.props.table_counts.filter((entry) => entry.table === 'libraries').length === 0 ? <div/> :
+                  <Resource
+                    name="libraries"
+                    list={this.LibraryList}
+                    edit={this.LibraryEdit}
+                    icon={LibraryBooks}
+                    options={{ label: this.props.ui_values.preferred_name['libraries'] }}
+                  />
+              }
+              {this.state.signature_fields === null || this.props.table_counts.filter((entry) => entry.table === 'signatures').length === 0 ? <div/> :
+                  <Resource
+                    name="signatures"
+                    edit={this.SignatureEdit}
+                    list={this.SignatureList}
+                    icon={Fingerprint}
+                    options={{ label: this.props.ui_values.preferred_name['signatures'] }}
+                  />
+              }
+              {this.props.entity_fields === null || this.props.table_counts.filter((entry) => entry.table === 'entities').length === 0 ? <div/> :
+                  <Resource
+                    name="entities"
+                    edit={this.EntityEdit}
+                    list={this.EntityList}
+                    icon={BlurOn}
+                    options={{ label: this.props.ui_values.preferred_name['entities'] }}
+                  />
+              }
+            </Admin>
+          </JssProvider>
         </main>
       </div>
     )

@@ -1,15 +1,20 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import { fetch_meta } from '../../util/fetch/meta'
-
+import { similar_search_terms } from '../Home'
 const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
 const SearchResults = dynamic(() => import('../../components/MetadataSearch/SearchResults'))
 
-function getParam(search, param) {
+function getParam(s, param) {
+  const search = s
   const params = new URLSearchParams(search)
   let val = params.get(param)
-  if (val == undefined || val === null || val == undefined) {
-    val = ''
+  if (val === undefined || val === null || val === '') {
+    val = []
+  } else {
+    val = val.split('&')
+    if (val.filter((v) => v.trim() === '').length === val.length) {
+      val = []
+    }
   }
   return val
 }
@@ -17,67 +22,52 @@ function getParam(search, param) {
 export default class MetadataSearch extends React.Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      search: '',
-      currentSearch: '',
-      controller: undefined,
-      signatures_total_count: undefined,
-      libraries_total_count: undefined,
-      entities_total_count: undefined,
-    }
-
-    this.searchChange = this.searchChange.bind(this)
   }
 
-  async componentDidMount() {
-    const currentSearch = getParam(this.props.location.search, 'q')
-    this.setState({
-      search: currentSearch,
-    })
-    const { response: signatures } = await fetch_meta({ endpoint: '/signatures/count', body: {} })
-    const { response: libraries } = await fetch_meta({ endpoint: '/libraries/count', body: {} })
-    const { response: entities } = await fetch_meta({ endpoint: '/entities/count', body: {} })
-    this.setState({
-      currentSearch,
-      signatures_total_count: signatures.count,
-      libraries_total_count: libraries.count,
-      entities_total_count: entities.count,
-    })
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const prevSearch = getParam(prevProps.location.search, 'q')
-    const currentSearch = getParam(this.props.location.search, 'q')
-    if (prevSearch !== currentSearch) {
-      this.setState({ search: currentSearch, currentSearch })
+  componentDidMount = async () => {
+    const currentSearchArray = getParam(this.props.location.search, 'q')
+    if (!similar_search_terms(this.props.currentSearchArray, currentSearchArray)) {
+      if (currentSearchArray.length > 0) {
+        this.props.currentSearchArrayChange(currentSearchArray)
+      }
     }
   }
 
-  searchChange(e) {
-    this.setState({ search: e.target.value })
+  componentDidUpdate = (prevProps) => {
+    const currentSearchArray = getParam(this.props.location.search, 'q')
+    const oldSearchArray = getParam(prevProps.location.search, 'q')
+    if (!similar_search_terms(oldSearchArray, currentSearchArray)) {
+      if (currentSearchArray.length > 0) {
+        this.props.currentSearchArrayChange(currentSearchArray)
+      }
+    }
   }
 
-  render() {
+  componentWillUnmount = () => {
+    this.props.resetAllSearches()
+  }
+
+  searchChange = (e) => {
+    this.props.searchChange(e.target.value)
+  }
+
+  render = () => {
     return (
       <div className="row">
         <div className="col s12 center">
           <SearchBox
-            search={this.state.search}
-            searchChange={this.searchChange}
-            ui_content={this.props.ui_content}
+            search_status={this.props.search_status}
+            currentSearchArray={this.props.currentSearchArray}
+            currentSearchChange={this.props.currentSearchChange}
+            currentSearchArrayChange={this.props.currentSearchArrayChange}
+            ui_values={this.props.ui_values}
           />
         </div>
-        {this.state.currentSearch === '' ? null : (
+        {this.props.currentSearchArray.length === 0 ? null :
           <SearchResults
-            signatures_total_count={this.state.signatures_total_count}
-            libraries_total_count={this.state.libraries_total_count}
-            entities_total_count={this.state.entities_total_count}
-            search={this.state.currentSearch}
-            ui_content={this.props.ui_content}
-            schemas={this.props.schemas}
+            {...this.props}
           />
-        )}
+        }
       </div>
     )
   }

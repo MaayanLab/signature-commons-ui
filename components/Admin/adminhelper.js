@@ -157,12 +157,11 @@ const RecursiveDisplay = withStyles(styles)(({ classes, value, field, ...props }
       return (<CloseIcon className={classes.icon}/>)
     }
   } else if (Array.isArray(value[field])) {
-    console.log(field, value[field])
     return (
       <div>
         {value[field].map((item) => (
           <RecursiveDisplay
-            key={field}
+            key={item}
             value={{ [field]: item }}
             field={field}
             {...props}
@@ -171,11 +170,10 @@ const RecursiveDisplay = withStyles(styles)(({ classes, value, field, ...props }
       </div>
     )
   } else if (typeof value[field] === 'object') {
-    console.log(field, value[field])
     return (
       <div>
         {Object.keys(value[field]).map((key) => (
-          <div key={`object-${field}`}>
+          <div key={`${key}`}>
             <RecursiveDisplay
               value={{ label: `${key}: ` }}
               field={'label'}

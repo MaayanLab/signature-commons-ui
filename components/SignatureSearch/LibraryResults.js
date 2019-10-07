@@ -7,6 +7,9 @@ import TableRow from '@material-ui/core/TableRow'
 import ShowMeta from '../../components/ShowMeta'
 import { Label, objectMatch } from '../../components/Label'
 import { makeTemplate } from '../../util/makeTemplate'
+import { RunningSum, dataFromResults } from '@dcic/signature-commons-ui-components-running-sum'
+import { fetch_data } from '../../util/fetch/data'
+import Lazy from '../Lazy'
 
 const one_tailed_columns = [
   'P-Value',
@@ -31,10 +34,36 @@ const theme = createMuiTheme({
         minHeight: '500px',
       },
     },
+    MUIDataTableHeadCell: {
+      root: {
+        fontSize: 13,
+      },
+    },
   },
 })
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
+
+export const rank_data_results = async ({ up, down, signature, database }) => {
+  const { response } = await fetch_data({
+    endpoint: '/fetch/rank',
+    body: {
+      entities: [],
+      signatures: [signature],
+      database,
+    },
+  })
+  return dataFromResults({
+    input: {
+      up,
+      down,
+    },
+    output: {
+      entities: response.entities,
+      ranks: response.signatures[0].ranks,
+    },
+  })
+}
 
 export default class LibraryResults extends React.Component {
   check_column = ({ schema, prop, lib }) => {
@@ -65,8 +94,10 @@ export default class LibraryResults extends React.Component {
         (schema) => objectMatch(schema.match, sigs[0])
     )[0]
     const lib = sigs[0].library.id
-    const cols = Object.keys(schema.properties).filter(
-        (prop) => {
+    const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
+    const cols = sorted_entries.filter(
+        (entry) => {
+          const prop = entry[0]
           if (this.check_column({ schema, prop, lib })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
@@ -80,7 +111,7 @@ export default class LibraryResults extends React.Component {
           }
           return false
         }
-    )
+    ).map((entry) => entry[0])
     const options = {
       filter: true,
       filterType: 'dropdown',
@@ -89,7 +120,26 @@ export default class LibraryResults extends React.Component {
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => (
         <TableRow>
-          <TableCell colSpan={rowData.length}>
+          <TableCell colSpan={rowData.length}
+            style={{
+              overflowWrap: 'break-word',
+              wordWrap: 'break-word',
+            }}
+          >
+            {(this.props.input.up_entities !== undefined) ? (
+              <Lazy>{
+                async () => (
+                  <RunningSum
+                    data={await rank_data_results({
+                      up: this.props.input.up_entities.map((ent) => ent.id),
+                      down: this.props.input.down_entities.map((ent) => ent.id),
+                      signature: sigs[rowMeta.dataIndex].id,
+                      database: sigs[rowMeta.dataIndex].library.dataset,
+                    })}
+                  />
+                )
+              }</Lazy>
+            ) : null}
             <ShowMeta
               value={[
                 {
@@ -139,7 +189,12 @@ export default class LibraryResults extends React.Component {
           return ''
         }
         try {
-          return JSON.parse(val)
+          const val_parsed = JSON.parse(val)
+          if (val_parsed === null) {
+            return NaN
+          } else {
+            return val_parsed
+          }
         } catch (e) {
           return val
         }

@@ -1,0 +1,31 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/dataset.json",
+    "${dataset}": "lincs_fwd"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "header-img",
+      "src": "${PREFIX}/static/images/creeds.png",
+      "alt": "CREEDS",
+      "style": {
+        "maxHeight": "70px",
+        "maxWidth": "70px"
+      },
+      "priority": 1
+    },
+    "Libraries": {
+      "visibility": 1,
+      "type": "text",
+      "text": "3",
+      "priority": 2
+    },
+    "Signatures": {
+      "visibility": 1,
+      "type": "text",
+      "text": "7758",
+      "priority": 3
+    }
+  }
+}

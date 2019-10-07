@@ -2,9 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
-import config from '../../ui-schemas/SignatureSearch.json'
 import { call } from '../../util/call'
 import M from 'materialize-css'
+import { get_signature } from '../MetadataSearch/download'
 
 export default class ResourceFilters extends React.Component {
   constructor(props) {
@@ -14,6 +14,45 @@ export default class ResourceFilters extends React.Component {
       show_all: false,
     }
   }
+
+  async componentDidMount() {
+    const input_signature = this.props.match.params.input_signature
+    const type = this.props.match.params.type
+    if (type === 'Overlap' && this.props.input.id !== input_signature) {
+      try {
+        const { data } = await get_signature({item: input_signature})
+        const input = {
+          type,
+          geneset: data.join('\n'),
+          id: input_signature,
+        }
+        this.props.submit(input)
+      } catch (e) {
+        console.warn('No such signature', input_signature)
+      }
+    }
+  }
+
+  async componentDidUpdate(prevProps) {
+    const input_signature = this.props.match.params.input_signature
+    const type = this.props.match.params.type
+    if (input_signature !== prevProps.match.params.input_signature) {
+      if (type === 'Overlap' && this.props.input.id !== input_signature) {
+        try {
+          const { data } = await get_signature({item: input_signature})
+          const input = {
+            type,
+            geneset: data.join('\n'),
+            id: input_signature,
+          }
+          this.props.submit(input)
+        } catch (e) {
+          console.warn('No such signature', input_signature)
+        }
+      }
+    }
+  }
+
 
   toggle_show_all = () => this.setState({ show_all: !this.state.show_all })
 
@@ -74,13 +113,13 @@ export default class ResourceFilters extends React.Component {
           )
           return (
             <Grid item xs={xs} sm={sm} md={md} key={resource.id}>
-              {this.state.show_all || ind < config.maxResourcesToShow || sorted_resources.length < config.maxResourcesBeforeCollapse ? (
+              {this.state.show_all || ind < this.props.ui_values.maxResourcesToShow || sorted_resources.length < this.props.ui_values.maxResourcesBeforeCollapse ? (
                 <div>{btn}</div>
               ) : null}
             </Grid>
           )
         })}
-        {sorted_resources.length >= config.maxResourcesBeforeCollapse ? (
+        {sorted_resources.length >= this.props.ui_values.maxResourcesBeforeCollapse ? (
           <Grid item xs={xs} sm={sm} md={md} key={resource.id}>
             <IconButton
               alt={this.state.show_all ? 'Less' : 'More'}

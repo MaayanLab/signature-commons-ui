@@ -7,26 +7,22 @@ import { fetch_meta_post } from '../../util/fetch/meta'
 export default class TermQuery extends React.PureComponent {
   constructor(props) {
     super(props)
+
     this.state = {
       term: 'breast cancer',
       term_results: {},
       enrichr_results: {},
       status: 'ready',
     }
-
-    this.log = this.log.bind(this)
-    this.submit = this.submit.bind(this)
-    this.sendToEnrichr = this.sendToEnrichr.bind(this)
-    this.setTerm = this.setTerm.bind(this)
   }
 
-  log(msg) {
+  log = (msg) => {
     this.setState((prevState) => ({
       status: prevState.status + '\n' + msg,
     }))
   }
 
-  async sendToEnrichr() {
+  sendToEnrichr = async () => {
     try {
       const background_library = 'KEGG_2015'
       const gene_list = [
@@ -66,7 +62,7 @@ export default class TermQuery extends React.PureComponent {
     }
   }
 
-  async submit() {
+  submit = async () => {
     try {
       this.setState({
         term_results: null,
@@ -98,11 +94,11 @@ export default class TermQuery extends React.PureComponent {
     }
   }
 
-  setTerm(e) {
+  setTerm = (e) => {
     this.setState({ term: e.target.value })
   }
 
-  render() {
+  render = () => {
     return (
       <div className="root">
         <main>

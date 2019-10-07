@@ -1,7 +1,7 @@
 import { fetch_meta_post } from './meta'
 import { fetch_data } from './data'
 import { get_library_resources } from '../../components/Resources/resources'
-import { get_ui_content } from '../../pages/index'
+import { get_ui_values } from '../../pages/index'
 
 async function PromiseAllSeq(promises) {
   const resolved = []
@@ -262,14 +262,11 @@ export default class DataProvider {
   }
 
   fetch_resources = async () => {
-    const { ui_content } = await get_ui_content()
-    if (ui_content.content === undefined || Object.keys(ui_content.content).length === 0) {
+    const { ui_values } = await get_ui_values()
+    if (ui_values === undefined || Object.keys(ui_values).length === 0) {
       console.error('UI Content is undefined')
     }
-    if (ui_content.content.resource_from_library === undefined || ui_content.content.resource_from_library.length === 0) {
-      onsole.error('resource form library is undefined')
-    }
-    const { libraries, resources, library_resource } = await get_library_resources(ui_content)
+    const { libraries, resources, library_resource } = await get_library_resources(ui_values)
     for (const res of Object.values(resources)) {
       const resource = await this.resolve_resource(res)
       resource._fetched = true
@@ -397,7 +394,6 @@ export default class DataProvider {
       } else {
         throw new Error(`${dataset_type} not recognized`)
       }
-
       // construct request with signatures of interest
       const { response } = await fetch_data({
         endpoint: `/fetch/${endpoint}`,
@@ -407,14 +403,22 @@ export default class DataProvider {
           database: dataset,
         },
       })
-
       // resolve results
       // TODO: Deal with rank data differently?
       for (const sig of response.signatures) {
         const signature = await this.resolve_signature(sig.uid)
         signature._fetched_data = true
-        const entities = await this.resolve_entities(sig.entities)
-        signature._data = entities
+        if (endpoint === 'set') {
+          const entities = await this.resolve_entities(sig.entities)
+          signature._data = entities
+        } else if (endpoint === 'rank') {
+          const ranks = sig.ranks
+          ranks.sort((a, b) => a - b)
+          const entities = await this.resolve_entities(ranks.map((rank) => response.entities[rank]).filter((ent) => ent !== undefined))
+          signature._data = entities
+        } else {
+          throw new Error(`endpoint ${endpoint} not recognized`)
+        }
       }
     }
   }
@@ -466,6 +470,10 @@ export class Resource {
     return Promise.resolve(this._resource.id)
   }
 
+  get validator() {
+    return Promise.resolve(this._resource['$validator'])
+  }
+
   get libraries() {
     return (async () => {
       if (this._libraries !== undefined) {
@@ -509,6 +517,10 @@ export class Library {
 
   get id() {
     return Promise.resolve(this._library.id)
+  }
+
+  get validator() {
+    return Promise.resolve(this._library['$validator'])
   }
 
   get resource() {
@@ -591,6 +603,10 @@ export class Signature {
     return Promise.resolve(this._signature.id)
   }
 
+  get validator() {
+    return Promise.resolve(this._signature['$validator'])
+  }
+
   get library() {
     return (async () => {
       if (this._library !== undefined) {
@@ -647,6 +663,10 @@ export class Entity {
 
   get id() {
     return Promise.resolve(this._entity.id)
+  }
+
+  get validator() {
+    return Promise.resolve(this._entity['$validator'])
   }
 
   get meta() {
