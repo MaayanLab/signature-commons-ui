@@ -73,7 +73,7 @@ function rootReducer(state = initialState, action) {
     return {
       ...state,
       search: [],
-      model: {},
+      models: {},
       loading: false,
       completed: true,
     }
@@ -92,6 +92,16 @@ function rootReducer(state = initialState, action) {
         }
         return acc
       },{}),
+      failed: false,
+      completed: false,
+    }
+  }
+  if (action.type === action_definitions.FETCH_METADATA) {
+    const {search, ...tables} = action.params
+    return {
+      ...state,
+      search: search,
+      loading: true,
       failed: false,
       completed: false,
     }

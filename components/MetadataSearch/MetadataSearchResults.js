@@ -178,6 +178,15 @@ class MetadataSearchResults extends React.Component {
 
   componentDidUpdate = (prevProps) => {
     const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    const old_table = this.props.reverse_preferred_name[prevProps.match.params.table]
+    if (current_table!==old_table){
+      const c = this.props.models[current_table].results.metadata_search || []
+      const collection = c.map(data=>get_card_data(data, this.props.schemas))
+      this.setState({
+        collection,
+        current_table
+      })
+    }
     if (prevProps.completed===false && this.props.completed===true){
       const c = this.props.models[current_table].results.metadata_search || []
       const collection = c.map(data=>get_card_data(data, this.props.schemas))

@@ -42,12 +42,14 @@ function* watchResetSigcom() {
 }
 // Metadata Search
 export function* workFetchMetaData(action) {
-   if (action.type !== action_definitions.FETCH_METADATA_FROM_SEARCH_BOX){
+   if (action.type !== action_definitions.FETCH_METADATA_FROM_SEARCH_BOX &&
+    action.type !== action_definitions.FETCH_METADATA){
     return
    }
    const controller = new AbortController()
+   console.log(action)
    try {
-      const {params, currentTable} = action
+      const {params} = action
       const {search, ...search_models} = params
       const { models } = yield select(getStateFromStore)
       const search_calls = Object.keys(models).map(table=>{

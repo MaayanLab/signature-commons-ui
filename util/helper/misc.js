@@ -55,24 +55,47 @@ export const URLFormatter = ({
   current_table,
   search,
   filters, // dictionary where the key is the field and the value is the filter values
-  for_count,
   skip,
   limit,
+  params_str,
+  reverse_preferred_name,
+  value_count_params
 }) => {
-  if (filters!==undefined || skip!== undefined || limit!==undefined){
-    return JSON.stringify({
+  if (params_str===undefined) params_str = '{}'
+  if (reverse_preferred_name===undefined) reverse_preferred_name = {"Libraries": "libraries", "Signatures": "signatures"}
+  let params = ReadURLParams(params_str, reverse_preferred_name)
+  if(params[current_table]!==undefined){
+    params = {
+      ...params,
       search,
       [current_table]: {
+        ...params[current_table],
+        filters: filters || params[current_table].filters,
+        skip: skip || params[current_table].skip,
+        limit: limit || params[current_table].limit,
+        value_count_params: filters || params[current_table].value_count_params,
+      }
+    }
+  }else if (filters || skip || limit || value_count_params){
+    params = {
+      ...params,
+      search,
+      [current_table]: {
+        filters,
         skip,
         limit,
-        filters
+        value_count_params,
       }
-    })
-  }else{
-    return JSON.stringify({
+    }
+  } else {
+    params = {
+      ...params,
       search
-    })
+    }
   }
+  return JSON.stringify({
+      ...params,
+    })
 }
 
 export const ReadURLParams = (params_str, reverse_preferred_name) => {

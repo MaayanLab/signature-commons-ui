@@ -76,12 +76,16 @@ export default class Model {
     this.parents_meta = parents_meta
     this.where = null
     this.results = {}
+    this.search = null
+    this.filters = null
     this.pagination = {
       limit: 10
     }
   }
 
   set_where = ({search, filters}) => {
+    this.search = search
+    this.filters = filters
     this.where = build_where({search, parent: this.parent, filters})
   }
 
@@ -302,9 +306,12 @@ export default class Model {
     })
     const parent_ids = params.parent_ids || Object.keys(this.parents_meta)
     const result = this.parse_bulk_result({operations, bulk_response, parent_ids})
+
     this.results = {
-      ...this.results,
-      ...result
+      metadata_search: result.metadata_search || this.results.metadata_search,
+      value_count: result.value_count || this.results.value_count,
+      count: result.count || this.results.count,
+      per_parent_count: result.per_parent_count || this.results.per_parent_count,
     }
     return {table: this.table, model:this}
   }

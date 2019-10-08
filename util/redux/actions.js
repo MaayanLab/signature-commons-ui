@@ -13,9 +13,10 @@ export function changeMetadataSearchTable(table){
 }
 
 // Metadata search using search box
-export function fetchMetaDataFromSearchBox(params, currentTable) {
+export function fetchMetaDataFromSearchBox(params) {
+  console.log(params)
   return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-    params, currentTable}
+    params}
 }
 
 // change parent
@@ -47,12 +48,8 @@ export function fetchMetaDataFromSearchBox(params, currentTable) {
 
 
 // Metadata search
-export function fetchMetaData(params, table, paginating=false) {
-  return {type: action_definitions.FETCH_METADATA,
-    params,
-    table,
-    paginating
-  }
+export function fetchMetaData(params) {
+  return {type: action_definitions.FETCH_METADATA, params}
 }
 
 export function fetchMetaDataSucceeded(models){
