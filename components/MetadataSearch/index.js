@@ -43,6 +43,7 @@ const operationMapper = {
 const mapStateToProps = state => {
   const preferred_name = state.serverSideProps.ui_values.preferred_name
   return {
+    search: state.search,
     completed: state.completed,
     models: state.models,
     tables: Object.keys(state.parents_mapping),

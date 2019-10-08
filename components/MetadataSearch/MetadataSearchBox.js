@@ -6,7 +6,7 @@ import Chip from '@material-ui/core/Chip'
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import { fetchMetaDataFromSearchBox } from "../../util/redux/actions";
-import { URLFormatter } from "../../util/helper/misc";
+import { ReadURLParams, URLFormatter } from "../../util/helper/misc";
 
 import { connect } from "react-redux";
 import { SearchBox } from "./SearchBox"
@@ -57,7 +57,6 @@ const mapStateToProps = state => {
     completed: state.completed,
     examples: state.serverSideProps.ui_values.LandingText.search_terms,
     placeholder: state.serverSideProps.ui_values.LandingText.metadata_placeholder,
-    search: state.search,
     preferred_name: state.serverSideProps.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
   };
@@ -66,19 +65,48 @@ const mapStateToProps = state => {
 
 class MetadataSearchBox extends React.Component {
 
+  constructor(props){
+    super(props)
+    this.state = {
+      search: []
+    }
+  }
+  componentDidMount(){
+    const param_str = this.props.location.search
+    let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+    this.setState({
+      search: params.search
+    })
+  }
+
+  componentDidUpdate(prevProps){
+    const curr_param_str = this.props.location.search
+    const old_param_str = prevProps.location.search
+    if (old_param_str!==curr_param_str){
+      let params = ReadURLParams(curr_param_str, this.props.reverse_preferred_name)
+      this.setState({
+        search: params.search
+      })
+    }
+  }
+
   searchFunction = (search) => {
-    const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
-    const query = URLFormatter({search,
-      current_table,
-      reverse_preferred_name: this.props.reverse_preferred_name})
-    this.props.history.push({
-      pathname: `/MetadataSearch/${current_table}`,
-      search: `?q=${query}`,
-      state: {
-        new_search: true,
-        pagination: false,
-        new_filter: false
-      }
+    this.setState({
+      search
+    }, ()=>{
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+      const query = URLFormatter({search,
+        current_table,
+        reverse_preferred_name: this.props.reverse_preferred_name})
+      this.props.history.push({
+        pathname: `/MetadataSearch/${current_table}`,
+        search: `?q=${query}`,
+        state: {
+          new_search: true,
+          pagination: false,
+          new_filter: false
+        }
+      })
     })
   }
 
@@ -86,6 +114,7 @@ class MetadataSearchBox extends React.Component {
     return (
       <SearchBox 
         {...this.props}
+        search={this.state.search}
         searchFunction={this.searchFunction}
       />
     )

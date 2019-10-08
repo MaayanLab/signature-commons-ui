@@ -9,14 +9,10 @@ const mapStateToProps = state => {
   console.log(state)
   return {
     schemas,
-    search: state.search,
     parent_ids_mapping: state.parent_ids_mapping,
-    selected_parent_ids: state.selected_parent_ids,
-    table_count: state.table_count,
-    table_count_per_parent: state.table_count_per_parent,
-    categories: state.parents_mapping,
+    models: state.models,
+    parents: state.parents_mapping,
     completed: state.completed,
-    pagination: state.pagination,
     reverse_preferred_name: state.reverse_preferred_name,
   }
 }
@@ -36,8 +32,6 @@ class ParentFilter extends React.Component {
     const {schemas, parent_ids_mapping: mapping} = this.props
     const parent_ids_mapping = mapping[current_table]
     let mapping_id_to_name = {}
-    console.log(mapping)
-    console.log(current_table)
     const mapping_name_to_id = Object.entries(parent_ids_mapping).reduce((acc,[id, val])=>{
       const matched_schema = findMatchedSchema(val, schemas)
       let name_prop = Object.keys(matched_schema.properties).filter(prop=> matched_schema.properties[prop].name)
@@ -62,7 +56,9 @@ class ParentFilter extends React.Component {
       mapping_id_to_name,
       mapping_name_to_id,
       current_table
-    }, () => this.updateDataCounts(current_table))
+    }, ()=>{
+      this.updateDataCounts(current_table)
+    })
   }
 
   updateDataCounts = (current_table) => {
@@ -70,37 +66,27 @@ class ParentFilter extends React.Component {
       mapping_id_to_name,
       mapping_name_to_id
     } = this.state
-    const {table_count_per_parent, selected_parent_ids:select_ids} = this.props
-    const selected_parent_ids = select_ids[current_table]
-    const counts = table_count_per_parent[current_table]
-    let data_count
-    let selected = {}
-    if (counts!==undefined){
-      data_count = Object.entries(counts).filter(([id,val])=>
-        val.count>0).map(([id, val])=>{
-        const name = mapping_id_to_name[id]
-        selected[name] = selected_parent_ids.indexOf(id)>-1
-        return({
-            count: val.count,
-            name,
-        })})
-      console.log(data_count)
-      this.setState({
-        data_count,
-        selected,
-      })
-    }else {
-      this.setState({
-        data_count: [],
-        selected: {}
-      })
+    const model = this.props.models[current_table]
+    const per_parent_count = model.results.per_parent_count || {}
+    let selected_parents = []
+    if (model.filters!==undefined && model.filters[parent]!==undefined){
+      selected_parents = [...model.filters[parent]]
     }
+    let selected = {}
+    const data_count = Object.entries(per_parent_count).filter(([pid,count])=>count>0).map(([pid,count])=>{
+      const name = mapping_id_to_name[pid]
+      selected_parents[name] = selected_parents.indexOf(pid)>-1
+      return {count, name, id:pid}
+    })
+    this.setState({
+      data_count,
+      selected,
+    })
   }
 
 
   componentDidMount(){
     const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
-    console.log(this.props.reverse_preferred_name)
     this.getMapping(current_table)
   }
 
