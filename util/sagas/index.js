@@ -68,6 +68,7 @@ export function* workFetchMetaData(action) {
         }
         return model.fetch_meta(q, controller)
       })
+      console.log(search_calls)
       const m = yield all([...search_calls])
       const updated_models = m.reduce((acc,item)=>{
         acc = {
@@ -272,7 +273,6 @@ export default function* rootSaga() {
       watchFetchMetaData(),
       watchMatchEntities(),
       watchFindSignature(),
-      watchFetchMetaData(),
       watchResetSigcom(),
     ]);
 }

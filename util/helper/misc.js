@@ -107,7 +107,7 @@ export const ReadURLParams = (params_str, reverse_preferred_name) => {
     if (rest[k]!==undefined) {
       params = {
         ...params,
-        [reverse_preferred_name[k]]: v
+        [reverse_preferred_name[k]]: rest[k]
       }
     }
   }

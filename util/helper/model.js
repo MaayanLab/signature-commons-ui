@@ -77,7 +77,7 @@ export default class Model {
     this.where = null
     this.results = {}
     this.search = null
-    this.filters = null
+    this.filters = undefined
     this.pagination = {
       limit: 10
     }

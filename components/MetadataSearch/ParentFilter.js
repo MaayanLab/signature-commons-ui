@@ -67,9 +67,12 @@ class ParentFilter extends React.Component {
       mapping_name_to_id
     } = this.state
     const model = this.props.models[current_table]
-    const per_parent_count = model.results.per_parent_count || {}
+    let per_parent_count = {}
+    if (model!==undefined){
+      per_parent_count = model.results.per_parent_count || {}
+    }
     let selected_parents = []
-    if (model.filters!==undefined && model.filters[parent]!==undefined){
+    if (model!==undefined && model.filters!==undefined && model.filters[parent]!==undefined){
       selected_parents = [...model.filters[parent]]
     }
     let selected = {}
@@ -124,13 +127,14 @@ class ParentFilter extends React.Component {
     }))
   }
 
-  render = () => (
-    <Filter 
-      {...this.state}
-      loaded={this.props.completed}
-      toggleSelect={this.toggleSelect}
-    />
-  )
+  render = () => {
+    return(
+      <Filter 
+        {...this.state}
+        loaded={this.props.completed || this.props.pagination}
+        toggleSelect={this.toggleSelect}
+      />
+    )}
 
 }
 
