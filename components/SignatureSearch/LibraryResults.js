@@ -128,7 +128,6 @@ export default class LibraryResults extends React.Component {
           return false
         }
     ).map((entry) => entry[0])
-    console.log(cols)
     const options = {
       filter: true,
       filterType: 'dropdown',

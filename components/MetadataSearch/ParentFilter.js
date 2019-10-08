@@ -2,11 +2,11 @@ import React from 'react'
 import { connect } from "react-redux";
 import { findMatchedSchema } from '../../util/objectMatch'
 import { makeTemplate } from "../../util/makeTemplate"
-import { diffList } from "../../util/helper/misc"
+import { ReadURLParams, URLFormatter } from "../../util/helper/misc"
 import Filter from "./Filter"
+
 const mapStateToProps = state => {
   const schemas = state.serverSideProps.schemas
-  console.log(state)
   return {
     schemas,
     parent_ids_mapping: state.parent_ids_mapping,
@@ -21,8 +21,8 @@ class ParentFilter extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      data_count: undefined,
-      selected: undefined,
+      data_count: [],
+      selected: {},
       mapping_id_to_name: undefined,
       mapping_name_to_id: undefined,
     }
@@ -72,15 +72,19 @@ class ParentFilter extends React.Component {
       per_parent_count = model.results.per_parent_count || {}
     }
     let selected_parents = []
+    const parent = this.props.parents[current_table]
     if (model!==undefined && model.filters!==undefined && model.filters[parent]!==undefined){
       selected_parents = [...model.filters[parent]]
     }
-    let selected = {}
-    const data_count = Object.entries(per_parent_count).filter(([pid,count])=>count>0).map(([pid,count])=>{
-      const name = mapping_id_to_name[pid]
-      selected_parents[name] = selected_parents.indexOf(pid)>-1
-      return {count, name, id:pid}
-    })
+    const selected = {}
+    let data_count = []
+    for (const [pid, count] of Object.entries(per_parent_count)){
+      if (count>0){
+        const name = mapping_id_to_name[pid]
+        selected[name] = selected_parents.indexOf(pid)>-1
+        data_count = [...data_count, {count, name, id:pid}]
+      }
+    }
     this.setState({
       data_count,
       selected,
@@ -113,18 +117,35 @@ class ParentFilter extends React.Component {
       ...this.state.selected,
       [name]: !this.state.selected[name]
     }
-    const selected_parent_ids = Object.keys(selected).reduce((acc, name)=>{
-      const id = mapping_name_to_id[name]
-      const val = parent_ids_mapping[id]
-      acc = {
-        ...acc,
-        [id]: val
-      }
-    }, {})
-
+    const selected_parent_ids = Object.entries(selected).filter(([name, val])=>
+      val).map(([name,val])=>{
+        const id = mapping_name_to_id[name]
+        return(id)
+      })
     this.setState((prevState)=>({
       selected
-    }))
+    }), ()=>{
+      const current_table = this.props.match.params.table
+      const param_str = decodeURI(this.props.location.search)
+      let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+      params = {
+        ...params,
+        filters: {
+          ...params.filters,
+          [this.props.parents[this.props.reverse_preferred_name[current_table]]]: selected_parent_ids.length > 0 ? selected_parent_ids: undefined
+        }
+      }
+      const query = URLFormatter({...params, current_table})
+      this.props.history.push({
+        pathname: `/MetadataSearch/${current_table}`,
+        search: `?q=${query}`,
+        state: {
+          new_search: false,
+          pagination: false,
+          new_filter: true
+        }
+      })
+    })
   }
 
   render = () => {

@@ -266,7 +266,6 @@ export default class DataTable extends React.Component {
   }
 
   toggleExpanded(rowIndex){
-    console.log(rowIndex)
     this.setState(prevState=>{
       let expanded_row = prevState.expanded_row
       expanded_row[rowIndex] = !expanded_row[rowIndex]
@@ -308,10 +307,6 @@ export default class DataTable extends React.Component {
           toggleExpanded={this.toggleExpanded}
         />
       ),
-     onTableChange: (action, tableState) => {
-      console.log(action)
-      console.log(tableState)
-     }
     }
 
   parse_rows(data, schemas){

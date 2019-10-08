@@ -33,8 +33,6 @@ export default class ScorePopper extends React.Component{
     if (sorted===null){
       sorted = Object.keys(scores)[0]
     }
-    console.log(scores)
-    console.log(sorted)
     return(
       <div>
         <Button

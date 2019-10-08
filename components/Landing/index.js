@@ -46,7 +46,6 @@ class LandingPage extends React.Component {
   }
 
   searchCard = (props, searchType) => {
-    console.log(props)
     return(
     <SearchCard
       searchType={searchType}

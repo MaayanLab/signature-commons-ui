@@ -10,7 +10,7 @@ const model_mapper = {
 }
 
 export function build_where({search, parent, filters}) {
-  const where = {}
+  let where = {}
   let andClauses = []
   let orClauses = []
 
@@ -59,7 +59,10 @@ export function build_where({search, parent, filters}) {
     for (const [filter, values] of Object.entries(filters)){
       if (filter===parent) {
         where = {
-          and: [...where.and, {inq: [...values]}]
+          and: [...where.and, {
+            [filter]: {inq: [...values]}
+            }
+          ]
         }
       }
     }

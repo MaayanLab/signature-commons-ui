@@ -100,7 +100,6 @@ class MetadataSearchResults extends React.Component {
     if (this.props.models[current_table]){
       const coll = this.props.models[current_table].results.metadata_search || []
       const collection = coll.map(data=>get_card_data(data, this.props.schemas))
-      console.log(coll)
       this.setState({
         collection,
         current_table

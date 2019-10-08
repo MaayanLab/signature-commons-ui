@@ -59,7 +59,7 @@ class ResourcePage extends React.Component {
   async componentDidMount(){
     let res = this.props.match.params.resource.replace(/_/g, ' ')
     let resource
-    console.log(res)
+    
     if (isUUID(res+'')){
       // uuid fetch resource
       const {response} = await fetch_meta({
@@ -103,7 +103,7 @@ class ResourcePage extends React.Component {
     let prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
     if (res!=prevRes){
       let resource
-      console.log(res)
+      
       if (isUUID(res+'')){
         // uuid fetch resource
         const {response} = await fetch_meta({

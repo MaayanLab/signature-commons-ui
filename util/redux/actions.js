@@ -14,7 +14,6 @@ export function changeMetadataSearchTable(table){
 
 // Metadata search using search box
 export function fetchMetaDataFromSearchBox(params) {
-  console.log(params)
   return {type: action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
     params}
 }

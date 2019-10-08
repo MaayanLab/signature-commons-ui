@@ -47,7 +47,6 @@ export function* workFetchMetaData(action) {
     return
    }
    const controller = new AbortController()
-   console.log(action)
    try {
       const {params} = action
       const {search, ...search_models} = params
@@ -68,7 +67,6 @@ export function* workFetchMetaData(action) {
         }
         return model.fetch_meta(q, controller)
       })
-      console.log(search_calls)
       const m = yield all([...search_calls])
       const updated_models = m.reduce((acc,item)=>{
         acc = {

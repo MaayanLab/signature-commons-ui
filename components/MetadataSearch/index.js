@@ -151,25 +151,24 @@ class MetadataSearch extends React.Component {
               }
             }
           }
-          console.log(this.state.param_str)
-          console.log(current_param_str)
+
           this.props.searchBoxFunction(params)
         } else {
           const operations_key = this.getOperationsKey()
           const operations = operationMapper[operations_key](current_table, current_table)
           let params = this.format_param(current_param_str, operations, current_table)
-          console.log(params)
+          
           this.props.searchFunction(params)
         }
         this.setState({
-          pagination: this.props.location.state.pagination || false
+          pagination: this.props.location.state.pagination || this.props.location.state.new_filter || false
         })
       }
   }
 
   format_param = (param_str, operations, table) => {
     let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-    console.log(params)
+    
     if (params[table]){
       params = {
         ...params,
