@@ -152,14 +152,16 @@ class MetadataSearchResults extends React.Component {
       page,
     }, () => {
       const {page, perPage} = this.state
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
       const param_str = this.props.location.search
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+      console.log(params)
       params = {
         ...params,
+        filters: params[this.props.reverse_preferred_name[current_table]].filters,
         limit: perPage,
         skip: page * perPage
       }
-      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
       const query = URLFormatter({...params, current_table})
       this.props.history.push({
         pathname: `/MetadataSearch/${current_table}`,
@@ -178,6 +180,20 @@ class MetadataSearchResults extends React.Component {
   componentDidUpdate = (prevProps) => {
     const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
     const old_table = this.props.reverse_preferred_name[prevProps.match.params.table]
+    let page = this.state.page
+    let perPage = this.state.perPage
+    if (this.props.models[current_table]!==undefined){
+      const limit = this.props.models[current_table].pagination.limit
+      const skip = this.props.models[current_table].pagination.skip || 0
+      page = skip/limit
+      perPage = limit
+    }
+    if (page!==this.state.page || perPage!==this.state.perPage){
+      this.setState({
+        page,
+        perPage,
+      })
+    }
     if (current_table!==old_table){
       const c = this.props.models[current_table].results.metadata_search || []
       const collection = c.map(data=>get_card_data(data, this.props.schemas))

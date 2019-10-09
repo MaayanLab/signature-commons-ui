@@ -134,21 +134,15 @@ export default class Model {
   }
 
   get_search_params = ({search, filters, limit, skip}) => {
+    if (limit===undefined) limit=10
     if (this.where===null){
       this.set_where({search, filters})
     }
-    if (limit!==undefined){
-      this.pagination = {
-        ...this.pagination,
-        limit
+    this.pagination = {
+        limit,
+        skip,
       }
-    }
-    if (skip!==undefined){
-      this.pagination = {
-        ...this.pagination,
-        skip
-      }
-    }
+    console.log(this.pagination)
     const operationId = `${this.model}.find`
     const params = {
       operationId,
