@@ -6,6 +6,7 @@ import {
 
 export const BarChart = ({ meta_counts, ui_values, ...props }) => {
   const { bar_chart_style } = { ...ui_values }
+  console.log(meta_counts)
   return (
     <ResponsiveContainer
       {...bar_chart_style.ResponsiveContainer}>

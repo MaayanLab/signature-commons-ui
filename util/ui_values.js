@@ -96,7 +96,7 @@ export const UIValues = {
         maxResourcesBeforeCollapse: values.maxResourcesBeforeCollapse || 60,
         maxResourcesToShow: values.maxResourcesToShow || 40,
         score_icon: values.score_icon || 'mdi-trophy-award',
-        downloads: values.downloads || {
+        downloads: {
           gmt: 'Download gmt file',
           tsv: 'Download tsv file',
           geneset: 'Download gene set',
@@ -106,6 +106,7 @@ export const UIValues = {
           resource_json: 'Download resource as json',
           sigcom: true,
           enrichr: true,
+          ...values.downloads
         },
       }
     )

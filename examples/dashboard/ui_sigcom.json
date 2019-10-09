@@ -3,7 +3,7 @@
     "landing": true,
     "content": {
       "bar_chart": {
-        "Field_Name": "Version",
+        "Field_Name": "Year",
         "Caption": "Datasets per year"
       },
       "entity_name": [
@@ -12,6 +12,10 @@
       "entity_synonyms": [
         "meta.Synonyms"
       ],
+      "downloads": {
+        "sigcom": false
+      },
+      "signature_search": false,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json"
     }

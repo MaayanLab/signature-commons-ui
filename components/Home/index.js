@@ -11,6 +11,8 @@ import { call } from '../../util/call'
 import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
+import Pages from '../Pages'
+
 import { base_url as meta_url } from '../../util/fetch/meta'
 import theme from '../../util/theme-provider'
 import '../../styles/swagger.scss'
@@ -21,6 +23,7 @@ const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 const mapStateToProps = (state, ownProps) => {
   return { 
     ...state.serverSideProps,
+
   }
 };
 
@@ -111,6 +114,12 @@ class Home extends React.PureComponent {
       {...props}
     />
     )
+
+  pages = (props) => {
+    return(
+      <Pages {...props}/>
+    )
+  }
 
   render = () => (
     <MuiThemeProvider theme={theme}>

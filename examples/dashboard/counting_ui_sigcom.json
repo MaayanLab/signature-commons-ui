@@ -187,7 +187,7 @@
     "Visible_On_Admin": true
   },
   {
-    "Field_Name": "Version",
+    "Field_Name": "Year",
     "Type": "string",
     "Table": "libraries",
     "Preferred_Name": "Library per year",
