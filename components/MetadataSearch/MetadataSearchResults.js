@@ -157,7 +157,7 @@ class MetadataSearchResults extends React.Component {
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
       params = {
         ...params,
-        filters: params[this.props.reverse_preferred_name[current_table]].filters,
+        filters: params[this.props.reverse_preferred_name[current_table]]!==undefined ? params[this.props.reverse_preferred_name[current_table]].filters : undefined,
         limit: perPage,
         skip: page * perPage
       }
