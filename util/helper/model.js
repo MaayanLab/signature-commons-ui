@@ -30,14 +30,33 @@ export function build_where({search, parent, filters}) {
       // full text query
       if (q.startsWith('!') || q.startsWith('-')) {
         // and not
-        andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim() } } }]
+        const slist = q.substring(1).trim().split(" ")
+        const query = slist.map(s=>({ meta: {fullTextSearch: { ne: s }} } ))
+        andClauses = [...andClauses, ...query]
+        // andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim() } } }]
       } else if (q.toLowerCase().startsWith('or ')) {
-        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim() } } }]
+        // const slist = q.substring(3).trim().split(" ")
+        // const query = {and: slist.map(s=>({ fullTextSearch: { eq: s } } ))}
+        // orClauses = [...andClauses, query]
+        const slist = q.substring(3).trim().split(" ")
+        const query = {and: slist.map(s=>({ meta: {fullTextSearch: { eq: s }} } ))}
+        orClauses = [...orClauses, query]
+        // orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim() } } }]
       } else if (q.startsWith('|')) {
-        orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim() } } }]
+        // const slist = q.substring(1).trim().split(" ")
+        // const query = {and: slist.map(s=>({ fullTextSearch: { eq: s } } ))}
+        // orClauses = [...andClauses, query]
+        const slist = q.substring(1).trim().split(" ")
+        const query = {and: slist.map(s=>({ meta: {fullTextSearch: { eq: s }} } ))}
+        orClauses = [...orClauses, query]
+        // orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim() } } }]
       } else {
         // and
-        andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim() } } }]
+        const slist = q.trim().split(" ")
+        const query = slist.map(s=>({ meta: {fullTextSearch: { eq: s }} } ))
+        andClauses = [...andClauses, ...query]
+        
+        // andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim() } } }]
       }
     }
   }
@@ -112,9 +131,10 @@ export default class Model {
     const operationId = `${this.model}.count`
     const params = parent_ids.map(parent_id=>{
       let where = this.where
+      console.log(where)
       if (where.and === undefined) {
         where = {
-          and: [...where]
+          and: [{...where}]
         }
       }
       where = {

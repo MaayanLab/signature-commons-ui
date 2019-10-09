@@ -117,7 +117,22 @@ class MetadataSearchResults extends React.Component {
   }
 
   onChipClick = (value) => {
-    const search = [...this.props.search, value]
+    const param_str = this.props.location.search
+    let { search } = ReadURLParams(param_str, this.props.reverse_preferred_name)
+    search = [...search, value]
+    const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+    const query = URLFormatter({search,
+      current_table,
+      reverse_preferred_name: this.props.reverse_preferred_name})
+    this.props.history.push({
+      pathname: `/MetadataSearch/${current_table}`,
+      search: `?q=${query}`,
+      state: {
+        new_search: true,
+        pagination: false,
+        new_filter: false
+      }
+    })
   }
 
   handleChangeRowsPerPage = (e) => {
@@ -220,6 +235,7 @@ class MetadataSearchResults extends React.Component {
           {...this.state}
           loaded={this.props.completed && !this.props.loading && !this.props.paginating}
           sortingFunction={this.sortBy}
+          onChipClick={this.onChipClick}
           current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
         />
         <div align="right">
