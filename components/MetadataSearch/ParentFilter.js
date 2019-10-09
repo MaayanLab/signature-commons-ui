@@ -128,7 +128,6 @@ class ParentFilter extends React.Component {
       const current_table = this.props.match.params.table
       const param_str = decodeURI(this.props.location.search)
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-      console.log(params)
       params = {
         ...params,
         filters: {

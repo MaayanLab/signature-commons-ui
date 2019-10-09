@@ -155,7 +155,6 @@ class MetadataSearchResults extends React.Component {
       const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
       const param_str = this.props.location.search
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-      console.log(params)
       params = {
         ...params,
         filters: params[this.props.reverse_preferred_name[current_table]].filters,

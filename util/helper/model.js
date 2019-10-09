@@ -142,7 +142,6 @@ export default class Model {
         limit,
         skip,
       }
-    console.log(this.pagination)
     const operationId = `${this.model}.find`
     const params = {
       operationId,
