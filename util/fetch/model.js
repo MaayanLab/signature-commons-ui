@@ -34,6 +34,7 @@ export default class DataProvider {
 
     serialized.id = await resource.id
     serialized.meta = await resource.meta
+    if (opts.validator) serialized['$validator'] = await resource.validator
 
     if (!opts.fetched_data) {
       if (opts.signatures === true) {
@@ -58,6 +59,7 @@ export default class DataProvider {
                 async () => await this.serialize_library(library, {
                   signatures: opts.signatures,
                   data: opts.data,
+                  validator: opts.validator,
                   fetched_data: true,
                 })
           )
@@ -77,6 +79,7 @@ export default class DataProvider {
     serialized.meta = await library.meta
     serialized.dataset = await library.dataset
     serialized.dataset_type = await library.dataset_type
+    if (opts.validator) serialized['$validator'] = await library.validator
 
     if (!opts.fetched_data) {
       if (opts.signatures === true) {
@@ -97,7 +100,7 @@ export default class DataProvider {
           (await library.signatures).map(
               (signature) =>
                 async () => await this.serialize_signature(signature, {
-                  data: opts.data, fetched_data: true,
+                  data: opts.data, validator: opts.validator, fetched_data: true,
                 })
           )
       )
@@ -108,16 +111,17 @@ export default class DataProvider {
 
   async serialize_signature(sig, opts) {
     if (opts === undefined) opts = {}
-
     const signature = await this.resolve_signature(sig)
     const serialized = {}
 
     serialized.id = await signature.id
     serialized.meta = await signature.meta
+    if (opts.validator) serialized['$validator'] = await signature.validator
 
     if (opts.library === true) {
       serialized.library = await this.serialize_library(await signature.library, {
         resource: opts.resource,
+        validator: opts.validator
       })
     }
 
@@ -125,7 +129,7 @@ export default class DataProvider {
       serialized.data = await PromiseAllSeq(
           (await signature.data).map(
               (entity) =>
-                async () => await this.serialize_entity(entity)
+                async () => await this.serialize_entity(entity, {validator: opts.validator})
           )
       )
     }
@@ -142,10 +146,11 @@ export default class DataProvider {
 
     serialized.id = await entity.id
     serialized.meta = await entity.meta
+    if (opts.validator) serialized['$validator'] = await entity.validator
 
     if (opts.signature === true) {
       serialized.signature = await this.serialize_signature(await entity.library, {
-        library: opts.library, resource: opts.resource,
+        library: opts.library, resource: opts.resource, validator: opts.validator,
       })
     }
 
@@ -466,7 +471,13 @@ export class Resource {
   }
 
   get validator() {
-    return Promise.resolve(this._resource['$validator'])
+    return (async () => {
+      if (this._resource['$validator'] !== undefined) {
+        return this._resource['$validator']
+      }
+      await this._parent.fetch_resources()
+      return Promise.resolve(this._resource['$validator'])
+    })()
   }
 
   get libraries() {
@@ -515,7 +526,13 @@ export class Library {
   }
 
   get validator() {
-    return Promise.resolve(this._library['$validator'])
+    return (async () => {
+      if (this._library['$validator'] !== undefined) {
+        return this._library['$validator']
+      }
+      await this._parent.fetch_libraries()
+      return Promise.resolve(this._library['$validator'])
+    })()
   }
 
   get resource() {
@@ -599,7 +616,13 @@ export class Signature {
   }
 
   get validator() {
-    return Promise.resolve(this._signature['$validator'])
+    return (async () => {
+      if (this._signature['$validator'] !== undefined) {
+        return this._signature['$validator']
+      }
+      await this._parent.fetch_signatures()
+      return Promise.resolve(this._signature['$validator'])
+    })()
   }
 
   get library() {
@@ -661,7 +684,13 @@ export class Entity {
   }
 
   get validator() {
-    return Promise.resolve(this._entity['$validator'])
+    return (async () => {
+      if (this._entity['$validator'] !== undefined) {
+        return this._entity['$validator']
+      }
+      await this._parent.fetch_entities()
+      return Promise.resolve(this._entity['$validator'])
+    })()
   }
 
   get meta() {

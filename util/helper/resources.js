@@ -52,7 +52,8 @@ export async function get_library_resources() {
         }
         let name_prop = Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].name)
         if (name_prop.length > 0){
-          resource_name = makeTemplate(matched_schemas[0].properties[name_prop[0]].text, resource)
+          name_prop = matched_schemas[0].properties[name_prop[0]]
+          resource_name = makeTemplate(name_prop.text, resource)
         } else {
           console.warn('source of resource name is not defined, using either Resource_Name or ids')
           resource_name = resource.meta['Resource_Name'] || resource_id

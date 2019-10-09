@@ -121,8 +121,8 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
           <Grid item md={1} sm={2} xs={3} style={{textAlign: "right"}}>
             <Grid container direction={"column"}>
               <Grid item>
-                {props.current_table === "libraries" ? null:
-                  <Options type={props.current_table} item={data.original} ui_values={ui_values}
+                { props.current_table === "libraries" ? null:
+                <Options type={props.current_table} item={data.original} ui_values={ui_values}
                     submit={()=>{console.log("submitted")}} schemas={schemas}/>
                 }
               </Grid>

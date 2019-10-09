@@ -150,7 +150,6 @@ export default class Model {
     const operationId = `${this.model}.count`
     const params = parent_ids.map(parent_id=>{
       let where = this.where
-      console.log(where)
       if (where.and === undefined) {
         where = {
           and: [{...where}]

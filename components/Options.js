@@ -19,6 +19,8 @@ import {
   download_library_json,
   download_library_gmt,
   download_library_tsv,
+  fetch_schemas,
+  get_label
 } from './MetadataSearch/download'
 
 const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
@@ -66,7 +68,14 @@ const EnrichrDialog = (props) => {
 }
 
 async function submit_sigcom(item, submit, ui_schemas) {
-  const { data } = await get_signature({ item, slice_rank: true, ui_schemas })
+  const schemas = await fetch_schemas()
+  const signature = await get_signature({ item })
+  let data
+  if (signature.library.dataset_type === 'rank_matrix') {
+    data = signature.data.slice(0, 250).map(d=>get_label(d, schemas))
+  } else {
+    data = signature.data.map(d=>get_label(d, schemas))
+  }
   const input = {
     id: item.id,
     type: 'Overlap',
@@ -105,10 +114,17 @@ export default class Options extends React.Component {
     })
   }
 
-  submit_enrichr = async ({ item, ui_schemas }) => {
+  submit_enrichr = async (item) => {
     NProgress.start()
-
-    const { data, filename } = await get_signature({ item, ui_schemas })
+    const schemas = await fetch_schemas()
+    const signature = await get_signature({item})
+    let data
+    if (signature.library.dataset_type === 'rank_matrix') {
+      data = signature.data.slice(0, 250).map(d=>get_label(d, schemas))
+    } else {
+      data = signature.data.map(d=>get_label(d, schemas))
+    }
+    const filename = get_label(signature, schemas)
     this.setState({
       enrichr_open: true,
       enrichr_status: 'Sending to enrichr',
@@ -132,17 +148,17 @@ export default class Options extends React.Component {
 
   handleDownloadJson = () => {
     this.handleClose()
-    download_signature_json({ item: this.props.item, ui_schemas: this.props.schemas })
+    download_signature_json(this.props.item)
   }
 
   handleDownloadText = () => {
     this.handleClose()
-    download_signatures_text({ item: this.props.item, ui_schemas: this.props.schemas })
+    download_signatures_text(this.props.item)
   }
 
   handleDownloadRanked = () => {
     this.handleClose()
-    download_ranked_signatures_text({ item: this.props.item, ui_schemas: this.props.schemas })
+    download_ranked_signatures_text(this.props.item)
   }
 
   handleSubmitSigcom = () => {
@@ -157,22 +173,22 @@ export default class Options extends React.Component {
       enrichr_ready: false,
       enrichr_id: '',
     })
-    this.submit_enrichr({ item: this.props.item, ui_schemas: this.props.schemas })
+    this.submit_enrichr(this.props.item)
   }
 
   handleDownloadLibraryJson = () => {
     this.handleClose()
-    download_library_json({ item: this.props.item, ui_schemas: this.props.schemas })
+    download_library_json(this.props.item)
   }
 
   handleDownloadLibraryGmt = () => {
     this.handleClose()
-    download_library_gmt({ item: this.props.item, ui_schemas: this.props.schemas })
+    download_library_gmt(this.props.item)
   }
 
   handleDownloadLibraryTsv = () => {
     this.handleClose()
-    download_library_tsv({ item: this.props.item, ui_schemas: this.props.schemas })
+    download_library_tsv(this.props.item)
   }
 
   render = () => {
