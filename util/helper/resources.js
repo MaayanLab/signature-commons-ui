@@ -11,11 +11,9 @@ export const iconOf = {
 
 const default_schemas = []
 
-export async function get_library_resources({schema_validator, schemas, ...props}) {
+export async function get_library_resources() {
   // fetch schemas if missing
-  if (schemas===undefined){
-    schemas = await get_schemas(schema_validator)
-  }
+  const schemas = await get_schemas("/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json")
   // fetch resources on database
   const { response } = await fetch_meta({
     endpoint: '/resources',
@@ -141,14 +139,11 @@ export async function get_library_resources({schema_validator, schemas, ...props
   }
 }
 
-export async function get_signature_counts_per_resources(ui_values, schemas=undefined) {
+export async function get_signature_counts_per_resources() {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  if (schemas===undefined){
-    schemas = await get_schemas(schema_validator)
-  }
+  const schemas = await get_schemas("/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json")
 
-  const { libraries, resources, resources_id, library_resource } = await get_library_resources({schemas,
-    schema_validator: ui_values.ui_schema})
+  const { libraries, resources, resources_id, library_resource } = await get_library_resources()
 
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios

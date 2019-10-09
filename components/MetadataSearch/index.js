@@ -24,19 +24,19 @@ const operationMapper = {
     metadata_search: table===current_table,
     per_parent_count: false,
     value_count: false,
-    count: false
+    count: true
   }),
   new_filter: (table, current_table) => ({
     metadata_search: table===current_table,
     per_parent_count: table===current_table,
     value_count: table===current_table,
-    count: table===current_table,
+    count: true,
   }),
   change_tab: (table, current_table) => ({
     metadata_search: table===current_table,
     per_parent_count: table===current_table,
     value_count: table===current_table,
-    count: false,
+    count: true,
   })
 }
 
