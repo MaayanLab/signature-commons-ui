@@ -13,12 +13,13 @@ export function build_where({search, parent, filters}) {
   let where = {}
   let andClauses = []
   let orClauses = []
+  let notClauses = []
 
   for (const q of search) {
     if (q.indexOf(':') !== -1) {
       const [key, ...value] = q.split(':')
       if (key.startsWith('!') || key.startsWith('-')) {
-        andClauses = [...andClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
+        notClauses = [...notClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
       } else if (key.toLowerCase().startsWith('or ')) {
         orClauses = [...orClauses, { ['meta.' + key.substring(3).trim()]: { ilike: '%' + value.join(':') + '%' } }]
       } else if (key.startsWith('|')) {
@@ -32,7 +33,7 @@ export function build_where({search, parent, filters}) {
         // and not
         const slist = q.substring(1).trim().split(" ")
         const query = slist.map(s=>({ meta: {fullTextSearch: { ne: s }} } ))
-        andClauses = [...andClauses, ...query]
+        notClauses = [...notClauses, ...query]
         // andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim() } } }]
       } else if (q.toLowerCase().startsWith('or ')) {
         // const slist = q.substring(3).trim().split(" ")
@@ -68,11 +69,29 @@ export function build_where({search, parent, filters}) {
   } else {
     where['and'] = andClauses
   }
+  if (notClauses.length > 0) {
+    if (where.and !==undefined){
+      where = {
+        ...where,
+        and: [
+          ...where.and,
+          ...notClauses
+        ]
+      }
+    }else if (where.or !== undefined){
+      where = {
+        and: [
+          {...where},
+          ...notClauses
+        ]
+      }
+    }
+  }
 
   if (filters!==undefined){
     if (where.and === undefined){
       where = {
-        and: [...where]
+        and: [{...where}]
       }
     }
     for (const [filter, values] of Object.entries(filters)){
