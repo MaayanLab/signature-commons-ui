@@ -11,6 +11,8 @@ import { call } from '../../util/call'
 import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
+import SignatureSearch from '../SignatureSearch'
+
 import Pages from '../Pages'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
@@ -115,6 +117,12 @@ class Home extends React.PureComponent {
     />
     )
 
+  signature_search = (props) => (
+    <SignatureSearch 
+      {...props}
+    />
+    )
+
   pages = (props) => {
     return(
       <Pages {...props}/>
@@ -141,6 +149,12 @@ class Home extends React.PureComponent {
               component={this.metadata_search}
             /> : null
           }
+          {this.props.ui_values.nav.signature_search ?
+            <Route
+              path={"/SignatureSearch/:type/:id"}
+              component={this.signature_search}
+            /> : null
+          }
           {this.props.ui_values.nav.resources ?
             <Route
               path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
@@ -153,7 +167,8 @@ class Home extends React.PureComponent {
           />
           <Route
             path="/not-found"
-            component={(props)=><div />}//{this.landing}
+            component={(props)=>{
+            return <div />}}//{this.landing}
           />
           <Route
             path="/"

@@ -9,7 +9,7 @@ import { makeTemplate } from '../../util/makeTemplate'
 import { RunningSum, dataFromResults } from '@dcic/signature-commons-ui-components-running-sum'
 import { fetch_data } from '../../util/fetch/data'
 import Lazy from '../Lazy'
-
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core'
 const one_tailed_columns = [
   'P-Value',
   'Odds Ratio',

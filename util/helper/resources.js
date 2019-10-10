@@ -18,7 +18,6 @@ export async function get_library_resources() {
   const { response } = await fetch_meta({
     endpoint: '/resources',
   })
-  console.log(response)
 
   // fetch libraries on database
   const { response: libraries } = await fetch_meta({

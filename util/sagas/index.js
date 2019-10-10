@@ -10,6 +10,7 @@ import { operationIds,
   query_overlap,
   query_rank,
   fetch_bulk_counts_per_parent } from "../helper/fetch_methods"
+import {parse_entities} from "../helper/misc"
 import { fetchMetaDataSucceeded,
   fetchMetaDataFailed,
   fetchMetaDataAborted,
@@ -20,7 +21,7 @@ import { fetchMetaDataSucceeded,
   findSignaturesFailed } from "../redux/actions"
 import { getStateFromStore } from "./selectors"
 import Model from "../helper/model"
-
+import uuid5 from 'uuid5'
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -239,15 +240,57 @@ export function* workFindSignature(action) {
   try {
       let { input, props } = action
       if (input.type==="Overlap"){
-        console.log(input)
-        const signature_result = yield call(query_overlap, { input, controller, ...props } )
-        yield put({type: action_definitions.FIND_SIGNATURES_SUCCEEDED, signature_result})
+        const unresolved_entities = parse_entities(input.geneset)
+        const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
+        const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
+        const signature_id = input.id || uuid5(JSON.stringify(resolved_entities))
+
+        const signature_result = yield call(query_overlap, {
+          input: {
+            entities
+          },
+          controller,
+          ...props
+        })
+        const resuts = {
+          ...signature_result,
+          mismatched,
+          input: {
+            ...input,
+            id: signature_id,
+            entities: resolved_entities,
+          }
+        }
+        yield put(findSignaturesSucceeded(resuts))
       }else if (input.type==="Rank"){
-        console.log(input)
-        const signature_result = yield call(query_rank, { input, controller, ...props } )
-        yield put(findSignaturesSucceeded(signature_result))
+        const unresolved_up_entities = parse_entities(input.up_geneset)
+        const unresolved_down_entities = parse_entities(input.down_geneset)
+        const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
+        const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
+        const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
+        const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
+        const signature_id = input.id || uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
+        const signature_result = yield call(query_rank, { 
+          input: {
+            up_entities: resolved_up_entities,
+            down_entities: resolved_down_entities,
+          },
+        controller,
+        ...props } )
+        const resuts = {
+          ...signature_result,
+          mismatched,
+          input: {
+            ...input,
+            id: signature_id,
+            up_entities: resolved_up_entities,
+            down_entities: resolved_down_entities,
+          }
+        }
+        yield put(findSignaturesSucceeded(resuts))
       }
    } catch (error) {
+      console.log(error)
       yield put(findSignaturesFailed(error))
       controller.abort()
    } finally {

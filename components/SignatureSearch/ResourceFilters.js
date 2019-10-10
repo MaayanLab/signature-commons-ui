@@ -5,6 +5,7 @@ import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
 import M from 'materialize-css'
 import { get_signature } from '../MetadataSearch/download'
+import { makeTemplate } from '../../util/makeTemplate'
 
 export default class ResourceFilters extends React.Component {
   constructor(props) {
@@ -15,43 +16,43 @@ export default class ResourceFilters extends React.Component {
     }
   }
 
-  async componentDidMount() {
-    const input_signature = this.props.match.params.input_signature
-    const type = this.props.match.params.type
-    if (type === 'Overlap' && this.props.input.id !== input_signature) {
-      try {
-        const { data } = await get_signature({item: input_signature})
-        const input = {
-          type,
-          geneset: data.join('\n'),
-          id: input_signature,
-        }
-        this.props.submit(input)
-      } catch (e) {
-        console.warn('No such signature', input_signature)
-      }
-    }
-  }
+  // async componentDidMount() {
+  //   const input_signature = this.props.match.params.input_signature
+  //   const type = this.props.match.params.type
+  //   if (type === 'Overlap' && this.props.input.id !== input_signature) {
+  //     try {
+  //       const { data } = await get_signature({item: input_signature})
+  //       const input = {
+  //         type,
+  //         geneset: data.join('\n'),
+  //         id: input_signature,
+  //       }
+  //       this.props.submit(input)
+  //     } catch (e) {
+  //       console.warn('No such signature', input_signature)
+  //     }
+  //   }
+  // }
 
-  async componentDidUpdate(prevProps) {
-    const input_signature = this.props.match.params.input_signature
-    const type = this.props.match.params.type
-    if (input_signature !== prevProps.match.params.input_signature) {
-      if (type === 'Overlap' && this.props.input.id !== input_signature) {
-        try {
-          const { data } = await get_signature({item: input_signature})
-          const input = {
-            type,
-            geneset: data.join('\n'),
-            id: input_signature,
-          }
-          this.props.submit(input)
-        } catch (e) {
-          console.warn('No such signature', input_signature)
-        }
-      }
-    }
-  }
+  // async componentDidUpdate(prevProps) {
+  //   const input_signature = this.props.match.params.input_signature
+  //   const type = this.props.match.params.type
+  //   if (input_signature !== prevProps.match.params.input_signature) {
+  //     if (type === 'Overlap' && this.props.input.id !== input_signature) {
+  //       try {
+  //         const { data } = await get_signature({item: input_signature})
+  //         const input = {
+  //           type,
+  //           geneset: data.join('\n'),
+  //           id: input_signature,
+  //         }
+  //         this.props.submit(input)
+  //       } catch (e) {
+  //         console.warn('No such signature', input_signature)
+  //       }
+  //     }
+  //   }
+  // }
 
 
   toggle_show_all = () => this.setState({ show_all: !this.state.show_all })
@@ -59,10 +60,14 @@ export default class ResourceFilters extends React.Component {
   sort_resources() {
     return [...this.props.resources].sort(
         (r1, r2) => {
-          const diff = (((this.props.resource_signatures || {})[r2.meta.Resource_Name] || {}).count || 0) - (((this.props.resource_signatures || {})[r1.meta.Resource_Name] || {}).count || 0)
+          console.log(this.props.resource_signatures[makeTemplate(this.props.name_prop, r1)])
+          console.log(this.props.resource_signatures[makeTemplate(this.props.name_prop, r2)])
+          const diff = (this.props.resource_signatures[makeTemplate(this.props.name_prop, r2)] || 0) - 
+            (this.props.resource_signatures[makeTemplate(this.props.name_prop, r1)] || 0)
           if (diff === 0) {
-            return r1.meta.Resource_Name.localeCompare(r2.meta.Resource_Name)
+            return makeTemplate(this.props.name_prop, r1).localeCompare(makeTemplate(this.props.name_prop, r2))
           } else {
+            console.log(diff)
             return diff
           }
         }
@@ -79,6 +84,7 @@ export default class ResourceFilters extends React.Component {
 
   render() {
     const sorted_resources = this.sort_resources()
+    console.log(sorted_resources)
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
     const xs = 12
@@ -95,8 +101,8 @@ export default class ResourceFilters extends React.Component {
           const count = ((this.props.resource_signatures || {})[resource.meta.Resource_Name] || {}).count
           const btn = count === undefined ? (
             <IconButton
-              alt={resource.meta.Resource_Name}
-              img={resource.meta.icon}
+              alt={makeTemplate(this.props.name_prop, resource)}
+              src={`${makeTemplate(this.props.icon_prop, resource)}`}
               counter={count}
               onClick={call(this.empty_alert)}
             />
@@ -105,8 +111,8 @@ export default class ResourceFilters extends React.Component {
               to={`${this.props.match.url}/${resource.meta.Resource_Name.replace(/ /g, '_')}`}
             >
               <IconButton
-                alt={resource.meta.Resource_Name}
-                img={resource.meta.icon}
+                alt={makeTemplate(this.props.name_prop, resource)}
+                src={`${makeTemplate(this.props.icon_prop, resource)}`}
                 counter={count}
               />
             </Link>

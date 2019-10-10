@@ -31,18 +31,21 @@ class LandingPage extends React.Component {
     super(props)
     const selected_field = Object.keys(props.pie_fields_and_stats)[0]
     this.state = {
-      input: {},
-      searchType: 'metadata',
-      type: 'Overlap',
       scroll: false,
       selected_field,
       pie_meta: props.pie_fields_and_stats[selected_field] || {},
     }
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     this.props.resetSigcom()
   }
+
+  // componentDidUpdate = (prevProps) => {
+  //   const current_type = this.props.match.params.type
+  //   const old_type = prevProps.match.params.type
+  //   console.log(old_type,current_type)
+  // }
 
   scrollToTop = () => {
     scroll.scrollToTop()
@@ -57,15 +60,18 @@ class LandingPage extends React.Component {
     })
   }
 
-  searchCard = (props, searchType) => {
+  searchCard = (props) => {
+    if (["MetadataSearch", "SignatureSearch"].indexOf(props.match.params.searchType) === -1){
+      return (<Redirect to='/not-found' />)
+    }
     return(
-    <SearchCard
-      searchType={searchType}
-      ui_values={this.props.ui_values}
-      classes={this.props.classes}
-      {...props}
-    />
-  )}
+      <SearchCard
+        ui_values={this.props.ui_values}
+        classes={this.props.classes}
+        {...props}
+      />
+    )
+  }
 
   render = () => {
     return(
@@ -81,18 +87,11 @@ class LandingPage extends React.Component {
                 component={(props)=><Redirect to='/MetadataSearch' />}//{this.landing}
               />
               <Route
-                path="/MetadataSearch"
-                component={props=>this.searchCard(props, "MetadataSearch")}
+                path="/:searchType"
+                component={props=>this.searchCard(props)}
               />
-              <Route
-                exact path="/SignatureSearch"
-                component={(props)=><Redirect to='/SignatureSearch/Overlap' />}//{this.landing}
-              />
-              <Route
-                path="/SignatureSearch/:type"
-                component={props=>this.searchCard(props, "SignatureSearch")}
-              />
-              <Route component={(props)=><Redirect to='/not-found' />} />
+              <Route component={(props)=>{
+                return <Redirect to='/not-found' />}} />
             </Switch>
           </Grid>
           { this.props.table_counts.length === 0 ? null :

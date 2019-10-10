@@ -69,12 +69,16 @@ export function initializeSignatureSearch(input){
   return {type:action_definitions.INITIALIZE_SIGNATURE_SEARCH, input}
 }
 
+export function updateInput(input){
+  return {type:action_definitions.UPDATE_INPUT, input}
+}
+
 export function matchEntity(input) {
   return {type: action_definitions.MATCH_ENTITY, input}
 }
 
-export function findSignature(input, props) {
-  return {type: action_definitions.FIND_SIGNATURES, input, props}
+export function findSignature(input) {
+  return {type: action_definitions.FIND_SIGNATURES, input}
 }
 
 export function updateResolvedEntities(input){

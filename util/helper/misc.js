@@ -1,3 +1,5 @@
+import { Set } from 'immutable'
+
 export function get_formated_query(terms) {
   if (Array.isArray(terms)) {
     if (terms.length === 0) {

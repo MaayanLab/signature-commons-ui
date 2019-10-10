@@ -11,10 +11,6 @@ export const initialState = {
   current_table: 'signatures',
   filter_mapper: {},
   pagination_mapper: {},
-  metadata_results: {
-    signatures: null,
-    libraries: null,
-  },
   models: {},
   completed: true,
   loading: false,
@@ -22,9 +18,10 @@ export const initialState = {
   paginating: false,
   loading_matches: false,
   loading_signature: false,
-  signature_input: {},
+  signature_input: {
+    type: "Overlap"
+  },
   signature_results: {},
-  metadata_results: {},
   table_count: {}, // Number of result per table i.e. datasets, signatures
   table_count_per_parent: {}, // Number of result per table grouped by its parents
   operationIDs: {
@@ -76,6 +73,10 @@ function rootReducer(state = initialState, action) {
       models: {},
       loading: false,
       completed: true,
+      signature_input: {
+        type: "Overlap"
+      },
+      loading_signature: false,
     }
   }
 
@@ -156,18 +157,27 @@ function rootReducer(state = initialState, action) {
       loading_matches: false
     }
   }
+  if (action.type === action_definitions.UPDATE_INPUT) {
+    return {
+      ...state,
+      signature_input: action.input,
+    }
+  }
   if (action.type === action_definitions.FIND_SIGNATURES) {
     return {
       ...state,
       signature_input: action.input,
-      loading_signature: true
+      loading_signature: true,
+      signature_results: {}
     }
   }
   if (action.type === action_definitions.FIND_SIGNATURES_SUCCEEDED) {
+    console.log(action)
     return {
       ...state,
       signature_result: action.signature_result,
-      loading_signature: false
+      loading_signature: false,
+      signature_input: action.signature_result.input
     }
   }
   if (action.type === action_definitions.FIND_SIGNATURES_FAILED) {

@@ -3,8 +3,28 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import GenesetSearchBox from './GenesetSearchBox'
 import ResourceFilters from './ResourceFilters'
 import LibraryResults from './LibraryResults'
+import { connect } from "react-redux";
+import { findSignature } from "../../util/redux/actions";
+import { findMatchedSchema } from '../../util/objectMatch'
+import { makeTemplate } from '../../util/makeTemplate'
 
-export default class SignatureSearch extends React.Component {
+const mapStateToProps = state => {
+  return { 
+    ...state.signature_result,
+    ...state.serverSideProps,
+    resources: Object.values(state.serverSideProps.resources),
+    input: state.signature_input,
+  }
+};
+
+function mapDispatchToProps(dispatch) {
+  return {
+    search : (params) => 
+      dispatch(findSignature(input)),
+  }
+}
+
+class SignatureSearch extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -13,19 +33,40 @@ export default class SignatureSearch extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    this.props.resetAllSearches()
+  async componentDidMount() {
+    window.scrollTo(0, 0)
+    const schema = await findMatchedSchema(this.props.resources[0], this.props.schemas)
+    const name_props = Object.values(schema.properties).filter(prop=>prop.name)
+    const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
+    const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
+    const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
+    const description_props = Object.values(schema.properties).filter(prop=>prop.description)
+    const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
+    const sorted_resources = [...this.props.resources].sort((r1, r2) => {
+      const r1_name = makeTemplate(name_prop, r1)
+      const r2_name = makeTemplate(name_prop, r2)
+      return (r1_name.localeCompare(r2_name))
+    })
+    this.setState({
+      schema,
+      sorted_resources,
+      icon_prop,
+      name_prop,
+      description_prop,
+    })
   }
+
 
   resource_filters = (props) => (
     <ResourceFilters
-      resources={Object.values(this.props.resources || {})}
+      resources={this.props.resources||[]}
       resource_signatures={this.props.resource_signatures || {}}
       ui_values={this.props.ui_values}
       input={this.props.input}
       submit={this.props.submit}
       signature_type={this.props.signature_type}
       {...props}
+      {...this.state}
     />
   )
 
@@ -40,6 +81,7 @@ export default class SignatureSearch extends React.Component {
       schemas={this.props.schemas}
       {...this.props}
       {...props}
+      {...this.state}
     />
   )
 
@@ -55,7 +97,7 @@ export default class SignatureSearch extends React.Component {
     return <Redirect to="/" />
   }
 
-  render() {
+  render = () => {
     return (
       <div className="row">
         <Switch>
@@ -68,3 +110,5 @@ export default class SignatureSearch extends React.Component {
     )
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignatureSearch)

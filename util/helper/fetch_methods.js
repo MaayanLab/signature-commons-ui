@@ -5,6 +5,7 @@ import { get_library_resources } from "./resources"
 import { UIValues } from '../ui_values'
 import { makeTemplate } from "../makeTemplate"
 import { parse_entities, maybe_fix_obj} from "./misc"
+import { objectMatch } from "../objectMatch"
 
 export const operationIds = {
   libraries: {
@@ -378,28 +379,36 @@ export async function resolve_entities(props) {
   let entities = Set([...props.entities])
   const entitiy_ids = {}
   // Get fields from schema
-  let ui_values = props.ui_values
-  if (ui_values === undefined){
-    const { response: ui_val } = await fetch_meta_post({
-      endpoint: '/schemas/find',
-      body: {
-        filter: {
-          where: {
-            'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json',
-            'meta.landing': true,
-          },
-        },
+  const schemas = await get_schemas()
+  let {response: entity} = await fetch_meta_post({
+    endpoint: `/entities/find`,
+    body: {
+      filter: {
+        limit: 1,
       },
-    })
-    const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
-    ui_values = UIValues['landing'](values)
+    },
+    signal: props.controller.signal,
+  })
+  let matched_schemas = schemas.filter(
+    (schema) => objectMatch(schema.match, entity[0])
+  )
+  if (matched_schemas.length === 0){
+    console.error("No matchcing schema for", entity[0])
   }
-  const entity_names = ui_values.entity_name
-  const or = entity_names.map(field=>({
-      [field]: {
+  let name_props = Object.keys(matched_schemas[0].properties).filter(prop=>
+    matched_schemas[0].properties[prop].name &&
+    matched_schemas[0].properties[prop].field!==undefined).map(key=>
+    matched_schemas[0].properties[key]
+    )
+  let entity_names = []
+  console.log(name_props)
+  const or = name_props.map(prop=>{
+    entity_names = [...entity_names, prop.field]
+    return({
+      [prop.field]: {
         inq: entities.toArray()
       }
-    }))
+    })})
   const { duration, response: entity_meta_pre } = await fetch_meta_post({
     endpoint: '/entities/find',
     body: {
@@ -441,27 +450,38 @@ export async function resolve_entities(props) {
 }
 
 export async function find_synonyms(props) {
-  let ui_values = props.ui_values
-  if (ui_values === undefined){
-    const { response: ui_val } = await fetch_meta_post({
-      endpoint: '/schemas/find',
-      body: {
-        filter: {
-          where: {
-            'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json',
-            'meta.landing': true,
-          },
-        },
+  const schemas = await get_schemas()
+  let {response: entity} = await fetch_meta_post({
+    endpoint: `/entities/find`,
+    body: {
+      filter: {
+        limit: 1,
       },
-    })
-    const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
-    ui_values = await UIValues['landing'](values)
+    },
+    signal: props.controller.signal,
+  })
+  let matched_schemas = schemas.filter(
+    (schema) => objectMatch(schema.match, entity[0])
+  )
+  if (matched_schemas.length === 0){
+    console.error("No matchcing schema")
   }
-  const entity_names = ui_values.entity_name
-  const entity_synonyms = ui_values.entity_synonyms
-  const or = entity_synonyms.map(field=>({
-      [field]: props.term
-    }))
+  let name_props = Object.keys(matched_schemas[0].properties).filter(prop=>
+    matched_schemas[0].properties[prop].name &&
+    matched_schemas[0].properties[prop].field!==undefined)
+
+  let synonym_props = Object.keys(matched_schemas[0].properties).filter(prop=>
+    matched_schemas[0].properties[prop].synonyms &&
+    matched_schemas[0].properties[prop].field!==undefined)
+  
+  let entity_names = []
+  const or = name_props.map(prop=>{
+    entity_names = [...entity_names, prop.field]
+    return({
+      [prop.field]: {
+        inq: entities.toArray()
+      }
+    })})
   if (entity_synonyms===undefined || entity_synonyms.length === 0){
     return { term: props.term, synonyms: {} }
   }
@@ -481,10 +501,9 @@ export async function find_synonyms(props) {
     signal: props.controller.signal,
   })
   const synonyms = syns.map(s=>{
-    const ent_names = entity_names.map(n=>{
+    const ent_names = name_props.map(prop=>{
       try{
-        const property = '${'+ n +'}'
-        const name = makeTemplate(property, s)
+        const name = makeTemplate(prop.text, s)
         return(name)
       }catch (error) {
         return 'undefined'

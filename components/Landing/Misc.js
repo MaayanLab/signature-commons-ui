@@ -18,7 +18,7 @@ import { FindReplace,
   NearMe,
   Earth } from 'mdi-material-ui'
 
-import GenesetSearchBox from '../SignatureSearch/GenesetSearchBox'
+import SearchBoxWrapper from '../SignatureSearch/SearchBoxWrapper'
 
 const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/MetadataSearchBox'))
 
@@ -206,7 +206,6 @@ const toggleSearch = (e) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  const {searchType} = props
   const { signature_search, metadata_search } = props.ui_values.nav
   if (signature_search && metadata_search) {
     return (
@@ -218,12 +217,16 @@ export const SearchCard = ({ classes, width, ...props }) => {
           justify="center">
           <Grid item xs={12}>
             <div className={classes.toggleContainer}>
-              <ToggleButtonGroup value={searchType} exclusive onChange={toggleSearch}>
-                <ToggleButton value="MetadataSearch">
+              <ToggleButtonGroup value={props.match.params.searchType} exclusive>
+                <ToggleButton value="MetadataSearch"
+                  onClick={(e)=>props.history.push("/MetadataSearch")}
+                >
                   <FileFind />
                   Metadata Search
                 </ToggleButton>
-                <ToggleButton value="SignatureSearch">
+                <ToggleButton value="SignatureSearch"
+                  onClick={(e)=>props.history.push("/SignatureSearch")}
+                >
                   <FindReplace />
                   Signature Search
                 </ToggleButton>
@@ -231,15 +234,12 @@ export const SearchCard = ({ classes, width, ...props }) => {
             </div>
           </Grid>
           <Grid item xs={12}>
-            {props.searchType == 'MetadataSearch' ?
+            {props.match.params.searchType == 'MetadataSearch' ?
               <MetadataSearchBox
                 id='MetadataSearch'
-                ui_values={props.ui_values}
                 {...props}
               /> :
-              <GenesetSearchBox
-                input={{type:'Overlap'}}
-                ui_values={props.ui_values}
+              <SearchBoxWrapper
                 {...props}
               />
             }
@@ -256,9 +256,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
           align="center"
           justify="center">
           <Grid item xs={12}>
-            <GenesetSearchBox
-              input={{type:'Overlap'}}
-              ui_values={props.ui_values}
+            <SearchBoxWrapper
               {...props}
             />
           </Grid>
@@ -276,7 +274,6 @@ export const SearchCard = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <MetadataSearchBox
               id='MetadataSearch'
-              ui_values={props.ui_values}
               {...props}
             />
           </Grid>

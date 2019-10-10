@@ -6,20 +6,31 @@
     "Name": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta['Name']}",
+      "text": "${meta.Name}",
       "name": true,
+      "field": "meta.Name",
       "priority": 1
     },
     "Gene ID": {
       "visibility": 2,
       "type": "text",
-      "text": "${meta['Gene_ID']}",
+      "text": "${meta.Gene_ID}",
+      "field": "meta.Gene_ID",
       "priority": 2
     },
     "Taxon ID": {
       "visibility": 2,
       "type": "text",
-      "text": "${meta['Taxon_ID']}",
+      "text": "${meta.Taxon_ID}",
+      "field": "meta.Taxon_ID",
+      "priority": 3
+    },
+    "Synonyms": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta.Synonyms}",
+      "field": "meta.Synonyms",
+      "synonyms": true,
       "priority": 3
     }
   }
