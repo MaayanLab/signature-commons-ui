@@ -6,7 +6,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}${meta['icon']}",
+      "src": "${PREFIX}/${meta['icon']}",
       "alt": "${meta['Resource_Name']}",
       "text": "${meta['Resource_Name']}",
       "priority": 1,

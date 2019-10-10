@@ -87,14 +87,14 @@ class Home extends React.PureComponent {
   //   />
   // )
 
-  // api = (props) => (
-  //   <SwaggerUI
-  //     url={`${meta_url}/openapi.json`}
-  //     deepLinking={true}
-  //     displayOperationId={true}
-  //     filter={true}
-  //   />
-  // )
+  api = (props) => (
+    <SwaggerUI
+      url={`${meta_url}/openapi.json`}
+      deepLinking={true}
+      displayOperationId={true}
+      filter={true}
+    />
+  )
 
   // collection = (props) => (
   //   <Collection
