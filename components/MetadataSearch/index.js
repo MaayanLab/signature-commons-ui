@@ -260,14 +260,17 @@ class MetadataSearch extends React.Component {
         >
           {this.props.tables.map((table) => {
             const model = this.props.models[table]
-            let count = ''
+            let count_text = ''
+            let count
             if (model!==undefined){
-              count = model.results!==undefined && this.props.completed ? ` (${model.results.count || 0})` : ''
+              count = model.results.count || 0
+              count_text = model.results!==undefined && this.props.completed ? ` (${count})` : ''
             }
+            if (count === 0) return null
             return(
               <Tab
                   key={table}
-                  label={`${this.props.preferred_name[table]}${count}`}
+                  label={`${this.props.preferred_name[table]}${count_text}`}
                 />
               )})}
         </Tabs>
