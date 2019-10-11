@@ -176,12 +176,10 @@ class LandingPage extends React.Component {
                   <Grid item xs md={6}>
                     <div className={this.props.classes.centered}>
                       <WordCloud classes={this.props.classes} stats={this.state.pie_meta.stats}/>
-                      <Typography variant="caption">
-                        Top {this.props.pie_preferred_name} terms
-                      </Typography>
                     </div>
                   </Grid>
                 }
+                <Grid item xs={12}/>
               </Grid>
             </Grid>
           }
