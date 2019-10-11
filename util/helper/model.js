@@ -278,7 +278,8 @@ export default class Model {
       metadata_search,
       value_count,
       count,
-      per_parent_count
+      per_parent_count,
+      value_count_params
     } = operations
     let result = {}
     let response = bulk_response
