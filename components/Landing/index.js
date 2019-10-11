@@ -168,7 +168,7 @@ class LandingPage extends React.Component {
                   <div className={this.props.classes.centered}>
                     <ChartCard cardheight={300} pie_stats={this.state.pie_meta.stats} slice={this.state.pie_meta.slice} color={'Blue'} ui_values={this.props.ui_values}/>
                     <Typography variant="caption">
-                      {`${this.props.pie_table} per ${this.state.pie_meta.preferred_name}`}
+                      {`${this.state.pie_meta.table} per ${this.state.pie_meta.Preferred_Name}`}
                     </Typography>
                   </div>
                 </Grid>
