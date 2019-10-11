@@ -3,6 +3,7 @@ import React from 'react'
 import App, { Container } from 'next/app'
 import { Provider } from "react-redux";
 import dynamic from 'next/dynamic'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Router from 'next/router'
 import NProgress from 'nprogress'
@@ -79,8 +80,8 @@ class App_ extends App {
           {loaded ? (
               <Component {...pageProps} />
           ) : (
-            <div>
-              Loading Page...
+            <div style={{textAlign:"center", marginTop: 100}}>
+              <CircularProgress />
             </div>
           )}
         </Container>
