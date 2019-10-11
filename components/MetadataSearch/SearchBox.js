@@ -52,7 +52,7 @@ import Icon from '@material-ui/core/Icon';
           <li>
             <div>
               <Typography variant="h6">
-                  Search for specific field
+                  Search for a specific field
               </Typography>
               <Typography variant="body2">
                 {'Prefix query with "[desired_field]:", e.g.'}
