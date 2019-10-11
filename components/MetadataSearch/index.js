@@ -160,8 +160,12 @@ class MetadataSearch extends React.Component {
           
           this.props.searchFunction(params)
         }
+        let pagination = this.state.pagination
+        if (this.props.location.state!== undefined){
+          pagination = this.props.location.state.pagination || this.props.location.state.new_filter || false
+        }
         this.setState({
-          pagination: this.props.location.state.pagination || this.props.location.state.new_filter || false
+          pagination
         })
       }
   }
