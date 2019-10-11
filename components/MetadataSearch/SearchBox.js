@@ -180,7 +180,7 @@ export class SearchBox extends React.Component {
               <Grid item xs={12} style={{textAlign: "center"}}>
                 <Button variant="contained"
                   color="primary"
-                  style={{ marginTop: 5, fontSize: 10, padding: 3 }}
+                  style={{ marginTop: 5}}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
                   }>
