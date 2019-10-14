@@ -16,58 +16,19 @@ export default class ResourceFilters extends React.Component {
     }
   }
 
-  // async componentDidMount() {
-  //   const input_signature = this.props.match.params.input_signature
-  //   const type = this.props.match.params.type
-  //   if (type === 'Overlap' && this.props.input.id !== input_signature) {
-  //     try {
-  //       const { data } = await get_signature({item: input_signature})
-  //       const input = {
-  //         type,
-  //         geneset: data.join('\n'),
-  //         id: input_signature,
-  //       }
-  //       this.props.submit(input)
-  //     } catch (e) {
-  //       console.warn('No such signature', input_signature)
-  //     }
-  //   }
-  // }
-
-  // async componentDidUpdate(prevProps) {
-  //   const input_signature = this.props.match.params.input_signature
-  //   const type = this.props.match.params.type
-  //   if (input_signature !== prevProps.match.params.input_signature) {
-  //     if (type === 'Overlap' && this.props.input.id !== input_signature) {
-  //       try {
-  //         const { data } = await get_signature({item: input_signature})
-  //         const input = {
-  //           type,
-  //           geneset: data.join('\n'),
-  //           id: input_signature,
-  //         }
-  //         this.props.submit(input)
-  //       } catch (e) {
-  //         console.warn('No such signature', input_signature)
-  //       }
-  //     }
-  //   }
-  // }
-
 
   toggle_show_all = () => this.setState({ show_all: !this.state.show_all })
-
-  sort_resources() {
-    return [...this.props.resources].sort(
+  
+  sort_resources = () => {
+    return this.props.resources.filter(r=>
+      this.props.resource_signatures[makeTemplate(this.props.name_prop, r)]!==undefined).sort(
         (r1, r2) => {
-          console.log(this.props.resource_signatures[makeTemplate(this.props.name_prop, r1)])
-          console.log(this.props.resource_signatures[makeTemplate(this.props.name_prop, r2)])
-          const diff = (this.props.resource_signatures[makeTemplate(this.props.name_prop, r2)] || 0) - 
-            (this.props.resource_signatures[makeTemplate(this.props.name_prop, r1)] || 0)
+          const diff = (this.props.resource_signatures[makeTemplate(this.props.name_prop, r2)].count) - 
+            (this.props.resource_signatures[makeTemplate(this.props.name_prop, r1)].count)
+          console.log(diff)
           if (diff === 0) {
             return makeTemplate(this.props.name_prop, r1).localeCompare(makeTemplate(this.props.name_prop, r2))
           } else {
-            console.log(diff)
             return diff
           }
         }
@@ -84,10 +45,14 @@ export default class ResourceFilters extends React.Component {
 
   render() {
     const sorted_resources = this.sort_resources()
-    console.log(sorted_resources)
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
     const xs = 12
+    if (sorted_resources.length===0){
+      return(
+        <span>No results found</span>
+      )
+    }
     return (
       <Grid
         container
@@ -103,6 +68,7 @@ export default class ResourceFilters extends React.Component {
             <IconButton
               alt={makeTemplate(this.props.name_prop, resource)}
               src={`${makeTemplate(this.props.icon_prop, resource)}`}
+              description={makeTemplate(this.props.description_prop, resource)}
               counter={count}
               onClick={call(this.empty_alert)}
             />
@@ -113,6 +79,7 @@ export default class ResourceFilters extends React.Component {
               <IconButton
                 alt={makeTemplate(this.props.name_prop, resource)}
                 src={`${makeTemplate(this.props.icon_prop, resource)}`}
+                description={makeTemplate(this.props.description_prop, resource)}
                 counter={count}
               />
             </Link>

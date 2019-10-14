@@ -10,10 +10,10 @@ import { makeTemplate } from '../../util/makeTemplate'
 
 const mapStateToProps = state => {
   return { 
-    ...state.signature_result,
     ...state.serverSideProps,
     resources: Object.values(state.serverSideProps.resources),
-    input: state.signature_input,
+    ...state.signature_result,
+    input: state.signature_result.input,
   }
 };
 
@@ -42,14 +42,14 @@ class SignatureSearch extends React.Component {
     const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
     const description_props = Object.values(schema.properties).filter(prop=>prop.description)
     const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
-    const sorted_resources = [...this.props.resources].sort((r1, r2) => {
-      const r1_name = makeTemplate(name_prop, r1)
-      const r2_name = makeTemplate(name_prop, r2)
-      return (r1_name.localeCompare(r2_name))
-    })
+    // const sorted_resources = [...this.props.resources].sort((r1, r2) => {
+    //   const r1_name = makeTemplate(name_prop, r1)
+    //   const r2_name = makeTemplate(name_prop, r2)
+    //   return (r1_name.localeCompare(r2_name))
+    // })
     this.setState({
       schema,
-      sorted_resources,
+      //sorted_resources,
       icon_prop,
       name_prop,
       description_prop,

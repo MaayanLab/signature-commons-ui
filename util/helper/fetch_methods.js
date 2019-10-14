@@ -641,6 +641,7 @@ export async function query_overlap(props){
     // })
     library_signatures[sig.library].signatures.push({
       ...sig,
+      library: libraries[sig.library],
     })
     const resource = library_resource[sig.library]
     if (resource_signatures[resource] === undefined) {
@@ -788,6 +789,7 @@ export async function query_rank(props) {
     // })
     library_signatures[sig.library].signatures.push({
       ...sig,
+      library: libraries[sig.library],
     })
 
     const resource = library_resource[sig.library]

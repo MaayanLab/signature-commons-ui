@@ -21,7 +21,7 @@ export const initialState = {
   signature_input: {
     type: "Overlap"
   },
-  signature_results: {},
+  signature_result: {},
   table_count: {}, // Number of result per table i.e. datasets, signatures
   table_count_per_parent: {}, // Number of result per table grouped by its parents
   operationIDs: {
@@ -168,7 +168,7 @@ function rootReducer(state = initialState, action) {
       ...state,
       signature_input: action.input,
       loading_signature: true,
-      signature_results: {}
+      signature_result: {}
     }
   }
   if (action.type === action_definitions.FIND_SIGNATURES_SUCCEEDED) {

@@ -71,24 +71,18 @@ export const rank_data_results = async ({ up, down, signature, database }) => {
 }
 
 export default class LibraryResults extends React.Component {
-  check_column = ({ schema, prop, lib }) => {
+  check_column = ({ schema, prop, item }) => {
     if (schema.properties[prop].text === undefined) {
       return false
-    } else {
-      const sig_keys = this.props.signature_keys[lib]
-      const col_src = schema.properties[prop].text.replace(/meta\./g, '').replace(/meta\[\'/g, '').replace(/']/g, '').replace(/\${/g, '').replace(/}/g, '')
-      if (schema.properties[prop].columnType === 'number') {
-        return true
-      } else if (schema.properties[prop].columnType === 'meta') {
-        return false
-      } else if (sig_keys.indexOf(col_src) > -1) {
-        return true
-      } else {
-        const substring = sig_keys.filter((k) => schema.properties[prop].text.indexOf(k) > -1)
-        if (substring.length > 0) {
-          return true
-        }
-      }
+    } else if(makeTemplate(schema.properties[prop].text,item)!=='undefined'){
+      return true
+      // const sig_keys = this.props.signature_keys[lib]
+      
+      // if (schema.properties[prop].columnType === 'number') {
+      //   return true
+      // } else if (schema.properties[prop].columnType === 'meta') {
+      //   if 
+      // }
     }
     return false
   }
@@ -112,9 +106,8 @@ export default class LibraryResults extends React.Component {
     const lib = sigs[0].library.id
     const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
     const cols = sorted_entries.filter(
-        (entry) => {
-          const prop = entry[0]
-          if (this.check_column({ schema, prop, lib })) {
+        ([prop, val]) => {
+          if (this.check_column({ schema, prop, item:sigs[0] })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
                 return true
