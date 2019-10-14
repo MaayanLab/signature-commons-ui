@@ -36,7 +36,7 @@ const InformativeButton = (props) => {
         </Typography>||''}
         placement="bottom">
       <Button className={classes.button}>
-        <Badge className={classes.margin} badgeContent={counter===undefined ? 0: counter} color="secondary">
+        <Badge className={classes.margin} badgeContent={counter===undefined ? 0: counter} color="error">
           <Grid container>
             <Grid item xs={12}>
               <img className={classes.image} alt={alt} src={src}/>
