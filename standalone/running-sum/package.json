@@ -8,7 +8,7 @@
   "scripts": {
     "build": "microbundle build --jsx React.createElement --globals react=React",
     "dev": "parcel serve public/index.html -d build",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "author": "Daniel J. B. Clarke <u8sand@gmail.com>",
   "license": "Apache-2.0",
