@@ -107,7 +107,7 @@ class LandingPage extends React.Component {
                 <Grid item xs={12} sm={this.props.barcounts === undefined || Object.keys(this.props.barcounts).length === 0 ? true : 6}>
                   <div className={this.props.classes.centered}>
                     <ChartCard cardheight={300} pie_stats={this.props.resource_signatures} resources color={'Blue'} ui_values={this.props.ui_values}/>
-                    <Typography variant="caption">
+                    <Typography variant="subtitle2">
                       {this.props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}
                     </Typography>
                   </div>
@@ -122,7 +122,7 @@ class LandingPage extends React.Component {
                         ui_values={this.props.ui_values}/>) : (
                       null
                       )}
-                      <Typography variant="caption">
+                      <Typography variant="subtitle2">
                         {this.props.ui_values.bar_chart.Caption}
                       </Typography>
                     </div>
@@ -133,7 +133,7 @@ class LandingPage extends React.Component {
                         ui_values={this.props.ui_values}/> :
                         null
                       }
-                      <Typography variant="caption">
+                      <Typography variant="subtitle2">
                         Bar Chart
                       </Typography>
                     </div>
@@ -167,7 +167,7 @@ class LandingPage extends React.Component {
                 <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
                   <div className={this.props.classes.centered}>
                     <ChartCard cardheight={300} pie_stats={this.state.pie_meta.stats} slice={this.state.pie_meta.slice} color={'Blue'} ui_values={this.props.ui_values}/>
-                    <Typography variant="caption">
+                    <Typography variant="subtitle2">
                       {`${this.state.pie_meta.table} per ${this.state.pie_meta.Preferred_Name}`}
                     </Typography>
                   </div>
@@ -179,6 +179,10 @@ class LandingPage extends React.Component {
                     </div>
                   </Grid>
                 }
+                <Grid item xs={12}>
+                  <BottomLinks handleChange={this.props.handleChange}
+                    {...this.props} />
+                </Grid>
                 <Grid item xs={12}/>
               </Grid>
             </Grid>
