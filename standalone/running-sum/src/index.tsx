@@ -47,7 +47,7 @@ export function dataFromResults({ input, output }: {
   }
   
   data.sort(function(a,b) {
-    return a.x - b.x;
+    return b.x - a.x;
   });
   
   data["columns"] = ["x", "y", "b"]
