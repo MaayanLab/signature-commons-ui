@@ -237,6 +237,7 @@ class MetadataSearchResults extends React.Component {
           sortingFunction={this.sortBy}
           onChipClick={this.onChipClick}
           current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
+          history={this.props.history}
         />
         <div align="right">
           <TablePagination

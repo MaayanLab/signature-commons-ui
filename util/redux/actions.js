@@ -77,8 +77,12 @@ export function matchEntity(input) {
   return {type: action_definitions.MATCH_ENTITY, input}
 }
 
-export function findSignature(input) {
+export function findSignatures(input) {
   return {type: action_definitions.FIND_SIGNATURES, input}
+}
+
+export function findSignaturesFromId(search_type, id) {
+  return {type: action_definitions.FIND_SIGNATURES_FROM_ID, search_type, id}
 }
 
 export function updateResolvedEntities(input){

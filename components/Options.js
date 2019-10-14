@@ -67,21 +67,10 @@ const EnrichrDialog = (props) => {
   )
 }
 
-async function submit_sigcom(item, submit, ui_schemas) {
-  const schemas = await fetch_schemas()
-  const signature = await get_signature({ item })
-  let data
-  if (signature.library.dataset_type === 'rank_matrix') {
-    data = signature.data.slice(0, 250).map(d=>get_label(d, schemas))
-  } else {
-    data = signature.data.map(d=>get_label(d, schemas))
-  }
-  const input = {
-    id: item.id,
-    type: 'Overlap',
-    geneset: data.join('\n'),
-  }
-  submit(input)
+async function submit_sigcom(item, history) {
+  history.push({
+    pathname: `/SignatureSearch/Overlap/${item.id}`
+  })
 }
 
 export default class Options extends React.Component {
@@ -163,7 +152,7 @@ export default class Options extends React.Component {
 
   handleSubmitSigcom = () => {
     this.handleClose()
-    submit_sigcom(this.props.item, props.submit, ui_schemas = this.props.schemas)
+    submit_sigcom(this.props.item, this.props.history)
   }
 
   handleSubmitEnrichr = () => {

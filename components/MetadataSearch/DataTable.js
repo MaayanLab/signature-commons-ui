@@ -123,7 +123,7 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
               <Grid item>
                 { props.current_table === "libraries" ? null:
                 <Options type={props.current_table} item={data.original} ui_values={ui_values}
-                    submit={()=>{console.log("submitted")}} schemas={schemas}/>
+                    submit={()=>{console.log("submitted")}} schemas={schemas} history={props.history}/>
                 }
               </Grid>
               { data.processed.scores !== undefined ?

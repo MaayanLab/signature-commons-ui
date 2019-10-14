@@ -178,12 +178,7 @@ export async function download_signatures_text(item, schemas=undefined, provider
   NProgress.start()
   if (schemas===undefined) schemas = await fetch_schemas()
   if (provider===undefined) provider = new DataProvider()
-  const signature = await provider.serialize_signature(item, {
-    resource: false,
-    library: true,
-    data: true,
-    validator: true
-  })
+  const signature = await get_signature({item, schemas, provider})
   const filename = get_label(signature, schemas)
   let data
   if (signature.library.dataset_type === 'rank_matrix') {
@@ -236,29 +231,57 @@ export async function get_signature({item, schemas, provider, opts}) {
   }
   const signature = await provider.serialize_signature(item, opts)
   return(signature)
-  // const signature = await provider.resolve_signature(item)
-  // const signature_id = await signature.id
-  // const signature_meta = await signature.meta
-  // const signature_validator = await signature.validator
-  // console.log(signature_id)
-  // const library = await get_library({item: await signature.library, provider, schemas})
-  // const signature_data = await signature.data
-  // console.log(signature_data)
-  // const entities = get_entities({items: signature_data, provider, schemas})
-  // console.log({
-  //   id: signature_id,
-  //   $validator: signature_validator,
-  //   meta: signature_meta,
-  //   library,
-  //   entities
-  // })
-  // return ({
-  //   id: signature_id,
-  //   $validator: signature_validator,
-  //   meta: signature_meta,
-  //   library,
-  //   entities
-  // })
+}
+
+export async function get_signature_data({item, schemas, provider, search_type}) {
+  if (schemas===undefined) schemas = await fetch_schemas()
+  if (provider===undefined) provider = new DataProvider()
+  const signature = await get_signature({item, schemas, provider})
+  let data
+  if (signature.library.dataset_type === 'rank_matrix') {
+    if (search_type==="Overlap"){
+      data = {
+        entities: signature.data.slice(0, 250).reduce((acc,item)=>{
+          acc = {
+            ...acc,
+            [get_label(item, schemas)]: item
+          }
+          return acc
+        },{})
+      }
+    }else {
+      data = {
+        up_entities: signature.data.slice(0, 250).reduce((acc,item)=>{
+          acc = {
+            ...acc,
+            [get_label(item, schemas)]: item
+          }
+          return acc
+        },{}),
+        down_entities: signature.data.slice((signature.data.length-250)).reduce((acc,item)=>{
+          acc = {
+            ...acc,
+            [get_label(item, schemas)]: item
+          }
+          return acc
+        },{}),
+      }
+    }
+  } else {
+    if (search_type==="Rank"){
+      throw "non rank matrix genesets can't be fed to Rank search"
+    }
+    data = {
+      entities: signature.data.reduce((acc,item)=>{
+          acc = {
+            ...acc,
+            [get_label(item, schemas)]: item
+          }
+          return acc
+        },{})
+    }
+  }
+  return(data)
 }
 
 export async function download_library_gmt(item, schemas=undefined, provider=undefined) {

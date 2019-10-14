@@ -6,6 +6,7 @@ import { call } from '../../util/call'
 import M from 'materialize-css'
 import { get_signature } from '../MetadataSearch/download'
 import { makeTemplate } from '../../util/makeTemplate'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default class ResourceFilters extends React.Component {
   constructor(props) {
@@ -25,7 +26,6 @@ export default class ResourceFilters extends React.Component {
         (r1, r2) => {
           const diff = (this.props.resource_signatures[makeTemplate(this.props.name_prop, r2)].count) - 
             (this.props.resource_signatures[makeTemplate(this.props.name_prop, r1)].count)
-          console.log(diff)
           if (diff === 0) {
             return makeTemplate(this.props.name_prop, r1).localeCompare(makeTemplate(this.props.name_prop, r2))
           } else {
@@ -48,7 +48,13 @@ export default class ResourceFilters extends React.Component {
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
     const xs = 12
-    if (sorted_resources.length===0){
+    if (this.props.loading){
+      return(
+        <div style={{textAlign:"center"}}>
+          <CircularProgress />
+        </div>
+      )
+    }else if (sorted_resources.length===0){
       return(
         <span>No results found</span>
       )

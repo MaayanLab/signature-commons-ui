@@ -4,7 +4,7 @@ import GenesetSearchBox from './GenesetSearchBox'
 import ResourceFilters from './ResourceFilters'
 import LibraryResults from './LibraryResults'
 import { connect } from "react-redux";
-import { findSignature } from "../../util/redux/actions";
+import { findSignaturesFromId } from "../../util/redux/actions";
 import { findMatchedSchema } from '../../util/objectMatch'
 import { makeTemplate } from '../../util/makeTemplate'
 
@@ -14,13 +14,14 @@ const mapStateToProps = state => {
     resources: Object.values(state.serverSideProps.resources),
     ...state.signature_result,
     input: state.signature_result.input,
+    loading: state.loading_signature,
   }
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    search : (params) => 
-      dispatch(findSignature(input)),
+    search : (type, id) => 
+      dispatch(findSignaturesFromId(type, id)),
   }
 }
 
@@ -33,7 +34,7 @@ class SignatureSearch extends React.Component {
     }
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     window.scrollTo(0, 0)
     const schema = await findMatchedSchema(this.props.resources[0], this.props.schemas)
     const name_props = Object.values(schema.properties).filter(prop=>prop.name)
@@ -42,18 +43,23 @@ class SignatureSearch extends React.Component {
     const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
     const description_props = Object.values(schema.properties).filter(prop=>prop.description)
     const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
-    // const sorted_resources = [...this.props.resources].sort((r1, r2) => {
-    //   const r1_name = makeTemplate(name_prop, r1)
-    //   const r2_name = makeTemplate(name_prop, r2)
-    //   return (r1_name.localeCompare(r2_name))
-    // })
+    if (this.props.input===undefined || this.props.match.params.id !== this.props.input.id){
+      this.props.search(this.props.match.params.type, this.props.match.params.id)
+    }
     this.setState({
       schema,
-      //sorted_resources,
       icon_prop,
       name_prop,
       description_prop,
     })
+  }
+
+  componentDidUpdate = async (prevProps) => {
+    if (prevProps.loading===false && this.props.loading === false){
+      if (this.props.input===undefined || this.props.match.params.id !== this.props.input.id){
+        this.props.search(this.props.match.params.type, this.props.match.params.id)
+      }
+    }
   }
 
 
@@ -65,6 +71,7 @@ class SignatureSearch extends React.Component {
       input={this.props.input}
       submit={this.props.submit}
       signature_type={this.props.signature_type}
+      loading={this.props.loading}
       {...props}
       {...this.state}
     />

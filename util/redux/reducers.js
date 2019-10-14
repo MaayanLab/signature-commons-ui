@@ -76,6 +76,7 @@ function rootReducer(state = initialState, action) {
       signature_input: {
         type: "Overlap"
       },
+      signature_result: {},
       loading_signature: false,
     }
   }
@@ -171,8 +172,15 @@ function rootReducer(state = initialState, action) {
       signature_result: {}
     }
   }
+  if (action.type === action_definitions.FIND_SIGNATURES_FROM_ID) {
+    return {
+      ...state,
+      signature_input: action.input,
+      loading_signature: true,
+      signature_result: {}
+    }
+  }
   if (action.type === action_definitions.FIND_SIGNATURES_SUCCEEDED) {
-    console.log(action)
     return {
       ...state,
       signature_result: action.signature_result,

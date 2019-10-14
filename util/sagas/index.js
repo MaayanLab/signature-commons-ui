@@ -20,11 +20,13 @@ import { fetchMetaDataSucceeded,
   resetSigcom,
   findSignaturesFailed } from "../redux/actions"
 import { getStateFromStore } from "./selectors"
+import { get_signature_data } from  "../../components/MetadataSearch/download"
 import Model from "../helper/model"
 import uuid5 from 'uuid5'
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
+  action_definitions.FIND_SIGNATURES_FROM_ID,
   action_definitions.MATCH_ENTITY,
   action_definitions.FETCH_METADATA,
   action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
@@ -238,7 +240,7 @@ export function* workFindSignature(action) {
    }
   const controller = new AbortController()
   try {
-      let { input, props } = action
+      let { input } = action
       if (input.type==="Overlap"){
         const unresolved_entities = parse_entities(input.geneset)
         const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
@@ -250,9 +252,8 @@ export function* workFindSignature(action) {
             entities
           },
           controller,
-          ...props
         })
-        const resuts = {
+        const results = {
           ...signature_result,
           mismatched,
           input: {
@@ -261,7 +262,7 @@ export function* workFindSignature(action) {
             entities: resolved_entities,
           }
         }
-        yield put(findSignaturesSucceeded(resuts))
+        yield put(findSignaturesSucceeded(results))
       }else if (input.type==="Rank"){
         const unresolved_up_entities = parse_entities(input.up_geneset)
         const unresolved_down_entities = parse_entities(input.down_geneset)
@@ -276,8 +277,8 @@ export function* workFindSignature(action) {
             down_entities: resolved_down_entities,
           },
         controller,
-        ...props } )
-        const resuts = {
+        })
+        const results = {
           ...signature_result,
           mismatched,
           input: {
@@ -287,7 +288,7 @@ export function* workFindSignature(action) {
             down_entities: resolved_down_entities,
           }
         }
-        yield put(findSignaturesSucceeded(resuts))
+        yield put(findSignaturesSucceeded(results))
       }
    } catch (error) {
       console.log(error)
@@ -309,11 +310,74 @@ function* watchFindSignature() {
   yield takeLatest(allWatchedActions, workFindSignature)
 }
 
+export function* workFindSignatureFromId(action) {
+  if (action.type !== action_definitions.FIND_SIGNATURES_FROM_ID){
+    return
+   }
+  const controller = new AbortController()
+  try {
+      let { id, search_type } = action
+      const data = yield call(get_signature_data, {item: id, search_type})
+      let input = {
+        type: search_type,
+        ...data
+      }
+      if (input.type==="Overlap"){
+        const signature_id = id
+
+        const signature_result = yield call(query_overlap, {
+          input,
+          controller,
+        })
+        const results = {
+          ...signature_result,
+          input: {
+            ...input,
+            id: signature_id,
+          }
+        }
+        yield put(findSignaturesSucceeded(results))
+      }else if (input.type==="Rank"){
+        const signature_id = id
+        const signature_result = yield call(query_rank, { 
+          input,
+          controller,
+        })
+        const results = {
+          ...signature_result,
+          input: {
+            ...input,
+            id: signature_id,
+          }
+        }
+        yield put(findSignaturesSucceeded(results))
+      }
+   } catch (error) {
+      console.log(error)
+      yield put(findSignaturesFailed(error))
+      controller.abort()
+   } finally {
+      if (yield cancelled()){
+        controller.abort()
+        yield put(findSignaturesFailed("aborted"))
+      }
+   }
+}
+
+function* watchFindSignatureFromId() {
+  // const task = yield takeEvery([action_definitions.FETCH_METADATA_COUNT], workMatchEntities)
+  // for (const t in task){
+  //   yield cancel(task)
+  // }
+  yield takeLatest(allWatchedActions, workFindSignatureFromId)
+}
+
 export default function* rootSaga() {
   yield all([
       watchFetchMetaData(),
       watchMatchEntities(),
       watchFindSignature(),
       watchResetSigcom(),
+      watchFindSignatureFromId()
     ]);
 }

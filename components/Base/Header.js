@@ -79,27 +79,6 @@ const Header = (props) => {
           <Nav id="nav-mobile" className="right hide-on-med-and-down" {...props} />
         </div>
         <Nav className="sidenav" id="mobile-menu" {...props}/>
-
-        {paths.length <= 3 ? null : (
-          <div className="nav-wrapper grey">
-            <div className="row">
-              <div className="col s12">
-                {paths.slice(1).map((path, i) => {
-                  const href = paths.slice(0, i + 2).join('/')
-                  return (
-                    <Link
-                      key={href}
-                      to={href}
-                      className="breadcrumb"
-                    >
-                      {path.replace(/_/g, ' ')}
-                    </Link>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-        )}
       </nav>
     </header>
   )

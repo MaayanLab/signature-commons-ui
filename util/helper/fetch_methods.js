@@ -191,7 +191,7 @@ export const fetch_metadata = async ({
   ...props
 }) => {
   const { query, aggregate } = search_params
-  console.log(search_params)
+  
   let bulk_params = []
   if (query!==undefined){
     const operationId = operationIds[table].find
@@ -272,7 +272,7 @@ export const fetch_metadata = async ({
       }
     }
   }
-  console.log(metadata_search_result)
+  
   return metadata_search_result
 }
 
@@ -323,7 +323,7 @@ export async function metadataSearcher({search,
   where,
   search_filters,
   controller}) {
-  console.log(search_filters)
+  
   let {limit, skip, filters} = search_filters
   if (limit===undefined) limit = 10  
   if (where===undefined && search!==undefined) where = build_where(search)
@@ -401,7 +401,7 @@ export async function resolve_entities(props) {
     matched_schemas[0].properties[key]
     )
   let entity_names = []
-  console.log(name_props)
+  
   const or = name_props.map(prop=>{
     entity_names = [...entity_names, prop.field]
     return({
@@ -427,8 +427,15 @@ export async function resolve_entities(props) {
   const entity_meta = maybe_fix_obj(entity_meta_pre)
 
   for (const entity of Object.values(entity_meta)) {
+    const names = name_props.map(prop=>makeTemplate(prop.text, entity))
+    let name
+    if (names.length>0){
+      name = names[0]
+    }else{
+      console.error("Cannot find a name for", entity)
+    }
     const matched_entities = entities.intersect(
-        Set([entity.meta.Name])
+        Set([name])
     )
 
     if (matched_entities.count() > 0) {
@@ -555,7 +562,8 @@ export async function query_overlap(props){
     library_resource = lr
   }
   const resolve_entities = Object.keys(input.entities).map((entity)=>input.entities[entity])
-
+  
+  
   // fix input fields uuid -> id
   const entity_meta = maybe_fix_obj(resolve_entities)
   // get entities
@@ -577,9 +585,12 @@ export async function query_overlap(props){
         })
       )
   )).reduce(
-      (results, { duration: duration_data_n, contentRange: contentRange_data_n, response: result }) => {
+      (results, res) => {
+        
+        const { duration: duration_data_n, contentRange: contentRange_data_n, response: result } = res
         duration_data += duration_data_n
         count_data += (contentRange_data_n || {}).count || 0
+        
         return ({
           ...results,
           ...maybe_fix_obj(result.results),
