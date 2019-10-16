@@ -80,6 +80,7 @@ class ResourceList extends React.PureComponent {
               >
                 <IconButton
                   alt={makeTemplate(name_prop, resource)}
+                  title={makeTemplate(name_prop, resource)}
                   src={`${makeTemplate(icon_prop, resource)}`}
                   description={makeTemplate(description_prop, resource)}
                 />

@@ -299,7 +299,7 @@ class MetadataSearch extends React.Component {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={9} style={{textAlign:"center"}}>
+          <Grid item xs={9} style={{textAlign:"center", height:500, marginTop:50}}>
             <CircularProgress />
           </Grid>
         </Grid>

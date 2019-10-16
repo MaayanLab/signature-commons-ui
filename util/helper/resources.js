@@ -24,17 +24,19 @@ export async function get_library_resources() {
     endpoint: '/libraries',
   })
 
-
-  const resource_meta = response.filter((resource) => !resource.meta.$hidden).reduce((group, data) => {
-    group[data.id] = data
-    return group
-  }, {})
+  const resource_meta = {}
+  for (const resource of response){
+    if (!resource.meta.$hidden){
+      resource_meta[resource.id] = resource
+    }
+  }
   const resources_id = {}
-  const resources = libraries.reduce((acc, lib) => {
+  const resources = {}
+
+  for (const lib of libraries){
     let resource_name
     let icon_src
     const resource_id = lib.resource
-
     // lib resource matches with resource table
     if (resource_id) {
       if (resource_id in resource_meta) {
@@ -60,23 +62,12 @@ export async function get_library_resources() {
           console.warn('source of resource name is not defined, using either Resource_Name or ids')
           resource_name = resource.meta['Resource_Name'] || resource_id
         }
-
-        // let icon_prop =Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].icon)
-
-        // if (icon_prop.length > 0){
-        //   icon_src = makeTemplate(matched_schemas[0].properties[icon_prop[0]].src, resource)
-        //   console.log(resource.meta.icon)
-        //   icon_src = icon_src === 'undefined' ? `${process.env.PREFIX}/static/images/default-black.png`: icon_src
-        // } else {
-        //   console.warn('source of lib icon is not defined, using default')
-        //   icon_src = 'static/images/default-black.png'
-        // }
-        if (!(resource_name in acc)) {
+        if (resources[resource_name]===undefined) {
           resource.libraries = []
           // resource.meta.icon = icon_src || `${process.env.PREFIX}/${resource.meta.icon}`
-          acc[resource_name] = resource
+          resources[resource_name] = resource
         }
-        acc[resource_name].libraries.push({ ...lib })
+        resources[resource_name].libraries.push({ ...lib })
         resources_id[resource_id] = resource
       } else {
         console.error(`Resource not found: ${resource_name}`)
@@ -93,7 +84,7 @@ export async function get_library_resources() {
       }
 
       if (matched_schemas.length < 1) {
-        console.error('Could not match ui-schema for', lib)
+        console.error('Could not match ui-schemas for', lib)
         return null
       }
       let name_prop = Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].name)
@@ -104,22 +95,16 @@ export async function get_library_resources() {
         console.warn('source of lib name is not defined, using either dataset or ids')
         resource_name = lib.dataset || lib.id
       }
-      // let icon_prop = Object.keys(matched_schemas[0].properties).filter(prop=> matched_schemas[0].properties[prop].icon)
-
-      // if (icon_prop.length > 0){
-      //   icon_src = makeTemplate(matched_schemas[0].properties[icon_prop[0]].src, lib)
-      //   icon_src = icon_src === 'undefined' ? `${process.env.PREFIX}/static/images/default-black.png`: icon_src
-      // } else {
-      //   console.warn('source of lib icon is not defined, using default')
-      //   icon_src = 'static/images/default-black.png'
-      // }
-      acc[resource_name] = {
-        ...lib,
-        libraries: [lib],
+      // render only library as resource if resource table is empty
+      if (response.length === 0){
+        resources[resource_name] = {
+          ...lib,
+          libraries: [lib],
+        }
       }
     }
-    return acc
-  }, {})
+  }
+  
   const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
 
   const library_resource = Object.keys(resources).reduce((groups, resource) => {

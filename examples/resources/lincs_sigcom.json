@@ -19,9 +19,9 @@
       "visibility": 1
     },
     "Image": {
-      "alt": "${meta.creators.affiliations.name}",
+      "alt": "${meta.name}",
       "src": "${PREFIX}/${meta.extraProperties[0].values[0]}",
-      "text": "${meta.creators.affiliations.name}",
+      "text": "${meta.name}",
       "icon": true,
       "name": true,
       "type": "img",
@@ -29,9 +29,9 @@
       "visibility": 1
     },
     "Description": {
-      "text": "${meta['Description']}",
+      "text": "${meta['description']}",
       "type": "text",
-      "field": "Description",
+      "field": "description",
       "priority": 2,
       "visibility": 0,
       "description": true,

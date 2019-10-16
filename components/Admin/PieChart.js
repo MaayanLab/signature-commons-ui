@@ -1,7 +1,7 @@
 // Code taken from Rechart example
 // http://recharts.org/en-US/examples/CustomActiveShapePieChart
 import React, { PureComponent } from 'react'
-import { PieChart as Chart, Pie, Sector } from 'recharts'
+import { PieChart as Chart, Pie, Sector, Text } from 'recharts'
 
 const ActiveShape = (props) => {
   const RADIAN = Math.PI / 180
@@ -21,7 +21,7 @@ const ActiveShape = (props) => {
 
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} fontSize={10} {...props.pie_chart_style.Text_Label}>{payload.label}</text>
+      <Text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} width={50} fontSize={10} {...props.pie_chart_style.Text_Label}>{payload.label}</Text>
       <Sector
         cx={cx}
         cy={cy}

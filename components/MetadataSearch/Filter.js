@@ -37,15 +37,7 @@ export default class Filter extends React.Component {
     }
     if (this.props.data_count.length === 0){
       return(
-        <Card style={{
-          height: 300,
-          width: '100%',
-          overflow: "scroll",
-        }}>
-          <CardContent style={{textAlign: "center"}}>
-            No Results
-          </CardContent>
-        </Card>
+        null
       )
     }
     const sorted = this.props.data_count.sort((a, b) => b.count - a.count)

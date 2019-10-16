@@ -47,14 +47,9 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
         processed.name = val.text || data.id
       }
       if (prop.subtitle){
-        console.log("SUB")
-        console.log(val)
         if (val!==null) processed.subtitle = val.text
       }
       if (prop.icon){
-        console.log("ICON")
-        console.log(val)
-        console.log(data)
         if (val!==null){
           processed.icon = {...val}
         }
@@ -78,7 +73,6 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
     tags = tags.sort((a, b) => a.priority - b.priority)
     if (Object.keys(scores).length>0) processed.scores = scores
     processed.tags = tags || []
-  console.log(processed)
     return {original: data, processed}
   }
 }

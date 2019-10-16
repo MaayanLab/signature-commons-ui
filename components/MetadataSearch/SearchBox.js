@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip'
 import Icon from '@material-ui/core/Icon';
+import Hidden from '@material-ui/core/Hidden';
 
   const Info = (props) => {
     const { classes } = props
@@ -210,13 +211,15 @@ export class SearchBox extends React.Component {
               spacing={24}
               alignItems={'center'}>
               <Grid item xs={12}>
-                <Tooltip title={this.props.Info || <Info {...this.props}/>}
-                  interactive placement="left-start" 
-                  classes={{ tooltip: this.props.classes.tooltip }}>
-                  <Button className={this.props.classes.tooltipButton} >
-                    <span className="mdi mdi-information mdi-24px" />
-                  </Button>
-                </Tooltip>
+                <Hidden mdDown>
+                  <Tooltip title={this.props.Info || <Info {...this.props}/>}
+                    interactive placement="left-start" 
+                    classes={{ tooltip: this.props.classes.tooltip }}>
+                    <Button className={this.props.classes.tooltipButton} >
+                      <span className="mdi mdi-information mdi-24px" />
+                    </Button>
+                  </Tooltip>
+                </Hidden>
                 <Input renderChips={this.renderChips} {...this.props} />
                 <span>&nbsp;&nbsp;</span>
                 <Button variant="contained"
@@ -245,6 +248,15 @@ export class SearchBox extends React.Component {
                   this.props.searchFunction([example])
                 }/>
             ))}
+            <Hidden lgUp>
+              <Tooltip title={this.props.Info || <Info {...this.props}/>}
+                interactive placement="left-start" 
+                classes={{ tooltip: this.props.classes.tooltip }}>
+                <Button className={this.props.classes.tooltipButton} >
+                  <span className="mdi mdi-information mdi-24px" />
+                </Button>
+              </Tooltip>
+            </Hidden>
           </Grid>
         </Grid>
       )

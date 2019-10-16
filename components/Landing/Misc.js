@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
@@ -210,74 +211,77 @@ export const SearchCard = ({ classes, width, ...props }) => {
   if (signature_search && metadata_search) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
-        <Grid container
-          spacing={24}
-          direction={'column'}
-          align="center"
-          justify="center">
-          <Grid item xs={12}>
-            <div className={classes.toggleContainer}>
-              <ToggleButtonGroup value={props.match.params.searchType} exclusive>
-                <ToggleButton value="MetadataSearch"
-                  onClick={(e)=>props.history.push("/MetadataSearch")}
-                >
-                  <FileFind />
-                  Metadata Search
-                </ToggleButton>
-                <ToggleButton value="SignatureSearch"
-                  onClick={(e)=>props.history.push("/SignatureSearch")}
-                >
-                  <FindReplace />
-                  Signature Search
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </div>
+        <CardContent>
+          <Grid container
+            spacing={24}
+            direction={'column'}
+            align="center"
+            justify="center">
+            <Grid item xs={12}>
+              <Typography variant="button" align={"center"} style={{ color:"#FFF", fontSize:30}} gutterBottom>
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              {props.match.params.searchType == 'MetadataSearch' ?
+                <MetadataSearchBox
+                  id='MetadataSearch'
+                  {...props}
+                /> :
+                <SearchBoxWrapper
+                  {...props}
+                />
+              }
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            {props.match.params.searchType == 'MetadataSearch' ?
-              <MetadataSearchBox
-                id='MetadataSearch'
-                {...props}
-              /> :
-              <SearchBoxWrapper
-                {...props}
-              />
-            }
-          </Grid>
-        </Grid>
+        </CardContent>
       </Card>
     )
   } else if (signature_search) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
-        <Grid container
-          spacing={24}
-          direction={'column'}
-          align="center"
-          justify="center">
-          <Grid item xs={12}>
-            <SearchBoxWrapper
-              {...props}
-            />
+        <CardContent>
+          <Grid container
+            spacing={24}
+            direction={'column'}
+            align="center"
+            justify="center">
+            <Grid item xs={12}>
+              <Typography variant="button" align={"center"} style={{ color:"#FFF", fontSize:30}} gutterBottom>
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <SearchBoxWrapper
+                {...props}
+              />
+            </Grid>
           </Grid>
-        </Grid>
+        </CardContent>
       </Card>
     )
   } else if (metadata_search) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
-        <Grid container
-          spacing={24}
-          direction={'column'}
-          align="center"
-          justify="center">
-          <Grid item xs={12}>
-            <MetadataSearchBox
-              id='MetadataSearch'
-              {...props}
-            />
+        <CardContent>
+          <Grid container
+            spacing={24}
+            direction={'column'}
+            align="center"
+            justify="center">
+            <Grid item xs={12}>
+              <Typography variant="button" align={"center"} style={{ color:"#FFF", fontSize:30}} gutterBottom>
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <MetadataSearchBox
+                id='MetadataSearch'
+                {...props}
+              />
+            </Grid>
           </Grid>
-        </Grid>
+        </CardContent>
       </Card>
     )
   } else {

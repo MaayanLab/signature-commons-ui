@@ -14,7 +14,7 @@ export function Nav(props) {
     <ul {...rest}>
       {ui_values.nav.metadata_search ?
         <li
-          className={rest.location.pathname === '/MetadataSearch' ? 'active' : ''}
+          className={rest.location.pathname === '/MetadataSearch' ? '' : ''}
         >
           <Link to={'/MetadataSearch'}>
             Metadata Search
@@ -23,7 +23,7 @@ export function Nav(props) {
       }
       {ui_values.nav.signature_search ?
         <li
-          className={rest.location.pathname === '/SignatureSearch' ? 'active' : ''}
+          className={rest.location.pathname === '/SignatureSearch' ? '' : ''}
         >
           <Link to={'/SignatureSearch'}>
             Signature Search
@@ -32,7 +32,7 @@ export function Nav(props) {
       }
       {ui_values.nav.resources ?
         <li
-          className={rest.location.pathname === `/${ui_values.preferred_name.resources || 'Resources'}` ? 'active' : ''}
+          className={rest.location.pathname === `/${ui_values.preferred_name.resources || 'Resources'}` ? '' : ''}
         >
           <Link to={`/${ui_values.preferred_name.resources || 'Resources'}`}>
             {ui_values.preferred_name.resources || 'Resources'}
@@ -40,7 +40,7 @@ export function Nav(props) {
         </li> : null
       }
       <li
-        className={rest.location.pathname === '/API' ? 'active' : ''}
+        className={rest.location.pathname === '/API' ? '' : ''}
       >
         <Link to="/API">
           API
@@ -78,10 +78,10 @@ const Header = (props) => {
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           <Nav id="nav-mobile" className="right hide-on-med-and-down" {...props} />
         </div>
-        <Nav className="sidenav" id="mobile-menu" {...props}/>
+        <Nav className="sidenav hide-on-large-and-up" id="mobile-menu" {...props}/>
       </nav>
     </header>
   )
 }
 
-export default connect(mapStateToProps)(withRouter((Header)))
+export default connect(mapStateToProps)(withRouter(Header))

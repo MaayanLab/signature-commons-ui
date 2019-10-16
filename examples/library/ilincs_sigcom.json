@@ -9,6 +9,7 @@
       "type": "img",
       "src": "${PREFIX}/static/images/lincs/LINCS.ico",
       "alt": "${meta.title || meta.libraryName || dataset}",
+      "text": "${meta.title || meta.libraryName || dataset}",
       "priority": 1,
       "icon": true,
       "name": true

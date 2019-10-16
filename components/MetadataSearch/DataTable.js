@@ -98,7 +98,7 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="subtitle2">
-                      {data.processed.subtitle}
+                      <i>{data.processed.subtitle}</i>
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
