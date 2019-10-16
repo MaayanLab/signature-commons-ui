@@ -74,6 +74,8 @@ export default class LibraryResults extends React.Component {
   check_column = ({ schema, prop, item }) => {
     if (schema.properties[prop].text === undefined) {
       return false
+    } else if(schema.properties[prop].visibility===0){
+      return false
     } else if(makeTemplate(schema.properties[prop].text,item)!=='undefined'){
       return true
       // const sig_keys = this.props.signature_keys[lib]

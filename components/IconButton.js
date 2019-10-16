@@ -17,7 +17,6 @@ const styles = theme => ({
     overflow: 'visible',
   },
   image: {
-    maxWidth: 60,
     height: 50,
   },
   margin: {
@@ -29,14 +28,17 @@ const styles = theme => ({
 
 const InformativeButton = (props) => {
   let {classes, counter, title, alt, src, description} = props
+  let tooltip_title = ""
+  if (description!==undefined) {
+    tooltip_title = <Typography variant="subtitle2" style={{color:"#FFF"}} gutterBottom>
+              {description}
+            </Typography>
+  }
   return(
-    <Tooltip title={
-        <Typography variant="subtitle2" style={{color:"#FFF"}} gutterBottom>
-          {description}
-        </Typography>||''}
+    <Tooltip title={tooltip_title}
         placement="bottom">
       <Button className={classes.button}>
-        <Badge className={classes.margin} badgeContent={counter===undefined ? 0: counter} color="error">
+        <Badge className={classes.margin} max={9999} badgeContent={counter===undefined ? 0: counter} color="error">
           <Grid container>
             <Grid item xs={12}>
               <img className={classes.image} alt={alt} src={src}/>

@@ -32,7 +32,7 @@
       },
       "type": "text",
       "text": "${meta['p-value']}",
-      "priority": 3
+      "priority": 4
     },
     "Odds Ratio": {
       "visibility": 1,
@@ -44,9 +44,9 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}",
-      "priority": 3
+      "priority": 5
     },
-    "Set Size": {
+    "Gene Set Size": {
       "visibility": 1,
       "condition": {
         "${meta.setsize}": {

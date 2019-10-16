@@ -86,7 +86,7 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
             <Grid container>
               <Grid item md={2} xs={4} style={{textAlign: "center"}}>
                 <CardMedia style={{marginTop:-30}} {...data.processed.icon}>
-                  <IconButton {...data.processed.icon} title={' '}/>
+                  <IconButton {...data.processed.icon}/>
                 </CardMedia>
               </Grid>
               <Grid item md={10} xs={8}>

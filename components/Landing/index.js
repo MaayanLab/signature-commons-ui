@@ -53,9 +53,9 @@ class LandingPage extends React.Component {
 
   handleSelectField = (e) => {
     const value = e.target.value
-    console.log(value)
     const pie_meta = this.props.pie_fields_and_stats[value]
     this.setState({
+      selected_field: value,
       pie_meta,
     })
   }

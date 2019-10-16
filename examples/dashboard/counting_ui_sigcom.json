@@ -1,6 +1,6 @@
 [
   {
-    "Field_Name": "Antibody_Identifier",
+    "Field_Name": "meta.Antibody_Identifier",
     "Preferred_Name": "Antibodies",
     "Preferred_Name_Singular": "Antibody",
     "Type": "string",
@@ -9,7 +9,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "Cell_Line.Name",
+    "Field_Name": "meta.Cell_Line.Name",
     "Preferred_Name": "Cell lines",
     "Preferred_Name_Singular": "Cell line",
     "Type": "object",
@@ -19,7 +19,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "Disease.Name",
+    "Field_Name": "meta.Disease.Name",
     "Preferred_Name": "Diseases",
     "Preferred_Name_Singular": "Disease",
     "Type": "object",
@@ -28,7 +28,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "Metabolite.Name",
+    "Field_Name": "meta.Metabolite.Name",
     "Preferred_Name": "Metabolites",
     "Preferred_Name_Singular": "Metabolite",
     "Type": "object",
@@ -37,7 +37,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "MicroRNA",
+    "Field_Name": "meta.MicroRNA",
     "Preferred_Name": "MicroRNAs",
     "Preferred_Name_Singular": "MicroRNA",
     "Type": "string",
@@ -46,7 +46,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "Phenotype.Name",
+    "Field_Name": "meta.Phenotype.Name",
     "Preferred_Name": "Phenotypes",
     "Preferred_Name_Singular": "Phenotype",
     "Type": "object",
@@ -55,7 +55,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "Pathway.Name",
+    "Field_Name": "meta.Pathway.Name",
     "Preferred_Name": "Pathways",
     "Preferred_Name_Singular": "Pathway",
     "Type": "object",
@@ -64,7 +64,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "Gene.Name",
+    "Field_Name": "meta.Gene.Name",
     "Preferred_Name": "Genes",
     "Preferred_Name_Singular": "Gene",
     "Type": "object",
@@ -74,7 +74,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "PTM",
+    "Field_Name": "meta.PTM",
     "Type": "string",
     "Preferred_Name": "PTMs",
     "Preferred_Name_Singular": "PTM",
@@ -83,7 +83,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "Small_Molecule.Name",
+    "Field_Name": "meta.Small_Molecule.Name",
     "Preferred_Name": "Small Molecules",
     "Preferred_Name_Singular": "Small Molecule",
     "Type": "object",
@@ -93,7 +93,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "Tissue.Name",
+    "Field_Name": "meta.Tissue.Name",
     "Preferred_Name": "Tissues",
     "Preferred_Name_Singular": "Tissue",
     "Type": "object",
@@ -103,7 +103,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "Virus.Name",
+    "Field_Name": "meta.Virus.Name",
     "Preferred_Name": "Viruses",
     "Preferred_Name_Singular": "Virus",
     "Type": "object",
@@ -112,7 +112,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "Assay",
+    "Field_Name": "meta.Assay",
     "Type": "string",
     "Preferred_Name": "Assays",
     "Preferred_Name_Singular": "Assay",
@@ -120,7 +120,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "Readout",
+    "Field_Name": "meta.Readout",
     "Type": "string",
     "Preferred_Name": "Readouts",
     "Preferred_Name_Singular": "Readout",
@@ -128,14 +128,14 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "Organism",
+    "Field_Name": "meta.Organism",
     "Type": "string",
     "Preferred_Name": "Organisms",
     "Table": "signatures",
     "Pie_Count": true
   },
   {
-    "Field_Name": "Perturbation_Type",
+    "Field_Name": "meta.Perturbation_Type",
     "Type": "string",
     "Preferred_Name": "Perturbation Types",
     "Preferred_Name_Singular": "Perturbation Type",
@@ -143,7 +143,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "Program",
+    "Field_Name": "meta.Program",
     "Type": "string",
     "Preferred_Name": "Programs",
     "Preferred_Name_Singular": "Program",
@@ -187,7 +187,7 @@
     "Visible_On_Admin": true
   },
   {
-    "Field_Name": "Year",
+    "Field_Name": "meta.Year",
     "Type": "string",
     "Table": "libraries",
     "Preferred_Name": "Library per year",

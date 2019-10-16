@@ -13,7 +13,7 @@
       "icon": true
     },
     "Library": {
-      "visibility": 1,
+      "visibility": 0,
       "type": "text",
       "text": "CREEDS",
       "priority": 1,
@@ -89,7 +89,7 @@
       },
       "type": "text",
       "text": "${meta['p-value']}",
-      "priority": 4
+      "priority": 5
     },
     "Odds Ratio": {
       "visibility": 1,
@@ -101,9 +101,9 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}",
-      "priority": 4
+      "priority": 6
     },
-    "Set Size": {
+    "Gene Set Size": {
       "visibility": 1,
       "condition": {
         "${meta.setsize}": {

@@ -14,7 +14,7 @@
       "icon": true
     },
     "Library": {
-      "visibility": 1,
+      "visibility": 0,
       "type": "text",
       "text": "${library.meta['Library_name']}",
       "priority": 1,
@@ -151,7 +151,7 @@
       "text": "${meta['p-value']}",
       "sortable": true,
       "score": true,
-      "priority": 6
+      "priority": 7
     },
     "Odds Ratio": {
       "visibility": 1,
@@ -165,9 +165,9 @@
       "text": "${meta.oddsratio}",
       "sortable": true,
       "score": true,
-      "priority": 6
+      "priority": 8
     },
-    "Set Size": {
+    "Gene Set Size": {
       "visibility": 1,
       "condition": {
         "${meta.setsize}": {

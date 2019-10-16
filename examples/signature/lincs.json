@@ -13,7 +13,7 @@
       "icon": true
     },
     "Library": {
-      "visibility": 1,
+      "visibility": 0,
       "type": "text",
       "text": "ConnectivityMap",
       "priority": 1,
@@ -37,21 +37,21 @@
       "visibility": 1,
       "type": "text",
       "text": "${meta.Cell_Line[0].Name}",
-      "priority": 3,
+      "priority": 4,
       "MDI_Icon": "mdi-test-tube"
     },
     "Time point": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.pert_time} ${meta.pert_time_unit}",
-      "priority": 4,
+      "priority": 6,
       "MDI_Icon": "mdi-timer"
     },
     "Perturbation": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.pert_desc === '-666' ? meta.pert_id : meta.pert_desc}",
-      "priority": 4,
+      "priority": 3,
       "MDI_Icon": "mdi-microscope"
     },
     "Concentration": {
@@ -63,7 +63,7 @@
       },
       "type": "text",
       "text": "${meta.pert_dose} ${meta.pert_dose_unit}",
-      "priority": 4,
+      "priority": 5,
       "MDI_Icon": "mdi-eyedropper"
     },
     "P-Value": {
@@ -110,7 +110,7 @@
       "text": "${meta.setsize}",
       "sortable": true,
       "score": true,
-      "priority": 5
+      "priority": 8
     },
     "P-Up": {
       "visibility": 1,
@@ -124,7 +124,7 @@
       "text": "${meta['p-up']}",
       "sortable": true,
       "score": true,
-      "priority": 5
+      "priority": 9
     },
     "P-Down": {
       "visibility": 1,
@@ -138,7 +138,7 @@
       "text": "${meta['p-down']}",
       "sortable": true,
       "score": true,
-      "priority": 5
+      "priority": 10
     },
     "Z-Up": {
       "visibility": 1,
@@ -152,7 +152,7 @@
       "text": "${meta['z-up']}",
       "sortable": true,
       "score": true,
-      "priority": 5
+      "priority": 11
     },
     "Z-Down": {
       "visibility": 1,
@@ -166,7 +166,7 @@
       "text": "${meta['z-down']}",
       "sortable": true,
       "score": true,
-      "priority": 5
+      "priority": 12
     },
     "Log(p) Fisher": {
       "visibility": 1,
@@ -184,7 +184,7 @@
       "text": "${meta['logp-fisher']}",
       "sortable": true,
       "score": true,
-      "priority": 5
+      "priority": 13
     },
     "Log(p) Average":{
       "visibility": 1,
@@ -198,7 +198,7 @@
       "text": "${meta['logp-avg']}",
       "sortable": true,
       "score": true,
-      "priority": 5
+      "priority": 14
     },
     "Direction": {
       "visibility": 1,
@@ -209,7 +209,7 @@
       },
       "type": "text",
       "text": "${meta['direction'] === 1 ? 'up' : 'down'}",
-      "priority": 4,
+      "priority": 7,
       "MDI_Icon": "mdi-arrow-up-down-bold-outline"
     }
   }

@@ -3,7 +3,7 @@
     "landing": true,
     "content": {
       "bar_chart": {
-        "Field_Name": "Year",
+        "Field_Name": "meta.Year",
         "Caption": "Datasets per Year"
       },
       "entity_name": [

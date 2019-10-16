@@ -21,11 +21,9 @@ export default class ResourceFilters extends React.Component {
   toggle_show_all = () => this.setState({ show_all: !this.state.show_all })
   
   sort_resources = () => {
-    return this.props.resources.filter(r=>
-      this.props.resource_signatures[makeTemplate(this.props.name_prop, r)]!==undefined).sort(
+    return this.props.resources.sort(
         (r1, r2) => {
-          const diff = (this.props.resource_signatures[makeTemplate(this.props.name_prop, r2)].count) - 
-            (this.props.resource_signatures[makeTemplate(this.props.name_prop, r1)].count)
+          const diff = (((this.props.resource_signatures || {})[r2.meta.Resource_Name] || {}).count || 0) - (((this.props.resource_signatures || {})[r1.meta.Resource_Name] || {}).count || 0)
           if (diff === 0) {
             return makeTemplate(this.props.name_prop, r1).localeCompare(makeTemplate(this.props.name_prop, r2))
           } else {
