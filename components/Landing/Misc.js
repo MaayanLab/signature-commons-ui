@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
+import yellow from '@material-ui/core/colors/yellow';
 
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
@@ -218,8 +219,10 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ color:"#FFF", fontSize:30}} gutterBottom>
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()}
+              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+                <span class="mdi mdi-cloud-search mdi-36px"/>
+                &nbsp;&nbsp;
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -247,8 +250,10 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ color:"#FFF", fontSize:30}} gutterBottom>
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()}
+              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+                <span class="mdi mdi-cloud-search mdi-36px"/>
+                &nbsp;&nbsp;
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -270,8 +275,10 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ color:"#FFF", fontSize:30}} gutterBottom>
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()}
+              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+                <span class="mdi mdi-cloud-search mdi-36px"/>
+                &nbsp;&nbsp;
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>

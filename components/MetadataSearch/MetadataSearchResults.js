@@ -87,6 +87,7 @@ const mapStateToProps = state => {
     paginating: state.paginating,
     reverse_preferred_name: state.reverse_preferred_name,
     preferred_name: state.serverSideProps.ui_values.preferred_name,
+    deactivate_download: state.serverSideProps.ui_values.deactivate_download,
   }
 }
 
@@ -244,6 +245,7 @@ class MetadataSearchResults extends React.Component {
           onChipClick={this.onChipClick}
           current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
           history={this.props.history}
+          deactivate_download={this.props.deactivate_download}
         />
         <div align="right">
           <TablePagination
