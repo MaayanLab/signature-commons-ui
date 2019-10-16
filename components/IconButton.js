@@ -45,7 +45,7 @@ const InformativeButton = (props) => {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="subtitle2" gutterBottom>
-                {title || alt}
+                {title}
               </Typography>
             </Grid>
           </Grid>

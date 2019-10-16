@@ -17,16 +17,18 @@ export const value_by_type = {
     if (val === 'undefined'){
       return null
     } else {
-      return val
+      return {text: val}
     }
   },
   'img': ({label, prop, data }) => {
     const src = makeTemplate(prop.src, data)
     const alt = makeTemplate(prop.alt, data)
+    let text = makeTemplate(prop.text, data)
     if ( alt === 'undefined'){
       return null
     } else {
-      return {alt, src}
+      if (text === 'undefined') text = alt
+      return {alt, src, text}
     }
   },
 }
@@ -42,23 +44,32 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
       const prop = properties[label]
       const val = value_by_type[prop.type]({label, prop, data, highlight})
       if (prop.name){
-        processed.name = val || data.id
-      }else if (prop.subtitle){
-        if (val!==null) processed.subtitle = val
-      }else if (prop.icon){
+        processed.name = val.text || data.id
+      }
+      if (prop.subtitle){
+        console.log("SUB")
+        console.log(val)
+        if (val!==null) processed.subtitle = val.text
+      }
+      if (prop.icon){
+        console.log("ICON")
+        console.log(val)
+        console.log(data)
         if (val!==null){
           processed.icon = {...val}
         }
-      }else if (prop.score){
+      }
+      if (prop.score){
         if (val!==null) scores[label] = {
           label,
-          value: val,
+          value: val.text,
           icon: prop.MDI_Icon || 'mdi-star'
         }
-      }else {
+      }
+      if (!(prop.score || prop.icon || prop.name || prop.subtitle)) {
         if ( val !== null) tags = [...tags, {
           label,
-          value: val,
+          value: val.text,
           icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
           priority: prop.priority
         }]
@@ -67,6 +78,7 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
     tags = tags.sort((a, b) => a.priority - b.priority)
     if (Object.keys(scores).length>0) processed.scores = scores
     processed.tags = tags || []
+  console.log(processed)
     return {original: data, processed}
   }
 }

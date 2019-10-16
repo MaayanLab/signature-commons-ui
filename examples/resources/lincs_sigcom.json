@@ -2,38 +2,47 @@
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resource.json"
   },
+  "$validator": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
   "properties": {
-    "Image": {
-      "visibility": 1,
-      "type": "img",
-      "src": "${PREFIX}/${meta.extraProperties[0].values[0]}",
-      "alt": "${meta.name}",
-      "text": "${meta.name}",
-      "priority": 1,
-      "icon": true,
-      "name": true
-    },
-    "Description": {
-      "visibility": 1,
-      "type": "text",
-      "field": "Description",
-      "text": "${meta.description}",
-      "priority": 2,
-      "description": true
-    },
     "URL": {
-      "visibility": 1,
+      "text": "${meta['URL']}",
       "type": "text",
       "field": "URL",
-      "text": "${meta.access[0].landingPage}",
-      "priority": 3
+      "priority": 3,
+      "visibility": 1
+    },
+    "PMID": {
+      "text": "${meta['PMID']}",
+      "type": "text",
+      "field": "PMID",
+      "priority": 3,
+      "visibility": 1
+    },
+    "Image": {
+      "alt": "${meta.creators.affiliations.name}",
+      "src": "${PREFIX}/${meta.extraProperties[0].values[0]}",
+      "text": "${meta.creators.affiliations.name}",
+      "icon": true,
+      "name": true,
+      "type": "img",
+      "priority": 1,
+      "visibility": 1
+    },
+    "Description": {
+      "text": "${meta['Description']}",
+      "type": "text",
+      "field": "Description",
+      "priority": 2,
+      "visibility": 0,
+      "description": true,
+      "subtitle": true
     },
     "Signature Count": {
-      "visibility": 1,
+      "text": "${meta['Signature_Count']}",
       "type": "text",
       "field": "Signature_Count",
-      "text": "${meta['Signature_Count']}",
-      "priority": 3
+      "priority": 3,
+      "visibility": 1
     }
   }
 }

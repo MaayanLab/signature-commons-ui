@@ -25,7 +25,6 @@ export async function get_library_resources() {
   })
 
 
-
   const resource_meta = response.filter((resource) => !resource.meta.$hidden).reduce((group, data) => {
     group[data.id] = data
     return group
@@ -35,6 +34,7 @@ export async function get_library_resources() {
     let resource_name
     let icon_src
     const resource_id = lib.resource
+
     // lib resource matches with resource table
     if (resource_id) {
       if (resource_id in resource_meta) {

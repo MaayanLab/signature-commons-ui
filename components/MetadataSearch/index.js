@@ -12,6 +12,7 @@ import { ReadURLParams, diffList, URLFormatter } from "../../util/helper/misc";
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import ParentFilter from './ParentFilter'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const operationMapper = {
   new_search: (table, current_table) => ({
@@ -284,6 +285,25 @@ class MetadataSearch extends React.Component {
 
     if (current_table === undefined){
       return <Redirect to="/not-found" />
+    }
+
+    if (!this.props.completed){
+      return(
+        <Grid container
+          spacing={24}>
+          <Grid item xs={3}>
+            <Grid container
+              spacing={24}>
+              <Grid item xs={12}>
+                <Route path="/MetadataSearch/:table" component={this.searchBox} />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={9} style={{textAlign:"center"}}>
+            <CircularProgress />
+          </Grid>
+        </Grid>
+      )
     }
     // else if (this.props.location.search===""){
     //   return <Redirect to="/" />

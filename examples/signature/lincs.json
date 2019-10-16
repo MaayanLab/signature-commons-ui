@@ -8,7 +8,7 @@
       "visibility": 1,
       "type": "img",
       "src": "${PREFIX}/static/images/clueio.ico",
-      "alt": "ConnectivityMap",
+      "alt": "Connectivity Map",
       "priority": 1,
       "icon": true
     },

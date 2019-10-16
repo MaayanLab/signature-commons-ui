@@ -155,7 +155,7 @@ class DataTable extends React.Component {
       <div style={{
         maxWidth: '100%',
       }}>
-        {this.props.collection.map((data,ind)=><InfoCard key={data.id}
+        {this.props.collection.map((data,ind)=><InfoCard key={data.original.id}
           {...this.props}
           data={data}
         />)}
