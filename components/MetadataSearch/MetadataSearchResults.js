@@ -83,6 +83,7 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
 const mapStateToProps = state => {
   return {
     schemas: state.serverSideProps.schemas,
+    search: state.search,
     models: state.models,
     ui_values:state.serverSideProps.ui_values,
     loading: state.loading,
@@ -250,6 +251,7 @@ class MetadataSearchResults extends React.Component {
           current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
           type={this.props.preferred_name_singular[this.props.reverse_preferred_name[this.props.match.params.table]]}
           history={this.props.history}
+          search={this.props.search}
           deactivate_download={this.props.deactivate_download}
         />
         <div align="right">

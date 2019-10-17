@@ -87,7 +87,7 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
             <Grid container>
               <Grid item md={2} xs={4} style={{textAlign: "center"}}>
                 <CardMedia style={{marginTop:-30}} {...data.processed.icon}>
-                  <IconButton {...data.processed.icon} onClick={props.handleClick} value={data.original}/>
+                  <IconButton {...data.processed.icon} onClick={props.handleClick} value={data}/>
                 </CardMedia>
               </Grid>
               <Grid item md={10} xs={8}>
@@ -180,7 +180,8 @@ class DataTable extends React.Component {
             open={this.state.open}
             onClose={this.handleClose}
           >
-            <Card style={{width:700,
+            <Card style={{minWidth:700,
+              maxWidth: 1000,
               maxHeight: 700,
               overflow: "scroll",
               position: "absolute",
@@ -189,17 +190,39 @@ class DataTable extends React.Component {
               top: "50%",
               transform: "translate(-50%, -50%)",
             }}>
-              <CardContent>
-                <ShowMeta
-                  value={[
-                    {
-                      '@id': this.state.metadata.id,
-                      '@type': this.props.type,
-                      'meta': this.state.metadata.meta,
-                    }
-                  ]}
-                />
-              </CardContent>
+              <Grid
+                container
+                direction="row"
+              >
+                <Grid item xs={2} style={{textAlign: "right"}}>
+                  <CardMedia style={{marginTop:-10}}>
+                    <IconButton
+                      {...this.state.metadata.processed.icon}
+                    />
+                  </CardMedia>
+                </Grid>
+                <Grid item xs={10}>
+                  <CardContent>
+                    <Grid
+                      container
+                      direction="row"
+                    >
+                      <Grid item xs={12}>
+                        <ShowMeta
+                          value={[
+                            {
+                              '@id': this.state.metadata.original.id,
+                              '@name': this.state.metadata.processed.name,
+                              'meta': this.state.metadata.original.meta,
+                            }
+                          ]}
+                          highlight={this.props.search}
+                        />
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Grid>
+              </Grid>
             </Card>
           </Modal>: null
         }

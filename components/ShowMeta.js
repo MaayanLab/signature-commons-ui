@@ -68,6 +68,29 @@ export function ShowMeta({ value, highlight, classes }) {
           </Grid>
         </Grid>
       )
+    } else if (value['@id'] !== undefined && value['@name'] !== undefined && value.meta !== undefined) {
+      return (
+        <Grid container
+          spacing={24}>
+          <Grid item xs={12}>
+            <Highlight
+              Component={(props) => <Typography variant={"h5"} {...props}>{props.children}</Typography>}
+              HighlightComponent={(props) => <i {...props}>{props.children}</i>}
+              text={value['@name']}
+              highlight={highlight}
+            />
+            <Highlight
+              Component={(props) => <Typography variant={"subtitle1"} {...props}>{props.children}</Typography>}
+              HighlightComponent={(props) => <i {...props}>{props.children}</i>}
+              text={value['@id']}
+              highlight={highlight}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <ShowMeta classes={classes} value={value.meta} highlight={highlight} />
+          </Grid>
+        </Grid>
+      )
     }
     if (value['Description'] !== undefined) {
       const { Description, ...rest } = value
