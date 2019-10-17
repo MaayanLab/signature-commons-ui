@@ -37,7 +37,7 @@ const InformativeButton = (props) => {
   return(
     <Tooltip title={tooltip_title}
         placement="bottom">
-      <Button className={classes.button} onClick={() => props.onClick(props.value)}>
+      <Button className={classes.button} onClick={() => {if(props.onClick!== undefined) props.onClick(props.value)}}>
         <Badge className={classes.margin} max={9999} badgeContent={counter===undefined ? 0: counter} color="error">
           <Grid container>
             <Grid item xs={12}>
