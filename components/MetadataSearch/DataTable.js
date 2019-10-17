@@ -13,6 +13,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Modal from '@material-ui/core/Modal';
 
 import { makeTemplate } from '../../util/makeTemplate'
 import { Highlight } from '../Highlight'
@@ -86,7 +87,7 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
             <Grid container>
               <Grid item md={2} xs={4} style={{textAlign: "center"}}>
                 <CardMedia style={{marginTop:-30}} {...data.processed.icon}>
-                  <IconButton {...data.processed.icon}/>
+                  <IconButton {...data.processed.icon} onClick={props.handleClick} value={data.original}/>
                 </CardMedia>
               </Grid>
               <Grid item md={10} xs={8}>
@@ -145,6 +146,25 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
 }
 
 class DataTable extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      metadata: null,
+      open: false
+    }
+  }
+  handleClick = (metadata) => {
+    console.log(metadata)
+    this.setState({
+      metadata,
+      open: true
+    })
+  }
+  handleClose = () => {
+    this.setState({
+      open: false
+    })
+  }
   render() {
     if (!this.props.loaded ){
       return <div style={{textAlign: "center", marginTop: 20}}><CircularProgress /></div>
@@ -152,13 +172,46 @@ class DataTable extends React.Component {
     if (this.props.collection.length===0)
       return(<span>No Results</span>)
     return(
-      <div style={{
-        maxWidth: '100%',
-      }}>
-        {this.props.collection.map((data,ind)=><InfoCard key={data.original.id}
-          {...this.props}
-          data={data}
-        />)}
+      <div>
+        {this.state.metadata!==null ? 
+          <Modal
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            open={this.state.open}
+            onClose={this.handleClose}
+          >
+            <Card style={{width:700,
+              maxHeight: 700,
+              overflow: "scroll",
+              position: "absolute",
+              float: "left",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+            }}>
+              <CardContent>
+                <ShowMeta
+                  value={[
+                    {
+                      '@id': this.state.metadata.id,
+                      '@type': this.props.type,
+                      'meta': this.state.metadata.meta,
+                    }
+                  ]}
+                />
+              </CardContent>
+            </Card>
+          </Modal>: null
+        }
+        <div style={{
+          maxWidth: '100%',
+        }}>
+          {this.props.collection.map((data,ind)=><InfoCard key={data.original.id}
+            {...this.props}
+            handleClick={this.handleClick}
+            data={data}
+          />)}
+        </div>
       </div>
     )
   }

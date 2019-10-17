@@ -44,7 +44,10 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
       const prop = properties[label]
       const val = value_by_type[prop.type]({label, prop, data, highlight})
       if (prop.name){
-        processed.name = val.text || data.id
+        processed.name = data.id
+        if (val!==null){
+          processed.name = val.text || data.id
+        }
       }
       if (prop.subtitle){
         if (val!==null) processed.subtitle = val.text
@@ -87,6 +90,7 @@ const mapStateToProps = state => {
     paginating: state.paginating,
     reverse_preferred_name: state.reverse_preferred_name,
     preferred_name: state.serverSideProps.ui_values.preferred_name,
+    preferred_name_singular: state.serverSideProps.ui_values.preferred_name_singular,
     deactivate_download: state.serverSideProps.ui_values.deactivate_download,
   }
 }
@@ -244,6 +248,7 @@ class MetadataSearchResults extends React.Component {
           sortingFunction={this.sortBy}
           onChipClick={this.onChipClick}
           current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
+          type={this.props.preferred_name_singular[this.props.reverse_preferred_name[this.props.match.params.table]]}
           history={this.props.history}
           deactivate_download={this.props.deactivate_download}
         />
