@@ -13,7 +13,7 @@ const mapStateToProps = state => {
     ...state.serverSideProps,
     resources: Object.values(state.serverSideProps.resources),
     ...state.signature_result,
-    input: state.signature_result.input,
+    input: state.signature_input,
     loading: state.loading_signature,
   }
 };
@@ -86,9 +86,9 @@ class SignatureSearch extends React.Component {
       }
       signature_keys={this.props.signature_keys}
       schemas={this.props.schemas}
-      {...this.props}
       {...props}
       {...this.state}
+      {...this.props}
     />
   )
 

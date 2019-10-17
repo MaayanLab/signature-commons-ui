@@ -82,6 +82,7 @@ export default class ResourceFilters extends React.Component {
             >
               <IconButton
                 alt={makeTemplate(this.props.name_prop, resource)}
+                title={makeTemplate(this.props.name_prop, resource)}
                 src={`${makeTemplate(this.props.icon_prop, resource)}`}
                 description={makeTemplate(this.props.description_prop, resource)}
                 counter={count}
