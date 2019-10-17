@@ -81,7 +81,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "compound",
+    "Field_Name": "clueIoCompound",
     "Preferred_Name": "Compounds",
     "Type": "text",
     "Preferred_Name_Singular": "Compound",
@@ -91,12 +91,23 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "organism",
-    "Preferred_Name": "Organisms",
+    "Field_Name": "clueIoGeneTargets",
+    "Preferred_Name": "Gene Targets",
     "Type": "text",
-    "Preferred_Name_Singular": "Organism",
+    "Preferred_Name_Singular": "Gene Target",
     "Table": "signatures",
-    "MDI_Icon": "mdi-hexagon-multiple",
+    "MDI_Icon": "mdi-target-variant",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "clueIoMOA",
+    "Preferred_Name": "MoA",
+    "Type": "text",
+    "Preferred_Name_Singular": "MoA",
+    "Table": "signatures",
+    "MDI_Icon": "mdi-settings-outline",
+    "Meta_Count": true,
     "Pie_Count": true
   },
   {

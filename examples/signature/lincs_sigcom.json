@@ -38,9 +38,23 @@
     "Compound": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.compound}",
+      "text": "${meta.clueIoCompound}",
       "priority": 2,
       "MDI_Icon": "mdi-hexagon-multiple"
+    },
+    "Gene Target": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.clueIoGeneTargets}",
+      "priority": 2,
+      "MDI_Icon": "mdi-target-variant"
+    },
+    "MoA": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.clueIoMOA}",
+      "priority": 2,
+      "MDI_Icon": "mdi-settings-outline"
     },
     "Concentration": {
       "visibility": 1,
