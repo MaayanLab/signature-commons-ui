@@ -39,42 +39,6 @@ class Home extends React.PureComponent {
   }
 
 
-  // signature_search = (props) => (
-  //   <SignatureSearch
-  //     cart={this.state.cart}
-  //     updateCart={this.updateCart}
-  //     signature_keys={this.props.signature_keys}
-  //     libraries={this.props.libraries}
-  //     resources={this.props.resources}
-  //     library_resource={this.props.library_resource}
-  //     ui_values={this.props.ui_values}
-  //     schemas={this.props.schemas}
-  //     handleChange={this.handleChange}
-  //     changeSignatureType={this.changeSignatureType}
-  //     updateSignatureInput={this.updateSignatureInput}
-  //     resetAllSearches={this.resetAllSearches}
-  //     submit={this.submit}
-  //     {...props}
-  //     {...this.state.signature_search}
-  //   />
-  // )
-
-  // metadata_search = (props) => (
-  //   <MetadataSearch
-  //     cart={this.state.cart}
-  //     updateCart={this.updateCart}
-  //     ui_values={this.props.ui_values}
-  //     schemas={this.props.schemas}
-  //     currentSearchArrayChange={this.currentSearchArrayChange}
-  //     performSearch={this.performSearch}
-  //     handleChange={this.handleChange}
-  //     resetAllSearches={this.resetAllSearches}
-  //     submit={this.submit}
-  //     {...props}
-  //     {...this.state.metadata_search}
-  //   />
-  // )
-
   resources = (props) => (
     <Resources
       {...props}
@@ -161,6 +125,10 @@ class Home extends React.PureComponent {
               component={this.resources}
             /> : null
           }
+          <Route
+            path="/:table/:id"
+            component={this.pages}
+          />
           <Route
             path="/API"
             component={this.api}
