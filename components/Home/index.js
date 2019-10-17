@@ -1,6 +1,6 @@
 import React from 'react'
 import { Set } from 'immutable'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import NProgress from 'nprogress'
 import dynamic from 'next/dynamic'
 import { connect } from "react-redux";
@@ -69,11 +69,12 @@ class Home extends React.PureComponent {
   //   />
   // )
 
-  landing = (props) => (
-    <Landing 
-      {...props}
-    />
-    )
+  landing = (props) => {
+    return(
+      <Landing 
+        {...props}
+      />
+    )}
 
   metadata_search = (props) => (
     <MetadataSearch 
@@ -109,15 +110,42 @@ class Home extends React.PureComponent {
         <Switch>
           {this.props.ui_values.nav.metadata_search ?
             <Route
+              path={"/MetadataSearch"}
+              exact
+              component={this.landing}
+            />
+            : null
+          }
+          {this.props.ui_values.nav.metadata_search ?
+            <Route
               path={"/MetadataSearch/:table"}
               component={this.metadata_search}
-            /> : null
+            />
+            : null
+          }
+          {this.props.ui_values.nav.signature_search ?
+            <Route
+              path={"/SignatureSearch"}
+              exact
+              component={(props)=>{
+              return <Redirect to='/SignatureSearch/Overlap' />}}
+            />
+            : null
+          }
+          {this.props.ui_values.nav.signature_search ?
+            <Route
+              path={"/SignatureSearch/:type"}
+              exact
+              component={this.landing}
+            />
+           : null
           }
           {this.props.ui_values.nav.signature_search ?
             <Route
               path={"/SignatureSearch/:type/:id"}
               component={this.signature_search}
-            /> : null
+            />
+           : null
           }
           {this.props.ui_values.nav.resources ?
             <Route
@@ -140,6 +168,7 @@ class Home extends React.PureComponent {
           />
           <Route
             path="/"
+            exact
             component={this.landing}//{this.landing}
           />
         </Switch>
