@@ -220,7 +220,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             justify="center">
             <Grid item xs={12}>
               <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
-                <span class="mdi mdi-cloud-search mdi-36px"/>
+                <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
               </Typography>
@@ -251,7 +251,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             justify="center">
             <Grid item xs={12}>
               <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
-                <span class="mdi mdi-cloud-search mdi-36px"/>
+                <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
               </Typography>
@@ -276,7 +276,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             justify="center">
             <Grid item xs={12}>
               <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
-                <span class="mdi mdi-cloud-search mdi-36px"/>
+                <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
               </Typography>
