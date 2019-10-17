@@ -2,6 +2,7 @@ import React from 'react'
 import { Highlight } from './Highlight'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography';
 
 import { landingStyle } from '../styles/jss/theme.js'
 
@@ -56,9 +57,9 @@ export function ShowMeta({ value, highlight, classes }) {
           spacing={24}>
           <Grid item xs={12}>
             <Highlight
-              Component={(props) => <b {...props}>{props.children}</b>}
+              Component={(props) => <Typography variant={"h5"} {...props}>{props.children}</Typography>}
               HighlightComponent={(props) => <i {...props}>{props.children}</i>}
-              text={value['@type'] + ' (' + value['@id'] + '):'}
+              text={value['@type'] + ' (' + value['@id'] + ')'}
               highlight={highlight}
             />
           </Grid>
