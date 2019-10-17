@@ -20,9 +20,9 @@
       "subtitle": true
     },
     "ID": {
-      "visibility": 1,
+      "visibility": 0,
       "type": "text",
-      "text": "${meta.ID}",
+      "text": "${meta.id}",
       "priority": 1,
       "name": true
     },
