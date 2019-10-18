@@ -6,7 +6,36 @@
     "Type": "string",
     "MDI_Icon": "mdi-certificate",
     "Table": "libraries",
-    "Meta_Count": true
+    "Meta_Count": true,
+    "Bar_Count": true
+  },
+  {
+    "Field_Name": "last_author.name",
+    "Preferred_Name": "Last Authors",
+    "Preferred_Name_Singular": "Last Author",
+    "Type": "string",
+    "MDI_Icon": "mdi-fountain-pen-tip",
+    "Table": "libraries",
+    "Bar_Count": true
+  },
+  {
+    "Field_Name": "up_down",
+    "Preferred_Name": "Status",
+    "Preferred_Name_Singular": "Status",
+    "Type": "string",
+    "MDI_Icon": "mdi-cloud",
+    "Table": "libraries",
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "country",
+    "Preferred_Name": "Countries",
+    "Preferred_Name_Singular": "Country",
+    "Type": "string",
+    "MDI_Icon": "mdi-earth",
+    "Table": "libraries",
+    "Meta_Count": true,
+    "Bar_Count": true
   },
   {
     "Field_Name": "journal_name",
@@ -15,15 +44,14 @@
     "Type": "string",
     "MDI_Icon": "mdi-file-document",
     "Table": "libraries",
-    "Meta_Count": true,
     "Pie_Count": true
   },
   {
-    "Field_Name": "authors",
-    "Preferred_Name": "Authors",
-    "Preferred_Name_Singular": "Author",
-    "Type": "object",
-    "MDI_Icon": "mdi-fountain-pen-tip",
+    "Field_Name": "pubmed",
+    "Preferred_Name": "PMIDs",
+    "Preferred_Name_Singular": "PMID",
+    "Type": "string",
+    "MDI_Icon": "mdi-page-next",
     "Table": "libraries",
     "Meta_Count": true
   },
@@ -31,7 +59,7 @@
     "Field_Name": "libraries",
     "Type": "table",
     "Preferred_Name": "Tools",
-    "MDI_Icon": "mdi-tools",
+    "MDI_Icon": "mdi-toolbox",
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true
@@ -40,7 +68,7 @@
     "Field_Name": "resources",
     "Type": "table",
     "Preferred_Name": "Journals",
-    "MDI_Icon": "mdi-web",
+    "MDI_Icon": "mdi-file-document",
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true

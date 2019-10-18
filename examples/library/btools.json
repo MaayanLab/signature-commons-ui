@@ -1,0 +1,52 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${meta.icon}",
+      "alt": "${meta.tool_name}",
+      "text": "${meta.tool_name}",
+      "priority": 1,
+      "icon": true,
+      "name": true
+    },
+    "Journal": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.journal_name}",
+      "subtitle": true,
+      "priority": 2
+    },
+    "Last Author": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.last_author.name}",
+      "MDI_Icon": "mdi-fountain-pen-tip",
+      "priority": 4
+    },
+    "Institution": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.institution}",
+      "MDI_Icon": "mdi-certificate",
+      "priority": 5
+    },
+    "Publication year": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.pub_year}",
+      "MDI_Icon": "mdi-calendar",
+      "priority": 6
+    },
+    "Status": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.up_down}",
+      "MDI_Icon": "mdi-web",
+      "priority": 7
+    }
+  }
+} 
