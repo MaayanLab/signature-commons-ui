@@ -18,13 +18,16 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import Button from '@material-ui/core/Button';
+import TablePagination from '@material-ui/core/TablePagination'
+import { URLFormatter } from "../../util/helper/misc";
 
+import DataTable from "../MetadataSearch/DataTable"
 import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
 
 import { makeTemplate } from '../../util/makeTemplate'
 import { connect } from 'react-redux';
 import { findMatchedSchema } from '../../util/objectMatch'
-
+import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
 
@@ -38,7 +41,8 @@ const mapStateToProps = (state, ownProps) => {
   return { 
     ui_values,
     resources,
-    schemas
+    schemas,
+    preferred_name_singular: ui_values.preferred_name_singular,
   }
 };
 
@@ -47,9 +51,11 @@ class ResourcePage extends React.Component {
   constructor(props){
     super(props)
     this.state = {
+      page: 0,
       resource: null,
-      schema: null,
-      expanded_id: null,
+      perPage: 10,
+      collection: [],
+      sorted: null
     }
   }
   redirectLink(url) {
@@ -88,12 +94,21 @@ class ResourcePage extends React.Component {
     const description_props = Object.values(schema.properties).filter(prop=>prop.description)
     const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
 
+    const start = this.state.page*this.state.perPage
+    const end = (this.state.page+1)*this.state.perPage
+    let children = []
+    if (resource !== null && !resource.is_library){
+      children = resource.libraries.slice(start, end)
+    }
+    const collection = children.map(data=>get_card_data(data, this.props.schemas))
+    
     this.setState({
       schema,
       resource,
       icon_prop,
       name_prop,
       description_prop,
+      collection,
     })
 
   }
@@ -132,12 +147,19 @@ class ResourcePage extends React.Component {
       const description_props = Object.values(schema.properties).filter(prop=>prop.description)
       const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
 
+      let children = []
+      if (resource !== null && !resource.is_library){
+        children = resource.libraries.slice(start, end)
+      }
+      const collection = children.map(data=>get_card_data(data, this.props.schemas))
+      
       this.setState({
         schema,
         resource,
         icon_prop,
         name_prop,
         description_prop,
+        collection
       })
     }
   }
@@ -162,14 +184,62 @@ class ResourcePage extends React.Component {
     }
   }
 
+  handleChangeRowsPerPage = (e, name) => {
+    const perPage = e.target.value
+    const start = this.state.page*perPage
+    const end = (this.state.page+1)*perPage
+    let children = []
+    if (!this.state.resource.is_library){
+      children = this.state.resource.libraries.slice(start, end)
+    }
+    const collection = children.map(data=>get_card_data(data, this.props.schemas))
+    this.setState({
+      perPage,
+      collection
+    })
+  }
+
+  handleChangePage = (event, page, name) => {
+    const start = page*this.state.perPage
+    const end = (page+1)*this.state.perPage
+    let children = []
+    if (!this.state.resource.is_library){
+      children = this.state.resource.libraries.slice(start, end)
+    }
+    const collection = children.map(data=>get_card_data(data, this.props.schemas))
+    this.setState({
+      page,
+      collection
+    })
+  }
+
+  onChipClick = (value) => {
+    const query = URLFormatter({search: [value],
+      current_table: "Datasets",
+      reverse_preferred_name: this.props.reverse_preferred_name})
+    this.props.history.push({
+      pathname: `/MetadataSearch/Datasets`,
+      search: `?q=${query}`,
+      state: {
+        new_search: true,
+        pagination: false,
+        new_filter: false
+      }
+    })
+  }
+
   render() {
     if (this.state.resource===null){
       return <div />
     }
-    const {resource,
-      icon_prop,
+    const {icon_prop,
       name_prop,
-      description_prop,} = this.state
+      description_prop,
+      resource
+    } = this.state
+
+    let resource_name = makeTemplate(name_prop, resource)
+    resource_name = resource_name === 'undefined' ? resource.id : resource_name
     return (
       <Grid
         container
@@ -201,15 +271,10 @@ class ResourcePage extends React.Component {
                       direction="row"
                     >
                       <Grid item xs={12}>
-                        <Typography variant="display1" gutterBottom>
-                          {makeTemplate(name_prop, resource)}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
                         <ShowMeta
                           value={{
                             '@id': resource.id,
-                            '@type': this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
+                            '@name': resource_name,//this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
                             'meta': Object.keys(resource.meta).filter((key) => (
                               ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
                               acc[key] = resource.meta[key]
@@ -242,47 +307,26 @@ class ResourcePage extends React.Component {
           </Card>
         </Grid>
         <Grid item xs={12}>
-          { !resource.is_library ?
+          { this.state.collection.length > 0 ?
             <div style={{margin: '20px 0'}}>
-            {resource.libraries.map((library) => (
-              <Card key={library.id}>
-                <CardContent>
-                  <Grid
-                    container
-                    direction="row"
-                    justify="space-between"
-                  >
-                    <Grid item xs={11}>
-                      <Label
-                        item={library}
-                        visibility={1}
-                        schemas={this.props.schemas}
-                      />
-                    </Grid>
-                    <Grid item xs={1} style={{textAlign: "right"}}>
-                      <Button className={`mdi
-                        ${this.state.expanded_id===library.id ? 'mdi-chevron-up': 'mdi-chevron-down'}
-                        mdi-24px`}
-                        style={{padding: '0 20px'}}
-                        onClick={this.handleExpand}
-                        value={library.id}
-                        />
-                    </Grid>
-                  </Grid>
-                </CardContent>
-                <Collapse in={this.state.expanded_id===library.id} timeout="auto" unmountOnExit>
-                  <CardContent>
-                    <ShowMeta
-                      value={{
-                        '@id': library.id,
-                        '@type': 'Library',
-                        'meta': library.meta,
-                      }}
-                    />
-                  </CardContent>
-                </Collapse>
-              </Card>
-            ))}
+              <DataTable schemas={this.props.schemas}
+                ui_values={this.props.ui_values}
+                {...this.state}
+                loaded={true}
+                onChipClick={this.onChipClick}
+                current_table={"resources"}
+                type={this.props.preferred_name_singular["resources"]}
+                history={this.props.history}
+                deactivate_download={true}
+              />
+              <TablePagination
+                page={this.state.page}
+                rowsPerPage={this.state.perPage}
+                count={ this.state.resource.libraries.length}
+                onChangePage={(event, page) => this.handleChangePage(event, page)}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                component="div"
+              />
             </div> :
             null 
           }
@@ -293,4 +337,3 @@ class ResourcePage extends React.Component {
 }
 
 export default connect(mapStateToProps)(ResourcePage)
-
