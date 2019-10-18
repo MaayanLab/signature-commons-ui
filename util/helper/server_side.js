@@ -187,7 +187,6 @@ export async function get_barcounts(ui_values) {
         depth: 2,
         filter: {
           fields: [item.meta.Field_Name],
-          limit: 25
         },
       },
     })

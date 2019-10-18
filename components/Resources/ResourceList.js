@@ -40,7 +40,6 @@ class ResourceList extends React.PureComponent {
       const r2_name = makeTemplate(name_prop, r2)
       return (r1_name.localeCompare(r2_name))
     })
-    console.log(description_prop)
     this.setState({
       schema,
       sorted_resources,
@@ -74,7 +73,7 @@ class ResourceList extends React.PureComponent {
                   justify="center"
                   alignItems="center" 
                   style={{textAlign: 'center',}}
-                  key={makeTemplate(name_prop, resource)}>
+                  key={resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}>
               <Link
                 key={resource.id}
                 to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource).replace(/ /g, '_')}`}

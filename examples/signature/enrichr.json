@@ -1,0 +1,185 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
+    "${library.dataset}": "enrichr_geneset",
+    "${library.meta.Library_name}": "^((?!LINCS).)*$"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/${library.meta['Icon']}",
+      "alt": "${library.meta['Library_name']}",
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${library.meta['Library_name']}",
+      "priority": 1,
+      "subtitle": true
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Original_String']}",
+      "name": true,
+      "priority": 2
+    },
+    "Gene": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Gene[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-dna"
+    },
+    "Disease": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Disease[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-emoticon-cry-outline"
+    },
+    "Pathway": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Pathway.Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-webhook"
+    },
+    "Metabolite": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Metabolite.Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-chart-bubble"
+    },
+    "MicroRNA": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.MicroRNA}",
+      "priority": 3,
+      "MDI_Icon": "mdi-tilde"
+    },
+    "Antibody_Identifier": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Antibody_Identifier}",
+      "priority": 3,
+      "MDI_Icon": "mdi-axis"
+    },
+    "Phenotype": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Phenotype[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-human"
+    },
+    "PTM": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.PTM}",
+      "priority": 3,
+      "MDI_Icon": "mdi-hammer"
+    },
+    "Small Molecule": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Small_Molecule[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-hexagon-multiple"
+    },
+    "Virus": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Virus[0].Name}",
+      "priority": 3,
+      "MDI_Icon": "mdi-decagram-outline"
+    },
+    "Cell-line": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Cell_Line[0].Name}",
+      "priority": 4,
+      "MDI_Icon": "mdi-test-tube"
+    },
+    "Tissue": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Tissue[0].Name}",
+      "priority": 4,
+      "MDI_Icon": "mdi-camera-metering-matrix"
+    },
+    "Assay": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Assay}",
+      "priority": 1,
+      "MDI_Icon": "mdi-flask-outline"
+    },
+    "Organism": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Organism}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Organism}",
+      "priority": 5,
+      "MDI_Icon": "mdi-human-child"
+    },
+    "P-Value": {
+      "visibility": 1,
+      "condition": {
+        "${meta['p-value']}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "columnOptions": {
+        "sort": true,
+        "sortDirection": "asc"
+      },
+      "type": "text",
+      "text": "${meta['p-value']}",
+      "sortable": true,
+      "score": true,
+      "priority": 7
+    },
+    "Odds Ratio": {
+      "visibility": 1,
+      "condition": {
+        "${meta.oddsratio}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta.oddsratio}",
+      "sortable": true,
+      "score": true,
+      "priority": 8
+    },
+    "Gene Set Size": {
+      "visibility": 1,
+      "condition": {
+        "${meta.setsize}": {
+          "ne": null
+        }
+      },
+      "columnType": "number",
+      "type": "text",
+      "text": "${meta.setsize}",
+      "sortable": true,
+      "score": true,
+      "priority": 6
+    }
+  }
+}

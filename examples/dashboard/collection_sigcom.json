@@ -1,0 +1,134 @@
+[
+  {
+    "Field_Name": "Antibody_Identifier",
+    "Preferred_Name": "Antibodies",
+    "Preferred_Name_Singular": "Antibody",
+    "Type": "string",
+    "MDI_Icon": "mdi-axis",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "Cell_Line.Name",
+    "Preferred_Name": "Cell lines",
+    "Preferred_Name_Singular": "Cell line",
+    "Type": "object",
+    "MDI_Icon": "mdi-test-tube",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Disease.Name",
+    "Preferred_Name": "Diseases",
+    "Preferred_Name_Singular": "Disease",
+    "Type": "object",
+    "MDI_Icon": "mdi-emoticon-cry-outline",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "Metabolite.Name",
+    "Preferred_Name": "Metabolites",
+    "Preferred_Name_Singular": "Metabolite",
+    "Type": "object",
+    "MDI_Icon": "mdi-chart-bubble",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "MicroRNA",
+    "Preferred_Name": "MicroRNAs",
+    "Preferred_Name_Singular": "MicroRNA",
+    "Type": "string",
+    "MDI_Icon": "mdi-tilde",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "Phenotype.Name",
+    "Preferred_Name": "Phenotypes",
+    "Preferred_Name_Singular": "Phenotype",
+    "Type": "object",
+    "MDI_Icon": "mdi-human",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "Pathway.Name",
+    "Preferred_Name": "Pathways",
+    "Preferred_Name_Singular": "Pathway",
+    "Type": "object",
+    "MDI_Icon": "mdi-webhook",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "Gene.Name",
+    "Preferred_Name": "Genes",
+    "Preferred_Name_Singular": "Gene",
+    "Type": "object",
+    "MDI_Icon": "mdi-dna",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "PTM",
+    "Type": "string",
+    "Preferred_Name": "PTMs",
+    "Preferred_Name_Singular": "PTM",
+    "MDI_Icon": "mdi-hammer",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "Small_Molecule.Name",
+    "Preferred_Name": "Small Molecules",
+    "Preferred_Name_Singular": "Small Molecule",
+    "Type": "object",
+    "MDI_Icon": "mdi-hexagon-multiple",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Tissue.Name",
+    "Preferred_Name": "Tissues",
+    "Preferred_Name_Singular": "Tissue",
+    "Type": "object",
+    "MDI_Icon": "mdi-camera-metering-matrix",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "Virus.Name",
+    "Preferred_Name": "Viruses",
+    "Preferred_Name_Singular": "Virus",
+    "Type": "object",
+    "MDI_Icon": "mdi-decagram-outline",
+    "Table": "signatures",
+    "Meta_Count": true,
+    "Collection_Count": true
+  },
+  {
+    "Field_Name": "Organism",
+    "Type": "string",
+    "Preferred_Name": "Organisms",
+    "Table": "signatures",
+    "Pie_Count": true,
+    "Collection_Count": true
+  }
+]

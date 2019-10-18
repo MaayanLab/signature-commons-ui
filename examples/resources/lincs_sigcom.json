@@ -1,0 +1,48 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resource.json"
+  },
+  "$validator": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+  "properties": {
+    "URL": {
+      "text": "${meta['URL']}",
+      "type": "text",
+      "field": "URL",
+      "priority": 3,
+      "visibility": 1
+    },
+    "PMID": {
+      "text": "${meta['PMID']}",
+      "type": "text",
+      "field": "PMID",
+      "priority": 3,
+      "visibility": 1
+    },
+    "Image": {
+      "alt": "${meta.name}",
+      "src": "${PREFIX}/${meta.extraProperties[0].values[0]}",
+      "text": "${meta.name}",
+      "icon": true,
+      "name": true,
+      "type": "img",
+      "priority": 1,
+      "visibility": 1
+    },
+    "Description": {
+      "text": "${meta['description']}",
+      "type": "text",
+      "field": "description",
+      "priority": 2,
+      "visibility": 0,
+      "description": true,
+      "subtitle": true
+    },
+    "Signature Count": {
+      "text": "${meta['Signature_Count']}",
+      "type": "text",
+      "field": "Signature_Count",
+      "priority": 3,
+      "visibility": 1
+    }
+  }
+}

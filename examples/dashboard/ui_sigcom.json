@@ -1,0 +1,30 @@
+[
+  {
+    "landing": true,
+    "content": {
+      "bar_chart": {
+        "Field_Name": "meta.Year",
+        "Caption": "Datasets per Year"
+      },
+      "entity_name": [
+        "meta.Name"
+      ],
+      "entity_synonyms": [
+        "meta.Synonyms"
+      ],
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json"
+    }
+  },
+  {
+    "admin": true,
+    "content": {
+      "resource_pie_caption": "Signatures per Resource",
+      "bar_chart": {
+        "Field_Name": "Version",
+        "Caption": "Datasets per Year"
+      },
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
+    }
+  }
+]

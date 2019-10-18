@@ -1,0 +1,62 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
+    "${dataset}": "enrichr_geneset"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/${meta['Icon']}",
+      "alt": "${meta['Primary_Resource']}",
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Library_name']}",
+      "priority": 2,
+      "name": true
+    },
+    "Description": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta['Description']}",
+      "priority": 2,
+      "description": true,
+      "subtitle": true
+    },
+    "Assay": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Assay}",
+      "priority": 3,
+      "MDI_Icon": "mdi-flask-outline"
+    },
+    "Organism": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Organism}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Organism}",
+      "priority": 4,
+      "MDI_Icon": "mdi-human-child"
+    },
+    "Year": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.Year}",
+      "priority": 4,
+      "MDI_Icon": "mdi-calendar"
+    }
+  }
+}
