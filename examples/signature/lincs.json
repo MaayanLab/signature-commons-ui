@@ -208,8 +208,9 @@
         }
       },
       "type": "text",
-      "text": "${meta['direction'] === 1 ? 'up' : 'down'}",
+      "text": "${meta['direction-up'] === 1 && meta['direction-down'] === -1 ? 'up' : 'down'}",
       "priority": 7,
+      "sortable": true,
       "MDI_Icon": "mdi-arrow-up-down-bold-outline"
     }
   }

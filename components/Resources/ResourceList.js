@@ -73,7 +73,7 @@ class ResourceList extends React.PureComponent {
                   justify="center"
                   alignItems="center" 
                   style={{textAlign: 'center',}}
-                  key={resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, resource)}>
+                  key={makeTemplate(name_prop, resource)}>
               <Link
                 key={resource.id}
                 to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource).replace(/ /g, '_')}`}
