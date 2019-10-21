@@ -14,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Modal from '@material-ui/core/Modal';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { makeTemplate } from '../../util/makeTemplate'
 import { Highlight } from '../Highlight'
@@ -43,6 +44,14 @@ const styles = theme => ({
   },
   chip: {
     margin: "5px 10px 5px 0",
+    maxWidth: 500,
+  },
+  chipLabel: {
+    margin: "5px 10px 5px 0",
+    maxWidth: 400,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    display: "inline-block"
   },
   card: {
     width: '100%',
@@ -105,15 +114,19 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
                   <Grid item xs={12}>
                   </Grid>
                   <Grid item xs={12}>
-                    {data.processed.tags.map(tag=><Chip className={classes.chip} key={tag.label}
-                      avatar={<Icon className={`${classes.icon} mdi ${tag.icon || default_tag_icon} mdi-18px`} />}
-                      label={<Highlight
-                          Component={(props) => <span {...props}>{props.children}</span>}
-                          text={`${tag.label}: ${tag.value}`}
-                          highlight={search}
-                        />}
-                      onClick={()=>props.onChipClick(tag.value)}
-                    />)}
+                    {data.processed.tags.map(tag=>
+                      <Tooltip title={tag.value}
+                        placement="bottom">
+                        <Chip className={classes.chip} key={tag.label}
+                          avatar={<Icon className={`${classes.icon} mdi ${tag.icon || default_tag_icon} mdi-18px`} />}
+                          label={<Highlight
+                              Component={(props) => <span {...props} className={classes.chipLabel}>{props.children}</span>}
+                              text={`${tag.label}: ${tag.value}`}
+                              highlight={search}
+                            />}
+                          onClick={()=>props.onChipClick(tag.value)}
+                        />
+                      </Tooltip>)}
                   </Grid>
                 </Grid>
               </Grid>

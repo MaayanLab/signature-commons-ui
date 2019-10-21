@@ -24,8 +24,7 @@ const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
 const mapStateToProps = (state, ownProps) => {
   return { 
-    ...state.serverSideProps,
-
+    ui_values: state.serverSideProps.ui_values
   }
 };
 
@@ -107,34 +106,34 @@ class Home extends React.PureComponent {
           background-position: left bottom;
         }
         `}</style>
-        <Switch>
-          {this.props.ui_values.nav.metadata_search ?
+        <Switch>}
+          {this.props.ui_values.nav.MetadataSearch.active ?
             <Route
-              path={"/MetadataSearch"}
+              path={this.props.ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}
               exact
               component={this.landing}
             />
             : null
           }
-          {this.props.ui_values.nav.metadata_search ?
+          {this.props.ui_values.nav.MetadataSearch.active ?
             <Route
-              path={"/MetadataSearch/:table"}
+              path={`${this.props.ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}/:table`}
               component={this.metadata_search}
             />
             : null
           }
-          {this.props.ui_values.nav.signature_search ?
+          {this.props.ui_values.nav.SignatureSearch.active ?
             <Route
-              path={"/SignatureSearch"}
+              path={this.props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}
               exact
               component={(props)=>{
-              return <Redirect to='/SignatureSearch/Overlap' />}}
+              return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}/Overlap`} />}}
             />
             : null
           }
           {this.props.ui_values.nav.signature_search ?
             <Route
-              path={"/SignatureSearch/:type"}
+              path={`${this.props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}/:type`}
               exact
               component={this.landing}
             />
@@ -142,14 +141,14 @@ class Home extends React.PureComponent {
           }
           {this.props.ui_values.nav.signature_search ?
             <Route
-              path={"/SignatureSearch/:type/:id"}
+              path={`${this.props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}/:type/:id`}
               component={this.signature_search}
             />
            : null
           }
           {this.props.ui_values.nav.resources ?
             <Route
-              path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+              path={`${this.props.ui_values.nav.Resources.endpoint || "/Resources"} || 'Resources'}`}
               component={this.resources}
             /> : null
           }
@@ -158,13 +157,18 @@ class Home extends React.PureComponent {
             component={this.pages}
           />
           <Route
-            path="/API"
+            path={`${this.props.ui_values.nav.API.endpoint || "/API"}`}
             component={this.api}
           />
           <Route
             path="/not-found"
             component={(props)=>{
             return <div />}}//{this.landing}
+          />
+          <Route
+            path="/:otherendpoint"
+            component={props=>{
+            return <Redirect to='/not-found'/>}}
           />
           <Route
             path="/"

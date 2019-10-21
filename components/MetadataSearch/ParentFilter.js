@@ -14,6 +14,7 @@ const mapStateToProps = state => {
     parents: state.parents_mapping,
     completed: state.completed,
     reverse_preferred_name: state.reverse_preferred_name,
+    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
   }
 }
 
@@ -137,7 +138,7 @@ class ParentFilter extends React.Component {
       }
       const query = URLFormatter({...params, current_table})
       this.props.history.push({
-        pathname: `/MetadataSearch/${current_table}`,
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,
         state: {
           new_search: false,

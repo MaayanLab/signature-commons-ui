@@ -93,6 +93,7 @@ const mapStateToProps = state => {
     preferred_name: state.serverSideProps.ui_values.preferred_name,
     preferred_name_singular: state.serverSideProps.ui_values.preferred_name_singular,
     deactivate_download: state.serverSideProps.ui_values.deactivate_download,
+    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {}
   }
 }
 
@@ -137,7 +138,7 @@ class MetadataSearchResults extends React.Component {
       current_table,
       reverse_preferred_name: this.props.reverse_preferred_name})
     this.props.history.push({
-      pathname: `/MetadataSearch/${current_table}`,
+      pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
       search: `?q=${query}`,
       state: {
         new_search: true,
@@ -163,7 +164,7 @@ class MetadataSearchResults extends React.Component {
       const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
       const query = URLFormatter({...params, current_table})
       this.props.history.push({
-        pathname: `/MetadataSearch/${current_table}`,
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,
         state: {
           new_search: false,
@@ -190,7 +191,7 @@ class MetadataSearchResults extends React.Component {
       }
       const query = URLFormatter({...params, current_table})
       this.props.history.push({
-        pathname: `/MetadataSearch/${current_table}`,
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,
         state: {
           new_search: false,

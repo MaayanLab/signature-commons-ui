@@ -50,6 +50,7 @@ const mapStateToProps = state => {
     tables: Object.keys(state.parents_mapping),
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
+    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {}
   }
 }
 
@@ -225,7 +226,7 @@ class MetadataSearch extends React.Component {
     }, ()=>{
       const query = this.props.location.search
       this.props.history.push({
-        pathname: `/MetadataSearch/${this.props.preferred_name[new_table]}`,
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${this.props.preferred_name[new_table]}`,
         search: `${query}`,
         state: {
           change_tab: true
@@ -295,7 +296,7 @@ class MetadataSearch extends React.Component {
             <Grid container
               spacing={24}>
               <Grid item xs={12}>
-                <Route path="/MetadataSearch/:table" component={this.searchBox} />
+                <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.searchBox} />
               </Grid>
             </Grid>
           </Grid>
@@ -315,15 +316,15 @@ class MetadataSearch extends React.Component {
           <Grid container
             spacing={24}>
             <Grid item xs={12}>
-              <Route path="/MetadataSearch/:table" component={this.searchBox} />
+              <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.searchBox} />
             </Grid>
             <Grid item xs={12}>
-              <Route path="/MetadataSearch/:table" component={this.parentFilter} />
+              <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.parentFilter} />
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={9}>
-          <Route path="/MetadataSearch/:table" component={this.data_table} />
+          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.data_table} />
         </Grid>
       </Grid>
     )

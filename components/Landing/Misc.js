@@ -208,8 +208,8 @@ const toggleSearch = (e) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  const { signature_search, metadata_search } = props.ui_values.nav
-  if (signature_search && metadata_search) {
+  const { SignatureSearch, MetadataSearch } = props.ui_values.nav
+  if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active ) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>
@@ -226,7 +226,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              {props.match.params.searchType == 'MetadataSearch' ?
+              { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
                 <MetadataSearchBox
                   id='MetadataSearch'
                   {...props}
@@ -240,7 +240,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
         </CardContent>
       </Card>
     )
-  } else if (signature_search) {
+  } else if (SignatureSearch && SignatureSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>
@@ -265,7 +265,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
         </CardContent>
       </Card>
     )
-  } else if (metadata_search) {
+  } else if (MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>

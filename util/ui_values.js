@@ -2,6 +2,7 @@ import { fetch_meta } from '../util/fetch/meta'
 
 export const UIValues = {
   'landing': (values) => {
+    console.log(values)
     return (
       {
         LandingText: {
@@ -21,11 +22,58 @@ export const UIValues = {
           up_set_terms: values.up_set_terms,
           down_set_terms: values.down_set_terms,
         },
-        nav: {
-          signature_search: values.signature_search !== undefined ? values.signature_search : true,
-          metadata_search: values.metadata_search !== undefined ? values.metadata_search : true,
-          resources: values.resources !== undefined ? values.resources : true,
-        },
+        nav: values.nav!==undefined ? {
+            MetadataSearch: values.nav.MetadataSearch!==undefined? {
+                active: true,
+                endpoint: "/MetadataSearch",
+                ...values.nav.MetadataSearch
+              } :{
+                active: true,
+                endpoint: "/MetadataSearch"
+              },
+            SignatureSearch: values.nav.SignatureSearch!==undefined? {
+                active: false,
+                endpoint: "/SignatureSearch",
+                ...values.nav.SignaturesSearch
+              } :{
+                active: true,
+                endpoint: "/SignaturesSearch"
+              },
+            Resources: values.nav.Resources!==undefined? {
+                active: true,
+                endpoint: values.preferred_name!==undefined ? `/${values.preferred_name.resources||"Resources"}` : "/Resources",
+                ...values.nav.Resources
+              } :{
+                active: true,
+                endpoint: "/Resources"
+              },
+            API: values.nav.API!==undefined? {
+                active: true,
+                endpoint: "/API",
+                ...values.nav.API
+              } :{
+                active: true,
+                endpoint: "/API"
+              },
+          } :
+          {
+            MetadataSearch: {
+              active: true,
+              endpoint: "/MetadataSearch"
+            },
+            SignatureSearch: {
+              active: false,
+              endpoint: "/SignatureSearch"
+            },
+            Resources: {
+              active: true,
+              endpoint: "/Resources"
+            },
+            API: {
+              active: true,
+              endpoint: "/API"
+            }
+          } ,
         preferred_name_singular: values.preferred_name_singular ||
           {
             libraries: 'Dataset',
@@ -42,7 +90,8 @@ export const UIValues = {
           },
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
-        bar_chart: values.bar_chart,
+        bar_chart_solo: values.bar_chart_solo,
+        pie_chart_solo: values.pie_chart_solo,
         bar_chart_style: values.bar_chart_style ||
           {
             ResponsiveContainer: {
@@ -79,7 +128,7 @@ export const UIValues = {
           },
           Chart: {
             width: 420,
-            height: 420,
+            height: 300,
           },
           Pie: {
             fill: '#75bef5',

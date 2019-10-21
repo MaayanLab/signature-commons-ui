@@ -196,7 +196,6 @@ export async function get_signature_counts_per_resources(ui_values) {
   // });
   return {
     resource_signatures: total_count === 0 ? undefined : resource_signatures, // for_sorting.slice(0,11)
-    libraries,
     resources: resources_with_counts,
     library_resource,
     resources_id

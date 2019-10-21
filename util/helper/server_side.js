@@ -91,7 +91,7 @@ export async function get_metacounts(ui_values) {
 
   const meta_promise = counting_fields.map(async (entry) => {
     const { response: meta_stats } = await fetch_meta({
-      endpoint: `/${entry.meta.Table}/value_count`,
+      endpoint: `/${entry.meta.Table}/distinct_value_count`,
       body: {
         depth: 2,
         filter: {
@@ -110,7 +110,7 @@ export async function get_metacounts(ui_values) {
   const meta_counts = counting_fields.reduce((stat_list, item) => {
     const k = item.meta.Field_Name
     stat_list.push({ name: item.meta.Preferred_Name,
-      counts: Object.keys(meta_stats[k] || {}).length,
+      counts: meta_stats[k],
       icon: item.meta.MDI_Icon,
       Preferred_Name: item.meta.Preferred_Name || item.meta.Field_Name })
     return (stat_list)
@@ -208,16 +208,22 @@ export async function get_barcounts(ui_values) {
       }
       return accumulator
     }, {}) // TODO: Fix this as schema
-    return { field: item.meta.Field_Name, stats: stats }
+    return { meta: item.meta, stats: stats }
   })
 
   const meta = await Promise.all(meta_promise)
   const barcounts = meta.reduce((accumulator, item) => {
-    accumulator[item.field] = Object.keys(item.stats).map((key) => ({ name: key, counts: item.stats[key] }))
+    accumulator[item.meta.Preferred_Name || item.meta.Field_Name] = {
+      key: item.meta.Preferred_Name || item.meta.Field_Name,
+      Preferred_Name: item.meta.Preferred_Name || item.meta.Field_Name,
+      table: item.meta.Table,
+      stats: Object.entries(item.stats).map(([name,counts]) => ({ name, counts })),
+    }
     return accumulator
   }, {})
   return { barcounts }
 }
+
 
 export async function get_signature_keys() {
   const { response: libraries } = await fetch_meta({

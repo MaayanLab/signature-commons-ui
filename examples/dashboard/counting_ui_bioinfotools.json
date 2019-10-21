@@ -1,5 +1,15 @@
 [
   {
+    "Field_Name": "country",
+    "Preferred_Name": "Countries",
+    "Preferred_Name_Singular": "Country",
+    "Type": "string",
+    "MDI_Icon": "mdi-earth",
+    "Table": "libraries",
+    "Meta_Count": true,
+    "Bar_Count": true
+  },
+  {
     "Field_Name": "institution",
     "Preferred_Name": "Institutions",
     "Preferred_Name_Singular": "Institution",
@@ -11,12 +21,22 @@
   },
   {
     "Field_Name": "last_author.name",
-    "Preferred_Name": "Last Authors",
-    "Preferred_Name_Singular": "Last Author",
+    "Preferred_Name": "Labs",
+    "Preferred_Name_Singular": "Lab",
+    "Type": "string",
+    "MDI_Icon": "mdi-desktop-tower-monitor",
+    "Table": "libraries",
+    "Bar_Count": true,
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "authors",
+    "Preferred_Name": "Authors",
+    "Preferred_Name_Singular": "Author",
     "Type": "string",
     "MDI_Icon": "mdi-fountain-pen-tip",
     "Table": "libraries",
-    "Bar_Count": true
+    "Meta_Count": true
   },
   {
     "Field_Name": "up_down",
@@ -26,16 +46,6 @@
     "MDI_Icon": "mdi-cloud",
     "Table": "libraries",
     "Pie_Count": true
-  },
-  {
-    "Field_Name": "country",
-    "Preferred_Name": "Countries",
-    "Preferred_Name_Singular": "Country",
-    "Type": "string",
-    "MDI_Icon": "mdi-earth",
-    "Table": "libraries",
-    "Meta_Count": true,
-    "Bar_Count": true
   },
   {
     "Field_Name": "journal_name",

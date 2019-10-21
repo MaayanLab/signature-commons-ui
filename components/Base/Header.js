@@ -12,29 +12,29 @@ export function Nav(props) {
   const { ui_values, dispatch, ...rest } = props
   return (
     <ul {...rest}>
-      {ui_values.nav.metadata_search ?
+      {ui_values.nav.MetadataSearch && ui_values.nav.MetadataSearch.active ?
         <li
-          className={rest.location.pathname === '/MetadataSearch' ? '' : ''}
+          className={rest.location.pathname === `${ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}` ? '' : ''}
         >
-          <Link to={'/MetadataSearch'}>
-            Metadata Search
+          <Link to={`${ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}`}>
+            {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
         </li> : null
       }
-      {ui_values.nav.signature_search ?
+      {ui_values.nav.SignatureSearch && ui_values.nav.SignatureSearch.active ?
         <li
-          className={rest.location.pathname === '/SignatureSearch' ? '' : ''}
+          className={rest.location.pathname === `${ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}` ? '' : ''}
         >
-          <Link to={'/SignatureSearch'}>
-            Signature Search
+          <Link to={`${ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}`}>
+            {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
         </li> : null
       }
-      {ui_values.nav.resources ?
+      {ui_values.nav.Resources && ui_values.nav.Resources.active ?
         <li
-          className={rest.location.pathname === `/${ui_values.preferred_name.resources || 'Resources'}` ? '' : ''}
+          className={rest.location.pathname === `${ui_values.nav.Resources.endpoint || "/Resources"}` ? '' : ''}
         >
-          <Link to={`/${ui_values.preferred_name.resources || 'Resources'}`}>
+          <Link to={`${ui_values.nav.Resources.endpoint || "/Resources"}`}>
             {ui_values.preferred_name.resources || 'Resources'}
           </Link>
         </li> : null
@@ -64,7 +64,7 @@ const Header = (props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {props.ui_values.LandingText.header || 'Signature Commons'}
+            &nbsp;&nbsp; b<img src={`${process.env.PREFIX}/static/favicon.ico`} height="30" />ools
           </Link>
           <Link
             to="/"
@@ -73,12 +73,12 @@ const Header = (props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
+            &nbsp;&nbsp;  b<img src={`${process.env.PREFIX}/static/favicon.ico`} height="30" />ools
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           <Nav id="nav-mobile" className="right hide-on-med-and-down" {...props} />
         </div>
-        <Nav className="sidenav hide-on-large-and-up" id="mobile-menu" {...props}/>
+        <Nav className="sidenav" id="mobile-menu" {...props}/>
       </nav>
     </header>
   )

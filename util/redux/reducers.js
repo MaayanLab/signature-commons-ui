@@ -32,16 +32,10 @@ export const initialState = {
 
 function rootReducer(state = initialState, action) {
   if (action.type === action_definitions.INITIALIZE_SIGCOM) {
-    const libraries = action.serverSideProps.libraries
-    const resources = action.serverSideProps.resources_id
     const preferred_name = action.serverSideProps.ui_values.preferred_name
     return {
       ...state,
       serverSideProps: action.serverSideProps,
-      parent_ids_mapping: {
-        signatures: libraries,
-        libraries: Object.keys(resources).length > 0 ? resources: libraries,
-      },
       reverse_preferred_name: Object.entries(preferred_name).reduce((acc,[name, preferred])=>{
         acc = {
           ...acc,
@@ -49,14 +43,24 @@ function rootReducer(state = initialState, action) {
         }
         return acc
       },{}),
-      selected_parent_ids: {
-        signatures: [],
-        libraries: [],
-      },
-      parents_mapping: {
-        signatures: "library",
-        libraries: Object.keys(resources).length > 0 ? "resource": "id", // just search among self if no parent
-      }
+    }
+  }
+  if (action.type === action_definitions.INITIALIZE_PARENTS){
+    const {parent_ids_mapping, parents_mapping} = action
+    console.log(parent_ids_mapping)
+    console.log(parents_mapping)
+    console.log( Object.keys(parents_mapping).reduce((acc,item)=>{
+        acc[item] = []
+        return acc
+      },{}))
+    return {
+      ...state,
+      parent_ids_mapping,
+      parents_mapping,
+      selected_parent_ids: Object.keys(parents_mapping).reduce((acc,item)=>{
+        acc[item] = []
+        return acc
+      },{}),
     }
   }
   if (action.type === action_definitions.CHANGE_METADATA_SEARCH_TABLE) {

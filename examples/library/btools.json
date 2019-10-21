@@ -20,11 +20,11 @@
       "subtitle": true,
       "priority": 2
     },
-    "Last Author": {
+    "Lab": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.last_author.name}",
-      "MDI_Icon": "mdi-fountain-pen-tip",
+      "MDI_Icon": "mdi-desktop-tower-monitor",
       "priority": 4
     },
     "Institution": {

@@ -6,6 +6,8 @@ import { UIValues } from '../ui_values'
 import { makeTemplate } from "../makeTemplate"
 import { parse_entities, maybe_fix_obj} from "./misc"
 import { objectMatch } from "../objectMatch"
+import isUUID from 'validator/lib/isUUID'
+import {fetch_count} from "./server_side"
 
 export const operationIds = {
   libraries: {
@@ -20,13 +22,43 @@ export const operationIds = {
   }
  }
 
+export const fetch_all_as_dictionary = async({table, controller}) => {
+  const count = await fetch_count(table)
+  if (count===0) return null
+
+  const { response: meta } = await fetch_meta({
+    endpoint: `/${table}`,
+    signal: controller.signal
+  })
+  const meta_dict = meta.reduce((acc,item)=>{
+    acc = {
+      ...acc,
+      [item.id]: item
+    }
+    return acc
+  }, {})
+  return meta_dict
+}
+
 export function build_where({search, parent, filters}) {
   const where = {}
   let andClauses = []
   let orClauses = []
 
   for (const q of search) {
-    if (q.indexOf(':') !== -1) {
+    if (isUUID(q) ||isUUID(q.substring(1).trim()) || isUUID(q.substring(3).trim())){
+      if (q.startsWith('!') || q.startsWith('-')) {
+        // and not
+        andClauses = [...andClauses, { id: q.substring(1) }]
+      } else if (q.toLowerCase().startsWith('or ')) {
+        orClauses = [...orClauses, { id: q.substring(3) }]
+      } else if (q.startsWith('|')) {
+        orClauses = [...orClauses, { id: q.substring(1) }]
+      } else {
+        // and
+        andClauses = [...andClauses, { id: q.substring(1) }]
+      }
+    }else if (q.indexOf(':') !== -1) {
       const [key, ...value] = q.split(':')
       if (key.startsWith('!') || key.startsWith('-')) {
         andClauses = [...andClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]

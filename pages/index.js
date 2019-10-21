@@ -46,6 +46,7 @@ export async function get_ui_values() {
     },
   })
   const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
+  console.log(values)
   const ui_values = UIValues['landing'](values)
   return { ui_values }
 }
@@ -55,7 +56,7 @@ class App extends React.Component {
     const { ui_values } = await get_ui_values()
     // Check if it has library_name and resource_from_library
     const schemas = await get_schemas(ui_values.ui_schema)
-    const { resource_signatures, libraries, resources, resources_id, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
+    const { resource_signatures, resources, resources_id, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
     const { table_counts, ui_values: ui_val } = await get_counts(Object.keys(resources).length, ui_values)
     const { meta_counts } = await get_metacounts(ui_val)
     const { pie_fields_and_stats } = await get_pie_stats(ui_val)
@@ -68,7 +69,6 @@ class App extends React.Component {
       pie_fields_and_stats,//: {},
       barcounts,
       // signature_keys,
-      libraries,
       resources,
       resources_id,
       library_resource,
@@ -79,6 +79,7 @@ class App extends React.Component {
   }
 
   async componentDidMount(){
+    console.log(this.props.serverSideProps)
     this.props.initializeSigcom(this.props.serverSideProps)
   }
 
