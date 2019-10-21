@@ -131,7 +131,7 @@ class Home extends React.PureComponent {
             />
             : null
           }
-          {this.props.ui_values.nav.signature_search ?
+          {this.props.ui_values.nav.SignatureSearch.active ?
             <Route
               path={`${this.props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}/:type`}
               exact
@@ -139,16 +139,16 @@ class Home extends React.PureComponent {
             />
            : null
           }
-          {this.props.ui_values.nav.signature_search ?
+          {this.props.ui_values.nav.SignatureSearch.active ?
             <Route
               path={`${this.props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}/:type/:id`}
               component={this.signature_search}
             />
            : null
           }
-          {this.props.ui_values.nav.resources ?
+          {this.props.ui_values.nav.Resources.active ?
             <Route
-              path={`${this.props.ui_values.nav.Resources.endpoint || "/Resources"} || 'Resources'}`}
+              path={`${this.props.ui_values.nav.Resources.endpoint || "/Resources"}`}
               component={this.resources}
             /> : null
           }
@@ -168,6 +168,7 @@ class Home extends React.PureComponent {
           <Route
             path="/:otherendpoint"
             component={props=>{
+              console.log(props)
             return <Redirect to='/not-found'/>}}
           />
           <Route

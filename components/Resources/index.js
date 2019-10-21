@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 const mapStateToProps = (state, ownProps) => {
   return { 
     ...state.serverSideProps,
+    ResourcesNav: state.serverSideProps.ui_values.nav.Resources || {}
   }
 };
 
@@ -37,8 +38,8 @@ class Resources extends React.PureComponent {
   render() {
     return (
       <Switch>
-        <Route exact path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}component={this.resource_list} />
-        <Route path={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/:resource`} component={this.resource_page} />
+        <Route exact path={`${this.props.ResourcesNav.endpoint || '/Resources'}`}component={this.resource_list} />
+        <Route path={`${this.props.ResourcesNav.endpoint || '/Resources'}/:resource`} component={this.resource_page} />
       </Switch>
     )
   }
