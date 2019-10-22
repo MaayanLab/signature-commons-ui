@@ -13,7 +13,6 @@ export default class ScorePopper extends React.Component{
     this.state = {
       anchorEl: null,
     }
-    console.log(props)
   }
 
   handleClick = (event) => {
@@ -42,13 +41,16 @@ export default class ScorePopper extends React.Component{
         >
           <Typography style={{
               fontSize: 15, 
-              width: 100, 
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+              width: 100,
               textAlign: "left"
             }} 
             variant="subtitle2">
-            {`${sorted}: ${scores[sorted].value}`}
+            <Icon className={`${classes.menuIcon} mdi mdi-18px ${scores[sorted].icon || 'mdi-trophy-award'}`} />
+                &nbsp;
+            <Typography style={{ fontSize: 10, display: "block", width: 20, overflow: "visible" }} variant="caption" display="block">
+              {`${scores[sorted].label}:`}
+            </Typography>
+            {scores[sorted].value}
           </Typography>
         </Button>
         <Menu
@@ -57,15 +59,15 @@ export default class ScorePopper extends React.Component{
           open={Boolean(this.state.anchorEl)}
           onClose={this.handleClose}
         >
-          {Object.keys(scores).map(label=>(
+          {Object.keys(scores).map(key=>(
             <MenuItem onClick={()=>{
-              sortBy(label)
+              sortBy(key)
               this.handleClose()
-            }} key={label}>
-              <Icon className={`${classes.menuIcon} mdi mdi-18px ${scores[label].icon || 'mdi-trophy-award'}`} />
+            }} key={key}>
+              <Icon className={`${classes.menuIcon} mdi mdi-18px ${scores[key].icon || 'mdi-trophy-award'}`} />
                 &nbsp;
               <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-                {`${label}: ${scores[label].value}`}
+                {`${scores[key].label}: ${scores[key].value}`}
               </Typography>
             </MenuItem>
           ))}

@@ -53,6 +53,7 @@ export function Nav(props) {
 
 const Header = (props) => {
   const paths = props.location.pathname.split('/')
+  const {staticContext, ...rest} = props
   return (
     <header>
       <nav className="nav-extended">
@@ -76,9 +77,9 @@ const Header = (props) => {
             &nbsp;&nbsp;  b<img src={`${process.env.PREFIX}/static/favicon.ico`} height="30" />ools
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-          <Nav id="nav-mobile" className="right hide-on-med-and-down" {...props} />
+          <Nav id="nav-mobile" className="right hide-on-med-and-down" {...rest} />
         </div>
-        <Nav className="sidenav" id="mobile-menu" {...props}/>
+        <Nav className="sidenav" id="mobile-menu" {...rest}/>
       </nav>
     </header>
   )

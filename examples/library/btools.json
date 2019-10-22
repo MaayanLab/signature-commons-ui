@@ -20,12 +20,53 @@
       "subtitle": true,
       "priority": 2
     },
-    "Lab": {
+    "Last Author": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.last_author.name}",
       "MDI_Icon": "mdi-desktop-tower-monitor",
       "priority": 4
+    },
+    "Institution": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.institution}",
+      "MDI_Icon": "mdi-certificate",
+      "priority": 5
+    },
+    "Pubmed Citations": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.total_pubmed_citations}",
+      "Field_Name": "meta.total_pubmed_citations",
+      "MDI_Icon": "mdi-book-open-page-variant",
+      "priority": 10,
+      "score": true
+    },
+    "Twitter Citations": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.cited_by_tweeters_count}",
+      "Field_Name": "meta.cited_by_tweeters_count",
+      "MDI_Icon": "mdi-twitter",
+      "priority": 10,
+      "score": true
+    },
+    "Attention Score": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.attention_score}",
+      "Field_Name": "meta.attention_score",
+      "MDI_Icon": "mdi-forum-outline",
+      "priority": 10,
+      "score": true
+    },
+    "Institution": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.institution}",
+      "MDI_Icon": "mdi-certificate",
+      "priority": 5
     },
     "Institution": {
       "visibility": 1,

@@ -167,7 +167,6 @@ class DataTable extends React.Component {
     }
   }
   handleClick = (metadata) => {
-    console.log(metadata)
     this.setState({
       metadata,
       open: true

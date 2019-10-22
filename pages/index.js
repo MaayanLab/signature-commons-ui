@@ -11,7 +11,8 @@ import { get_counts,
   get_metacounts,
   get_pie_stats,
   get_signature_keys,
-  get_barcounts
+  get_barcounts,
+  get_histograms
   } from '../util/helper/server_side.js'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
@@ -46,7 +47,6 @@ export async function get_ui_values() {
     },
   })
   const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
-  console.log(values)
   const ui_values = UIValues['landing'](values)
   return { ui_values }
 }
@@ -62,12 +62,14 @@ class App extends React.Component {
     const { pie_fields_and_stats } = await get_pie_stats(ui_val)
     // const signature_keys = await get_signature_keys()
     const { barcounts } = await get_barcounts(ui_val)
+    const { histograms } = await get_histograms(ui_val)
     const serverSideProps = {
       table_counts,
       meta_counts,//: {},
       resource_signatures,
       pie_fields_and_stats,//: {},
       barcounts,
+      histograms,
       // signature_keys,
       resources,
       resources_id,
@@ -79,7 +81,6 @@ class App extends React.Component {
   }
 
   async componentDidMount(){
-    console.log(this.props.serverSideProps)
     this.props.initializeSigcom(this.props.serverSideProps)
   }
 

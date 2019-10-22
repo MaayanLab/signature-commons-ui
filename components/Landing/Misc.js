@@ -38,7 +38,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </Typography>
         </div>
       </Grid>
-      {props.ui_values.nav.metadata_search ?
+      {props.ui_values.nav.MetadataSearch && props.ui_values.nav.MetadataSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -53,14 +53,14 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    Metadata Search
+                    {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.signature_search ?
+      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.activeh ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -75,14 +75,14 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    Signature Search
+                    {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.resources ?
+      {props.ui_values.nav.Resources && props.ui_values.nav.Resources.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -96,7 +96,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                  {`Browse ${props.ui_values.preferred_name.resources || 'Resources'}`}
+                  {`Browse ${props.ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}`}
                 </Typography>
               </Grid>
             </Grid>

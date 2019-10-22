@@ -99,7 +99,6 @@ class MetadataSearchBox extends React.Component {
       const query = URLFormatter({search,
         current_table,
         reverse_preferred_name: this.props.reverse_preferred_name})
-      console.log(`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`)
       this.props.history.push({
         pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,

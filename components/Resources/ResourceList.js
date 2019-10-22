@@ -40,7 +40,6 @@ class ResourceList extends React.PureComponent {
       const r2_name = makeTemplate(name_prop, r2)
       return (r1_name.localeCompare(r2_name))
     })
-    console.log(description_prop)
     this.setState({
       schema,
       sorted_resources,

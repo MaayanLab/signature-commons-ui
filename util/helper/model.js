@@ -1,6 +1,7 @@
 import { fetch_meta_post } from '../fetch/meta'
 import { getState } from 'redux-saga/effects'
 import { getStateFromStore } from "../sagas/selectors"
+import isUUID from 'validator/lib/isUUID'
 
 const model_mapper = {
   resources: "Resource",
@@ -9,14 +10,25 @@ const model_mapper = {
   entities: "Entity"
 }
 
-export function build_where({search, parent, filters}) {
+export function build_where({search, parent, filters, order}) {
   let where = {}
   let andClauses = []
   let orClauses = []
   let notClauses = []
-
   for (const q of search) {
-    if (q.indexOf(':') !== -1) {
+    if (isUUID(q) ||isUUID(q.substring(1).trim()) || isUUID(q.substring(3).trim())){
+      if (q.startsWith('!') || q.startsWith('-')) {
+        // and not
+        andClauses = [...andClauses, { id: q.substring(1) }]
+      } else if (q.toLowerCase().startsWith('or ')) {
+        orClauses = [...orClauses, { id: q.substring(3) }]
+      } else if (q.startsWith('|')) {
+        orClauses = [...orClauses, { id: q.substring(1) }]
+      } else {
+        // and
+        andClauses = [...andClauses, { id: q.substring(1) }]
+      }
+    }else if (q.indexOf(':') !== -1) {
       const [key, ...value] = q.split(':')
       if (key.startsWith('!') || key.startsWith('-')) {
         notClauses = [...notClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
@@ -106,6 +118,20 @@ export function build_where({search, parent, filters}) {
     }
   }
 
+  if (order!==undefined){
+    if (where.and === undefined){
+      where = {
+        and: [{...where}]
+      }
+    }
+    where = {
+      and: [...where.and, {
+        [order]: {neq: null}
+        }
+      ]
+    }
+  }
+
   return where
 }
 
@@ -122,12 +148,13 @@ export default class Model {
     this.pagination = {
       limit: 10
     }
+    this.order = undefined
   }
 
-  set_where = ({search, filters}) => {
+  set_where = ({search, filters, order}) => {
     this.search = search
     this.filters = filters
-    this.where = build_where({search, parent: this.parent, filters})
+    this.where = build_where({search, parent: this.parent, filters, order})
   }
 
   get_count_params = ({search, filters}) => {
@@ -171,22 +198,24 @@ export default class Model {
     return params
   }
 
-  get_search_params = ({search, filters, limit, skip}) => {
+  get_search_params = ({search, filters, limit, skip, order}) => {
     if (limit===undefined) limit=10
     if (this.where===null){
-      this.set_where({search, filters})
+      this.set_where({search, filters, order})
     }
     this.pagination = {
-        limit,
-        skip,
-      }
+      limit,
+      skip,
+    }
+    this.order = order
     const operationId = `${this.model}.find`
     const params = {
       operationId,
       parameters: {
         filter:{
           where: this.where,
-          ...this.pagination
+          ...this.pagination,
+          order: this.order!==undefined ? `${this.order} DESC`: undefined
         }
       }
     }
@@ -242,8 +271,8 @@ export default class Model {
       value_count_params
     } = query_params
     let params = []
-    const { search, filters} = query
-    this.set_where({search, filters})
+    const { search, filters, order} = query
+    this.set_where({search, filters, order})
     if (metadata_search){
       const p = this.get_search_params({...query})
       params = [...params, p]

@@ -224,6 +224,60 @@ export async function get_barcounts(ui_values) {
   return { barcounts }
 }
 
+export async function get_histograms(ui_values) {
+  const { response: counting_fields } = await fetch_meta_post({
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Histogram': true,
+        },
+      },
+    },
+  })
+  const meta_promise = counting_fields.map(async (item) => {
+    const { response: meta_stats } = await fetch_meta({
+      endpoint: `/${item.meta.Table}/value_count`,
+      body: {
+        depth: 2,
+        filter: {
+          fields: [item.meta.Field_Name],
+        },
+      },
+    })
+    const stats = Object.keys(meta_stats[item.meta.Field_Name] || {}).reduce((accumulator, bar) => {
+      const count = meta_stats[item.meta.Field_Name][bar]
+      if (bar === '2017b') {
+        if (accumulator['2017'] === undefined) {
+          accumulator['2017'] = count
+        } else {
+          accumulator['2017'] = accumulator['2017'] + count
+        }
+      } else {
+        if (accumulator[bar] === undefined) {
+          accumulator[bar] = count
+        } else {
+          accumulator[bar] = accumulator[bar] + count
+        }
+      }
+      return accumulator
+    }, {}) // TODO: Fix this as schema
+    return { meta: item.meta, stats: stats }
+  })
+
+  const meta = await Promise.all(meta_promise)
+  const histograms = meta.reduce((accumulator, item) => {
+    accumulator[item.meta.Preferred_Name || item.meta.Field_Name] = {
+      key: item.meta.Preferred_Name || item.meta.Field_Name,
+      Preferred_Name: item.meta.Preferred_Name || item.meta.Field_Name,
+      table: item.meta.Table,
+      stats: Object.entries(item.stats).map(([name,counts]) => ({ name, counts })),
+    }
+    return accumulator
+  }, {})
+  return { histograms }
+}
 
 export async function get_signature_keys() {
   const { response: libraries } = await fetch_meta({

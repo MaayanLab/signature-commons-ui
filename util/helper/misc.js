@@ -59,6 +59,7 @@ export const URLFormatter = ({
   filters, // dictionary where the key is the field and the value is the filter values
   skip,
   limit,
+  order,
   params_str,
   reverse_preferred_name,
   value_count_params
@@ -74,11 +75,12 @@ export const URLFormatter = ({
         ...params[current_table],
         filters: filters || params[current_table].filters,
         skip: skip || params[current_table].skip,
+        order: order || params[current_table].order,
         limit: limit || params[current_table].limit,
         value_count_params: filters || params[current_table].value_count_params,
       }
     }
-  }else if (filters || skip || limit || value_count_params){
+  }else if (filters || skip || limit || order || value_count_params){
     params = {
       ...params,
       search,
@@ -87,6 +89,7 @@ export const URLFormatter = ({
         skip,
         limit,
         value_count_params,
+        order,
       }
     }
   } else {

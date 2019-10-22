@@ -62,7 +62,6 @@ class SearchBoxWrapper extends React.Component {
   }
 
   toggleInput = (type) =>{
-    console.log(type)
     if (type === "Overlap") {
       this.props.updateInput({
           type,
@@ -90,7 +89,6 @@ class SearchBoxWrapper extends React.Component {
     if (prevProps.loading===true && this.props.loading===false){
       const pathname = this.props.location.pathname
       const id = this.props.input.id
-      console.log(`${pathname}/${id}`)
       this.props.history.push(`${pathname}/${id}`)
     }
   }

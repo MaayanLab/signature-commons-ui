@@ -1,15 +1,5 @@
 [
   {
-    "Field_Name": "country",
-    "Preferred_Name": "Countries",
-    "Preferred_Name_Singular": "Country",
-    "Type": "string",
-    "MDI_Icon": "mdi-earth",
-    "Table": "libraries",
-    "Meta_Count": true,
-    "Bar_Count": true
-  },
-  {
     "Field_Name": "institution",
     "Preferred_Name": "Institutions",
     "Preferred_Name_Singular": "Institution",
@@ -20,14 +10,51 @@
     "Bar_Count": true
   },
   {
+    "Field_Name": "country",
+    "Preferred_Name": "Countries",
+    "Preferred_Name_Singular": "Country",
+    "Type": "string",
+    "MDI_Icon": "mdi-earth",
+    "Table": "libraries",
+    "Meta_Count": true,
+    "Bar_Count": true
+  },
+  {
     "Field_Name": "last_author.name",
-    "Preferred_Name": "Labs",
-    "Preferred_Name_Singular": "Lab",
+    "Preferred_Name": "Last Authors",
+    "Preferred_Name_Singular": "Last Author",
     "Type": "string",
     "MDI_Icon": "mdi-desktop-tower-monitor",
     "Table": "libraries",
     "Bar_Count": true,
     "Meta_Count": true
+  },
+  {
+    "Field_Name": "total_pubmed_citations",
+    "Preferred_Name": "Pubmed Citations",
+    "Preferred_Name_Singular": "Pubmed Citation",
+    "Type": "string",
+    "MDI_Icon": "mdi-book-open-page-variant",
+    "Table": "libraries",
+    "Histogram": true
+  },
+  {
+    "Field_Name": "attention_score",
+    "Preferred_Name": "Attention Scores",
+    "Preferred_Name_Singular": "Attention Score",
+    "Type": "string",
+    "MDI_Icon": "mdi-forum-outline",
+    "Table": "libraries",
+    "Histogram": true
+  },
+  {
+    "Field_Name": "cited_by_tweeters_count",
+    "Preferred_Name": "Twitter Citations",
+    "Preferred_Name_Singular": "Twitter Citation",
+    "Type": "string",
+    "MDI_Icon": "mdi-twitter",
+    "Table": "libraries",
+    "Histogram": true
   },
   {
     "Field_Name": "authors",

@@ -31,6 +31,7 @@ url params
     },
     skip,
     limit,
+    order,
     value_count_params: {
         fields: [...]
     }
@@ -74,6 +75,7 @@ saga params
     },
     skip,
     limit,
+    order,
     value_count_params: {
         fields: [...]
     },

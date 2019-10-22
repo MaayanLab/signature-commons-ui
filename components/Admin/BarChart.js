@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  BarChart as Chart, Bar, XAxis, Tooltip, ResponsiveContainer, Text
+  BarChart as Chart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Text
 } from 'recharts'
 
 const articles = ["a", "of", "the", "for", "and"]
@@ -29,7 +29,8 @@ export const BarChart = ({ meta_counts, ui_values, ...props }) => {
         data={meta_counts}
         {...bar_chart_style.Chart}
       >
-        <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />}/>
+        {props.XAxis ? <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />}/>: null}
+        {props.YAxis ? <YAxis dataKey="counts" {...bar_chart_style.YAxis}/>: null}
         <Tooltip {...bar_chart_style.Tooltip} />
         <Bar dataKey="counts" {...bar_chart_style.Bar}/>
       </Chart>

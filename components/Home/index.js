@@ -96,7 +96,9 @@ class Home extends React.PureComponent {
   render = () => (
     <MuiThemeProvider theme={theme}>
       <Base ui_values={this.props.ui_values}
-        handleChange={this.handleChange}
+        footer_type={this.props.ui_values.footer_type}
+        github={this.props.ui_values.github}
+        github_issues={this.props.ui_values.github_issues}
       >
         <style jsx>{`
         #Home {
@@ -168,7 +170,6 @@ class Home extends React.PureComponent {
           <Route
             path="/:otherendpoint"
             component={props=>{
-              console.log(props)
             return <Redirect to='/not-found'/>}}
           />
           <Route

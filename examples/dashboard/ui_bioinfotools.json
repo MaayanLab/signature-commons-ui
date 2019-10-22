@@ -5,6 +5,7 @@
       "header": "BTools",
       "metadata_placeholder": "Search over thousands of tools",
       "text_1": "Explore an extensive collection of bioinformatics tools",
+      "text_4": "Find your bioinformatics tool now",
       "library_name": "title",
       "preferred_name_singular": {
         "libraries": "Tool",
@@ -14,6 +15,12 @@
         "libraries": "Tools",
         "resources": "Journals"
       },
+      "order_default": {
+        "libraries": "meta.total_pubmed_citations"
+      },
+      "footer_type": "powered",
+      "github": "https://github.com/MaayanLab/btools-ui",
+      "github_issues": "https://github.com/MaayanLab/btools-ui/issues",
       "deactivate_download": true,
       "deactivate_wordcloud": true,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",

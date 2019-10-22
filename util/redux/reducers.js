@@ -47,12 +47,6 @@ function rootReducer(state = initialState, action) {
   }
   if (action.type === action_definitions.INITIALIZE_PARENTS){
     const {parent_ids_mapping, parents_mapping} = action
-    console.log(parent_ids_mapping)
-    console.log(parents_mapping)
-    console.log( Object.keys(parents_mapping).reduce((acc,item)=>{
-        acc[item] = []
-        return acc
-      },{}))
     return {
       ...state,
       parent_ids_mapping,

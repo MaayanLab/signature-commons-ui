@@ -146,8 +146,6 @@ export async function get_signature_counts_per_resources(ui_values) {
     })
     counts = await Promise.all(count_promises)
   }else {
-    console.log(libraries),
-    console.log(resources)
     return {
       libraries,
       resources,

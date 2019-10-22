@@ -58,9 +58,10 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
         }
       }
       if (prop.score){
-        if (val!==null) scores[label] = {
+        if (val!==null) scores[prop.Field_Name] = {
           label,
           value: val.text,
+          field_name: prop.Field_Name,
           icon: prop.MDI_Icon || 'mdi-star'
         }
       }
@@ -93,7 +94,7 @@ const mapStateToProps = state => {
     preferred_name: state.serverSideProps.ui_values.preferred_name,
     preferred_name_singular: state.serverSideProps.ui_values.preferred_name_singular,
     deactivate_download: state.serverSideProps.ui_values.deactivate_download,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {}
+    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
   }
 }
 
@@ -105,6 +106,7 @@ class MetadataSearchResults extends React.Component {
       sorted: null,
       page:0,
       perPage:10,
+      order: props.order,
     }
   }
 
@@ -121,19 +123,45 @@ class MetadataSearchResults extends React.Component {
   }
 
   sortBy = (sorted) => {
-    const collection = this.props.collection
-    collection = collection.sort((a, b) => a.processed.scores[sorted].value - b.processed.scores[sorted].value)
-    this.setState({
-      collection,
-      sorted,
-    })
+    console.log(sorted)
+    const curr_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    if (this.props.order[curr_table]!==sorted){
+      this.setState({
+        order: {
+          ...this.props.order,
+          [curr_table]: sorted
+        }
+      }, () =>{
+        const param_str = this.props.location.search
+        let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+        params = {
+          ...params,
+          order: sorted
+        }
+        const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
+        const query = URLFormatter({...params, current_table})
+        this.props.history.push({
+          pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
+          search: `?q=${query}`,
+          state: {
+            order: true
+          }
+        })
+      })
+    }
+    // const collection = this.props.collection
+    // collection = collection.sort((a, b) => a.processed.scores[sorted].value - b.processed.scores[sorted].value)
+    // this.setState({
+    //   collection,
+    //   sorted,
+    // })
   }
 
   onChipClick = (value) => {
     const param_str = this.props.location.search
     let { search } = ReadURLParams(param_str, this.props.reverse_preferred_name)
     search = [...search, value]
-    const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+    const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
     const query = URLFormatter({search,
       current_table,
       reverse_preferred_name: this.props.reverse_preferred_name})
@@ -161,7 +189,7 @@ class MetadataSearchResults extends React.Component {
         limit: perPage,
         skip: page * perPage
       }
-      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
       const query = URLFormatter({...params, current_table})
       this.props.history.push({
         pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
@@ -180,7 +208,7 @@ class MetadataSearchResults extends React.Component {
       page,
     }, () => {
       const {page, perPage} = this.state
-      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
       const param_str = this.props.location.search
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
       params = {
@@ -240,16 +268,18 @@ class MetadataSearchResults extends React.Component {
   }
 
   render = () => {
-    const model = this.props.models[this.props.reverse_preferred_name[this.props.match.params.table]]
+    const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    const model = this.props.models[current_table]
     return(
       <React.Fragment>
         <DataTable schemas={this.props.schemas}
           ui_values={this.props.ui_values}
           {...this.state}
           loaded={this.props.completed && !this.props.loading && !this.props.paginating}
-          sortingFunction={this.sortBy}
+          sortBy={this.sortBy}
+          sorted={this.props.order[current_table]}
           onChipClick={this.onChipClick}
-          current_table={this.props.reverse_preferred_name[this.props.match.params.table]}
+          current_table={current_table}
           type={this.props.preferred_name_singular[this.props.reverse_preferred_name[this.props.match.params.table]]}
           history={this.props.history}
           search={this.props.search}

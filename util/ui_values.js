@@ -2,7 +2,6 @@ import { fetch_meta } from '../util/fetch/meta'
 
 export const UIValues = {
   'landing': (values) => {
-    console.log(values)
     return (
       {
         LandingText: {
@@ -88,6 +87,10 @@ export const UIValues = {
             entities: 'Genes',
             resources: 'Resources',
           },
+        order_default: values.order_default,
+        footer_type: values.footer_type || "dcic",
+        github: values.github || "https://github.com/dcic/signature-commons-ui",
+        github_issues: values.github_issues || "https://github.com/dcic/signature-commons-ui/issues",
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
         bar_chart_solo: values.bar_chart_solo,
