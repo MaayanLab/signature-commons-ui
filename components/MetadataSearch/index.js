@@ -122,14 +122,8 @@ class MetadataSearch extends React.Component {
             [table]: params[table].order
           }
         })
-      }else if (this.props.order_default[table]!==undefined && params[table].order===undefined){
-        this.setState({
-          order: {
-            ...this.state.order,
-            [table]: this.props.order_default[table]
-          }
-        })
-        params[table].order = this.props.order_default[table]
+      }else if (this.state.order[table]!==undefined && params[table].order===undefined){
+        params[table].order = this.state.order[table]
       }
     }
     this.setState({
@@ -185,14 +179,8 @@ class MetadataSearch extends React.Component {
                   [table]: params[table].order
                 }
               })
-            }else if (this.props.order_default[table]!==undefined && params[table].order===undefined){
-              this.setState({
-                order: {
-                  ...this.state.order,
-                  [table]: this.props.order_default[table]
-                }
-              })
-              params[table].order = this.props.order_default[table]
+            }else if (this.state.order[table]!==undefined && params[table].order===undefined){
+              params[table].order = this.state.order[table]
             }
           }
           this.props.searchBoxFunction(params)

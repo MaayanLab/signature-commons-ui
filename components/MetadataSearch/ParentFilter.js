@@ -14,6 +14,7 @@ const mapStateToProps = state => {
     parents: state.parents_mapping,
     completed: state.completed,
     reverse_preferred_name: state.reverse_preferred_name,
+    preferred_name: state.serverSideProps.ui_values.preferred_name,
     MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
   }
 }
@@ -126,17 +127,31 @@ class ParentFilter extends React.Component {
     this.setState((prevState)=>({
       selected
     }), ()=>{
-      const current_table = this.props.match.params.table
-      const param_str = decodeURI(this.props.location.search)
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
+      const curr_table = this.props.reverse_preferred_name[current_table]
+      const param_str = this.props.location.search
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-      params = {
-        ...params,
-        filters: {
-          ...params.filters,
-          [this.props.parents[this.props.reverse_preferred_name[current_table]]]: selected_parent_ids.length > 0 ? selected_parent_ids: undefined
+      let filters = {}
+      if (params[curr_table]!==undefined){
+        filters = {
+          ...params[curr_table].filters,
+          [this.props.parents[curr_table]]: selected_parent_ids.length > 0 ? selected_parent_ids: undefined
+        }
+      } else {
+        filters = {
+          [this.props.parents[curr_table]]: selected_parent_ids.length > 0 ? selected_parent_ids: undefined
         }
       }
-      const query = URLFormatter({...params, current_table})
+      params = {
+        ...params,
+        [curr_table]: {
+          ...params[curr_table],
+          filters,
+          skip: undefined,
+          limit: undefined
+        }
+      }
+      const query = URLFormatter({params, preferred_name: this.props.preferred_name})
       this.props.history.push({
         pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,

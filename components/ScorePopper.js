@@ -29,7 +29,7 @@ export default class ScorePopper extends React.Component{
 
   render = () => {
     let {scores, score_icon, sorted, sortBy, classes} = this.props
-    if (sorted===null){
+    if (sorted===null || scores[sorted]===undefined){
       sorted = Object.keys(scores)[0]
     }
     return(

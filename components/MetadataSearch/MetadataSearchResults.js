@@ -132,14 +132,20 @@ class MetadataSearchResults extends React.Component {
           [curr_table]: sorted
         }
       }, () =>{
+        const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
+        const curr_table = this.props.reverse_preferred_name[current_table]
         const param_str = this.props.location.search
         let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
         params = {
           ...params,
-          order: sorted
+          [curr_table]: {
+            ...params[curr_table],
+            order: sorted,
+            limit: undefined,
+            skip: undefined,
+          }
         }
-        const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
-        const query = URLFormatter({...params, current_table})
+        const query = URLFormatter({params, preferred_name: this.props.preferred_name})
         this.props.history.push({
           pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
           search: `?q=${query}`,
@@ -158,13 +164,23 @@ class MetadataSearchResults extends React.Component {
   }
 
   onChipClick = (value) => {
-    const param_str = this.props.location.search
-    let { search } = ReadURLParams(param_str, this.props.reverse_preferred_name)
-    search = [...search, value]
     const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
-    const query = URLFormatter({search,
-      current_table,
-      reverse_preferred_name: this.props.reverse_preferred_name})
+    const curr_table = this.props.reverse_preferred_name[current_table]
+    const param_str = this.props.location.search
+    let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+    const {search, ...rest} = params
+    for (const i in rest){
+      rest[i] = {
+        ...rest[i],
+        limit: undefined,
+        skip: undefined,
+      }
+    }
+    params = {
+      search: [...search, value],
+      ...rest,
+    }
+    const query = URLFormatter({params, preferred_name: this.props.preferred_name})
     this.props.history.push({
       pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
       search: `?q=${query}`,
@@ -182,15 +198,19 @@ class MetadataSearchResults extends React.Component {
       perPage: e.target.value,
     }, () => {
       const {page, perPage} = this.state
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
+      const curr_table = this.props.reverse_preferred_name[current_table]
       const param_str = this.props.location.search
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
       params = {
         ...params,
-        limit: perPage,
-        skip: page * perPage
+        [curr_table]: {
+          ...params[curr_table],
+          limit: perPage,
+          skip: page*perPage
+        }
       }
-      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
-      const query = URLFormatter({...params, current_table})
+      const query = URLFormatter({params, preferred_name: this.props.preferred_name})
       this.props.history.push({
         pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,
@@ -209,15 +229,18 @@ class MetadataSearchResults extends React.Component {
     }, () => {
       const {page, perPage} = this.state
       const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
+      const curr_table = this.props.reverse_preferred_name[current_table]
       const param_str = this.props.location.search
       let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
       params = {
         ...params,
-        filters: params[this.props.reverse_preferred_name[current_table]]!==undefined ? params[this.props.reverse_preferred_name[current_table]].filters : undefined,
-        limit: perPage,
-        skip: page * perPage
+        [curr_table]: {
+          ...params[curr_table],
+          limit: perPage,
+          skip: page*perPage
+        }
       }
-      const query = URLFormatter({...params, current_table})
+      const query = URLFormatter({params, preferred_name: this.props.preferred_name})
       this.props.history.push({
         pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,
