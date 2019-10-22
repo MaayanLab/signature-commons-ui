@@ -30,31 +30,34 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "total_pubmed_citations",
+    "Field_Name": "meta.tool_name",
+    "Order_By": "meta.total_pubmed_citations",
     "Preferred_Name": "Pubmed Citations",
     "Preferred_Name_Singular": "Pubmed Citation",
     "Type": "string",
     "MDI_Icon": "mdi-book-open-page-variant",
     "Table": "libraries",
-    "Histogram": true
+    "Bar_Score": true
   },
   {
-    "Field_Name": "attention_score",
+    "Field_Name": "meta.tool_name",
+    "Order_By": "meta.attention_score",
     "Preferred_Name": "Attention Scores",
     "Preferred_Name_Singular": "Attention Score",
     "Type": "string",
     "MDI_Icon": "mdi-forum-outline",
     "Table": "libraries",
-    "Histogram": true
+    "Bar_Score": true
   },
   {
-    "Field_Name": "cited_by_tweeters_count",
+    "Field_Name": "meta.tool_name",
+    "Order_By": "meta.cited_by_tweeters_count",
     "Preferred_Name": "Twitter Citations",
     "Preferred_Name_Singular": "Twitter Citation",
     "Type": "string",
     "MDI_Icon": "mdi-twitter",
     "Table": "libraries",
-    "Histogram": true
+    "Bar_Score": true
   },
   {
     "Field_Name": "authors",

@@ -12,7 +12,8 @@ import { get_counts,
   get_pie_stats,
   get_signature_keys,
   get_barcounts,
-  get_histograms
+  get_histograms,
+  get_barscores,
   } from '../util/helper/server_side.js'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
@@ -63,6 +64,7 @@ class App extends React.Component {
     // const signature_keys = await get_signature_keys()
     const { barcounts } = await get_barcounts(ui_val)
     const { histograms } = await get_histograms(ui_val)
+    const { barscores } = await get_barscores(ui_val)
     const serverSideProps = {
       table_counts,
       meta_counts,//: {},
@@ -70,6 +72,7 @@ class App extends React.Component {
       pie_fields_and_stats,//: {},
       barcounts,
       histograms,
+      barscores,
       // signature_keys,
       resources,
       resources_id,

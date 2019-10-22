@@ -1,4 +1,7 @@
 import { fetch_meta, fetch_meta_post } from '../fetch/meta'
+import { makeTemplate } from '../makeTemplate'
+import { get_schemas } from "./fetch_methods"
+import { objectMatch } from "../objectMatch"
 
 export async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
@@ -277,6 +280,75 @@ export async function get_histograms(ui_values) {
     return accumulator
   }, {})
   return { histograms }
+}
+
+export async function get_barscores(ui_values) {
+  const schemas = await get_schemas("/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json")
+  const { response: counting_fields } = await fetch_meta_post({
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Bar_Score': true,
+        },
+      },
+    },
+  })
+  //   "where": {
+  //     "meta.cited_by_tweeters_count": {"neq": null}
+  //   },
+  //   "fields": [
+  //     "meta.cited_by_tweeters_count",
+  //     "meta.tool_name"
+  //   ],
+  //   "order": "meta.cited_by_tweeters_count DESC",
+  //   "limit": 10
+  // }
+  // {
+  const meta_promise = counting_fields.map(async (item) => {
+    const { response: meta_scores } = await fetch_meta({
+      endpoint: `/${item.meta.Table}`,
+      body: {
+        depth: 2,
+        filter: {
+          where: {
+            [item.meta.Order_By]: {
+              neq: null
+            }
+          },
+          order: `${item.meta.Order_By} DESC`,
+          "limit": 25,
+        },
+      },
+    })
+    const stats = meta_scores.reduce((accumulator, match) => {
+      const matched_schemas = schemas.filter(
+            (schema) => objectMatch(schema.match, match)
+        )
+      if (matched_schemas.length < 1) {
+        console.error('Could not match ui-schema for', match)
+        return null
+      }
+      const count = makeTemplate("${"+item.meta.Order_By+"}", match)
+      const name = makeTemplate("${"+item.meta.Field_Name+"}", match)
+      accumulator[name] = count
+      return accumulator
+    }, {}) // TODO: Fix this as schema
+    return { meta: item.meta, stats: stats }
+  })
+
+  const meta = await Promise.all(meta_promise)
+  const barscores = meta.reduce((accumulator, item) => {
+    accumulator[item.meta.Preferred_Name || item.meta.Field_Name] = {
+      key: item.meta.Preferred_Name || item.meta.Order_By,
+      Preferred_Name: item.meta.Preferred_Name || item.meta.Order_By,
+      table: item.meta.Table,
+      stats: Object.entries(item.stats).map(([name,counts]) => ({ name, counts })),
+    }
+    return accumulator
+  }, {})
+  return { barscores }
 }
 
 export async function get_signature_keys() {

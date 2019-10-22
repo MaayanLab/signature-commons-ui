@@ -32,11 +32,14 @@ class LandingPage extends React.Component {
     super(props)
     const selected_field = Object.keys(props.barcounts).filter(i=>i!==props.ui_values.bar_chart_solo.Field_Name)[0]
     const selected_histogram = Object.keys(props.histograms).sort()[0]
+    const selected_barscore = Object.keys(props.barscores)[0]
     this.state = {
       scroll: false,
       selected_field,
       selected_histogram,
+      selected_barscore,
       histogram: props.histograms[selected_histogram],
+      barscore: props.barscores[selected_barscore],
       bar_stats: props.barcounts[selected_field],
     }
   }
@@ -70,6 +73,15 @@ class LandingPage extends React.Component {
     this.setState({
       selected_histogram: value,
       histogram,
+    })
+  }
+
+  handleSelectBarScore = (e) => {
+    const value = e.target.value
+    const barscore = this.props.barscores[value]
+    this.setState({
+      selected_barscore: value,
+      barscore,
     })
   }
 
@@ -137,21 +149,46 @@ class LandingPage extends React.Component {
                   </Grid>
                 ))
               }
-              { Object.keys(this.props.histograms).length === 0 ? null :
+            </Grid>
+          </Grid>
+          <Grid item xs={12} className={this.props.classes.stretched}>
+          </Grid>
+          { Object.keys(this.props.barcounts).length === 0 ? null :
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <Grid container
+                spacing={24}
+                alignItems={'center'}>
+                <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
+                  <div className={this.props.classes.centered}>
+                    <BarChart meta_counts={this.state.bar_stats.stats}
+                        ui_values={this.props.ui_values}
+                        XAxis
+                    />
+                  </div>
+                </Grid>
+                <Grid item xs={12}>
+                  <div className={this.props.classes.centered}>
+                    <span className={this.props.classes.vertical20}>{"Top " ||this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
+                    <Selections
+                      value={this.state.selected_field}
+                      values={Object.keys(this.props.barcounts).sort()}
+                      onChange={(e) => this.handleSelectField(e)}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+            </Grid>
+          }
+          { Object.keys(this.props.meta_counts).length === 0 ? null :
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <CountsDiv {...this.props}/>
+            </Grid>
+          }
+          { Object.keys(this.props.histograms).length === 0 ? null :
                 <Grid item xs={12} className={this.props.classes.stretched}>
                   <Grid container
                     spacing={24}
                     alignItems={'center'}>
-                    <Grid item xs={12}>
-                      <div className={this.props.classes.centered}>
-                        <span className={this.props.classes.vertical20}>{'Examine histograms:'}</span>
-                        <Selections
-                          value={this.state.selected_histogram}
-                          values={Object.keys(this.props.histograms).sort()}
-                          onChange={(e) => this.handleSelectHistogram(e)}
-                        />
-                      </div>
-                    </Grid>
                     <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.histogram.stats}
@@ -163,47 +200,45 @@ class LandingPage extends React.Component {
                         </Typography>
                       </div>
                     </Grid>
+                    <Grid item xs={12}>
+                      <div className={this.props.classes.centered}>
+                        <span className={this.props.classes.vertical20}>{'Examine histograms:'}</span>
+                        <Selections
+                          value={this.state.selected_histogram}
+                          values={Object.keys(this.props.histograms).sort()}
+                          onChange={(e) => this.handleSelectHistogram(e)}
+                        />
+                      </div>
+                    </Grid>
                   </Grid>
                 </Grid>
               }
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={this.props.classes.stretched}>
-          </Grid>
-          { Object.keys(this.props.meta_counts).length === 0 ? null :
-            <Grid item xs={12} className={this.props.classes.stretched}>
-              <CountsDiv {...this.props}/>
-            </Grid>
-          }
-          { Object.keys(this.props.barcounts).length === 0 ? null :
-            <Grid item xs={12} className={this.props.classes.stretched}>
-              <Grid container
-                spacing={24}
-                alignItems={'center'}>
-                <Grid item xs={12}>
-                  <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
-                    <Selections
-                      value={this.state.selected_field}
-                      values={Object.keys(this.props.barcounts).sort()}
-                      onChange={(e) => this.handleSelectField(e)}
-                    />
-                  </div>
+              { Object.keys(this.props.barscores).length === 0 ? null :
+                <Grid item xs={12} className={this.props.classes.stretched}>
+                  <Grid container
+                    spacing={24}
+                    alignItems={'center'}>
+                    <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
+                      <div className={this.props.classes.centered}>
+                        <BarChart meta_counts={this.state.barscore.stats}
+                            ui_values={this.props.ui_values}
+                            XAxis
+                        />
+                      </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <div className={this.props.classes.centered}>
+                        <span className={this.props.classes.vertical20}>{'Top'}</span>
+                        <Selections
+                          value={this.state.selected_barscore}
+                          values={Object.keys(this.props.barscores).sort()}
+                          onChange={(e) => this.handleSelectBarScore(e)}
+                        />
+                      </div>
+                    </Grid>
+                  </Grid>
                 </Grid>
-                <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
-                  <div className={this.props.classes.centered}>
-                    <BarChart meta_counts={this.state.bar_stats.stats}
-                        ui_values={this.props.ui_values}
-                        XAxis
-                    />
-                    <Typography variant="overline">
-                      {`Top ${this.state.bar_stats.Preferred_Name}`}
-                    </Typography>
-                  </div>
-                </Grid>
-              </Grid>
-            </Grid>
-          }
+              }
           <Grid item xs={12}>
             <BottomLinks handleChange={this.props.handleChange}
               {...this.props} />
