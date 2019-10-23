@@ -104,7 +104,6 @@ export function* workFetchMetaData(action) {
             filters,
             search: params.search,
           },
-          value_count_params,
           parent_ids,
           ...operations
         }

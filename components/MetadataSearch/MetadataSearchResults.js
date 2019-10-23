@@ -14,23 +14,27 @@ import DataTable from "./DataTable"
 export const value_by_type = {
   text: ({label, prop, data}) => {
     let val = makeTemplate(prop.text, data)
+    let hyperlink
+    if (prop.hyperlink!==undefined) hyperlink  = makeTemplate(prop.hyperlink, data)
     if (val === 'undefined'){
       return null
     } else if (validURL(val)){
       return {text: <a href={val} target="_blank">{label}</a>}
     } else {
-      return {text: val}
+      return {text: val, hyperlink}
     }
   },
   'img': ({label, prop, data }) => {
     const src = makeTemplate(prop.src, data)
     const alt = makeTemplate(prop.alt, data)
     let text = makeTemplate(prop.text, data)
+    let hyperlink
+    if (prop.hyperlink!==undefined) hyperlink  = makeTemplate(prop.hyperlink, data)
     if ( alt === 'undefined'){
       return null
     } else {
       if (text === 'undefined') text = alt
-      return {alt, src, text}
+      return {alt, src, text, hyperlink}
     }
   },
 }

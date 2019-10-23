@@ -271,7 +271,7 @@ class DataTable extends React.Component {
                   onChange={(e)=>this.props.sortBy(e.target.value)}
                 >
                   {Object.entries(this.props.sort_tags).map(([field_name, values])=>(
-                    <MenuItem value={field_name}>{values.label}</MenuItem>
+                    <MenuItem value={field_name} key={field_name}>{values.label}</MenuItem>
                     ))}
                 </Select>
               </FormControl>

@@ -107,7 +107,7 @@ export function build_where({search, parent, filters, order}) {
       }
     }
     for (const [filter, values] of Object.entries(filters)){
-      if (filter===parent) {
+      if (filter.indexOf("..")===-1) {
         where = {
           and: [...where.and, {
             [filter]: {inq: [...values]}
@@ -145,6 +145,7 @@ export default class Model {
     this.results = {}
     this.search = null
     this.filters = undefined
+    this.fields = undefined
     this.pagination = {
       limit: 10
     }
@@ -268,7 +269,6 @@ export default class Model {
       value_count,
       query,
       parent_ids,
-      value_count_params
     } = query_params
     let params = []
     const { search, filters, order} = query
@@ -277,26 +277,25 @@ export default class Model {
       const p = this.get_search_params({...query})
       params = [...params, p]
     }
-    if (value_count && value_count_params!==undefined){
-      const p = this.get_value_count({search, filters, ...value_count_params})
+    if (value_count && this.fields!==undefined && this.fields.length>0){
+      const p = this.get_value_count({search, filters, fields: this.fields})
       params = [...params, p]
     }
     if (count) {
       const p = this.get_count_params({search, filters}) 
       params = [...params, p]
     }
-    if (per_parent_count) {
-      const p = this.get_count_per_parent_params({search, filters, parent_ids})
-      params = [...params, ...p]
-    }
-
+    // if (per_parent_count) {
+    //   const p = this.get_count_per_parent_params({search, filters, parent_ids})
+    //   params = [...params, ...p]
+    // }
+    
     return {
       params,
       operations: {
         metadata_search,
-        value_count: value_count && value_count_params!==undefined,
+        value_count: value_count && this.sorting_fields!==undefined && this.sorting_fields.length>0,
         count,
-        per_parent_count,
       }
     }
   }
@@ -312,6 +311,7 @@ export default class Model {
     } = operations
     let result = {}
     let response = bulk_response
+    
     if (metadata_search) {
       const [m, ...r] = response
       const res = m.response.map(r=>{
@@ -328,16 +328,25 @@ export default class Model {
         metadata_search: res,
       }
     }
-    if (value_count && value_count_params!==undefined) {
+    if (value_count) {
       const [m, ...r] = response
+      
       response = [...r]
       result = {
         ...result,
-        value_count: m.response
+        value_count: this.sorting_fields.reduce((acc,s)=>{
+          const field_name = s.meta.Field_Name
+          acc[field_name] = {
+            schema: s,
+            stats: m.response[field_name]
+          }
+          return acc
+        },{})
       }
     }
     if (count) {
       const [m, ...r] = response
+      
       response = [...r]
       result = {
         ...result,
@@ -357,11 +366,34 @@ export default class Model {
         ...result,
         per_parent_count
       }
+      
     }
+    
     return result
   }
 
+  get_value_count_fields = async () => {
+    const { response: sorting_fields } = await fetch_meta_post({
+      endpoint: '/schemas/find',
+      body: {
+        filter: {
+          where: {
+            'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+            'meta.Filter': true,
+            'meta.Table': this.Table
+          },
+        },
+      },
+    })
+    this.fields = sorting_fields.map(i=>i.meta.Field_Name)
+    this.sorting_fields = sorting_fields
+  }
+
   fetch_meta = async (query_params, controller) => {
+    let sorting_fields
+    if (this.fields===undefined && this.sorting_fields===undefined){
+      await this.get_value_count_fields()
+    }
     const {params, operations} = this.build_query(query_params)
     let {response: bulk_response, duration} = await fetch_meta_post({
       endpoint: '/bulk',

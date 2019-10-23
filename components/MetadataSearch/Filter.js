@@ -25,7 +25,7 @@ export default class Filter extends React.Component {
     if (!this.props.loaded || this.props.data_count === undefined){
       return(
         <Card style={{
-          height: 300,
+          maxHeight: 300,
           width: '100%',
           overflow: "scroll",
         }}>
@@ -43,7 +43,7 @@ export default class Filter extends React.Component {
     const sorted = this.props.data_count.sort((a, b) => b.count - a.count)
     return(
       <Card style={{
-        height: 300,
+        maxHeight: 300,
         width: '100%',
         overflow: "scroll",
       }}>

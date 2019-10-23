@@ -1,6 +1,6 @@
 [
   {
-    "Field_Name": "institution",
+    "Field_Name": "meta.institution",
     "Preferred_Name": "Institutions",
     "Preferred_Name_Singular": "Institution",
     "Type": "string",
@@ -10,7 +10,7 @@
     "Bar_Count": true
   },
   {
-    "Field_Name": "country",
+    "Field_Name": "meta.country",
     "Preferred_Name": "Countries",
     "Preferred_Name_Singular": "Country",
     "Type": "string",
@@ -20,7 +20,7 @@
     "Bar_Count": true
   },
   {
-    "Field_Name": "last_author.name",
+    "Field_Name": "meta.last_author.name",
     "Preferred_Name": "Last Authors",
     "Preferred_Name_Singular": "Last Author",
     "Type": "string",
@@ -60,7 +60,7 @@
     "Bar_Score": true
   },
   {
-    "Field_Name": "authors",
+    "Field_Name": "meta.authors",
     "Preferred_Name": "Authors",
     "Preferred_Name_Singular": "Author",
     "Type": "string",
@@ -69,16 +69,26 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "up_down",
+    "Field_Name": "resource",
+    "Preferred_Name": "Journals",
+    "Preferred_Name_Singular": "Journal",
+    "Type": "string",
+    "MDI_Icon": "mdi-file-document",
+    "Table": "libraries",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.up_down",
     "Preferred_Name": "Status",
     "Preferred_Name_Singular": "Status",
     "Type": "string",
     "MDI_Icon": "mdi-cloud",
     "Table": "libraries",
-    "Pie_Count": true
+    "Pie_Count": true,
+    "Filter": true
   },
   {
-    "Field_Name": "journal_name",
+    "Field_Name": "meta.journal_name",
     "Preferred_Name": "Journals",
     "Preferred_Name_Singular": "Journal",
     "Type": "string",
@@ -87,7 +97,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "pubmed",
+    "Field_Name": "meta.pubmed",
     "Preferred_Name": "PMIDs",
     "Preferred_Name_Singular": "PMID",
     "Type": "string",
@@ -114,7 +124,7 @@
     "Visible_On_Admin": true
   },
   {
-    "Field_Name": "pub_year",
+    "Field_Name": "meta.pub_year",
     "Type": "string",
     "Table": "libraries",
     "Preferred_Name": "Publication Year",

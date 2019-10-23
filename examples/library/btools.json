@@ -9,6 +9,7 @@
       "src": "${meta.icon}",
       "alt": "${meta.tool_name}",
       "text": "${meta.tool_name}",
+      "hyperlink": "${meta.tool_homepage_url}",
       "priority": 1,
       "icon": true,
       "name": true
@@ -17,21 +18,8 @@
       "visibility": 1,
       "type": "text",
       "text": "${meta.journal_name}",
+      "hyperlink": "${meta.pubmed}",
       "subtitle": true,
-      "priority": 2
-    },
-    "Pubmed": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.pubmed}",
-      "display": true,
-      "priority": 2
-    },
-    "Homepage": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.tool_homepage_url}",
-      "display": true,
       "priority": 2
     },
     "Last Author": {

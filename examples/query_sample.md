@@ -41,10 +41,7 @@ url params
       [filter_field]: [...]
     },
     skip,
-    limit,
-    value_count_params: {
-        fields: [...]
-    }
+    limit
   }  
 }
 ```
@@ -59,9 +56,6 @@ saga params
     },
     skip,
     limit,
-    value_count_params: {
-        fields: [...]
-    },
     operations: {
       metadata_search: false,
       per_parent_count: false,
@@ -76,9 +70,6 @@ saga params
     skip,
     limit,
     order,
-    value_count_params: {
-        fields: [...]
-    },
     operations: {
       metadata_search: true,
       per_parent_count: true,
