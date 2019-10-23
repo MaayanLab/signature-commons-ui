@@ -53,7 +53,7 @@
     "Field_Name": "meta.tool_name",
     "Order_By": "meta.cited_by_tweeters_count",
     "Preferred_Name": "Twitter Citations",
-    "Preferred_Name_Singular": "Twitter Citation",
+    "Preferred_Name_Singular": "Twitter Mentions",
     "Type": "string",
     "MDI_Icon": "mdi-twitter",
     "Table": "libraries",

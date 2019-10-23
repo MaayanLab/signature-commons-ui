@@ -51,6 +51,7 @@ export async function get_library_resources() {
           )
         }
         if (matched_schemas.length < 1) {
+          console.log(schemas)
           console.error('Could not match ui-schema for', resource)
           return null
         }
@@ -123,7 +124,7 @@ export async function get_library_resources() {
 
 export async function get_signature_counts_per_resources(ui_values) {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const { libraries, resources, resources_id, library_resource } = await get_library_resources(ui_values)
+  const { libraries, resources, resources_id, library_resource } = await get_library_resources()
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios
   const { response } = await fetch_meta({

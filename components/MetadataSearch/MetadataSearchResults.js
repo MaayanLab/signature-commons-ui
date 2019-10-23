@@ -8,7 +8,7 @@ import { diffList } from "../../util/helper/misc"
 import { connect } from "react-redux";
 import { fetchMetaData } from "../../util/redux/actions";
 import { URLFormatter, ReadURLParams } from "../../util/helper/misc";
-
+import {validURL} from "../ShowMeta"
 import DataTable from "./DataTable"
 
 export const value_by_type = {
@@ -16,6 +16,8 @@ export const value_by_type = {
     let val = makeTemplate(prop.text, data)
     if (val === 'undefined'){
       return null
+    } else if (validURL(val)){
+      return {text: <a href={val} target="_blank">{label}</a>}
     } else {
       return {text: val}
     }
@@ -39,7 +41,8 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
     const { properties } = schema
     let scores= {}
     let tags = []
-    const processed = {id: data.id}
+    const processed = {id: data.id, display: {}}
+    const sort_tags = {}
     for (const label of Object.keys(properties)){
       const prop = properties[label]
       const val = value_by_type[prop.type]({label, prop, data, highlight})
@@ -52,12 +55,22 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
       if (prop.subtitle){
         if (val!==null) processed.subtitle = val.text
       }
+      if (prop.display){
+        if (val!==null) processed.display[label] = val.text
+      }
       if (prop.icon){
         if (val!==null){
           processed.icon = {...val}
         }
       }
       if (prop.score){
+        if (sort_tags[prop.Field_Name] === undefined){
+          sort_tags[prop.Field_Name] = {
+            label,
+            field_name: prop.Field_Name,
+            icon: prop.MDI_Icon || 'mdi-star'
+          }
+        }
         if (val!==null) scores[prop.Field_Name] = {
           label,
           value: val.text,
@@ -65,7 +78,7 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
           icon: prop.MDI_Icon || 'mdi-star'
         }
       }
-      if (!(prop.score || prop.icon || prop.name || prop.subtitle)) {
+      if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display)) {
         if ( val !== null) tags = [...tags, {
           label,
           value: val.text,
@@ -77,7 +90,7 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
     tags = tags.sort((a, b) => a.priority - b.priority)
     if (Object.keys(scores).length>0) processed.scores = scores
     processed.tags = tags || []
-    return {original: data, processed}
+    return {original: data, processed, sort_tags}
   }
 }
 
@@ -107,6 +120,7 @@ class MetadataSearchResults extends React.Component {
       page:0,
       perPage:10,
       order: props.order,
+      sort_tags: {}
     }
   }
 
@@ -114,16 +128,24 @@ class MetadataSearchResults extends React.Component {
     const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
     if (this.props.models[current_table]){
       const coll = this.props.models[current_table].results.metadata_search || []
-      const collection = coll.map(data=>get_card_data(data, this.props.schemas))
+      let sort_tags = this.state.sort_tags
+      const collection = coll.map(data=>{
+        const {original, processed, sort_tags: tags} = get_card_data(data, this.props.schemas)
+        sort_tags = {
+          ...sort_tags,
+          ...tags
+        }
+        return {original, processed}
+      })
       this.setState({
         collection,
-        current_table
+        current_table,
+        sort_tags,
       })
     }
   }
 
   sortBy = (sorted) => {
-    console.log(sorted)
     const curr_table = this.props.reverse_preferred_name[this.props.match.params.table]
     if (this.props.order[curr_table]!==sorted){
       this.setState({
@@ -306,6 +328,7 @@ class MetadataSearchResults extends React.Component {
           type={this.props.preferred_name_singular[this.props.reverse_preferred_name[this.props.match.params.table]]}
           history={this.props.history}
           search={this.props.search}
+          sort_tags={this.state.sort_tags}
           deactivate_download={this.props.deactivate_download}
         />
         <div align="right">

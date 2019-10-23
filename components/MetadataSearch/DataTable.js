@@ -15,6 +15,10 @@ import Icon from '@material-ui/core/Icon';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Modal from '@material-ui/core/Modal';
 import Tooltip from '@material-ui/core/Tooltip';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 import { makeTemplate } from '../../util/makeTemplate'
 import { Highlight } from '../Highlight'
@@ -102,15 +106,32 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
               <Grid item md={10} xs={8}>
                 <Grid container>
                   <Grid item xs={12}>
-                    <Typography variant="subtitle1">
-                      {data.processed.name}
-                    </Typography>
+                    <Highlight
+                      Component={(props) => 
+                        <Typography variant="subtitle1">
+                          {props.children}
+                        </Typography>}
+                      text={data.processed.name}
+                      highlight={search}
+                    />
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography variant="subtitle2">
-                      <i>{data.processed.subtitle}</i>
-                    </Typography>
+                    <Highlight
+                      Component={(props) => 
+                        <Typography variant="subtitle2">
+                          <i>{props.children}</i>
+                        </Typography>}
+                      text={data.processed.subtitle}
+                      highlight={search}
+                    />
                   </Grid>
+                  {Object.entries(data.processed.display).map(([label, value])=>(
+                    <Grid item xs={12}>
+                      <Typography variant="caption" style={{textTransform: "uppercase"}}>
+                        {value}
+                      </Typography>
+                    </Grid>
+                  ))}
                   <Grid item xs={12}>
                   </Grid>
                   <Grid item xs={12}>
@@ -241,11 +262,28 @@ class DataTable extends React.Component {
         <div style={{
           maxWidth: '100%',
         }}>
-          {this.props.collection.map((data,ind)=><InfoCard key={data.original.id}
-            {...this.props}
-            handleClick={this.handleClick}
-            data={data}
-          />)}
+          <Grid container>
+            <Grid item style={{marginLeft: "auto", marginRight: 0, marginBottom:10}}>
+              <FormControl>
+                <InputLabel>Sort by</InputLabel>
+                <Select
+                  value={this.props.sorted}
+                  onChange={(e)=>this.props.sortBy(e.target.value)}
+                >
+                  {Object.entries(this.props.sort_tags).map(([field_name, values])=>(
+                    <MenuItem value={field_name}>{values.label}</MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              {this.props.collection.map((data,ind)=><InfoCard key={data.original.id}
+                {...this.props}
+                handleClick={this.handleClick}
+                data={data}
+              />)}
+            </Grid>
+          </Grid>
         </div>
       </div>
     )

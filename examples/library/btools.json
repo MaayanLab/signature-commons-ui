@@ -20,6 +20,20 @@
       "subtitle": true,
       "priority": 2
     },
+    "Pubmed": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.pubmed}",
+      "display": true,
+      "priority": 2
+    },
+    "Homepage": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.tool_homepage_url}",
+      "display": true,
+      "priority": 2
+    },
     "Last Author": {
       "visibility": 1,
       "type": "text",
@@ -43,7 +57,7 @@
       "priority": 10,
       "score": true
     },
-    "Twitter Citations": {
+    "Twitter Mentions": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.cited_by_tweeters_count}",

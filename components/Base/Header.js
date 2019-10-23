@@ -65,7 +65,7 @@ const Header = (props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp; b<img src={`${process.env.PREFIX}/static/favicon.ico`} height="30" />ools
+            &nbsp;&nbsp; b<img src={`${process.env.PREFIX}/static/favicon.ico`} style={{marginLeft:-3}} height="30" />ls
           </Link>
           <Link
             to="/"
@@ -74,7 +74,7 @@ const Header = (props) => {
               whiteSpace: 'nowrap',
             }}
           >
-            &nbsp;&nbsp;  b<img src={`${process.env.PREFIX}/static/favicon.ico`} height="30" />ools
+            &nbsp;&nbsp;  b<img src={`${process.env.PREFIX}/static/favicon.ico`} style={{marginLeft:-3}} height="30" />ls
           </Link>
           <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
           <Nav id="nav-mobile" className="right hide-on-med-and-down" {...rest} />

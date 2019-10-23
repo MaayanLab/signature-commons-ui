@@ -139,11 +139,11 @@ class LandingPage extends React.Component {
               alignItems={'center'}>
               {
                 Object.entries(this.props.pie_fields_and_stats).map(([key,value])=>(
-                  <Grid item xs={12} key={key} sm>
+                  <Grid item xs={12} key={key} md={6}>
                     <ChartCard cardheight={300} pie_stats={value.stats} resources color={'Blue'} ui_values={this.props.ui_values}/>
                     <div className={this.props.classes.centered}>
                       <Typography variant="overline">
-                        Tool {value.Preferred_Name}
+                        By {value.Preferred_Name}
                       </Typography>
                     </div>
                   </Grid>
