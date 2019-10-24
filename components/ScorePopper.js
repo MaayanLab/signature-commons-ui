@@ -38,6 +38,7 @@ export default class ScorePopper extends React.Component{
           aria-owns={this.state.anchorEl ? 'simple-menu' : undefined}
           aria-haspopup="true"
           onClick={this.handleClick}
+          style={{width:50}}
         >
           <Typography style={{
               fontSize: 15, 

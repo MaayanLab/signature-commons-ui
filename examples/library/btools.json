@@ -14,12 +14,12 @@
       "icon": true,
       "name": true
     },
-    "Journal": {
+    "Pubmed": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.journal_name}",
+      "text": "${meta.pubmed.split('/').pop()}",
       "hyperlink": "${meta.pubmed}",
-      "subtitle": true,
+      "display": true,
       "priority": 2
     },
     "Last Author": {

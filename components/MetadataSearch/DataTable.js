@@ -26,6 +26,7 @@ import {findMatchedSchema} from '../../util/objectMatch'
 import ShowMeta from '../ShowMeta'
 
 import IconButton from '../IconButton'
+import MaterialIconButton from '@material-ui/core/IconButton';
 import ScorePopper from '../ScorePopper'
 
 
@@ -59,6 +60,9 @@ const styles = theme => ({
   },
   card: {
     width: '100%',
+  },
+  margin: {
+    margin: theme.spacing.unit,
   },
   media: {
     height: 0,
@@ -94,14 +98,24 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
   const default_tag_icon = 'mdi-arrow-top-right-thick'
   return(
     <Card>
-      <CardContent>
+      <CardContent style={{paddingBottom:3}}>
         <Grid container>
           <Grid item md={11} sm={10} xs={9}>
             <Grid container>
               <Grid item md={2} xs={4} style={{textAlign: "center"}}>
                 <CardMedia style={{marginTop:-30}} {...data.processed.icon}>
-                  <IconButton {...data.processed.icon} title={<span className={"mdi mdi-arrow-expand-all"}/>} description={"Expand"} onClick={props.handleClick} value={data}/>
+                  <IconButton {...data.processed.icon} onClick={props.handleClick} value={data}/>
                 </CardMedia>
+                <Tooltip title={"See more"}
+                        placement="bottom">
+                  <Button aria-label="Expand"
+                    onClick={()=>props.handleClick(data)}
+                    className={classes.margin}
+                    style={{minWidth:5, paddingTop: 0, paddingBottom: 0}}
+                  >
+                    <span className="mdi mdi-dots-horizontal mdi-24px"/>
+                  </Button>
+                </Tooltip>
               </Grid>
               <Grid item md={10} xs={8}>
                 <Grid container>
@@ -126,34 +140,48 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
                       highlight={search}
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    <Highlight
-                      Component={(props) =>{
-                        if (data.processed.subtitle.hyperlink !== undefined){
-                          return(
-                            <Typography variant="subtitle2">
-                              <i><a href={data.processed.subtitle.hyperlink} target="_blank" >{props.children}</a></i>
-                            </Typography>
-                          )
-                        }else{
-                          return(
-                            <Typography variant="subtitle2">
-                              {props.children}
-                            </Typography>
-                          )
-                        }
-                      }}
-                      text={data.processed.subtitle.text}
-                      highlight={search}
-                    />
-                  </Grid>
-                  {Object.entries(data.processed.display).map(([label, value])=>(
+                  {data.processed.subtitle===undefined? null:
                     <Grid item xs={12}>
-                      <Typography variant="caption" style={{textTransform: "uppercase"}}>
-                        {value.text}
-                      </Typography>
+                      <Highlight
+                        Component={(props) =>{
+                          if (data.processed.subtitle.hyperlink !== undefined){
+                            return(
+                              <Typography variant="subtitle2">
+                                <i><a href={data.processed.subtitle.hyperlink} target="_blank" >{props.children}</a></i>
+                              </Typography>
+                            )
+                          }else{
+                            return(
+                              <Typography variant="subtitle2">
+                                {props.children}
+                              </Typography>
+                            )
+                          }
+                        }}
+                        text={data.processed.subtitle.text}
+                        highlight={search}
+                      />
                     </Grid>
-                  ))}
+                  }
+                  {Object.entries(data.processed.display).map(([label, value])=>{
+                    if (value.hyperlink===undefined) {
+                      return (
+                        <Grid item xs={12}>
+                          <Typography variant="caption" style={{textTransform: "uppercase"}}>
+                            {value.label}: {value.text}
+                          </Typography>
+                        </Grid>
+                      )
+                    } else {
+                      return (
+                        <Grid item xs={12}>
+                          <Typography variant="caption" style={{textTransform: "uppercase"}}>
+                            {value.label}: <a href={value.hyperlink} target="_blank">{value.text}</a>
+                          </Typography>
+                        </Grid>
+                      )
+                    }
+                  })}
                   <Grid item xs={12}>
                   </Grid>
                   <Grid item xs={12}>
@@ -175,14 +203,14 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
               </Grid>
             </Grid>
           </Grid>
-          <Grid item md={1} sm={2} xs={3} style={{textAlign: "right"}}>
+          <Grid item md={1} sm={2} xs={3}>
             <Grid container direction={"column"}>
-              <Grid item>
-                { props.current_table === "libraries" || props.deactivate_download ? null:
-                <Options type={props.current_table} item={data.original} ui_values={ui_values}
-                    submit={()=>{console.log("submitted")}} schemas={schemas} history={props.history}/>
-                }
-              </Grid>
+              { props.current_table === "libraries" || props.deactivate_download ? null:
+                <Grid item>
+                  <Options type={props.current_table} item={data.original} ui_values={ui_values}
+                      submit={()=>{console.log("submitted")}} schemas={schemas} history={props.history}/>
+                </Grid>
+              }
               { data.processed.scores !== undefined ?
                 <Grid item>
                   <ScorePopper scores={data.processed.scores}
@@ -237,7 +265,7 @@ class DataTable extends React.Component {
           >
             <Card style={{minWidth:700,
               maxWidth: 1000,
-              maxHeight: 700,
+              maxHeight: 500,
               overflow: "scroll",
               position: "absolute",
               float: "left",

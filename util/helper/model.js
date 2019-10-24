@@ -213,6 +213,7 @@ export default class Model {
     const params = {
       operationId,
       parameters: {
+        contentRange: false,
         filter:{
           where: this.where,
           ...this.pagination,

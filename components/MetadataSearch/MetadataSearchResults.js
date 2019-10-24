@@ -18,10 +18,8 @@ export const value_by_type = {
     if (prop.hyperlink!==undefined) hyperlink  = makeTemplate(prop.hyperlink, data)
     if (val === 'undefined'){
       return null
-    } else if (validURL(val)){
-      return {text: <a href={val} target="_blank">{label}</a>}
     } else {
-      return {text: val, hyperlink}
+      return {text: val, hyperlink, label}
     }
   },
   'img': ({label, prop, data }) => {
@@ -34,7 +32,7 @@ export const value_by_type = {
       return null
     } else {
       if (text === 'undefined') text = alt
-      return {alt, src, text, hyperlink}
+      return {label, alt, src, text, hyperlink}
     }
   },
 }
@@ -60,7 +58,7 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
         if (val!==null) processed.subtitle = {...val}
       }
       if (prop.display){
-        if (val!==null) processed.display[label] = val.text
+        if (val!==null) processed.display[label] = {...val}
       }
       if (prop.icon){
         if (val!==null){
