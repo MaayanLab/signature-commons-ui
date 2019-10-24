@@ -27,7 +27,7 @@ export default class Filter extends React.Component {
         <Card style={{
           maxHeight: 300,
           width: '100%',
-          overflow: "scroll",
+          overflow: "auto",
         }}>
           <CardContent style={{textAlign: "center"}}>
             <CircularProgress />
@@ -45,7 +45,7 @@ export default class Filter extends React.Component {
       <Card style={{
         maxHeight: 300,
         width: '100%',
-        overflow: "scroll",
+        overflow: "auto",
       }}>
         <CardContent>
           <FormGroup>

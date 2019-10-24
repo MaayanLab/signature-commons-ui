@@ -143,7 +143,7 @@ class MetaFilter extends React.Component {
     let selected_values = []
     let selected = {}
     let data_count = []
-    if (params[curr_table]!== undefined && params[curr_table].filters[this.props.field_name] !== undefined){
+    if (params[curr_table]!== undefined && params[curr_table].filters!== undefined && params[curr_table].filters[this.props.field_name] !== undefined){
       selected_values = params[curr_table].filters[this.props.field_name]
       
     }
