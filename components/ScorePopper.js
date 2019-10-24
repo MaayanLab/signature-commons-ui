@@ -63,7 +63,10 @@ export default class ScorePopper extends React.Component{
             <MenuItem onClick={()=>{
               sortBy(key)
               this.handleClose()
-            }} key={key}>
+            }}
+            key={key}
+            selected={sorted===key}
+            >
               <Icon className={`${classes.menuIcon} mdi mdi-18px ${scores[key].icon || 'mdi-trophy-award'}`} />
                 &nbsp;
               <Typography style={{ fontSize: 15 }} variant="caption" display="block">
