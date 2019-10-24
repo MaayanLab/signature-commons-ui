@@ -267,7 +267,7 @@ class DataTable extends React.Component {
                           value={[
                             {
                               '@id': this.state.metadata.original.id,
-                              '@name': this.state.metadata.processed.name,
+                              '@name': this.state.metadata.processed.name.text,
                               'meta': this.state.metadata.original.meta,
                             }
                           ]}
