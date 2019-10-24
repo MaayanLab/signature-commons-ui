@@ -100,35 +100,57 @@ export const InfoCard = ({data, schemas, ui_values, classes, search, ...props}) 
             <Grid container>
               <Grid item md={2} xs={4} style={{textAlign: "center"}}>
                 <CardMedia style={{marginTop:-30}} {...data.processed.icon}>
-                  <IconButton {...data.processed.icon} onClick={props.handleClick} value={data}/>
+                  <IconButton {...data.processed.icon} title={<span className={"mdi mdi-arrow-expand-all"}/>} description={"Expand"} onClick={props.handleClick} value={data}/>
                 </CardMedia>
               </Grid>
               <Grid item md={10} xs={8}>
                 <Grid container>
                   <Grid item xs={12}>
                     <Highlight
-                      Component={(props) => 
-                        <Typography variant="subtitle1">
-                          {props.children}
-                        </Typography>}
-                      text={data.processed.name}
+                      Component={(props) =>{
+                        if (data.processed.name.hyperlink !== undefined){
+                          return(
+                            <Typography variant="subtitle1">
+                              <a href={data.processed.name.hyperlink} target="_blank" >{props.children}</a>
+                            </Typography>
+                          )
+                        }else{
+                          return(
+                            <Typography variant="subtitle1">
+                              {props.children}
+                            </Typography>
+                          )
+                        }
+                      }}
+                      text={data.processed.name.text}
                       highlight={search}
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <Highlight
-                      Component={(props) => 
-                        <Typography variant="subtitle2">
-                          <i>{props.children}</i>
-                        </Typography>}
-                      text={data.processed.subtitle}
+                      Component={(props) =>{
+                        if (data.processed.subtitle.hyperlink !== undefined){
+                          return(
+                            <Typography variant="subtitle2">
+                              <i><a href={data.processed.subtitle.hyperlink} target="_blank" >{props.children}</a></i>
+                            </Typography>
+                          )
+                        }else{
+                          return(
+                            <Typography variant="subtitle2">
+                              {props.children}
+                            </Typography>
+                          )
+                        }
+                      }}
+                      text={data.processed.subtitle.text}
                       highlight={search}
                     />
                   </Grid>
                   {Object.entries(data.processed.display).map(([label, value])=>(
                     <Grid item xs={12}>
                       <Typography variant="caption" style={{textTransform: "uppercase"}}>
-                        {value}
+                        {value.text}
                       </Typography>
                     </Grid>
                   ))}

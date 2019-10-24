@@ -29,10 +29,10 @@ export const BarChart = ({ meta_counts, ui_values, ...props }) => {
         data={meta_counts}
         {...bar_chart_style.Chart}
       >
-        {props.XAxis ? <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />}/>: null}
-        {props.YAxis ? <YAxis dataKey="counts" {...bar_chart_style.YAxis}/>: null}
-        <Tooltip {...bar_chart_style.Tooltip} />
         <Bar dataKey="counts" {...bar_chart_style.Bar}/>
+        <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />} hide={props.XAxis===undefined || !props.XAxis} />
+        <YAxis dataKey="counts" {...bar_chart_style.YAxis} hide={props.YAxis===undefined || !props.YAxis} />
+        <Tooltip {...bar_chart_style.Tooltip} />
       </Chart>
     </ResponsiveContainer>
   )

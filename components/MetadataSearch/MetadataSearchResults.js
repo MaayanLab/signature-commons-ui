@@ -53,11 +53,11 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
       if (prop.name){
         processed.name = data.id
         if (val!==null){
-          processed.name = val.text || data.id
+          processed.name = {text:data.id, ...val}
         }
       }
       if (prop.subtitle){
-        if (val!==null) processed.subtitle = val.text
+        if (val!==null) processed.subtitle = {...val}
       }
       if (prop.display){
         if (val!==null) processed.display[label] = val.text

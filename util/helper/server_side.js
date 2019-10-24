@@ -330,7 +330,7 @@ export async function get_barscores(ui_values) {
         console.error('Could not match ui-schema for', match)
         return null
       }
-      const count = makeTemplate("${"+item.meta.Order_By+"}", match)
+      const count = Number(makeTemplate("${"+item.meta.Order_By+"}", match))
       const name = makeTemplate("${"+item.meta.Field_Name+"}", match)
       accumulator[name] = count
       return accumulator
