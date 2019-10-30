@@ -75,8 +75,9 @@ const mapStateToProps = state => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    searchBoxFunction : (params) => 
-      dispatch(fetchMetaDataFromSearchBox(params)),
+    searchBoxFunction : (params) => {
+      dispatch(fetchMetaDataFromSearchBox(params))
+    },
     searchFunction: (params) =>
       dispatch(fetchMetaData(params)),
   };
@@ -139,10 +140,9 @@ class MetadataSearch extends React.Component {
         params[table].order = this.state.order[table]
       }
     }
+    this.props.searchBoxFunction(params)
     this.setState({
       index_value: this.props.tables.indexOf(new_table),
-    }, ()=>{
-      this.props.searchBoxFunction(params)
     })
   }
 

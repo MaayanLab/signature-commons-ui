@@ -92,7 +92,6 @@ class MetadataSearchBox extends React.Component {
   }
 
   searchFunction = (search) => {
-    console.log(search)
     this.setState({
       search
     }, ()=>{
