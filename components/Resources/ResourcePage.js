@@ -65,7 +65,8 @@ class ResourcePage extends React.Component {
   async componentDidMount(){
     let res = this.props.match.params.resource.replace(/_/g, ' ')
     let resource
-    
+    console.log(res)
+    console.log(this.props.resources)
     if (isUUID(res+'')){
       // uuid fetch resource
       const {response} = await fetch_meta({

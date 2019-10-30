@@ -62,7 +62,7 @@ export default class ScorePopper extends React.Component{
         >
           {Object.keys(scores).map(key=>(
             <MenuItem onClick={()=>{
-              sortBy(key)
+              if (sortBy!==undefined) sortBy(key)
               this.handleClose()
             }}
             key={key}
@@ -85,5 +85,5 @@ ScorePopper.propTypes = {
   score_icon: PropTypes.string,
   sortBy: PropTypes.func,
   sorted: PropTypes.string,
-  classes: PropTypes.func,
+  classes: PropTypes.object,
 };

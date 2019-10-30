@@ -66,12 +66,11 @@ class ResourceList extends React.PureComponent {
       <Grid
         container
         direction="row"
+        alignItems="center"
       >
         {sorted_resources.map((resource) => {
           return (
             <Grid item xs={xs} sm={sm} md={md} 
-                  justify="center"
-                  alignItems="center" 
                   style={{textAlign: 'center',}}
                   key={makeTemplate(name_prop, resource)}>
               <Link

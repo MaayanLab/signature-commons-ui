@@ -313,19 +313,21 @@ class DataTable extends React.Component {
           maxWidth: '100%',
         }}>
           <Grid container>
-            <Grid item style={{marginLeft: "auto", marginRight: 0, marginBottom:10}}>
-              <FormControl>
-                <InputLabel>Sort by</InputLabel>
-                <Select
-                  value={this.props.sorted}
-                  onChange={(e)=>this.props.sortBy(e.target.value)}
-                >
-                  {Object.entries(this.props.sort_tags).map(([field_name, values])=>(
-                    <MenuItem value={field_name} key={field_name}>{values.label}</MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </Grid>
+            {this.props.sortBy!==undefined ? 
+              <Grid item style={{marginLeft: "auto", marginRight: 0, marginBottom:10}}>
+                <FormControl>
+                  <InputLabel>Sort by</InputLabel>
+                  <Select
+                    value={this.props.sorted}
+                    onChange={(e)=>this.props.sortBy(e.target.value)}
+                  >
+                    {Object.entries(this.props.sort_tags).map(([field_name, values])=>(
+                      <MenuItem value={field_name} key={field_name}>{values.label}</MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Grid>: null
+            }
             <Grid item>
               {this.props.collection.map((data,ind)=><InfoCard key={data.original.id}
                 {...this.props}
