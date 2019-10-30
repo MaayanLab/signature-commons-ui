@@ -1,9 +1,10 @@
 import { Set } from 'immutable'
 import { action_definitions } from "./action-types";
-import Model from "../helper/model"
+import Model from "../helper/APIConnector"
 
 export const initialState = {
   serverSideProps: null,
+  initialized: false,
   search: [],
   selected_parent_ids: {},
   parent_ids_mapping: {},
@@ -49,6 +50,7 @@ function rootReducer(state = initialState, action) {
     const {parent_ids_mapping, parents_mapping} = action
     return {
       ...state,
+      initialized: true,
       parent_ids_mapping,
       parents_mapping,
       selected_parent_ids: Object.keys(parents_mapping).reduce((acc,item)=>{

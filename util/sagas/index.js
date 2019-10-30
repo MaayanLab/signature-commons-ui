@@ -25,7 +25,7 @@ import { fetchMetaDataSucceeded,
   initializeParents } from "../redux/actions"
 import { getStateFromStore } from "./selectors"
 import { get_signature_data } from  "../../components/MetadataSearch/download"
-import Model from "../helper/model"
+import Model from "../helper/APIConnector"
 import uuid5 from 'uuid5'
 
 const allWatchedActions = [
@@ -55,9 +55,14 @@ export function* workInitializeSigcom(action) {
       parent_ids_mapping["signatures"] = libraries
     }
     if (lib_count>0){
-      const resources = yield call(fetch_all_as_dictionary, { table: "resources", controller })
-      parents_mapping["libraries"] = resources === null ? "library": "resource"
-      parent_ids_mapping["libraries"] = resources === null ? libraries: resources
+      let resources = yield call(fetch_all_as_dictionary, { table: "resources", controller })
+      if (resources===null){
+        resources = libraries
+        parents_mapping["libraries"] = "library"
+      }else{
+        parents_mapping["libraries"] = "resource"
+      }
+      parent_ids_mapping["libraries"] = resources
     }
 
     yield put(initializeParents({parent_ids_mapping, parents_mapping}))

@@ -1,3 +1,4 @@
+// This contains classes for querying a table with relevant filters
 import { fetch_meta_post } from '../fetch/meta'
 import { getState } from 'redux-saga/effects'
 import { getStateFromStore } from "../sagas/selectors"
@@ -10,7 +11,7 @@ const model_mapper = {
   entities: "Entity"
 }
 
-export function build_where({search, parent, filters, order}) {
+export function build_where({search, filters, order}) {
   let where = {}
   let andClauses = []
   let orClauses = []
@@ -155,7 +156,7 @@ export default class Model {
   set_where = ({search, filters, order}) => {
     this.search = search
     this.filters = filters
-    this.where = build_where({search, parent: this.parent, filters, order})
+    this.where = build_where({search, filters, order})
   }
 
   get_count_params = ({search, filters}) => {
@@ -172,32 +173,32 @@ export default class Model {
     return params
   }
 
-  get_count_per_parent_params = ({search, filters, parent_ids}) => {
-    if (this.where===null) this.set_where({search, filters})
-    if (parent_ids === undefined) parent_ids = Object.keys(this.parents_meta)
-    const operationId = `${this.model}.count`
-    const params = parent_ids.map(parent_id=>{
-      let where = this.where
-      if (where.and === undefined) {
-        where = {
-          and: [{...where}]
-        }
-      }
-      where = {
-        and: [
-          ...where.and,
-          {[this.parent]: parent_id}
-        ]
-      }
-      return {
-        operationId,
-        parameters: {
-          where
-        }
-      }
-    })
-    return params
-  }
+  // get_count_per_parent_params = ({search, filters, parent_ids}) => {
+  //   if (this.where===null) this.set_where({search, filters})
+  //   if (parent_ids === undefined) parent_ids = Object.keys(this.parents_meta)
+  //   const operationId = `${this.model}.count`
+  //   const params = parent_ids.map(parent_id=>{
+  //     let where = this.where
+  //     if (where.and === undefined) {
+  //       where = {
+  //         and: [{...where}]
+  //       }
+  //     }
+  //     where = {
+  //       and: [
+  //         ...where.and,
+  //         {[this.parent]: parent_id}
+  //       ]
+  //     }
+  //     return {
+  //       operationId,
+  //       parameters: {
+  //         where
+  //       }
+  //     }
+  //   })
+  //   return params
+  // }
 
   get_search_params = ({search, filters, limit, skip, order}) => {
     if (limit===undefined) limit=10
@@ -266,10 +267,8 @@ export default class Model {
   build_query = (query_params) => {
     const {metadata_search,
       count,
-      per_parent_count,
       value_count,
       query,
-      parent_ids,
     } = query_params
     let params = []
     const { search, filters, order} = query
@@ -301,13 +300,11 @@ export default class Model {
     }
   }
 
-  parse_bulk_result = ({operations, bulk_response, parent_ids}) => {
-    if (parent_ids === undefined) parent_ids = Object.keys(this.parents_meta)
+  parse_bulk_result = ({operations, bulk_response}) => {
     const {
       metadata_search,
       value_count,
       count,
-      per_parent_count,
       value_count_params
     } = operations
     let result = {}
@@ -315,14 +312,15 @@ export default class Model {
     
     if (metadata_search) {
       const [m, ...r] = response
-      const res = m.response.map(r=>{
-        const parent_id = r[this.parent]
-        const parent_meta = this.parents_meta[parent_id]
-        return {
-          ...r,
-          [this.parent]: parent_meta,
-        }
-      })
+      const res = this.parents === undefined ? m.response:
+        m.response.map(r=>{
+          const parent_id = r[this.parent]
+          const parent_meta = this.parents_meta[parent_id]
+          return {
+            ...r,
+            [this.parent]: parent_meta,
+          }
+        })
       response = [...r]
       result = {
         ...result,
@@ -353,21 +351,6 @@ export default class Model {
         ...result,
         count: m.response.count
       }
-    }
-    if (per_parent_count) {
-      const m = [...response]
-      const per_parent_count = m.map((m_res, index) =>({
-        parent_id: parent_ids[index],
-        count: m_res.response.count
-      })).reduce((acc, item)=>{
-        acc[item.parent_id]= item.count
-        return acc
-      },{})
-      result = {
-        ...result,
-        per_parent_count
-      }
-      
     }
     
     return result
@@ -401,14 +384,12 @@ export default class Model {
       body: params,
       signal: controller.signal,
     })
-    const parent_ids = params.parent_ids || Object.keys(this.parents_meta)
-    const result = this.parse_bulk_result({operations, bulk_response, parent_ids})
+    const result = this.parse_bulk_result({operations, bulk_response})
 
     this.results = {
       metadata_search: result.metadata_search || this.results.metadata_search,
       value_count: result.value_count || this.results.value_count,
       count: result.count || this.results.count,
-      per_parent_count: result.per_parent_count || this.results.per_parent_count,
     }
     return {table: this.table, model:this}
   }
