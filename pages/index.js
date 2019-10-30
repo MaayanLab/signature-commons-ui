@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
 import { get_schemas } from '../util/helper/fetch_methods.js'
@@ -34,6 +35,13 @@ function mapDispatchToProps(dispatch) {
     initializeSigcom: serverSideProps => dispatch(initializeSigcom(serverSideProps)),
   };
 }
+
+
+const mapStateToProps = state => {
+  return {
+    initialized: state.initialized
+  }
+};
 
 export async function get_ui_values() {
   const { response: ui_val } = await fetch_meta_post({
@@ -88,6 +96,9 @@ class App extends React.Component {
   }
 
   render() {
+    if (!this.props.initialized){
+      return <CircularProgress />
+    }
     return (
       <div className="root">
         <Router>
@@ -107,4 +118,4 @@ class App extends React.Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)
