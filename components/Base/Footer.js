@@ -5,6 +5,8 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
+import grey from '@material-ui/core/colors/grey';
+import yellow from '@material-ui/core/colors/yellow';
 
 export const DCIC = (props) => (
   <img src={`${process.env.PREFIX}/static/images/dcic.png`} alt="BD2K-LINCS Data Coordination and Integration Center" height="130" />
@@ -12,26 +14,31 @@ export const DCIC = (props) => (
 
 export const PoweredBySigcom = (props) => (
     <Card style={{
-      background: '#757575',
+      background: grey[100],
+      maxWidth: 100,
     }}>
-      <CardContent style={{marginBottom:-10}}>
+      <CardContent style={{padding: '0 0 0 10px'}}>
         <Grid container spacing={8}>
-          <Grid item>
-            <Typography variant="overline" style={{color: '#FFF'}}>
+          <Grid item xs={12}>
+            <Typography variant="overline" style={{color: '#000', fontSize: 7}}>
               Powered by
             </Typography>
           </Grid>
-          <Grid item>
-            <img
-              src={`${process.env.PREFIX}/static/sigcom.ico`}
-              alt="Sigcom"
-              width={50}
-            />
-          </Grid>
-          <Grid item>
-            <Typography variant="h6" style={{color:"#ffde14"}}>
-              Signature<br/>Commons
-            </Typography>
+          <Grid item xs={12}>
+            <Grid container spacing={8}>
+              <Grid item>
+                  <img
+                  src={`${process.env.PREFIX}/static/sigcom.ico`}
+                  alt="Sigcom"
+                  width={30}
+                />
+              </Grid>
+              <Grid item>
+                <Typography variant="h6" style={{color:yellow[900], fontSize: 10}}>
+                  Signature<br/>Commons
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </CardContent>

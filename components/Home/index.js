@@ -95,7 +95,7 @@ class Home extends React.PureComponent {
 
   render = () => (
     <MuiThemeProvider theme={theme}>
-      <Base ui_values={this.props.ui_values}
+      <Base location={this.props.location}
         footer_type={this.props.ui_values.footer_type}
         github={this.props.ui_values.github}
         github_issues={this.props.ui_values.github_issues}
