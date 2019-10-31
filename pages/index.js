@@ -1,22 +1,20 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
-import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
+import { fetch_meta_post } from '../util/fetch/meta'
 import { get_schemas } from '../util/helper/fetch_methods.js'
-import { get_signature_counts_per_resources } from '../util/helper/resources.js'
 import { UIValues } from '../util/ui_values'
 import { initializeSigcom } from '../util/redux/actions'
-import { connect } from "react-redux";
+import { connect } from 'react-redux'
 import { get_counts,
   get_metacounts,
   get_pie_stats,
-  get_signature_keys,
   get_barcounts,
   get_histograms,
   get_barscores,
-  get_resource_signature_counts
-  } from '../util/helper/server_side.js'
+  get_resource_signature_counts,
+} from '../util/helper/server_side.js'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
 const Route = dynamic(async () => (await import('react-router-dom')).Route, { ssr: false })
@@ -30,19 +28,18 @@ const Tests = dynamic(() => import('../components/Tests'), { ssr: false })
 const Values = dynamic(() => import('../components/Values'), { ssr: false })
 
 
-
 function mapDispatchToProps(dispatch) {
   return {
-    initializeSigcom: serverSideProps => dispatch(initializeSigcom(serverSideProps)),
-  };
+    initializeSigcom: (serverSideProps) => dispatch(initializeSigcom(serverSideProps)),
+  }
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    initialized: state.initialized
+    initialized: state.initialized,
   }
-};
+}
 
 export async function get_ui_values() {
   const { response: ui_val } = await fetch_meta_post({
@@ -57,7 +54,6 @@ export async function get_ui_values() {
     },
   })
   const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
-  console.log(ui_val)
   const ui_values = UIValues['landing'](values)
   return { ui_values }
 }
@@ -78,9 +74,9 @@ class App extends React.Component {
     const { resource_signature_counts } = await get_resource_signature_counts()
     const serverSideProps = {
       table_counts,
-      meta_counts,//: {},
+      meta_counts, // : {},
       // resource_signatures,
-      pie_fields_and_stats,//: {},
+      pie_fields_and_stats, // : {},
       barcounts,
       histograms,
       barscores,
@@ -88,19 +84,19 @@ class App extends React.Component {
       // resources,
       // resources_id,
       // library_resource,
-      ui_values,//: ui_val,
+      ui_values, // : ui_val,
       schemas,
       resource_signature_counts,
     }
     return { serverSideProps }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     this.props.initializeSigcom(this.props.serverSideProps)
   }
 
   render() {
-    if (!this.props.initialized){
+    if (!this.props.initialized) {
       return <CircularProgress />
     }
     return (

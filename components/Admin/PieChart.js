@@ -95,7 +95,7 @@ export default class DonutChart extends PureComponent {
           innerRadius={80}
           outerRadius={100}
           fill="#75bef5"
-          //onClick={this.handleClick}
+          // onClick={this.handleClick}
           {...pie_chart_style.Pie}
         />
       </Chart>

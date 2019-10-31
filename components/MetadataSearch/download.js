@@ -7,8 +7,6 @@ import NProgress from 'nprogress'
 
 let cached_schemas = []
 
-const gene_name = '${meta[\'Name\']}'
-
 export async function fetch_schemas() {
   let schemas
   if (cached_schemas.length > 0) {
@@ -47,16 +45,16 @@ export function get_label(data, schemas) {
   const schema = matched_schemas[0]
   let label
   let name_prop
-  for (const key in schema.properties){
-    const val = schema.properties[key]
-    if (val.name){
+  for (const key in schema.properties) {
+    if (schema.properties[key].name) {
+      const val = schema.properties[key]
       name_prop = val
       break
     }
   }
-  if (name_prop!==undefined){
+  if (name_prop !== undefined) {
     label = makeTemplate(name_prop.text, data)
-  }else {
+  } else {
     const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
     const meta_list = sorted_entries.reduce((acc, entry) => {
       let val
@@ -79,50 +77,50 @@ export function get_label(data, schemas) {
     label = meta_list.join('_')
   }
 
-  
+
   return label
 }
 
-export async function download_signature_json(item, schemas=undefined, provider=undefined) {
+export async function download_signature_json(item, schemas = undefined, provider = undefined) {
   NProgress.start()
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
   const data = await provider.serialize_signature(item, {
     resource: true,
     library: true,
     data: true,
-    validator: true
+    validator: true,
   })
   const filename = get_label(data, schemas)
   NProgress.done()
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_library_json(item, schemas=undefined, provider=undefined) {
+export async function download_library_json(item, schemas = undefined, provider = undefined) {
   NProgress.start()
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
   const data = await provider.serialize_library(item, {
     resource: true,
     library: true,
     signatures: true,
     data: true,
-    validator: true
+    validator: true,
   })
   const filename = get_label(data, schemas)
   NProgress.done()
   fileDownload(JSON.stringify(data), `${filename}.json`)
 }
 
-export async function download_resource_json(item, schemas=undefined, provider=undefined) {
+export async function download_resource_json(item, schemas = undefined, provider = undefined) {
   NProgress.start()
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
   const data = await provider.serialize_resource(item, {
     libraries: true,
     signatures: true,
     data: true,
-    validator: true
+    validator: true,
   })
   const filename = get_label(data, schemas)
   NProgress.done()
@@ -163,132 +161,137 @@ export async function download_resource_json(item, schemas=undefined, provider=u
 //   })
 // }
 
-export async function get_entities(item, schemas=undefined, provider=undefined){
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
+export async function get_entities(item, schemas = undefined, provider = undefined) {
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
   const _entities = await provider.resolve_entities(items)
-  const entities = await Promise.all( await _entities.map(async (_ent)=>({
+  const entities = await Promise.all(await _entities.map(async (_ent) => ({
     id: await _ent.id,
     meta: await _ent.meta,
     $validator: await _ent.validator,
   })))
+  return entities
 }
 
-export async function download_signatures_text(item, schemas=undefined, provider=undefined) {
+export async function download_signatures_text(item, schemas = undefined, provider = undefined) {
   NProgress.start()
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
-  const signature = await get_signature({item, schemas, provider})
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
+  const signature = await get_signature({ item, schemas, provider })
   const filename = get_label(signature, schemas)
   let data
   if (signature.library.dataset_type === 'rank_matrix') {
-    data = signature.data.slice(0, 250).map(d=>get_label(d, schemas))
+    data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
   } else {
-    data = signature.data.map(d=>get_label(d, schemas))
+    data = signature.data.map((d) => get_label(d, schemas))
   }
   NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
 }
 
-export async function download_ranked_signatures_text(item, schemas=undefined, provider=undefined) {
+export async function download_ranked_signatures_text(item, schemas = undefined, provider = undefined) {
   NProgress.start()
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
   const signature = await provider.serialize_signature(item, {
     resource: true,
     library: true,
     data: true,
-    validator: true
+    validator: true,
   })
   const filename = get_label(signature, schemas)
-  const data = signature.data.map(d=>get_label(d, schemas))
+  const data = signature.data.map((d) => get_label(d, schemas))
   NProgress.done()
   fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.gmt`)
 }
 
-export async function get_library({item, schemas, provider, opts}) {
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
-  if (opts===undefined) opts = {
-    resource: true,
-    library: true,
-    signatures: true,
-    data: false,
-    validator: true
+export async function get_library({ item, schemas, provider, opts }) {
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
+  if (opts === undefined) {
+    opts = {
+      resource: true,
+      library: true,
+      signatures: true,
+      data: false,
+      validator: true,
+    }
   }
   const library = await provider.serialize_library(item, opts)
   return library
 }
 
-export async function get_signature({item, schemas, provider, opts}) {
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
-  if (opts===undefined) opts = {
-    resource: false,
-    library: true,
-    data: true,
-    validator: true
+export async function get_signature({ item, schemas, provider, opts }) {
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
+  if (opts === undefined) {
+    opts = {
+      resource: false,
+      library: true,
+      data: true,
+      validator: true,
+    }
   }
   const signature = await provider.serialize_signature(item, opts)
-  return(signature)
+  return (signature)
 }
 
-export async function get_signature_data({item, schemas, provider, search_type}) {
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
-  const signature = await get_signature({item, schemas, provider})
+export async function get_signature_data({ item, schemas, provider, search_type }) {
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
+  const signature = await get_signature({ item, schemas, provider })
   let data
   if (signature.library.dataset_type === 'rank_matrix') {
-    if (search_type==="Overlap"){
+    if (search_type === 'Overlap') {
       data = {
-        entities: signature.data.slice(0, 250).reduce((acc,item)=>{
+        entities: signature.data.slice(0, 250).reduce((acc, item) => {
           acc = {
             ...acc,
-            [get_label(item, schemas)]: item
+            [get_label(item, schemas)]: item,
           }
           return acc
-        },{})
+        }, {}),
       }
-    }else {
+    } else {
       data = {
-        up_entities: signature.data.slice(0, 250).reduce((acc,item)=>{
+        up_entities: signature.data.slice(0, 250).reduce((acc, item) => {
           acc = {
             ...acc,
-            [get_label(item, schemas)]: item
+            [get_label(item, schemas)]: item,
           }
           return acc
-        },{}),
-        down_entities: signature.data.slice((signature.data.length-250)).reduce((acc,item)=>{
+        }, {}),
+        down_entities: signature.data.slice((signature.data.length - 250)).reduce((acc, item) => {
           acc = {
             ...acc,
-            [get_label(item, schemas)]: item
+            [get_label(item, schemas)]: item,
           }
           return acc
-        },{}),
+        }, {}),
       }
     }
   } else {
-    if (search_type==="Rank"){
-      throw "non rank matrix genesets can't be fed to Rank search"
+    if (search_type === 'Rank') {
+      throw new Error('\'non rank matrix genesets can\'t be fed to Rank search\'')
     }
     data = {
-      entities: signature.data.reduce((acc,item)=>{
-          acc = {
-            ...acc,
-            [get_label(item, schemas)]: item
-          }
-          return acc
-        },{})
+      entities: signature.data.reduce((acc, item) => {
+        acc = {
+          ...acc,
+          [get_label(item, schemas)]: item,
+        }
+        return acc
+      }, {}),
     }
   }
-  return(data)
+  return (data)
 }
 
-export async function download_library_gmt(item, schemas=undefined, provider=undefined) {
+export async function download_library_gmt(item, schemas = undefined, provider = undefined) {
   NProgress.start()
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
-  const library = await get_library({item,
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
+  const library = await get_library({ item,
     provider,
     schemas,
     opts: {
@@ -296,30 +299,30 @@ export async function download_library_gmt(item, schemas=undefined, provider=und
       library: true,
       signatures: true,
       data: true,
-      validator: true
-    }
+      validator: true,
+    },
   })
   const filename = get_label(library, schemas)
   let dataset = []
-  for (const signature of library.signatures){
+  for (const signature of library.signatures) {
     const sig_label = get_label(signature, schemas)
     let entities = []
-    for (const entity of signature.data){
+    for (const entity of signature.data) {
       const ent = get_label(entity, schemas)
       entities = [...entities, ent]
     }
-    dataset = [...dataset , `${sig_label}\t\t${entities.join('\t')}`]
+    dataset = [...dataset, `${sig_label}\t\t${entities.join('\t')}`]
   }
   NProgress.done()
   fileDownload(dataset.join('\n'), `${filename}.gmt`)
 }
 
 
-export async function download_library_tsv(item, schemas=undefined, provider=undefined) {
+export async function download_library_tsv(item, schemas = undefined, provider = undefined) {
   NProgress.start()
-  if (schemas===undefined) schemas = await fetch_schemas()
-  if (provider===undefined) provider = new DataProvider()
-  const library = await get_library({item,
+  if (schemas === undefined) schemas = await fetch_schemas()
+  if (provider === undefined) provider = new DataProvider()
+  const library = await get_library({ item,
     provider,
     schemas,
     opts: {
@@ -327,18 +330,18 @@ export async function download_library_tsv(item, schemas=undefined, provider=und
       library: true,
       signatures: true,
       data: true,
-      validator: true
-    }
+      validator: true,
+    },
   })
 
   const filename = get_label(library, schemas)
 
   const dataset = {}
-  for (const signature of library.signatures){
+  for (const signature of library.signatures) {
     const sig_label = get_label(signature, schemas)
     let entities = []
-    for (const entity of signature.data){
-      const ent = get_label(ent, schemas)
+    for (const entity of signature.data) {
+      const ent = get_label(entity, schemas)
       entities = [...entities, ent]
     }
     dataset[sig_label] = entities

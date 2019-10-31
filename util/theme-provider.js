@@ -1,9 +1,9 @@
 import { createMuiTheme } from '@material-ui/core'
-import blue from '@material-ui/core/colors/blue';
-import red from '@material-ui/core/colors/red';
-import amber from '@material-ui/core/colors/amber';
-import grey from '@material-ui/core/colors/grey';
-import green from '@material-ui/core/colors/green';
+import blue from '@material-ui/core/colors/blue'
+import red from '@material-ui/core/colors/red'
+import amber from '@material-ui/core/colors/amber'
+import grey from '@material-ui/core/colors/grey'
+import green from '@material-ui/core/colors/green'
 
 const theme = createMuiTheme({
   palette: {
@@ -39,7 +39,7 @@ const theme = createMuiTheme({
     },
     MuiChip: {
       root: {
-        margin: "5px 10px 5px 0",
+        margin: '5px 10px 5px 0',
       },
     },
   },

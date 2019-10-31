@@ -1,6 +1,5 @@
 import React from 'react'
 import Button from '@material-ui/core/Button'
-import {default as RoundButton} from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
@@ -20,7 +19,7 @@ import {
   download_library_gmt,
   download_library_tsv,
   fetch_schemas,
-  get_label
+  get_label,
 } from './MetadataSearch/download'
 
 const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
@@ -69,7 +68,7 @@ const EnrichrDialog = (props) => {
 
 async function submit_sigcom(item, history) {
   history.push({
-    pathname: `/SignatureSearch/Overlap/${item.id}`
+    pathname: `/SignatureSearch/Overlap/${item.id}`,
   })
 }
 
@@ -106,12 +105,12 @@ export default class Options extends React.Component {
   submit_enrichr = async (item) => {
     NProgress.start()
     const schemas = await fetch_schemas()
-    const signature = await get_signature({item})
+    const signature = await get_signature({ item })
     let data
     if (signature.library.dataset_type === 'rank_matrix') {
-      data = signature.data.slice(0, 250).map(d=>get_label(d, schemas))
+      data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
     } else {
-      data = signature.data.map(d=>get_label(d, schemas))
+      data = signature.data.map((d) => get_label(d, schemas))
     }
     const filename = get_label(signature, schemas)
     this.setState({

@@ -1,42 +1,40 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from "react-redux";
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import { connect } from 'react-redux'
 
 const mapStateToProps = (state, ownProps) => {
-  return { 
+  return {
     ui_values: state.serverSideProps.ui_values,
   }
-};
+}
 
 export function Nav(props) {
-  const { ui_values, dispatch, location, ...rest } = props
+  const { ui_values, location, ...rest } = props
   return (
     <ul {...rest}>
       {ui_values.nav.MetadataSearch && ui_values.nav.MetadataSearch.active ?
         <li
-          className={location.pathname === `${ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}` ? 'active' : ''}
+          className={location.pathname === `${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}` ? 'active' : ''}
         >
-          <Link to={`${ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}`}>
+          <Link to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
             {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
         </li> : null
       }
       {ui_values.nav.SignatureSearch && ui_values.nav.SignatureSearch.active ?
         <li
-          className={location.pathname === `${ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}` ? 'active' : ''}
+          className={location.pathname === `${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}` ? 'active' : ''}
         >
-          <Link to={`${ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}`}>
+          <Link to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
             {ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
         </li> : null
       }
       {ui_values.nav.Resources && ui_values.nav.Resources.active ?
         <li
-          className={location.pathname === `${ui_values.nav.Resources.endpoint || "/Resources"}` ? 'active' : ''}
+          className={location.pathname === `${ui_values.nav.Resources.endpoint || '/Resources'}` ? 'active' : ''}
         >
-          <Link to={`${ui_values.nav.Resources.endpoint || "/Resources"}`}>
+          <Link to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
             {ui_values.preferred_name.resources || 'Resources'}
           </Link>
         </li> : null
@@ -56,7 +54,7 @@ export function Nav(props) {
 class Header extends React.Component {
   render = () => {
     const paths = this.props.location.pathname.split('/')
-    const {staticContext, ...rest} = this.props
+    const { staticContext, ...rest } = this.props
     return (
       <header>
         <nav className="nav-extended">

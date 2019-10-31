@@ -13,7 +13,7 @@ export function makeTemplate(
   }
   try {
     return templateFunction(...values)
-  } catch(error){
+  } catch (error) {
     return 'undefined'
   }
 }

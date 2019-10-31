@@ -1,6 +1,5 @@
-import { Set } from 'immutable'
-import { action_definitions } from "./action-types";
-import Model from "../helper/APIConnector"
+import { action_definitions } from './action-types'
+import Model from '../helper/APIConnector'
 
 export const initialState = {
   serverSideProps: null,
@@ -20,16 +19,16 @@ export const initialState = {
   loading_matches: false,
   loading_signature: false,
   signature_input: {
-    type: "Overlap"
+    type: 'Overlap',
   },
   signature_result: {},
   table_count: {}, // Number of result per table i.e. datasets, signatures
   table_count_per_parent: {}, // Number of result per table grouped by its parents
   operationIDs: {
-    signatures_count: "Signature.count",
-    libraries_count: "Library.count",
-  }
-};
+    signatures_count: 'Signature.count',
+    libraries_count: 'Library.count',
+  },
+}
 
 function rootReducer(state = initialState, action) {
   if (action.type === action_definitions.INITIALIZE_SIGCOM) {
@@ -37,32 +36,32 @@ function rootReducer(state = initialState, action) {
     return {
       ...state,
       serverSideProps: action.serverSideProps,
-      reverse_preferred_name: Object.entries(preferred_name).reduce((acc,[name, preferred])=>{
+      reverse_preferred_name: Object.entries(preferred_name).reduce((acc, [name, preferred]) => {
         acc = {
           ...acc,
           [preferred]: name,
         }
         return acc
-      },{}),
+      }, {}),
     }
   }
-  if (action.type === action_definitions.INITIALIZE_PARENTS){
-    const {parent_ids_mapping, parents_mapping} = action
+  if (action.type === action_definitions.INITIALIZE_PARENTS) {
+    const { parent_ids_mapping, parents_mapping } = action
     return {
       ...state,
       initialized: true,
       parent_ids_mapping,
       parents_mapping,
-      selected_parent_ids: Object.keys(parents_mapping).reduce((acc,item)=>{
+      selected_parent_ids: Object.keys(parents_mapping).reduce((acc, item) => {
         acc[item] = []
         return acc
-      },{}),
+      }, {}),
     }
   }
   if (action.type === action_definitions.CHANGE_METADATA_SEARCH_TABLE) {
     return {
       ...state,
-      current_table: action.table
+      current_table: action.table,
     }
   }
 
@@ -74,7 +73,7 @@ function rootReducer(state = initialState, action) {
       loading: false,
       completed: true,
       signature_input: {
-        type: "Overlap"
+        type: 'Overlap',
       },
       signature_result: {},
       loading_signature: false,
@@ -82,24 +81,24 @@ function rootReducer(state = initialState, action) {
   }
 
   if (action.type === action_definitions.FETCH_METADATA_FROM_SEARCH_BOX) {
-    const {search, ...tables} = action.params
+    const { search } = action.params
     return {
       ...state,
       search: search,
       loading: true,
-      models: Object.keys(state.parents_mapping).reduce((acc,table)=>{
+      models: Object.keys(state.parents_mapping).reduce((acc, table) => {
         acc = {
           ...acc,
-          [table]: new Model(table, state.parents_mapping[table], state.parent_ids_mapping[table])
+          [table]: new Model(table, state.parents_mapping[table], state.parent_ids_mapping[table]),
         }
         return acc
-      },{}),
+      }, {}),
       failed: false,
       completed: false,
     }
   }
   if (action.type === action_definitions.FETCH_METADATA) {
-    const {search, ...tables} = action.params
+    const { search } = action.params
     return {
       ...state,
       search: search,
@@ -114,20 +113,20 @@ function rootReducer(state = initialState, action) {
       completed: true,
       loading: false,
       failed: false,
-      models: action.models
+      models: action.models,
     }
   }
   if (action.type === action_definitions.FETCH_METADATA_FAILED) {
     return Object.assign({}, state, {
       results: {},
       loading: false,
-    });
+    })
   }
   if (action.type === action_definitions.FETCH_METADATA_ABORTED) {
     return Object.assign({}, state, {
       results: {},
       loading: true,
-    });
+    })
   }
   if (action.type === action_definitions.INITIALIZE_SIGNATURE_SEARCH) {
     return {
@@ -139,13 +138,13 @@ function rootReducer(state = initialState, action) {
     return {
       ...state,
       signature_input: action.input,
-      loading_matches: true
+      loading_matches: true,
     }
   }
   if (action.type === action_definitions.MATCH_FAILED) {
     return {
       ...state,
-      loading_matches: false
+      loading_matches: false,
     }
   }
   if (action.type === action_definitions.UPDATE_RESOLVED_ENTITIES) {
@@ -155,7 +154,7 @@ function rootReducer(state = initialState, action) {
         ...state.signature_input,
         ...action.input,
       },
-      loading_matches: false
+      loading_matches: false,
     }
   }
   if (action.type === action_definitions.UPDATE_INPUT) {
@@ -169,7 +168,7 @@ function rootReducer(state = initialState, action) {
       ...state,
       signature_input: action.input,
       loading_signature: true,
-      signature_result: {}
+      signature_result: {},
     }
   }
   if (action.type === action_definitions.FIND_SIGNATURES_FROM_ID) {
@@ -177,7 +176,7 @@ function rootReducer(state = initialState, action) {
       ...state,
       signature_input: action.input,
       loading_signature: true,
-      signature_result: {}
+      signature_result: {},
     }
   }
   if (action.type === action_definitions.FIND_SIGNATURES_SUCCEEDED) {
@@ -185,16 +184,16 @@ function rootReducer(state = initialState, action) {
       ...state,
       signature_result: action.signature_result,
       loading_signature: false,
-      signature_input: action.signature_result.input
+      signature_input: action.signature_result.input,
     }
   }
   if (action.type === action_definitions.FIND_SIGNATURES_FAILED) {
     return {
       ...state,
-      loading_signature: false
+      loading_signature: false,
     }
   }
-  return state;
+  return state
 };
 
-export default rootReducer;
+export default rootReducer

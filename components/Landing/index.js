@@ -7,23 +7,23 @@ import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 
 import { landingStyle } from '../../styles/jss/theme.js'
-import { connect } from 'react-redux';
-import { resetSigcom } from "../../util/redux/actions";
+import { connect } from 'react-redux'
+import { resetSigcom } from '../../util/redux/actions'
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
 import { BarChart } from '../Admin/BarChart.js'
 
 const mapStateToProps = (state, ownProps) => {
-  return { 
-   ...state.serverSideProps,
-   nav: state.serverSideProps.ui_values.nav
+  return {
+    ...state.serverSideProps,
+    nav: state.serverSideProps.ui_values.nav,
   }
-};
+}
 
 function mapDispatchToProps(dispatch) {
   return {
-    resetSigcom : () => dispatch(resetSigcom()),
-  };
+    resetSigcom: () => dispatch(resetSigcom()),
+  }
 }
 
 
@@ -99,18 +99,18 @@ class LandingPage extends React.Component {
 
   searchCard = (props) => {
     let searchTypes = []
-    for (const n in this.props.nav){
-      if (this.props.nav[n].active){
+    for (const n in this.props.nav) {
+      if (this.props.nav[n].active) {
         const endpoint_trimmed = this.props.nav[n].endpoint.substring(1)
-        if (["MetadataSearch", "SignatureSearch"].indexOf(n) > -1){
+        if (['MetadataSearch', 'SignatureSearch'].indexOf(n) > -1) {
           searchTypes = [...searchTypes, endpoint_trimmed]
         }
       }
     }
-    if (searchTypes.indexOf(props.match.params.searchType) === -1){
+    if (searchTypes.indexOf(props.match.params.searchType) === -1) {
       return (<Redirect to='/not-found' />)
     }
-    return(
+    return (
       <SearchCard
         ui_values={this.props.ui_values}
         classes={this.props.classes}
@@ -120,7 +120,7 @@ class LandingPage extends React.Component {
   }
 
   render = () => {
-    return(
+    return (
       <div>
         <Grid container
           spacing={24}
@@ -129,14 +129,15 @@ class LandingPage extends React.Component {
             <Switch>
               <Route
                 exact path="/"
-                component={(props)=><Redirect to={`${this.props.nav.MetadataSearch.endpoint || "/MetadataSearch"}`} />}//{this.landing}
+                component={(props) => <Redirect to={`${this.props.nav.MetadataSearch.endpoint || '/MetadataSearch'}`} />}// {this.landing}
               />
               <Route
                 path="/:searchType"
-                component={props=>this.searchCard(props)}
+                component={(props) => this.searchCard(props)}
               />
-              <Route component={(props)=>{
-                return <Redirect to='/not-found' />}} />
+              <Route component={(props) => {
+                return <Redirect to='/not-found' />
+              }} />
             </Switch>
           </Grid>
           { this.props.table_counts.length === 0 ? null :
@@ -145,8 +146,8 @@ class LandingPage extends React.Component {
             </Grid>
           }
           { Object.keys(this.props.resource_signature_counts).length > 0 ?
-            <Grid item xs={12} md={Object.keys(this.props.barcounts).length === 0 ? 12: 6}
-                    className={this.props.classes.stretched}>
+            <Grid item xs={12} md={Object.keys(this.props.barcounts).length === 0 ? 12 : 6}
+              className={this.props.classes.stretched}>
               <Grid container
                 alignItems={'center'}>
                 <Grid item xs>
@@ -164,8 +165,8 @@ class LandingPage extends React.Component {
             : null
           }
           { Object.keys(this.props.barcounts).length === 0 ? null :
-            <Grid item xs={12} md={Object.keys(this.props.resource_signature_counts).length === 0 ? 12: 6 }
-                    className={this.props.classes.stretched}>
+            <Grid item xs={12} md={Object.keys(this.props.resource_signature_counts).length === 0 ? 12 : 6 }
+              className={this.props.classes.stretched}>
               <Grid container
                 alignItems={'center'}>
                 <Grid item xs={12}>
@@ -178,17 +179,17 @@ class LandingPage extends React.Component {
                 </Grid>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    {Object.keys(this.props.barcounts).length === 1 ? 
-                    <span>{this.state.selected_bar}</span>:
+                    {Object.keys(this.props.barcounts).length === 1 ?
+                    <span>{this.state.selected_bar}</span> :
                     <React.fragment>
-                      <span>{"Top " }</span>
+                      <span>{'Top ' }</span>
                       <Selections
                         value={this.state.selected_bar}
                         values={Object.keys(this.props.barcounts).sort()}
                         onChange={(e) => this.handleSelectBar(e)}
                       />
                     </React.fragment>
-                  }
+                    }
                   </div>
                 </Grid>
               </Grid>
@@ -199,7 +200,7 @@ class LandingPage extends React.Component {
               <CountsDiv {...this.props}/>
             </Grid>
           }
-          { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null: 
+          { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
               <Grid container
                 spacing={24}
@@ -237,8 +238,8 @@ class LandingPage extends React.Component {
                     <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.histogram.stats}
-                            ui_values={this.props.ui_values}
-                            YAxis
+                          ui_values={this.props.ui_values}
+                          YAxis
                         />
                         <Typography variant="overline">
                           {`${this.state.histogram.Preferred_Name} Histogram`}
@@ -257,8 +258,8 @@ class LandingPage extends React.Component {
                     </Grid>
                   </Grid>
                 </Grid>
-              }
-              { Object.keys(this.props.barscores).length === 0 ? null :
+          }
+          { Object.keys(this.props.barscores).length === 0 ? null :
                 <Grid item xs={12} className={this.props.classes.stretched}>
                   <Grid container
                     spacing={24}
@@ -266,8 +267,8 @@ class LandingPage extends React.Component {
                     <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.barscore.stats}
-                            ui_values={this.props.ui_values}
-                            XAxis
+                          ui_values={this.props.ui_values}
+                          XAxis
                         />
                       </div>
                     </Grid>
@@ -283,7 +284,7 @@ class LandingPage extends React.Component {
                     </Grid>
                   </Grid>
                 </Grid>
-              }
+          }
           <Grid item xs={12}>
             <BottomLinks
               {...this.props} />

@@ -4,9 +4,8 @@ import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
 import M from 'materialize-css'
-import { get_signature } from '../MetadataSearch/download'
 import { makeTemplate } from '../../util/makeTemplate'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 export default class ResourceFilters extends React.Component {
   constructor(props) {
@@ -19,7 +18,7 @@ export default class ResourceFilters extends React.Component {
 
 
   toggle_show_all = () => this.setState({ show_all: !this.state.show_all })
-  
+
   sort_resources = () => {
     return this.props.resources.sort(
         (r1, r2) => {
@@ -46,14 +45,14 @@ export default class ResourceFilters extends React.Component {
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
     const xs = 12
-    if (this.props.loading){
-      return(
-        <div style={{textAlign:"center"}}>
+    if (this.props.loading) {
+      return (
+        <div style={{ textAlign: 'center' }}>
           <CircularProgress />
         </div>
       )
-    }else if (sorted_resources.length===0){
-      return(
+    } else if (sorted_resources.length === 0) {
+      return (
         <span>No results found</span>
       )
     }

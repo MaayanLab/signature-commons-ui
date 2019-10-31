@@ -3,26 +3,23 @@ import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
 import { makeTemplate } from '../../util/makeTemplate'
-import { objectMatch } from '../../util/makeTemplate'
-import { connect } from 'react-redux';
-import { findMatchedSchema } from '../../util/objectMatch'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { connect } from 'react-redux'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state, ownProps) => {
-  const {ui_values, resources, schemas} = state.serverSideProps
-  return { 
+  const { ui_values, schemas } = state.serverSideProps
+  return {
     ui_values,
-    schemas
+    schemas,
   }
-};
+}
 
 class ResourceList extends React.PureComponent {
-  
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       sorted_resources: [],
-      schema: null
+      schema: null,
     }
   }
 
@@ -41,9 +38,9 @@ class ResourceList extends React.PureComponent {
   render() {
     const { icon_prop,
       name_prop,
-      description_prop,} = this.props
+      description_prop } = this.props
     const sorted_resources = this.state.sorted_resources
-    if (sorted_resources.length === 0 ){
+    if (sorted_resources.length === 0) {
       return <CircularProgress />
     }
     const md = sorted_resources.length > 6 ? 2 : 4
@@ -58,9 +55,9 @@ class ResourceList extends React.PureComponent {
       >
         {sorted_resources.map((resource) => {
           return (
-            <Grid item xs={xs} sm={sm} md={md} 
-                  style={{textAlign: 'center',}}
-                  key={makeTemplate(name_prop, resource)}>
+            <Grid item xs={xs} sm={sm} md={md}
+              style={{ textAlign: 'center' }}
+              key={makeTemplate(name_prop, resource)}>
               <Link
                 key={resource.id}
                 to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource).replace(/ /g, '_')}`}

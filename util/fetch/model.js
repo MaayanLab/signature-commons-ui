@@ -121,7 +121,7 @@ export default class DataProvider {
     if (opts.library === true) {
       serialized.library = await this.serialize_library(await signature.library, {
         resource: opts.resource,
-        validator: opts.validator
+        validator: opts.validator,
       })
     }
 
@@ -129,7 +129,7 @@ export default class DataProvider {
       serialized.data = await PromiseAllSeq(
           (await signature.data).map(
               (entity) =>
-                async () => await this.serialize_entity(entity, {validator: opts.validator})
+                async () => await this.serialize_entity(entity, { validator: opts.validator })
           )
       )
     }

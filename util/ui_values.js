@@ -1,8 +1,5 @@
-import { fetch_meta } from '../util/fetch/meta'
-
 export const UIValues = {
   'landing': (values) => {
-    console.log(values)
     return (
       {
         LandingText: {
@@ -22,58 +19,58 @@ export const UIValues = {
           up_set_terms: values.up_set_terms,
           down_set_terms: values.down_set_terms,
         },
-        nav: values.nav!==undefined ? {
-            MetadataSearch: values.nav.MetadataSearch!==undefined? {
-                active: true,
-                endpoint: "/MetadataSearch",
-                ...values.nav.MetadataSearch
-              } :{
-                active: true,
-                endpoint: "/MetadataSearch"
-              },
-            SignatureSearch: values.nav.SignatureSearch!==undefined? {
-                active: false,
-                endpoint: "/SignatureSearch",
-                ...values.nav.SignatureSearch
-              } :{
-                active: false,
-                endpoint: "/SignatureSearch"
-              },
-            Resources: values.nav.Resources!==undefined? {
-                active: true,
-                endpoint: values.preferred_name!==undefined ? `/${values.preferred_name.resources||"Resources"}` : "/Resources",
-                ...values.nav.Resources
-              } :{
-                active: true,
-                endpoint: "/Resources"
-              },
-            API: values.nav.API!==undefined? {
-                active: true,
-                endpoint: "/API",
-                ...values.nav.API
-              } :{
-                active: true,
-                endpoint: "/API"
-              },
-          } :
+        nav: values.nav !== undefined ? {
+          MetadataSearch: values.nav.MetadataSearch !== undefined ? {
+            active: true,
+            endpoint: '/MetadataSearch',
+            ...values.nav.MetadataSearch,
+          } : {
+            active: true,
+            endpoint: '/MetadataSearch',
+          },
+          SignatureSearch: values.nav.SignatureSearch !== undefined ? {
+            active: false,
+            endpoint: '/SignatureSearch',
+            ...values.nav.SignatureSearch,
+          } : {
+            active: false,
+            endpoint: '/SignatureSearch',
+          },
+          Resources: values.nav.Resources !== undefined ? {
+            active: true,
+            endpoint: values.preferred_name !== undefined ? `/${values.preferred_name.resources || 'Resources'}` : '/Resources',
+            ...values.nav.Resources,
+          } : {
+            active: true,
+            endpoint: '/Resources',
+          },
+          API: values.nav.API !== undefined ? {
+            active: true,
+            endpoint: '/API',
+            ...values.nav.API,
+          } : {
+            active: true,
+            endpoint: '/API',
+          },
+        } :
           {
             MetadataSearch: {
               active: true,
-              endpoint: "/MetadataSearch"
+              endpoint: '/MetadataSearch',
             },
             SignatureSearch: {
               active: false,
-              endpoint: "/SignatureSearch"
+              endpoint: '/SignatureSearch',
             },
             Resources: {
               active: true,
-              endpoint: "/Resources"
+              endpoint: '/Resources',
             },
             API: {
               active: true,
-              endpoint: "/API"
-            }
-          } ,
+              endpoint: '/API',
+            },
+          },
         preferred_name_singular: values.preferred_name_singular ||
           {
             libraries: 'Dataset',
@@ -89,9 +86,9 @@ export const UIValues = {
             resources: 'Resources',
           },
         order_default: values.order_default,
-        footer_type: values.footer_type || "powered",
-        github: values.github || "https://github.com/dcic/signature-commons-ui",
-        github_issues: values.github_issues || "https://github.com/dcic/signature-commons-ui/issues",
+        footer_type: values.footer_type || 'powered',
+        github: values.github || 'https://github.com/dcic/signature-commons-ui',
+        github_issues: values.github_issues || 'https://github.com/dcic/signature-commons-ui/issues',
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
         bar_chart_style: values.bar_chart_style ||
@@ -157,7 +154,7 @@ export const UIValues = {
           resource_json: 'Download resource as json',
           sigcom: true,
           enrichr: true,
-          ...values.downloads
+          ...values.downloads,
         },
       }
     )

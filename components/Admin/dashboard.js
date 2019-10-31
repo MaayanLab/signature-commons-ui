@@ -41,7 +41,7 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
         },
       }}
       margin="normal"
-      style={{marginTop:-5}}
+      style={{ marginTop: -5 }}
       onChange={props.onChange}
     >
       {props.values.map(function(k) {

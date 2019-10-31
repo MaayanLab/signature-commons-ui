@@ -1,7 +1,7 @@
 import { fetch_meta, fetch_meta_post } from '../fetch/meta'
 import { makeTemplate } from '../makeTemplate'
-import { get_schemas } from "./fetch_methods"
-import { objectMatch, findMatchedSchema } from "../objectMatch"
+import { get_schemas } from './fetch_methods'
+import { objectMatch, findMatchedSchema } from '../objectMatch'
 
 export async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
@@ -170,7 +170,7 @@ export async function get_barcounts(ui_values) {
         depth: 2,
         filter: {
           fields: [item.meta.Field_Name],
-          limit: 25
+          limit: 25,
         },
       },
     })
@@ -200,7 +200,7 @@ export async function get_barcounts(ui_values) {
       key: item.meta.Preferred_Name || item.meta.Field_Name,
       Preferred_Name: item.meta.Preferred_Name || item.meta.Field_Name,
       table: item.meta.Table,
-      stats: Object.entries(item.stats).map(([name,counts]) => ({ name, counts })),
+      stats: Object.entries(item.stats).map(([name, counts]) => ({ name, counts })),
     }
     return accumulator
   }, {})
@@ -255,7 +255,7 @@ export async function get_histograms(ui_values) {
       key: item.meta.Preferred_Name || item.meta.Field_Name,
       Preferred_Name: item.meta.Preferred_Name || item.meta.Field_Name,
       table: item.meta.Table,
-      stats: Object.entries(item.stats).map(([name,counts]) => ({ name, counts })),
+      stats: Object.entries(item.stats).map(([name, counts]) => ({ name, counts })),
     }
     return accumulator
   }, {})
@@ -263,7 +263,7 @@ export async function get_histograms(ui_values) {
 }
 
 export async function get_barscores(ui_values) {
-  const schemas = await get_schemas("/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json")
+  const schemas = await get_schemas('/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json')
   const { response: counting_fields } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {
@@ -292,26 +292,26 @@ export async function get_barscores(ui_values) {
       body: {
         depth: 2,
         filter: {
-          where: {
+          'where': {
             [item.meta.Order_By]: {
-              neq: null
-            }
+              neq: null,
+            },
           },
-          order: `${item.meta.Order_By} DESC`,
-          "limit": 25,
+          'order': `${item.meta.Order_By} DESC`,
+          'limit': 25,
         },
       },
     })
     const stats = meta_scores.reduce((accumulator, match) => {
       const matched_schemas = schemas.filter(
-            (schema) => objectMatch(schema.match, match)
-        )
+          (schema) => objectMatch(schema.match, match)
+      )
       if (matched_schemas.length < 1) {
         console.error('Could not match ui-schema for', match)
         return null
       }
-      const count = Number(makeTemplate("${"+item.meta.Order_By+"}", match))
-      const name = makeTemplate("${"+item.meta.Field_Name+"}", match)
+      const count = Number(makeTemplate('${' + item.meta.Order_By + '}', match))
+      const name = makeTemplate('${' + item.meta.Field_Name + '}', match)
       accumulator[name] = count
       return accumulator
     }, {}) // TODO: Fix this as schema
@@ -324,7 +324,7 @@ export async function get_barscores(ui_values) {
       key: item.meta.Preferred_Name || item.meta.Order_By,
       Preferred_Name: item.meta.Preferred_Name || item.meta.Order_By,
       table: item.meta.Table,
-      stats: Object.entries(item.stats).map(([name,counts]) => ({ name, counts })),
+      stats: Object.entries(item.stats).map(([name, counts]) => ({ name, counts })),
     }
     return accumulator
   }, {})
@@ -337,28 +337,28 @@ export async function get_resource_signature_counts() {
   const { response } = await fetch_meta({
     endpoint: '/resources',
   })
-  
+
   if (response.length === 0) {
     const { response: libraries } = await fetch_meta({
       endpoint: '/libraries',
     })
     resource_list = libraries
-  }else {
+  } else {
     resource_list = response
   }
   const resource_signature_counts = {}
-  for (const resource of resource_list){
+  for (const resource of resource_list) {
     const resource_id = resource.id
     const schema = findMatchedSchema(resource, schemas)
-    const name_props = Object.values(schema.properties).filter(prop=> prop.name)
+    const name_props = Object.values(schema.properties).filter((prop) => prop.name)
     let resource_name
-    if (name_props.length>0){
+    if (name_props.length > 0) {
       resource_name = makeTemplate(name_props[0].text, resource)
-    }else {
+    } else {
       console.warn('source of resource name is not defined, using either Resource_Name or ids')
       resource_name = resource.meta['Resource_Name'] || resource_id
     }
-    const { response: res } = await fetch_meta({ endpoint: `/resources/${resource_id}/signatures/count`})
+    const { response: res } = await fetch_meta({ endpoint: `/resources/${resource_id}/signatures/count` })
     resource_signature_counts[resource_name] = res.count
   }
   return { resource_signature_counts }

@@ -42,10 +42,10 @@ export function maybe_fix_obj(obj) {
   return Object.keys(obj).reduce((objs, k) => ({ ...objs, [k]: { ...obj[k], id: k } }), {})
 }
 
-export const diffList = (prevList, currList) =>{
+export const diffList = (prevList, currList) => {
   if (prevList.length !== currList.length) return true
-  const diff = prevList.filter(s=>currList.indexOf(s)===-1)
-  if (diff.length>0) return true
+  const diff = prevList.filter((s) => currList.indexOf(s) === -1)
+  if (diff.length > 0) return true
   return false
 }
 
@@ -55,32 +55,32 @@ export const diffList = (prevList, currList) =>{
 // 3. Add pages
 export const URLFormatter = ({
   preferred_name,
-  params
+  params,
 }) => {
-  const {search, ...rest} = params
-  let params_preferred = {search}
-  for (const i in preferred_name){
-    if (rest[i]!==undefined){
+  const { search, ...rest } = params
+  const params_preferred = { search }
+  for (const i in preferred_name) {
+    if (rest[i] !== undefined) {
       params_preferred[preferred_name[i]] = rest[i]
     }
   }
   return JSON.stringify({
-      ...params_preferred,
-    })
+    ...params_preferred,
+  })
 }
 
 export const ReadURLParams = (params_str, reverse_preferred_name) => {
-  const searchParams = new URLSearchParams(params_str);
-  const p = JSON.parse(searchParams.get("q"))
-  const {search, ...rest} = p || {search:[]}
-  let params = {search}
-  for (const [k,v] of Object.entries(reverse_preferred_name)){
-    if (rest[k]!==undefined) {
+  const searchParams = new URLSearchParams(params_str)
+  const p = JSON.parse(searchParams.get('q'))
+  const { search, ...rest } = p || { search: [] }
+  let params = { search }
+  for (const k in reverse_preferred_name) {
+    if (rest[k] !== undefined) {
       params = {
         ...params,
-        [reverse_preferred_name[k]]: rest[k]
+        [reverse_preferred_name[k]]: rest[k],
       }
     }
   }
-  return {...params}
+  return { ...params }
 }

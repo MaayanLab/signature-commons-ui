@@ -36,23 +36,23 @@ export default withStyles(styles)(class Base extends React.PureComponent {
   render() {
     const { classes } = this.props
     return (
-        <div className="root">
-          <Head>
-            <meta charSet="utf-8" />
-            <link rel="shortcut icon" href={`${process.env.PREFIX}/static/favicon.ico`} />
-            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-            <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-            <script async defer src="https://buttons.github.io/buttons.js"></script>
-          </Head>
-          <Header location={this.props.location}/>
-          <main>
-            <div className={classes.container}>
-              {this.props.children}
-            </div>
-          </main>
-          <Footer {...this.props}/>
-        </div>
+      <div className="root">
+        <Head>
+          <meta charSet="utf-8" />
+          <link rel="shortcut icon" href={`${process.env.PREFIX}/static/favicon.ico`} />
+          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+          <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
+          <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+          <script async defer src="https://buttons.github.io/buttons.js"></script>
+        </Head>
+        <Header location={this.props.location}/>
+        <main>
+          <div className={classes.container}>
+            {this.props.children}
+          </div>
+        </main>
+        <Footer {...this.props}/>
+      </div>
     )
   }
 })

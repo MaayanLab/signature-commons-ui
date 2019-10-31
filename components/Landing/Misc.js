@@ -4,14 +4,11 @@ import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent';
+import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
-import yellow from '@material-ui/core/colors/yellow';
 import { animateScroll as scroll } from 'react-scroll'
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 
 import ReactWordcloud from 'react-wordcloud'
 
@@ -46,15 +43,15 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}`}>
-                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={()=>scroll.scrollToTop()}>
+                <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
+                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
                     <FileFind className={classes.icon} />
                   </Button>
                 </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+                  {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
@@ -69,15 +66,15 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}`}>
-                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={()=>scroll.scrollToTop()}>
+                <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
+                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
                     <FindReplace className={classes.icon} />
                   </Button>
                 </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+                  {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
@@ -205,13 +202,9 @@ export const StatDiv = ({ classes, width, ...props }) => {
   )
 }
 
-const toggleSearch = (e) => {
-  console.log(e.target.value)
-}
-
 export const SearchCard = ({ classes, width, ...props }) => {
   const { SignatureSearch, MetadataSearch } = props.ui_values.nav
-  if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active ) {
+  if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>
@@ -221,7 +214,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
                 <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
@@ -252,7 +245,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
                 <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
@@ -277,7 +270,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
                 <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
@@ -326,7 +319,7 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
           callbacks={callbacks}
           options={{
             colors: ['#000'],
-            scale: "log",
+            scale: 'log',
             rotations: 3,
             rotationsAngles: [0, 90],
           }} />
