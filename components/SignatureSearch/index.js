@@ -7,11 +7,14 @@ import { connect } from "react-redux";
 import { findSignaturesFromId } from "../../util/redux/actions";
 import { findMatchedSchema } from '../../util/objectMatch'
 import { makeTemplate } from '../../util/makeTemplate'
+import { get_schemas } from '../../util/helper/fetch_methods'
+import { fetch_meta } from '../../util/fetch/meta'
+
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const mapStateToProps = state => {
   return { 
     ...state.serverSideProps,
-    resources: Object.values(state.serverSideProps.resources),
     ...state.signature_result,
     input: state.signature_input,
     loading: state.loading_signature,
@@ -32,12 +35,18 @@ class SignatureSearch extends React.Component {
     this.state = {
       input: {},
       controller: null,
+      resources: null,
     }
   }
 
   componentDidMount = async () => {
     window.scrollTo(0, 0)
-    const schema = await findMatchedSchema(this.props.resources[0], this.props.schemas)
+
+    const schemas = await get_schemas()
+    const {response: resources} = await fetch_meta({
+      endpoint: `/resources`
+    })
+    const schema = await findMatchedSchema(resources[0], schemas)
     const name_props = Object.values(schema.properties).filter(prop=>prop.name)
     const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
     const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
@@ -48,10 +57,11 @@ class SignatureSearch extends React.Component {
       this.props.search(this.props.match.params.type, this.props.match.params.id)
     }
     this.setState({
-      schema,
+      schemas,
       icon_prop,
       name_prop,
       description_prop,
+      resources,
     })
   }
 
@@ -106,13 +116,16 @@ class SignatureSearch extends React.Component {
   }
 
   render = () => {
+    if (this.state.resources === null){
+      return <CircularProgress />
+    }
     return (
       <div className="row">
         <Switch>
-          <Route exact path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}`} render={this.render_signature_search} />
-          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:type/:input_signature/:resource`} component={this.library_results} />
-          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:type/:input_signature`}  component={this.resource_filters} />
-          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:type`}  render={this.render_signature_search_type} />
+          <Route exact path={`${this.props.SignatureSearchNav.endpoint || '/SignatureSearch'}`} render={this.render_signature_search} />
+          <Route path={`${this.props.SignatureSearchNav.endpoint || '/SignatureSearch'}/:type/:input_signature/:resource`} component={this.library_results} />
+          <Route path={`${this.props.SignatureSearchNav.endpoint || '/SignatureSearch'}/:type/:input_signature`}  component={this.resource_filters} />
+          <Route path={`${this.props.SignatureSearchNav.endpoint || '/SignatureSearch'}/:type`}  render={this.render_signature_search_type} />
         </Switch>
       </div>
     )
