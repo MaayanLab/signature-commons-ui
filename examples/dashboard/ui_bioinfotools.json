@@ -4,13 +4,23 @@
     "content": {
       "header": "BTools",
       "metadata_placeholder": "Search over thousands of tools",
-      "text_1": "Explore an extensive collection of Bioinformatics tools",
+      "text_1": "Explore an extensive collection of bioinformatics tools",
+      "text_4": "Explore BTools now",
       "library_name": "title",
       "preferred_name_singular": {
         "libraries": "Tool",
         "resources": "Journal"
       },
-      "signature_search": false,
+      "preferred_name": {
+        "libraries": "Tools",
+        "resources": "Journals"
+      },
+      "order_default": {
+        "libraries": "meta.total_pubmed_citations"
+      },
+      "footer_type": "powered",
+      "github": "https://github.com/MaayanLab/btools-ui",
+      "github_issues": "https://github.com/MaayanLab/btools-ui/issues",
       "deactivate_download": true,
       "deactivate_wordcloud": true,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
@@ -21,7 +31,7 @@
       "bar_chart_style": {
         "ResponsiveContainer": {
           "width": "100%",
-          "height":500
+          "height": 300
         },
         "Chart": {
           "margin": {
@@ -43,6 +53,24 @@
           "fill": "#75bef5"
         }
       },
+      "nav": {
+        "MetadataSearch": {
+          "active": true,
+          "endpoint": "/ToolSearch"
+        },
+        "SignatureSearch": {
+          "active": false
+        },
+        "Resources": {
+          "active": true,
+          "endpoint": "/Journals"
+        },
+        "API": {
+          "active": true
+        }
+      },
+      "text_2": "Search across various fields",
+      "text_3": "Examine top",
       "resource_name_from_library": "journal_name",
       "resource_name": "${meta.name}",
       "resource_icon": "${meta.icon}",
@@ -69,7 +97,7 @@
       "bar_chart_style": {
         "ResponsiveContainer": {
           "width": "100%",
-          "height":500
+          "height": 500
         },
         "Chart": {
           "margin": {

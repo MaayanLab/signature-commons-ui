@@ -59,6 +59,7 @@ const mapStateToProps = state => {
     placeholder: state.serverSideProps.ui_values.LandingText.metadata_placeholder,
     preferred_name: state.serverSideProps.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
+    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {}
   };
 };
 
@@ -94,12 +95,16 @@ class MetadataSearchBox extends React.Component {
     this.setState({
       search
     }, ()=>{
-      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"]
-      const query = URLFormatter({search,
-        current_table,
-        reverse_preferred_name: this.props.reverse_preferred_name})
+      const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
+      const param_str = this.props.location.search
+      let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+      params = {
+        search
+      }
+      const query = URLFormatter({params,
+        preferred_name: this.props.preferred_name})
       this.props.history.push({
-        pathname: `/MetadataSearch/${current_table}`,
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
         search: `?q=${query}`,
         state: {
           new_search: true,

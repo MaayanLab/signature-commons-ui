@@ -82,7 +82,6 @@ class Pages extends React.Component {
     let children
     try {
       NProgress.start()
-      console.log(table)
       metadata = await metadata_mapper[table]({item, opts:{
         resource: true,
         library: true,
@@ -97,7 +96,6 @@ class Pages extends React.Component {
         data: false,
         validator: true
       }})
-      console.log(children)
       NProgress.done()
       this.setState({metadata, children})
     }catch (error) {

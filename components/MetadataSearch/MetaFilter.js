@@ -1,5 +1,9 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
+
 import { connect } from "react-redux";
+import PropTypes from 'prop-types';
+
 import { findMatchedSchema } from '../../util/objectMatch'
 import { makeTemplate } from "../../util/makeTemplate"
 import { ReadURLParams, URLFormatter } from "../../util/helper/misc"
@@ -19,7 +23,7 @@ const mapStateToProps = state => {
   }
 }
 
-class ParentFilter extends React.Component {
+class MetaFilter extends React.Component {
   constructor(props){
     super(props)
     this.state = {
@@ -58,8 +62,6 @@ class ParentFilter extends React.Component {
       mapping_id_to_name,
       mapping_name_to_id,
       current_table
-    }, ()=>{
-      this.updateDataCounts(current_table)
     })
   }
 
@@ -93,40 +95,127 @@ class ParentFilter extends React.Component {
     })
   }
 
+  getParentMeta = () => {
+    const {current_table, mapping_id_to_name, mapping_name_to_id} = this.state
+    const curr_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    if (curr_table===current_table && mapping_id_to_name !== undefined && mapping_name_to_id !== undefined){
+      return {mapping_name_to_id, mapping_id_to_name}
+    }else {
+      const {schemas, parent_ids_mapping: mapping} = this.props
+      
+      
+      const parent_ids_mapping = mapping[curr_table]
+      let mapping_id_to_name = {}
+      const mapping_name_to_id = Object.entries(parent_ids_mapping).reduce((acc,[id, val])=>{
+        const matched_schema = findMatchedSchema(val, schemas)
+        let name_prop = Object.keys(matched_schema.properties).filter(prop=> matched_schema.properties[prop].name)
+        let name
+        if (name_prop.length > 0){
+          name = makeTemplate(matched_schema.properties[name_prop[0]].text, val)
+        } else {
+          console.warn('source of resource name is not defined, using either Name or ids')
+          name = resource.meta['Name'] || id
+        }
+        mapping_id_to_name = {
+          ...mapping_id_to_name,
+          [id]: name
+        }
+        acc = {
+          ...acc,
+          [name]:id
+        }
+        return acc
+      },{})
+      this.setState({
+        mapping_id_to_name,
+        mapping_name_to_id,
+        current_table
+      })
+      return {mapping_name_to_id, mapping_id_to_name}
+    }
+  }
+
+  getDataCounts = (stats) => {
+    const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
+    const curr_table = this.props.reverse_preferred_name[current_table]
+    const param_str = this.props.location.search
+    let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
+    let selected_values = []
+    let selected = {}
+    let data_count = []
+    if (params[curr_table]!== undefined && params[curr_table].filters!== undefined && params[curr_table].filters[this.props.field_name] !== undefined){
+      selected_values = params[curr_table].filters[this.props.field_name]
+      
+    }
+    if (this.props.parent){
+      const {mapping_name_to_id, mapping_id_to_name} = this.getParentMeta()
+      for (const [id, count] of Object.entries(stats)){
+        if (count>0){
+          const name = mapping_id_to_name[id]
+          selected[name] = selected_values.indexOf(id)>-1
+          data_count = [...data_count, {count, name, id}]
+        }
+      }
+    } else{
+      for (const [id, count] of Object.entries(stats)){
+        if (count>0){
+          
+          selected[id] = selected_values.indexOf(id) > -1
+          data_count = [...data_count, {count, id, name: id}]
+        }
+      }
+    }
+    this.setState({
+      selected,
+      data_count
+    })
+  }
 
   componentDidMount(){
-    const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
-    this.getMapping(current_table)
+    this.getDataCounts(this.props.stats)
   }
 
   componentDidUpdate(prevProps){
     const prevTable = prevProps.match.params.table
     const current_table = this.props.match.params.table
     if (prevTable!==current_table){
-      this.getMapping(this.props.reverse_preferred_name[current_table])
+      this.getDataCounts(this.props.stats)
     }else if(!prevProps.completed && this.props.completed){
-      this.getMapping(this.props.reverse_preferred_name[current_table])
+      this.getDataCounts(this.props.stats)
     }
   }
 
   toggleSelect = (name) => {
-    const {
-      mapping_id_to_name,
-      mapping_name_to_id
-    } = this.state
-    const parent_ids_mapping = this.props.parent_ids_mapping
-    const selected = {
-      ...this.state.selected,
-      [name]: !this.state.selected[name]
+    let selected_values = []
+    let selected
+    if (this.props.parent){
+      const {
+        mapping_id_to_name,
+        mapping_name_to_id
+      } = this.state
+      selected = {
+        ...this.state.selected,
+        [name]: !this.state.selected[name]
+      }
+      for (const [name, val] of Object.entries(selected)){
+        if (val){
+          selected_values = [...selected_values, mapping_name_to_id[name]]
+        }
+      }
+    }else {
+      selected = {
+        ...this.state.selected,
+        [name]: !this.state.selected[name]
+      }
+      for (const [name, val] of Object.entries(selected)){
+        if (val){
+          selected_values = [...selected_values, name]
+        }
+      }
     }
-    const selected_parent_ids = Object.entries(selected).filter(([name, val])=>
-      val).map(([name,val])=>{
-        const id = mapping_name_to_id[name]
-        return(id)
-      })
-    this.setState((prevState)=>({
+    this.setState({
       selected
-    }), ()=>{
+    }, ()=>{
       const current_table = this.props.match.params.table || this.props.preferred_name["signatures"] || this.props.preferred_name["libraries"]
       const curr_table = this.props.reverse_preferred_name[current_table]
       const param_str = this.props.location.search
@@ -135,11 +224,11 @@ class ParentFilter extends React.Component {
       if (params[curr_table]!==undefined){
         filters = {
           ...params[curr_table].filters,
-          [this.props.parents[curr_table]]: selected_parent_ids.length > 0 ? selected_parent_ids: undefined
+          [this.props.field_name]: selected_values.length > 0 ? selected_values: undefined
         }
       } else {
         filters = {
-          [this.props.parents[curr_table]]: selected_parent_ids.length > 0 ? selected_parent_ids: undefined
+          [this.props.field_name]: selected_values.length > 0 ? selected_values: undefined
         }
       }
       params = {
@@ -175,5 +264,10 @@ class ParentFilter extends React.Component {
 
 }
 
+MetaFilter.propTypes = {
+  stats: PropTypes.object,
+  parent: PropTypes.bool,
+  field_name: PropTypes.string,
+};
 
-export default connect(mapStateToProps)(ParentFilter)
+export default withRouter(connect(mapStateToProps)(MetaFilter))

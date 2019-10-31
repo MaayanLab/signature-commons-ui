@@ -12,7 +12,18 @@ import { ReadURLParams, diffList, URLFormatter } from "../../util/helper/misc";
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import ParentFilter from './ParentFilter'
+import MetaFilter from './MetaFilter'
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
+import Icon from '@material-ui/core/Icon';
+import Card from '@material-ui/core/Card';
+
 
 const operationMapper = {
   new_search: (table, current_table) => ({
@@ -25,7 +36,7 @@ const operationMapper = {
     metadata_search: table===current_table,
     per_parent_count: false,
     value_count: false,
-    count: true
+    count: false
   }),
   new_filter: (table, current_table) => ({
     metadata_search: table===current_table,
@@ -38,6 +49,12 @@ const operationMapper = {
     per_parent_count: table===current_table,
     value_count: table===current_table,
     count: true,
+  }),
+  order: (table, current_table) => ({
+    metadata_search: table===current_table,
+    per_parent_count: false,
+    value_count: false,
+    count: false
   })
 }
 
@@ -47,16 +64,20 @@ const mapStateToProps = state => {
     search: state.search,
     completed: state.completed,
     models: state.models,
+    parents: state.parents_mapping,
     tables: Object.keys(state.parents_mapping),
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
+    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
+    order_default: state.serverSideProps.ui_values.order_default || {},
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    searchBoxFunction : (params) => 
-      dispatch(fetchMetaDataFromSearchBox(params)),
+    searchBoxFunction : (params) => {
+      dispatch(fetchMetaDataFromSearchBox(params))
+    },
     searchFunction: (params) =>
       dispatch(fetchMetaData(params)),
   };
@@ -68,6 +89,8 @@ class MetadataSearch extends React.Component {
     this.state = {
       index_value: 0,
       pagination: false,
+      order: props.order_default,
+      open: {},
     }
   }
 
@@ -106,11 +129,20 @@ class MetadataSearch extends React.Component {
           }
         }
       }
+     if (this.state.order[table]!==undefined && params[table].order!==undefined && params[table].order!==this.state.order[table]){
+        this.setState({
+          order: {
+            ...this.state.order,
+            [table]: params[table].order
+          }
+        })
+      }else if (this.state.order[table]!==undefined && params[table].order===undefined){
+        params[table].order = this.state.order[table]
+      }
     }
+    this.props.searchBoxFunction(params)
     this.setState({
       index_value: this.props.tables.indexOf(new_table),
-    }, ()=>{
-      this.props.searchBoxFunction(params)
     })
   }
 
@@ -120,18 +152,19 @@ class MetadataSearch extends React.Component {
       const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
       const old_param_str = decodeURI(prevProps.location.search)
       const current_param_str = decodeURI(this.props.location.search)
-      
+      let params
       if (prev_table !== current_table && current_param_str === old_param_str){
         const model = this.props.models[current_table]
         if (model.results.metadata_search === undefined){
           const operations_key = this.getOperationsKey()
           const operations = operationMapper[operations_key](current_table, current_table)
-          let params = this.format_param(current_param_str, operations, current_table)
+          params = this.format_param(current_param_str, operations, current_table)
           this.props.searchFunction(params)
         }
       }else if(current_param_str!==old_param_str){
+        
         if (this.props.location.state === undefined || this.props.location.state.new_search){
-          let params = ReadURLParams(current_param_str, this.props.reverse_preferred_name)
+          params = ReadURLParams(current_param_str, this.props.reverse_preferred_name)
           for (const table of this.props.tables){
             const operations_key = this.getOperationsKey()
             const operations = operationMapper[operations_key](table, current_table)
@@ -151,14 +184,23 @@ class MetadataSearch extends React.Component {
                 }
               }
             }
+            if (this.state.order[table]!==undefined && params[table].order!==undefined && params[table].order!==this.state.order[table]){
+              
+              this.setState({
+                order: {
+                  ...this.state.order,
+                  [table]: params[table].order
+                }
+              })
+            }else if (this.state.order[table]!==undefined && params[table].order===undefined){
+              params[table].order = this.state.order[table]
+            }
           }
-
           this.props.searchBoxFunction(params)
         } else {
           const operations_key = this.getOperationsKey()
           const operations = operationMapper[operations_key](current_table, current_table)
-          let params = this.format_param(current_param_str, operations, current_table)
-          
+          params = this.format_param(current_param_str, operations, current_table)
           this.props.searchFunction(params)
         }
         let pagination = this.state.pagination
@@ -166,7 +208,24 @@ class MetadataSearch extends React.Component {
           pagination = this.props.location.state.pagination || this.props.location.state.new_filter || false
         }
         this.setState({
-          pagination
+          pagination,
+        })
+      }
+      
+      if (params!==undefined){
+        const order = this.props.tables.filter(t=>params[t].order!==undefined).reduce((acc,t)=>{
+          acc = {
+            ...acc,
+            [t]: params[t].order
+          }
+          return acc
+        },{})
+        
+        this.setState({
+          order: {
+            ...this.state.order,
+            ...order,
+          }
         })
       }
   }
@@ -192,30 +251,6 @@ class MetadataSearch extends React.Component {
     }
     return params
   }
-  // componentDidUpdate(prevProps) {
-  //   const prevTable = this.props.reverse_preferred_name[prevProps.match.params.table]
-  //   const new_table = this.props.reverse_preferred_name[this.props.match.params.table]
-  //   const param_str = this.props.location.search
-  //   const params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-  //   const old_param_str = prevProps.location.search
-  //   const old_params = ReadURLParams(old_param_str, this.props.reverse_preferred_name)
-  //   const state = this.props.location.state || { new_search: true}
-
-  //   if (prevTable!==new_table){
-  //     this.props.changeTab(new_table)
-  //     this.setState({
-  //       index_value: this.props.tables.indexOf(new_table),
-  //     })
-  //   }
-  //   if (param_str!==old_param_str){
-  //     // search has changed
-  //     if (diffList(old_params.search, params.search)){
-  //       this.props.searchBoxFunction(params, new_table)
-  //     } else {
-  //       // this.props.searchFunction(params, new_table)
-  //     }
-  //   }
-  // }
 
 
   handleChange = (event, new_index) => {
@@ -225,7 +260,7 @@ class MetadataSearch extends React.Component {
     }, ()=>{
       const query = this.props.location.search
       this.props.history.push({
-        pathname: `/MetadataSearch/${this.props.preferred_name[new_table]}`,
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${this.props.preferred_name[new_table]}`,
         search: `${query}`,
         state: {
           change_tab: true
@@ -248,6 +283,43 @@ class MetadataSearch extends React.Component {
       pagination={this.state.pagination}
     />
   )
+
+  openFilter = (field) => {
+    this.setState((prevState) =>({
+      open: {
+        ...prevState.open,
+        [field]: prevState.open[field]===undefined ? true: !prevState.open[field]
+      }
+    }))
+  }
+
+  filters = (props) => {
+    const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    const model = this.props.models[current_table]
+    if (model === undefined) return null
+    const sorting_fields = model.sorting_fields
+    const results = model.results
+    if (sorting_fields===undefined || sorting_fields.length===0 || results===undefined || results.value_count === undefined) return null
+    const filters = sorting_fields.map(field_item=>{
+      const value = results.value_count[field_item.meta.Field_Name]
+      if (value === undefined) return null
+      const stats = value.stats
+      return (
+        <Card>
+          <ListItem button onClick={()=>this.openFilter(field_item.meta.Field_Name)}>
+            <ListItemIcon>
+              <Icon className={`mdi ${field_item.meta.MDI_Icon} mdi-18px`} />
+            </ListItemIcon>
+            <ListItemText inset primary={field_item.meta.Preferred_Name} />
+          </ListItem>
+          <Collapse in={this.state.open[field_item.meta.Field_Name]} timeout="auto" unmountOnExit>
+            <MetaFilter stats={stats} field_name={field_item.meta.Field_Name} parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name)>-1} />
+          </Collapse>
+        </Card>
+      ) 
+    })
+    return <List>{filters}</List>
+  }
 
   data_table = (props) => {
     return(
@@ -275,7 +347,7 @@ class MetadataSearch extends React.Component {
                 />
               )})}
         </Tabs>
-        <MetadataSearchResults {...props}/>
+        <MetadataSearchResults {...props} order={this.state.order}/>
       </React.Fragment>
     )
   }
@@ -295,7 +367,7 @@ class MetadataSearch extends React.Component {
             <Grid container
               spacing={24}>
               <Grid item xs={12}>
-                <Route path="/MetadataSearch/:table" component={this.searchBox} />
+                <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.searchBox} />
               </Grid>
             </Grid>
           </Grid>
@@ -315,15 +387,15 @@ class MetadataSearch extends React.Component {
           <Grid container
             spacing={24}>
             <Grid item xs={12}>
-              <Route path="/MetadataSearch/:table" component={this.searchBox} />
+              <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.searchBox} />
             </Grid>
             <Grid item xs={12}>
-              <Route path="/MetadataSearch/:table" component={this.parentFilter} />
+              <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.filters} />
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={9}>
-          <Route path="/MetadataSearch/:table" component={this.data_table} />
+          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.data_table} />
         </Grid>
       </Grid>
     )

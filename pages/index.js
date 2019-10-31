@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
 import { get_schemas } from '../util/helper/fetch_methods.js'
@@ -11,7 +12,9 @@ import { get_counts,
   get_metacounts,
   get_pie_stats,
   get_signature_keys,
-  get_barcounts
+  get_barcounts,
+  get_histograms,
+  get_barscores,
   } from '../util/helper/server_side.js'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
@@ -32,6 +35,13 @@ function mapDispatchToProps(dispatch) {
     initializeSigcom: serverSideProps => dispatch(initializeSigcom(serverSideProps)),
   };
 }
+
+
+const mapStateToProps = state => {
+  return {
+    initialized: state.initialized
+  }
+};
 
 export async function get_ui_values() {
   const { response: ui_val } = await fetch_meta_post({
@@ -55,23 +65,26 @@ class App extends React.Component {
     const { ui_values } = await get_ui_values()
     // Check if it has library_name and resource_from_library
     const schemas = await get_schemas(ui_values.ui_schema)
-    const { resource_signatures, libraries, resources, resources_id, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
-    const { table_counts, ui_values: ui_val } = await get_counts(Object.keys(resources).length, ui_values)
+    // const { resource_signatures, resources, resources_id, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
+    const { table_counts, ui_values: ui_val } = await get_counts(ui_values)
     const { meta_counts } = await get_metacounts(ui_val)
     const { pie_fields_and_stats } = await get_pie_stats(ui_val)
     // const signature_keys = await get_signature_keys()
     const { barcounts } = await get_barcounts(ui_val)
+    const { histograms } = await get_histograms(ui_val)
+    const { barscores } = await get_barscores(ui_val)
     const serverSideProps = {
       table_counts,
       meta_counts,//: {},
-      resource_signatures,
+      // resource_signatures,
       pie_fields_and_stats,//: {},
       barcounts,
+      histograms,
+      barscores,
       // signature_keys,
-      libraries,
-      resources,
-      resources_id,
-      library_resource,
+      // resources,
+      // resources_id,
+      // library_resource,
       ui_values,//: ui_val,
       schemas,
     }
@@ -83,6 +96,9 @@ class App extends React.Component {
   }
 
   render() {
+    if (!this.props.initialized){
+      return <CircularProgress />
+    }
     return (
       <div className="root">
         <Router>
@@ -102,4 +118,4 @@ class App extends React.Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)

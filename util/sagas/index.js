@@ -9,7 +9,9 @@ import { operationIds,
   find_synonyms,
   query_overlap,
   query_rank,
-  fetch_bulk_counts_per_parent } from "../helper/fetch_methods"
+  fetch_bulk_counts_per_parent,
+  fetch_all_as_dictionary } from "../helper/fetch_methods"
+import { fetch_count } from "../helper/server_side"
 import {parse_entities} from "../helper/misc"
 import { fetchMetaDataSucceeded,
   fetchMetaDataFailed,
@@ -18,10 +20,12 @@ import { fetchMetaDataSucceeded,
   matchFailed,
   findSignaturesSucceeded,
   resetSigcom,
-  findSignaturesFailed } from "../redux/actions"
+  findSignaturesFailed,
+  initializeSigcom,
+  initializeParents } from "../redux/actions"
 import { getStateFromStore } from "./selectors"
 import { get_signature_data } from  "../../components/MetadataSearch/download"
-import Model from "../helper/model"
+import Model from "../helper/APIConnector"
 import uuid5 from 'uuid5'
 
 const allWatchedActions = [
@@ -30,10 +34,51 @@ const allWatchedActions = [
   action_definitions.MATCH_ENTITY,
   action_definitions.FETCH_METADATA,
   action_definitions.FETCH_METADATA_FROM_SEARCH_BOX,
-  action_definitions.RESET_SIGCOM]
+  action_definitions.RESET_SIGCOM,
+]
 
-function* cancelWorkerSaga (task) {
-    yield cancel(task)
+export function* workInitializeSigcom(action) {
+  if (action.type !== action_definitions.INITIALIZE_SIGCOM){
+    return
+  }
+  const controller = new AbortController()
+  try{
+    const sig_count = yield call(fetch_count, "signatures")
+    const lib_count = yield call(fetch_count, "libraries")
+    
+    const parents_mapping = {}
+    const parent_ids_mapping = {}
+    let libraries = {}
+    if (sig_count>0){
+      libraries = yield call(fetch_all_as_dictionary, { table: "libraries", controller })
+      parents_mapping["signatures"] = "library"
+      parent_ids_mapping["signatures"] = libraries
+    }
+    if (lib_count>0){
+      let resources = yield call(fetch_all_as_dictionary, { table: "resources", controller })
+      if (resources===null){
+        resources = libraries
+        parents_mapping["libraries"] = "library"
+      }else{
+        parents_mapping["libraries"] = "resource"
+      }
+      parent_ids_mapping["libraries"] = resources
+    }
+
+    yield put(initializeParents({parent_ids_mapping, parents_mapping}))
+  } catch (error) {
+      console.log(error)
+      controller.abort()
+   } finally {
+      if (yield cancelled()){
+        controller.abort()
+        console.log("Aborted")
+      }
+   }
+}
+
+function* watchInitializeSigcom() {
+  const task = yield takeLatest(action_definitions.INITIALIZE_SIGCOM, workInitializeSigcom)
 }
 
 export function* workResetSigcom(action) {
@@ -64,7 +109,6 @@ export function* workFetchMetaData(action) {
             filters,
             search: params.search,
           },
-          value_count_params,
           parent_ids,
           ...operations
         }
@@ -378,6 +422,7 @@ export default function* rootSaga() {
       watchMatchEntities(),
       watchFindSignature(),
       watchResetSigcom(),
-      watchFindSignatureFromId()
+      watchFindSignatureFromId(),
+      watchInitializeSigcom()
     ]);
 }

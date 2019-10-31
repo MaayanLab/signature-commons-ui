@@ -54,49 +54,18 @@ export const diffList = (prevList, currList) =>{
 // 2. Add filter (parent and meta) (parents for now)
 // 3. Add pages
 export const URLFormatter = ({
-  current_table,
-  search,
-  filters, // dictionary where the key is the field and the value is the filter values
-  skip,
-  limit,
-  params_str,
-  reverse_preferred_name,
-  value_count_params
+  preferred_name,
+  params
 }) => {
-  if (params_str===undefined) params_str = '{}'
-  if (reverse_preferred_name===undefined) reverse_preferred_name = {"Libraries": "libraries", "Signatures": "signatures"}
-  let params = ReadURLParams(params_str, reverse_preferred_name)
-  if(params[current_table]!==undefined){
-    params = {
-      ...params,
-      search,
-      [current_table]: {
-        ...params[current_table],
-        filters: filters || params[current_table].filters,
-        skip: skip || params[current_table].skip,
-        limit: limit || params[current_table].limit,
-        value_count_params: filters || params[current_table].value_count_params,
-      }
-    }
-  }else if (filters || skip || limit || value_count_params){
-    params = {
-      ...params,
-      search,
-      [current_table]: {
-        filters,
-        skip,
-        limit,
-        value_count_params,
-      }
-    }
-  } else {
-    params = {
-      ...params,
-      search
+  const {search, ...rest} = params
+  let params_preferred = {search}
+  for (const i in preferred_name){
+    if (rest[i]!==undefined){
+      params_preferred[preferred_name[i]] = rest[i]
     }
   }
   return JSON.stringify({
-      ...params,
+      ...params_preferred,
     })
 }
 

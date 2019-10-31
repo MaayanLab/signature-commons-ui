@@ -51,6 +51,7 @@ export async function get_library_resources() {
           )
         }
         if (matched_schemas.length < 1) {
+          console.log(schemas)
           console.error('Could not match ui-schema for', resource)
           return null
         }
@@ -123,10 +124,7 @@ export async function get_library_resources() {
 
 export async function get_signature_counts_per_resources() {
   // const response = await fetch("/resources/all.json").then((res)=>res.json())
-  const schemas = await get_schemas("/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json")
-
   const { libraries, resources, resources_id, library_resource } = await get_library_resources()
-
   // const count_promises = Object.keys(library_resource).map(async (lib) => {
   //   // request details from GitHub’s API with Axios
   const count_promises = Object.keys(libraries).map(async (lib_key) => {
@@ -157,6 +155,14 @@ export async function get_signature_counts_per_resources() {
       library_name = resource.meta['Library_name'] || lib.id
     }
 
+      return {
+        id: lib.id,
+        name: lib.meta[ui_values.library_name] || lib.dataset,
+        count: stats.count,
+      }
+    })
+    counts = await Promise.all(count_promises)
+  }else {
     return {
       id: lib.id,
       name: library_name,
@@ -227,7 +233,6 @@ export async function get_signature_counts_per_resources() {
   // });
   return {
     resource_signatures: total_count === 0 ? undefined : resource_signatures, // for_sorting.slice(0,11)
-    libraries,
     resources: resources_with_counts,
     library_resource,
     resources_id,

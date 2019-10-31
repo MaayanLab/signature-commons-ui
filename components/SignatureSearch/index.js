@@ -15,6 +15,7 @@ const mapStateToProps = state => {
     ...state.signature_result,
     input: state.signature_input,
     loading: state.loading_signature,
+    SignatureSearchNav: state.serverSideProps.ui_values.nav.SignatureSearch || {}
   }
 };
 
@@ -108,10 +109,10 @@ class SignatureSearch extends React.Component {
     return (
       <div className="row">
         <Switch>
-          <Route exact path="/SignatureSearch" render={this.render_signature_search} />
-          <Route path="/SignatureSearch/:type/:input_signature/:resource" component={this.library_results} />
-          <Route path="/SignatureSearch/:type/:input_signature" component={this.resource_filters} />
-          <Route path="/SignatureSearch/:type" render={this.render_signature_search_type} />
+          <Route exact path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}`} render={this.render_signature_search} />
+          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:type/:input_signature/:resource`} component={this.library_results} />
+          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:type/:input_signature`}  component={this.resource_filters} />
+          <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:type`}  render={this.render_signature_search_type} />
         </Switch>
       </div>
     )

@@ -38,7 +38,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </Typography>
         </div>
       </Grid>
-      {props.ui_values.nav.metadata_search ?
+      {props.ui_values.nav.MetadataSearch && props.ui_values.nav.MetadataSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -53,14 +53,14 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    Metadata Search
+                    {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.signature_search ?
+      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.activeh ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -75,14 +75,14 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    Signature Search
+                    {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.resources ?
+      {props.ui_values.nav.Resources && props.ui_values.nav.Resources.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -96,7 +96,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                  {`Browse ${props.ui_values.preferred_name.resources || 'Resources'}`}
+                  {`Browse ${props.ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}`}
                 </Typography>
               </Grid>
             </Grid>
@@ -208,8 +208,8 @@ const toggleSearch = (e) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  const { signature_search, metadata_search } = props.ui_values.nav
-  if (signature_search && metadata_search) {
+  const { SignatureSearch, MetadataSearch } = props.ui_values.nav
+  if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active ) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>
@@ -226,7 +226,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              {props.match.params.searchType == 'MetadataSearch' ?
+              { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
                 <MetadataSearchBox
                   id='MetadataSearch'
                   {...props}
@@ -240,7 +240,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
         </CardContent>
       </Card>
     )
-  } else if (signature_search) {
+  } else if (SignatureSearch && SignatureSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>
@@ -265,7 +265,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
         </CardContent>
       </Card>
     )
-  } else if (metadata_search) {
+  } else if (MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>

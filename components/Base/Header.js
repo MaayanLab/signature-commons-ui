@@ -1,6 +1,8 @@
 import React from 'react'
-import { withRouter, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { connect } from "react-redux";
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 const mapStateToProps = (state, ownProps) => {
   return { 
@@ -9,38 +11,38 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export function Nav(props) {
-  const { ui_values, dispatch, ...rest } = props
+  const { ui_values, dispatch, location, ...rest } = props
   return (
     <ul {...rest}>
-      {ui_values.nav.metadata_search ?
+      {ui_values.nav.MetadataSearch && ui_values.nav.MetadataSearch.active ?
         <li
-          className={rest.location.pathname === '/MetadataSearch' ? '' : ''}
+          className={location.pathname === `${ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}` ? 'active' : ''}
         >
-          <Link to={'/MetadataSearch'}>
-            Metadata Search
+          <Link to={`${ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}`}>
+            {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
         </li> : null
       }
-      {ui_values.nav.signature_search ?
+      {ui_values.nav.SignatureSearch && ui_values.nav.SignatureSearch.active ?
         <li
-          className={rest.location.pathname === '/SignatureSearch' ? '' : ''}
+          className={location.pathname === `${ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}` ? 'active' : ''}
         >
-          <Link to={'/SignatureSearch'}>
-            Signature Search
+          <Link to={`${ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}`}>
+            {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
         </li> : null
       }
-      {ui_values.nav.resources ?
+      {ui_values.nav.Resources && ui_values.nav.Resources.active ?
         <li
-          className={rest.location.pathname === `/${ui_values.preferred_name.resources || 'Resources'}` ? '' : ''}
+          className={location.pathname === `${ui_values.nav.Resources.endpoint || "/Resources"}` ? 'active' : ''}
         >
-          <Link to={`/${ui_values.preferred_name.resources || 'Resources'}`}>
+          <Link to={`${ui_values.nav.Resources.endpoint || "/Resources"}`}>
             {ui_values.preferred_name.resources || 'Resources'}
           </Link>
         </li> : null
       }
       <li
-        className={rest.location.pathname === '/API' ? '' : ''}
+        className={location.pathname === '/API' ? '' : ''}
       >
         <Link to="/API">
           API
@@ -51,37 +53,40 @@ export function Nav(props) {
 }
 
 
-const Header = (props) => {
-  const paths = props.location.pathname.split('/')
-  return (
-    <header>
-      <nav className="nav-extended">
-        <div className="nav-wrapper">
-          <Link
-            to="/"
-            className="brand-logo left hide-on-med-and-down"
-            style={{
-              whiteSpace: 'nowrap',
-            }}
-          >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {props.ui_values.LandingText.header || 'Signature Commons'}
-          </Link>
-          <Link
-            to="/"
-            className={`brand-logo ${location} hide-on-large-only`}
-            style={{
-              whiteSpace: 'nowrap',
-            }}
-          >
-            &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; Signature Commons
-          </Link>
-          <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-          <Nav id="nav-mobile" className="right hide-on-med-and-down" {...props} />
-        </div>
-        <Nav className="sidenav hide-on-large-and-up" id="mobile-menu" {...props}/>
-      </nav>
-    </header>
-  )
+class Header extends React.Component {
+  render = () => {
+    const paths = this.props.location.pathname.split('/')
+    const {staticContext, ...rest} = this.props
+    return (
+      <header>
+        <nav className="nav-extended">
+          <div className="nav-wrapper">
+            <Link
+              to="/"
+              className="brand-logo left hide-on-med-and-down"
+              style={{
+                whiteSpace: 'nowrap',
+              }}
+            >
+              &nbsp;&nbsp; b<img src={`${process.env.PREFIX}/static/favicon.ico`} style={{marginLeft:-3}} height="30" />ls
+            </Link>
+            <Link
+              to="/"
+              className={`brand-logo ${location} hide-on-large-only`}
+              style={{
+                whiteSpace: 'nowrap',
+              }}
+            >
+              &nbsp;&nbsp;  b<img src={`${process.env.PREFIX}/static/favicon.ico`} style={{marginLeft:-3}} height="30" />ls
+            </Link>
+            <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
+            <Nav id="nav-mobile" className="right hide-on-med-and-down" {...rest} />
+          </div>
+          <Nav className="sidenav" id="mobile-menu" {...rest}/>
+        </nav>
+      </header>
+    )
+  }
 }
 
-export default connect(mapStateToProps)(withRouter(Header))
+export default connect(mapStateToProps)(Header)

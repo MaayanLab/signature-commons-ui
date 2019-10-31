@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { landingStyle } from '../styles/jss/theme.js'
 
-function validURL(str) {
+export function validURL(str) {
   try {
     new URL(str)
   } catch {
