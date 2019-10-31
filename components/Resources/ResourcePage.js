@@ -18,6 +18,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import TablePagination from '@material-ui/core/TablePagination'
 import { URLFormatter } from "../../util/helper/misc";
 
@@ -40,8 +41,6 @@ const mapStateToProps = (state, ownProps) => {
   const {ui_values, resources, schemas} = state.serverSideProps
   return { 
     ui_values,
-    resources,
-    schemas,
     preferred_name_singular: ui_values.preferred_name_singular,
   }
 };
@@ -64,9 +63,8 @@ class ResourcePage extends React.Component {
 
   async componentDidMount(){
     let res = this.props.match.params.resource.replace(/_/g, ' ')
-    let resource
-    console.log(res)
     console.log(this.props.resources)
+    let resource
     if (isUUID(res+'')){
       // uuid fetch resource
       const {response} = await fetch_meta({
@@ -86,14 +84,18 @@ class ResourcePage extends React.Component {
       resource.libraries = libraries
     } else {
       resource = this.props.resources[res]
+      const {response: libraries} = await fetch_meta_post({
+        endpoint: `/libraries/find`,
+        body: {
+          filter: {
+            where: {
+              resource: resource.id,
+            }
+          }
+        },
+      })
+      resource.libraries = libraries
     }
-    const schema = await findMatchedSchema(resource, this.props.schemas)
-    const name_props = Object.values(schema.properties).filter(prop=>prop.name)
-    const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
-    const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
-    const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
-    const description_props = Object.values(schema.properties).filter(prop=>prop.description)
-    const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
 
     const start = this.state.page*this.state.perPage
     const end = (this.state.page+1)*this.state.perPage
@@ -104,11 +106,7 @@ class ResourcePage extends React.Component {
     const collection = children.map(data=>get_card_data(data, this.props.schemas))
     
     this.setState({
-      schema,
       resource,
-      icon_prop,
-      name_prop,
-      description_prop,
       collection,
     })
 
@@ -139,15 +137,20 @@ class ResourcePage extends React.Component {
         resource.libraries = libraries
       } else {
         resource = this.props.resources[res]
+        const {response: libraries} = await fetch_meta_post({
+          endpoint: `/libraries/find`,
+          body: {
+            filter: {
+              where: {
+                resource: resource.id,
+              }
+            }
+          },
+        })
+        resource.libraries = libraries
       }
-      const schema = await findMatchedSchema(resource, this.props.schemas)
-      const name_props = Object.values(schema.properties).filter(prop=>prop.name)
-      const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
-      const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
-      const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
-      const description_props = Object.values(schema.properties).filter(prop=>prop.description)
-      const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
-
+      const start = this.state.page*this.state.perPage
+      const end = (this.state.page+1)*this.state.perPage
       let children = []
       if (resource !== null && !resource.is_library){
         children = resource.libraries.slice(start, end)
@@ -155,11 +158,7 @@ class ResourcePage extends React.Component {
       const collection = children.map(data=>get_card_data(data, this.props.schemas))
       
       this.setState({
-        schema,
         resource,
-        icon_prop,
-        name_prop,
-        description_prop,
         collection
       })
     }
@@ -231,13 +230,14 @@ class ResourcePage extends React.Component {
 
   render() {
     if (this.state.resource===null){
-      return <div />
+      return <CircularProgress />
     }
     const {icon_prop,
       name_prop,
-      description_prop,
-      resource
-    } = this.state
+      description_prop
+    } = this.props
+
+    const resource = this.state.resource
 
     let resource_name = makeTemplate(name_prop, resource)
     resource_name = resource_name === 'undefined' ? resource.id : resource_name

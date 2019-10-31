@@ -6,6 +6,7 @@ import { makeTemplate } from '../../util/makeTemplate'
 import { objectMatch } from '../../util/makeTemplate'
 import { connect } from 'react-redux';
 import { findMatchedSchema } from '../../util/objectMatch'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const mapStateToProps = (state, ownProps) => {
   const {ui_values, resources, schemas} = state.serverSideProps
@@ -56,7 +57,7 @@ class ResourceList extends React.PureComponent {
       description_prop,} = this.state
 
     if (sorted_resources.length === 0 ){
-      return <div> hi</div>
+      return <CircularProgress />
     }
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
