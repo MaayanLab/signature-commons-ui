@@ -2,13 +2,14 @@ import { fetch_meta } from '../util/fetch/meta'
 
 export const UIValues = {
   'landing': (values) => {
+    console.log(values)
     return (
       {
         LandingText: {
           header: values.header || 'Signature Commons',
           text_1: values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures',
           text_2: values.text_2 || 'Search across a broad gathering of perturbations',
-          text_3: values.text_3 || 'Examine metadata:',
+          text_3: values.text_3 || 'By',
           text_4: values.text_4 || 'Start using Signature Commons in your project',
           metadata_placeholder: values.metadata_placeholder || 'Search over half a million signatures',
           geneset_placeholder: values.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set',
@@ -33,10 +34,10 @@ export const UIValues = {
             SignatureSearch: values.nav.SignatureSearch!==undefined? {
                 active: false,
                 endpoint: "/SignatureSearch",
-                ...values.nav.SignaturesSearch
+                ...values.nav.SignatureSearch
               } :{
-                active: true,
-                endpoint: "/SignaturesSearch"
+                active: false,
+                endpoint: "/SignatureSearch"
               },
             Resources: values.nav.Resources!==undefined? {
                 active: true,
@@ -93,8 +94,6 @@ export const UIValues = {
         github_issues: values.github_issues || "https://github.com/dcic/signature-commons-ui/issues",
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
-        bar_chart_solo: values.bar_chart_solo,
-        pie_chart_solo: values.pie_chart_solo,
         bar_chart_style: values.bar_chart_style ||
           {
             ResponsiveContainer: {
@@ -131,7 +130,7 @@ export const UIValues = {
           },
           Chart: {
             width: 420,
-            height: 300,
+            height: 420,
           },
           Pie: {
             fill: '#75bef5',

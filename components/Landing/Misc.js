@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
 import yellow from '@material-ui/core/colors/yellow';
-
+import { animateScroll as scroll } from 'react-scroll'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 
@@ -46,10 +46,11 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'metadata', true)}>
-                  <FileFind className={classes.icon} />
-                </Button>
+                <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || "/MetadataSearch"}`}>
+                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={()=>scroll.scrollToTop()}>
+                    <FileFind className={classes.icon} />
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
@@ -60,7 +61,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.activeh ?
+      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -68,10 +69,11 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'signature', true)}>
-                  <FindReplace className={classes.icon} />
-                </Button>
+                <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || "/SignatureSearch"}`}>
+                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={()=>scroll.scrollToTop()}>
+                    <FindReplace className={classes.icon} />
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">

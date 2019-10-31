@@ -1,7 +1,7 @@
 import { fetch_meta, fetch_meta_post } from '../fetch/meta'
 import { makeTemplate } from '../makeTemplate'
 import { get_schemas } from "./fetch_methods"
-import { objectMatch } from "../objectMatch"
+import { objectMatch, findMatchedSchema } from "../objectMatch"
 
 export async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,
@@ -144,7 +144,7 @@ export async function get_pie_stats(ui_values) {
     }
   })
   const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {
-    piestats[stats.key] = { stats: stats.stats, table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name, slice: stats.slice }
+    piestats[stats.Preferred_Name] = { stats: stats.stats, table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name, slice: stats.slice }
     return piestats
   }, {})
 
@@ -329,6 +329,39 @@ export async function get_barscores(ui_values) {
     return accumulator
   }, {})
   return { barscores }
+}
+
+export async function get_resource_signature_counts() {
+  const schemas = await get_schemas()
+  let resource_list
+  const { response } = await fetch_meta({
+    endpoint: '/resources',
+  })
+  
+  if (response.length === 0) {
+    const { response: libraries } = await fetch_meta({
+      endpoint: '/libraries',
+    })
+    resource_list = libraries
+  }else {
+    resource_list = response
+  }
+  const resource_signature_counts = {}
+  for (const resource of resource_list){
+    const resource_id = resource.id
+    const schema = findMatchedSchema(resource, schemas)
+    const name_props = Object.values(schema.properties).filter(prop=> prop.name)
+    let resource_name
+    if (name_props.length>0){
+      resource_name = makeTemplate(name_props[0].text, resource)
+    }else {
+      console.warn('source of resource name is not defined, using either Resource_Name or ids')
+      resource_name = resource.meta['Resource_Name'] || resource_id
+    }
+    const { response: res } = await fetch_meta({ endpoint: `/resources/${resource_id}/signatures/count`})
+    resource_signature_counts[resource_name] = res.count
+  }
+  return { resource_signature_counts }
 }
 
 export async function get_signature_keys() {

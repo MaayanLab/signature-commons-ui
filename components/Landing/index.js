@@ -30,17 +30,20 @@ function mapDispatchToProps(dispatch) {
 class LandingPage extends React.Component {
   constructor(props) {
     super(props)
-    const selected_field = Object.keys(props.barcounts)[0]
+    const selected_pie = Object.keys(props.pie_fields_and_stats)[0]
+    const selected_bar = Object.keys(props.barcounts)[0]
     const selected_histogram = Object.keys(props.histograms).sort()[0]
     const selected_barscore = Object.keys(props.barscores)[0]
     this.state = {
       scroll: false,
-      selected_field,
+      selected_pie,
+      selected_bar,
       selected_histogram,
       selected_barscore,
       histogram: props.histograms[selected_histogram],
       barscore: props.barscores[selected_barscore],
-      bar_stats: props.barcounts[selected_field],
+      bar_stats: props.barcounts[selected_bar],
+      pie_stats: props.pie_fields_and_stats[selected_pie],
     }
   }
 
@@ -58,11 +61,20 @@ class LandingPage extends React.Component {
     scroll.scrollToTop()
   }
 
-  handleSelectField = (e) => {
+  handleSelectPie = (e) => {
+    const value = e.target.value
+    const pie_stats = this.props.pie_fields_and_stats[value]
+    this.setState({
+      selected_pie: value,
+      pie_stats,
+    })
+  }
+
+  handleSelectBar = (e) => {
     const value = e.target.value
     const bar_stats = this.props.barcounts[value]
     this.setState({
-      selected_field: value,
+      selected_bar: value,
       bar_stats,
     })
   }
@@ -112,8 +124,7 @@ class LandingPage extends React.Component {
       <div>
         <Grid container
           spacing={24}
-          alignItems={'center'}
-          direction={'column'}>
+          alignItems={'center'}>
           <Grid item xs={12} className={this.props.classes.stretched}>
             <Switch>
               <Route
@@ -133,47 +144,51 @@ class LandingPage extends React.Component {
               <StatDiv {...this.props}/>
             </Grid>
           }
-          <Grid item xs={12} className={this.props.classes.stretched}>
-            <Grid container
-              spacing={24}
-              alignItems={'center'}>
-              {
-                Object.entries(this.props.pie_fields_and_stats).map(([key,value])=>(
-                  <Grid item xs={12} key={key} md={6}>
-                    <ChartCard cardheight={300} pie_stats={value.stats} resources color={'Blue'} ui_values={this.props.ui_values}/>
-                    <div className={this.props.classes.centered}>
-                      <Typography variant="overline">
-                        By {value.Preferred_Name}
-                      </Typography>
-                    </div>
-                  </Grid>
-                ))
-              }
-            </Grid>
-          </Grid>
-          <Grid item xs={12} className={this.props.classes.stretched}>
-          </Grid>
-          { Object.keys(this.props.barcounts).length === 0 ? null :
-            <Grid item xs={12} className={this.props.classes.stretched}>
+          { Object.keys(this.props.resource_signature_counts).length > 0 ?
+            <Grid item xs={12} md={Object.keys(this.props.barcounts).length === 0 ? 12: 6}
+                    className={this.props.classes.stretched}>
               <Grid container
-                spacing={24}
                 alignItems={'center'}>
-                <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
+                <Grid item xs>
+                  <div className={this.props.classes.centered}>
+                    <ChartCard cardheight={420} pie_stats={this.props.resource_signature_counts} color={'Blue'} ui_values={this.props.ui_values}/>
+                  </div>
+                </Grid>
+                <Grid item xs={12}>
+                  <div className={this.props.classes.centered}>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}</span>
+                  </div>
+                </Grid>
+              </Grid>
+            </Grid>
+            : null
+          }
+          { Object.keys(this.props.barcounts).length === 0 ? null :
+            <Grid item xs={12} md={Object.keys(this.props.resource_signature_counts).length === 0 ? 12: 6 }
+                    className={this.props.classes.stretched}>
+              <Grid container
+                alignItems={'center'}>
+                <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
                     <BarChart meta_counts={this.state.bar_stats.stats}
-                        ui_values={this.props.ui_values}
-                        XAxis
+                      ui_values={this.props.ui_values}
+                      XAxis
                     />
                   </div>
                 </Grid>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{"Top " ||this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
-                    <Selections
-                      value={this.state.selected_field}
-                      values={Object.keys(this.props.barcounts).sort()}
-                      onChange={(e) => this.handleSelectField(e)}
-                    />
+                    {Object.keys(this.props.barcounts).length === 1 ? 
+                    <span>{this.state.selected_bar}</span>:
+                    <React.fragment>
+                      <span>{"Top " }</span>
+                      <Selections
+                        value={this.state.selected_bar}
+                        values={Object.keys(this.props.barcounts).sort()}
+                        onChange={(e) => this.handleSelectBar(e)}
+                      />
+                    </React.fragment>
+                  }
                   </div>
                 </Grid>
               </Grid>
@@ -182,6 +197,36 @@ class LandingPage extends React.Component {
           { Object.keys(this.props.meta_counts).length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
               <CountsDiv {...this.props}/>
+            </Grid>
+          }
+          { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null: 
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <Grid container
+                spacing={24}
+                alignItems={'center'}>
+                <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
+                  <div className={this.props.classes.centered}>
+                    <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+                  </div>
+                </Grid>
+                { this.props.ui_values.deactivate_wordcloud ? null :
+                  <Grid item xs md={6}>
+                    <div className={this.props.classes.centered}>
+                      <WordCloud classes={this.props.classes} stats={this.state.pie_stats.stats}/>
+                    </div>
+                  </Grid>
+                }
+                <Grid item xs={12}>
+                  <div className={this.props.classes.centered}>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
+                    <Selections
+                      value={this.state.selected_pie}
+                      values={Object.keys(this.props.pie_fields_and_stats).sort()}
+                      onChange={(e) => this.handleSelectPie(e)}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
             </Grid>
           }
           { Object.keys(this.props.histograms).length === 0 ? null :
@@ -240,7 +285,7 @@ class LandingPage extends React.Component {
                 </Grid>
               }
           <Grid item xs={12}>
-            <BottomLinks handleChange={this.props.handleChange}
+            <BottomLinks
               {...this.props} />
           </Grid>
           <Grid item xs={12}>

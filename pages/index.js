@@ -15,6 +15,7 @@ import { get_counts,
   get_barcounts,
   get_histograms,
   get_barscores,
+  get_resource_signature_counts
   } from '../util/helper/server_side.js'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
@@ -56,6 +57,7 @@ export async function get_ui_values() {
     },
   })
   const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
+  console.log(ui_val)
   const ui_values = UIValues['landing'](values)
   return { ui_values }
 }
@@ -73,6 +75,7 @@ class App extends React.Component {
     const { barcounts } = await get_barcounts(ui_val)
     const { histograms } = await get_histograms(ui_val)
     const { barscores } = await get_barscores(ui_val)
+    const { resource_signature_counts } = await get_resource_signature_counts()
     const serverSideProps = {
       table_counts,
       meta_counts,//: {},
@@ -87,6 +90,7 @@ class App extends React.Component {
       // library_resource,
       ui_values,//: ui_val,
       schemas,
+      resource_signature_counts,
     }
     return { serverSideProps }
   }

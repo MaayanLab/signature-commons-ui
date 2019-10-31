@@ -14,23 +14,23 @@
       ],
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
-      "footer_type": "dcic"
-    },
-    "nav": {
-      "MetadataSearch": {
-        "active": true,
-        "endpoint": "/MetadataSearch"
-      },
-      "SignatureSearch": {
-        "active": true,
-        "endpoint": "SignatureSearch"
-      },
-      "Resources": {
-        "active": true,
-        "endpoint": "/Resources"
-      },
-      "API": {
-        "active": true
+      "footer_type": "dcic",
+      "nav": {
+        "MetadataSearch": {
+          "active": true,
+          "endpoint": "/MetadataSearch"
+        },
+        "SignatureSearch": {
+          "active": true,
+          "endpoint": "/SignatureSearch"
+        },
+        "Resources": {
+          "active": true,
+          "endpoint": "/Resources"
+        },
+        "API": {
+          "active": true
+        }
       }
     }
   },
