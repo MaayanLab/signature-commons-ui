@@ -12,7 +12,6 @@ const mapStateToProps = (state, ownProps) => {
   const {ui_values, resources, schemas} = state.serverSideProps
   return { 
     ui_values,
-    resources: Object.values(resources),
     schemas
   }
 };
@@ -29,33 +28,21 @@ class ResourceList extends React.PureComponent {
 
   async componentDidMount() {
     window.scrollTo(0, 0)
-    const schema = await findMatchedSchema(this.props.resources[0], this.props.schemas)
-    const name_props = Object.values(schema.properties).filter(prop=>prop.name)
-    const name_prop = name_props.length > 0 ? name_props[0].text : "${id}"
-    const icon_props = Object.values(schema.properties).filter(prop=>prop.icon)
-    const icon_prop = icon_props.length > 0 ? icon_props[0].src : "${id}"
-    const description_props = Object.values(schema.properties).filter(prop=>prop.description)
-    const description_prop = description_props.length > 0 ? description_props[0].text : "${id}"
-    const sorted_resources = [...this.props.resources].sort((r1, r2) => {
-      const r1_name = makeTemplate(name_prop, r1)
-      const r2_name = makeTemplate(name_prop, r2)
+    const sorted_resources = Object.values(this.props.resources).sort((r1, r2) => {
+      const r1_name = makeTemplate(this.props.name_prop, r1)
+      const r2_name = makeTemplate(this.props.name_prop, r2)
       return (r1_name.localeCompare(r2_name))
     })
     this.setState({
-      schema,
       sorted_resources,
-      icon_prop,
-      name_prop,
-      description_prop,
     })
   }
 
   render() {
-    const {sorted_resources,
-      icon_prop,
+    const { icon_prop,
       name_prop,
-      description_prop,} = this.state
-
+      description_prop,} = this.props
+    const sorted_resources = this.state.sorted_resources
     if (sorted_resources.length === 0 ){
       return <CircularProgress />
     }

@@ -9,7 +9,7 @@ export async function fetch_count(source) {
   return response.count
 }
 
-export async function get_counts(resource_count, ui_values) {
+export async function get_counts(ui_values) {
   const { response: counting_fields } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {
@@ -26,7 +26,7 @@ export async function get_counts(resource_count, ui_values) {
     if (ui_values.preferred_name === undefined) {
       ui_values.preferred_name = {}
     }
-    const count_promise = counting_fields.filter((item) => item.meta.Field_Name !== 'resources').map(async (item) => {
+    const count_promise = counting_fields.map(async (item) => {
       const count_stats = await fetch_count(item.meta.Field_Name)
       ui_values.preferred_name[item.meta.Field_Name] = item.meta.Preferred_Name
       return {
@@ -38,17 +38,6 @@ export async function get_counts(resource_count, ui_values) {
       }
     })
     table_counts = await Promise.all(count_promise)
-    const resource_field = counting_fields.filter((item) => item.meta.Field_Name === 'resources')
-    if (resource_field.length > 0) {
-      table_counts = [...table_counts, {
-        table: resource_field[0].meta.Field_Name,
-        preferred_name: resource_field[0].meta.Preferred_Name,
-        icon: resource_field[0].meta.MDI_Icon,
-        Visible_On_Landing: resource_field[0].meta.Visible_On_Landing,
-        counts: resource_count,
-      }]
-      ui_values.preferred_name[resource_field[0].meta.Field_Name] = resource_field[0].meta.Preferred_Name
-    }
   } else {
     if (ui_values.preferred_name !== undefined) {
       const count_promise = Object.keys(ui_values.preferred_name).filter((key) => key !== 'resources').map(async (key) => {
@@ -62,15 +51,6 @@ export async function get_counts(resource_count, ui_values) {
         }
       })
       table_counts = await Promise.all(count_promise)
-      if ('resources' in ui_values.preferred_name) {
-        table_counts = [...table_counts, {
-          table: 'resources',
-          preferred_name: ui_values.preferred_name['resources'],
-          Visible_On_Landing: resource_count > 0,
-          icon: 'mdi-arrow-top-right-thick',
-          counts: resource_count,
-        }]
-      }
     }
   }
   return { table_counts, ui_values }
