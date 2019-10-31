@@ -309,10 +309,9 @@ export default class Model {
     } = operations
     let result = {}
     let response = bulk_response
-    
     if (metadata_search) {
       const [m, ...r] = response
-      const res = this.parents === undefined ? m.response:
+      const res = this.parent === undefined ? m.response:
         m.response.map(r=>{
           const parent_id = r[this.parent]
           const parent_meta = this.parents_meta[parent_id]
@@ -364,7 +363,7 @@ export default class Model {
           where: {
             'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
             'meta.Filter': true,
-            'meta.Table': this.Table
+            'meta.Table': this.table
           },
         },
       },

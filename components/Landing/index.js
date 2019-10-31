@@ -30,7 +30,7 @@ function mapDispatchToProps(dispatch) {
 class LandingPage extends React.Component {
   constructor(props) {
     super(props)
-    const selected_field = Object.keys(props.barcounts).filter(i=>i!==props.ui_values.bar_chart_solo.Field_Name)[0]
+    const selected_field = Object.keys(props.barcounts)[0]
     const selected_histogram = Object.keys(props.histograms).sort()[0]
     const selected_barscore = Object.keys(props.barscores)[0]
     this.state = {

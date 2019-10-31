@@ -313,7 +313,7 @@ class DataTable extends React.Component {
           maxWidth: '100%',
         }}>
           <Grid container>
-            {this.props.sortBy!==undefined ? 
+            {this.props.sortBy!==undefined && Object.keys(this.props.sort_tags).length > 0 ? 
               <Grid item style={{marginLeft: "auto", marginRight: 0, marginBottom:10}}>
                 <FormControl>
                   <InputLabel>Sort by</InputLabel>

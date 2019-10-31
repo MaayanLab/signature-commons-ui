@@ -88,7 +88,7 @@ export const UIValues = {
             resources: 'Resources',
           },
         order_default: values.order_default,
-        footer_type: values.footer_type || "dcic",
+        footer_type: values.footer_type || "powered",
         github: values.github || "https://github.com/dcic/signature-commons-ui",
         github_issues: values.github_issues || "https://github.com/dcic/signature-commons-ui/issues",
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,

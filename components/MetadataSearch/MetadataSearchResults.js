@@ -49,9 +49,9 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
       const prop = properties[label]
       const val = value_by_type[prop.type]({label, prop, data, highlight})
       if (prop.name){
-        processed.name = data.id
+        processed.name = {text:data.id}
         if (val!==null){
-          processed.name = {text:data.id, ...val}
+          processed.name = {...processed.name, ...val}
         }
       }
       if (prop.subtitle){
@@ -66,19 +66,19 @@ export const get_card_data = (data, schemas, highlight=undefined) => {
         }
       }
       if (prop.score){
-        if (sort_tags[prop.Field_Name] === undefined){
+        if (val!==null){
+          scores[prop.Field_Name] = {
+            label,
+            value: val.text,
+            field_name: prop.Field_Name,
+            icon: prop.MDI_Icon || 'mdi-star'
+          }
           sort_tags[prop.Field_Name] = {
             label,
             field_name: prop.Field_Name,
             icon: prop.MDI_Icon || 'mdi-star'
           }
-        }
-        if (val!==null) scores[prop.Field_Name] = {
-          label,
-          value: val.text,
-          field_name: prop.Field_Name,
-          icon: prop.MDI_Icon || 'mdi-star'
-        }
+        } 
       }
       if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display)) {
         if ( val !== null) tags = [...tags, {

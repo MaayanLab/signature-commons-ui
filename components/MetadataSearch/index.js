@@ -213,13 +213,14 @@ class MetadataSearch extends React.Component {
       }
       
       if (params!==undefined){
-        const order = this.props.tables.filter(t=>params[t].order!==undefined).reduce((acc,t)=>{
-          acc = {
-            ...acc,
-            [t]: params[t].order
-          }
-          return acc
-        },{})
+        const order = this.props.tables.filter(t=>params[t]!==undefined && 
+          params[t].order!==undefined).reduce((acc,t)=>{
+            acc = {
+              ...acc,
+              [t]: params[t].order
+            }
+            return acc
+          },{})
         
         this.setState({
           order: {
