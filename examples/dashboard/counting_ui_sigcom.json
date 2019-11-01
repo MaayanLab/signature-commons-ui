@@ -137,7 +137,7 @@
     "Table": "signatures",
     "Pie_Count": true,
     "Filter": true,
-    "MDI_Icon": "mdi-microscope"
+    "MDI_Icon": "mdi-flask-outline"
   },
   {
     "Field_Name": "meta.Readout",
@@ -147,7 +147,7 @@
     "Table": "signatures",
     "Pie_Count": true,
     "Filter": true,
-    "MDI_Icon": "mdi-desktop-tower-monitor"
+    "MDI_Icon": "mdi-microscope"
   },
   {
     "Field_Name": "meta.Organism",
