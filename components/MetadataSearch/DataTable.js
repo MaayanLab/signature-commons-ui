@@ -306,12 +306,9 @@ class DataTable extends React.Component {
             </Card>
           </Modal> : null
         }
-        <div style={{
-          maxWidth: '100%',
-        }}>
           <Grid container>
             {this.props.sortBy !== undefined && Object.keys(this.props.sort_tags).length > 0 ?
-              <Grid item style={{ marginLeft: 'auto', marginRight: 0, marginBottom: 10 }}>
+              <Grid item style={{ marginLeft: 'auto', marginRight: 0, marginBottom: 10}}>
                 <FormControl>
                   <InputLabel>Sort by</InputLabel>
                   <Select
@@ -325,7 +322,7 @@ class DataTable extends React.Component {
                 </FormControl>
               </Grid> : null
             }
-            <Grid item>
+            <Grid item style={{width:"100%"}}>
               {this.props.collection.map((data, ind) => <InfoCard key={data.original.id}
                 {...this.props}
                 handleClick={this.handleClick}
@@ -333,7 +330,6 @@ class DataTable extends React.Component {
               />)}
             </Grid>
           </Grid>
-        </div>
       </div>
     )
   }
