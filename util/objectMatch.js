@@ -1,6 +1,7 @@
 import { makeTemplate } from './makeTemplate'
 
 export const default_schemas = [
+  require('../examples/resources/default.json'),
   require('../examples/library/default.json'),
   require('../examples/signature/default.json'),
   require('../examples/entities/default.json'),
