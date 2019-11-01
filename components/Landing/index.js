@@ -181,14 +181,14 @@ class LandingPage extends React.Component {
                   <div className={this.props.classes.centered}>
                     {Object.keys(this.props.barcounts).length === 1 ?
                     <span>{this.state.selected_bar}</span> :
-                    <React.fragment>
+                    <React.Fragment>
                       <span>{'Top ' }</span>
                       <Selections
                         value={this.state.selected_bar}
                         values={Object.keys(this.props.barcounts).sort()}
                         onChange={(e) => this.handleSelectBar(e)}
                       />
-                    </React.fragment>
+                    </React.Fragment>
                     }
                   </div>
                 </Grid>
