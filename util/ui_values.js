@@ -89,7 +89,7 @@ export const UIValues = {
         footer_type: values.footer_type || 'powered',
         github: values.github || 'https://github.com/dcic/signature-commons-ui',
         github_issues: values.github_issues || 'https://github.com/dcic/signature-commons-ui/issues',
-        deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
+        deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : true,
         deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
         bar_chart_style: values.bar_chart_style ||
           {

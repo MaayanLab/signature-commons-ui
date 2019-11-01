@@ -3,7 +3,6 @@ import isUUID from 'validator/lib/isUUID'
 import IconButton from '../../components/IconButton'
 import ShowMeta from '../../components/ShowMeta'
 import { Link } from 'react-router-dom'
-import NProgress from 'nprogress'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
@@ -153,9 +152,7 @@ class ResourcePage extends React.Component {
   }
 
   async handleDownload(type, id) {
-    NProgress.start()
     await download[type](id)
-    NProgress.done()
   }
 
   handleExpand = (e) => {

@@ -38,7 +38,9 @@ class Resources extends React.PureComponent {
     const description_props = Object.values(schema.properties).filter((prop) => prop.description)
     const description_prop = description_props.length > 0 ? description_props[0].text : '${id}'
     const resources = response.reduce((acc, resource) => {
-      acc[makeTemplate(name_prop, resource)] = resource
+      let name = makeTemplate(name_prop, resource)
+      if (name === 'undefined') name = resource.id
+      acc[name] = resource
       return acc
     }, {})
     this.setState({

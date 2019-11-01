@@ -97,7 +97,6 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
 
 const mapStateToProps = (state) => {
   return {
-    schemas: state.serverSideProps.schemas,
     search: state.search,
     models: state.models,
     ui_values: state.serverSideProps.ui_values,

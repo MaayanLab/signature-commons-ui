@@ -354,7 +354,8 @@ export async function get_resource_signature_counts() {
     let resource_name
     if (name_props.length > 0) {
       resource_name = makeTemplate(name_props[0].text, resource)
-    } else {
+    } 
+    if (name_props.length===0 || resource_name === 'undefined') {
       console.warn('source of resource name is not defined, using either Resource_Name or ids')
       resource_name = resource.meta['Resource_Name'] || resource_id
     }

@@ -20,6 +20,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Collapse from '@material-ui/core/Collapse'
 import Icon from '@material-ui/core/Icon'
 import Card from '@material-ui/core/Card'
+import { get_schemas } from '../../util/helper/fetch_methods'
 
 
 const operationMapper = {
@@ -88,6 +89,7 @@ class MetadataSearch extends React.Component {
       pagination: false,
       order: props.order_default,
       open: {},
+      schemas: null,
     }
   }
 
@@ -103,7 +105,8 @@ class MetadataSearch extends React.Component {
     return operations_key
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const schemas = await get_schemas()
     const new_table = this.props.reverse_preferred_name[this.props.match.params.table]
     const param_str = decodeURI(this.props.location.search)
     let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
@@ -140,6 +143,7 @@ class MetadataSearch extends React.Component {
     this.props.searchBoxFunction(params)
     this.setState({
       index_value: this.props.tables.indexOf(new_table),
+      schemas
     })
   }
 
@@ -302,7 +306,7 @@ class MetadataSearch extends React.Component {
             <ListItemText inset primary={field_item.meta.Preferred_Name} />
           </ListItem>
           <Collapse in={this.state.open[field_item.meta.Field_Name]} timeout="auto" unmountOnExit>
-            <MetaFilter stats={stats} field_name={field_item.meta.Field_Name} parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1} />
+            <MetaFilter stats={stats} schemas={this.state.schemas} field_name={field_item.meta.Field_Name} parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1} />
           </Collapse>
         </Card>
       )
@@ -337,7 +341,7 @@ class MetadataSearch extends React.Component {
             )
           })}
         </Tabs>
-        <MetadataSearchResults {...props} order={this.state.order}/>
+        <MetadataSearchResults {...props} order={this.state.order} schemas={this.state.schemas}/>
       </React.Fragment>
     )
   }
@@ -349,7 +353,7 @@ class MetadataSearch extends React.Component {
       return <Redirect to="/not-found" />
     }
 
-    if (!this.props.completed) {
+    if (this.state.schemas===null || !this.props.completed) {
       return (
         <Grid container
           spacing={24}>

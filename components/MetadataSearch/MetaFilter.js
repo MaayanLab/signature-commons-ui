@@ -10,9 +10,7 @@ import { ReadURLParams, URLFormatter } from '../../util/helper/misc'
 import Filter from './Filter'
 
 const mapStateToProps = (state) => {
-  const schemas = state.serverSideProps.schemas
   return {
-    schemas,
     parent_ids_mapping: state.parent_ids_mapping,
     models: state.models,
     parents: state.parents_mapping,

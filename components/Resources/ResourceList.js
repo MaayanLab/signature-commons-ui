@@ -26,8 +26,10 @@ class ResourceList extends React.PureComponent {
   async componentDidMount() {
     window.scrollTo(0, 0)
     const sorted_resources = Object.values(this.props.resources).sort((r1, r2) => {
-      const r1_name = makeTemplate(this.props.name_prop, r1)
-      const r2_name = makeTemplate(this.props.name_prop, r2)
+      let r1_name = makeTemplate(this.props.name_prop, r1)
+      if (r1_name === 'undefined') r1_name = r1.id
+      let r2_name = makeTemplate(this.props.name_prop, r2)
+      if (r2_name === 'undefined') r2_name = r2.id
       return (r1_name.localeCompare(r2_name))
     })
     this.setState({
@@ -54,17 +56,19 @@ class ResourceList extends React.PureComponent {
         alignItems="center"
       >
         {sorted_resources.map((resource) => {
+          let name = makeTemplate(name_prop, resource)
+          if (name==='undefined') name = resource.id
           return (
             <Grid item xs={xs} sm={sm} md={md}
               style={{ textAlign: 'center' }}
-              key={makeTemplate(name_prop, resource)}>
+              key={name}>
               <Link
                 key={resource.id}
-                to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource).replace(/ /g, '_')}`}
+                to={`${this.props.ui_values.nav.Resources.endpoint}/${ name.replace(/ /g, '_')}`}
               >
                 <IconButton
-                  alt={makeTemplate(name_prop, resource)}
-                  title={makeTemplate(name_prop, resource)}
+                  alt={name}
+                  title={name}
                   src={`${makeTemplate(icon_prop, resource)}`}
                   description={makeTemplate(description_prop, resource)}
                 />
