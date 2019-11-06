@@ -12,7 +12,7 @@
       },
       "signature_search": false,
       "deactivate_download": true,
-      "deactivate_wordcloud": true,
+      "deactivate_wordcloud": false,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "bar_chart": {
         "Field_Name": "types.method.value",
@@ -21,11 +21,12 @@
       "bar_chart_style": {
         "ResponsiveContainer": {
           "width": "100%",
-          "height":500
+          "height":420,
+          "width": 420
         },
         "Chart": {
           "margin": {
-            "right": 50,
+            "right": 80,
             "left": 50
           }
         },
@@ -48,9 +49,10 @@
       "resource_icon": "${meta.extraProperties[0].values[0]}",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
-        "MEMA",
-        "MCF10A",
-        "L1000"
+        "Apoptosis",
+        "Interferon",
+        "Autophagy",
+        "PKN3"
       ]
     }
   },

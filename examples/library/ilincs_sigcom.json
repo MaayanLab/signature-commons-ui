@@ -1,0 +1,32 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
+    "${dataset_type}": "rank_matrix"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/static/images/lincs/LINCS.ico",
+      "alt": "${meta.title || meta.libraryName || dataset}",
+      "text": "${meta.title || meta.libraryName || dataset}",
+      "priority": 1,
+      "icon": true,
+      "name": true
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.libraryInfo}",
+      "description": true,
+      "subtitle": true,
+      "priority": 2
+    },
+    "Signature Count": {
+      "visibility": 1,
+      "type": "text",
+      "alt": "${meta.signatureCount}",
+      "priority": 3
+    }
+  }
+}

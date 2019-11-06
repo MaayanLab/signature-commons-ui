@@ -1,28 +1,12 @@
-import { fetch_meta } from '../util/fetch/meta'
-
 export const UIValues = {
-  'landing': async (values) => {
-    let library_name
-    if (values.library_name === undefined) {
-      console.warn('library name is undefined, using key_count values')
-      const { response } = await fetch_meta({ endpoint: `/libraries/count` })
-      const { response: fields } = await fetch_meta({
-        endpoint: `/libraries/key_count`,
-      })
-      const field_candidate = Object.keys(fields).filter((key) => fields[key] === response.count && key.indexOf('validator') === -1)
-      if (field_candidate.length === 0) {
-        console.error('Error: No shared library key exist, please define library_name on your schema')
-      } else {
-        library_name = field_candidate[0]
-      }
-    }
+  'landing': (values) => {
     return (
       {
         LandingText: {
           header: values.header || 'Signature Commons',
           text_1: values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures',
           text_2: values.text_2 || 'Search across a broad gathering of perturbations',
-          text_3: values.text_3 || 'Examine metadata:',
+          text_3: values.text_3 || 'By',
           text_4: values.text_4 || 'Start using Signature Commons in your project',
           metadata_placeholder: values.metadata_placeholder || 'Search over half a million signatures',
           geneset_placeholder: values.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set',
@@ -35,11 +19,58 @@ export const UIValues = {
           up_set_terms: values.up_set_terms,
           down_set_terms: values.down_set_terms,
         },
-        nav: {
-          signature_search: values.signature_search !== undefined ? values.signature_search : true,
-          metadata_search: values.metadata_search !== undefined ? values.metadata_search : true,
-          resources: values.resources !== undefined ? values.resources : true,
-        },
+        nav: values.nav !== undefined ? {
+          MetadataSearch: values.nav.MetadataSearch !== undefined ? {
+            active: true,
+            endpoint: '/MetadataSearch',
+            ...values.nav.MetadataSearch,
+          } : {
+            active: true,
+            endpoint: '/MetadataSearch',
+          },
+          SignatureSearch: values.nav.SignatureSearch !== undefined ? {
+            active: false,
+            endpoint: '/SignatureSearch',
+            ...values.nav.SignatureSearch,
+          } : {
+            active: false,
+            endpoint: '/SignatureSearch',
+          },
+          Resources: values.nav.Resources !== undefined ? {
+            active: true,
+            endpoint: values.preferred_name !== undefined ? `/${values.preferred_name.resources || 'Resources'}` : '/Resources',
+            ...values.nav.Resources,
+          } : {
+            active: true,
+            endpoint: '/Resources',
+          },
+          API: values.nav.API !== undefined ? {
+            active: true,
+            endpoint: '/API',
+            ...values.nav.API,
+          } : {
+            active: true,
+            endpoint: '/API',
+          },
+        } :
+          {
+            MetadataSearch: {
+              active: true,
+              endpoint: '/MetadataSearch',
+            },
+            SignatureSearch: {
+              active: false,
+              endpoint: '/SignatureSearch',
+            },
+            Resources: {
+              active: true,
+              endpoint: '/Resources',
+            },
+            API: {
+              active: true,
+              endpoint: '/API',
+            },
+          },
         preferred_name_singular: values.preferred_name_singular ||
           {
             libraries: 'Dataset',
@@ -54,14 +85,16 @@ export const UIValues = {
             entities: 'Genes',
             resources: 'Resources',
           },
-        deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
-        deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
-        bar_chart: values.bar_chart,
+        order_default: values.order_default,
+        footer_type: values.footer_type || 'powered',
+        github: values.github || 'https://github.com/dcic/signature-commons-ui',
+        github_issues: values.github_issues || 'https://github.com/dcic/signature-commons-ui/issues',
+        deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : true,
         bar_chart_style: values.bar_chart_style ||
           {
             ResponsiveContainer: {
               width: '100%',
-              height: 350,
+              height: 420,
             },
             Chart: {
               margin: {
@@ -89,7 +122,7 @@ export const UIValues = {
         pie_chart_style: {
           ResponsiveContainer: {
             width: '100%',
-            height: 350,
+            height: 420,
           },
           Chart: {
             width: 420,
@@ -103,15 +136,14 @@ export const UIValues = {
           },
         },
         pie_caption: values.pie_caption || 'Signatures per',
-        library_name: values.library_name || library_name,
-        resource_name_from_library: values.resource_name_from_library,
-        resource_name: values.resource_name,
-        resource_icon: values.resource_icon,
+        entity_name: values.entity_name,
+        entity_synonyms: values.entity_synonyms,
         counting_validator: values.counting_validator || '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
         ui_schema: values.ui_schema || '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
         maxResourcesBeforeCollapse: values.maxResourcesBeforeCollapse || 60,
         maxResourcesToShow: values.maxResourcesToShow || 40,
-        downloads: values.downloads || {
+        score_icon: values.score_icon || 'mdi-trophy-award',
+        downloads: {
           gmt: 'Download gmt file',
           tsv: 'Download tsv file',
           geneset: 'Download gene set',
@@ -119,27 +151,14 @@ export const UIValues = {
           signature_json: 'Download signature as json',
           library_json: 'Download library as json',
           resource_json: 'Download resource as json',
-          sigcom: false,
+          sigcom: true,
           enrichr: true,
+          ...values.downloads,
         },
       }
     )
   },
-  'admin': async (values) => {
-    let library_name
-    if (values.library_name === undefined) {
-      console.warn('library name is undefined, using key_count values')
-      const { response } = await fetch_meta({ endpoint: `/libraries/count` })
-      const { response: fields } = await fetch_meta({
-        endpoint: `/libraries/key_count`,
-      })
-      const field_candidate = Object.keys(fields).filter((key) => fields[key] === response.count && key.indexOf('validator') === -1)
-      if (field_candidate.length === 0) {
-        console.error('Error: No shared library key exist, please define library_name on your schema')
-      } else {
-        library_name = field_candidate[0]
-      }
-    }
+  'admin': (values) => {
     return (
       {
         LandingText: {
@@ -207,9 +226,8 @@ export const UIValues = {
           },
         },
         pie_caption: values.pie_caption || 'Signatures per',
-        library_name: values.library_name || library_name,
-        resource_name: values.resource_name,
-        resource_icon: values.resource_icon,
+        entity_name: values.entity_name,
+        entity_synonyms: values.entity_synonyms,
         counting_validator: values.counting_validator || '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
       }
     )

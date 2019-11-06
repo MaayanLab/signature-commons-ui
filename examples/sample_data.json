@@ -1,0 +1,348 @@
+[
+  {
+    "library": {
+      "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+      "id": "311cbbe1-d3e2-11e8-b211-787b8ad942f3",
+      "resource": "fd9fbb96-b5c7-453f-b5a5-7d5224992182",
+      "dataset": "enrichr_geneset",
+      "dataset_type": "geneset_library",
+      "meta": {
+        "DOI": "10.1093/nar/gkv354",
+        "Icon": "static/images/SysMyo_Muscle_Gene_Sets.ico",
+        "PMID": "25883154",
+        "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Gene>.+?) ((?P<Organism>Murine|Human|Rat|Monkey)|(?P<Cell_Line>C2c12|C2as12)) (?P<Experiment>.+ v .+) (PMID (?P<PMID>([0-9]+|Unknown))|(?P<GEO_Series_Accession>GSE[0-9]+)|(?P<ArrayExpress_Accession>E.+)) (?P<Direction>up|down))\\t\\t(?P<Genes>.+)",
+        "Assay": "literature curation",
+        "Readout": "protein",
+        "Version": "2017",
+        "Filename": "SysMyo_Muscle_Gene_Sets",
+        "Organism": "Homo sapiens",
+        "Weighted": "False",
+        "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+        "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=SysMyo_Muscle_Gene_Sets",
+        "Description": "Gene sets related to muscle research manually curated by the Duddy Lab.",
+        "Library_name": "SysMyo Muscle Gene Sets",
+        "Original_source": "SysMyo",
+        "Link_to_resource": "https://www.sys-myo.com/muscle_gene_sets/",
+        "Primary_Resource": "SysMyo",
+        "Perturbation_Type": "pathway",
+        "Library_created_by": "DuddyLab"
+      }
+    },
+    "signatures": [
+      {
+        "$validator": "/dcic/signature-commons-schema/v5/core/signature.json",
+        "id": "63a0049e-c1a1-11e8-aa88-0242ac170004",
+        "library": {
+          "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+          "id": "311cbbe1-d3e2-11e8-b211-787b8ad942f3",
+          "resource": "fd9fbb96-b5c7-453f-b5a5-7d5224992182",
+          "dataset": "enrichr_geneset",
+          "dataset_type": "geneset_library",
+          "meta": {
+            "DOI": "10.1093/nar/gkv354",
+            "Icon": "static/images/SysMyo_Muscle_Gene_Sets.ico",
+            "PMID": "25883154",
+            "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Gene>.+?) ((?P<Organism>Murine|Human|Rat|Monkey)|(?P<Cell_Line>C2c12|C2as12)) (?P<Experiment>.+ v .+) (PMID (?P<PMID>([0-9]+|Unknown))|(?P<GEO_Series_Accession>GSE[0-9]+)|(?P<ArrayExpress_Accession>E.+)) (?P<Direction>up|down))\\t\\t(?P<Genes>.+)",
+            "Assay": "literature curation",
+            "Readout": "protein",
+            "Version": "2017",
+            "Filename": "SysMyo_Muscle_Gene_Sets",
+            "Organism": "Homo sapiens",
+            "Weighted": "False",
+            "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+            "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=SysMyo_Muscle_Gene_Sets",
+            "Description": "Gene sets related to muscle research manually curated by the Duddy Lab.",
+            "Library_name": "SysMyo Muscle Gene Sets",
+            "Original_source": "SysMyo",
+            "Link_to_resource": "https://www.sys-myo.com/muscle_gene_sets/",
+            "Primary_Resource": "SysMyo",
+            "Perturbation_Type": "pathway",
+            "Library_created_by": "DuddyLab"
+          }
+        },
+        "meta": {
+          "Age": "age13wk",
+          "Gene": [
+            {
+              "Name": "Adcy5",
+              "Accession": "224129",
+              "Gene_Perturbation": "transgenic"
+            }
+          ],
+          "Assay": "literature curation",
+          "MGS_ID": "MGS773",
+          "Tissue": [
+            {
+              "Name": "heart",
+              "Accession": "BTO:0000562"
+            }
+          ],
+          "geo_id": "GSE11887",
+          "Readout": "protein",
+          "Organism": "Mus musculus",
+          "Direction": "up",
+          "$validator": "/@dcic/signature-commons-schema/v4/meta/signature/sigcom.json",
+          "Number_of_genes": 99,
+          "Original_String": "MGS773 Murine age13wk heart AC5 transgenic v WT GSE11887 up",
+          "Perturbation_Type": "pathway",
+          "p-value": 0.000006587825131458973,
+          "oddsratio": 14.75294117647059,
+          "setsize": 91,
+          "overlap": [
+            {
+              "@id": "c98f623a-ed1c-11e8-a084-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "ZBTB16"
+              }
+            },
+            {
+              "@id": "c98d67de-ed1c-11e8-8130-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "SARS"
+              }
+            },
+            {
+              "@id": "c99d85c6-ed1c-11e8-98bc-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "CHAC1"
+              }
+            },
+            {
+              "@id": "c98f29ca-ed1c-11e8-a3a6-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "WFS1"
+              }
+            },
+            {
+              "@id": "c994c6f0-ed1c-11e8-aa81-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "MCF2L"
+              }
+            },
+            {
+              "@id": "c99c50c8-ed1c-11e8-b77b-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "TRIB3"
+              }
+            }
+          ],
+          "id": "63a0049e-c1a1-11e8-aa88-0242ac170004"
+        }
+      },
+      {
+        "$validator": "/dcic/signature-commons-schema/v5/core/signature.json",
+        "id": "63a0049e-c1a1-11e8-aa88-0242ac170006",
+        "library": {
+          "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+          "id": "311cbbe1-d3e2-11e8-b211-787b8ad942f3",
+          "resource": "fd9fbb96-b5c7-453f-b5a5-7d5224992182",
+          "dataset": "enrichr_geneset",
+          "dataset_type": "geneset_library",
+          "meta": {
+            "DOI": "10.1093/nar/gkv354",
+            "Icon": "static/images/SysMyo_Muscle_Gene_Sets.ico",
+            "PMID": "25883154",
+            "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Gene>.+?) ((?P<Organism>Murine|Human|Rat|Monkey)|(?P<Cell_Line>C2c12|C2as12)) (?P<Experiment>.+ v .+) (PMID (?P<PMID>([0-9]+|Unknown))|(?P<GEO_Series_Accession>GSE[0-9]+)|(?P<ArrayExpress_Accession>E.+)) (?P<Direction>up|down))\\t\\t(?P<Genes>.+)",
+            "Assay": "literature curation",
+            "Readout": "protein",
+            "Version": "2017",
+            "Filename": "SysMyo_Muscle_Gene_Sets",
+            "Organism": "Homo sapiens",
+            "Weighted": "False",
+            "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+            "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=SysMyo_Muscle_Gene_Sets",
+            "Description": "Gene sets related to muscle research manually curated by the Duddy Lab.",
+            "Library_name": "SysMyo Muscle Gene Sets",
+            "Original_source": "SysMyo",
+            "Link_to_resource": "https://www.sys-myo.com/muscle_gene_sets/",
+            "Primary_Resource": "SysMyo",
+            "Perturbation_Type": "pathway",
+            "Library_created_by": "DuddyLab"
+          }
+        },
+        "meta": {
+          "Age": "age13wk",
+          "Gene": [
+            {
+              "Name": "CAC"
+            }
+          ],
+          "Assay": "literature curation",
+          "MGS_ID": "MGS773",
+          "Tissue": [
+            {
+              "Name": "heart",
+              "Accession": "BTO:0000562"
+            }
+          ],
+          "geo_id": "GSE11887",
+          "Readout": "protein",
+          "Organism": "Mus musculus",
+          "Direction": "up",
+          "$validator": "/@dcic/signature-commons-schema/v4/meta/signature/sigcom.json",
+          "Number_of_genes": 99,
+          "Original_String": "MGS773 Murine age13wk heart AC5 transgenic v WT GSE11887 up",
+          "Perturbation_Type": "pathway",
+          "p-value": 0.5,
+          "oddsratio": 17,
+          "setsize": 92,
+          "overlap": [
+            {
+              "@id": "c98f623a-ed1c-11e8-a084-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "ZBTB16"
+              }
+            },
+            {
+              "@id": "c98d67de-ed1c-11e8-8130-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "SARS"
+              }
+            },
+            {
+              "@id": "c99d85c6-ed1c-11e8-98bc-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "CHAC1"
+              }
+            },
+            {
+              "@id": "c98f29ca-ed1c-11e8-a3a6-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "WFS1"
+              }
+            },
+            {
+              "@id": "c994c6f0-ed1c-11e8-aa81-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "MCF2L"
+              }
+            },
+            {
+              "@id": "c99c50c8-ed1c-11e8-b77b-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "TRIB3"
+              }
+            }
+          ],
+          "id": "63a0049e-c1a1-11e8-aa88-0242ac170006"
+        }
+      },
+      {
+        "$validator": "/dcic/signature-commons-schema/v5/core/signature.json",
+        "id": "63a0049e-c1a1-11e8-aa88-0242ac170008",
+        "library": {
+          "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+          "id": "311cbbe1-d3e2-11e8-b211-787b8ad942f3",
+          "resource": "fd9fbb96-b5c7-453f-b5a5-7d5224992182",
+          "dataset": "enrichr_geneset",
+          "dataset_type": "geneset_library",
+          "meta": {
+            "DOI": "10.1093/nar/gkv354",
+            "Icon": "static/images/SysMyo_Muscle_Gene_Sets.ico",
+            "PMID": "25883154",
+            "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Gene>.+?) ((?P<Organism>Murine|Human|Rat|Monkey)|(?P<Cell_Line>C2c12|C2as12)) (?P<Experiment>.+ v .+) (PMID (?P<PMID>([0-9]+|Unknown))|(?P<GEO_Series_Accession>GSE[0-9]+)|(?P<ArrayExpress_Accession>E.+)) (?P<Direction>up|down))\\t\\t(?P<Genes>.+)",
+            "Assay": "literature curation",
+            "Readout": "protein",
+            "Version": "2017",
+            "Filename": "SysMyo_Muscle_Gene_Sets",
+            "Organism": "Homo sapiens",
+            "Weighted": "False",
+            "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+            "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=SysMyo_Muscle_Gene_Sets",
+            "Description": "Gene sets related to muscle research manually curated by the Duddy Lab.",
+            "Library_name": "SysMyo Muscle Gene Sets",
+            "Original_source": "SysMyo",
+            "Link_to_resource": "https://www.sys-myo.com/muscle_gene_sets/",
+            "Primary_Resource": "SysMyo",
+            "Perturbation_Type": "pathway",
+            "Library_created_by": "DuddyLab"
+          }
+        },
+        "meta": {
+          "Age": "age13wk",
+          "Gene": [
+            {
+              "Name": "CAC"
+            }
+          ],
+          "Assay": "literature curation",
+          "MGS_ID": "MGS773",
+          "Tissue": [
+            {
+              "Name": "heart",
+              "Accession": "BTO:0000562"
+            }
+          ],
+          "geo_id": "GSE11887",
+          "Readout": "protein",
+          "Organism": "Mus musculus",
+          "Direction": "up",
+          "$validator": "/@dcic/signature-commons-schema/v4/meta/signature/sigcom.json",
+          "Number_of_genes": 99,
+          "Original_String": "MGS773 Murine age13wk heart AC5 transgenic v WT GSE11887 up",
+          "Perturbation_Type": "pathway",
+          "p-value": 0.5123412412312312312,
+          "oddsratio": 17.1232,
+          "setsize": 92,
+          "overlap": [
+            {
+              "@id": "c98f623a-ed1c-11e8-a084-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "ZBTB16"
+              }
+            },
+            {
+              "@id": "c98d67de-ed1c-11e8-8130-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "SARS"
+              }
+            },
+            {
+              "@id": "c99d85c6-ed1c-11e8-98bc-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "CHAC1"
+              }
+            },
+            {
+              "@id": "c98f29ca-ed1c-11e8-a3a6-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "WFS1"
+              }
+            },
+            {
+              "@id": "c994c6f0-ed1c-11e8-aa81-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "MCF2L"
+              }
+            },
+            {
+              "@id": "c99c50c8-ed1c-11e8-b77b-787b8ad942f3",
+              "@type": "Entity",
+              "meta": {
+                "Name": "TRIB3"
+              }
+            }
+          ],
+          "id": "63a0049e-c1a1-11e8-aa88-0242ac170008"
+        }
+      }
+    ]
+  }
+]

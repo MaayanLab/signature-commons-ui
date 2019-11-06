@@ -1,34 +1,25 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ChipInput from 'material-ui-chip-input'
-import { withStyles } from '@material-ui/core/styles'
 import Chip from '@material-ui/core/Chip'
-import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
-
-const styles = (theme) => ({
-  info: {
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-  },
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    boxShadow: theme.shadows[1],
-    maxWidth: 380,
-  },
-})
+import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
+import Tooltip from '@material-ui/core/Tooltip'
+import Icon from '@material-ui/core/Icon'
+import Hidden from '@material-ui/core/Hidden'
 
 const Info = (props) => {
-  const { classes } = props
   return (
-    <div className={classes.info}>
+    <div>
       <Typography variant="h5">
-          Search operators
+            Search operators
       </Typography>
       <ul>
         <li>
           <div>
             <Typography variant="h6">
-                Exclude word from search
+                  Exclude word from search
             </Typography>
             <Typography variant="body2">
               {'Prefix query with "-" or "!", e.g.'} &nbsp;
@@ -44,7 +35,7 @@ const Info = (props) => {
         <li>
           <div>
             <Typography variant="h6">
-                Combine searches
+                  Combine searches
             </Typography>
             <Typography variant="body2">
               {'Prefix query "or " or "|", e.g.'} &nbsp;
@@ -60,7 +51,7 @@ const Info = (props) => {
         <li>
           <div>
             <Typography variant="h6">
-                Search for specific field
+                  Search for a specific field
             </Typography>
             <Typography variant="body2">
               {'Prefix query with "[desired_field]:", e.g.'}
@@ -78,136 +69,218 @@ const Info = (props) => {
   )
 }
 
-class MetadataSearchBox extends React.Component {
-  constructor(props) {
-    super(props)
-  }
+const Input = (props) => (
+  <ChipInput
+    className={props.classes.ChipInput}
+    placeholder={props.search.length > 0 ? 'Add filter' :
+        props.placeholder}
+    value={props.search}
+    chipRenderer={props.renderChips || props.renderChips}
+    disableUnderline
+    alwaysShowPlaceholder
+    InputProps={{
+      inputProps: {
+        style: {
+          border: 'none',
+          fontSize: props.small ? 12 : 15,
+          textAlign: 'left',
+        },
+      },
+      ...props.InputProps,
+    }}
+    style={props.small ? {
+      fontWeight: 500,
+      color: 'rgba(0, 0, 0, 0.54)',
+      borderRadius: '2px',
+      border: 0,
+      minheight: 35,
+      marginBottom: 0,
+      width: '100%',
+      padding: '5px 5px 0 10px',
+      background: '#f7f7f7',
+      ...props.ChipInputStyle,
+    } :
+      {
+        fontWeight: 500,
+        color: 'rgba(0, 0, 0, 0.54)',
+        borderRadius: '2px',
+        border: 0,
+        minheight: 35,
+        marginBottom: 0,
+        width: 430,
+        padding: '5px 5px 0 25px',
+        background: '#f7f7f7',
+        ...props.ChipInputStyle,
+      }}
+    onAdd={(chip) => {
+      const search = [...props.search, chip]
+      props.searchFunction(search)
+    }}
+    onDelete={(chip, index) => {
+      const search = props.search.filter((term) => term != chip)
+      props.searchFunction(search)
+    }}
+    blurBehavior="add"
+  />
+)
 
+export class SearchBox extends React.Component {
   renderChips = (
       {
         value,
         isDisabled,
         className,
+        handleDelete,
       },
       key
   ) => {
-    let backgroundColor = '#e0e0e0'
-    const fontColor = '#000'
-    let icon = 'mdi-code-equal' // mdi-code-not-equal
     let chip_value = value
-    // if (value.startsWith("|!") || value.startsWith("!|")){
-    //   // or not
-    //   icon = "mdi-code-not-equal"
-    //   chip_value = value.substring(2)
-    //   backgroundColor = "#9e9e9e"
-    //   fontColor = "#FFF"
-    // } else if (value.startsWith("|")){
-    //   // or
-    //   chip_value = value.substring(1)
-    //   backgroundColor = "#9e9e9e"
-    //   fontColor = "#FFF"
-    // } else
+    let chip_class = this.props.classes.defaultLightChip
+    let chip_icon = this.props.andIcon
     if (value.startsWith('!') || value.startsWith('-')) {
       // not
-      icon = 'mdi-code-not-equal'
-      backgroundColor = '#FFBABA'
+      chip_icon = this.props.notIcon
       chip_value = value.substring(1)
+      chip_class = this.props.classes.notChip
     } else if (value.toLowerCase().startsWith('or ')) {
       // or
-      icon = 'mdi-equal-box mdi-rotate-90'
-      backgroundColor = '#FFEAD9'
+      chip_icon = this.props.orIcon
       chip_value = value.substring(3)
+      chip_class = this.props.classes.orChip
     } else if (value.startsWith('|')) {
-      // not
-      backgroundColor = '#FFEAD9'
+      // or
+      chip_icon = this.props.orIcon
       chip_value = value.substring(1)
+      chip_class = this.props.classes.orChip
     }
     return (
       <Chip
         key={key}
-        avatar={<span className={`mdi ${icon} mdi-24px`}/>}
+        avatar={<Icon className={`${this.props.classes.icon} mdi ${chip_icon} mdi-18px`} />}
         label={chip_value}
-        onDelete={() => {
-          const chips = this.props.currentSearchArray.filter((term) => term != value)
-          this.props.currentSearchArrayChange(chips)
-        }}
-        style={{
-          pointerEvents: isDisabled ? 'none' : undefined,
-          backgroundColor: backgroundColor,
-          color: fontColor,
-        }}
-        className={className}
+        onDelete={handleDelete}
+        className={`${className} ${chip_class}`}
       />
     )
   }
 
-  render() {
-    const examples = this.props.ui_values.LandingText.search_terms
-    const { classes } = this.props
-    return (
-      <form action="javascript:void(0);">
-        <div className="input-field">
-          <span className="mdi mdi-magnify mdi-36px"></span>
-          <ChipInput
-            placeholder={this.props.currentSearchArray.length > 0 ? 'Add filter' :
-                this.props.ui_values.LandingText.metadata_placeholder}
-            value={this.props.currentSearchArray}
-            chipRenderer={this.renderChips}
-            disableUnderline
-            alwaysShowPlaceholder
-            InputProps={{
-              inputProps: {
-                style: {
-                  border: 'none',
-                },
-              },
-            }}
-            style={{
-              fontWeight: 500,
-              color: 'rgba(0, 0, 0, 0.54)',
-              borderRadius: '2px',
-              border: 0,
-              minheight: '35px',
-              marginBottom: 0,
-              width: '430px',
-              padding: this.props.currentSearchArray.length === 0 ? '8px 8px 0 60px' : '8px 8px 0 8px',
-              background: '#f7f7f7',
-            }}
-            onAdd={(chip) => {
-              const chips = [...this.props.currentSearchArray, chip]
-              this.props.currentSearchArrayChange(chips)
-            }}
-            onDelete={(chip, index) => {
-              const chips = this.props.currentSearchArray.filter((term) => term != chip)
-              this.props.currentSearchArrayChange(chips)
-            }}
-            blurBehavior="add"
-          />
-          <span>&nbsp;&nbsp;</span>
-          <button className="btn waves-effect waves-light" type="submit" name="action"
-            style={{ marginBottom: 20 }}
-            onClick={() =>
-              this.props.currentSearchArrayChange(this.props.currentSearchArray)}
-          >Search
-            <i className="material-icons right">send</i>
-          </button>
-        </div>
-        {examples.map((example) => (
-          <a
-            key={example}
-            className="chip grey white-text waves-effect waves-light"
-
-            onClick={() => this.props.currentSearchArrayChange([example])}
-          >
-            {example}
-          </a>
-        ))}
-        <Tooltip title={<Info {...this.props}/>} interactive placement="right-start" classes={{ tooltip: classes.tooltip }}>
-          <span className="mdi mdi-information mdi-18px" />
-        </Tooltip>
-      </form>
-    )
+  render = () => {
+    if (this.props.small) {
+      return (
+        <Grid container
+          alignItems={'center'}>
+          <Grid item xs={12}>
+            <Grid container
+              alignItems={'center'}>
+              <Grid item xs={12}>
+                <Input renderChips={this.renderChips} {...this.props} />
+              </Grid>
+              <Grid item xs={12} style={{ textAlign: 'center' }}>
+                <Button variant="contained"
+                  color="primary"
+                  style={{ marginTop: 5 }}
+                  onClick={() =>
+                    this.props.searchFunction(this.props.search)
+                  }>
+                  { this.props.loading || !this.props.completed ?
+                    <React.Fragment>
+                      Searching &nbsp;
+                      <span className="mdi mdi-spin mdi-loading right" />
+                    </React.Fragment> :
+                    <React.Fragment>
+                      Search &nbsp;
+                      <span className="mdi mdi-send right" />
+                    </React.Fragment>
+                  }
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      )
+    } else {
+      return (
+        <Grid container
+          spacing={24}
+          alignItems={'center'}>
+          <Grid item xs={12}>
+            <Grid container
+              spacing={24}
+              alignItems={'center'}>
+              <Grid item xs={12}>
+                <Hidden mdDown>
+                  <Tooltip title={this.props.Info || <Info {...this.props}/>}
+                    interactive placement="left-start"
+                    classes={{ tooltip: this.props.classes.tooltip }}>
+                    <Button className={this.props.classes.tooltipButton} >
+                      <span className="mdi mdi-information mdi-24px mdi-dark" />
+                    </Button>
+                  </Tooltip>
+                </Hidden>
+                <Input renderChips={this.renderChips} {...this.props} />
+                <span>&nbsp;&nbsp;</span>
+                <Button variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    this.props.searchFunction(this.props.search)
+                  }>
+                  { this.props.loading || !this.props.completed ?
+                    <React.Fragment>
+                      Searching &nbsp;
+                      <span className="mdi mdi-spin mdi-loading right" />
+                    </React.Fragment> :
+                    <React.Fragment>
+                      Search &nbsp;
+                      <span className="mdi mdi-send right" />
+                    </React.Fragment>
+                  }
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            {this.props.examples.map((example) => (
+              <Chip label={example} key={example} className={this.props.classes.defaultChip}
+                onClick={() =>
+                  this.props.searchFunction([example])
+                }/>
+            ))}
+            <Hidden lgUp>
+              <Tooltip title={this.props.Info || <Info {...this.props}/>}
+                interactive placement="left-start"
+                classes={{ tooltip: this.props.classes.tooltip }}>
+                <Button className={this.props.classes.tooltipButton} >
+                  <span className="mdi mdi-information mdi-24px mdi-dark" />
+                </Button>
+              </Tooltip>
+            </Hidden>
+          </Grid>
+        </Grid>
+      )
+    }
   }
 }
 
-export default withStyles(styles)(MetadataSearchBox)
+SearchBox.propTypes = {
+  search: PropTypes.array.isRequired,
+  searchFunction: PropTypes.func.isRequired,
+  renderChips: PropTypes.func,
+  loading: PropTypes.bool,
+  placeholder: PropTypes.string,
+  andIcon: PropTypes.string,
+  orIcon: PropTypes.string,
+  notIcon: PropTypes.string,
+  ChipStyle: PropTypes.object,
+  ChipInputStyle: PropTypes.object,
+  InputProps: PropTypes.object,
+  classes: PropTypes.object,
+  examples: PropTypes.array,
+  Info: PropTypes.elementType,
+}
+
+SearchBox.defaultProps = {
+  andIcon: 'mdi-code-equal',
+  orIcon: 'mdi-equal-box mdi-rotate-90',
+  notIcon: 'mdi-code-not-equal',
+  placeholder: 'Search',
+}

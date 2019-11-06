@@ -11,5 +11,9 @@ export function makeTemplate(
       templateFunction = new Function(...keys, `return \`${templateSubfield}\`;`)
     }
   }
-  return templateFunction(...values)
+  try {
+    return templateFunction(...values)
+  } catch (error) {
+    return 'undefined'
+  }
 }

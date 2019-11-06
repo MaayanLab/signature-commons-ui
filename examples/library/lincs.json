@@ -17,7 +17,28 @@
       "type": "text",
       "text": "${meta['Library_name']}",
       "priority": 2,
-      "name": true
+      "name": true,
+      "hyperlink": "${meta.Link_to_resource}"
+    },
+    "Description": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta['Description']}",
+      "priority": 2,
+      "description": true,
+      "subtitle": true
+    },
+    "Assay": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Assay}",
+      "priority": 3,
+      "MDI_Icon": "mdi-flask-outline"
     }
   }
 }

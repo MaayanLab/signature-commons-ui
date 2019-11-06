@@ -1,5 +1,4 @@
 import React from 'react'
-import { Redirect } from 'react-router'
 import Head from 'next/head'
 
 import { Admin,
@@ -19,9 +18,6 @@ import { Admin,
   AUTH_CHECK,
   GET_ONE,
   UPDATE } from 'react-admin'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardHeader from '@material-ui/core/CardHeader'
 import BlurOn from '@material-ui/icons/BlurOn'
 import Fingerprint from '@material-ui/icons/Fingerprint'
 import LibraryBooks from '@material-ui/icons/LibraryBooks'

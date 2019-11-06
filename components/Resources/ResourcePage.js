@@ -1,14 +1,24 @@
 import React from 'react'
+import isUUID from 'validator/lib/isUUID'
 import IconButton from '../../components/IconButton'
-import { call } from '../../util/call'
 import ShowMeta from '../../components/ShowMeta'
-import { Label } from '../../components/Label'
 import { Link } from 'react-router-dom'
-import M from 'materialize-css'
-import NProgress from 'nprogress'
 import Grid from '@material-ui/core/Grid'
-import { makeTemplate } from '../../util/makeTemplate'
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+import Divider from '@material-ui/core/Divider'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import TablePagination from '@material-ui/core/TablePagination'
+import { URLFormatter } from '../../util/helper/misc'
 
+import DataTable from '../MetadataSearch/DataTable'
+import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
+
+import { makeTemplate } from '../../util/makeTemplate'
+import { connect } from 'react-redux'
+import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
 
@@ -17,61 +27,253 @@ const download = {
   resources: download_resource_json,
 }
 
-export default class ResourcePage extends React.Component {
-  componentDidMount() {
-    M.AutoInit()
+const mapStateToProps = (state, ownProps) => {
+  const { ui_values } = state.serverSideProps
+  return {
+    ui_values,
+    preferred_name_singular: ui_values.preferred_name_singular,
   }
+}
 
+class ResourcePage extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      page: 0,
+      resource: null,
+      perPage: 10,
+      collection: [],
+      sorted: null,
+    }
+  }
   redirectLink(url) {
     return (e) => window.open(url, '_blank').focus()
   }
 
+  async componentDidMount() {
+    const res = this.props.match.params.resource.replace(/_/g, ' ')
+    let resource
+    if (isUUID(res + '')) {
+      // uuid fetch resource
+      const { response } = await fetch_meta({
+        endpoint: `/resources/${res}`,
+      })
+      resource = response
+      const { response: libraries } = await fetch_meta_post({
+        endpoint: `/libraries/find`,
+        body: {
+          filter: {
+            where: {
+              resource: res,
+            },
+          },
+        },
+      })
+      resource.libraries = libraries
+    } else {
+      resource = this.props.resources[res]
+      const { response: libraries } = await fetch_meta_post({
+        endpoint: `/libraries/find`,
+        body: {
+          filter: {
+            where: {
+              resource: resource.id,
+            },
+          },
+        },
+      })
+      resource.libraries = libraries
+    }
+
+    const start = this.state.page * this.state.perPage
+    const end = (this.state.page + 1) * this.state.perPage
+    let children = []
+    if (resource !== null && !resource.is_library) {
+      children = resource.libraries.slice(start, end)
+    }
+    const collection = children.map((data) => get_card_data(data, this.props.schemas))
+
+    this.setState({
+      resource,
+      collection,
+    })
+  }
+
+  async componentDidUpdate(prevProps) {
+    const res = this.props.match.params.resource.replace(/_/g, ' ')
+    const prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
+    if (res != prevRes) {
+      let resource
+
+      if (isUUID(res + '')) {
+        // uuid fetch resource
+        const { response } = await fetch_meta({
+          endpoint: `/resources/${res}`,
+        })
+        resource = response
+        const { response: libraries } = await fetch_meta_post({
+          endpoint: `/libraries/find`,
+          body: {
+            filter: {
+              where: {
+                resource: res,
+              },
+            },
+          },
+        })
+        resource.libraries = libraries
+      } else {
+        resource = this.props.resources[res]
+        const { response: libraries } = await fetch_meta_post({
+          endpoint: `/libraries/find`,
+          body: {
+            filter: {
+              where: {
+                resource: resource.id,
+              },
+            },
+          },
+        })
+        resource.libraries = libraries
+      }
+      const start = this.state.page * this.state.perPage
+      const end = (this.state.page + 1) * this.state.perPage
+      let children = []
+      if (resource !== null && !resource.is_library) {
+        children = resource.libraries.slice(start, end)
+      }
+      const collection = children.map((data) => get_card_data(data, this.props.schemas))
+
+      this.setState({
+        resource,
+        collection,
+      })
+    }
+  }
+
   async handleDownload(type, id) {
-    NProgress.start()
     await download[type](id)
-    NProgress.done()
+  }
+
+  handleExpand = (e) => {
+    const id = e.target.value
+    if (this.state.expanded_id === id) {
+      // If you click the same card then collapse it
+      this.setState({
+        expanded_id: null,
+      })
+    } else {
+      this.setState({
+        expanded_id: id,
+      })
+    }
+  }
+
+  handleChangeRowsPerPage = (e, name) => {
+    const perPage = e.target.value
+    const start = this.state.page * perPage
+    const end = (this.state.page + 1) * perPage
+    let children = []
+    if (!this.state.resource.is_library) {
+      children = this.state.resource.libraries.slice(start, end)
+    }
+    const collection = children.map((data) => get_card_data(data, this.props.schemas))
+    this.setState({
+      perPage,
+      collection,
+    })
+  }
+
+  handleChangePage = (event, page, name) => {
+    const start = page * this.state.perPage
+    const end = (page + 1) * this.state.perPage
+    let children = []
+    if (!this.state.resource.is_library) {
+      children = this.state.resource.libraries.slice(start, end)
+    }
+    const collection = children.map((data) => get_card_data(data, this.props.schemas))
+    this.setState({
+      page,
+      collection,
+    })
+  }
+
+  onChipClick = (value) => {
+    const query = URLFormatter({ search: [value],
+      current_table: 'Datasets',
+      reverse_preferred_name: this.props.reverse_preferred_name })
+    this.props.history.push({
+      pathname: `/MetadataSearch/Datasets`,
+      search: `?q=${query}`,
+      state: {
+        new_search: true,
+        pagination: false,
+        new_filter: false,
+      },
+    })
   }
 
   render() {
-    return (
-      <div className="row">
-        <div className="col s12">
+    if (this.state.resource === null) {
+      return <CircularProgress />
+    }
+    const { icon_prop,
+      name_prop,
+    } = this.props
 
-          <div className="row">
-            <div className="col s12">
-              <div className="card">
-                <div className="row">
-                  <div className="col s12">
-                    <div className="card-image col s1">
-                      <Link
-                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                        className="waves-effect waves-teal"
-                      >
-                        <IconButton
-                          img={this.props.resource.meta.icon}
-                          onClick={call(this.redirectLink, '/')}
-                        />
-                      </Link>
-                    </div>
-                    <div className="card-content col s11">
-                      <div>
-                        <span className="card-title">{this.props.resource.meta.Resource_Name || makeTemplate(this.props.ui_values.resource_name, this.props.resource)}</span>
-                      </div>
+    const resource = this.state.resource
+
+    let resource_name = makeTemplate(name_prop, resource)
+    resource_name = resource_name === 'undefined' ? resource.id : resource_name
+    return (
+      <Grid
+        container
+        direction="row"
+      >
+        <Grid item xs={12}>
+          <Card>
+            <Grid
+              container
+              direction="row"
+            >
+              <Grid item xs={1}>
+                <CardMedia style={{ marginTop: -10 }}>
+                  <Link
+                    to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                    className="waves-effect waves-teal"
+                  >
+                    <IconButton
+                      src={`${makeTemplate(icon_prop, resource)}`}
+                      description={'Go back to resource list'}
+                    />
+                  </Link>
+                </CardMedia>
+              </Grid>
+              <Grid item xs={11}>
+                <CardContent>
+                  <Grid
+                    container
+                    direction="row"
+                  >
+                    <Grid item xs={12}>
                       <ShowMeta
                         value={{
-                          '@id': this.props.resource.id,
-                          '@type': this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
-                          'meta': Object.keys(this.props.resource.meta).filter((key) => (
+                          '@id': resource.id,
+                          '@name': resource_name, // this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
+                          'meta': Object.keys(resource.meta).filter((key) => (
                             ['name', 'icon'].indexOf(key) === -1)).reduce((acc, key) => {
-                            acc[key] = this.props.resource.meta[key]
+                            acc[key] = resource.meta[key]
                             return acc
                           }, {}),
                         }}
                       />
-                    </div>
-                  </div>
-                </div>
-                <div className="card-action">
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider />
+                <CardActions>
                   <Grid container justify="space-between">
                     <Grid item xs={1}>
                     </Grid>
@@ -80,78 +282,43 @@ export default class ResourcePage extends React.Component {
                         to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
                         className="waves-effect waves-teal btn-flat"
                       >
-                        BACK
+                        <span style={{ color: 'orange' }}>BACK</span>
                       </Link>
                     </Grid>
                   </Grid>
-                </div>
-              </div>
-            </div>
-          </div>
-          {!this.props.resource.is_library ?
-            <div className="row">
-              <div className="col s12">
-                <ul
-                  className="collapsible popout"
-                >
-                  {this.props.resource.libraries.map((library) => (
-                    <li
-                      key={library.id}
-                    >
-                      <div
-                        className="page-header"
-                        style={{
-                          padding: 10,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          backgroundColor: 'rgba(255,255,255,1)',
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                          }}>
-                          <Label
-                            item={library}
-                            visibility={1}
-                            schemas={this.props.schemas}
-                          />
-                          &nbsp;
-                          <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                          <a
-                            href="javascript:void(0);"
-                            className="collapsible-header"
-                            style={{ border: 0 }}
-                          >
-                            <i className="material-icons">expand_more</i>
-                          </a>
-                        </div>
-                      </div>
-                      <div
-                        className="collapsible-body"
-                        style={{
-                          overflowWrap: 'break-word',
-                          wordWrap: 'break-word',
-                        }}
-                      >
-                        <ShowMeta
-                          value={{
-                            '@id': library.id,
-                            '@type': 'Library',
-                            'meta': library.meta,
-                          }}
-                        />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                </CardActions>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
+          { this.state.collection.length > 0 ?
+            <div style={{ margin: '20px 0' }}>
+              <DataTable schemas={this.props.schemas}
+                ui_values={this.props.ui_values}
+                {...this.state}
+                loaded={true}
+                onChipClick={this.onChipClick}
+                current_table={'resources'}
+                type={this.props.preferred_name_singular['resources']}
+                history={this.props.history}
+                deactivate_download={true}
+              />
+              <TablePagination
+                page={this.state.page}
+                rowsPerPage={this.state.perPage}
+                count={ this.state.resource.libraries.length}
+                onChangePage={(event, page) => this.handleChangePage(event, page)}
+                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                component="div"
+              />
             </div> :
             null
           }
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     )
   }
 }
+
+export default connect(mapStateToProps)(ResourcePage)

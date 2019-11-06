@@ -21,7 +21,7 @@ export async function fetch_data({ endpoint, body, signal }) {
     throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
   }
 
-  let response_text = await request.text()
+  let response_text = (await request.text()).replace(/Infinity/g, 'null')
   if (response_text === '') { // normalize empty responses
     response_text = '{"signatures":[], "matchingEntities": [], "results": {}}'
   }
