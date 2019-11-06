@@ -297,7 +297,8 @@ export const ListItemLink = (props) => (
 
 function getCallback(callback) {
   return function(word) {
-    location.href = `#/MetadataSearch?q=${word.text}`
+    console.log(word)
+    // location.href = `#/MetadataSearch?q=${word.text}`
   }
 }
 

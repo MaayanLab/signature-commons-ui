@@ -164,7 +164,7 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={420} pie_stats={this.props.resource_signature_counts} color={'Blue'} ui_values={this.props.ui_values}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_counts} color={'Blue'} ui_values={this.props.ui_values}/>
                   </div>
                 </Grid>
                 <Grid item xs={12}>
@@ -177,9 +177,9 @@ class LandingPage extends React.Component {
             : null
           }
           { Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? null :
-            <Grid item xs={12} md={this.props.resource_signature_counts.length === 0 ? 12 : 6 } className={this.props.classes.stretched}>
+            <Grid item xs={12} md={this.props.resource_signature_counts.length === 0 ? 12 : 6}
+              className={this.props.classes.stretched}>
               <Grid container
-                spacing={24}
                 alignItems={'center'}>
                 <Grid item xs>
                   <div className={this.props.classes.centered}>
@@ -188,7 +188,7 @@ class LandingPage extends React.Component {
                 </Grid>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
+                    <span>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
                     <Selections
                       value={this.state.selected_pie}
                       values={Object.keys(this.props.piecounts).sort()}
