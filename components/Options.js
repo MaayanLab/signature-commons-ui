@@ -57,7 +57,7 @@ const EnrichrDialog = (props) => {
             target="_blank"
           >
             <IconButton
-              src={`${process.env.PREFIX}static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
+              src={`${process.env.PREFIX}/static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
             />
             <Typography style={{ fontSize: 15 }} align="center" variant="caption" display="block">
               Go to Enrichr
