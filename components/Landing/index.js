@@ -217,7 +217,7 @@ class LandingPage extends React.Component {
 
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
+                    <span className={this.props.classes.vertical20}>Top</span>
                     <Selections
                       value={this.state.selected_word}
                       values={Object.keys(this.props.wordcounts).sort()}
