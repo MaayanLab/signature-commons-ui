@@ -1,4 +1,4 @@
-# btools-ui
+# signature-commons-ui
 A front-end UI for demoing API integration. Currently available at: http://amp.pharm.mssm.edu/btools/
 
 ## Development
