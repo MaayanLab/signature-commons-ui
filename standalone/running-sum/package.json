@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "scripts": {
-    "build": "microbundle build --jsx React.createElement --globals react=React",
+    "build": "microbundle build --jsx React.createElement --globals react=React -f es",
     "dev": "parcel serve public/index.html -d build",
     "prepare": "npm run build"
   },
