@@ -32,65 +32,6 @@ class MetaFilter extends React.Component {
     }
   }
 
-  getMapping = (current_table) => {
-    const { schemas, parent_ids_mapping: mapping } = this.props
-    const parent_ids_mapping = mapping[current_table]
-    let mapping_id_to_name = {}
-    const mapping_name_to_id = Object.entries(parent_ids_mapping).reduce((acc, [id, val]) => {
-      const matched_schema = findMatchedSchema(val, schemas)
-      const name_prop = Object.keys(matched_schema.properties).filter((prop) => matched_schema.properties[prop].name)
-      let name
-      if (name_prop.length > 0) {
-        name = makeTemplate(matched_schema.properties[name_prop[0]].text, val)
-      } else {
-        console.warn('source of resource name is not defined, using either Name or ids')
-        name = resource.meta['Name'] || id
-      }
-      mapping_id_to_name = {
-        ...mapping_id_to_name,
-        [id]: name,
-      }
-      acc = {
-        ...acc,
-        [name]: id,
-      }
-      return acc
-    }, {})
-    this.setState({
-      mapping_id_to_name,
-      mapping_name_to_id,
-      current_table,
-    })
-  }
-
-  updateDataCounts = (current_table) => {
-    const {
-      mapping_id_to_name,
-    } = this.state
-    const model = this.props.models[current_table]
-    let per_parent_count = {}
-    if (model !== undefined) {
-      per_parent_count = model.results.per_parent_count || {}
-    }
-    let selected_parents = []
-    const parent = this.props.parents[current_table]
-    if (model !== undefined && model.filters !== undefined && model.filters[parent] !== undefined) {
-      selected_parents = [...model.filters[parent]]
-    }
-    const selected = {}
-    let data_count = []
-    for (const [pid, count] of Object.entries(per_parent_count)) {
-      if (count > 0) {
-        const name = mapping_id_to_name[pid]
-        selected[name] = selected_parents.indexOf(pid) > -1
-        data_count = [...data_count, { count, name, id: pid }]
-      }
-    }
-    this.setState({
-      data_count,
-      selected,
-    })
-  }
 
   getParentMeta = () => {
     const { current_table, mapping_id_to_name, mapping_name_to_id } = this.state
@@ -109,6 +50,10 @@ class MetaFilter extends React.Component {
         let name
         if (name_prop.length > 0) {
           name = makeTemplate(matched_schema.properties[name_prop[0]].text, val)
+          if (name==="undefined"){
+            console.log(matched_schema)
+            console.log(val)
+          }
         } else {
           console.warn('source of resource name is not defined, using either Name or ids')
           name = resource.meta['Name'] || id
