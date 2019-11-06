@@ -77,7 +77,8 @@
     "deploy:dev": "NODE_ENV=development npm run deploy",
     "version:major": "npm version --no-git-tag-version major",
     "version:minor": "npm version --no-git-tag-version minor",
-    "version:patch": "npm version --no-git-tag-version patch"
+    "version:patch": "npm version --no-git-tag-version patch",
+    "install": "cd standalone/running-sum && npm i"
   },
   "eslintConfig": {
     "extends": "react-app"
