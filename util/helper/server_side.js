@@ -187,7 +187,7 @@ export async function get_wordcounts(ui_values) {
   const word_stats = wordfields.map((item) => {
     return {
       key: item.meta.Preferred_Name || item.meta.Field_Name,
-      Preferred_Name: item.meta.Preferred_Name_Singular || item.meta.Preferred_Name || item.meta.Field_Name,
+      Preferred_Name: item.meta.Preferred_Name || item.meta.Field_Name,
       table: item.meta.Table,
       stats: meta_stats[item.meta.Field_Name] || {},
       slice: item.meta.Slice || 14,
