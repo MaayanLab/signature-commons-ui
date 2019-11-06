@@ -111,7 +111,6 @@ export default class Library extends React.Component {
 
       const pie_stats = this.state.collection_fields.map((field) => {
         const item = this.state.all_fields[field]
-        console.log(item)
         return {
           key: item.Preferred_Name || item.Field_Name,
           Preferred_Name: item.Preferred_Name_Singular || item.Preferred_Name || item.Field_Name,

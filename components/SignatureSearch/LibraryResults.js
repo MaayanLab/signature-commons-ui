@@ -1,6 +1,5 @@
 import React from 'react'
 import M from 'materialize-css'
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core'
 import MUIDataTable from 'mui-datatables'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
@@ -10,7 +9,7 @@ import { makeTemplate } from '../../util/makeTemplate'
 import { RunningSum, dataFromResults } from '@dcic/signature-commons-ui-components-running-sum'
 import { fetch_data } from '../../util/fetch/data'
 import Lazy from '../Lazy'
-
+import { createMuiTheme } from '@material-ui/core'
 const one_tailed_columns = [
   'P-Value',
   'Odds Ratio',
@@ -44,6 +43,12 @@ const theme = createMuiTheme({
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
 
+export const default_schemas = [
+  require('../../examples/library/default.json'),
+  require('../../examples/signature/default.json'),
+  require('../../examples/entities/default.json'),
+]
+
 export const rank_data_results = async ({ up, down, signature, database }) => {
   const { response } = await fetch_data({
     endpoint: '/fetch/rank',
@@ -66,39 +71,44 @@ export const rank_data_results = async ({ up, down, signature, database }) => {
 }
 
 export default class LibraryResults extends React.Component {
-  check_column = ({ schema, prop, lib }) => {
+  check_column = ({ schema, prop, item }) => {
     if (schema.properties[prop].text === undefined) {
       return false
-    } else {
-      const sig_keys = this.props.signature_keys[lib]
-      const col_src = schema.properties[prop].text.replace(/meta\./g, '').replace(/meta\[\'/g, '').replace(/']/g, '').replace(/\${/g, '').replace(/}/g, '')
-      if (schema.properties[prop].columnType === 'number') {
-        return true
-      } else if (schema.properties[prop].columnType === 'meta') {
-        return false
-      } else if (sig_keys.indexOf(col_src) > -1) {
-        return true
-      } else {
-        const substring = sig_keys.filter((k) => schema.properties[prop].text.indexOf(k) > -1)
-        if (substring.length > 0) {
-          return true
-        }
-      }
+    } else if (schema.properties[prop].visibility === 0) {
+      return false
+    } else if (makeTemplate(schema.properties[prop].text, item) !== 'undefined') {
+      return true
+      // const sig_keys = this.props.signature_keys[lib]
+
+      // if (schema.properties[prop].columnType === 'number') {
+      //   return true
+      // } else if (schema.properties[prop].columnType === 'meta') {
+      //   if
+      // }
     }
     return false
   }
 
   render_table = ({ result }) => {
     const sigs = result.signatures
-    const schema = this.props.schemas.filter(
+    let matched_schemas = this.props.schemas.filter(
         (schema) => objectMatch(schema.match, sigs[0])
-    )[0]
-    const lib = sigs[0].library.id
+    )
+    // default if there is no match
+    if (matched_schemas.length < 1) {
+      matched_schemas = default_schemas.filter(
+          (schema) => objectMatch(schema.match, sigs[0])
+      )
+    }
+    if (matched_schemas.length < 1) {
+      console.error('Could not match ui-schema for item', item)
+      return null
+    }
+    const schema = matched_schemas[0]
     const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
     const cols = sorted_entries.filter(
-        (entry) => {
-          const prop = entry[0]
-          if (this.check_column({ schema, prop, lib })) {
+        ([prop, val]) => {
+          if (this.check_column({ schema, prop, item: sigs[0] })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
                 return true
@@ -201,13 +211,11 @@ export default class LibraryResults extends React.Component {
       })
     )
     return (
-      <MuiThemeProvider theme={theme}>
-        <MUIDataTable
-          options={options}
-          columns={columns}
-          data={data}
-        />
-      </MuiThemeProvider>
+      <MUIDataTable
+        options={options}
+        columns={columns}
+        data={data}
+      />
     )
   }
 

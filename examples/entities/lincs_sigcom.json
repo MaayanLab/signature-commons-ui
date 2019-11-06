@@ -6,19 +6,31 @@
     "Name": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.symbol}",
+      "text": "${meta.Symbol}",
+      "name": true,
+      "field": "meta.Symbol",
       "priority": 1
     },
     "Gene ID": {
       "visibility": 2,
       "type": "text",
       "text": "${meta.geneid}",
+      "field": "meta.geneid",
       "priority": 2
     },
     "Taxon ID": {
       "visibility": 2,
       "type": "text",
       "text": "${meta.taxid}",
+      "field": "meta.taxid",
+      "priority": 3
+    },
+    "Synonyms": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta.synonyms}",
+      "field": "meta.synonyms",
+      "synonyms": true,
       "priority": 3
     }
   }

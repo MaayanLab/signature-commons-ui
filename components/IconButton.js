@@ -1,78 +1,59 @@
 import React from 'react'
+import { withStyles } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
+import Badge from '@material-ui/core/Badge'
 
-const IconButton = (props) => {
+const styles = (theme) => ({
+  button: {
+    margin: theme.spacing.unit,
+    textTransform: 'none',
+    width: 100,
+    minHeight: 100,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    overflow: 'visible',
+  },
+  image: {
+    height: 50,
+  },
+  margin: {
+    margin: theme.spacing.unit * 2,
+  },
+})
+
+
+const InformativeButton = (props) => {
+  const { classes, counter, title, alt, src, description } = props
+  let tooltip_title = ''
+  if (description !== undefined) {
+    tooltip_title = <Typography variant="subtitle2" style={{ color: '#FFF' }} gutterBottom>
+      {description}
+    </Typography>
+  }
   return (
-    <div style={{ textAlign: 'center' }}>
-      <style jsx>{`
-    .icon-btn {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      align-items: center;
-      border-radius: 15px;
-      width: 100px;
-      min-height: 100px;
-      overflow: visible;
-      color: black;
-      margin: auto;
-    }
-    .icon-btn > span {
-      line-height: 16px;
-      text-align: center;
-      vertical-align: middle;
-      padding: 10px;
-    }
-    .icon-btn > div > img {
-      position: relative;
-      top: 30%;
-      height: 50px;
-      max-width: 60px;
-    }
-    .icon-btn:hover {
-      background-color: #eee;
-    }
-    .icon-btn > .counter {
-      position: absolute;
-      top: -1em;
-      font-size: 75%;
-      left: 5.5em;
-      line-height: 2.2em;
-      z-index: 100;
-      color: white;
-      border-radius: 50%;
-      width: 25px;
-      height: 25px;
-      text-align: center;
-      vertical-align: middle;
-    }
-    `}</style>
-      <div
-        className="icon-btn waves-effect waves-light"
-        onClick={props.onClick}
-        style={props.style}
-      >
-        <div>
-          {props.img !== undefined ? (
-          <img
-            className="icon-img"
-            alt={props.alt}
-            src={props.img}
-          />
-        ) : (
-          <i className="material-icons left black-text">{props.icon}</i>
-        )}
-        </div>
-        <span>
-          {props.alt}
-        </span>
-        {props.counter === undefined ? null : (
-        <div className="counter red lighten-1">
-          {props.counter}
-        </div>
-      )}
-      </div>
-    </div>
+    <Tooltip title={tooltip_title}
+      placement="bottom">
+      <Button className={classes.button} onClick={() => {
+        if (props.onClick !== undefined) props.onClick(props.value)
+      }}>
+        <Badge className={classes.margin} max={9999} badgeContent={counter === undefined ? 0 : counter} color="error">
+          <Grid container>
+            <Grid item xs={12}>
+              <img className={classes.image} alt={alt} src={src}/>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle2" gutterBottom>
+                {title}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Badge>
+      </Button>
+    </Tooltip>
   )
 }
 
-export default IconButton
+export default withStyles(styles)(InformativeButton)

@@ -8,44 +8,67 @@
       "visibility": 1,
       "type": "img",
       "src": "${PREFIX}/static/images/lincs/LINCS.ico",
-      "alt": "${meta.platform || meta.signatureid}",
-      "priority": 1
+      "alt": "${library.dataset}",
+      "text": "${library.dataset}",
+      "priority": 1,
+      "icon": true,
+      "subtitle": true
     },
     "Signature ID": {
-      "visibility": 1,
+      "visibility": 0,
       "type": "text",
       "text": "${meta.signatureid}",
-      "priority": 4
+      "priority": 1,
+      "name": true
     },
     "Cell-line": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.cellline}",
-      "priority": 3
+      "priority": 4,
+      "MDI_Icon": "mdi-microscope"
     },
     "Tissue": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.tissue}",
-      "priority": 3
+      "priority": 4,
+      "MDI_Icon": "mdi-camera-metering-matrix"
     },
     "Compound": {
       "visibility": 1,
       "type": "text",
-      "text": "${meta.compound}",
-      "priority": 4
+      "text": "${meta.clueIoCompound}",
+      "priority": 2,
+      "MDI_Icon": "mdi-hexagon-multiple"
+    },
+    "Gene Target": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.clueIoGeneTargets}",
+      "priority": 2,
+      "MDI_Icon": "mdi-target-variant"
+    },
+    "MoA": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.clueIoMOA}",
+      "priority": 2,
+      "MDI_Icon": "mdi-settings-outline"
     },
     "Concentration": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.concentration}",
-      "priority": 4
+      "priority": 3,
+      "MDI_Icon": "mdi-eyedropper"
     },
     "Organism": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.organism}",
-      "priority": 4
+      "priority": 5,
+      "MDI_Icon": "mdi-human-child"
     },
     "P-Value": {
       "visibility": 1,
@@ -75,7 +98,7 @@
       "text": "${meta.oddsratio}",
       "priority": 5
     },
-    "Set Size": {
+    "Gene Set Size": {
       "visibility": 1,
       "condition": {
         "${meta.setsize}": {

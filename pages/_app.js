@@ -1,21 +1,17 @@
 
 import React from 'react'
 import App, { Container } from 'next/app'
+import { Provider } from 'react-redux'
+import CircularProgress from '@material-ui/core/CircularProgress'
+
 import Router from 'next/router'
-import NProgress from 'nprogress'
 import Error from './_error'
 import serializeError from 'serialize-error'
 import '../styles/index.scss'
+import withRedux from 'next-redux-wrapper'
+import initializeStore from '../util/redux/store'
 
-NProgress.configure({ showSpinner: false })
-
-Router.events.on('routeChangeStart', (url) => NProgress.start())
-Router.events.on('hashChangeStart', (url) => NProgress.start())
-Router.events.on('routeChangeComplete', () => NProgress.done())
-Router.events.on('hashChangeComplete', (url) => NProgress.done())
-Router.events.on('routeChangeError', () => NProgress.done())
-
-export default class extends App {
+class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {}
     if (process.env.NODE_ENV === 'production' && Component.getInitialProps) {
@@ -54,12 +50,11 @@ export default class extends App {
 
   componentDidCatch(error, errorInfo) {
     // TODO: log error
-    NProgress.done()
     this.setState({ error, errorInfo })
   }
 
   render() {
-    const { Component } = this.props
+    const { Component, store } = this.props
     const { pageProps, loaded } = this.state
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
@@ -69,15 +64,19 @@ export default class extends App {
       )
     }
     return (
-      <Container className="root">
-        {loaded ? (
-          <Component {...pageProps} />
-        ) : (
-          <div>
-            Loading Page...
-          </div>
-        )}
-      </Container>
+      <Provider store={store}>
+        <Container className="root">
+          {loaded ? (
+              <Component {...pageProps} />
+          ) : (
+            <div style={{ textAlign: 'center', marginTop: 100 }}>
+              <CircularProgress />
+            </div>
+          )}
+        </Container>
+      </Provider>
     )
   }
 }
+
+export default withRedux(initializeStore)(App_)

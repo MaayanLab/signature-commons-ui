@@ -4,12 +4,11 @@ import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
-
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import { animateScroll as scroll } from 'react-scroll'
 
 import ReactWordcloud from 'react-wordcloud'
 
@@ -18,9 +17,9 @@ import { FindReplace,
   NearMe,
   Earth } from 'mdi-material-ui'
 
-import GenesetSearchBox from '../SignatureSearch/GenesetSearchBox'
+import SearchBoxWrapper from '../SignatureSearch/SearchBoxWrapper'
 
-const SearchBox = dynamic(() => import('../../components/MetadataSearch/SearchBox'))
+const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/MetadataSearchBox'))
 
 const meta_default_icon = 'mdi-creation'
 
@@ -36,7 +35,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
           </Typography>
         </div>
       </Grid>
-      {props.ui_values.nav.metadata_search ?
+      {props.ui_values.nav.MetadataSearch && props.ui_values.nav.MetadataSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -44,21 +43,22 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'metadata', true)}>
-                  <FileFind className={classes.icon} />
-                </Button>
+                <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
+                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
+                    <FileFind className={classes.icon} />
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    Metadata Search
+                  {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.signature_search ?
+      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -66,21 +66,22 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'signature', true)}>
-                  <FindReplace className={classes.icon} />
-                </Button>
+                <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
+                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
+                    <FindReplace className={classes.icon} />
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    Signature Search
+                  {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.resources ?
+      {props.ui_values.nav.Resources && props.ui_values.nav.Resources.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -94,7 +95,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                  {`Browse ${props.ui_values.preferred_name.resources || 'Resources'}`}
+                  {`Browse ${props.ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}`}
                 </Typography>
               </Grid>
             </Grid>
@@ -202,92 +203,87 @@ export const StatDiv = ({ classes, width, ...props }) => {
 }
 
 export const SearchCard = ({ classes, width, ...props }) => {
-  const { signature_search, metadata_search } = props.ui_values.nav
-  if (signature_search && metadata_search) {
+  const { SignatureSearch, MetadataSearch } = props.ui_values.nav
+  if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
-        <Grid container
-          spacing={24}
-          direction={'column'}
-          align="center"
-          justify="center">
-          <Grid item xs={12}>
-            <div className={classes.toggleContainer}>
-              <ToggleButtonGroup value={props.searchType} exclusive onChange={props.handleChange}>
-                <ToggleButton value="metadata">
-                  <FileFind />
-                  Metadata Search
-                </ToggleButton>
-                <ToggleButton value="signature">
-                  <FindReplace />
-                  Signature Search
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </div>
+        <CardContent>
+          <Grid container
+            spacing={24}
+            direction={'column'}
+            align="center"
+            justify="center">
+            <Grid item xs={12}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
+                <span className="mdi mdi-cloud-search mdi-36px"/>
+                &nbsp;&nbsp;
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
+                <MetadataSearchBox
+                  id='MetadataSearch'
+                  {...props}
+                /> :
+                <SearchBoxWrapper
+                  {...props}
+                />
+              }
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            {props.searchType == 'metadata' ?
-              <SearchBox
-                id='metadata'
-                currentSearchArray={props.currentSearchArray}
-                search_status={props.search_status}
-                currentSearchArrayChange={props.currentSearchArrayChange}
-                ui_values={props.ui_values}
-              /> :
-              <GenesetSearchBox
-                input={props.signature_search.input}
-                status={props.signature_search.status}
-                onSubmit={props.submit}
-                ui_values={props.ui_values}
-                changeSignatureType={props.changeSignatureType}
-                updateSignatureInput={props.updateSignatureInput}
+        </CardContent>
+      </Card>
+    )
+  } else if (SignatureSearch && SignatureSearch.active) {
+    return (
+      <Card className={`${classes.paddedCard} ${classes.topCard}`}>
+        <CardContent>
+          <Grid container
+            spacing={24}
+            direction={'column'}
+            align="center"
+            justify="center">
+            <Grid item xs={12}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
+                <span className="mdi mdi-cloud-search mdi-36px"/>
+                &nbsp;&nbsp;
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <SearchBoxWrapper
                 {...props}
               />
-            }
+            </Grid>
           </Grid>
-        </Grid>
+        </CardContent>
       </Card>
     )
-  } else if (signature_search) {
+  } else if (MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
-        <Grid container
-          spacing={24}
-          direction={'column'}
-          align="center"
-          justify="center">
-          <Grid item xs={12}>
-            <GenesetSearchBox
-              input={props.signature_search.input}
-              status={props.signature_search.status}
-              onSubmit={props.submit}
-              ui_values={props.ui_values}
-              changeSignatureType={props.changeSignatureType}
-              updateSignatureInput={props.updateSignatureInput}
-              {...props}
-            />
+        <CardContent>
+          <Grid container
+            spacing={24}
+            direction={'column'}
+            align="center"
+            justify="center">
+            <Grid item xs={12}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
+                <span className="mdi mdi-cloud-search mdi-36px"/>
+                &nbsp;&nbsp;
+                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <MetadataSearchBox
+                id='MetadataSearch'
+                {...props}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      </Card>
-    )
-  } else if (metadata_search) {
-    return (
-      <Card className={`${classes.paddedCard} ${classes.topCard}`}>
-        <Grid container
-          spacing={24}
-          direction={'column'}
-          align="center"
-          justify="center">
-          <Grid item xs={12}>
-            <SearchBox
-              id='metadata'
-              search_status={props.search_status}
-              ui_values={props.ui_values}
-              currentSearchArray={props.currentSearchArray}
-              currentSearchArrayChange={props.currentSearchArrayChange}
-            />
-          </Grid>
-        </Grid>
+        </CardContent>
       </Card>
     )
   } else {
@@ -311,25 +307,26 @@ const callbacks = {
 
 export const WordCloud = function({ classes, record = {}, ...props }) {
   const { stats } = props
-  if (stats !== null) {
-    const wordstats = Object.entries(stats).map(function(entry) {
-      return ({ 'text': entry[0], 'value': entry[1] })
+  if (stats !== null && stats!==undefined) {
+    const wordstats = stats.map(function(entry) {
+      return ({ 'text': entry.name, 'value': entry.counts })
     })
     wordstats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
 
     return (
-      <div style={{ width: 420, height: 420, display: 'block', margin: 'auto' }}>
+      <div style={{ width: "100%", height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
           callbacks={callbacks}
           scale={'log'}
           options={{
             colors: ['#000'],
+            scale: 'log',
             rotations: 3,
             rotationsAngles: [0, 90],
           }} />
       </div>
     )
   } else {
-    return <div />
+    return null
   }
 }

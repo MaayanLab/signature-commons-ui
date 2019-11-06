@@ -8,13 +8,15 @@
       "type": "img",
       "alt": "${id}",
       "src": "${PREFIX}/static/images/default-black.png",
-      "priority": 1
+      "priority": 1,
+      "icon": true
     },
     "Description": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Description || meta.description}",
-      "priority": 2
+      "priority": 2,
+      "name": true
     },
     "P-Value": {
       "visibility": 1,
@@ -30,7 +32,7 @@
       },
       "type": "text",
       "text": "${meta['p-value']}",
-      "priority": 3
+      "priority": 4
     },
     "Odds Ratio": {
       "visibility": 1,
@@ -42,9 +44,9 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}",
-      "priority": 3
+      "priority": 5
     },
-    "Set Size": {
+    "Gene Set Size": {
       "visibility": 1,
       "condition": {
         "${meta.setsize}": {

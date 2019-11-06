@@ -8,34 +8,33 @@
       "visibility": 1,
       "type": "img",
       "src": "${PREFIX}/${meta.creators[0].affiliations[0].extraProperties[0].values[0]}",
-      "alt": "${meta.title || meta.libraryName}",
+      "alt": "${meta['title']}",
+      "text": "${meta['title']}",
       "priority": 1,
       "icon": true,
       "name": true
     },
+    "Description": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta.description}",
+      "priority": 1,
+      "description": true,
+      "subtitle": true
+    },
     "Assay": {
       "visibility": 1,
       "type": "text",
-      "alt": "${meta.types.method.value}",
-      "priority": 2
+      "text": "${meta.types[0].method.value}",
+      "priority": 1,
+      "MDI_Icon": "mdi-test-tube"
     },
     "Institute": {
       "visibility": 1,
       "type": "text",
-      "alt": "${meta.creators.affiliations.name}",
-      "priority": 4
-    },
-    "Library ID": {
-      "visibility": 1,
-      "type": "text",
-      "alt": "${meta.libraryID}",
-      "priority": 3
-    },
-    "Signature Count": {
-      "visibility": 1,
-      "type": "text",
-      "alt": "${meta.signatureCount}",
-      "priority": 5
+      "text": "${meta.creators[0].affiliations[0].name}",
+      "priority": 2,
+      "MDI_Icon": "mdi-certificate"
     }
   }
 }

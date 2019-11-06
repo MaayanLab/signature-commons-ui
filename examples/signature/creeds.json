@@ -9,53 +9,71 @@
       "type": "img",
       "src": "${PREFIX}/static/images/creeds.png",
       "alt": "CREEDS",
-      "priority": 1
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 0,
+      "type": "text",
+      "text": "CREEDS",
+      "priority": 1,
+      "subtitle": true
+    },
+    "ID": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta.id}",
+      "priority": 1,
+      "name": true
     },
     "Assay": {
       "visibility": 1,
       "type": "text",
       "text": "Microarray",
-      "priority": 3
+      "priority": 1,
+      "MDI_Icon": "mdi-flask-outline"
     },
     "Disease": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Disease}",
-      "subfield": "${meta.Disease[0].Name}",
-      "priority": 2
+      "type": "text",
+      "text": "${meta.Disease[0].Name}",
+      "priority": 2,
+      "MDI_Icon": "mdi-emoticon-cry-outline"
     },
     "Gene": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Gene}",
-      "subfield": "${meta.Gene[0].Name}",
-      "priority": 2
+      "type": "text",
+      "text": "${meta.Gene[0].Name}",
+      "priority": 2,
+      "MDI_Icon": "mdi-dna"
     },
     "Drug": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Small_Molecule}",
-      "subfield": "${meta.Small_Molecule[0].Name}",
-      "priority": 2
+      "type": "text",
+      "text": "${meta.Small_Molecule[0].Name}",
+      "priority": 2,
+      "MDI_Icon": "mdi-hexagon-multiple"
     },
     "DrugBank": {
       "visibility": 1,
-      "type": "object",
-      "text": "${meta.Small_Molecule}",
-      "subfield": "${meta.Small_Molecule[0].DrugBankID}",
-      "priority": 3
+      "type": "text",
+      "text": "${meta.Small_Molecule[0].DrugBankID}",
+      "priority": 3,
+      "MDI_Icon": "mdi-pill"
     },
     "Organism": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Organism}",
-      "priority": 3
+      "priority": 3,
+      "MDI_Icon": "mdi-human-child"
     },
     "GEO Accession": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.geo_id}",
-      "priority": 3
+      "priority": 3,
+      "MDI_Icon": "mdi-identifier"
     },
     "P-Value": {
       "visibility": 1,
@@ -71,7 +89,7 @@
       },
       "type": "text",
       "text": "${meta['p-value']}",
-      "priority": 4
+      "priority": 5
     },
     "Odds Ratio": {
       "visibility": 1,
@@ -83,9 +101,9 @@
       "columnType": "number",
       "type": "text",
       "text": "${meta.oddsratio}",
-      "priority": 4
+      "priority": 6
     },
-    "Set Size": {
+    "Gene Set Size": {
       "visibility": 1,
       "condition": {
         "${meta.setsize}": {

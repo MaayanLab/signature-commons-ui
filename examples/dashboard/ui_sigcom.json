@@ -2,15 +2,37 @@
   {
     "landing": true,
     "content": {
+      "deactivate_download": false,
       "bar_chart": {
-        "Field_Name": "Version",
-        "Caption": "Datasets per year"
+        "Field_Name": "meta.Year",
+        "Caption": "Datasets per Year"
       },
-      "signature_search": true,
-      "library_name": "Library_name",
-      "resource_name": "${meta.Resource_Name}",
+      "entity_name": [
+        "meta.Name"
+      ],
+      "entity_synonyms": [
+        "meta.Synonyms"
+      ],
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
-      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json"
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+      "footer_type": "dcic",
+      "nav": {
+        "MetadataSearch": {
+          "active": true,
+          "endpoint": "/MetadataSearch"
+        },
+        "SignatureSearch": {
+          "active": true,
+          "endpoint": "/SignatureSearch"
+        },
+        "Resources": {
+          "active": true,
+          "endpoint": "/Resources"
+        },
+        "API": {
+          "active": true
+        }
+      }
     }
   },
   {
@@ -19,10 +41,8 @@
       "resource_pie_caption": "Signatures per Resource",
       "bar_chart": {
         "Field_Name": "Version",
-        "Caption": "Datasets per year"
+        "Caption": "Datasets per Year"
       },
-      "library_name": "Library_name",
-      "resource_name": "${meta.Resource_Name}",
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
     }
   }

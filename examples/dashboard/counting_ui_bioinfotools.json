@@ -1,16 +1,93 @@
 [
   {
-    "Field_Name": "institution",
+    "Field_Name": "meta.institution",
     "Preferred_Name": "Institutions",
     "Preferred_Name_Singular": "Institution",
     "Type": "string",
     "MDI_Icon": "mdi-certificate",
     "Table": "libraries",
-    "Meta_Count": true,
-    "Pie_Count": true
+    "Meta_Count": true
   },
   {
-    "Field_Name": "journal_name",
+    "Field_Name": "meta.country",
+    "Preferred_Name": "Countries",
+    "Preferred_Name_Singular": "Country",
+    "Type": "string",
+    "MDI_Icon": "mdi-earth",
+    "Table": "libraries",
+    "Meta_Count": true,
+    "Bar_Count": true
+  },
+  {
+    "Field_Name": "meta.last_author.name",
+    "Preferred_Name": "Last Authors",
+    "Preferred_Name_Singular": "Last Author",
+    "Type": "string",
+    "MDI_Icon": "mdi-desktop-tower-monitor",
+    "Table": "libraries",
+    "Bar_Count": true,
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "meta.tool_name",
+    "Order_By": "meta.total_pubmed_citations",
+    "Preferred_Name": "Pubmed Citations",
+    "Preferred_Name_Singular": "Pubmed Citation",
+    "Type": "string",
+    "MDI_Icon": "mdi-book-open-page-variant",
+    "Table": "libraries",
+    "Bar_Score": true
+  },
+  {
+    "Field_Name": "meta.tool_name",
+    "Order_By": "meta.attention_score",
+    "Preferred_Name": "Attention Scores",
+    "Preferred_Name_Singular": "Attention Score",
+    "Type": "string",
+    "MDI_Icon": "mdi-forum-outline",
+    "Table": "libraries",
+    "Bar_Score": true
+  },
+  {
+    "Field_Name": "meta.tool_name",
+    "Order_By": "meta.cited_by_tweeters_count",
+    "Preferred_Name": "Twitter Citations",
+    "Preferred_Name_Singular": "Twitter Mentions",
+    "Type": "string",
+    "MDI_Icon": "mdi-twitter",
+    "Table": "libraries",
+    "Bar_Score": true
+  },
+  {
+    "Field_Name": "meta.authors",
+    "Preferred_Name": "Authors",
+    "Preferred_Name_Singular": "Author",
+    "Type": "string",
+    "MDI_Icon": "mdi-fountain-pen-tip",
+    "Table": "libraries",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "resource",
+    "Preferred_Name": "Journals",
+    "Preferred_Name_Singular": "Journal",
+    "Type": "string",
+    "MDI_Icon": "mdi-file-document",
+    "Table": "libraries",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.up_down",
+    "Preferred_Name": "Status",
+    "Preferred_Name_Singular": "Status",
+    "Type": "string",
+    "MDI_Icon": "mdi-cloud",
+    "Table": "libraries",
+    "Pie_Count": true,
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.journal_name",
     "Preferred_Name": "Journals",
     "Preferred_Name_Singular": "Journal",
     "Type": "string",
@@ -20,20 +97,11 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "Pubmed",
+    "Field_Name": "meta.pubmed",
     "Preferred_Name": "PMIDs",
     "Preferred_Name_Singular": "PMID",
     "Type": "string",
     "MDI_Icon": "mdi-page-next",
-    "Table": "libraries",
-    "Meta_Count": true
-  },
-  {
-    "Field_Name": "authors",
-    "Preferred_Name": "Authors",
-    "Preferred_Name_Singular": "Author",
-    "Type": "object",
-    "MDI_Icon": "mdi-fountain-pen-tip",
     "Table": "libraries",
     "Meta_Count": true
   },
@@ -56,7 +124,7 @@
     "Visible_On_Admin": true
   },
   {
-    "Field_Name": "pub_year",
+    "Field_Name": "meta.pub_year",
     "Type": "string",
     "Table": "libraries",
     "Preferred_Name": "Publication Year",

@@ -11,10 +11,9 @@ export function makeTemplate(
       templateFunction = new Function(...keys, `return \`${templateSubfield}\`;`)
     }
   }
-  try{
-    const val = templateFunction(...values)
-    return val
-  }catch(error){
+  try {
+    return templateFunction(...values)
+  } catch (error) {
     return 'undefined'
   }
 }

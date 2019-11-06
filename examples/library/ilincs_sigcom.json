@@ -9,6 +9,7 @@
       "type": "img",
       "src": "${PREFIX}/static/images/lincs/LINCS.ico",
       "alt": "${meta.title || meta.libraryName || dataset}",
+      "text": "${meta.title || meta.libraryName || dataset}",
       "priority": 1,
       "icon": true,
       "name": true
@@ -16,7 +17,9 @@
     "Description": {
       "visibility": 1,
       "type": "text",
-      "alt": "${meta.libraryInfo}",
+      "text": "${meta.libraryInfo}",
+      "description": true,
+      "subtitle": true,
       "priority": 2
     },
     "Signature Count": {
