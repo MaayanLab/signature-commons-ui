@@ -2,6 +2,7 @@
   {
     "landing": true,
     "content": {
+      "deactivate_download": false,
       "bar_chart": {
         "Field_Name": "meta.Year",
         "Caption": "Datasets per Year"

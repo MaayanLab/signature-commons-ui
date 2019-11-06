@@ -34,7 +34,7 @@
     "MDI_Icon": "mdi-test-tube",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true
+    "Word_Count": true
   },
   {
     "Field_Name": "meta.Disease.Name",
@@ -43,7 +43,8 @@
     "Type": "object",
     "MDI_Icon": "mdi-emoticon-cry-outline",
     "Table": "signatures",
-    "Meta_Count": true
+    "Meta_Count": true,
+    "Word_Count": true
   },
   {
     "Field_Name": "meta.Metabolite.Name",
@@ -89,7 +90,7 @@
     "MDI_Icon": "mdi-dna",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true
+    "Word_Count": true
   },
   {
     "Field_Name": "meta.PTM",
@@ -108,7 +109,7 @@
     "MDI_Icon": "mdi-hexagon-multiple",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true
+    "Word_Count": true
   },
   {
     "Field_Name": "meta.Tissue.Name",
@@ -118,7 +119,7 @@
     "MDI_Icon": "mdi-camera-metering-matrix",
     "Table": "signatures",
     "Meta_Count": true,
-    "Pie_Count": true
+    "Word_Count": true
   },
   {
     "Field_Name": "meta.Virus.Name",
@@ -207,12 +208,5 @@
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true
-  },
-  {
-    "Field_Name": "meta.Year",
-    "Type": "string",
-    "Table": "libraries",
-    "Preferred_Name": "Dataset per year",
-    "Bar_Count": true
   }
 ]

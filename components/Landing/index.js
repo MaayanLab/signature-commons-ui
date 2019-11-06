@@ -30,20 +30,23 @@ function mapDispatchToProps(dispatch) {
 class LandingPage extends React.Component {
   constructor(props) {
     super(props)
-    const selected_pie = Object.keys(props.pie_fields_and_stats)[0]
+    const selected_pie = Object.keys(props.piecounts)[0]
+    const selected_word = Object.keys(props.wordcounts)[0]
     const selected_bar = Object.keys(props.barcounts)[0]
     const selected_histogram = Object.keys(props.histograms).sort()[0]
     const selected_barscore = Object.keys(props.barscores)[0]
     this.state = {
       scroll: false,
       selected_pie,
+      selected_word,
       selected_bar,
       selected_histogram,
       selected_barscore,
       histogram: props.histograms[selected_histogram],
       barscore: props.barscores[selected_barscore],
       bar_stats: props.barcounts[selected_bar],
-      pie_stats: props.pie_fields_and_stats[selected_pie],
+      pie_stats: props.piecounts[selected_pie],
+      word_stats: props.wordcounts[selected_word],
     }
   }
 
@@ -63,10 +66,19 @@ class LandingPage extends React.Component {
 
   handleSelectPie = (e) => {
     const value = e.target.value
-    const pie_stats = this.props.pie_fields_and_stats[value]
+    const pie_stats = this.props.piecounts[value]
     this.setState({
       selected_pie: value,
       pie_stats,
+    })
+  }
+
+  handleSelectWord = (e) => {
+    const value = e.target.value
+    const word_stats = this.props.wordcounts[value]
+    this.setState({
+      selected_word: value,
+      word_stats,
     })
   }
 
@@ -145,8 +157,8 @@ class LandingPage extends React.Component {
               <StatDiv {...this.props}/>
             </Grid>
           }
-          { Object.keys(this.props.resource_signature_counts).length > 0 ?
-            <Grid item xs={12} md={Object.keys(this.props.barcounts).length === 0 ? 12 : 6}
+          { this.props.resource_signature_counts.length > 0 ?
+            <Grid item xs={12} md={Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? 12 : 6}
               className={this.props.classes.stretched}>
               <Grid container
                 alignItems={'center'}>
@@ -164,8 +176,60 @@ class LandingPage extends React.Component {
             </Grid>
             : null
           }
-          { Object.keys(this.props.barcounts).length === 0 ? null :
-            <Grid item xs={12} md={Object.keys(this.props.resource_signature_counts).length === 0 ? 12 : 6 }
+          { Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? null :
+            <Grid item xs={12} md={this.props.resource_signature_counts.length === 0 ? 12 : 6 } className={this.props.classes.stretched}>
+              <Grid container
+                spacing={24}
+                alignItems={'center'}>
+                <Grid item xs>
+                  <div className={this.props.classes.centered}>
+                    <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+                  </div>
+                </Grid>
+                <Grid item xs={12}>
+                  <div className={this.props.classes.centered}>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
+                    <Selections
+                      value={this.state.selected_pie}
+                      values={Object.keys(this.props.piecounts).sort()}
+                      onChange={(e) => this.handleSelectPie(e)}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+            </Grid>
+          }
+          { Object.keys(this.props.meta_counts).length === 0 ? null :
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <CountsDiv {...this.props}/>
+            </Grid>
+          }
+          { Object.keys(this.props.wordcounts).length === 0 || this.state.word_stats.stats.length === 0 ? null :
+            <Grid item xs={12} className={this.props.classes.stretched}>
+              <Grid container
+                spacing={24}
+                alignItems={'center'}>
+                <Grid item xs md={12}>
+                  <div className={this.props.classes.centered}>
+                    <WordCloud classes={this.props.classes} stats={this.state.word_stats.stats}/>
+                  </div>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <div className={this.props.classes.centered}>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
+                    <Selections
+                      value={this.state.selected_word}
+                      values={Object.keys(this.props.wordcounts).sort()}
+                      onChange={(e) => this.handleSelectWord(e)}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+            </Grid>
+          }
+          { Object.keys(this.props.barcounts).length === 0 || this.state.bar_stats.stats.length ===0 ? null :
+            <Grid item xs={12}
               className={this.props.classes.stretched}>
               <Grid container
                 alignItems={'center'}>
@@ -195,42 +259,7 @@ class LandingPage extends React.Component {
               </Grid>
             </Grid>
           }
-          { Object.keys(this.props.meta_counts).length === 0 ? null :
-            <Grid item xs={12} className={this.props.classes.stretched}>
-              <CountsDiv {...this.props}/>
-            </Grid>
-          }
-          { Object.keys(this.props.pie_fields_and_stats).length === 0 ? null :
-            <Grid item xs={12} className={this.props.classes.stretched}>
-              <Grid container
-                spacing={24}
-                alignItems={'center'}>
-                <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
-                  <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
-                  </div>
-                </Grid>
-                { this.props.ui_values.deactivate_wordcloud ? null :
-                  <Grid item xs md={6}>
-                    <div className={this.props.classes.centered}>
-                      <WordCloud classes={this.props.classes} stats={this.state.pie_stats.stats}/>
-                    </div>
-                  </Grid>
-                }
-                <Grid item xs={12}>
-                  <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
-                    <Selections
-                      value={this.state.selected_pie}
-                      values={Object.keys(this.props.pie_fields_and_stats).sort()}
-                      onChange={(e) => this.handleSelectPie(e)}
-                    />
-                  </div>
-                </Grid>
-              </Grid>
-            </Grid>
-          }
-          { Object.keys(this.props.histograms).length === 0 ? null :
+          { Object.keys(this.props.histograms).length === 0 || this.state.histogram.stats.length ===0 ? null :
                 <Grid item xs={12} className={this.props.classes.stretched}>
                   <Grid container
                     spacing={24}
@@ -259,7 +288,7 @@ class LandingPage extends React.Component {
                   </Grid>
                 </Grid>
           }
-          { Object.keys(this.props.barscores).length === 0 ? null :
+          { Object.keys(this.props.barscores).length === 0 || this.state.barscore.stats.length ===0 ? null :
                 <Grid item xs={12} className={this.props.classes.stretched}>
                   <Grid container
                     spacing={24}

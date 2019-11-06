@@ -103,7 +103,7 @@ export async function get_metacounts(ui_values) {
   return { meta_counts }
 }
 
-export async function get_pie_stats(ui_values) {
+export async function get_piecounts(ui_values) {
   const { response: piefields } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {
@@ -139,16 +139,67 @@ export async function get_pie_stats(ui_values) {
       key: item.meta.Preferred_Name || item.meta.Field_Name,
       Preferred_Name: item.meta.Preferred_Name_Singular || item.meta.Preferred_Name || item.meta.Field_Name,
       table: item.meta.Table,
-      stats: meta_stats[item.meta.Field_Name],
+      stats: meta_stats[item.meta.Field_Name] || {},
       slice: item.meta.Slice || 14,
     }
   })
-  const pie_fields_and_stats = pie_stats.reduce((piestats, stats) => {
-    piestats[stats.Preferred_Name] = { stats: stats.stats, table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name, slice: stats.slice }
+  const piecounts = pie_stats.reduce((piestats, stats) => {
+    piestats[stats.Preferred_Name] = { stats: Object.entries(stats.stats).map(([name, counts]) => ({ name, counts })), 
+      table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name, slice: stats.slice }
     return piestats
   }, {})
 
-  return { pie_fields_and_stats }
+  return { piecounts }
+}
+
+export async function get_wordcounts(ui_values) {
+  const { response: wordfields } = await fetch_meta_post({
+    endpoint: '/schemas/find',
+    body: {
+      filter: {
+        where: {
+          'meta.$validator': ui_values.counting_validator,
+          'meta.Word_Count': true,
+        },
+      },
+    },
+  })
+
+  const meta_promise = wordfields.map(async (entry) => {
+    const { response: meta_stats } = await fetch_meta({
+      endpoint: `/${entry.meta.Table}/value_count`,
+      body: {
+        depth: 2,
+        filter: {
+          fields: [entry.meta.Field_Name],
+          limit: 100,
+        },
+      },
+    })
+    return meta_stats
+  })
+
+  const meta = await Promise.all(meta_promise)
+  const meta_stats = meta.reduce((mapping, item) => {
+    mapping = { ...item, ...mapping }
+    return mapping
+  }, {})
+  const word_stats = wordfields.map((item) => {
+    return {
+      key: item.meta.Preferred_Name || item.meta.Field_Name,
+      Preferred_Name: item.meta.Preferred_Name_Singular || item.meta.Preferred_Name || item.meta.Field_Name,
+      table: item.meta.Table,
+      stats: meta_stats[item.meta.Field_Name] || {},
+      slice: item.meta.Slice || 14,
+    }
+  })
+  const wordcounts = word_stats.reduce((wordstats, stats) => {
+    wordstats[stats.Preferred_Name] = { stats: Object.entries(stats.stats).map(([name, counts]) => ({ name, counts })), 
+      table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name, slice: stats.slice }
+    return wordstats
+  }, {})
+
+  return { wordcounts }
 }
 
 export async function get_barcounts(ui_values) {
@@ -176,18 +227,10 @@ export async function get_barcounts(ui_values) {
     })
     const stats = Object.keys(meta_stats[item.meta.Field_Name] || {}).reduce((accumulator, bar) => {
       const count = meta_stats[item.meta.Field_Name][bar]
-      if (bar === '2017b') {
-        if (accumulator['2017'] === undefined) {
-          accumulator['2017'] = count
-        } else {
-          accumulator['2017'] = accumulator['2017'] + count
-        }
+      if (accumulator[bar] === undefined) {
+        accumulator[bar] = count
       } else {
-        if (accumulator[bar] === undefined) {
-          accumulator[bar] = count
-        } else {
-          accumulator[bar] = accumulator[bar] + count
-        }
+        accumulator[bar] = accumulator[bar] + count
       }
       return accumulator
     }, {}) // TODO: Fix this as schema
@@ -303,13 +346,6 @@ export async function get_barscores(ui_values) {
       },
     })
     const stats = meta_scores.reduce((accumulator, match) => {
-      const matched_schemas = schemas.filter(
-          (schema) => objectMatch(schema.match, match)
-      )
-      if (matched_schemas.length < 1) {
-        console.error('Could not match ui-schema for', match)
-        return null
-      }
       const count = Number(makeTemplate('${' + item.meta.Order_By + '}', match))
       const name = makeTemplate('${' + item.meta.Field_Name + '}', match)
       accumulator[name] = count
@@ -346,7 +382,7 @@ export async function get_resource_signature_counts() {
   } else {
     resource_list = response
   }
-  const resource_signature_counts = {}
+  let resource_signature_counts = []
   for (const resource of resource_list) {
     const resource_id = resource.id
     const schema = findMatchedSchema(resource, schemas)
@@ -360,7 +396,7 @@ export async function get_resource_signature_counts() {
       resource_name = resource.meta['Resource_Name'] || resource_id
     }
     const { response: res } = await fetch_meta({ endpoint: `/resources/${resource_id}/signatures/count` })
-    resource_signature_counts[resource_name] = res.count
+    resource_signature_counts = [...resource_signature_counts, {name: resource_name, counts:res.count}]
   }
   return { resource_signature_counts }
 }

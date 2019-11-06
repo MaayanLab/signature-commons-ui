@@ -307,14 +307,14 @@ const callbacks = {
 
 export const WordCloud = function({ classes, record = {}, ...props }) {
   const { stats } = props
-  if (stats !== null) {
-    const wordstats = Object.entries(stats).map(function(entry) {
-      return ({ 'text': entry[0], 'value': entry[1] })
+  if (stats !== null && stats!==undefined) {
+    const wordstats = stats.map(function(entry) {
+      return ({ 'text': entry.name, 'value': entry.counts })
     })
     wordstats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
 
     return (
-      <div style={{ width: 420, height: 420, display: 'block', margin: 'auto' }}>
+      <div style={{ width: "100%", height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
           callbacks={callbacks}
           options={{
@@ -326,6 +326,6 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
       </div>
     )
   } else {
-    return <div />
+    return null
   }
 }

@@ -57,25 +57,31 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
   )
 })
 
-export const PieChart = withStyles(landingStyle)(function({ classes, record = {}, ...props }) {
-  const stats = Object.entries(props.stats).map(function(entry) {
-    return ({ 'label': entry[0], 'value': entry[1] })
-  })
-  const slice = props.slice || 14
+export const PieChart = withStyles(landingStyle)(function({ classes, record = {}, stats, ...props }) {
+  
+  if (stats === undefined) return null
+  let slice = props.slice || 14
   stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-  const included = stats.slice(0, slice)
-  const included_sum = sum(included, 'value')
-  const other = sum(stats.slice(slice), 'value')
-  const other_sum = included_sum > other || included_sum < included.length * 10 ? other : included_sum * 1.5
-  const others = [{ 'label': 'others', 'value': other_sum }]
-  const data = other_sum > 0 ? included.concat(others) : included
-  let true_values = included.map((entry) => (
-    { label: entry.label, value: entry.value }
-  ))
-  true_values = true_values.concat({ label: 'others', value: other })
+  let data
+  if (stats.length <= stats){
+    data = stats
+  }else {
+    const total = sum(stats, 'counts')
+    let included = stats.slice(0, slice)
+    let included_sum = sum(included, 'counts')
+    if (included_sum<total/2){
+      while (included_sum<total/2){
+        included_sum = included_sum + stats[slice].counts
+        slice++
+      }
+    }
+    included = stats.slice(0, slice)
+    const other = sum(stats.slice(slice), 'counts')
+    const others = [{ 'name': 'others', 'counts': other }]
+    data = other > 0 ? included.concat(others) : included
+  }
 
-  data.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
-  true_values.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
+  data.sort((a, b) => parseFloat(b.counts) - parseFloat(a.counts))
   return (
     <div><DonutChart
       data={data}

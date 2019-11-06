@@ -9,11 +9,12 @@ import { initializeSigcom } from '../util/redux/actions'
 import { connect } from 'react-redux'
 import { get_counts,
   get_metacounts,
-  get_pie_stats,
+  get_piecounts,
   get_barcounts,
   get_histograms,
   get_barscores,
   get_resource_signature_counts,
+  get_wordcounts,
 } from '../util/helper/server_side.js'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
@@ -66,7 +67,8 @@ class App extends React.Component {
     // const { resource_signatures, resources, resources_id, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
     const { table_counts, ui_values: ui_val } = await get_counts(ui_values)
     const { meta_counts } = await get_metacounts(ui_val)
-    const { pie_fields_and_stats } = await get_pie_stats(ui_val)
+    const { piecounts } = await get_piecounts(ui_val)
+    const { wordcounts } = await get_wordcounts(ui_val)
     // const signature_keys = await get_signature_keys()
     const { barcounts } = await get_barcounts(ui_val)
     const { histograms } = await get_histograms(ui_val)
@@ -76,7 +78,8 @@ class App extends React.Component {
       table_counts,
       meta_counts, // : {},
       // resource_signatures,
-      pie_fields_and_stats, // : {},
+      piecounts, // : {},
+      wordcounts,
       barcounts,
       histograms,
       barscores,
