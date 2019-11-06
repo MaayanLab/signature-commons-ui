@@ -199,7 +199,12 @@ export default class LibraryResults extends React.Component {
           return ''
         }
         try {
-          return JSON.parse(val)
+          const val_parsed = JSON.parse(val)
+          if (val_parsed === null) {
+            return NaN
+          } else {
+            return val_parsed
+          }
         } catch (e) {
           return val
         }

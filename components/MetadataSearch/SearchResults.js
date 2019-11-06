@@ -109,9 +109,9 @@ export default class SearchResults extends React.Component {
           {this.props[`${name}_count`] !== undefined ? (
             <div>
               <span className="grey-text">
-                Found {this.props[`${name}_count`]}
-                {this.props[`${name}_total_count`] !== undefined ? ` matches out of ${this.props[`${name}_total_count`]} ` : null}
-                { this.props.ui_values.preferred_name[name].toLowerCase() || name }
+                Found {this.props[`${name}_count`]}&nbsp;
+                {this.props[`${name}_total_count`] !== undefined ? ` matches out of ${this.props[`${name}_total_count`]} ` : null}&nbsp;
+                { this.props.ui_values.preferred_name[name].toLowerCase() || name }&nbsp;
                 {this.props[`${name}_duration_meta`] !== undefined ? ` in ${this.props[`${name}_duration_meta`].toPrecision(3)} seconds` : null}
               </span>
             </div>

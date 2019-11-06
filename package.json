@@ -5,7 +5,7 @@
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
   "dependencies": {
     "@dcic/signature-commons-schema": "^1.2.1",
-    "@dcic/signature-commons-ui-components-running-sum": "github:dcic/signature-commons-ui-running-sum",
+    "@dcic/signature-commons-ui-components-running-sum": "file:standalone/running-sum",
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.30",
@@ -77,7 +77,8 @@
     "deploy:dev": "NODE_ENV=development npm run deploy",
     "version:major": "npm version --no-git-tag-version major",
     "version:minor": "npm version --no-git-tag-version minor",
-    "version:patch": "npm version --no-git-tag-version patch"
+    "version:patch": "npm version --no-git-tag-version patch",
+    "install": "cd standalone/running-sum && npm i"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -40,6 +40,7 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
           className: classes.menu,
         },
       }}
+      style={{marginTop:-5}}
       margin="normal"
       style={{ marginTop: -5 }}
       onChange={props.onChange}

@@ -1,0 +1,32 @@
+{
+  "name": "@dcic/signature-commons-ui-components-smiles",
+  "version": "1.0.0",
+  "description": "A component for rendering SMILES strings",
+  "main": "dist/index.js",
+  "source": "src/index.jsx",
+  "scripts": {
+    "build": "microbundle -jsx React.createElement --globals react=React",
+    "dev": "parcel serve public/index.html -d build",
+    "prepare": "npm run build"
+  },
+  "author": "Daniel J. B. Clarke <u8sand@gmail.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "microbundle": "^0.11.0",
+    "parcel-bundler": "^1.12.3",
+    "prop-types": "^15.7.2",
+    "react-dom": "^16.9.0",
+    "react": "^16.9.0"
+  },
+  "peerDependencies": {
+    "react": "^16.9.0"
+  },
+  "dependencies": {
+    "smiles-drawer": "^1.1.22"
+  }
+}
