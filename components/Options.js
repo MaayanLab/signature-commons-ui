@@ -4,11 +4,11 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
-import NProgress from 'nprogress'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import IconButton from './IconButton'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import {
   download_signature_json,
@@ -34,6 +34,7 @@ const EnrichrDialog = (props) => {
     handleDialogClose,
     enrichr_status,
     enrichr_id,
+    enrichr_ready,
     ...other
   } = props
   return (
@@ -49,18 +50,23 @@ const EnrichrDialog = (props) => {
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <a
-          href={`${ENRICHR_URL}/enrich?dataset=${enrichr_id}`}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <IconButton
-            src={`${process.env.PREFIX}static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
-          />
-          <Typography style={{ fontSize: 15 }} align="center" variant="caption" display="block">
-            Go to Enrichr
-          </Typography>
-        </a>
+        {enrichr_ready ?
+          <a
+            href={`${ENRICHR_URL}/enrich?dataset=${enrichr_id}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <IconButton
+              src={`${process.env.PREFIX}static/images/Enrichr_Libraries_Most_Popular_Genes.ico`}
+            />
+            <Typography style={{ fontSize: 15 }} align="center" variant="caption" display="block">
+              Go to Enrichr
+            </Typography>
+          </a>:
+          <div style={{textAlign: "center"}}>
+            <CircularProgress />
+          </div>
+        }
       </DialogContent>
     </Dialog>
   )
@@ -99,24 +105,25 @@ export default class Options extends React.Component {
   handleDialogClose = () => {
     this.setState({
       enrichr_open: false,
+      enrichr_ready: false,
     })
   }
 
   submit_enrichr = async (item) => {
-    NProgress.start()
-    const schemas = await fetch_schemas()
-    const signature = await get_signature({ item })
-    let data
-    if (signature.library.dataset_type === 'rank_matrix') {
-      data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
-    } else {
-      data = signature.data.map((d) => get_label(d, schemas))
-    }
-    const filename = get_label(signature, schemas)
     this.setState({
       enrichr_open: true,
+      enrichr_ready: false,
       enrichr_status: 'Sending to enrichr',
     }, async () => {
+      const schemas = await fetch_schemas()
+      const signature = await get_signature({ item })
+      let data
+      if (signature.library.dataset_type === 'rank_matrix') {
+        data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
+      } else {
+        data = signature.data.map((d) => get_label(d, schemas))
+      }
+      const filename = get_label(signature, schemas)
       const formData = new FormData()
       formData.append('list', data.join('\n'))
       formData.append('description', filename + '')
@@ -130,7 +137,6 @@ export default class Options extends React.Component {
         enrichr_id: response['shortId'],
       }))
       // window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
-      NProgress.done()
     })
   }
 
