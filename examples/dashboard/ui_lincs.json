@@ -2,6 +2,10 @@
   {
     "landing": true,
     "content": {
+      "favicon": {
+        "icon": "/static/LINCS.ico",
+        "width": 30
+      },
       "header": "Signature Commons-LINCS",
       "metadata_placeholder": "Search over LINCS datasets",
       "text_1": "Explore an extensive collection of LINCS datasets",
@@ -20,7 +24,6 @@
       },
       "bar_chart_style": {
         "ResponsiveContainer": {
-          "width": "100%",
           "height":420,
           "width": 420
         },
