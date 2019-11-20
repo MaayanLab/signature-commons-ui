@@ -47,11 +47,18 @@ class LandingPage extends React.Component {
       bar_stats: props.barcounts[selected_bar],
       pie_stats: props.piecounts[selected_pie],
       word_stats: props.wordcounts[selected_word],
+      total_sig_per_resource: 0,
     }
   }
 
   componentDidMount = () => {
     this.props.resetSigcom()
+    const total_sig_per_resource = this.props.resource_signature_counts.reduce((tot,item)=>{
+      return tot + item.counts
+    },0)
+    this.setState({
+      total_sig_per_resource
+    })
   }
 
   // componentDidUpdate = (prevProps) => {
@@ -157,7 +164,7 @@ class LandingPage extends React.Component {
               <StatDiv {...this.props}/>
             </Grid>
           }
-          { this.props.resource_signature_counts.length > 0 ?
+          { this.props.resource_signature_counts.length > 0 && this.state.total_sig_per_resource > 0 ?
             <Grid item xs={12} md={Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? 12 : 6}
               className={this.props.classes.stretched}>
               <Grid container
@@ -177,7 +184,7 @@ class LandingPage extends React.Component {
             : null
           }
           { Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? null :
-            <Grid item xs={12} md={this.props.resource_signature_counts.length === 0 ? 12 : 6}
+            <Grid item xs={12} md={this.props.resource_signature_counts.length === 0  || this.state.total_sig_per_resource === 0 ? 12 : 6}
               className={this.props.classes.stretched}>
               <Grid container
                 alignItems={'center'}>
