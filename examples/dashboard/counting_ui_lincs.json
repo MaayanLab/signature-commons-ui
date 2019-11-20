@@ -1,6 +1,24 @@
 [
   {
-    "Field_Name": "types.instrument.value",
+    "Field_Name": "library",
+    "Preferred_Name": "Datasets",
+    "Preferred_Name_Singular": "Dataset",
+    "Type": "string",
+    "MDI_Icon": "mdi-library-books",
+    "Table": "signatures",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.platform",
+    "Preferred_Name": "Platforms",
+    "Preferred_Name_Singular": "Platform",
+    "Type": "string",
+    "MDI_Icon": "mdi-test-tube",
+    "Table": "signatures",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.types.instrument.value",
     "Type": "object",
     "Preferred_Name": "Instruments",
     "Preferred_Name_Singular": "Instrument",
@@ -10,7 +28,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "types.information.value",
+    "Field_Name": "meta.types.information.value",
     "Type": "object",
     "Preferred_Name": "Types",
     "Preferred_Name_Singular": "Type",
@@ -19,7 +37,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "types.description.value",
+    "Field_Name": "meta.types.description.value",
     "Type": "object",
     "Preferred_Name": "Data Levels",
     "Preferred_Name_Singular": "Data Level",
@@ -28,7 +46,7 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "storedIn.name",
+    "Field_Name": "meta.storedIn.name",
     "Type": "object",
     "Preferred_Name": "Repositories",
     "Preferred_Name_Singular": "Repository",
@@ -37,7 +55,16 @@
     "Meta_Count": true
   },
   {
-    "Field_Name": "creators.affiliations.name",
+    "Field_Name": "resource",
+    "Preferred_Name": "Data and Signature Generation Centers",
+    "Preferred_Name_Singular": "Data and Signature Generation Center",
+    "Type": "string",
+    "MDI_Icon": "mdi-certificate",
+    "Table": "libraries",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.creators.affiliations.name",
     "Type": "object",
     "Preferred_Name": "Data and Signature Generation Centers",
     "Preferred_Name_Singular": "Data and Signature Generation Center",
@@ -47,7 +74,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "types.method.value",
+    "Field_Name": "meta.types.method.value",
     "Type": "object",
     "Preferred_Name": "Assays",
     "Preferred_Name_Singular": "Assay",
@@ -57,7 +84,7 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "cellline",
+    "Field_Name": "meta.cellline",
     "Preferred_Name": "Cell Lines",
     "Type": "text",
     "Preferred_Name_Singular": "Cell Line",
@@ -67,7 +94,7 @@
     "Word_Count": true
   },
   {
-    "Field_Name": "tissue",
+    "Field_Name": "meta.tissue",
     "Preferred_Name": "Tissues",
     "Type": "text",
     "Preferred_Name_Singular": "Tissue",
@@ -77,7 +104,7 @@
     "Word_Count": true
   },
   {
-    "Field_Name": "clueIoCompound",
+    "Field_Name": "meta.clueIoCompound",
     "Preferred_Name": "Compounds",
     "Type": "text",
     "Preferred_Name_Singular": "Compound",
@@ -87,7 +114,7 @@
     "Word_Count": true
   },
   {
-    "Field_Name": "clueIoGeneTargets",
+    "Field_Name": "meta.clueIoGeneTargets",
     "Preferred_Name": "Gene Targets",
     "Type": "text",
     "Preferred_Name_Singular": "Gene Target",
@@ -97,7 +124,7 @@
     "Word_Count": true
   },
   {
-    "Field_Name": "clueIoMOA",
+    "Field_Name": "meta.clueIoMOA",
     "Preferred_Name": "MoA",
     "Type": "text",
     "Preferred_Name_Singular": "MoA",
@@ -107,7 +134,7 @@
     "Word_Count": true
   },
   {
-    "Field_Name": "antibodytarget",
+    "Field_Name": "meta.antibodytarget",
     "Preferred_Name": "Antibody Targets",
     "Type": "text",
     "Preferred_Name_Singular": "Antibody Target",

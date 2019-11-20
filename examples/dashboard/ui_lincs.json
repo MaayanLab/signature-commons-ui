@@ -6,7 +6,7 @@
         "icon": "/static/LINCS.ico",
         "width": 30
       },
-      "header": "Signature Commons-LINCS",
+      "header_right": "Signature Commons-LINCS",
       "metadata_placeholder": "Search over LINCS datasets",
       "text_1": "Explore an extensive collection of LINCS datasets",
       "library_name": "title",
