@@ -1,5 +1,5 @@
 # signature-commons-ui
-A front-end UI for demoing API integration. Currently available at: http://amp.pharm.mssm.edu/btools/
+A front-end UI for demoing API integration. Currently available at: http://amp.pharm.mssm.edu/sigcom/
 
 ## Development
 Before starting, install the project dependencies:
@@ -32,3 +32,13 @@ Furthermore, environment prefixes are important for NextJS.
 - `NEXT_STATIC_*`: available during static rendering
 
 Other variables may not propagate, so ensure you use these prefixes.
+
+## UI SCHEMAS
+Modifying SigCom UI to your data is done via the entries in the schema table. SigCom uses three types of schemas.
+
+- `/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json`: Defines the overall look of the landing page
+- `/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json`: Used for formatting the labels for searches, without this, SigCom defaults to the ids as labels
+- `/dcic/signature-commons-schema/v5/meta/schema/counting.json`: Tells sigcom which metadata to count for the landing page, you can also set it to either be a pie chart, a bar chart, or a regular count|
+
+For more information check [Modifying UI](./components/Landing/README.md)
+and the [examples folder](./examples/). Also, check [UI_values](./util/ui_values.js)
