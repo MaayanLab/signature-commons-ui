@@ -66,7 +66,7 @@ class Header extends React.Component {
                 whiteSpace: 'nowrap',
               }}
             >
-              &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {this.props.ui_values.LandingText.header || 'Signature Commons'}
+              &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.LandingText.header || 'Signature Commons'}
             </Link>
             <Link
               to="/"
@@ -75,7 +75,7 @@ class Header extends React.Component {
                 whiteSpace: 'nowrap',
               }}
             >
-              &nbsp;&nbsp; <img src={`${process.env.PREFIX}/static/favicon.ico`} width={22} />&nbsp; {this.props.ui_values.LandingText.header || 'Signature Commons'}
+              &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.LandingText.header || 'Signature Commons'}
             </Link>
             <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
             <Nav id="nav-mobile" className="right hide-on-med-and-down" {...rest} />
