@@ -19,6 +19,10 @@ export const UIValues = {
           up_set_terms: values.up_set_terms,
           down_set_terms: values.down_set_terms,
         },
+        favicon: {
+          icon: values.favicon.icon || "/static/favicon.ico",
+          width: values.favicon.width || 22
+        },
         nav: values.nav !== undefined ? {
           MetadataSearch: values.nav.MetadataSearch !== undefined ? {
             active: true,
