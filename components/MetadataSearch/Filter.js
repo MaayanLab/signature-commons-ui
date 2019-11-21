@@ -37,7 +37,7 @@ export default class Filter extends React.Component {
       }}>
         <CardContent>
           <FormGroup>
-            {sorted.map(({ name, count }) => (
+            {sorted.filter(({name, count})=> name!==undefined).map(({ name, count }) => (
               <FormControlLabel
                 key={name}
                 control={

@@ -141,8 +141,9 @@ class MetadataSearch extends React.Component {
       }
     }
     this.props.searchBoxFunction(params)
+    const index = this.props.tables.filter(table=>this.props.models[table]!==undefined && this.props.models[table].results.count).indexOf(new_table)
     this.setState({
-      index_value: this.props.tables.indexOf(new_table),
+      index_value: index>-1 ? index:0,
       schemas
     })
   }
@@ -226,6 +227,11 @@ class MetadataSearch extends React.Component {
           ...this.state.order,
           ...order,
         },
+      })
+    }
+    if (this.props.completed && !prevProps.completed){
+      this.setState({
+        index_value: this.props.tables.filter(table=>this.props.models[table]!==undefined && this.props.models[table].results.count).indexOf(current_table),
       })
     }
   }
@@ -348,9 +354,8 @@ class MetadataSearch extends React.Component {
 
   render = () => {
     const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
-
     if (current_table === undefined) {
-      return <Redirect to="/not-found" />
+      return <Redirect to="/not-found"/>
     }
 
     if (this.state.schemas===null || !this.props.completed) {
@@ -370,6 +375,32 @@ class MetadataSearch extends React.Component {
           </Grid>
         </Grid>
       )
+    }else if (this.props.completed && Object.values(this.props.models).filter(model=>model!==undefined && model.results.count>0).length===0){
+      return (
+        <Grid container
+          spacing={24}>
+          <Grid item xs={3}>
+            <Grid container
+              spacing={24}>
+              <Grid item xs={12}>
+                <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.searchBox} />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={9} style={{ textAlign: 'center', height: 500, marginTop: 50 }}>
+            Not found
+          </Grid>
+        </Grid>
+      )
+    }else if (this.props.completed && this.props.models[current_table].results.count===0){
+      console.log("HI")
+      const redirect_to_table = Object.values(this.props.models).filter(model=>model!==undefined && model.table!==current_table && model.results.count>0)[0].table
+      const preferred = this.props.preferred_name[redirect_to_table]
+      return <Redirect to={{
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${preferred}`,
+        search: this.props.location.search,
+        state: this.props.location.state
+      }} />
     }
     // else if (this.props.location.search===""){
     //   return <Redirect to="/" />

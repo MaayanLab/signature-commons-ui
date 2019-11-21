@@ -91,7 +91,7 @@ class MetaFilter extends React.Component {
     if (this.props.parent) {
       const { mapping_id_to_name } = this.getParentMeta()
       for (const [id, count] of Object.entries(stats)) {
-        if (count > 0) {
+        if (id!==null &&count > 0) {
           const name = mapping_id_to_name[id]
           selected[name] = selected_values.indexOf(id) > -1
           data_count = [...data_count, { count, name, id }]

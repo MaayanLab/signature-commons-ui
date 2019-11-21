@@ -141,7 +141,7 @@ export default class Model {
     this.parent = parent
     this.parents_meta = parents_meta
     this.where = null
-    this.results = {}
+    this.results = {count:0}
     this.search = null
     this.filters = undefined
     this.fields = undefined
@@ -380,7 +380,6 @@ export default class Model {
       signal: controller.signal,
     })
     const result = this.parse_bulk_result({ operations, bulk_response })
-
     this.results = {
       metadata_search: result.metadata_search || this.results.metadata_search,
       value_count: result.value_count || this.results.value_count,
