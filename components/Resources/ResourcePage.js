@@ -7,7 +7,6 @@ import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
 import Divider from '@material-ui/core/Divider'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import TablePagination from '@material-ui/core/TablePagination'
@@ -249,17 +248,15 @@ class ResourcePage extends React.Component {
               direction="row"
             >
               <Grid item xs={1}>
-                <CardMedia style={{ marginTop: -10 }}>
-                  <Link
-                    to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                    className="waves-effect waves-teal"
-                  >
-                    <IconButton
-                      src={`${makeTemplate(icon_prop, resource)}`}
-                      description={'Go back to resource list'}
-                    />
-                  </Link>
-                </CardMedia>
+                <Link
+                  to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                  className="waves-effect waves-teal"
+                >
+                  <IconButton
+                    src={`${makeTemplate(icon_prop, resource)}`}
+                    description={'Go back to resource list'}
+                  />
+                </Link>
               </Grid>
               <Grid item xs={11}>
                 <CardContent>

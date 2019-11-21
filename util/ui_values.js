@@ -3,6 +3,14 @@ export const UIValues = {
     return (
       {
         LandingText: {
+          favicon: values.favicon=== undefined ? {
+            icon: "/static/favicon.ico",
+            width: 22
+          } :
+          {
+            icon: values.favicon.icon || "/static/favicon.ico",
+            width: values.favicon.width || 22
+          },
           header: values.header || 'Signature Commons',
           text_1: values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures',
           text_2: values.text_2 || 'Search across a broad gathering of perturbations',
