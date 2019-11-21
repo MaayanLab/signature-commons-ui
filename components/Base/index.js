@@ -42,6 +42,7 @@ export default withStyles(styles)(class Base extends React.PureComponent {
           <link rel="shortcut icon" href={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
           <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"></link>
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>
@@ -56,3 +57,5 @@ export default withStyles(styles)(class Base extends React.PureComponent {
     )
   }
 })
+{/* <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Archivo+Narrow" rel="stylesheet" type="text/css"></link> */}
