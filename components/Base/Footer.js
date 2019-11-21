@@ -5,6 +5,18 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import grey from '@material-ui/core/colors/grey'
 import yellow from '@material-ui/core/colors/yellow'
+import Paper from '@material-ui/core/Paper'
+import { withStyles } from '@material-ui/core/styles';
+
+
+const styles = theme => ({
+  root: {
+    ...theme.mixins.gutters(),
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
+    background: theme.palette.default.main,
+  },
+});
 
 export const DCIC = (props) => (
   <img src={`${process.env.PREFIX}/static/images/dcic.png`} alt="BD2K-LINCS Data Coordination and Integration Center" height="130" />
@@ -53,10 +65,10 @@ const FooterImage = ({ footer_type, ...props }) => {
   }
 }
 
-export default function Footer(props) {
-  const { footer_type, github, github_issues, ...rest } = props
+function Footer(props) {
+  const { footer_type, github, github_issues, classes, ...rest } = props
   return (
-    <footer className="page-footer grey lighten-3 black-text">
+    <Paper className={classes.root}>
       <Grid
         container
         direction="row"
@@ -74,6 +86,8 @@ export default function Footer(props) {
           <FooterImage footer_type={footer_type} {...rest}/>
         </Grid>
       </Grid>
-    </footer>
+    </Paper>
   )
 }
+
+export default withStyles(styles)(Footer)

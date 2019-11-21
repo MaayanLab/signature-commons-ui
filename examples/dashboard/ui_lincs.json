@@ -4,20 +4,35 @@
     "content": {
       "favicon": {
         "icon": "/static/LINCS.ico",
-        "width": 30
+        "width": 60
       },
-      "header_right": " Signature Commons-LINCS",
-      "metadata_placeholder": "Search over LINCS datasets",
-      "text_1": "Explore an extensive collection of LINCS datasets",
+      "header_right": " LINCS Datasets and Signatures",
+      "metadata_placeholder": "Search over LINCS datasets and signatures",
+      "text_1": "Explore an extensive collection of LINCS datasets and signatures",
       "library_name": "title",
       "preferred_name_singular": {
         "libraries": "Dataset",
         "resources": "Dataset"
       },
-      "signature_search": false,
+      "nav": {
+        "MetadataSearch": {
+          "active": true,
+          "endpoint": "/MetadataSearch"
+        },
+        "SignatureSearch": {
+          "active": true,
+          "endpoint": "/SignatureSearch"
+        },
+        "Resources": {
+          "active": true,
+          "endpoint": "/Resources"
+        },
+        "API": {
+          "active": true
+        }
+      },
       "deactivate_download": true,
       "deactivate_wordcloud": false,
-      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "bar_chart": {
         "Field_Name": "types.method.value",
         "Caption": "Assays"
@@ -44,12 +59,15 @@
           }
         },
         "Bar": {
-          "fill": "#75bef5"
+          "fill": "rgb(124, 162, 206)"
         }
       },
-      "resource_name_from_library": "title",
-      "resource_name": "${meta.name}",
-      "resource_icon": "${meta.extraProperties[0].values[0]}",
+      "pie_chart_style": {
+        "Pie": {
+          "fill":  "rgb(124, 162, 206)"
+        }
+      },
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
         "Apoptosis",
@@ -92,7 +110,7 @@
           }
         },
         "Bar": {
-          "fill": "#75bef5"
+          "fill": "rgb(124, 162, 206)"
         }
       },
       "resource_name_from_library": "title",
