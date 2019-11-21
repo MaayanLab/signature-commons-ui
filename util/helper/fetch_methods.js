@@ -409,27 +409,25 @@ export async function resolve_entities(props) {
   let entities = Set([...props.entities])
   const entitiy_ids = {}
   // Get fields from schema
-  const schemas = await get_schemas()
-  const { response: entity } = await fetch_meta_post({
-    endpoint: `/entities/find`,
-    body: {
-      filter: {
-        limit: 1,
-      },
-    },
-    signal: props.controller.signal,
-  })
-  const matched_schemas = schemas.filter(
-      (schema) => objectMatch(schema.match, entity[0])
-  )
-  if (matched_schemas.length === 0) {
-    console.error('No matchcing schema for', entity[0])
+  const sch= await get_schemas()
+  const schemas = schemas.filter(schema=>schema.type==="entity")
+  
+  // const matched_schemas = schemas.filter(
+  //     (schema) => objectMatch(schema.match, entity[0])
+  // )
+  // if (matched_schemas.length === 0) {
+  //   console.error('No matchcing schema for', entity[0])
+  // }
+  let name_props = []
+  for (const schema in schemas){
+    const name_prop = Object.keys(matched_schemas[0].properties).filter((prop) =>
+      matched_schemas[0].properties[prop].name &&
+      matched_schemas[0].properties[prop].field !== undefined).map((key) =>
+      matched_schemas[0].properties[key]
+    )
+    name_props = [...name_props, ...name_prop]
   }
-  const name_props = Object.keys(matched_schemas[0].properties).filter((prop) =>
-    matched_schemas[0].properties[prop].name &&
-    matched_schemas[0].properties[prop].field !== undefined).map((key) =>
-    matched_schemas[0].properties[key]
-  )
+  
   let entity_names = []
 
   const or = name_props.map((prop) => {
