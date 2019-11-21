@@ -11,7 +11,8 @@ export const UIValues = {
             icon: values.favicon.icon || "/static/favicon.ico",
             width: values.favicon.width || 22
           },
-          header: values.header || 'Signature Commons',
+          header_left: values.header_left || '',
+          header_right: values.header_right || ' Signature Commons',
           text_1: values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures',
           text_2: values.text_2 || 'Search across a broad gathering of perturbations',
           text_3: values.text_3 || 'By',
