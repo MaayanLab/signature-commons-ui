@@ -1,0 +1,41 @@
+{
+    "type": "entity",
+    "match": {
+      "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json",
+      "meta.VMsiteFlanks": "^(?!undefined$)",
+      "meta.geneSymbol": "^(?!undefined$)"
+    },
+    "properties": {
+      "Image": {
+        "visibility": 1,
+        "type": "img",
+        "src": "${PREFIX}/static/images/dna.png",
+        "alt": "${meta.symbol}",
+        "priority": 1,
+        "icon": true
+      },
+      "Name": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${meta.Symbols}",
+        "name": true,
+        "field": "meta.Symbols",
+        "priority": 1
+      },
+      "PeptideModified Sequence": {
+        "visibility": 2,
+        "type": "text",
+        "text": "${meta.PeptideModifiedSequence}",
+        "field": "meta.PeptideModifiedSequence",
+        "priority": 2
+      },
+      "ID": {
+        "visibility": 2,
+        "type": "text",
+        "text": "${meta.ID}",
+        "field": "meta.ID",
+        "priority": 3,
+        "subtitle": 2
+      }
+    }
+  }

@@ -7,7 +7,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/static/images/lincs/LINCS.ico",
+      "src": "${PREFIX}/${library.meta.icon}",
       "alt": "${library.dataset}",
       "text": "${library.dataset}",
       "priority": 1,

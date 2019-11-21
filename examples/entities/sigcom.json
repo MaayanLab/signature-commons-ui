@@ -1,5 +1,5 @@
 {
-  "type": "entity"
+  "type": "entity",
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json"
   },
