@@ -189,7 +189,11 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                             text={`${tag.label}: ${tag.value}`}
                             highlight={search}
                           />}
-                          onClick={() => props.onChipClick(tag.value)}
+                          onClick={() => {
+                            if (tag.clickable){
+                              props.onChipClick(tag.value)
+                            }
+                          }}
                         />
                       </Tooltip>)}
                   </Grid>

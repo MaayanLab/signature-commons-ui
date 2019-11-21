@@ -31,28 +31,32 @@
       "type": "text",
       "text": "L1000",
       "priority": 1,
-      "MDI_Icon": "mdi-flask-outline"
+      "MDI_Icon": "mdi-flask-outline",
+      "clickable": true
     },
     "Cell-line": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Cell_Line[0].Name}",
       "priority": 4,
-      "MDI_Icon": "mdi-test-tube"
+      "MDI_Icon": "mdi-test-tube",
+      "clickable": true
     },
     "Time point": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.pert_time} ${meta.pert_time_unit}",
       "priority": 6,
-      "MDI_Icon": "mdi-timer"
+      "MDI_Icon": "mdi-timer",
+      "clickable": false
     },
     "Perturbation": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.pert_desc === '-666' ? meta.pert_id : meta.pert_desc}",
       "priority": 3,
-      "MDI_Icon": "mdi-microscope"
+      "MDI_Icon": "mdi-microscope",
+      "clickable": true
     },
     "Concentration": {
       "visibility": 1,

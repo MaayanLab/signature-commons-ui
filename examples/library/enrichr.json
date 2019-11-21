@@ -38,7 +38,8 @@
       "type": "text",
       "text": "${meta.Assay}",
       "priority": 3,
-      "MDI_Icon": "mdi-flask-outline"
+      "MDI_Icon": "mdi-flask-outline",
+      "clickable": true
     },
     "Organism": {
       "visibility": 1,
@@ -50,14 +51,16 @@
       "type": "text",
       "text": "${meta.Organism}",
       "priority": 4,
-      "MDI_Icon": "mdi-human-child"
+      "MDI_Icon": "mdi-human-child",
+      "clickable": true
     },
     "Year": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Year}",
       "priority": 4,
-      "MDI_Icon": "mdi-calendar"
+      "MDI_Icon": "mdi-calendar",
+      "clickable": true
     }
   }
 }

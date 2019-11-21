@@ -27,14 +27,16 @@
       "type": "text",
       "text": "${meta.types[0].method.value}",
       "priority": 1,
-      "MDI_Icon": "mdi-test-tube"
+      "MDI_Icon": "mdi-test-tube",
+      "clickable": true
     },
     "Institute": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.creators[0].affiliations[0].name}",
       "priority": 2,
-      "MDI_Icon": "mdi-certificate"
+      "MDI_Icon": "mdi-certificate",
+      "clickable": true
     }
   }
 }

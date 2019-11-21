@@ -17,19 +17,22 @@
       "type": "text",
       "text": "${meta['assay']}",
       "priority": 2,
-      "name": true
+      "name": true,
+      "clickable": true
     },
     "Institution": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['institution']}",
-      "priority": 2
+      "priority": 2,
+      "clickable": true
     },
     "LINCS center": {
       "visibility": 1,
       "type": "text",
       "text": "${meta['LINCS_center']}",
-      "priority": 2
+      "priority": 2,
+      "clickable": true
     }
   }
 }
