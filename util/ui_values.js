@@ -147,6 +147,7 @@ export const UIValues = {
           Text_Label: {
             fontSize: 10,
           },
+          ...values.pie_chart_style
         },
         pie_caption: values.pie_caption || 'Signatures per',
         entity_name: values.entity_name,
