@@ -15,7 +15,7 @@
       "name": true
     },
     "Description": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "${meta.description}",
       "priority": 1,

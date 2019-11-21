@@ -44,53 +44,56 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
-      const val = value_by_type[prop.type]({ label, prop, data, highlight })
-      if (prop.name) {
-        processed.name = { text: data.id }
-        if (val !== null) {
-          processed.name = { ...processed.name, ...val }
-        }
-      }
-      if (prop.subtitle) {
-        if (val !== null) processed.subtitle = { ...val }
-      }
-      if (prop.display) {
-        if (val !== null) processed.display[label] = { ...val }
-      }
-      if (prop.icon) {
-        if (val !== null) {
-          processed.icon = { ...val }
-        }
-      }
-      if (prop.score) {
-        if (val !== null) {
-          scores[prop.Field_Name] = {
-            label,
-            value: val.text,
-            field_name: prop.Field_Name,
-            icon: prop.MDI_Icon || 'mdi-star',
-          }
-          sort_tags[prop.Field_Name] = {
-            label,
-            field_name: prop.Field_Name,
-            icon: prop.MDI_Icon || 'mdi-star',
+      if (prop.visibility && prop.visibility > 0){
+        const val = value_by_type[prop.type]({ label, prop, data, highlight })
+        if (prop.name) {
+          processed.name = { text: data.id }
+          if (val !== null) {
+            processed.name = { ...processed.name, ...val }
           }
         }
-      }
-      if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display)) {
-        if (val !== null) {
-          tags = [...tags, {
-            label,
-            value: val.text,
-            icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
-            priority: prop.priority,
-          }]
+        if (prop.subtitle) {
+          if (val !== null) processed.subtitle = { ...val }
+        }
+        if (prop.display) {
+          if (val !== null) processed.display[label] = { ...val }
+        }
+        if (prop.icon) {
+          if (val !== null) {
+            processed.icon = { ...val }
+          }
+        }
+        if (prop.score) {
+          if (val !== null) {
+            scores[prop.Field_Name] = {
+              label,
+              value: val.text,
+              field_name: prop.Field_Name,
+              icon: prop.MDI_Icon || 'mdi-star',
+            }
+            sort_tags[prop.Field_Name] = {
+              label,
+              field_name: prop.Field_Name,
+              icon: prop.MDI_Icon || 'mdi-star',
+            }
+          }
+        }
+        if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display)) {
+          if (val !== null) {
+            tags = [...tags, {
+              label,
+              value: val.text,
+              icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
+              priority: prop.priority,
+            }]
+          }
         }
       }
     }
     tags = tags.sort((a, b) => a.priority - b.priority)
     if (Object.keys(scores).length > 0) processed.scores = scores
     processed.tags = tags || []
+    console.log(processed)
     return { original: data, processed, sort_tags }
   }
 }

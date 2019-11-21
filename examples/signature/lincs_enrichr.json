@@ -14,7 +14,7 @@
       "icon": true
     },
     "Library": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "${library.meta['Library_name']}",
       "priority": 1,

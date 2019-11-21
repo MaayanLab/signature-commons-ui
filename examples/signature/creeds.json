@@ -13,7 +13,7 @@
       "icon": true
     },
     "Library": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "CREEDS",
       "priority": 1,

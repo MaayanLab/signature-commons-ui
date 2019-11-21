@@ -15,7 +15,7 @@
       "subtitle": true
     },
     "Signature ID": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "${meta.signatureid}",
       "priority": 1,
