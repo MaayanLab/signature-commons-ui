@@ -8,16 +8,27 @@ import green from '@material-ui/core/colors/green'
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: blue[500],
+      main: "#3a5278",
       contrastText: '#FFF'
     },
     secondary: {
       main: '#F37F21',
     },
+    default: {
+      main: "#555"
+    },
     error: {
       main: red[500],
     },
     // error: will use the default color
+  },
+  typography: {
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      'Lato',
+      'serif',
+      'Archivo Narrow',
+    ].join(','),
   },
   chipColors: {
     default: { backgroundColor: grey[500], color: '#FFF' },
@@ -45,6 +56,47 @@ const theme = createMuiTheme({
     },
   },
 })
+
+// const theme = createMuiTheme({
+//   palette: {
+//     primary: {
+//       main: blue[500],
+//       contrastText: '#FFF'
+//     },
+//     secondary: {
+//       main: '#F37F21',
+//     },
+//     error: {
+//       main: red[500],
+//     },
+//     // error: will use the default color
+//   },
+//   chipColors: {
+//     default: { backgroundColor: grey[500], color: '#FFF' },
+//     defaultLight: { backgroundColor: grey[300], color: '#000' },
+//     warning: { backgroundColor: amber[300], color: '#000' },
+//     alert: { backgroundColor: red[300], color: '#000' },
+//     healthy: { backgroundColor: green[300], color: '#000' },
+//   },
+//   overrides: {
+//     MUIDataTable: {
+//       responsiveScroll: {
+//         maxHeight: '500px',
+//         minHeight: '500px',
+//       },
+//     },
+//     MUIDataTableHeadCell: {
+//       root: {
+//         fontSize: 13,
+//       },
+//     },
+//     MuiChip: {
+//       root: {
+//         margin: '5px 10px 5px 0',
+//       },
+//     },
+//   },
+// })
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
 
