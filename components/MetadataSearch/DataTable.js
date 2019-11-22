@@ -279,11 +279,9 @@ class DataTable extends React.Component {
                 direction="row"
               >
                 <Grid item xs={2} style={{ textAlign: 'right' }}>
-                  <CardMedia style={{ marginTop: -10 }}>
                     <IconButton
                       {...this.state.metadata.processed.icon}
                     />
-                  </CardMedia>
                 </Grid>
                 <Grid item xs={10}>
                   <CardContent>
