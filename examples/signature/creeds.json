@@ -31,49 +31,56 @@
       "type": "text",
       "text": "Microarray",
       "priority": 1,
-      "MDI_Icon": "mdi-flask-outline"
+      "MDI_Icon": "mdi-flask-outline",
+      "clickable": true
     },
     "Disease": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Disease[0].Name}",
       "priority": 2,
-      "MDI_Icon": "mdi-emoticon-cry-outline"
+      "MDI_Icon": "mdi-emoticon-cry-outline",
+      "clickable": true
     },
     "Gene": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Gene[0].Name}",
       "priority": 2,
-      "MDI_Icon": "mdi-dna"
+      "MDI_Icon": "mdi-dna",
+      "clickable": true
     },
     "Drug": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Small_Molecule[0].Name}",
       "priority": 2,
-      "MDI_Icon": "mdi-hexagon-multiple"
+      "MDI_Icon": "mdi-hexagon-multiple",
+      "clickable": true
     },
     "DrugBank": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Small_Molecule[0].DrugBankID}",
       "priority": 3,
-      "MDI_Icon": "mdi-pill"
+      "MDI_Icon": "mdi-pill",
+      "clickable": true
     },
     "Organism": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Organism}",
       "priority": 3,
-      "MDI_Icon": "mdi-human-child"
+      "MDI_Icon": "mdi-human-child",
+      "clickable": true
     },
     "GEO Accession": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.geo_id}",
       "priority": 3,
-      "MDI_Icon": "mdi-identifier"
+      "MDI_Icon": "mdi-identifier",
+      "clickable": true
     },
     "P-Value": {
       "visibility": 1,

@@ -4,7 +4,10 @@
     "content": {
       "favicon": {
         "icon": "/static/LINCS.ico",
-        "width": 60
+        "width": 60,
+        "style": {
+          "marginBottom": 20
+        }
       },
       "header_right": " LINCS Datasets and Signatures",
       "metadata_placeholder": "Search over LINCS datasets and signatures",
@@ -31,7 +34,7 @@
           "active": true
         }
       },
-      "deactivate_download": true,
+      "deactivate_download": false,
       "deactivate_wordcloud": false,
       "bar_chart": {
         "Field_Name": "types.method.value",

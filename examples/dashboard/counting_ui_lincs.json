@@ -28,15 +28,6 @@
     "Pie_Count": true
   },
   {
-    "Field_Name": "meta.types.information.value",
-    "Type": "object",
-    "Preferred_Name": "Types",
-    "Preferred_Name_Singular": "Type",
-    "Table": "libraries",
-    "MDI_Icon": "mdi-information-outline",
-    "Meta_Count": true
-  },
-  {
     "Field_Name": "meta.types.description.value",
     "Type": "object",
     "Preferred_Name": "Data Levels",
@@ -115,9 +106,9 @@
   },
   {
     "Field_Name": "meta.clueIoGeneTargets",
-    "Preferred_Name": "Gene Targets",
+    "Preferred_Name": "Targets",
     "Type": "text",
-    "Preferred_Name_Singular": "Gene Target",
+    "Preferred_Name_Singular": "Target",
     "Table": "signatures",
     "MDI_Icon": "mdi-target-variant",
     "Meta_Count": true,
@@ -135,9 +126,9 @@
   },
   {
     "Field_Name": "meta.antibodytarget",
-    "Preferred_Name": "Antibody Targets",
+    "Preferred_Name": "Antibodies",
     "Type": "text",
-    "Preferred_Name_Singular": "Antibody Target",
+    "Preferred_Name_Singular": "Antibody",
     "Table": "signatures",
     "MDI_Icon": "mdi-target",
     "Meta_Count": true,

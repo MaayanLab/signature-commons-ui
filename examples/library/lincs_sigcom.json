@@ -1,7 +1,8 @@
 {
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
-    "${dataset_type}": "geneset_library"
+    "${dataset_type}": "rank_matrix",
+    "${meta['@type']}": "Dataset"
   },
   "properties": {
     "Image": {
