@@ -410,7 +410,7 @@ export async function resolve_entities(props) {
   const entitiy_ids = {}
   // Get fields from schema
   const sch= await get_schemas()
-  const schemas = schemas.filter(schema=>schema.type==="entity")
+  const schemas = sch.filter(schema=>schema.type==="entity")
   
   // const matched_schemas = schemas.filter(
   //     (schema) => objectMatch(schema.match, entity[0])
@@ -419,17 +419,16 @@ export async function resolve_entities(props) {
   //   console.error('No matchcing schema for', entity[0])
   // }
   let name_props = []
-  for (const schema in schemas){
-    const name_prop = Object.keys(matched_schemas[0].properties).filter((prop) =>
-      matched_schemas[0].properties[prop].name &&
-      matched_schemas[0].properties[prop].field !== undefined).map((key) =>
-      matched_schemas[0].properties[key]
-    )
+  console.log(schemas)
+  for (const schema of schemas){
+    const name_prop = Object.values(schema.properties).filter((prop) =>
+      prop.name &&
+      prop.field !== undefined)
     name_props = [...name_props, ...name_prop]
   }
   
   let entity_names = []
-
+  console.log(name_props)
   const or = name_props.map((prop) => {
     entity_names = [...entity_names, prop.field]
     return ({
@@ -445,10 +444,6 @@ export async function resolve_entities(props) {
         where: {
           or,
         },
-        fields: [
-          'id',
-          ...entity_names,
-        ],
       },
     },
     signal: props.controller.signal,
