@@ -16,7 +16,8 @@ import { BarChart } from '../Admin/BarChart.js'
 const mapStateToProps = (state, ownProps) => {
   return {
     ...state.serverSideProps,
-    nav: state.serverSideProps.ui_values.nav,
+    ui_values: state.ui_values,
+    nav: state.ui_values.nav,
   }
 }
 

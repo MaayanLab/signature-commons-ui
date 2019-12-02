@@ -53,7 +53,7 @@ const plural_mapper = {
   resource: 'resources',
 }
 const mapStateToProps = (state) => {
-  const preferred_name = state.serverSideProps.ui_values.preferred_name
+  const preferred_name = state.ui_values.preferred_name
   return {
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,

@@ -87,7 +87,6 @@ class App extends React.Component {
       // resources,
       // resources_id,
       // library_resource,
-      ui_values, // : ui_val,
       schemas,
       resource_signature_counts,
     }

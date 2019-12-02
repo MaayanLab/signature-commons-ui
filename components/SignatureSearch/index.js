@@ -14,9 +14,10 @@ const mapStateToProps = (state) => {
   return {
     ...state.serverSideProps,
     ...state.signature_result,
+    ui_values: state.ui_values,
     input: state.signature_input,
     loading: state.loading_signature,
-    SignatureSearchNav: state.serverSideProps.ui_values.nav.SignatureSearch || {},
+    SignatureSearchNav: state.ui_values.nav.SignatureSearch || {},
   }
 }
 

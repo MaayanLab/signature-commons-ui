@@ -29,14 +29,20 @@ export const initialState = {
     libraries_count: 'Library.count',
   },
   theme: null,
+  ui_values: null
 }
 
 function rootReducer(state = initialState, action) {
   if (action.type === action_definitions.INITIALIZE_SIGCOM) {
-    const preferred_name = action.serverSideProps.ui_values.preferred_name
     return {
       ...state,
       serverSideProps: action.serverSideProps,
+    }
+  }
+  if (action.type === action_definitions.INITIALIZE_PREFERRED_NAMES) {
+    const preferred_name = action.ui_values.preferred_name
+    return {
+      ...state,
       reverse_preferred_name: Object.entries(preferred_name).reduce((acc, [name, preferred]) => {
         acc = {
           ...acc,
@@ -51,6 +57,14 @@ function rootReducer(state = initialState, action) {
     return {
       ...state,
       theme
+    }
+  }
+
+  if (action.type === action_definitions.FETCH_UI_VALUES_SUCCEEDED) {
+    const {ui_values} = action
+    return {
+      ...state,
+      ui_values
     }
   }
   if (action.type === action_definitions.INITIALIZE_PARENTS) {

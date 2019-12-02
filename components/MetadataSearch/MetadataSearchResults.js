@@ -102,15 +102,15 @@ const mapStateToProps = (state) => {
   return {
     search: state.search,
     models: state.models,
-    ui_values: state.serverSideProps.ui_values,
+    ui_values: state.ui_values,
     loading: state.loading,
     completed: state.completed,
     paginating: state.paginating,
     reverse_preferred_name: state.reverse_preferred_name,
-    preferred_name: state.serverSideProps.ui_values.preferred_name,
-    preferred_name_singular: state.serverSideProps.ui_values.preferred_name_singular,
-    deactivate_download: state.serverSideProps.ui_values.deactivate_download,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
+    preferred_name: state.ui_values.preferred_name,
+    preferred_name_singular: state.ui_values.preferred_name_singular,
+    deactivate_download: state.ui_values.deactivate_download,
+    MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
   }
 }
 

@@ -4,8 +4,16 @@ export function initializeSigcom(serverSideProps) {
   return { type: action_definitions.INITIALIZE_SIGCOM, serverSideProps }
 }
 
+export function initializePreferredName(ui_values) {
+  return { type: action_definitions.INITIALIZE_PREFERRED_NAMES, ui_values }
+}
+
 export function initializeTheme(theme) {
   return { type: action_definitions.INITIALIZE_THEME, theme}
+}
+
+export function fetchUIValuesSucceeded(ui_values) {
+  return { type: action_definitions.FETCH_UI_VALUES_SUCCEEDED, ui_values}
 }
 
 export function initializeParents({ parent_ids_mapping, parents_mapping }) {

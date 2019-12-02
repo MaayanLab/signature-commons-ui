@@ -57,11 +57,12 @@ const FooterLink = ({src, alt, href, title, classes, containerProps, imageProps}
 const mapStateToProps = (state) => {
   return {
     theme: state.theme,
+    ui_values: state.ui_values,
   }
 }
 
 function Footer(props) {
-  const { footer_type, classes, ui_values, theme, ...rest } = props
+  const { classes, ui_values, theme, ...rest } = props
   const background = Color(theme.palette.default.main)
   let powered_src = "/static/powered.png"
   if (background.isDark()){

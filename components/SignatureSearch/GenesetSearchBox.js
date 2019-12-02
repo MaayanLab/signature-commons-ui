@@ -26,7 +26,7 @@ const style = {
 const mapStateToProps = (state) => {
   return {
     loading: state.loading_signature,
-    ui_values: state.serverSideProps.ui_values,
+    ui_values: state.ui_values,
   }
 }
 

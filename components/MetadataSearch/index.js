@@ -57,7 +57,7 @@ const operationMapper = {
 }
 
 const mapStateToProps = (state) => {
-  const preferred_name = state.serverSideProps.ui_values.preferred_name
+  const preferred_name = state.ui_values.preferred_name
   return {
     search: state.search,
     completed: state.completed,
@@ -66,8 +66,8 @@ const mapStateToProps = (state) => {
     tables: Object.keys(state.parents_mapping),
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
-    order_default: state.serverSideProps.ui_values.order_default || {},
+    MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
+    order_default: state.ui_values.order_default || {},
   }
 }
 

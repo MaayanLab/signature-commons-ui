@@ -16,8 +16,8 @@ const mapStateToProps = (state) => {
     parents: state.parents_mapping,
     completed: state.completed,
     reverse_preferred_name: state.reverse_preferred_name,
-    preferred_name: state.serverSideProps.ui_values.preferred_name,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
+    preferred_name: state.ui_values.preferred_name,
+    MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
   }
 }
 

@@ -15,7 +15,7 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import MenuIcon from '@material-ui/icons/Menu';
 const mapStateToProps = (state, ownProps) => {
   return {
-    ui_values: state.serverSideProps.ui_values,
+    ui_values: state.ui_values,
   }
 }
 

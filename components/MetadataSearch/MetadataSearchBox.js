@@ -49,11 +49,11 @@ const styles = (theme) => ({
 const mapStateToProps = (state) => {
   return { loading: state.loading,
     completed: state.completed,
-    examples: state.serverSideProps.ui_values.LandingText.search_terms,
-    placeholder: state.serverSideProps.ui_values.LandingText.metadata_placeholder,
-    preferred_name: state.serverSideProps.ui_values.preferred_name,
+    examples: state.ui_values.LandingText.search_terms,
+    placeholder: state.ui_values.LandingText.metadata_placeholder,
+    preferred_name: state.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
+    MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
   }
 }
 

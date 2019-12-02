@@ -15,15 +15,13 @@ import SignatureSearch from '../SignatureSearch'
 import Pages from '../Pages'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
-import defaultTheme from '../../util/theme-provider'
 import '../../styles/swagger.scss'
-import { initializeTheme } from '../../util/redux/actions'
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
 
 const mapStateToProps = (state) => {
   return {
-    ui_values: state.serverSideProps.ui_values,
+    ui_values: state.ui_values,
     theme: state.theme,
   }
 }
@@ -100,12 +98,6 @@ class Home extends React.PureComponent {
     return (
       <Pages {...props}/>
     )
-  }
-
-  componentDidMount() {
-    const theme = createMuiTheme(merge(defaultTheme, this.props.ui_values.theme_mod))
-    theme.shadows[4] = theme.shadows[0]
-    this.props.initializeTheme(theme)
   }
 
   render = () => {

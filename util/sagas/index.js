@@ -15,10 +15,19 @@ import { fetchMetaDataSucceeded,
   matchFailed,
   findSignaturesSucceeded,
   findSignaturesFailed,
-  initializeParents } from '../redux/actions'
+  initializeParents,
+  fetchUIValuesSucceeded,
+  initializeTheme,
+  initializePreferredName,
+ } from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
+import { get_ui_values } from '../../pages'
 import uuid5 from 'uuid5'
+import defaultTheme from '../theme-provider'
+import { createMuiTheme } from '@material-ui/core'
+import merge from 'deepmerge'
+
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -35,6 +44,13 @@ export function *workInitializeSigcom(action) {
   }
   const controller = new AbortController()
   try {
+    const {ui_values} = yield call(get_ui_values)
+    yield put(fetchUIValuesSucceeded(ui_values))
+    yield put(initializePreferredName(ui_values))
+    const theme = createMuiTheme(merge(defaultTheme, ui_values.theme_mod))
+    theme.shadows[4] = theme.shadows[0]
+    yield put(initializeTheme(theme))
+
     const sig_count = yield call(fetch_count, 'signatures')
     const lib_count = yield call(fetch_count, 'libraries')
 
