@@ -28,6 +28,10 @@ const styles = theme => ({
     whiteSpace: 'nowrap',
     color: "inherit"
   },
+  breadcrumb: {
+    whiteSpace: 'nowrap',
+    color: "inherit"
+  },
   link: {
     color: "inherit"
   },
@@ -153,21 +157,22 @@ class Header extends React.Component {
           </Toolbar>
         </AppBar>
         {paths.length <= 3 ? null : (
-          <Paper className={classes.paper}>
             <Breadcrumbs separator="›" aria-label="breadcrumb" component={"div"}>
               {paths.slice(1).map((path, i) => {
                 const href = paths.slice(0, i + 2).join('/')
                 return (
-                  <Link
-                    key={href}
-                    to={href}
-                  >
-                    {path.replace(/_/g, ' ')}
-                  </Link>
+                  <Typography variant="h6" color={"inherit"} key={href}>
+                    <Link
+                      key={href}
+                      to={href}
+                      className={classes.breadcrumb}
+                    >
+                      {path.replace(/_/g, ' ')}
+                    </Link>
+                  </Typography>
                 )
               })}
             </Breadcrumbs>
-          </Paper>
         )}
       </header>
     )
