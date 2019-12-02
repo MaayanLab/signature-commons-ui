@@ -53,7 +53,7 @@ export default withStyles(styles)(class Base extends React.PureComponent {
             {this.props.children}
           </div>
         </main>
-        <Footer {...this.props}/>
+        <Footer/>
       </div>
     )
   }
