@@ -419,7 +419,6 @@ export async function resolve_entities(props) {
   //   console.error('No matchcing schema for', entity[0])
   // }
   let name_props = []
-  console.log(schemas)
   for (const schema of schemas){
     const name_prop = Object.values(schema.properties).filter((prop) =>
       prop.name &&
@@ -428,7 +427,6 @@ export async function resolve_entities(props) {
   }
   
   let entity_names = []
-  console.log(name_props)
   const or = name_props.map((prop) => {
     entity_names = [...entity_names, prop.field]
     return ({
@@ -441,6 +439,7 @@ export async function resolve_entities(props) {
     endpoint: '/entities/find',
     body: {
       filter: {
+        fields: ["id", ...name_props.map(p=>p.field)],
         where: {
           or,
         },
@@ -449,12 +448,16 @@ export async function resolve_entities(props) {
     signal: props.controller.signal,
   })
   const entity_meta = maybe_fix_obj(entity_meta_pre)
-
   for (const entity of Object.values(entity_meta)) {
     const names = name_props.map((prop) => makeTemplate(prop.text, entity))
     let name
     if (names.length > 0) {
-      name = names[0]
+      name = names.filter(n=>n!=="null")
+      if (name.length===0){
+        name="null"
+      }else{
+        name=name[0]
+      }
     } else {
       console.error('Cannot find a name for', entity)
     }
@@ -733,8 +736,9 @@ export async function query_rank(props) {
   const { response } = await fetch_data({ endpoint: '/listdata' })
 
   const enriched_results = (await Promise.all(
-      response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map((repo) =>
-        fetch_data({
+      response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map(async (repo) => {
+        try {
+         return await fetch_data({
           endpoint: '/enrich/ranktwosided',
           body: {
             up_entities: up_entities,
@@ -744,12 +748,18 @@ export async function query_rank(props) {
             limit: 500,
           },
           signal: props.controller.signal,
-        })
-      )
-  )).reduce(
+        }) 
+        } catch (error) {
+          return null
+        }
+      })
+  )).filter(val=>val!==null).reduce(
       (results, { duration: duration_data_n, contentRange: contentRange_data_n, response: result }) => {
         duration_data += duration_data_n
         count_data += (contentRange_data_n || {}).count || 0
+        if(Object.keys(result.results).length === 0){
+          return(results)
+        }
         return ({
           ...results,
           ...maybe_fix_obj(
@@ -770,7 +780,6 @@ export async function query_rank(props) {
         })
       }, {}
   )
-
   const { duration: duration_meta, response: enriched_signatures_meta } = await fetch_meta_post({
     endpoint: '/signatures/find',
     body: {
@@ -806,7 +815,6 @@ export async function query_rank(props) {
         },
       ]), []
   )
-
   const resource_signatures = {}
   const library_signatures = {}
   for (const sig of enriched_signatures) {
@@ -838,7 +846,6 @@ export async function query_rank(props) {
       count: resource_signatures[resource].count + 1,
     }
   }
-
   return {
     library_signatures,
     resource_signatures,
