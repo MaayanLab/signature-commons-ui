@@ -38,7 +38,17 @@
         {
           "href": "http://www.lincsproject.org/LINCS/data/overview",
           "src": "/static/NIHLINCS.jpg",
-          "alt": "LINCS"
+          "alt": "LINCS",
+          "containerProps": {
+            "style": {
+              "width": 300
+            }
+          },
+          "imageProps": {
+            "style": {
+              "width": 300
+            }
+          }
         },
         {
           "href": "http://lincs-dcic.org/",
