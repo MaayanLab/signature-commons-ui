@@ -73,9 +73,15 @@ const EnrichrDialog = (props) => {
 }
 
 async function submit_sigcom(item, history) {
-  history.push({
-    pathname: `/SignatureSearch/Overlap/${item.id}`,
-  })
+  if (item.library.dataset_type==="rank_matrix"){
+    history.push({
+      pathname: `/SignatureSearch/Rank/${item.id}`,
+    })
+  }else{
+    history.push({
+      pathname: `/SignatureSearch/Overlap/${item.id}`,
+    })
+  }
 }
 
 export default class Options extends React.Component {
