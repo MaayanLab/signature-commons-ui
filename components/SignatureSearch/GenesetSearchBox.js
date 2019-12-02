@@ -1,9 +1,10 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 import { call } from '../../util/call'
-
+import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
+import Switch from '@material-ui/core/Switch';
 
 const style = {
   chiplabel: {
@@ -36,15 +37,15 @@ const Geneset = (props) => (
         <label style={{ color: '#FFF',
           fontWeight: 'bold' }}>
             Gene Set or Full Signature
-          <input
-            type="checkbox"
+          <Switch
             checked={false}
             onChange={() => {
-              props.toggleInput('Rank')
+                props.toggleInput('Rank')
+              }
             }
-            }
+            value="sigsearch"
+            color="primary"
           />
-          <span className="lever"></span>
             Up and Down Gene Sets
         </label>
       </div>
@@ -80,15 +81,14 @@ const UpDownGeneset = (props) => (
         <label style={{ color: '#FFF',
           fontWeight: 'bold' }}>
             Gene Set or Full Signature
-          <input
-            type="checkbox"
+          <Switch
             checked={true}
             onChange={() => {
               props.toggleInput('Overlap')
-            }
-            }
+            }}
+            value="sigsearch"
+            color="primary"
           />
-          <span className="lever"></span>
             Up and Down Gene Sets
         </label>
       </div>
@@ -210,8 +210,12 @@ class GenesetSearchBox extends React.Component {
       <div className="row">
         <SearchBox {...this.props} />
         <div className="col s12 center">
-          <button
-            className={'btn waves-effect waves-light' + (this.isEmpty() || this.props.loading ? ' disabled' : '')} type="submit" name="action"
+          <Button
+            variant="contained"
+            disabled={this.isEmpty() || this.props.loading} 
+            type="submit"
+            name="action"
+            color="primary"
             onClick={call(this.props.submit, this.props.input)}
           >
             { this.props.loading ?
@@ -225,7 +229,7 @@ class GenesetSearchBox extends React.Component {
                 </React.Fragment>
             }
 
-          </button>
+          </Button>
           <br /><br />
         </div>
       </div>
