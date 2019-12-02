@@ -28,10 +28,39 @@
         },
         "Resources": {
           "active": true,
-          "endpoint": "/Resources"
+          "endpoint": "/DSGC"
         },
         "API": {
           "active": true
+        }
+      },
+      "footer_links": [
+        {
+          "href": "http://www.lincsproject.org/LINCS/data/overview",
+          "src": "/static/NIHLINCS.jpg",
+          "alt": "LINCS"
+        },
+        {
+          "href": "http://lincs-dcic.org/",
+          "src": "/static/images/dcic_light.png",
+          "alt": "dcic"
+        }
+      ],
+      "theme_mod": {
+        "palette": {
+          "primary": {
+            "main": "#3a5278"
+          },
+          "secondary": {
+            "main": "#F37F21"
+          },
+          "default": {
+            "main": "#555",
+            "contrastText": "#FFF"
+          }
+        },
+        "typography": {
+          "fontFamily": "Lato, serif, Archivo Narrow"
         }
       },
       "deactivate_download": false,

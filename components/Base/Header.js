@@ -72,7 +72,7 @@ export function Nav(props) {
           className={classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
-            {ui_values.preferred_name.resources || 'Resources'}
+            {ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
         </MenuItem> : null
       }

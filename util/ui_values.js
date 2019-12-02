@@ -9,7 +9,8 @@ export const UIValues = {
           } :
           {
             icon: values.favicon.icon || "/static/favicon.ico",
-            width: values.favicon.width || 22
+            width: values.favicon.width || 22,
+            style: values.favicon.style,
           },
           header_left: values.header_left || '',
           header_right: values.header_right || ' Signature Commons',
@@ -98,8 +99,10 @@ export const UIValues = {
             entities: 'Genes',
             resources: 'Resources',
           },
+        footer_links: values.footer_links || [],
+        theme_mod: values.theme_mod || {},
+        deactivate_powered: values.deactivate_powered || false,
         order_default: values.order_default,
-        footer_type: values.footer_type || 'powered',
         github: values.github || 'https://github.com/dcic/signature-commons-ui',
         github_issues: values.github_issues || 'https://github.com/dcic/signature-commons-ui/issues',
         deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : true,

@@ -1,34 +1,25 @@
-import { createMuiTheme } from '@material-ui/core'
 import blue from '@material-ui/core/colors/blue'
 import red from '@material-ui/core/colors/red'
 import amber from '@material-ui/core/colors/amber'
 import grey from '@material-ui/core/colors/grey'
 import green from '@material-ui/core/colors/green'
 
-const theme = createMuiTheme({
+const defaultTheme = {
   palette: {
     primary: {
-      main: "#3a5278",
+      main: blue[500],
       contrastText: '#FFF'
     },
     secondary: {
       main: '#F37F21',
     },
-    default: {
-      main: "#555"
-    },
     error: {
       main: red[500],
     },
-    // error: will use the default color
-  },
-  typography: {
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      'Lato',
-      'serif',
-      'Archivo Narrow',
-    ].join(','),
+    default: {
+      main: grey[200],
+      contrastText: '#000'
+    }
   },
   chipColors: {
     default: { backgroundColor: grey[500], color: '#FFF' },
@@ -55,7 +46,7 @@ const theme = createMuiTheme({
       },
     },
   },
-})
+}
 
 // const theme = createMuiTheme({
 //   palette: {
@@ -97,7 +88,5 @@ const theme = createMuiTheme({
 //     },
 //   },
 // })
-// Weird hack to remove table shadows
-theme.shadows[4] = theme.shadows[0]
 
-export default theme
+export default defaultTheme

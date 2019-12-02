@@ -4,6 +4,10 @@ export function initializeSigcom(serverSideProps) {
   return { type: action_definitions.INITIALIZE_SIGCOM, serverSideProps }
 }
 
+export function initializeTheme(theme) {
+  return { type: action_definitions.INITIALIZE_THEME, theme}
+}
+
 export function initializeParents({ parent_ids_mapping, parents_mapping }) {
   return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
 }

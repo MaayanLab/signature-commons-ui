@@ -28,6 +28,7 @@ export const initialState = {
     signatures_count: 'Signature.count',
     libraries_count: 'Library.count',
   },
+  theme: null,
 }
 
 function rootReducer(state = initialState, action) {
@@ -43,6 +44,13 @@ function rootReducer(state = initialState, action) {
         }
         return acc
       }, {}),
+    }
+  }
+  if (action.type === action_definitions.INITIALIZE_THEME){
+    const {theme} = action
+    return {
+      ...state,
+      theme
     }
   }
   if (action.type === action_definitions.INITIALIZE_PARENTS) {
