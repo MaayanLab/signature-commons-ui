@@ -22,6 +22,7 @@ const mapStateToProps = (state, ownProps) => {
 const styles = theme => ({
   grow: {
     flexGrow: 1,
+    marginBottom: 10
   },
   header: {
     whiteSpace: 'nowrap',
@@ -115,7 +116,7 @@ class Header extends React.Component {
                     to="/"
                     className={classes.header}
                   >
-                  {this.props.ui_values.LandingText.header_left || ''}<img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />{this.props.ui_values.LandingText.header_right || ' Signature Commons'}
+                  {this.props.ui_values.LandingText.header_left || ''}<img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} style={{marginBottom:-15}} />{this.props.ui_values.LandingText.header_right || ' Signature Commons'}
                   </Link>
                 </Typography>
                 <Nav classes={classes} {...rest}/>
@@ -129,7 +130,7 @@ class Header extends React.Component {
                   to="/"
                   className={classes.header}
                 >
-                {this.props.ui_values.LandingText.header_left || ''}<img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.LandingText.header_right || 'Signature Commons'}
+                {this.props.ui_values.LandingText.header_left || ''}<img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} style={{marginBottom:-15}} />&nbsp; {this.props.ui_values.LandingText.header_right || 'Signature Commons'}
                 </Link>
               </Typography>
               <SwipeableDrawer
