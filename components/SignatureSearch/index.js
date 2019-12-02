@@ -44,7 +44,7 @@ class SignatureSearch extends React.Component {
     const { response: resources } = await fetch_meta({
       endpoint: `/resources`,
     })
-    const schema = await findMatchedSchema(resources[0], schemas)
+    const schema = findMatchedSchema(resources[0], schemas)
     const name_props = Object.values(schema.properties).filter((prop) => prop.name)
     const name_prop = name_props.length > 0 ? name_props[0].text : '${id}'
     const icon_props = Object.values(schema.properties).filter((prop) => prop.icon)
