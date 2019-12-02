@@ -17,9 +17,9 @@
       "Name": {
         "visibility": 1,
         "type": "text",
-        "text": "${meta.Symbols}",
+        "text": "${meta.geneSymbol}",
         "name": true,
-        "field": "meta.Symbols",
+        "field": "meta.geneSymbol",
         "priority": 1
       },
       "PeptideModified Sequence": {
