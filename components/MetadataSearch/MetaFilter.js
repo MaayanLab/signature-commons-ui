@@ -98,10 +98,10 @@ class MetaFilter extends React.Component {
         }
       }
     } else {
-      for (const [id, count] of Object.entries(stats)) {
+      for (const [name, count] of Object.entries(stats)) {
         if (count > 0) {
-          selected[id] = selected_values.indexOf(id) > -1
-          data_count = [...data_count, { count, id, name: id }]
+          selected[name] = selected_values.indexOf(name) > -1
+          data_count = [...data_count, { count, name }]
         }
       }
     }
