@@ -83,7 +83,7 @@ function Footer(props) {
           <a className="github-button" href={ui_values.github_issues} data-size="large" aria-label="Submit Bug Report on GitHub">Submit Bug Report</a>
         </Grid>
         {ui_values.footer_links.map(itemProps=>(
-          <Grid item>
+          <Grid item key={itemProps.alt}>
             <FooterLink classes={classes} {...itemProps} />
           </Grid>
         ))}
