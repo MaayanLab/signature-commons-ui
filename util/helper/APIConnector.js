@@ -333,7 +333,13 @@ export default class Model {
           const field_name = s.meta.Field_Name
           acc[field_name] = {
             schema: s,
-            stats: m.response[field_name],
+            stats: Object.entries(m.response[field_name]).reduce((acc_1,[key, val])=>{
+              if (key==="null"){
+                return acc_1
+              }
+              acc_1[key] = val
+              return acc_1
+            },{}),
           }
           return acc
         }, {}),
