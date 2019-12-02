@@ -1,10 +1,9 @@
 import React from 'react'
 import { Set } from 'immutable'
-import merge from 'deepmerge'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import dynamic from 'next/dynamic'
 import { connect } from 'react-redux'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
+import { MuiThemeProvider } from '@material-ui/core'
 
 import Base from '../../components/Base'
 import Landing from '../Landing'
