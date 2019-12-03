@@ -44,7 +44,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
-                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
+                  <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
                     <FileFind className={classes.icon} />
                   </Button>
                 </Link>
@@ -67,7 +67,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
-                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
+                  <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
                     <FindReplace className={classes.icon} />
                   </Button>
                 </Link>
@@ -89,7 +89,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
+                <Button className={`${classes.bottomLink}`} variant="contained" color='default' href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
                   <NearMe className={classes.icon} />
                 </Button>
               </Grid>
@@ -110,7 +110,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
             direction={'column'}>
             <Grid item xs={12}>
               <Link to="/API">
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}>
+                <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
                   <Earth className={classes.icon} />
                 </Button>
               </Link>
@@ -295,18 +295,14 @@ export const ListItemLink = (props) => (
   <ListItem button component="a" {...props} />
 )
 
-function getCallback(callback) {
+function getCallback(callback, searchTable) {
   return function(word) {
-    console.log(word)
-    // location.href = `#/MetadataSearch?q=${word.text}`
+    location.href = `#/MetadataSearch/${searchTable}?q={"search":["${word.text}"]}`
   }
 }
 
-const callbacks = {
-  onWordClick: getCallback('onWordClick'),
-}
 
-export const WordCloud = function({ classes, record = {}, ...props }) {
+export const WordCloud = function({ classes, searchTable, record = {}, ...props }) {
   const { stats } = props
   if (stats !== null && stats!==undefined) {
     const wordstats = stats.map(function(entry) {
@@ -317,7 +313,9 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
     return (
       <div style={{ width: "100%", height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
-          callbacks={callbacks}
+          callbacks={{
+            onWordClick: getCallback('onWordClick', searchTable)
+          }}
           scale={'log'}
           options={{
             colors: ['#000'],

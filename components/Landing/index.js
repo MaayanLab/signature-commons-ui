@@ -219,7 +219,7 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs md={12}>
                   <div className={this.props.classes.centered}>
-                    <WordCloud classes={this.props.classes} stats={this.state.word_stats.stats}/>
+                    <WordCloud classes={this.props.classes} searchTable={this.state.word_stats.table} stats={this.state.word_stats.stats}/>
                   </div>
                 </Grid>
 

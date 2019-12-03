@@ -28,7 +28,7 @@
         },
         "Resources": {
           "active": true,
-          "endpoint": "/DSGC"
+          "endpoint": "/DSGCs"
         },
         "API": {
           "active": true

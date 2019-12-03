@@ -7,10 +7,8 @@ import { connect } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state, ownProps) => {
-  const { ui_values, schemas } = state.serverSideProps
   return {
-    ui_values,
-    schemas,
+    ui_values: state.ui_values,
   }
 }
 

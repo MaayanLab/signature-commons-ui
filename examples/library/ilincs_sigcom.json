@@ -8,7 +8,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${meta.icon}",
+      "src": "${PREFIX}/${meta.icon || 'static/LINCS.ico'}",
       "alt": "${meta.title || meta.libraryName || dataset}",
       "text": "${meta.title || meta.libraryName || dataset}",
       "priority": 1,

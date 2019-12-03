@@ -27,10 +27,9 @@ const download = {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { ui_values } = state.serverSideProps
   return {
-    ui_values,
-    preferred_name_singular: ui_values.preferred_name_singular,
+    ui_values: state.ui_values,
+    preferred_name_singular: state.ui_values.preferred_name_singular,
   }
 }
 
