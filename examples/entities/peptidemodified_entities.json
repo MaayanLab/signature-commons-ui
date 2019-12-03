@@ -2,8 +2,8 @@
     "type": "entity",
     "match": {
       "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json",
-      "meta.PeptideModifiedSequence": "^(?!undefined$)",
-      "meta.Symbols": "^(?!undefined$)"
+      "${meta.PeptideModifiedSequence}": "^(?!undefined$)",
+      "${meta.Symbols}": "^(?!undefined$)"
     },
     "properties": {
       "Image": {

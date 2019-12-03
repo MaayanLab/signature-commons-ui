@@ -1,6 +1,6 @@
 import DataProvider from '../../util/fetch/model'
 import fileDownload from 'js-file-download'
-import { objectMatch, default_schemas } from '../Label'
+import { objectMatch, default_schemas } from '../../util/objectMatch'
 import { fetch_meta_post } from '../../util/fetch/meta'
 import { makeTemplate } from '../../util/makeTemplate'
 import NProgress from 'nprogress'
@@ -28,7 +28,7 @@ export async function fetch_schemas() {
   return schemas
 }
 
-export function get_label(data, schemas) {
+export function get_label(data, schemas, schema_filter={}) {
   let matched_schemas = schemas.filter(
       (schema) => objectMatch(schema.match, data)
   )
@@ -43,6 +43,7 @@ export function get_label(data, schemas) {
     return null
   }
   const schema = matched_schemas[0]
+
   let label
   let name_prop
   for (const key in schema.properties) {
@@ -180,10 +181,11 @@ export async function download_signatures_text(item, schemas = undefined, provid
   const signature = await get_signature({ item, schemas, provider })
   const filename = get_label(signature, schemas)
   let data
+  const entity_schemas = schemas.filter(i=>i.type==="entity")
   if (signature.library.dataset_type === 'rank_matrix') {
-    data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
+    data = signature.data.slice(0, 250).map((d) => get_label(d, entity_schemas))
   } else {
-    data = signature.data.map((d) => get_label(d, schemas))
+    data = signature.data.map((d) => get_label(d, entity_schemas))
   }
   NProgress.done()
   fileDownload(data.join('\n'), `${filename}.txt`)
@@ -200,7 +202,8 @@ export async function download_ranked_signatures_text(item, schemas = undefined,
     validator: true,
   })
   const filename = get_label(signature, schemas)
-  const data = signature.data.map((d) => get_label(d, schemas))
+  const entity_schemas = schemas.filter(i=>i.type==="entity")
+  const data = signature.data.map((d) => get_label(d, entity_schemas))
   NProgress.done()
   fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.gmt`)
 }
@@ -358,12 +361,12 @@ export async function download_library_tsv(item, schemas = undefined, provider =
       }
       // Put a 1 on that column for that gene and signatures
       acc[entity] = `${acc[entity]}\t1`
-      // console.log(acc[entity])
+    
     }
     const nonmember = Object.keys(acc).filter((ent) => (dataset[sig].indexOf(ent) === -1))
     for (const entity of nonmember) {
       acc[entity] = `${acc[entity]}\t0`
-      // console.log(acc[entity])
+    
     }
     columns = [...columns, sig]
     return (acc)

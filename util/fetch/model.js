@@ -656,6 +656,9 @@ export class Signature {
       }
 
       await this._parent.fetch_data_for_signatures([this])
+      if (this._data === undefined) {
+        throw new Error("Fetched data but we still don't have it!")
+      }
       return this._data
     })()
   }

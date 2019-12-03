@@ -1,7 +1,8 @@
 {
   "type": "entity",
   "match": {
-    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json"
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json",
+    "${meta.symbol}": "^(?!undefined$)"
   },
   "properties": {
     "Image": {
