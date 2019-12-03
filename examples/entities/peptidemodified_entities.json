@@ -22,8 +22,7 @@
         "field": "meta.Symbols",
         "priority": 1
       },
-      
-      "PeptideModified Sequence": {
+      "Peptide Modified Sequence": {
         "visibility": 2,
         "type": "text",
         "text": "${meta.PeptideModifiedSequence}",

@@ -23,6 +23,30 @@
       "subtitle": true,
       "priority": 2
     },
+    "Perturbation Type": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.perturbation_type}",
+      "description": true,
+      "subtitle": true,
+      "priority": 3
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.assay}",
+      "description": true,
+      "subtitle": true,
+      "priority": 2
+    },
+    "Organism": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.organism}",
+      "description": true,
+      "subtitle": true,
+      "priority": 3
+    },
     "Signature Count": {
       "visibility": 1,
       "type": "text",

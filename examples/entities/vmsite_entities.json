@@ -22,12 +22,20 @@
         "field": "meta.geneSymbol",
         "priority": 1
       },
-      "PeptideModified Sequence": {
+      "Peptide Modified Sequence": {
         "visibility": 2,
         "type": "text",
         "text": "${meta.PeptideModifiedSequence}",
         "field": "meta.PeptideModifiedSequence",
         "priority": 2
+      },
+      "VMsite Flanks": {
+        "visibility": 2,
+        "type": "text",
+        "text": "${meta.VMsiteFlanks}",
+        "field": "meta.VMsiteFlanks",
+        "priority": 3,
+        "subtitle": 2
       },
       "ID": {
         "visibility": 2,
