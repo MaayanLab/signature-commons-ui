@@ -413,8 +413,13 @@ export default class DataProvider {
           signature._data = entities
         } else if (endpoint === 'rank') {
           const ranks = sig.ranks
-          ranks.sort((a, b) => a - b)
-          const entities = await this.resolve_entities(ranks.map((rank) => response.entities[rank]).filter((ent) => ent !== undefined))
+          const ranked_entities = response.entities.map((ent, ind) => ({ ent, rank: ranks[ind] }));
+          ranked_entities.sort(({rank: rank_a}, {rank: rank_b}) => rank_a - rank_b);
+
+          const entities = await this.resolve_entities(ranked_entities.reduce((agg, { ent }) => ent !== undefined ? [...agg, ent] : agg, []));
+          // const rank_index = ranks.map((rank)=>sig.ranks.indexOf(rank))
+          // const entities = await this.resolve_entities(rank_index.map((rank) => response.entities[rank]).filter((ent) => ent !== undefined))
+          
           signature._data = entities
         } else {
           throw new Error(`endpoint ${endpoint} not recognized`)
