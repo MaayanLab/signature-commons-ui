@@ -31,7 +31,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            { props.ui_values.LandingText.text_4 || 'Start using Signature Commons on your project'}
+            { props.ui_values.text_4 || 'Start using Signature Commons on your project'}
           </Typography>
         </div>
       </Grid>
@@ -144,7 +144,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            {props.ui_values.LandingText.text_2 || 'Search across a broad gathering of perturbations'}
+            {props.ui_values.text_2 || 'Search across a broad gathering of perturbations'}
           </Typography>
         </div>
       </Grid>
@@ -181,7 +181,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-                {props.ui_values.LandingText.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
+                {props.ui_values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
               </Typography>
             </div>
           </Grid>

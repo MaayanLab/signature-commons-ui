@@ -5,8 +5,14 @@ import Footer from './Footer'
 import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
+import { connect } from 'react-redux'
 
-export default withStyles(styles)(class Base extends React.PureComponent {
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ui_values: state.ui_values,
+  }
+}
+export default connect(mapStateToProps)(withStyles(styles)(class Base extends React.PureComponent {
   constructor(props) {
     super(props)
 
@@ -41,9 +47,10 @@ export default withStyles(styles)(class Base extends React.PureComponent {
           <meta charSet="utf-8" />
           <link rel="shortcut icon" href={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+          {this.props.ui_values.font_families.map((family, ind)=>(
+            <link href={family} key={ind} rel="stylesheet" type="text/css"/>
+          ))}
           <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
-          <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet" type="text/css"/>
-          <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow" rel="stylesheet" type="text/css"/>
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>
@@ -57,4 +64,4 @@ export default withStyles(styles)(class Base extends React.PureComponent {
       </div>
     )
   }
-})
+}))

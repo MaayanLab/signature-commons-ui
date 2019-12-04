@@ -9,13 +9,16 @@
           "marginBottom": 20
         }
       },
+      "font_families": [
+        "https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900",
+        "https://fonts.googleapis.com/css?family=Archivo+Narrow"
+      ],
       "header_right": " LINCS Datasets and Signatures",
       "metadata_placeholder": "Search over LINCS datasets and signatures",
       "text_1": "Explore an extensive collection of LINCS datasets and signatures",
-      "library_name": "title",
       "preferred_name_singular": {
         "libraries": "Dataset",
-        "resources": "Dataset"
+        "resources": "Data and Signature Generation Center"
       },
       "nav": {
         "MetadataSearch": {
@@ -74,7 +77,6 @@
         }
       },
       "deactivate_download": false,
-      "deactivate_wordcloud": false,
       "bar_chart": {
         "Field_Name": "types.method.value",
         "Caption": "Assays"
