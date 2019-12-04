@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
 import { animateScroll as scroll } from 'react-scroll'
+import Color from 'color'
 
 import ReactWordcloud from 'react-wordcloud'
 
@@ -23,7 +24,11 @@ const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/
 
 const meta_default_icon = 'mdi-creation'
 
-export const BottomLinks = ({ classes, width, ...props }) => {
+export const BottomLinks = ({ classes, width, theme, ...props }) => {
+  const background = Color(theme.palette.default.main)
+  console.log(background)
+  console.log(theme.palette.default.main)
+  console.log(background.isDark())
   return (
     <Grid container
       spacing={24}
@@ -45,7 +50,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
-                    <FileFind className={classes.icon} />
+                    <FileFind className={background.isDark() ? classes.icon: classes.icon_light} />
                   </Button>
                 </Link>
               </Grid>
@@ -68,7 +73,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
-                    <FindReplace className={classes.icon} />
+                    <FindReplace className={background.isDark() ? classes.icon: classes.icon_light} />
                   </Button>
                 </Link>
               </Grid>
@@ -90,7 +95,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Button className={`${classes.bottomLink}`} variant="contained" color='default' href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
-                  <NearMe className={classes.icon} />
+                  <NearMe className={background.isDark() ? classes.icon: classes.icon_light} />
                 </Button>
               </Grid>
               <Grid item xs={12}>
@@ -111,7 +116,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
             <Grid item xs={12}>
               <Link to="/API">
                 <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
-                  <Earth className={classes.icon} />
+                  <Earth className={background.isDark() ? classes.icon: classes.icon_light} />
                 </Button>
               </Link>
             </Grid>

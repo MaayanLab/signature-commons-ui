@@ -210,19 +210,7 @@ class ResourcePage extends React.Component {
       },
     })
   }
-
-  handleChangeRowsPerPage = (e, name) => {
-    this.setState({
-      perPage: e.target.value,
-    })
-  }
-
-  handleChangePage = (event, page, name) => {
-    this.setState({
-      page: page
-    })
-  }
-
+  
   render() {
     if (this.state.resource === null) {
       return <CircularProgress />
