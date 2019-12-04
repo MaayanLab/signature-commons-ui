@@ -6,7 +6,7 @@
         "icon": "/static/LINCS.ico",
         "width": 60,
         "style": {
-          "marginBottom": 20
+          "marginBottom": -15
         }
       },
       "font_families": [

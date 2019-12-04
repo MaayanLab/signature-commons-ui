@@ -120,7 +120,7 @@ class Header extends React.Component {
                     to="/"
                     className={classes.header}
                   >
-                  {this.props.ui_values.header_left || ''}<img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />{this.props.ui_values.header_right || ' Signature Commons'}
+                  {this.props.ui_values.header_left || ''}<img {...this.props.ui_values.favicon} src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} />{this.props.ui_values.header_right || ' Signature Commons'}
                   </Link>
                 </Typography>
                 <Nav classes={classes} {...rest}/>
@@ -134,7 +134,7 @@ class Header extends React.Component {
                   to="/"
                   className={classes.header}
                 >
-                {this.props.ui_values.header_left || ''}<img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header_right || 'Signature Commons'}
+                {this.props.ui_values.header_left || ''}<img {...this.props.ui_values.favicon} src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} />&nbsp; {this.props.ui_values.header_right || 'Signature Commons'}
                 </Link>
               </Typography>
               <SwipeableDrawer
