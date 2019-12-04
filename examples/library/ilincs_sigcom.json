@@ -27,24 +27,21 @@
       "visibility": 1,
       "type": "text",
       "text": "${meta.perturbation_type}",
-      "description": true,
-      "subtitle": true,
+      "MDI_Icon": "mdi-flask-outline",
       "priority": 3
     },
     "Assay": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.assay}",
-      "description": true,
-      "subtitle": true,
+      "MDI_Icon": "mdi-test-tube",
       "priority": 2
     },
     "Organism": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.organism}",
-      "description": true,
-      "subtitle": true,
+      "MDI_Icon": "mdi-human-child",
       "priority": 3
     },
     "Signature Count": {
