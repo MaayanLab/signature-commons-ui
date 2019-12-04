@@ -3,34 +3,31 @@ import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
 import { makeTemplate } from '../../util/makeTemplate'
-import { objectMatch } from '../../util/makeTemplate'
-import { connect } from 'react-redux';
-import { findMatchedSchema } from '../../util/objectMatch'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { connect } from 'react-redux'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state, ownProps) => {
-  const {ui_values, resources, schemas} = state.serverSideProps
-  return { 
-    ui_values,
-    schemas
+  return {
+    ui_values: state.ui_values,
   }
-};
+}
 
 class ResourceList extends React.PureComponent {
-  
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       sorted_resources: [],
-      schema: null
+      schema: null,
     }
   }
 
   async componentDidMount() {
     window.scrollTo(0, 0)
     const sorted_resources = Object.values(this.props.resources).sort((r1, r2) => {
-      const r1_name = makeTemplate(this.props.name_prop, r1)
-      const r2_name = makeTemplate(this.props.name_prop, r2)
+      let r1_name = makeTemplate(this.props.name_prop, r1)
+      if (r1_name === 'undefined') r1_name = r1.id
+      let r2_name = makeTemplate(this.props.name_prop, r2)
+      if (r2_name === 'undefined') r2_name = r2.id
       return (r1_name.localeCompare(r2_name))
     })
     this.setState({
@@ -41,14 +38,14 @@ class ResourceList extends React.PureComponent {
   render() {
     const { icon_prop,
       name_prop,
-      description_prop,} = this.props
+      description_prop } = this.props
     const sorted_resources = this.state.sorted_resources
-    if (sorted_resources.length === 0 ){
+    if (sorted_resources.length === 0) {
       return <CircularProgress />
     }
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
-    const xs = 12
+    const xs = 6
 
     return (
       <Grid
@@ -57,17 +54,19 @@ class ResourceList extends React.PureComponent {
         alignItems="center"
       >
         {sorted_resources.map((resource) => {
+          let name = makeTemplate(name_prop, resource)
+          if (name==='undefined') name = resource.id
           return (
-            <Grid item xs={xs} sm={sm} md={md} 
-                  style={{textAlign: 'center',}}
-                  key={makeTemplate(name_prop, resource)}>
+            <Grid item xs={xs} sm={sm} md={md}
+              style={{ textAlign: 'center' }}
+              key={name}>
               <Link
                 key={resource.id}
-                to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}/${ makeTemplate(name_prop, resource).replace(/ /g, '_')}`}
+                to={`${this.props.ui_values.nav.Resources.endpoint}/${ name.replace(/ /g, '_')}`}
               >
                 <IconButton
-                  alt={makeTemplate(name_prop, resource)}
-                  title={makeTemplate(name_prop, resource)}
+                  alt={name}
+                  title={name}
                   src={`${makeTemplate(icon_prop, resource)}`}
                   description={makeTemplate(description_prop, resource)}
                 />

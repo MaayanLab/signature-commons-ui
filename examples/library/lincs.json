@@ -1,0 +1,45 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
+    "${dataset}": "lincs_clue"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/${meta['Icon']}",
+      "alt": "${meta['Primary_Resource']}",
+      "priority": 1,
+      "icon": true
+    },
+    "Library": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Library_name']}",
+      "priority": 2,
+      "name": true,
+      "hyperlink": "${meta.Link_to_resource}"
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Description']}",
+      "priority": 2,
+      "description": true,
+      "subtitle": true
+    },
+    "Assay": {
+      "visibility": 1,
+      "condition": {
+        "${meta.Assay}": {
+          "ne": null
+        }
+      },
+      "type": "text",
+      "text": "${meta.Assay}",
+      "priority": 3,
+      "MDI_Icon": "mdi-flask-outline",
+      "clickable": true
+    }
+  }
+}

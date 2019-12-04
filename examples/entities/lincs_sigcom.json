@@ -1,0 +1,55 @@
+{
+  "type": "entity",
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json",
+    "${meta.symbol}": "^(?!undefined$)"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/static/images/dna.png",
+      "alt": "${meta.symbol}",
+      "priority": 1,
+      "icon": true
+    },
+    "Name": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.symbol}",
+      "name": true,
+      "field": "meta.symbol",
+      "priority": 1
+    },
+    "Description": {
+      "visibility": 2,
+      "type": "text",
+      "text": "${meta.description}",
+      "field": "meta.description",
+      "subtitle": "true",
+      "priority": 2
+    },
+    "Taxon ID": {
+      "visibility": 2,
+      "type": "text",
+      "text": "${meta.taxid}",
+      "field": "meta.taxid",
+      "priority": 3
+    },
+    "Synonyms": {
+      "visibility": 0,
+      "type": "text",
+      "text": "${meta.synonyms}",
+      "field": "meta.synonyms",
+      "synonyms": true,
+      "priority": 3
+    },
+    "Gene ID": {
+      "visibility": 2,
+      "type": "text",
+      "text": "${meta.geneid}",
+      "field": "meta.geneid",
+      "priority": 2
+    }
+  }
+}

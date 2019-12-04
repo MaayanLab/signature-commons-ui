@@ -1,12 +1,12 @@
 import React from 'react'
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import Badge from '@material-ui/core/Badge';
+import { withStyles } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
+import Badge from '@material-ui/core/Badge'
 
-const styles = theme => ({
+const styles = (theme) => ({
   button: {
     margin: theme.spacing.unit,
     textTransform: 'none',
@@ -22,23 +22,24 @@ const styles = theme => ({
   margin: {
     margin: theme.spacing.unit * 2,
   },
-});
-
+})
 
 
 const InformativeButton = (props) => {
-  let {classes, counter, title, alt, src, description} = props
-  let tooltip_title = ""
-  if (description!==undefined) {
-    tooltip_title = <Typography variant="subtitle2" style={{color:"#FFF"}} gutterBottom>
-              {description}
-            </Typography>
+  const { classes, counter, title, alt, src, description } = props
+  let tooltip_title = ''
+  if (description !== undefined) {
+    tooltip_title = <Typography variant="subtitle2" style={{ color: '#FFF' }} gutterBottom>
+      {description}
+    </Typography>
   }
-  return(
+  return (
     <Tooltip title={tooltip_title}
-        placement="bottom">
-      <Button className={classes.button} onClick={() => {if(props.onClick!== undefined) props.onClick(props.value)}}>
-        <Badge className={classes.margin} max={9999} badgeContent={counter===undefined ? 0: counter} color="error">
+      placement="bottom">
+      <Button className={classes.button} onClick={() => {
+        if (props.onClick !== undefined) props.onClick(props.value)
+      }}>
+        <Badge className={classes.margin} max={9999} badgeContent={counter === undefined ? 0 : counter} color="error">
           <Grid container>
             <Grid item xs={12}>
               <img className={classes.image} alt={alt} src={src}/>

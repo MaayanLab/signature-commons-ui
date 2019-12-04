@@ -117,6 +117,10 @@ export const landingStyle = (theme) => ({
     float: 'left',
     zIndex: 100,
   },
+  bottomLink: {
+    background: theme.palette.default.main,
+    color: theme.palette.default.contrastText
+  },
   icon: {
     float: 'right',
     width: 75,

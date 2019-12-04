@@ -1,0 +1,144 @@
+[
+  {
+    "Field_Name": "library",
+    "Preferred_Name": "Datasets",
+    "Preferred_Name_Singular": "Dataset",
+    "Type": "string",
+    "MDI_Icon": "mdi-library-books",
+    "Table": "signatures",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.platform",
+    "Preferred_Name": "Platforms",
+    "Preferred_Name_Singular": "Platform",
+    "Type": "string",
+    "MDI_Icon": "mdi-test-tube",
+    "Table": "signatures",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.types.instrument.value",
+    "Type": "object",
+    "Preferred_Name": "Instruments",
+    "Preferred_Name_Singular": "Instrument",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-microscope",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "meta.types.description.value",
+    "Type": "object",
+    "Preferred_Name": "Data Levels",
+    "Preferred_Name_Singular": "Data Level",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-animation-outline",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "meta.storedIn.name",
+    "Type": "object",
+    "Preferred_Name": "Repositories",
+    "Preferred_Name_Singular": "Repository",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-database",
+    "Meta_Count": true
+  },
+  {
+    "Field_Name": "resource",
+    "Preferred_Name": "Data and Signature Generation Centers",
+    "Preferred_Name_Singular": "Data and Signature Generation Center",
+    "Type": "string",
+    "MDI_Icon": "mdi-certificate",
+    "Table": "libraries",
+    "Filter": true
+  },
+  {
+    "Field_Name": "meta.creators.affiliations.name",
+    "Type": "object",
+    "Preferred_Name": "Data and Signature Generation Centers",
+    "Preferred_Name_Singular": "Data and Signature Generation Center",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-certificate",
+    "Meta_Count": false,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "meta.types.method.value",
+    "Type": "object",
+    "Preferred_Name": "Assays",
+    "Preferred_Name_Singular": "Assay",
+    "Table": "libraries",
+    "MDI_Icon": "mdi-test-tube",
+    "Meta_Count": true,
+    "Pie_Count": true
+  },
+  {
+    "Field_Name": "meta.cellline",
+    "Preferred_Name": "Cell Lines",
+    "Type": "text",
+    "Preferred_Name_Singular": "Cell Line",
+    "Table": "signatures",
+    "MDI_Icon": "mdi-microscope",
+    "Meta_Count": true,
+    "Word_Count": true
+  },
+  {
+    "Field_Name": "meta.clueIoCompound",
+    "Preferred_Name": "Compounds",
+    "Type": "text",
+    "Preferred_Name_Singular": "Compound",
+    "Table": "signatures",
+    "MDI_Icon": "mdi-hexagon-multiple",
+    "Meta_Count": true,
+    "Word_Count": true
+  },
+  {
+    "Field_Name": "meta.clueIoGeneTargets",
+    "Preferred_Name": "Targets",
+    "Type": "text",
+    "Preferred_Name_Singular": "Target",
+    "Table": "signatures",
+    "MDI_Icon": "mdi-target-variant",
+    "Meta_Count": true,
+    "Word_Count": true
+  },
+  {
+    "Field_Name": "meta.clueIoMOA",
+    "Preferred_Name": "MoA",
+    "Type": "text",
+    "Preferred_Name_Singular": "MoA",
+    "Table": "signatures",
+    "MDI_Icon": "mdi-settings-outline",
+    "Meta_Count": true,
+    "Word_Count": true
+  },
+  {
+    "Field_Name": "libraries",
+    "Type": "table",
+    "Preferred_Name": "Datasets",
+    "MDI_Icon": "mdi-folder-text-outline",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true 
+  },
+  {
+    "Field_Name": "signatures",
+    "Type": "table",
+    "Preferred_Name": "Signatures",
+    "MDI_Icon": "mdi-fingerprint",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "resources",
+    "Type": "table",
+    "Preferred_Name": "Data and Signature Generation Centers",
+    "MDI_Icon": "mdi-certificate",
+    "Table_Count": true,
+    "Visible_On_Landing": true,
+    "Visible_On_Admin": true 
+  }
+]

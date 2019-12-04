@@ -25,7 +25,6 @@ export async function fetch_data({ endpoint, body, signal }) {
   if (response_text === '') { // normalize empty responses
     response_text = '{"signatures":[], "matchingEntities": [], "results": {}}'
   }
-
   let response
   try {
     response = JSON.parse(response_text)

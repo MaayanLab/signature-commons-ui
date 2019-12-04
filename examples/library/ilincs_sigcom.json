@@ -1,0 +1,54 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
+    "${dataset_type}": "rank_matrix",
+    "${meta['@type']}": "undefined"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/${meta.icon || 'static/LINCS.ico'}",
+      "alt": "${meta.title || meta.libraryName || dataset}",
+      "text": "${meta.title || meta.libraryName || dataset}",
+      "priority": 1,
+      "icon": true,
+      "name": true
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.libraryInfo}",
+      "description": true,
+      "subtitle": true,
+      "priority": 2
+    },
+    "Perturbation Type": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.perturbation_type}",
+      "MDI_Icon": "mdi-flask-outline",
+      "priority": 3
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.assay}",
+      "MDI_Icon": "mdi-test-tube",
+      "priority": 2
+    },
+    "Organism": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta.organism}",
+      "MDI_Icon": "mdi-human-child",
+      "priority": 3
+    },
+    "Signature Count": {
+      "visibility": 1,
+      "type": "text",
+      "alt": "${meta.signatureCount}",
+      "priority": 3
+    }
+  }
+}

@@ -4,14 +4,11 @@ import { Link } from 'react-router-dom'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent';
+import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
-import yellow from '@material-ui/core/colors/yellow';
-
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import { animateScroll as scroll } from 'react-scroll'
 
 import ReactWordcloud from 'react-wordcloud'
 
@@ -46,21 +43,22 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'metadata', true)}>
-                  <FileFind className={classes.icon} />
-                </Button>
+                <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
+                  <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
+                    <FileFind className={classes.icon} />
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+                  {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.activeh ?
+      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -68,14 +66,15 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}
-                  onClick={(e) => props.handleChange(e, 'signature', true)}>
-                  <FindReplace className={classes.icon} />
-                </Button>
+                <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
+                  <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
+                    <FindReplace className={classes.icon} />
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                    {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+                  {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
@@ -90,7 +89,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
+                <Button className={`${classes.bottomLink}`} variant="contained" color='default' href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
                   <NearMe className={classes.icon} />
                 </Button>
               </Grid>
@@ -111,7 +110,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
             direction={'column'}>
             <Grid item xs={12}>
               <Link to="/API">
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}>
+                <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
                   <Earth className={classes.icon} />
                 </Button>
               </Link>
@@ -203,13 +202,9 @@ export const StatDiv = ({ classes, width, ...props }) => {
   )
 }
 
-const toggleSearch = (e) => {
-  console.log(e.target.value)
-}
-
 export const SearchCard = ({ classes, width, ...props }) => {
   const { SignatureSearch, MetadataSearch } = props.ui_values.nav
-  if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active ) {
+  if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
         <CardContent>
@@ -219,7 +214,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
                 <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
@@ -250,7 +245,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
                 <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
@@ -275,7 +270,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={"center"} style={{ fontSize:30, color: "#FFF"}}>
+              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
                 <span className="mdi mdi-cloud-search mdi-36px"/>
                 &nbsp;&nbsp;
                 {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
@@ -300,37 +295,37 @@ export const ListItemLink = (props) => (
   <ListItem button component="a" {...props} />
 )
 
-function getCallback(callback) {
+function getCallback(callback, searchTable) {
   return function(word) {
-    location.href = `#/MetadataSearch?q=${word.text}`
+    location.href = `#/MetadataSearch/${searchTable}?q={"search":["${word.text}"]}`
   }
 }
 
-const callbacks = {
-  onWordClick: getCallback('onWordClick'),
-}
 
-export const WordCloud = function({ classes, record = {}, ...props }) {
+export const WordCloud = function({ classes, searchTable, record = {}, ...props }) {
   const { stats } = props
-  if (stats !== null) {
-    const wordstats = Object.entries(stats).map(function(entry) {
-      return ({ 'text': entry[0], 'value': entry[1] })
+  if (stats !== null && stats!==undefined) {
+    const wordstats = stats.map(function(entry) {
+      return ({ 'text': entry.name, 'value': entry.counts })
     })
     wordstats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
 
     return (
-      <div style={{ width: 420, height: 420, display: 'block', margin: 'auto' }}>
+      <div style={{ width: "100%", height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
-          callbacks={callbacks}
+          callbacks={{
+            onWordClick: getCallback('onWordClick', searchTable)
+          }}
+          scale={'log'}
           options={{
             colors: ['#000'],
-            scale: "log",
+            scale: 'log',
             rotations: 3,
             rotationsAngles: [0, 90],
           }} />
       </div>
     )
   } else {
-    return <div />
+    return null
   }
 }

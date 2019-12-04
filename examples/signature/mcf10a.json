@@ -1,0 +1,42 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
+    "${library.dataset}": "MCF10A*"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${PREFIX}/${library.meta['Icon']}",
+      "alt": "${library.meta['assay']}",
+      "priority": 1,
+      "icon": true
+    },
+    "Assay": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${library.meta['assay']}",
+      "subtitle": true,
+      "priority": 1
+    },
+    "Specimen Name": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['specimenName']}",
+      "priority": 2,
+      "name": true
+    },
+    "Cell Type": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['cellType']}",
+      "priority": 2
+    },
+    "Ligand": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['ligand']}",
+      "priority": 2
+    }
+  }
+}

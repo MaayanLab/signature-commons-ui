@@ -24,14 +24,9 @@
       "deactivate_download": true,
       "deactivate_wordcloud": true,
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
-      "bar_chart_solo": {
-        "Field_Name": "Publication Year",
-        "Caption": "Publication Year",
-        "fontSize": 14
-      },
-      "pie_chart_solo": {
-        "Field_Name": "Status",
-        "Caption": "Tool status"
+      "bar_chart": {
+        "Field_Name": "pub_year",
+        "Caption": "Publication Year"
       },
       "bar_chart_style": {
         "ResponsiveContainer": {
@@ -40,18 +35,18 @@
         },
         "Chart": {
           "margin": {
-            "right": 60,
-            "left": 60
+            "right": 50,
+            "left": 50
           }
         },
         "XAxis": {
           "axisLine": false,
-          "angle": 30,
-          "height": 95,
+          "angle": 45,
+          "height": 180,
           "textAnchor": "start",
           "interval": 0,
           "tick": {
-            "fontSize": 14
+            "fontSize": 9
           }
         },
         "Bar": {

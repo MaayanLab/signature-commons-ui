@@ -3,9 +3,6 @@ export function makeTemplate(
     templateVariables,
     templateSubfield = null
 ) {
-  if (templateString === undefined){
-    throw("Invalid template")
-  }
   const keys = [...Object.keys(templateVariables).map((key) => key.replace(/ /g, '_')), 'PREFIX']
   const values = [...Object.values(templateVariables), process.env.PREFIX]
   let templateFunction = new Function(...keys, `return \`${templateString}\`;`)
@@ -16,7 +13,7 @@ export function makeTemplate(
   }
   try {
     return templateFunction(...values)
-  } catch(error){
+  } catch (error) {
     return 'undefined'
   }
 }

@@ -1,6 +1,6 @@
 {
   "match": {
-    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resource.json"
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resources.json"
   },
   "properties": {
     "Image": {
@@ -8,7 +8,6 @@
       "type": "img",
       "src": "${meta.icon}",
       "alt": "${meta.name}",
-      "text": "${meta.name}",
       "priority": 1,
       "icon": true,
       "name": true
@@ -16,7 +15,6 @@
     "Description": {
       "visibility": 1,
       "type": "text",
-      "description": true,
       "field": "Description",
       "text": "${meta['description']}",
       "priority": 2

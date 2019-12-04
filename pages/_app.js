@@ -1,25 +1,15 @@
 
 import React from 'react'
 import App, { Container } from 'next/app'
-import { Provider } from "react-redux";
-import dynamic from 'next/dynamic'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Provider } from 'react-redux'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import Router from 'next/router'
-import NProgress from 'nprogress'
 import Error from './_error'
 import serializeError from 'serialize-error'
 import '../styles/index.scss'
-import withRedux from "next-redux-wrapper";
+import withRedux from 'next-redux-wrapper'
 import initializeStore from '../util/redux/store'
-
-NProgress.configure({ showSpinner: false })
-
-Router.events.on('routeChangeStart', (url) => NProgress.start())
-Router.events.on('hashChangeStart', (url) => NProgress.start())
-Router.events.on('routeChangeComplete', () => NProgress.done())
-Router.events.on('hashChangeComplete', (url) => NProgress.done())
-Router.events.on('routeChangeError', () => NProgress.done())
 
 class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -60,7 +50,6 @@ class App_ extends App {
 
   componentDidCatch(error, errorInfo) {
     // TODO: log error
-    NProgress.done()
     this.setState({ error, errorInfo })
   }
 
@@ -80,7 +69,7 @@ class App_ extends App {
           {loaded ? (
               <Component {...pageProps} />
           ) : (
-            <div style={{textAlign:"center", marginTop: 100}}>
+            <div style={{ textAlign: 'center', marginTop: 100 }}>
               <CircularProgress />
             </div>
           )}
@@ -90,4 +79,4 @@ class App_ extends App {
   }
 }
 
-export default withRedux(initializeStore)(App_);
+export default withRedux(initializeStore)(App_)

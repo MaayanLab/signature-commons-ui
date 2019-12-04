@@ -6,8 +6,7 @@
     "Type": "string",
     "MDI_Icon": "mdi-certificate",
     "Table": "libraries",
-    "Meta_Count": true,
-    "Bar_Count": true
+    "Meta_Count": true
   },
   {
     "Field_Name": "meta.country",
@@ -94,6 +93,7 @@
     "Type": "string",
     "MDI_Icon": "mdi-file-document",
     "Table": "libraries",
+    "Meta_Count": true,
     "Pie_Count": true
   },
   {
@@ -109,7 +109,7 @@
     "Field_Name": "libraries",
     "Type": "table",
     "Preferred_Name": "Tools",
-    "MDI_Icon": "mdi-toolbox",
+    "MDI_Icon": "mdi-tools",
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true
@@ -118,7 +118,7 @@
     "Field_Name": "resources",
     "Type": "table",
     "Preferred_Name": "Journals",
-    "MDI_Icon": "mdi-file-document",
+    "MDI_Icon": "mdi-web",
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true

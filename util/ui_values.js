@@ -1,14 +1,22 @@
-import { fetch_meta } from '../util/fetch/meta'
-
 export const UIValues = {
   'landing': (values) => {
     return (
       {
         LandingText: {
-          header: values.header || 'Signature Commons',
+          favicon: values.favicon=== undefined ? {
+            icon: "/static/favicon.ico",
+            width: 22
+          } :
+          {
+            icon: values.favicon.icon || "/static/favicon.ico",
+            width: values.favicon.width || 22,
+            style: values.favicon.style,
+          },
+          header_left: values.header_left || '',
+          header_right: values.header_right || ' Signature Commons',
           text_1: values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures',
           text_2: values.text_2 || 'Search across a broad gathering of perturbations',
-          text_3: values.text_3 || 'Examine metadata:',
+          text_3: values.text_3 || 'By',
           text_4: values.text_4 || 'Start using Signature Commons in your project',
           metadata_placeholder: values.metadata_placeholder || 'Search over half a million signatures',
           geneset_placeholder: values.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set',
@@ -21,58 +29,62 @@ export const UIValues = {
           up_set_terms: values.up_set_terms,
           down_set_terms: values.down_set_terms,
         },
-        nav: values.nav!==undefined ? {
-            MetadataSearch: values.nav.MetadataSearch!==undefined? {
-                active: true,
-                endpoint: "/MetadataSearch",
-                ...values.nav.MetadataSearch
-              } :{
-                active: true,
-                endpoint: "/MetadataSearch"
-              },
-            SignatureSearch: values.nav.SignatureSearch!==undefined? {
-                active: false,
-                endpoint: "/SignatureSearch",
-                ...values.nav.SignaturesSearch
-              } :{
-                active: true,
-                endpoint: "/SignaturesSearch"
-              },
-            Resources: values.nav.Resources!==undefined? {
-                active: true,
-                endpoint: values.preferred_name!==undefined ? `/${values.preferred_name.resources||"Resources"}` : "/Resources",
-                ...values.nav.Resources
-              } :{
-                active: true,
-                endpoint: "/Resources"
-              },
-            API: values.nav.API!==undefined? {
-                active: true,
-                endpoint: "/API",
-                ...values.nav.API
-              } :{
-                active: true,
-                endpoint: "/API"
-              },
-          } :
+        favicon: {
+          icon: values.favicon.icon || "/static/favicon.ico",
+          width: values.favicon.width || 22
+        },
+        nav: values.nav !== undefined ? {
+          MetadataSearch: values.nav.MetadataSearch !== undefined ? {
+            active: true,
+            endpoint: '/MetadataSearch',
+            ...values.nav.MetadataSearch,
+          } : {
+            active: true,
+            endpoint: '/MetadataSearch',
+          },
+          SignatureSearch: values.nav.SignatureSearch !== undefined ? {
+            active: false,
+            endpoint: '/SignatureSearch',
+            ...values.nav.SignatureSearch,
+          } : {
+            active: false,
+            endpoint: '/SignatureSearch',
+          },
+          Resources: values.nav.Resources !== undefined ? {
+            active: true,
+            endpoint: values.preferred_name !== undefined ? `/${values.preferred_name.resources || 'Resources'}` : '/Resources',
+            ...values.nav.Resources,
+          } : {
+            active: true,
+            endpoint: '/Resources',
+          },
+          API: values.nav.API !== undefined ? {
+            active: true,
+            endpoint: '/API',
+            ...values.nav.API,
+          } : {
+            active: true,
+            endpoint: '/API',
+          },
+        } :
           {
             MetadataSearch: {
               active: true,
-              endpoint: "/MetadataSearch"
+              endpoint: '/MetadataSearch',
             },
             SignatureSearch: {
               active: false,
-              endpoint: "/SignatureSearch"
+              endpoint: '/SignatureSearch',
             },
             Resources: {
               active: true,
-              endpoint: "/Resources"
+              endpoint: '/Resources',
             },
             API: {
               active: true,
-              endpoint: "/API"
-            }
-          } ,
+              endpoint: '/API',
+            },
+          },
         preferred_name_singular: values.preferred_name_singular ||
           {
             libraries: 'Dataset',
@@ -87,14 +99,13 @@ export const UIValues = {
             entities: 'Genes',
             resources: 'Resources',
           },
+        footer_links: values.footer_links || [],
+        theme_mod: values.theme_mod || {},
+        deactivate_powered: values.deactivate_powered || false,
         order_default: values.order_default,
-        footer_type: values.footer_type || "dcic",
-        github: values.github || "https://github.com/dcic/signature-commons-ui",
-        github_issues: values.github_issues || "https://github.com/dcic/signature-commons-ui/issues",
-        deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : false,
-        deactivate_wordcloud: values.deactivate_wordcloud !== undefined ? values.deactivate_wordcloud : false,
-        bar_chart_solo: values.bar_chart_solo,
-        pie_chart_solo: values.pie_chart_solo,
+        github: values.github || 'https://github.com/dcic/signature-commons-ui',
+        github_issues: values.github_issues || 'https://github.com/dcic/signature-commons-ui/issues',
+        deactivate_download: values.deactivate_download !== undefined ? values.deactivate_download : true,
         bar_chart_style: values.bar_chart_style ||
           {
             ResponsiveContainer: {
@@ -131,7 +142,7 @@ export const UIValues = {
           },
           Chart: {
             width: 420,
-            height: 300,
+            height: 420,
           },
           Pie: {
             fill: '#75bef5',
@@ -139,6 +150,7 @@ export const UIValues = {
           Text_Label: {
             fontSize: 10,
           },
+          ...values.pie_chart_style
         },
         pie_caption: values.pie_caption || 'Signatures per',
         entity_name: values.entity_name,
@@ -158,7 +170,7 @@ export const UIValues = {
           resource_json: 'Download resource as json',
           sigcom: true,
           enrichr: true,
-          ...values.downloads
+          ...values.downloads,
         },
       }
     )

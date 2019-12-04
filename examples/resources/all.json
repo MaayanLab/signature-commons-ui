@@ -1,0 +1,323 @@
+[
+  {
+    "Resource_Name": "CMAP",
+    "PMID": "29195078",
+    "URL": "https://clue.io",
+    "Description": "(From the website) The Connectivity Map (CMap) at the Broad Institute is creating a genome-scale library of cellular signatures that catalogs transcriptional responses to chemical, genetic, and disease perturbation.",
+    "Signature_Count": 497587
+  },
+  {
+    "Resource_Name": "ARCHS4",
+    "PMID": "29636450",
+    "URL": "http://archs4.cloud",
+    "Description": "(From the website) ARCHS4 provides access to gene counts from HiSeq 2000, HiSeq 2500 and NextSeq 500 platforms for human and mouse experiments from GEO and SRA.",
+    "Signature_Count": 2807
+  },
+  {
+    "Resource_Name": "Achilles",
+    "PMID": "25984343",
+    "URL": "https://portals.broadinstitute.org/achilles",
+    "Description": "Project Achilles is a systematic effort aimed at identifying and cataloging gene essentiality across hundreds of genomically characterized cancer cell lines.",
+    "Signature_Count": 432
+  },
+  {
+    "Resource_Name": "CREEDS",
+    "PMID": "27667448",
+    "URL": "http://amp.pharm.mssm.edu/CREEDS",
+    "Description": "(From the abstract) CRowd Extracted Expression of Differential Signatures  (CREEDS) is a crowdsourcing project annotating and reanalyzing a large number of gene expression profiles from Gene Expression Omnibus (GEO).",
+    "Signature_Count": 22459
+  },
+  {
+    "Resource_Name": "Allen Brain Atlas",
+    "PMID": "23193282",
+    "URL": "http://portal.brain-map.org",
+    "Description": "(From the abstract) The Allen Brain Atlas (http://www.brain-map.org) provides a unique online public resource integrating extensive gene expression data, connectivity data and neuroanatomical information with powerful search and viewing tools for the adult and developing brain in mouse, human and non-human primate. ",
+    "Signature_Count": 4384
+  },
+  {
+    "Resource_Name": "BioCarta",
+    "PMID": "-",
+    "URL": "https://cgap.nci.nih.gov/Pathways/BioCarta_Pathways",
+    "Description": "(From integbio.jp) BioCarta is a database of gene interaction models. The database contains high-quality images of several cellular signaling and interaction pathways, and each diagram is fully hyperlinked to products and information pages about individual genes. ",
+    "Signature_Count": 725
+  },
+  {
+    "Resource_Name": "BioPlex",
+    "PMID": "28514442",
+    "URL": "http://bioplex.hms.harvard.edu",
+    "Description": "(From the website) The BioPlex (biophysical interactions of ORFeome-based complexes) network is the result of creating thousands of cell lines with each expressing a tagged version of a protein from the ORFeome collection. Immunopurification of the tagged protein and detection of associated proteins by mass spectrometry are the building blocks of the network.",
+    "Signature_Count": 4910
+  },
+  {
+    "Resource_Name": "CORUM",
+    "PMID": "30357367",
+    "URL": "https://mips.helmholtz-muenchen.de/corum",
+    "Description": "(From the website) The CORUM database provides a resource of manually annotated protein complexes from mammalian organisms. Annotation includes protein complex function, localization, subunit composition, literature references and more.",
+    "Signature_Count": 1658
+  },
+  {
+    "Resource_Name": "CCLE",
+    "PMID": "22460905",
+    "URL": "https://portals.broadinstitute.org/ccle",
+    "Description": "(From the website) The CCLE (Cancer Cell Line Encyclopedia) project is a collaboration between the Broad Institute, and the Novartis Institutes for Biomedical Research and its Genomics Institute of the Novartis Research Foundation to conduct a detailed genetic and pharmacologic characterization of a large panel of human cancer models, to develop integrated computational analyses that link distinct pharmacologic vulnerabilities to genomic patterns and to translate cell line integrative genomics into cancer patient stratification. The CCLE provides public access to genomic data, analysis and visualization for over 1100 cell lines. ",
+    "Signature_Count": 967
+  },
+  {
+    "Resource_Name": "ChEA",
+    "PMID": "20709693",
+    "URL": "http://amp.pharm.mssm.edu/chea3",
+    "Description": "ChIP-seq enrichment analysis3 (ChEA) is a transcription factor enrichment analysis tool that integrates putative TF targets extracted from multiple sources.",
+    "Signature_Count": 1393
+  },
+  {
+    "Resource_Name": "UCSC Genome Browser",
+    "PMID": "12045153",
+    "URL": "https://genome.ucsc.edu",
+    "Description": "(From the abstract) UCSC Genome Browser is a web tool for rapid and reliable display of any requested portion of the genome at any scale, together with several dozen aligned annotation tracks. This browser displays assembly contigs and gaps, mRNA and expressed sequence tag alignments, multiple gene predictions, cross-species homologies, single nucleotide polymorphisms, sequence-tagged sites, radiation hybrid data, transposon repeats, and more as a stack of coregistered tracks",
+    "Signature_Count": 1001
+  },
+  {
+    "Resource_Name": "DrugMatrix",
+    "PMID": "16005536",
+    "URL": "https://ntp.niehs.nih.gov/results/toxfx",
+    "Description": "(From norecopa.no) DrugMatrix, produced by the U.S. National Toxicology Program, is a molecular toxicology reference database and informatics system. DrugMatrix is populated with the comprehensive results of thousands of highly controlled and standardized toxicological experiments in which rats or primary rat hepatocytes were systematically treated with therapeutic, industrial, and environmental chemicals at both non-toxic and toxic doses.",
+    "Signature_Count": 7876
+  },
+  {
+    "Resource_Name": "ENCODE",
+    "PMID": "26527727",
+    "URL": "http://genome.ucsc.edu/ENCODE",
+    "Description": "(From the website) The Encyclopedia of DNA Elements (ENCODE) Consortium is an international collaboration of research groups funded by the National Human Genome Research Institute (NHGRI). The goal of ENCODE is to build a comprehensive parts list of functional elements in the human genome, including elements that act at the protein and RNA levels, and regulatory elements that control cells and circumstances in which a gene is active.",
+    "Signature_Count": 1939
+  },
+  {
+    "Resource_Name": "Enrichr",
+    "PMID": "27141961",
+    "URL": "http://amp.pharm.mssm.edu/Enrichr/",
+    "Description": "(From the website) A suite of gene list enrichment analysis tools."
+  },
+  {
+    "Resource_Name": "ESCAPE",
+    "PMID": "23794736",
+    "URL": "http://www.maayanlab.net/ESCAPE",
+    "Description": "(From the website) Embryonic Stem Cell Atlas from Pluripotency Evidence (ESCAPE) is a m/hESC-centered database that integrates data from many recent diverse high-throughput studies including: gene expression microarrays, RNA-seq, ChIP-chip/seq, genome-wide inhibitory RNA (RNAi) screens, immunoprecipitation followed by mass spectrometry (IP-MS) proteomics and phosphoproteomics.",
+    "Signature_Count": 315
+  },
+  {
+    "Resource_Name": "Roadmap Epigenomics",
+    "PMID": "22690667",
+    "URL": "http://www.roadmapepigenomics.org",
+    "Description": "(From the website) The NIH Roadmap Epigenomics Mapping Consortium aims to produce a public resource of epigenomic maps for stem cells and primary ex vivo tissues selected to represent the normal counterparts of tissues and organ systems frequently involved in human disease.",
+    "Signature_Count": 383
+  },
+  {
+    "Resource_Name": "Gene Ontology",
+    "PMID": "27899567",
+    "URL": "http://www.geneontology.org",
+    "Description": "(From the website) The Gene Ontology resource provides a computational representation of our current scientific knowledge about the functions of genes (or, more properly, the protein and non-coding RNA molecules produced by genes) from many different organisms, from humans to bacteria.",
+    "Signature_Count": 27719
+  },
+  {
+    "Resource_Name": "GTEx",
+    "PMID": "25954001",
+    "URL": "https://www.gtexportal.org",
+    "Description": "(From the website) The Genotype-Tissue Expression (GTEx) project is an ongoing effort to build a comprehensive public resource to study tissue-specific gene expression and regulation. The GTEx Portal provides open access to data including gene expression, QTLs, and histology images. ",
+    "Signature_Count": 5836
+  },
+  {
+    "Resource_Name": "GeneSigDB",
+    "PMID": "22110038",
+    "URL": "https://genesigdb.org",
+    "Description": "(From the website) The Gene Signature DataBase is a searchable database of fully traceable, standardized, annotated gene signatures which have been manually curated from publications that are indexed in PubMed.",
+    "Signature_Count": 2139
+  },
+  {
+    "Resource_Name": "RePORTER",
+    "PMID": "-",
+    "URL": "https://projectreporter.nih.gov",
+    "Description": "(From the website) The Research Portfolio Online Reporting Tools (RePORT) website provides access to reports, data, and analyses of NIH research activities, including information on NIH expenditures and the results of NIH-supported research. ",
+    "Signature_Count": 32876
+  },
+  {
+    "Resource_Name": "HMDB",
+    "PMID": "29140435",
+    "URL": "http://www.hmdb.ca",
+    "Description": "(From the website) The Human Metabolome Database (HMDB) is a freely available electronic database containing detailed information about small molecule metabolites found in the human body.",
+    "Signature_Count": 3906
+  },
+  {
+    "Resource_Name": "HomoloGene",
+    "PMID": "26615191",
+    "URL": "https://www.ncbi.nlm.nih.gov/homologene",
+    "Description": "(From the website) An automated system for constructing putative homology groups from the complete gene sets of a wide range of eukaryotic species.",
+    "Signature_Count": 12
+  },
+  {
+    "Resource_Name": "HumanCyc",
+    "PMID": "15642094",
+    "URL": "https://humancyc.org",
+    "Description": "(From the website) HumanCyc provides an encyclopedic reference on human metabolic pathways. It provides a zoomable human metabolic map diagram, and it has been used to generate a steady-state quantitative model of human metabolism.",
+    "Signature_Count": 277
+  },
+  {
+    "Resource_Name": "HPO",
+    "PMID": "24217912",
+    "URL": "https://hpo.jax.org",
+    "Description": "(From the website) The Human Phenotype Ontology (HPO) provides a standardized vocabulary of phenotypic abnormalities encountered in human disease. The HPO is currently being developed using the medical literature, Orphanet, DECIPHER, and OMIM.",
+    "Signature_Count": 1779
+  },
+  {
+    "Resource_Name": "Jensen Lab",
+    "PMID": "-",
+    "URL": "https://jensenlab.org",
+    "Description": "(From the website) The Jensen Lab develops state-of-the-art tools for generation and analysis of molecular interaction networks from proteomics data and text mining, which are freely available to the scientific community.",
+    "Signature_Count": 5936
+  },
+  {
+    "Resource_Name": "KEA",
+    "PMID": "19176546",
+    "URL": "http://maayanlab.net/KEA2",
+    "Description": "(From the website) KEA is a library that predicts kinase activity from an input set of phosphosites. This library was made by manual curation of kinase-substrate interactions in the literature.",
+    "Signature_Count": 902
+  },
+  {
+    "Resource_Name": "KEGG",
+    "PMID": "27899662",
+    "URL": "https://www.kegg.jp",
+    "Description": "(From the website) KEGG (Kyoto Encyclopedia of Genes and Genomes) is a database resource that integrates genomic, chemical and systemic functional information. In particular, gene catalogs from completely sequenced genomes are linked to higher-level systemic functions of the cell, the organism and the ecosystem.",
+    "Signature_Count": 672
+  },
+  {
+    "Resource_Name": "MGI-MP",
+    "PMID": "29092072",
+    "URL": "http://www.informatics.jax.org",
+    "Description": "(From the website) MGI is the international database resource for the laboratory mouse, providing integrated genetic, genomic, and biological data to facilitate the study of human health and disease.",
+    "Signature_Count": 6254
+  },
+  {
+    "Resource_Name": "MSigDB",
+    "PMID": "26771021",
+    "URL": "http://software.broadinstitute.org/gsea/msigdb",
+    "Description": "(From the website) The Molecular Signatures Database (MSigDB) is a collection of annotated gene sets for use with GSEA software.",
+    "Signature_Count": 1047
+  },
+  {
+    "Resource_Name": "BioGPS",
+    "PMID": "26578587",
+    "URL": "http://biogps.org",
+    "Description": "(From the website) BioGPS is a free extensible and customizable gene annotation portal, and a complete resource for learning about gene and protein function. ",
+    "Signature_Count": 273
+  },
+  {
+    "Resource_Name": "NCI Pathways",
+    "PMID": "18832364",
+    "URL": "https://wiki.nci.nih.gov/pages/viewpage.action?pageId=315491760",
+    "Description": "(From the website) The Pathway Interaction Database is a highly-structured, curated collection ofinformation about known bio-molecular interactions and key cellular processes assembled into signaling pathways.",
+    "Signature_Count": 418
+  },
+  {
+    "Resource_Name": "NURSA",
+    "PMID": "16051673",
+    "URL": "https://www.nursa.org",
+    "Description": "(From the website) The mission of NURSA is to accrue, develop, and communicate information that advances our understanding of the roles of nuclear receptors (NRs) and coregulators in human physiology and disease. The NURSA website has been developed over the past decade into a comprehensive source of information about NRs and their co-regulators, ligands, and downstream transcriptional targets.",
+    "Signature_Count": 1796
+  },
+  {
+    "Resource_Name": "OMIM",
+    "PMID": "11752252",
+    "URL": "https://www.omim.org",
+    "Description": "(From the website) Online Mendelian Inheritance in Man (OMIM) is a continuously updated catalog of human genes and genetic disorders and traits, with particular focus on the molecular relationship between genetic variation and phenotypic expression.",
+    "Signature_Count": 277
+  },
+  {
+    "Resource_Name": "X2K",
+    "PMID": "22080467",
+    "URL": "http://amp.pharm.mssm.edu/X2K",
+    "Description": "(From the website) X2K Web infers upstream regulatory networks from signatures of differentially expressed genes. By combining transcription factor enrichment analysis, protein-protein interaction network expansion, with kinase enrichment analysis, X2K Web produces inferred networks of transcription factors, proteins, and kinases predicted to regulate the expression of the inputted gene list.",
+    "Signature_Count": 675
+  },
+  {
+    "Resource_Name": "Pfam and Interpro",
+    "PMID": "30398656",
+    "URL": "https://www.ebi.ac.uk/interpro",
+    "Description": "(From the website) InterPro provides functional analysis of proteins by classifying them into families and predicting domains and important sites. It combines protein signatures from a number of member databases into a single searchable resource, capitalising on their individual strengths to produce a powerful integrated database and diagnostic tool.",
+    "Signature_Count": 311
+  },
+  {
+    "Resource_Name": "DEPOD",
+    "PMID": "25332398",
+    "URL": "http://www.depod.bioss.uni-freiburg.de",
+    "Description": "(From the website) The human DEPhOsphorylation Database (version 1.1) is a manually curated database collecting human active phosphatases, their experimentally verified protein and non-protein substrates and dephosphorylation site information, and pathways in which they are involved. It also provides links to popular kinase databases and protein-protein interaction databases for these phosphatases and substrates.",
+    "Signature_Count": 59
+  },
+  {
+    "Resource_Name": "Reactome",
+    "PMID": "29145629",
+    "URL": "https://reactome.org",
+    "Description": "(From the website) Reactome is a free, open-source, curated and peer-reviewed pathway database.",
+    "Signature_Count": 2997
+  },
+  {
+    "Resource_Name": "SysMyo",
+    "PMID": "-",
+    "URL": "https://www.sys-myo.com",
+    "Description": "(From the abstract) SysMyo web portal provides systems biology tools adapted to myology research.",
+    "Signature_Count": 1135
+  },
+  {
+    "Resource_Name": "TRANSFAC & JASPAR",
+    "PMID": "18436575; 29140473",
+    "URL": "http://www.gene-regulation.com; http://jaspar.genereg.net",
+    "Description": "(From the website) TRANSFAC is a proprietary database of eukaryotic transcription factors, their genomic binding sites and TDNA-binding profiles while JASPAR is an open access collection of transcription factor DNA-binding preferences.",
+    "Signature_Count": 326
+  },
+  {
+    "Resource_Name": "TargetScan",
+    "PMID": "26267216",
+    "URL": "http://www.targetscan.org",
+    "Description": "(From the website) TargetScan predicts biological targets of miRNAs by searching for the presence of conserved 8mer, 7mer, and 6mer sites that match the seed region of each miRNA (Lewis et al., 2005).",
+    "Signature_Count": 905
+  },
+  {
+    "Resource_Name": "Human Proteome Map",
+    "PMID": "24870542",
+    "URL": "http://www.humanproteomemap.org",
+    "Description": "(From the website) The Human Proteome Map (HPM) portal is an interactive resource to the scientific community integrating the massive peptide sequencing result from the draft map of the human proteome project.",
+    "Signature_Count": 30
+  },
+  {
+    "Resource_Name": "ProteomicsDB",
+    "PMID": "29106664",
+    "URL": "https://www.proteomicsdb.org",
+    "Description": "(From the abstract) ProteomicsDB (https://www.ProteomicsDB.org) is a protein-centric database for the exploration of large collections of quantitative mass spectrometry-based proteomics data.",
+    "Signature_Count": 207
+  },
+  {
+    "Resource_Name": "MINT",
+    "PMID": "22096227",
+    "URL": "https://mint.bio.uniroma2.it",
+    "Description": "(From the website) The Molecular INTeraction Database MINT focuses on experimentally verified protein-protein interactions mined from the scientific literature by expert curators.",
+    "Signature_Count": 85
+  },
+  {
+    "Resource_Name": "WikiPathways",
+    "PMID": "26481357",
+    "URL": "https://www.wikipathways.org",
+    "Description": "(From the website) WikiPathways is an open, collaborative platform dedicated to the curation of biological pathways.",
+    "Signature_Count": 1040
+  },
+  {
+    "Resource_Name": "dbGAP",
+    "PMID": "24297256",
+    "URL": "https://www.ncbi.nlm.nih.gov/gap",
+    "Description": "(From the website) The database of Genotypes and Phenotypes (dbGaP) was developed to archive and distribute the data and results from studies that have investigated the interaction of genotype and phenotype in Humans.",
+    "Signature_Count": 345
+  },
+  {
+    "Resource_Name": "miRTarBase",
+    "PMID": "29126174",
+    "URL": "http://mirtarbase.mbc.nctu.edu.tw",
+    "Description": "(From the website) miRTarBase is an experimentally validated microRNA-target interactions database.",
+    "Signature_Count": 3240
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "type": "entity",
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/entity.json"
+  },
+  "properties": {
+    "Ensembl Gene ID": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['ensembl_gene_id']}",
+      "priority": 1
+    },
+    "HGNC symbol": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['hgnc_symbol']}",
+      "priority": 2
+    },
+    "MDD": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['MDD']}",
+      "priority": 4
+    },
+    "Pathway": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['Pathway']}",
+      "priority": 2
+    },
+    "probeset": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['probeset']}",
+      "priority": 2
+    },
+    "Gene Title": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['pr_gene_title']}",
+      "priority": 2
+    },
+    "histone": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['histone']}",
+      "priority": 2
+    },
+    "idx": {
+      "visibility": 1,
+      "type": "text",
+      "text": "${meta['idx']}",
+      "priority": 2
+    }
+  }
+}

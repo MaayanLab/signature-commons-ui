@@ -9,7 +9,7 @@ import { makeTemplate } from '../../util/makeTemplate'
 import { RunningSum, dataFromResults } from '@dcic/signature-commons-ui-components-running-sum'
 import { fetch_data } from '../../util/fetch/data'
 import Lazy from '../Lazy'
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core'
+import { createMuiTheme } from '@material-ui/core'
 const one_tailed_columns = [
   'P-Value',
   'Odds Ratio',
@@ -74,16 +74,16 @@ export default class LibraryResults extends React.Component {
   check_column = ({ schema, prop, item }) => {
     if (schema.properties[prop].text === undefined) {
       return false
-    } else if(schema.properties[prop].visibility===0){
+    } else if (schema.properties[prop].visibility === 0) {
       return false
-    } else if(makeTemplate(schema.properties[prop].text,item)!=='undefined'){
+    } else if (makeTemplate(schema.properties[prop].text, item) !== 'undefined') {
       return true
       // const sig_keys = this.props.signature_keys[lib]
-      
+
       // if (schema.properties[prop].columnType === 'number') {
       //   return true
       // } else if (schema.properties[prop].columnType === 'meta') {
-      //   if 
+      //   if
       // }
     }
     return false
@@ -105,11 +105,10 @@ export default class LibraryResults extends React.Component {
       return null
     }
     const schema = matched_schemas[0]
-    const lib = sigs[0].library.id
     const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
     const cols = sorted_entries.filter(
         ([prop, val]) => {
-          if (this.check_column({ schema, prop, item:sigs[0] })) {
+          if (this.check_column({ schema, prop, item: sigs[0] })) {
             if (this.props.match.params.type === 'Overlap') {
               if (two_tailed_columns.indexOf(prop) === -1) {
                 return true
@@ -126,8 +125,8 @@ export default class LibraryResults extends React.Component {
     const options = {
       filter: true,
       filterType: 'dropdown',
-      responsive: 'scroll',
-      selectableRows: false,
+      responsive: 'scrollMaxHeight',
+      selectableRows: 'multiple',
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => (
         <TableRow>
@@ -200,7 +199,12 @@ export default class LibraryResults extends React.Component {
           return ''
         }
         try {
-          return JSON.parse(val)
+          const val_parsed = JSON.parse(val)
+          if (val_parsed === null) {
+            return NaN
+          } else {
+            return val_parsed
+          }
         } catch (e) {
           return val
         }

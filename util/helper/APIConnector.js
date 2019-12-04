@@ -1,23 +1,21 @@
 // This contains classes for querying a table with relevant filters
 import { fetch_meta_post } from '../fetch/meta'
-import { getState } from 'redux-saga/effects'
-import { getStateFromStore } from "../sagas/selectors"
 import isUUID from 'validator/lib/isUUID'
 
 const model_mapper = {
-  resources: "Resource",
-  libraries: "Library",
-  signatures: "Signature",
-  entities: "Entity"
+  resources: 'Resource',
+  libraries: 'Library',
+  signatures: 'Signature',
+  entities: 'Entity',
 }
 
-export function build_where({search, filters, order}) {
+export function build_where({ search, filters, order }) {
   let where = {}
   let andClauses = []
   let orClauses = []
   let notClauses = []
   for (const q of search) {
-    if (isUUID(q) ||isUUID(q.substring(1).trim()) || isUUID(q.substring(3).trim())){
+    if (isUUID(q) || isUUID(q.substring(1).trim()) || isUUID(q.substring(3).trim())) {
       if (q.startsWith('!') || q.startsWith('-')) {
         // and not
         andClauses = [...andClauses, { id: q.substring(1) }]
@@ -29,7 +27,7 @@ export function build_where({search, filters, order}) {
         // and
         andClauses = [...andClauses, { id: q.substring(1) }]
       }
-    }else if (q.indexOf(':') !== -1) {
+    } else if (q.indexOf(':') !== -1) {
       const [key, ...value] = q.split(':')
       if (key.startsWith('!') || key.startsWith('-')) {
         notClauses = [...notClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
@@ -44,32 +42,32 @@ export function build_where({search, filters, order}) {
       // full text query
       if (q.startsWith('!') || q.startsWith('-')) {
         // and not
-        const slist = q.substring(1).trim().split(" ")
-        const query = slist.map(s=>({ meta: {fullTextSearch: { ne: s }} } ))
+        const slist = q.substring(1).trim().split(' ')
+        const query = slist.map((s) => ({ meta: { fullTextSearch: { ne: s } } }))
         notClauses = [...notClauses, ...query]
         // andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim() } } }]
       } else if (q.toLowerCase().startsWith('or ')) {
         // const slist = q.substring(3).trim().split(" ")
         // const query = {and: slist.map(s=>({ fullTextSearch: { eq: s } } ))}
         // orClauses = [...andClauses, query]
-        const slist = q.substring(3).trim().split(" ")
-        const query = {and: slist.map(s=>({ meta: {fullTextSearch: { eq: s }} } ))}
+        const slist = q.substring(3).trim().split(' ')
+        const query = { and: slist.map((s) => ({ meta: { fullTextSearch: { eq: s } } })) }
         orClauses = [...orClauses, query]
         // orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim() } } }]
       } else if (q.startsWith('|')) {
         // const slist = q.substring(1).trim().split(" ")
         // const query = {and: slist.map(s=>({ fullTextSearch: { eq: s } } ))}
         // orClauses = [...andClauses, query]
-        const slist = q.substring(1).trim().split(" ")
-        const query = {and: slist.map(s=>({ meta: {fullTextSearch: { eq: s }} } ))}
+        const slist = q.substring(1).trim().split(' ')
+        const query = { and: slist.map((s) => ({ meta: { fullTextSearch: { eq: s } } })) }
         orClauses = [...orClauses, query]
         // orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim() } } }]
       } else {
         // and
-        const slist = q.trim().split(" ")
-        const query = slist.map(s=>({ meta: {fullTextSearch: { eq: s }} } ))
+        const slist = q.trim().split(' ')
+        const query = slist.map((s) => ({ meta: { fullTextSearch: { eq: s } } }))
         andClauses = [...andClauses, ...query]
-        
+
         // andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim() } } }]
       }
     }
@@ -83,53 +81,53 @@ export function build_where({search, filters, order}) {
     where['and'] = andClauses
   }
   if (notClauses.length > 0) {
-    if (where.and !==undefined){
+    if (where.and !== undefined) {
       where = {
         ...where,
         and: [
           ...where.and,
-          ...notClauses
-        ]
+          ...notClauses,
+        ],
       }
-    }else if (where.or !== undefined){
+    } else if (where.or !== undefined) {
       where = {
         and: [
-          {...where},
-          ...notClauses
-        ]
+          { ...where },
+          ...notClauses,
+        ],
       }
     }
   }
 
-  if (filters!==undefined){
-    if (where.and === undefined){
+  if (filters !== undefined) {
+    if (where.and === undefined) {
       where = {
-        and: [{...where}]
+        and: [{ ...where }],
       }
     }
-    for (const [filter, values] of Object.entries(filters)){
-      if (filter.indexOf("..")===-1) {
+    for (const [filter, values] of Object.entries(filters)) {
+      if (filter.indexOf('..') === -1) {
         where = {
           and: [...where.and, {
-            [filter]: {inq: [...values]}
-            }
-          ]
+            [filter]: { inq: [...values] },
+          },
+          ],
         }
       }
     }
   }
 
-  if (order!==undefined){
-    if (where.and === undefined){
+  if (order !== undefined) {
+    if (where.and === undefined) {
       where = {
-        and: [{...where}]
+        and: [{ ...where }],
       }
     }
     where = {
       and: [...where.and, {
-        [order]: {neq: null}
-        }
-      ]
+        [order]: { neq: null },
+      },
+      ],
     }
   }
 
@@ -143,32 +141,32 @@ export default class Model {
     this.parent = parent
     this.parents_meta = parents_meta
     this.where = null
-    this.results = {}
+    this.results = {count:0}
     this.search = null
     this.filters = undefined
     this.fields = undefined
     this.pagination = {
-      limit: 10
+      limit: 10,
     }
     this.order = undefined
   }
 
-  set_where = ({search, filters, order}) => {
+  set_where = ({ search, filters, order }) => {
     this.search = search
     this.filters = filters
-    this.where = build_where({search, filters, order})
+    this.where = build_where({ search, filters, order })
   }
 
-  get_count_params = ({search, filters}) => {
-    if (this.where===null){
-      this.set_where({search, filters})
+  get_count_params = ({ search, filters }) => {
+    if (this.where === null) {
+      this.set_where({ search, filters })
     }
     const operationId = `${this.model}.count`
     const params = {
       operationId,
       parameters: {
-        where: this.where
-      }
+        where: this.where,
+      },
     }
     return params
   }
@@ -200,10 +198,10 @@ export default class Model {
   //   return params
   // }
 
-  get_search_params = ({search, filters, limit, skip, order}) => {
-    if (limit===undefined) limit=10
-    if (this.where===null){
-      this.set_where({search, filters, order})
+  get_search_params = ({ search, filters, limit, skip, order }) => {
+    if (limit === undefined) limit = 10
+    if (this.where === null) {
+      this.set_where({ search, filters, order })
     }
     this.pagination = {
       limit,
@@ -215,31 +213,31 @@ export default class Model {
       operationId,
       parameters: {
         contentRange: false,
-        filter:{
+        filter: {
           where: this.where,
           ...this.pagination,
-          order: this.order!==undefined ? `${this.order} DESC`: undefined
-        }
-      }
+          order: this.order !== undefined ? `${this.order} DESC` : undefined,
+        },
+      },
     }
     return params
   }
 
-  get_value_count = ({search, filters, fields, limit}) => {
-    if (this.where===null){
-      this.set_where({search, filters})
+  get_value_count = ({ search, filters, fields, limit }) => {
+    if (this.where === null) {
+      this.set_where({ search, filters })
     }
-    if (limit===undefined) limit = 10
+    if (limit === undefined) limit = 10
     const operationId = `${this.model}.value_count`
-    if (fields!==undefined){
+    if (fields !== undefined) {
       return {
         operationId,
         parameters: {
           filter: {
-              where: this.where,
-              fields,
-            },
-          }
+            where: this.where,
+            fields,
+          },
+        },
       }
     }
   }
@@ -265,55 +263,53 @@ export default class Model {
   //   }
   // }
   build_query = (query_params) => {
-    const {metadata_search,
+    const { metadata_search,
       count,
       value_count,
       query,
     } = query_params
     let params = []
-    const { search, filters, order} = query
-    this.set_where({search, filters, order})
-    if (metadata_search){
-      const p = this.get_search_params({...query})
+    const { search, filters, order } = query
+    this.set_where({ search, filters, order })
+    if (metadata_search) {
+      const p = this.get_search_params({ ...query })
       params = [...params, p]
     }
-    if (value_count && this.fields!==undefined && this.fields.length>0){
-      const p = this.get_value_count({search, filters, fields: this.fields})
+    if (value_count && this.fields !== undefined && this.fields.length > 0) {
+      const p = this.get_value_count({ search, filters, fields: this.fields })
       params = [...params, p]
     }
     if (count) {
-      const p = this.get_count_params({search, filters}) 
+      const p = this.get_count_params({ search, filters })
       params = [...params, p]
     }
     // if (per_parent_count) {
     //   const p = this.get_count_per_parent_params({search, filters, parent_ids})
     //   params = [...params, ...p]
     // }
-    
+
     return {
       params,
       operations: {
         metadata_search,
-        value_count: value_count && this.sorting_fields!==undefined && this.sorting_fields.length>0,
+        value_count: value_count && this.sorting_fields !== undefined && this.sorting_fields.length > 0,
         count,
-      }
+      },
     }
   }
 
-  parse_bulk_result = ({operations, bulk_response}) => {
+  parse_bulk_result = ({ operations, bulk_response }) => {
     const {
       metadata_search,
       value_count,
       count,
-      value_count_params
     } = operations
     let result = {}
     let response = bulk_response
-    
     if (metadata_search) {
       const [m, ...r] = response
-      const res = this.parents === undefined ? m.response:
-        m.response.map(r=>{
+      const res = this.parent === undefined ? m.response :
+        m.response.map((r) => {
           const parent_id = r[this.parent]
           const parent_meta = this.parents_meta[parent_id]
           return {
@@ -329,30 +325,36 @@ export default class Model {
     }
     if (value_count) {
       const [m, ...r] = response
-      
+
       response = [...r]
       result = {
         ...result,
-        value_count: this.sorting_fields.reduce((acc,s)=>{
+        value_count: this.sorting_fields.reduce((acc, s) => {
           const field_name = s.meta.Field_Name
           acc[field_name] = {
             schema: s,
-            stats: m.response[field_name]
+            stats: Object.entries(m.response[field_name]).reduce((acc_1,[key, val])=>{
+              if (key==="null"){
+                return acc_1
+              }
+              acc_1[key] = val
+              return acc_1
+            },{}),
           }
           return acc
-        },{})
+        }, {}),
       }
     }
     if (count) {
       const [m, ...r] = response
-      
+
       response = [...r]
       result = {
         ...result,
-        count: m.response.count
+        count: m.response.count,
       }
     }
-    
+
     return result
   }
 
@@ -362,36 +364,33 @@ export default class Model {
       body: {
         filter: {
           where: {
-            'meta.$validator': "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+            'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
             'meta.Filter': true,
-            'meta.Table': this.Table
+            'meta.Table': this.table,
           },
         },
       },
     })
-    this.fields = sorting_fields.map(i=>i.meta.Field_Name)
+    this.fields = sorting_fields.map((i) => i.meta.Field_Name)
     this.sorting_fields = sorting_fields
   }
 
   fetch_meta = async (query_params, controller) => {
-    let sorting_fields
-    if (this.fields===undefined && this.sorting_fields===undefined){
+    if (this.fields === undefined && this.sorting_fields === undefined) {
       await this.get_value_count_fields()
     }
-    const {params, operations} = this.build_query(query_params)
-    let {response: bulk_response, duration} = await fetch_meta_post({
+    const { params, operations } = this.build_query(query_params)
+    const { response: bulk_response } = await fetch_meta_post({
       endpoint: '/bulk',
       body: params,
       signal: controller.signal,
     })
-    const result = this.parse_bulk_result({operations, bulk_response})
-
+    const result = this.parse_bulk_result({ operations, bulk_response })
     this.results = {
       metadata_search: result.metadata_search || this.results.metadata_search,
       value_count: result.value_count || this.results.value_count,
       count: result.count || this.results.count,
     }
-    return {table: this.table, model:this}
+    return { table: this.table, model: this }
   }
-
 }

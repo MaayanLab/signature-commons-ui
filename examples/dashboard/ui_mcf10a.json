@@ -1,0 +1,53 @@
+[
+  {
+    "landing": true,
+    "content": {
+      "header": "Signature Commons-MCF10A",
+      "metadata_placeholder": "Search over MCF10a datasets",
+      "text_1": "Explore an extensive collection of well-annotated MCF10a datasets",
+      "text_2": "Search across a broad gathering of perturbations",
+      "resource_pie_caption": "Sample Readout per Assay",
+      "library_name": "assay",
+      "preferred_name_singular": {
+        "libraries": "Assay",
+        "signatures": "Experimental Readout",
+        "entities": "Entity",
+        "resources": "Assay"
+      },
+      "signature_search": false,
+      "deactivate_download": true,
+      "deactivate_wordcloud": true,
+      "resource_name_from_library": "assay",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+      "search_terms": [
+        "MCF10A",
+        "IFNG",
+        "EGF",
+        "L1000"
+      ],
+      "bar_chart": {
+        "Field_Name": "ligand",
+        "Caption": "Experimental sample readouts per ligand"
+      }
+    }
+  },
+  {
+    "admin": true,
+    "content": {
+      "resource_pie_caption": "Signatures per Assay",
+      "bar_chart": {
+        "Field_Name": "ligand",
+        "Caption": "Experimental sample readouts per ligand"
+      },
+      "preferred_name_singular": {
+        "libraries": "Assay",
+        "signatures": "Experimental Readout",
+        "entities": "Entity",
+        "resources": "Assay"
+      },
+      "library_name": "assay",
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json"
+    }
+  }
+]
