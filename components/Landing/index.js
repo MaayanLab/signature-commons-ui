@@ -177,7 +177,7 @@ class LandingPage extends React.Component {
                 </Grid>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}</span>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.resource_pie_caption || 'Signatures per Resource'}</span>
                   </div>
                 </Grid>
               </Grid>
@@ -196,7 +196,7 @@ class LandingPage extends React.Component {
                 </Grid>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
+                    <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
                     <Selections
                       value={this.state.selected_pie}
                       values={Object.keys(this.props.piecounts).sort()}

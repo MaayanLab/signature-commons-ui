@@ -103,7 +103,7 @@ class SearchBoxWrapper extends React.Component {
               onClick={() => {
                 const input = {
                   type: 'Overlap',
-                  geneset: this.props.ui_values.LandingText.geneset_terms || example_geneset,
+                  geneset: this.props.ui_values.geneset_terms || example_geneset,
                 }
                 this.props.updateInput(input)
                 this.props.history.push({
@@ -118,7 +118,7 @@ class SearchBoxWrapper extends React.Component {
               onClick={() => {
                 const input = {
                   type: 'Overlap',
-                  geneset: this.props.ui_values.LandingText.weighted_geneset_terms || example_geneset_weighted,
+                  geneset: this.props.ui_values.weighted_geneset_terms || example_geneset_weighted,
                 }
                 this.props.updateInput(input)
                 this.props.history.push({
@@ -134,8 +134,8 @@ class SearchBoxWrapper extends React.Component {
               onClick={() => {
                 const input = {
                   type: 'Rank',
-                  up_geneset: this.props.ui_values.LandingText.up_set_terms || example_geneset_up,
-                  down_geneset: this.props.ui_values.LandingText.down_set_terms || example_geneset_down,
+                  up_geneset: this.props.ui_values.up_set_terms || example_geneset_up,
+                  down_geneset: this.props.ui_values.down_set_terms || example_geneset_down,
                 }
                 this.props.updateInput(input)
                 this.props.history.push({

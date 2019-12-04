@@ -49,8 +49,8 @@ const styles = (theme) => ({
 const mapStateToProps = (state) => {
   return { loading: state.loading,
     completed: state.completed,
-    examples: state.ui_values.LandingText.search_terms,
-    placeholder: state.ui_values.LandingText.metadata_placeholder,
+    examples: state.ui_values.search_terms,
+    placeholder: state.ui_values.metadata_placeholder,
     preferred_name: state.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
     MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
