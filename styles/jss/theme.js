@@ -121,6 +121,13 @@ export const landingStyle = (theme) => ({
     background: theme.palette.default.main,
     color: theme.palette.default.contrastText
   },
+  icon_light: {
+    float: 'right',
+    width: 75,
+    height: 75,
+    padding: 14,
+    color: "#424242",
+  },
   icon: {
     float: 'right',
     width: 75,
