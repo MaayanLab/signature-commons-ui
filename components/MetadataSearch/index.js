@@ -299,24 +299,28 @@ class MetadataSearch extends React.Component {
     const sorting_fields = model.sorting_fields
     const results = model.results
     if (sorting_fields === undefined || sorting_fields.length === 0 || results === undefined || results.value_count === undefined) return null
-    const filters = sorting_fields.map((field_item) => {
+    let filters = []
+    for (const field_item of sorting_fields ) {
       const value = results.value_count[field_item.meta.Field_Name]
       if (value === undefined) return null
       const stats = value.stats
-      return (
-        <Card key={field_item.meta.Field_Name}>
-          <ListItem button onClick={() => this.openFilter(field_item.meta.Field_Name)}>
-            <ListItemIcon>
-              <Icon className={`mdi ${field_item.meta.MDI_Icon} mdi-18px`} />
-            </ListItemIcon>
-            <ListItemText inset primary={field_item.meta.Preferred_Name} />
-          </ListItem>
-          <Collapse in={this.state.open[field_item.meta.Field_Name]} timeout="auto" unmountOnExit>
-            <MetaFilter stats={stats} schemas={this.state.schemas} field_name={field_item.meta.Field_Name} parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1} />
-          </Collapse>
-        </Card>
-      )
-    })
+      if (Object.keys(stats).length > 0){
+        const filter = (
+          <Card key={field_item.meta.Field_Name}>
+            <ListItem button onClick={() => this.openFilter(field_item.meta.Field_Name)}>
+              <ListItemIcon>
+                <Icon className={`mdi ${field_item.meta.MDI_Icon} mdi-18px`} />
+              </ListItemIcon>
+              <ListItemText inset primary={field_item.meta.Preferred_Name} />
+            </ListItem>
+            <Collapse in={this.state.open[field_item.meta.Field_Name]} timeout="auto" unmountOnExit>
+              <MetaFilter stats={stats} schemas={this.state.schemas} field_name={field_item.meta.Field_Name} parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1} />
+            </Collapse>
+          </Card>
+        )
+        filters = [...filters, filter]
+      }
+    }
     return <List>{filters}</List>
   }
 
