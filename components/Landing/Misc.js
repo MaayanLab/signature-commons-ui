@@ -26,9 +26,6 @@ const meta_default_icon = 'mdi-creation'
 
 export const BottomLinks = ({ classes, width, theme, ...props }) => {
   const background = Color(theme.palette.default.main)
-  console.log(background)
-  console.log(theme.palette.default.main)
-  console.log(background.isDark())
   return (
     <Grid container
       spacing={24}

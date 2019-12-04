@@ -10,6 +10,7 @@ const model_mapper = {
 }
 
 export function build_where({ search, filters, order }) {
+  if (search.length === 0 && filters===undefined && order===undefined) return undefined
   let where = {}
   let andClauses = []
   let orClauses = []
