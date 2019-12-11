@@ -216,10 +216,8 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
-                <span className="mdi mdi-cloud-search mdi-36px"/>
-                &nbsp;&nbsp;
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              <Typography variant="h4" align={'center'} color="inherit">
+              {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={`${process.env.PREFIX}${props.ui_values.header_info.icon.src}`} />{props.ui_values.header_info.header_right}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -247,10 +245,8 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
-                <span className="mdi mdi-cloud-search mdi-36px"/>
-                &nbsp;&nbsp;
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              <Typography variant="h4" color={"inherit"} align={'center'}>
+              {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={`${process.env.PREFIX}${props.ui_values.header_info.icon.src}`} />{props.ui_values.header_info.header_right}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -272,10 +268,8 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
-                <span className="mdi mdi-cloud-search mdi-36px"/>
-                &nbsp;&nbsp;
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              <Typography variant="h4" align={'center'} color="inherit">
+                {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={`${process.env.PREFIX}${props.ui_values.header_info.icon.src}`} />{props.ui_values.header_info.header_right}
               </Typography>
             </Grid>
             <Grid item xs={12}>
