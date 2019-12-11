@@ -22,7 +22,6 @@ const mapStateToProps = (state, ownProps) => {
 const styles = theme => ({
   grow: {
     flexGrow: 1,
-    marginBottom: 10
   },
   header: {
     whiteSpace: 'nowrap',
@@ -115,28 +114,34 @@ class Header extends React.Component {
         <AppBar position="static" color="primary">
           <Toolbar>
             <Hidden smDown>
-              <Typography variant="h4" color="inherit" className={classes.grow}>
-                  <Link
-                    to="/"
-                    className={classes.header}
-                  >
-                  {this.props.ui_values.header_left || ''}<img {...this.props.ui_values.favicon} src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} />{this.props.ui_values.header_right || ' Signature Commons'}
-                  </Link>
-                </Typography>
+              { [this.props.ui_values.nav.MetadataSearch.endpoint, this.props.ui_values.nav.SignatureSearch.endpoint + "/Overlap", this.props.ui_values.nav.SignatureSearch.endpoint + "/Rank"].indexOf(this.props.location.pathname) > -1 ?
+                <div className={classes.grow}/>:
+                <Typography variant="h4" color="inherit" className={classes.grow}>
+                    <Link
+                      to="/"
+                      className={classes.header}
+                    >
+                    {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={`${process.env.PREFIX}${this.props.ui_values.header_info.icon.src}`} />{this.props.ui_values.header_info.header_right}
+                    </Link>
+                  </Typography>
+                }
                 <Nav classes={classes} {...rest}/>
               </Hidden>
               <Hidden mdUp>
               <Button edge="start" className={classes.menuButton} onClick={this.toggleDrawer} color="inherit" aria-label="menu">
                 <MenuIcon />
               </Button>
-              <Typography variant="h4" align="center" color="inherit" className={classes.grow}>
-                <Link
-                  to="/"
-                  className={classes.header}
-                >
-                {this.props.ui_values.header_left || ''}<img {...this.props.ui_values.favicon} src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} />&nbsp; {this.props.ui_values.header_right || 'Signature Commons'}
-                </Link>
-              </Typography>
+              {[this.props.ui_values.nav.MetadataSearch.endpoint, this.props.ui_values.nav.SignatureSearch.endpoint + "/Overlap", this.props.ui_values.nav.SignatureSearch.endpoint + "/Rank"].indexOf(this.props.location.pathname) > -1 ?
+                <div className={classes.grow}/>:
+                <Typography variant="h4" color="inherit" className={classes.grow}>
+                  <Link
+                    to="/"
+                    className={classes.header}
+                  >
+                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={`${process.env.PREFIX}${this.props.ui_values.header_info.icon.src}`} />{this.props.ui_values.header_info.header_right}
+                  </Link>
+                </Typography>
+              }
               <SwipeableDrawer
                 open={this.state.open}
                 onClose={this.toggleDrawer}
@@ -195,7 +200,7 @@ class Header extends React.Component {
 //                 whiteSpace: 'nowrap',
 //               }}
 //             >
-//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header || 'Signature Commons'}
+//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header_info || 'Signature Commons'}
 //             </Link>
 //             <Link
 //               to="/"
@@ -204,7 +209,7 @@ class Header extends React.Component {
 //                 whiteSpace: 'nowrap',
 //               }}
 //             >
-//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header || 'Signature Commons'}
+//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header_info || 'Signature Commons'}
 //             </Link>
 //             <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
 //             <Nav id="nav-mobile" className="right hide-on-med-and-down" {...rest} />

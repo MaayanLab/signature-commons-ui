@@ -27,10 +27,10 @@ const styles = theme => ({
 const FooterLink = ({src, alt, href, title, classes, containerProps, imageProps}) => {
   if (href){
     return(
-      <Button href={href} style={{width: 200}} {...containerProps}>
+      <Button href={href} style={{width: 150}} {...containerProps}>
         <Grid container align={"center"}>
           <Grid item xs>
-            <img src={`${process.env.PREFIX}${src}`} alt={alt||title} style={{width: 200}} {...imageProps}/>
+            <img src={`${process.env.PREFIX}${src}`} alt={alt||title} style={{width: 150}} {...imageProps}/>
           </Grid>
           <Grid item xs>
             <Typography variant="caption" className={classes.footer_links}>{title}</Typography>
@@ -40,10 +40,10 @@ const FooterLink = ({src, alt, href, title, classes, containerProps, imageProps}
     )
   }else {
     return(
-      <Paper href={href} elevation={0} style={{width: 200, background:"inherit"}} {...containerProps}>
+      <Paper href={href} elevation={0} style={{width: 150, background:"inherit"}} {...containerProps}>
         <Grid container align={"center"}>
           <Grid item xs>
-            <img src={`${process.env.PREFIX}${src}`} alt={alt||title} style={{width: 200}} {...imageProps}/>
+            <img src={`${process.env.PREFIX}${src}`} alt={alt||title} style={{width: 150}} {...imageProps}/>
           </Grid>
           <Grid item xs>
             <Typography variant="caption" className={classes.footer_links}>{title}</Typography>

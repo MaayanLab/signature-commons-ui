@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch';
 
-const style = {
+const style = theme => ({
   chiplabel: {
     'maxWidth': 100,
     'overflow': 'hidden',
@@ -21,7 +21,12 @@ const style = {
     maxHeight: 200,
     marginBottom: 10,
   },
-}
+  submit: {
+    '&:disabled': {
+      background: theme.palette.secondary.light,
+    }
+  }
+})
 
 const mapStateToProps = (state) => {
   return {
@@ -44,7 +49,7 @@ const Geneset = (props) => (
               }
             }
             value="sigsearch"
-            color="primary"
+            color="secondary"
           />
             Up and Down Gene Sets
         </label>
@@ -87,7 +92,7 @@ const UpDownGeneset = (props) => (
               props.toggleInput('Overlap')
             }}
             value="sigsearch"
-            color="primary"
+            color="secondary"
           />
             Up and Down Gene Sets
         </label>
@@ -211,11 +216,12 @@ class GenesetSearchBox extends React.Component {
         <SearchBox {...this.props} />
         <div className="col s12 center">
           <Button
+            className={this.props.classes.submit}
             variant="contained"
             disabled={this.isEmpty() || this.props.loading} 
             type="submit"
             name="action"
-            color="primary"
+            color="secondary"
             onClick={call(this.props.submit, this.props.input)}
           >
             { this.props.loading ?
