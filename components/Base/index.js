@@ -45,7 +45,8 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
       <div className="root">
         <Head>
           <meta charSet="utf-8" />
-          <link rel="shortcut icon" href={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} />
+          <title>{this.props.ui_values.favicon.title}</title>
+          <link rel="shortcut icon" alt={this.props.ui_values.favicon.alt} href={`${process.env.PREFIX}${this.props.ui_values.favicon.src}`} />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
           {this.props.ui_values.font_families.map((family, ind)=>(
             <link href={family} key={ind} rel="stylesheet" type="text/css"/>
