@@ -27,7 +27,7 @@ import uuid5 from 'uuid5'
 import defaultTheme from '../theme-provider'
 import { createMuiTheme } from '@material-ui/core'
 import merge from 'deepmerge'
-
+import { darken, lighten } from '@material-ui/core/styles/colorManipulator'
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -48,7 +48,11 @@ export function *workInitializeSigcom(action) {
     yield put(fetchUIValuesSucceeded(ui_values))
     yield put(initializePreferredName(ui_values))
     const theme = createMuiTheme(merge(defaultTheme, ui_values.theme_mod))
+    const tonalOffset = theme.palette.tonalOffset
     theme.shadows[4] = theme.shadows[0]
+    theme.palette.default.dark = darken(theme.palette.default.main, tonalOffset*1.5)
+    theme.palette.default.light = lighten(theme.palette.default.main, tonalOffset)
+    // theme.palette.action.disabledBackground = theme.palette.secondary.light
     yield put(initializeTheme(theme))
 
     const sig_count = yield call(fetch_count, 'signatures')

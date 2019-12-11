@@ -5,8 +5,17 @@ const default_values = {
     font_families: [
       "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     ],
-    header_left: '',
-    header_right: ' Signature Commons',
+    header_info: {
+      header_left: '',
+      header_right: ' Signature Commons',
+      icon: {
+        src: "/static/favicon.ico",
+        alt: "Signature Commons",
+        style: {
+          width: 30
+      }
+      }
+    },
     text_1: 'Explore an extensive collection of well-annotated gene-sets and signatures',
     text_2: 'Search across a broad gathering of perturbations',
     text_3: 'By',
@@ -18,8 +27,9 @@ const default_values = {
     resource_pie_caption: 'Signatures per Resource',
     search_terms: ['MCF10A', 'Imatinib', 'ZNF830', 'STAT3', 'Neuropathy'],
     favicon: {
-      icon: "/static/favicon.ico",
-      width: 22
+      src: "/static/favicon.ico",
+      alt: "Signature Commons",
+      title: "Signature Commons"
     },
     nav: {
       MetadataSearch: {
