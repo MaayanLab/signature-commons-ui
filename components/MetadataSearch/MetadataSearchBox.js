@@ -14,10 +14,18 @@ const styles = (theme) => ({
     margin: theme.spacing.unit / 2,
   },
   defaultChip: {
-    ...theme.chipColors.default,
+    background: theme.palette.secondary.main,
+    color: theme.palette.secondary.contrastText,
+    '&:hover': {
+      background: theme.palette.secondary.dark,
+    }
   },
   defaultLightChip: {
-    ...theme.chipColors.defaultLight,
+    background: theme.palette.secondary.main,
+    color: theme.palette.secondary.contrastText,
+    '&:hover': {
+      background: theme.palette.secondary.dark,
+    }
   },
   notChip: {
     ...theme.chipColors.alert,
