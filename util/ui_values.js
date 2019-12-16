@@ -5,6 +5,11 @@ const default_values = {
     font_families: [
       "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     ],
+    favicon: {
+      src: "/static/favicon.ico",
+      alt: "Signature Commons",
+      title: "Signature Commons"
+    },
     header_info: {
       header_left: '',
       header_right: ' Signature Commons',
@@ -26,11 +31,6 @@ const default_values = {
     down_genes_placeholder: 'Genes that are down-regulated in signature or overlap with gene set',
     resource_pie_caption: 'Signatures per Resource',
     search_terms: ['MCF10A', 'Imatinib', 'ZNF830', 'STAT3', 'Neuropathy'],
-    favicon: {
-      src: "/static/favicon.ico",
-      alt: "Signature Commons",
-      title: "Signature Commons"
-    },
     nav: {
       MetadataSearch: {
         active: true,

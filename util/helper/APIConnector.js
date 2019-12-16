@@ -19,7 +19,7 @@ export function build_where({ search, filters, order }) {
     if (isUUID(q) || isUUID(q.substring(1).trim()) || isUUID(q.substring(3).trim())) {
       if (q.startsWith('!') || q.startsWith('-')) {
         // and not
-        andClauses = [...andClauses, { id: q.substring(1) }]
+        notClauses = [...andClauses, { id: {ne: q.substring(1)} }]
       } else if (q.toLowerCase().startsWith('or ')) {
         orClauses = [...orClauses, { id: q.substring(3) }]
       } else if (q.startsWith('|')) {

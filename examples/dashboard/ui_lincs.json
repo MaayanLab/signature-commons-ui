@@ -3,17 +3,25 @@
     "landing": true,
     "content": {
       "favicon": {
-        "icon": "/static/LINCS.ico",
-        "width": 60,
-        "style": {
-          "marginBottom": -15
-        }
+        "src": "/static/LINCS.ico",
+        "alt": "LINCS Datasets and Signatures",
+        "title": "LINCS Datasets and Signatures"
+      },
+      "header_info": {
+          "icon": {
+              "src": "/static/LINCS.ico",
+              "alt": "lincs",
+              "style": {
+                "width": 60,
+                "marginBottom": -15
+              }
+          },
+          "header_right": " LINCS Datasets and Signatures"
       },
       "font_families": [
         "https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900",
         "https://fonts.googleapis.com/css?family=Archivo+Narrow"
       ],
-      "header_right": " LINCS Datasets and Signatures",
       "metadata_placeholder": "Search over LINCS datasets and signatures",
       "text_1": "Explore an extensive collection of LINCS datasets and signatures",
       "preferred_name_singular": {
@@ -62,10 +70,10 @@
       "theme_mod": {
         "palette": {
           "primary": {
-            "main": "#3a5278"
+            "main": "rgb(100,150,200)"
           },
           "secondary": {
-            "main": "#F37F21"
+            "main": "rgb(204, 204, 153)"
           },
           "default": {
             "main": "#555",
