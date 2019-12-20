@@ -4,6 +4,7 @@ import { Route, Switch, Redirect } from 'react-router-dom'
 import dynamic from 'next/dynamic'
 import { connect } from 'react-redux'
 import { MuiThemeProvider } from '@material-ui/core'
+import Grid from '@material-ui/core/Grid'
 
 import Base from '../../components/Base'
 import Landing from '../Landing'
@@ -14,6 +15,7 @@ import SignatureSearch from '../SignatureSearch'
 import Pages from '../Pages'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
+import { base_url as data_url } from '../../util/fetch/data'
 import theme from '../../util/theme-provider'
 import '../../styles/swagger.scss'
 
@@ -51,12 +53,24 @@ class Home extends React.PureComponent {
   // )
 
   api = (props) => (
-    <SwaggerUI
-      url={`${meta_url}/openapi.json`}
-      deepLinking={true}
-      displayOperationId={true}
-      filter={true}
-    />
+    <Grid container>
+      <Grid xs={12} lg={6}>
+        <SwaggerUI
+          url={`${meta_url}/openapi.json`}
+          deepLinking={true}
+          displayOperationId={true}
+          filter={true}
+        />
+      </Grid>
+      <Grid xs={12} lg={6}>
+        <SwaggerUI
+          url={`${data_url}/swagger.yml`}
+          deepLinking={true}
+          displayOperationId={true}
+          filter={true}
+        />
+      </Grid>
+    </Grid>
   )
 
   // collection = (props) => (
