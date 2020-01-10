@@ -23,10 +23,10 @@ const style = theme => ({
     },
   },
   defaultChip: {
-    background: theme.palette.secondary.main,
-    color: theme.palette.secondary.contrastText,
+    background: theme.palette.defaultChip.main,
+    color: theme.palette.defaultChip.contrastText,
     '&:hover': {
-      background: theme.palette.secondary.dark,
+      background: theme.palette.defaultChip.dark,
     }
   },
   card: {
@@ -34,6 +34,10 @@ const style = theme => ({
     maxHeight: 200,
     marginBottom: 10,
   },
+  submit: {
+    background: theme.palette.defaultButton.main,
+    color: theme.palette.defaultButton.contrastText,
+  }
 })
 
 const mapStateToProps = (state) => {

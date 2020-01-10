@@ -25,7 +25,7 @@ const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/
 const meta_default_icon = 'mdi-creation'
 
 export const BottomLinks = ({ classes, width, theme, ...props }) => {
-  const background = Color(theme.palette.default.main)
+  const background = Color(theme.palette.defaultCard.main)
   return (
     <Grid container
       spacing={24}

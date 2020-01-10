@@ -79,8 +79,8 @@ export const landingStyle = (theme) => ({
   },
   topCard: {
     padding: '20px',
-    background: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    background: theme.palette.defaultCard.main,
+    color: theme.palette.defaultCard.contrastText,
   },
   stretched: {
     width: '80%',
@@ -118,10 +118,10 @@ export const landingStyle = (theme) => ({
     zIndex: 100,
   },
   bottomLink: {
-    background: theme.palette.default.main,
-    color: theme.palette.default.contrastText,
+    background: theme.palette.defaultCard.main,
+    color: theme.palette.defaultCard.contrastText,
     '&:hover': {
-      background: theme.palette.default.dark,
+      background: theme.palette.defaultCard.dark,
     }
   },
   icon_light: {

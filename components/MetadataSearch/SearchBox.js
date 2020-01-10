@@ -177,7 +177,6 @@ export class SearchBox extends React.Component {
               </Grid>
               <Grid item xs={12} style={{ textAlign: 'center' }}>
                 <Button variant="contained"
-                  color="secondary"
                   style={{ marginTop: 5 }}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
@@ -212,7 +211,7 @@ export class SearchBox extends React.Component {
                   <Tooltip title={this.props.Info || <Info {...this.props}/>}
                     interactive placement="left-start"
                     classes={{ tooltip: this.props.classes.tooltip }}>
-                    <Button className={this.props.classes.tooltipButton} color="secondary" >
+                    <Button className={this.props.classes.tooltipButton} >
                       <span className="mdi mdi-information mdi-24px" />
                     </Button>
                   </Tooltip>
@@ -220,7 +219,7 @@ export class SearchBox extends React.Component {
                 <Input renderChips={this.renderChips} {...this.props} />
                 <span>&nbsp;&nbsp;</span>
                 <Button variant="contained"
-                  color="secondary"
+                  className={this.props.classes.button}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
                   }>
@@ -249,7 +248,7 @@ export class SearchBox extends React.Component {
               <Tooltip title={this.props.Info || <Info {...this.props}/>}
                 interactive placement="left-start"
                 classes={{ tooltip: this.props.classes.tooltip }}>
-                <Button className={this.props.classes.tooltipButton} color="secondary">
+                <Button className={this.props.classes.tooltipButton}>
                   <span className="mdi mdi-information mdi-24px mdi-dark" />
                 </Button>
               </Tooltip>
