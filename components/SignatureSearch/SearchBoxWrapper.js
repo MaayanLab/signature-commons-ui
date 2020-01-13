@@ -98,7 +98,7 @@ class SearchBoxWrapper extends React.Component {
     return (
       <div className="row">
         <Switch>
-          <Route path="/SignatureSearch/:type" component={(props) =>
+          <Route path="/SignatureSearch/:type" render={(props) =>
             <GenesetSearchBox {...props}
               input={this.props.input}
               updateInput={this.props.updateInput}
