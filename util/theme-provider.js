@@ -30,6 +30,7 @@ const defaultTheme = {
       disabled: grey[300],
       light: blue[300],
       main: blue[500],
+      dark: blue[700],
       contrastText: '#FFF'
     },
     defaultChip: {

@@ -24,6 +24,9 @@ const style = theme => ({
   submit: {
     background: theme.palette.defaultButton.main,
     color: theme.palette.defaultButton.contrastText,
+    '&:hover': {
+      background: theme.palette.defaultButton.dark,
+    },
     '&:disabled': {
       background: theme.palette.defaultButton.disabled,
     },

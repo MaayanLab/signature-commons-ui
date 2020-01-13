@@ -44,6 +44,9 @@ const styles = (theme) => ({
   button: {
     background: theme.palette.defaultButton.main,
     color: theme.palette.defaultButton.contrastText,
+    '&:hover': {
+      background: theme.palette.defaultButton.dark,
+    }
   },
   icon: {
     paddingBottom: 35,
