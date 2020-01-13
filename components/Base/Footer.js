@@ -88,11 +88,13 @@ function Footer(props) {
             <FooterLink classes={classes} {...itemProps} />
           </Grid>
         ))}
-        <Grid item>
+        {ui_values.powered ? 
+          <Grid item>
             <FooterLink classes={classes} 
               src={powered_src}
               alt="sigcom" />
-          </Grid>
+          </Grid>: null
+        }
       </Grid>
     </Paper>
   )
