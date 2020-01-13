@@ -63,7 +63,7 @@ const default_values = {
     },
     footer_links: [],
     theme_mod: {},
-    deactivate_powered: false,
+    powered: true,
     github: 'https://github.com/dcic/signature-commons-ui',
     github_issues: 'https://github.com/dcic/signature-commons-ui/issues',
     deactivate_download: true,

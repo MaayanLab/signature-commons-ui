@@ -22,7 +22,6 @@ const defaultTheme = {
     },
     defaultCard: {
       main: grey[400],
-      contrastText: "#FFF"
     },
     defaultButton: {
       disabled: grey[300],
@@ -30,7 +29,6 @@ const defaultTheme = {
     },
     defaultChip: {
       main: grey[500],
-      contrastText: "#FFF"
     },
     defaultChipLight: {
       main: grey[300]
