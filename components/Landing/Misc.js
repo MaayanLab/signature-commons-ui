@@ -206,7 +206,6 @@ export const StatDiv = ({ classes, width, ...props }) => {
 
 export const SearchCard = ({ classes, width, ...props }) => {
   const { SignatureSearch, MetadataSearch } = props.ui_values.nav
-  console.log(props)
   if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
