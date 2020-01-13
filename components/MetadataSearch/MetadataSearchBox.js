@@ -21,10 +21,10 @@ const styles = (theme) => ({
     }
   },
   defaultLightChip: {
-    background: theme.palette.defaultChip.light,
-    color: theme.palette.defaultChip.contrastTextDark,
+    background: theme.palette.defaultChipLight.main,
+    color: theme.palette.defaultChipLight.contrastText,
     '&:hover': {
-      background: theme.palette.defaultChip.dark,
+      background: theme.palette.defaultChipLight.dark,
     }
   },
   notChip: {
