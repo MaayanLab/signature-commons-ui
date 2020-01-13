@@ -19,27 +19,23 @@ const defaultTheme = {
     },
     default: {
       main: grey[200],
-      contrastText: '#000'
     },
     defaultCard: {
       main: grey[400],
-      dark: grey[500],
-      contrastText: '#FFF'
+      contrastText: "#FFF"
     },
     defaultButton: {
       disabled: grey[300],
-      light: blue[300],
       main: blue[500],
-      dark: blue[700],
-      contrastText: '#FFF'
     },
     defaultChip: {
-      light: grey[300],
       main: grey[500],
-      dark: grey[700],
-      contrastText: "#FFF",
-      contrastTextDark: "#000"
+      contrastText: "#FFF"
+    },
+    defaultChipLight: {
+      main: grey[300]
     }
+
   },
   chipColors: {
     warning: { backgroundColor: amber[300], color: '#000' },

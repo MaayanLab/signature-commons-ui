@@ -8,6 +8,7 @@ import { resolve_entities,
   fetch_all_as_dictionary } from '../helper/fetch_methods'
 import { fetch_count } from '../helper/server_side'
 import { parse_entities } from '../helper/misc'
+import { fill_palette } from '../helper/theme_filler'
 import { fetchMetaDataSucceeded,
   fetchMetaDataFailed,
   fetchMetaDataAborted,
@@ -28,7 +29,7 @@ import uuid5 from 'uuid5'
 import defaultTheme from '../theme-provider'
 import { createMuiTheme } from '@material-ui/core'
 import merge from 'deepmerge'
-import { darken, lighten } from '@material-ui/core/styles/colorManipulator'
+import { darken, getContrastRatio, lighten } from '@material-ui/core/styles/colorManipulator'
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -49,10 +50,30 @@ export function *workInitializeSigcom(action) {
     yield put(fetchUIValuesSucceeded(ui_values))
     yield put(initializePreferredName(ui_values))
     const theme = createMuiTheme(merge(defaultTheme, ui_values.theme_mod))
-    const tonalOffset = theme.palette.tonalOffset
     theme.shadows[4] = theme.shadows[0]
-    theme.palette.default.dark = darken(theme.palette.default.main, tonalOffset*1.5)
-    theme.palette.default.light = lighten(theme.palette.default.main, tonalOffset)
+    // if (theme.palette.default.dark===undefined){
+    //   theme.palette.default.dark = darken(theme.palette.default.main, tonalOffset*1.5)
+    // }
+    // if (theme.palette.default.dark===undefined){
+    //   theme.palette.default.light = lighten(theme.palette.default.main, tonalOffset)
+    // }
+    const tonalOffset = theme.palette.tonalOffset
+    const contrastThreshold = theme.palette.contrastThreshold
+    const default_palette = theme.palette.default
+    theme.palette.default = fill_palette(default_palette, tonalOffset, contrastThreshold)
+    
+    const defaultCard = theme.palette.defaultCard
+    theme.palette.defaultCard = fill_palette(defaultCard, tonalOffset, contrastThreshold)
+    
+    const defaultButton = theme.palette.defaultButton
+    theme.palette.defaultButton = fill_palette(defaultButton, tonalOffset, contrastThreshold)
+
+    const defaultChip = theme.palette.defaultChip
+    theme.palette.defaultChip = fill_palette(defaultChip, tonalOffset, contrastThreshold)
+    
+    const defaultChipLight = theme.palette.defaultChipLight
+    theme.palette.defaultChipLight = fill_palette(defaultChipLight, tonalOffset, contrastThreshold)
+
     // theme.palette.action.disabledBackground = theme.palette.secondary.light
     yield put(initializeTheme(theme))
 
