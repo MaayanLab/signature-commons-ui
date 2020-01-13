@@ -16,7 +16,6 @@ import Pages from '../Pages'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
-import theme from '../../util/theme-provider'
 import '../../styles/swagger.scss'
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
