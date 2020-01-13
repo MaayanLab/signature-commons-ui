@@ -69,7 +69,7 @@ function Footer(props) {
     powered_src = "/static/powered_light.png"
   }
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} elevation={0} square >
       <Grid
         container
         direction="row"
