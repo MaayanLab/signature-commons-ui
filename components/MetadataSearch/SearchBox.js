@@ -156,8 +156,11 @@ export class SearchBox extends React.Component {
     return (
       <Chip
         key={key}
+        style={{
+          maxWidth: 300,
+        }}
         avatar={<Icon className={`${this.props.classes.icon} mdi ${chip_icon} mdi-18px`} />}
-        label={chip_value}
+        label={chip_value.length < 25 ? chip_value: chip_value.substring(0,22)+"..."}
         onDelete={handleDelete}
         className={`${className} ${chip_class}`}
       />
