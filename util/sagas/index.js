@@ -19,6 +19,7 @@ import { fetchMetaDataSucceeded,
   fetchUIValuesSucceeded,
   initializeTheme,
   initializePreferredName,
+  updateInput
  } from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
@@ -370,9 +371,10 @@ export function *workFindSignatureFromId(action) {
     return
   }
   const controller = new AbortController()
+  const { id, search_type } = action
   try {
-    const { id, search_type } = action
     const data = yield call(get_signature_data, { item: id, search_type })
+    console.log(data)
     const input = {
       type: search_type,
       ...data,
@@ -409,6 +411,22 @@ export function *workFindSignatureFromId(action) {
     }
   } catch (error) {
     console.log(error)
+    let input = ({
+      type: search_type
+    })
+    if (search_type==='Overlap') {
+      input = {
+        ...input,
+        geneset: ''
+      }
+    } else {
+      input = {
+        ...input,
+        up_geneset: '',
+        down_geneset: ''
+      }
+    }
+    yield put(updateInput(input))
     yield put(findSignaturesFailed(error))
     controller.abort()
   } finally {
