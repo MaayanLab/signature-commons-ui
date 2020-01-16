@@ -58,6 +58,16 @@ export function fetchMetaDataFromSearchBox(params) {
 //   return {type: action_definitions.PAGINATE_METADATA_FAILED, error}
 // }
 
+// Snackbar
+export function reportError(error) {
+  return { type: action_definitions.REPORT_ERROR,
+    error,
+  }
+}
+
+export function closeSnackBar() {
+  return { type: action_definitions.CLOSE_SNACK_BAR }
+}
 
 // Metadata search
 export function fetchMetaData(params) {

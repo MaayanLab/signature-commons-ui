@@ -29,7 +29,8 @@ export const initialState = {
     libraries_count: 'Library.count',
   },
   theme: null,
-  ui_values: null
+  ui_values: null,
+  error_message: null,
 }
 
 function rootReducer(state = initialState, action) {
@@ -213,6 +214,19 @@ function rootReducer(state = initialState, action) {
     return {
       ...state,
       loading_signature: false,
+    }
+  }
+  if (action.type === action_definitions.REPORT_ERROR) {
+    console.log(action)
+    return {
+      ...state,
+      error_message: action.error.message,
+    }
+  }
+  if (action.type === action_definitions.CLOSE_SNACK_BAR) {
+    return {
+      ...state,
+      error_message: null,
     }
   }
   return state

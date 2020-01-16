@@ -20,7 +20,8 @@ import { fetchMetaDataSucceeded,
   fetchUIValuesSucceeded,
   initializeTheme,
   initializePreferredName,
-  updateInput
+  updateInput,
+  reportError
  } from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
@@ -101,6 +102,7 @@ export function *workInitializeSigcom(action) {
 
     yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     controller.abort()
   } finally {
@@ -157,6 +159,7 @@ export function *workFetchMetaData(action) {
     }, {})
     yield put(fetchMetaDataSucceeded(updated_models))
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     yield put(fetchMetaDataFailed(error))
     controller.abort()
@@ -292,6 +295,7 @@ export function *workMatchEntities(action) {
       yield put(updateResolvedEntities(input))
     }
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     yield put(matchFailed(error))
     controller.abort()
@@ -368,6 +372,7 @@ export function *workFindSignature(action) {
       yield put(findSignaturesSucceeded(results))
     }
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     yield put(findSignaturesFailed(error))
     controller.abort()
@@ -395,7 +400,6 @@ export function *workFindSignatureFromId(action) {
   const { id, search_type } = action
   try {
     const data = yield call(get_signature_data, { item: id, search_type })
-    console.log(data)
     const input = {
       type: search_type,
       ...data,
@@ -431,6 +435,7 @@ export function *workFindSignatureFromId(action) {
       yield put(findSignaturesSucceeded(results))
     }
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     let input = ({
       type: search_type
