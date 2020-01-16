@@ -9,6 +9,8 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import IconButton from './IconButton'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { connect } from 'react-redux'
+import { reportError } from '../util/redux/actions'
 
 import {
   download_signature_json,
@@ -28,6 +30,13 @@ const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
+function mapDispatchToProps(dispatch) {
+  return {
+    reportError: (error) => {
+      dispatch(reportError(error))
+    }
+  }
+}
 
 const EnrichrDialog = (props) => {
   const {
@@ -84,7 +93,7 @@ async function submit_sigcom(item, history) {
   }
 }
 
-export default class Options extends React.Component {
+class Options extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -121,44 +130,51 @@ export default class Options extends React.Component {
       enrichr_ready: false,
       enrichr_status: 'Sending to enrichr',
     }, async () => {
-      const schemas = await fetch_schemas()
-      const signature = await get_signature({ item })
-      let data
-      if (signature.library.dataset_type === 'rank_matrix') {
-        data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
-      } else {
-        data = signature.data.map((d) => get_label(d, schemas))
+      try {
+        const schemas = await fetch_schemas()
+        const signature = await get_signature({ item })
+        let data
+        if (signature.library.dataset_type === 'rank_matrix') {
+          data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
+        } else {
+          data = signature.data.map((d) => get_label(d, schemas))
+        }
+        const filename = get_label(signature, schemas)
+        const formData = new FormData()
+        formData.append('list', data.join('\n'))
+        formData.append('description', filename + '')
+        const response = await (await fetch(`${ENRICHR_URL}/addList`, {
+          method: 'POST',
+          body: formData,
+        })).json()
+        this.setState((prevState) => ({
+          enrichr_ready: true,
+          enrichr_status: 'Analysis is ready',
+          enrichr_id: response['shortId'],
+        })) 
+      } catch (error) {
+        this.props.reportError(error)
+        this.setState((prevState) => ({
+          enrichr_open: false
+        })) 
       }
-      const filename = get_label(signature, schemas)
-      const formData = new FormData()
-      formData.append('list', data.join('\n'))
-      formData.append('description', filename + '')
-      const response = await (await fetch(`${ENRICHR_URL}/addList`, {
-        method: 'POST',
-        body: formData,
-      })).json()
-      this.setState((prevState) => ({
-        enrichr_ready: true,
-        enrichr_status: 'Analysis is ready',
-        enrichr_id: response['shortId'],
-      }))
       // window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
     })
   }
 
   handleDownloadJson = () => {
     this.handleClose()
-    download_signature_json(this.props.item)
+    download_signature_json(this.props.item, undefined, undefined, this.props.reportError)
   }
 
   handleDownloadText = () => {
     this.handleClose()
-    download_signatures_text(this.props.item)
+    download_signatures_text(this.props.item, undefined, undefined, this.props.reportError)
   }
 
   handleDownloadRanked = () => {
     this.handleClose()
-    download_ranked_signatures_text(this.props.item)
+    download_ranked_signatures_text(this.props.item, undefined, undefined, this.props.reportError)
   }
 
   handleSubmitSigcom = () => {
@@ -178,17 +194,17 @@ export default class Options extends React.Component {
 
   handleDownloadLibraryJson = () => {
     this.handleClose()
-    download_library_json(this.props.item)
+    download_library_json(this.props.item, undefined, undefined, this.props.reportError)
   }
 
   handleDownloadLibraryGmt = () => {
     this.handleClose()
-    download_library_gmt(this.props.item)
+    download_library_gmt(this.props.item, undefined, undefined, this.props.reportError)
   }
 
   handleDownloadLibraryTsv = () => {
     this.handleClose()
-    download_library_tsv(this.props.item)
+    download_library_tsv(this.props.item, undefined, undefined, this.props.reportError)
   }
 
   render = () => {
@@ -307,3 +323,5 @@ export default class Options extends React.Component {
     }
   }
 }
+
+export default connect(null, mapDispatchToProps)(Options)
