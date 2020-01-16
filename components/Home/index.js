@@ -5,6 +5,12 @@ import dynamic from 'next/dynamic'
 import { connect } from 'react-redux'
 import { MuiThemeProvider } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
+import ErrorIcon from '@material-ui/icons/Error';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import { withStyles } from '@material-ui/core/styles';
 
 import Base from '../../components/Base'
 import Landing from '../Landing'
@@ -16,6 +22,7 @@ import Pages from '../Pages'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
+import { closeSnackBar, initializeTheme } from '../../util/redux/actions'
 import '../../styles/swagger.scss'
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
@@ -24,6 +31,7 @@ const mapStateToProps = (state) => {
   return {
     ui_values: state.ui_values,
     theme: state.theme,
+    error_message: state.error_message,
   }
 }
 
@@ -31,16 +39,64 @@ function mapDispatchToProps(dispatch) {
   return {
     initializeTheme: (theme) => {
       dispatch(initializeTheme(theme))
+    },
+    closeSnackBar: () => {
+      dispatch(closeSnackBar())
     }
   }
 }
+
+const snackStyles = theme => ({
+  error: {
+    backgroundColor: theme.palette.error.dark,
+  },
+  icon: {
+    fontSize: 20,
+  },
+  iconVariant: {
+    opacity: 0.9,
+    marginRight: theme.spacing.unit,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+});
+
+const SigcomSnackbar = withStyles(snackStyles)((props) => {
+  const { classes, message, onClose, variant, ...other } = props;
+
+  return (
+    <SnackbarContent
+      className={`${classes.error}`}
+      aria-describedby="client-snackbar"
+      message={
+        <span id="client-snackbar" className={classes.message}>
+          <ErrorIcon className={`${classes.icon} ${classes.iconVariant}`} />
+          {message}
+        </span>
+      }
+      action={[
+        <IconButton
+          key="close"
+          aria-label="Close"
+          color="inherit"
+          onClick={onClose}
+        >
+          <CloseIcon className={classes.icon} />
+        </IconButton>,
+      ]}
+      {...other}
+    />
+  )
+})
 
 class Home extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
       cart: Set(),
-      theme: null
+      theme: null,
     }
   }
 
@@ -119,6 +175,20 @@ class Home extends React.PureComponent {
     }
     return (
       <MuiThemeProvider theme={this.props.theme}>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.props.error_message!==null}
+          autoHideDuration={6000}
+          onClose={this.props.closeSnackBar}
+        >
+          <SigcomSnackbar
+            onClose={this.handleClose}
+            message={this.props.error_message}
+          />
+        </Snackbar>
         <Base location={this.props.location}
           footer_type={this.props.ui_values.footer_type}
           github={this.props.ui_values.github}
