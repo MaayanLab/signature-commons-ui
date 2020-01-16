@@ -70,14 +70,22 @@
       "theme_mod": {
         "palette": {
           "primary": {
-            "main": "rgb(100,150,200)"
+            "main": "#3a5278"
           },
           "secondary": {
             "main": "rgb(204, 204, 153)"
           },
           "default": {
-            "main": "#555",
+            "main": "#555"
+          },
+          "defaultCard": {
             "contrastText": "#FFF"
+          },
+          "defaultChip": {
+            "contrastText": "#FFF"
+          },
+          "defaultButton": {
+            "main": "#3a5278"
           }
         },
         "typography": {
@@ -85,10 +93,6 @@
         }
       },
       "deactivate_download": false,
-      "bar_chart": {
-        "Field_Name": "types.method.value",
-        "Caption": "Assays"
-      },
       "bar_chart_style": {
         "ResponsiveContainer": {
           "height":420,

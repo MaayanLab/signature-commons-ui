@@ -8,7 +8,7 @@
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/${library.meta.icon}",
+      "src": "${PREFIX}/${library.meta.icon || library.meta.creators[0].affiliations[0].extraProperties[0].values[0]}",
       "alt": "${library.dataset}",
       "text": "${library.dataset}",
       "priority": 1,
