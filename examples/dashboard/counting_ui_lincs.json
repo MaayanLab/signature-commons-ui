@@ -9,6 +9,18 @@
     "Filter": true
   },
   {
+    "Field_Name": "resource",
+    "Preferred_Name": "Data and Signature Generation Centers",
+    "Preferred_Name_Singular": "Data and Signature Generation Center",
+    "Type": "string",
+    "MDI_Icon": "mdi-certificate",
+    "Table": "signatures",
+    "Parent_Table": "libraries",
+    "Grandparent_Table": "resources",
+    "Parent_Meta": true,
+    "Filter": true
+  },
+  {
     "Field_Name": "meta.platform",
     "Preferred_Name": "Platforms",
     "Preferred_Name_Singular": "Platform",

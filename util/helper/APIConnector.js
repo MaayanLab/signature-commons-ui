@@ -1,5 +1,5 @@
 // This contains classes for querying a table with relevant filters
-import { fetch_meta_post } from '../fetch/meta'
+import { fetch_meta_post, fetch_meta } from '../fetch/meta'
 import isUUID from 'validator/lib/isUUID'
 
 const model_mapper = {
@@ -154,6 +154,22 @@ export default class Model {
 
   set_where = ({ search, filters, order }) => {
     this.search = search
+    // If we are filtering by grandparents e.g. signatures of a resource,
+    // We first note the children of those grandparents (i.e. all possible parents)
+    // and filter by the parents instead
+    if (filters!==undefined &&
+        this.grandparent!==undefined &&
+        filters[this.grandparent]!==undefined){
+      let parents = filters[this.parent] || []
+      for (const i of filters[this.grandparent]){
+        parents = [...parents, ...this.grandparent_to_parent[i]]
+      }
+      filters = {
+        ...filters,
+        [this.parent]: parents
+      }
+      delete filters[this.grandparent]
+    }
     this.filters = filters
     this.where = build_where({ search, filters, order })
   }
@@ -328,12 +344,12 @@ export default class Model {
       const [m, ...r] = response
 
       response = [...r]
-      result = {
-        ...result,
-        value_count: this.sorting_fields.reduce((acc, s) => {
-          const field_name = s.meta.Field_Name
-          acc[field_name] = {
-            schema: s,
+      let value_count = {}
+      for (const i of this.sorting_fields){
+        if (i.meta.Parent_Meta===undefined || !i.meta.Parent_Meta){
+          const field_name = i.meta.Field_Name
+          value_count[field_name] = {
+            schema: i,
             stats: Object.entries(m.response[field_name] || {}).reduce((acc_1,[key, val])=>{
               if (key==="null"){
                 return acc_1
@@ -342,8 +358,31 @@ export default class Model {
               return acc_1
             },{}),
           }
-          return acc
-        }, {}),
+        }
+      }
+      let parents
+      if (this.grandparent!==undefined){
+        parents = m.response[this.parent]
+      }
+
+      result = {
+        ...result,
+        value_count,
+        parents,
+        // value_count: this.sorting_fields.reduce((acc, s) => {
+        //   const field_name = s.meta.Field_Name
+        //   acc[field_name] = {
+        //     schema: s,
+        //     stats: Object.entries(m.response[field_name] || {}).reduce((acc_1,[key, val])=>{
+        //       if (key==="null"){
+        //         return acc_1
+        //       }
+        //       acc_1[key] = val
+        //       return acc_1
+        //     },{}),
+        //   }
+        //   return acc
+        // }, {}),
       }
     }
     if (count) {
@@ -359,6 +398,62 @@ export default class Model {
     return result
   }
 
+  // This function fetches the grandparents metadata (provided that it is ever needed)
+  // It also provides a mapping between parents and grandparents
+  fetch_grandparents_meta = async() => {
+    const { response } = await fetch_meta({
+      endpoint: `/${this.grandparent_schema.meta.Grandparent_Table}`,
+    })
+
+    // Get grandparents meta
+    this.grandparents_meta = {}
+    for (const i of response){
+      this.grandparents_meta[i.id] = i
+    }
+    this.parent_to_grandparent = {}
+    this.grandparent_to_parent = {}
+    // Get a mapping of the parent to the respective grandparent and vice versa
+    for (const [key,val] of Object.entries(this.parents_meta)){
+      const grandparent_id = val[this.grandparent]
+      this.parent_to_grandparent[key] = grandparent_id
+      if (this.grandparent_to_parent[grandparent_id]===undefined){
+        this.grandparent_to_parent[grandparent_id] = [key]
+      }else {
+        this.grandparent_to_parent[grandparent_id] = [...this.grandparent_to_parent[grandparent_id], key]
+      }
+
+    }
+  }
+
+  fetch_grandparent = async(parents) => {
+    if (this.grandparents_meta === undefined){
+      await this.fetch_grandparents_meta()
+    }
+    // const { response } = await fetch_meta({
+    //   endpoint: `/${this.grandparent_schema.meta.Parent_Table}/value_count`,
+    //   body: {
+    //     filter: {
+    //       where: {
+    //         id: {
+    //           inq: Object.keys(parents)
+    //         },
+    //       },
+    //       fields: [field]
+    //     },
+    //   },
+    // })
+    const grandparent_count = {}
+    for (const [id,count] of Object.entries(parents)){
+      const grandparent_id = this.parent_to_grandparent[id]
+      if (grandparent_count[grandparent_id]===undefined){
+        grandparent_count[grandparent_id] = count
+      }else {
+        grandparent_count[grandparent_id] = grandparent_count[grandparent_id] + count
+      }
+    }
+    return {[this.grandparent]: grandparent_count}
+  }
+
   get_value_count_fields = async () => {
     const { response: sorting_fields } = await fetch_meta_post({
       endpoint: '/schemas/find',
@@ -372,13 +467,29 @@ export default class Model {
         },
       },
     })
-    this.fields = sorting_fields.map((i) => i.meta.Field_Name)
+    this.fields = []
+    for (const i of sorting_fields){
+      if (i.meta.Parent_Meta === undefined || !i.meta.Parent_Meta){
+        this.fields = [...this.fields, i.meta.Field_Name]
+      }
+      if (i.meta.Parent_Meta){
+        this.grandparent = i.meta.Field_Name
+        this.grandparent_schema = i
+      }
+    }
+    // If we are querying for the grandparent, make sure we know the parent
+    if (this.grandparent!==undefined && this.fields.indexOf(this.parent)===-1)
+      this.fields = [this.parent, ...this.fields]
+    // this.fields = sorting_fields.map((i) => i.meta.Field_Name)
     this.sorting_fields = sorting_fields
   }
 
   fetch_meta = async (query_params, controller) => {
     if (this.fields === undefined && this.sorting_fields === undefined) {
       await this.get_value_count_fields()
+    }
+    if (this.grandparent!==undefined && this.grandparents_meta === undefined){
+      await this.fetch_grandparents_meta()
     }
     const { params, operations } = this.build_query(query_params)
     const { response: bulk_response } = await fetch_meta_post({
@@ -391,6 +502,19 @@ export default class Model {
       metadata_search: result.metadata_search || this.results.metadata_search,
       value_count: result.value_count || this.results.value_count,
       count: result.count || this.results.count,
+    }
+    if (this.grandparent!==undefined && result.parents!==undefined){
+      const response = await this.fetch_grandparent(result.parents)
+      this.results.value_count[this.grandparent] = {
+        schema: this.grandparent_schema,
+        stats: Object.entries(response[this.grandparent] || {}).reduce((acc_1,[key, val])=>{
+          if (key==="null"){
+            return acc_1
+          }
+          acc_1[key] = val
+          return acc_1
+        },{}),
+      }
     }
     return { table: this.table, model: this }
   }

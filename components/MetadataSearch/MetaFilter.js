@@ -29,9 +29,51 @@ class MetaFilter extends React.Component {
       selected: {},
       mapping_id_to_name: undefined,
       mapping_name_to_id: undefined,
+      grandparent_mapping_id_to_name: undefined,
+      grandparent_mapping_name_to_id: undefined,
     }
   }
 
+  getGrandparentMeta = () => {
+    const { current_table, grandparent_mapping_id_to_name, grandparent_mapping_name_to_id } = this.state
+    const curr_table = this.props.reverse_preferred_name[this.props.match.params.table]
+    const model = this.props.models[curr_table]
+    if (model.grandparents_meta === undefined) return {}
+
+    if (curr_table === current_table &&
+        grandparent_mapping_id_to_name !== undefined &&
+        grandparent_mapping_name_to_id !== undefined) {
+      return { grandparent_mapping_name_to_id, grandparent_mapping_id_to_name }
+    } else {
+      const { schemas } = this.props
+      const grandparents_ids_mapping = model.grandparents_meta
+      const grandparent_mapping_id_to_name = {}
+      const grandparent_mapping_name_to_id = {}
+      for (const [id,val] of Object.entries(grandparents_ids_mapping)){
+        const matched_schema = findMatchedSchema(val, schemas)
+        const name_prop = Object.keys(matched_schema.properties).filter((prop) => matched_schema.properties[prop].name)
+        let name
+        if (name_prop.length > 0) {
+          name = makeTemplate(matched_schema.properties[name_prop[0]].text, val)
+          if (name==="undefined"){
+            console.log(matched_schema)
+            console.log(val)
+            name = id
+          }
+        } else {
+          console.warn('source of resource name is not defined, using either Name or ids')
+          name = resource.meta['Name'] || id
+        }
+        grandparent_mapping_id_to_name[id] = name
+        grandparent_mapping_name_to_id[name] = id
+      }
+      this.setState({
+        grandparent_mapping_id_to_name,
+        grandparent_mapping_name_to_id,
+      })
+      return { grandparent_mapping_name_to_id, grandparent_mapping_id_to_name }
+    }
+  }
 
   getParentMeta = () => {
     const { current_table, mapping_id_to_name, mapping_name_to_id } = this.state
@@ -53,6 +95,7 @@ class MetaFilter extends React.Component {
           if (name==="undefined"){
             console.log(matched_schema)
             console.log(val)
+            name = id
           }
         } else {
           console.warn('source of resource name is not defined, using either Name or ids')
@@ -91,8 +134,17 @@ class MetaFilter extends React.Component {
     if (this.props.parent) {
       const { mapping_id_to_name } = this.getParentMeta()
       for (const [id, count] of Object.entries(stats)) {
-        if (id!==null &&count > 0) {
+        if (id!==null && count > 0) {
           const name = mapping_id_to_name[id]
+          selected[name] = selected_values.indexOf(id) > -1
+          data_count = [...data_count, { count, name, id }]
+        }
+      }
+    } else if (this.props.grandparent) {
+      const { grandparent_mapping_id_to_name } = this.getGrandparentMeta()
+      for (const [id, count] of Object.entries(stats)) {
+        if (id!==null && count > 0) {
+          const name = grandparent_mapping_id_to_name[id]
           selected[name] = selected_values.indexOf(id) > -1
           data_count = [...data_count, { count, name, id }]
         }
@@ -139,6 +191,19 @@ class MetaFilter extends React.Component {
       for (const [name, val] of Object.entries(selected)) {
         if (val) {
           selected_values = [...selected_values, mapping_name_to_id[name]]
+        }
+      }
+    } else if (this.props.grandparent) {
+      const {
+        grandparent_mapping_name_to_id,
+      } = this.state
+      selected = {
+        ...this.state.selected,
+        [name]: !this.state.selected[name],
+      }
+      for (const [name, val] of Object.entries(selected)) {
+        if (val) {
+          selected_values = [...selected_values, grandparent_mapping_name_to_id[name]]
         }
       }
     } else {
