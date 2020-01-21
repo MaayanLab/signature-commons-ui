@@ -7,10 +7,8 @@ import { connect } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state, ownProps) => {
-  const { ui_values, schemas } = state.serverSideProps
   return {
-    ui_values,
-    schemas,
+    ui_values: state.ui_values,
   }
 }
 
@@ -47,7 +45,7 @@ class ResourceList extends React.PureComponent {
     }
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6
-    const xs = 12
+    const xs = 6
 
     return (
       <Grid

@@ -125,8 +125,8 @@ export default class LibraryResults extends React.Component {
     const options = {
       filter: true,
       filterType: 'dropdown',
-      responsive: 'scroll',
-      selectableRows: false,
+      responsive: 'scrollMaxHeight',
+      selectableRows: 'multiple',
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => (
         <TableRow>

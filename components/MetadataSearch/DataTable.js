@@ -189,7 +189,11 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                             text={`${tag.label}: ${tag.value}`}
                             highlight={search}
                           />}
-                          onClick={() => props.onChipClick(tag.value)}
+                          onClick={() => {
+                            if (tag.clickable){
+                              props.onChipClick(tag.value)
+                            }
+                          }}
                         />
                       </Tooltip>)}
                   </Grid>
@@ -275,11 +279,9 @@ class DataTable extends React.Component {
                 direction="row"
               >
                 <Grid item xs={2} style={{ textAlign: 'right' }}>
-                  <CardMedia style={{ marginTop: -10 }}>
                     <IconButton
                       {...this.state.metadata.processed.icon}
                     />
-                  </CardMedia>
                 </Grid>
                 <Grid item xs={10}>
                   <CardContent>

@@ -14,7 +14,7 @@
       "icon": true
     },
     "Library": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "${library.meta['Library_name']}",
       "priority": 1,
@@ -37,28 +37,32 @@
       "type": "text",
       "text": "${meta.Assay}",
       "priority": 1,
-      "MDI_Icon": "mdi-flask-outline"
+      "MDI_Icon": "mdi-flask-outline",
+      "clickable": true
     },
     "Cell-line": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Cell_Line[0].Name}",
       "priority": 4,
-      "MDI_Icon": "mdi-test-tube"
+      "MDI_Icon": "mdi-test-tube",
+      "clickable": true
     },
     "Time point": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Time_Point}",
       "priority": 6,
-      "MDI_Icon": "mdi-timer"
+      "MDI_Icon": "mdi-timer",
+      "clickable": false
     },
     "Perturbation": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.Small_Molecule[0].Name || meta.Gene[0].Name}",
       "priority": 3,
-      "MDI_Icon": "mdi-microscope"
+      "MDI_Icon": "mdi-microscope",
+      "clickable": true
     },
     "Concentration": {
       "visibility": 1,

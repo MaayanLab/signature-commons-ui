@@ -14,9 +14,10 @@ const mapStateToProps = (state) => {
   return {
     ...state.serverSideProps,
     ...state.signature_result,
+    ui_values: state.ui_values,
     input: state.signature_input,
     loading: state.loading_signature,
-    SignatureSearchNav: state.serverSideProps.ui_values.nav.SignatureSearch || {},
+    SignatureSearchNav: state.ui_values.nav.SignatureSearch || {},
   }
 }
 
@@ -44,7 +45,7 @@ class SignatureSearch extends React.Component {
     const { response: resources } = await fetch_meta({
       endpoint: `/resources`,
     })
-    const schema = await findMatchedSchema(resources[0], schemas)
+    const schema = findMatchedSchema(resources[0], schemas)
     const name_props = Object.values(schema.properties).filter((prop) => prop.name)
     const name_prop = name_props.length > 0 ? name_props[0].text : '${id}'
     const icon_props = Object.values(schema.properties).filter((prop) => prop.icon)
@@ -65,8 +66,10 @@ class SignatureSearch extends React.Component {
 
   componentDidUpdate = async (prevProps) => {
     if (prevProps.loading === false && this.props.loading === false) {
-      if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
-        this.props.search(this.props.match.params.type, this.props.match.params.id)
+      if (prevProps.match.params.id !== this.props.match.params.id){
+        if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
+          this.props.search(this.props.match.params.type, this.props.match.params.id)
+        }
       }
     }
   }

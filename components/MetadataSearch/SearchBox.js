@@ -156,8 +156,11 @@ export class SearchBox extends React.Component {
     return (
       <Chip
         key={key}
+        style={{
+          maxWidth: 300,
+        }}
         avatar={<Icon className={`${this.props.classes.icon} mdi ${chip_icon} mdi-18px`} />}
-        label={chip_value}
+        label={chip_value.length < 25 ? chip_value: chip_value.substring(0,22)+"..."}
         onDelete={handleDelete}
         className={`${className} ${chip_class}`}
       />
@@ -177,7 +180,7 @@ export class SearchBox extends React.Component {
               </Grid>
               <Grid item xs={12} style={{ textAlign: 'center' }}>
                 <Button variant="contained"
-                  color="primary"
+                  className={this.props.classes.button}
                   style={{ marginTop: 5 }}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
@@ -213,14 +216,14 @@ export class SearchBox extends React.Component {
                     interactive placement="left-start"
                     classes={{ tooltip: this.props.classes.tooltip }}>
                     <Button className={this.props.classes.tooltipButton} >
-                      <span className="mdi mdi-information mdi-24px mdi-dark" />
+                      <span className="mdi mdi-information mdi-24px" />
                     </Button>
                   </Tooltip>
                 </Hidden>
                 <Input renderChips={this.renderChips} {...this.props} />
                 <span>&nbsp;&nbsp;</span>
                 <Button variant="contained"
-                  color="primary"
+                  className={this.props.classes.button}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
                   }>
@@ -249,7 +252,7 @@ export class SearchBox extends React.Component {
               <Tooltip title={this.props.Info || <Info {...this.props}/>}
                 interactive placement="left-start"
                 classes={{ tooltip: this.props.classes.tooltip }}>
-                <Button className={this.props.classes.tooltipButton} >
+                <Button className={this.props.classes.tooltipButton}>
                   <span className="mdi mdi-information mdi-24px mdi-dark" />
                 </Button>
               </Tooltip>

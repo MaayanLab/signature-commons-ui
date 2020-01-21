@@ -101,7 +101,7 @@ export function ShowMeta({ value, highlight, classes }) {
     }
     return (
       <div>
-        {Object.keys(value).filter((key) => (!key.startsWith('$') && key.toLowerCase() !== 'icon')).map((key, ind) => (
+        {Object.keys(value).filter((key) => (!key.startsWith('$') && key.toLowerCase() !== 'icon' && key!== 'extraProperties' && key!== '@type')).map((key, ind) => (
           <Grid container
             spacing={24}
             key={key}>

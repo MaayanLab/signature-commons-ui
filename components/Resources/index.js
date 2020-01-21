@@ -12,7 +12,8 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 const mapStateToProps = (state, ownProps) => {
   return {
     ...state.serverSideProps,
-    ResourcesNav: state.serverSideProps.ui_values.nav.Resources || {},
+    ui_values: state.ui_values,
+    ResourcesNav: state.ui_values.nav.Resources || {},
   }
 }
 

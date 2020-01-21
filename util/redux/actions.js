@@ -4,6 +4,18 @@ export function initializeSigcom(serverSideProps) {
   return { type: action_definitions.INITIALIZE_SIGCOM, serverSideProps }
 }
 
+export function initializePreferredName(ui_values) {
+  return { type: action_definitions.INITIALIZE_PREFERRED_NAMES, ui_values }
+}
+
+export function initializeTheme(theme) {
+  return { type: action_definitions.INITIALIZE_THEME, theme}
+}
+
+export function fetchUIValuesSucceeded(ui_values) {
+  return { type: action_definitions.FETCH_UI_VALUES_SUCCEEDED, ui_values}
+}
+
 export function initializeParents({ parent_ids_mapping, parents_mapping }) {
   return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
 }
@@ -46,6 +58,16 @@ export function fetchMetaDataFromSearchBox(params) {
 //   return {type: action_definitions.PAGINATE_METADATA_FAILED, error}
 // }
 
+// Snackbar
+export function reportError(error) {
+  return { type: action_definitions.REPORT_ERROR,
+    error,
+  }
+}
+
+export function closeSnackBar() {
+  return { type: action_definitions.CLOSE_SNACK_BAR }
+}
 
 // Metadata search
 export function fetchMetaData(params) {

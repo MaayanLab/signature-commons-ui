@@ -7,7 +7,6 @@ import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
 import Divider from '@material-ui/core/Divider'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import TablePagination from '@material-ui/core/TablePagination'
@@ -28,10 +27,9 @@ const download = {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { ui_values } = state.serverSideProps
   return {
-    ui_values,
-    preferred_name_singular: ui_values.preferred_name_singular,
+    ui_values: state.ui_values,
+    preferred_name_singular: state.ui_values.preferred_name_singular,
   }
 }
 
@@ -212,19 +210,7 @@ class ResourcePage extends React.Component {
       },
     })
   }
-
-  handleChangeRowsPerPage = (e, name) => {
-    this.setState({
-      perPage: e.target.value,
-    })
-  }
-
-  handleChangePage = (event, page, name) => {
-    this.setState({
-      page: page
-    })
-  }
-
+  
   render() {
     if (this.state.resource === null) {
       return <CircularProgress />
@@ -249,17 +235,15 @@ class ResourcePage extends React.Component {
               direction="row"
             >
               <Grid item xs={1}>
-                <CardMedia style={{ marginTop: -10 }}>
-                  <Link
-                    to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                    className="waves-effect waves-teal"
-                  >
-                    <IconButton
-                      src={`${makeTemplate(icon_prop, resource)}`}
-                      description={'Go back to resource list'}
-                    />
-                  </Link>
-                </CardMedia>
+                <Link
+                  to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                  className="waves-effect waves-teal"
+                >
+                  <IconButton
+                    src={`${makeTemplate(icon_prop, resource)}`}
+                    description={'Go back to resource list'}
+                  />
+                </Link>
               </Grid>
               <Grid item xs={11}>
                 <CardContent>

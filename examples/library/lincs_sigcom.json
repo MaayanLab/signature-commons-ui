@@ -1,7 +1,8 @@
 {
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/library.json",
-    "${dataset_type}": "geneset_library"
+    "${dataset_type}": "rank_matrix",
+    "${meta['@type']}": "Dataset"
   },
   "properties": {
     "Image": {
@@ -15,7 +16,7 @@
       "name": true
     },
     "Description": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "${meta.description}",
       "priority": 1,
@@ -27,14 +28,16 @@
       "type": "text",
       "text": "${meta.types[0].method.value}",
       "priority": 1,
-      "MDI_Icon": "mdi-test-tube"
+      "MDI_Icon": "mdi-test-tube",
+      "clickable": true
     },
     "Institute": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.creators[0].affiliations[0].name}",
       "priority": 2,
-      "MDI_Icon": "mdi-certificate"
+      "MDI_Icon": "mdi-certificate",
+      "clickable": true
     }
   }
 }

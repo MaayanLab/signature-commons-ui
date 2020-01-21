@@ -16,7 +16,9 @@ import { BarChart } from '../Admin/BarChart.js'
 const mapStateToProps = (state, ownProps) => {
   return {
     ...state.serverSideProps,
-    nav: state.serverSideProps.ui_values.nav,
+    ui_values: state.ui_values,
+    nav: state.ui_values.nav,
+    theme: state.theme
   }
 }
 
@@ -47,11 +49,18 @@ class LandingPage extends React.Component {
       bar_stats: props.barcounts[selected_bar],
       pie_stats: props.piecounts[selected_pie],
       word_stats: props.wordcounts[selected_word],
+      total_sig_per_resource: 0,
     }
   }
 
   componentDidMount = () => {
     this.props.resetSigcom()
+    const total_sig_per_resource = this.props.resource_signature_counts.reduce((tot,item)=>{
+      return tot + item.counts
+    },0)
+    this.setState({
+      total_sig_per_resource
+    })
   }
 
   // componentDidUpdate = (prevProps) => {
@@ -131,6 +140,81 @@ class LandingPage extends React.Component {
     )
   }
 
+  pie_charts_stats = (props) => {
+    if (Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0) return null
+    if (this.props.resource_signature_counts.length === 0  || this.state.total_sig_per_resource === 0 ) {
+      if (Object.keys(this.props.piecounts).length < 3){
+        // Do not create selection
+        const all_charts = Object.entries(this.props.piecounts).map(([key,val])=>(
+          <Grid item key={key} xs={12} md={Object.keys(this.props.piecounts).length > 1 ? 6: 12}
+            className={this.props.classes.stretched}>
+            <Grid container
+              alignItems={'center'}>
+              <Grid item xs={12}>
+                <div className={this.props.classes.centered}>
+                  <ChartCard cardheight={300} pie_stats={val.stats} ui_values={this.props.ui_values}/>
+                </div>
+              </Grid>
+              <Grid item xs={12}>
+                <div className={this.props.classes.centered}>
+                  <span>{this.props.ui_values.text_3} {key}</span>
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+        ))
+        return all_charts
+      }else {
+        return (
+          <Grid item xs
+            className={this.props.classes.stretched}>
+            <Grid container
+              alignItems={'center'}>
+              <Grid item xs>
+                <div className={this.props.classes.centered}>
+                  <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+                </div>
+              </Grid>
+              <Grid item xs={12}>
+                <div className={this.props.classes.centered}>
+                  <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
+                  <Selections
+                    value={this.state.selected_pie}
+                    values={Object.keys(this.props.piecounts).sort()}
+                    onChange={(e) => this.handleSelectPie(e)}
+                  />
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+        )
+      }
+    }
+    return (
+      <Grid item xs={12} md={6}
+        className={this.props.classes.stretched}>
+        <Grid container
+          alignItems={'center'}>
+          <Grid item xs>
+            <div className={this.props.classes.centered}>
+              <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+            </div>
+          </Grid>
+          <Grid item xs={12}>
+            <div className={this.props.classes.centered}>
+              <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
+              <Selections
+                value={this.state.selected_pie}
+                values={Object.keys(this.props.piecounts).sort()}
+                onChange={(e) => this.handleSelectPie(e)}
+              />
+            </div>
+          </Grid>
+        </Grid>
+      </Grid>
+    )
+  }
+
   render = () => {
     return (
       <div>
@@ -157,48 +241,26 @@ class LandingPage extends React.Component {
               <StatDiv {...this.props}/>
             </Grid>
           }
-          { this.props.resource_signature_counts.length > 0 ?
+          { this.props.resource_signature_counts.length > 0 && this.state.total_sig_per_resource > 0 ?
             <Grid item xs={12} md={Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? 12 : 6}
               className={this.props.classes.stretched}>
               <Grid container
                 alignItems={'center'}>
                 <Grid item xs>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={420} pie_stats={this.props.resource_signature_counts} color={'Blue'} ui_values={this.props.ui_values}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_counts} color={'Blue'} ui_values={this.props.ui_values}/>
                   </div>
                 </Grid>
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}</span>
+                    <span className={this.props.classes.vertical20}>{this.props.ui_values.resource_pie_caption || 'Signatures per Resource'}</span>
                   </div>
                 </Grid>
               </Grid>
             </Grid>
             : null
           }
-          { Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? null :
-            <Grid item xs={12} md={this.props.resource_signature_counts.length === 0 ? 12 : 6 } className={this.props.classes.stretched}>
-              <Grid container
-                spacing={24}
-                alignItems={'center'}>
-                <Grid item xs>
-                  <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
-                  </div>
-                </Grid>
-                <Grid item xs={12}>
-                  <div className={this.props.classes.centered}>
-                    <span className={this.props.classes.vertical20}>{this.props.ui_values.LandingText.text_3 || 'Examine metadata:'}</span>
-                    <Selections
-                      value={this.state.selected_pie}
-                      values={Object.keys(this.props.piecounts).sort()}
-                      onChange={(e) => this.handleSelectPie(e)}
-                    />
-                  </div>
-                </Grid>
-              </Grid>
-            </Grid>
-          }
+          { this.pie_charts_stats() }
           { Object.keys(this.props.meta_counts).length === 0 ? null :
             <Grid item xs={12} className={this.props.classes.stretched}>
               <CountsDiv {...this.props}/>
@@ -211,7 +273,7 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs md={12}>
                   <div className={this.props.classes.centered}>
-                    <WordCloud classes={this.props.classes} stats={this.state.word_stats.stats}/>
+                    <WordCloud classes={this.props.classes} searchTable={this.state.word_stats.table} stats={this.state.word_stats.stats}/>
                   </div>
                 </Grid>
 
@@ -264,7 +326,7 @@ class LandingPage extends React.Component {
                   <Grid container
                     spacing={24}
                     alignItems={'center'}>
-                    <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
+                    <Grid item xs>
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.histogram.stats}
                           ui_values={this.props.ui_values}
@@ -293,7 +355,7 @@ class LandingPage extends React.Component {
                   <Grid container
                     spacing={24}
                     alignItems={'center'}>
-                    <Grid item xs md={this.props.ui_values.deactivate_wordcloud ? 12 : 6}>
+                    <Grid item xs>
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.barscore.stats}
                           ui_values={this.props.ui_values}

@@ -1,11 +1,12 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 import { call } from '../../util/call'
-
+import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
+import Switch from '@material-ui/core/Switch';
 
-const style = {
+const style = theme => ({
   chiplabel: {
     'maxWidth': 100,
     'overflow': 'hidden',
@@ -20,12 +21,22 @@ const style = {
     maxHeight: 200,
     marginBottom: 10,
   },
-}
+  submit: {
+    background: theme.palette.defaultButton.main,
+    color: theme.palette.defaultButton.contrastText,
+    '&:hover': {
+      background: theme.palette.defaultButton.dark,
+    },
+    '&:disabled': {
+      background: theme.palette.defaultButton.disabled,
+    },
+  }
+})
 
 const mapStateToProps = (state) => {
   return {
     loading: state.loading_signature,
-    ui_values: state.serverSideProps.ui_values,
+    ui_values: state.ui_values,
   }
 }
 
@@ -36,15 +47,15 @@ const Geneset = (props) => (
         <label style={{ color: '#FFF',
           fontWeight: 'bold' }}>
             Gene Set or Full Signature
-          <input
-            type="checkbox"
+          <Switch
             checked={false}
             onChange={() => {
-              props.toggleInput('Rank')
+                props.toggleInput('Rank')
+              }
             }
-            }
+            value="sigsearch"
+            color="secondary"
           />
-          <span className="lever"></span>
             Up and Down Gene Sets
         </label>
       </div>
@@ -53,7 +64,7 @@ const Geneset = (props) => (
       <div className="input-field">
         <textarea
           id="geneset"
-          placeholder={props.ui_values.LandingText.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set.'}
+          placeholder={props.ui_values.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set.'}
           style={{
             height: 200,
             overflow: 'auto',
@@ -80,15 +91,14 @@ const UpDownGeneset = (props) => (
         <label style={{ color: '#FFF',
           fontWeight: 'bold' }}>
             Gene Set or Full Signature
-          <input
-            type="checkbox"
+          <Switch
             checked={true}
             onChange={() => {
               props.toggleInput('Overlap')
-            }
-            }
+            }}
+            value="sigsearch"
+            color="primary"
           />
-          <span className="lever"></span>
             Up and Down Gene Sets
         </label>
       </div>
@@ -97,7 +107,7 @@ const UpDownGeneset = (props) => (
       <div className="input-field">
         <textarea
           id="up_geneset"
-          placeholder={props.ui_values.LandingText.up_genes_placeholder || 'Genes that are up-regulated in signature or overlap with gene set.'}
+          placeholder={props.ui_values.up_genes_placeholder || 'Genes that are up-regulated in signature or overlap with gene set.'}
           style={{
             height: 200,
             overflow: 'auto',
@@ -118,7 +128,7 @@ const UpDownGeneset = (props) => (
       <div className="input-field">
         <textarea
           id="down_geneset"
-          placeholder={props.ui_values.LandingText.down_genes_placeholder || 'Genes that are down-regulated in signature or overlap with gene set.'}
+          placeholder={props.ui_values.down_genes_placeholder || 'Genes that are down-regulated in signature or overlap with gene set.'}
           style={{
             height: 200,
             overflow: 'auto',
@@ -210,8 +220,12 @@ class GenesetSearchBox extends React.Component {
       <div className="row">
         <SearchBox {...this.props} />
         <div className="col s12 center">
-          <button
-            className={'btn waves-effect waves-light' + (this.isEmpty() || this.props.loading ? ' disabled' : '')} type="submit" name="action"
+          <Button
+            className={this.props.classes.submit}
+            variant="contained"
+            disabled={this.isEmpty() || this.props.loading} 
+            type="submit"
+            name="action"
             onClick={call(this.props.submit, this.props.input)}
           >
             { this.props.loading ?
@@ -225,7 +239,7 @@ class GenesetSearchBox extends React.Component {
                 </React.Fragment>
             }
 
-          </button>
+          </Button>
           <br /><br />
         </div>
       </div>

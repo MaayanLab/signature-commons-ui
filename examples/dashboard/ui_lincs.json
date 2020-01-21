@@ -2,25 +2,99 @@
   {
     "landing": true,
     "content": {
-      "header": "Signature Commons-LINCS",
-      "metadata_placeholder": "Search over LINCS datasets",
-      "text_1": "Explore an extensive collection of LINCS datasets",
-      "library_name": "title",
+      "favicon": {
+        "src": "/static/LINCS.ico",
+        "alt": "LINCS Datasets and Signatures",
+        "title": "LINCS Datasets and Signatures"
+      },
+      "header_info": {
+          "icon": {
+              "src": "/static/LINCS.ico",
+              "alt": "lincs",
+              "style": {
+                "width": 60,
+                "marginBottom": -15
+              }
+          },
+          "header_right": " LINCS Datasets and Signatures"
+      },
+      "font_families": [
+        "https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900",
+        "https://fonts.googleapis.com/css?family=Archivo+Narrow"
+      ],
+      "metadata_placeholder": "Search over LINCS datasets and signatures",
+      "text_1": "Explore an extensive collection of LINCS datasets and signatures",
       "preferred_name_singular": {
         "libraries": "Dataset",
-        "resources": "Dataset"
+        "resources": "Data and Signature Generation Center"
       },
-      "signature_search": false,
-      "deactivate_download": true,
-      "deactivate_wordcloud": false,
-      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
-      "bar_chart": {
-        "Field_Name": "types.method.value",
-        "Caption": "Assays"
+      "nav": {
+        "MetadataSearch": {
+          "active": true,
+          "endpoint": "/MetadataSearch"
+        },
+        "SignatureSearch": {
+          "active": true,
+          "endpoint": "/SignatureSearch"
+        },
+        "Resources": {
+          "active": true,
+          "endpoint": "/DSGCs"
+        },
+        "API": {
+          "active": true
+        }
       },
+      "footer_links": [
+        {
+          "href": "http://www.lincsproject.org/LINCS/data/overview",
+          "src": "/static/NIHLINCS.jpg",
+          "alt": "LINCS",
+          "containerProps": {
+            "style": {
+              "width": 300
+            }
+          },
+          "imageProps": {
+            "style": {
+              "width": 300
+            }
+          }
+        },
+        {
+          "href": "http://lincs-dcic.org/",
+          "src": "/static/images/dcic_light.png",
+          "alt": "dcic"
+        }
+      ],
+      "theme_mod": {
+        "palette": {
+          "primary": {
+            "main": "#3a5278"
+          },
+          "secondary": {
+            "main": "rgb(204, 204, 153)"
+          },
+          "default": {
+            "main": "#555"
+          },
+          "defaultCard": {
+            "contrastText": "#FFF"
+          },
+          "defaultChip": {
+            "contrastText": "#FFF"
+          },
+          "defaultButton": {
+            "main": "#3a5278"
+          }
+        },
+        "typography": {
+          "fontFamily": "Lato, serif, Archivo Narrow"
+        }
+      },
+      "deactivate_download": false,
       "bar_chart_style": {
         "ResponsiveContainer": {
-          "width": "100%",
           "height":420,
           "width": 420
         },
@@ -41,12 +115,15 @@
           }
         },
         "Bar": {
-          "fill": "#75bef5"
+          "fill": "rgb(124, 162, 206)"
         }
       },
-      "resource_name_from_library": "title",
-      "resource_name": "${meta.name}",
-      "resource_icon": "${meta.extraProperties[0].values[0]}",
+      "pie_chart_style": {
+        "Pie": {
+          "fill":  "rgb(124, 162, 206)"
+        }
+      },
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
         "Apoptosis",
@@ -89,7 +166,7 @@
           }
         },
         "Bar": {
-          "fill": "#75bef5"
+          "fill": "rgb(124, 162, 206)"
         }
       },
       "resource_name_from_library": "title",

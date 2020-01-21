@@ -79,8 +79,8 @@ export const landingStyle = (theme) => ({
   },
   topCard: {
     padding: '20px',
-    background:
-      'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
+    background: theme.palette.defaultCard.main,
+    color: theme.palette.defaultCard.contrastText,
   },
   stretched: {
     width: '80%',
@@ -116,6 +116,20 @@ export const landingStyle = (theme) => ({
     margin: '20px 20px 5px 20px',
     float: 'left',
     zIndex: 100,
+  },
+  bottomLink: {
+    background: theme.palette.defaultCard.main,
+    color: theme.palette.defaultCard.contrastText,
+    '&:hover': {
+      background: theme.palette.defaultCard.dark,
+    }
+  },
+  icon_light: {
+    float: 'right',
+    width: 75,
+    height: 75,
+    padding: 14,
+    color: "#424242",
   },
   icon: {
     float: 'right',

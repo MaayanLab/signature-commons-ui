@@ -21,7 +21,7 @@
       "hyperlink": "${meta.Link_to_resource}"
     },
     "Description": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "${meta['Description']}",
       "priority": 2,
@@ -38,7 +38,8 @@
       "type": "text",
       "text": "${meta.Assay}",
       "priority": 3,
-      "MDI_Icon": "mdi-flask-outline"
+      "MDI_Icon": "mdi-flask-outline",
+      "clickable": true
     }
   }
 }

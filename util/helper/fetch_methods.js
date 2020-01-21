@@ -409,29 +409,24 @@ export async function resolve_entities(props) {
   let entities = Set([...props.entities])
   const entitiy_ids = {}
   // Get fields from schema
-  const schemas = await get_schemas()
-  const { response: entity } = await fetch_meta_post({
-    endpoint: `/entities/find`,
-    body: {
-      filter: {
-        limit: 1,
-      },
-    },
-    signal: props.controller.signal,
-  })
-  const matched_schemas = schemas.filter(
-      (schema) => objectMatch(schema.match, entity[0])
-  )
-  if (matched_schemas.length === 0) {
-    console.error('No matchcing schema for', entity[0])
+  const sch= await get_schemas()
+  const schemas = sch.filter(schema=>schema.type==="entity")
+  
+  // const matched_schemas = schemas.filter(
+  //     (schema) => objectMatch(schema.match, entity[0])
+  // )
+  // if (matched_schemas.length === 0) {
+  //   console.error('No matchcing schema for', entity[0])
+  // }
+  let name_props = []
+  for (const schema of schemas){
+    const name_prop = Object.values(schema.properties).filter((prop) =>
+      prop.name &&
+      prop.field !== undefined)
+    name_props = [...name_props, ...name_prop]
   }
-  const name_props = Object.keys(matched_schemas[0].properties).filter((prop) =>
-    matched_schemas[0].properties[prop].name &&
-    matched_schemas[0].properties[prop].field !== undefined).map((key) =>
-    matched_schemas[0].properties[key]
-  )
+  
   let entity_names = []
-
   const or = name_props.map((prop) => {
     entity_names = [...entity_names, prop.field]
     return ({
@@ -444,24 +439,25 @@ export async function resolve_entities(props) {
     endpoint: '/entities/find',
     body: {
       filter: {
+        fields: ["id", ...name_props.map(p=>p.field)],
         where: {
           or,
         },
-        fields: [
-          'id',
-          ...entity_names,
-        ],
       },
     },
     signal: props.controller.signal,
   })
   const entity_meta = maybe_fix_obj(entity_meta_pre)
-
   for (const entity of Object.values(entity_meta)) {
     const names = name_props.map((prop) => makeTemplate(prop.text, entity))
     let name
     if (names.length > 0) {
-      name = names[0]
+      name = names.filter(n=>n!=="null")
+      if (name.length===0){
+        name="null"
+      }else{
+        name=name[0]
+      }
     } else {
       console.error('Cannot find a name for', entity)
     }
@@ -740,8 +736,9 @@ export async function query_rank(props) {
   const { response } = await fetch_data({ endpoint: '/listdata' })
 
   const enriched_results = (await Promise.all(
-      response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map((repo) =>
-        fetch_data({
+      response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map(async (repo) => {
+        try {
+         return await fetch_data({
           endpoint: '/enrich/ranktwosided',
           body: {
             up_entities: up_entities,
@@ -751,12 +748,18 @@ export async function query_rank(props) {
             limit: 500,
           },
           signal: props.controller.signal,
-        })
-      )
-  )).reduce(
+        }) 
+        } catch (error) {
+          return null
+        }
+      })
+  )).filter(val=>val!==null).reduce(
       (results, { duration: duration_data_n, contentRange: contentRange_data_n, response: result }) => {
         duration_data += duration_data_n
         count_data += (contentRange_data_n || {}).count || 0
+        if(Object.keys(result.results).length === 0){
+          return(results)
+        }
         return ({
           ...results,
           ...maybe_fix_obj(
@@ -777,7 +780,6 @@ export async function query_rank(props) {
         })
       }, {}
   )
-
   const { duration: duration_meta, response: enriched_signatures_meta } = await fetch_meta_post({
     endpoint: '/signatures/find',
     body: {
@@ -813,7 +815,6 @@ export async function query_rank(props) {
         },
       ]), []
   )
-
   const resource_signatures = {}
   const library_signatures = {}
   for (const sig of enriched_signatures) {
@@ -845,7 +846,6 @@ export async function query_rank(props) {
       count: resource_signatures[resource].count + 1,
     }
   }
-
   return {
     library_signatures,
     resource_signatures,

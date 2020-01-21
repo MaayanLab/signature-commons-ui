@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography'
 import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
 import { animateScroll as scroll } from 'react-scroll'
+import Color from 'color'
 
 import ReactWordcloud from 'react-wordcloud'
 
@@ -23,7 +24,8 @@ const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/
 
 const meta_default_icon = 'mdi-creation'
 
-export const BottomLinks = ({ classes, width, ...props }) => {
+export const BottomLinks = ({ classes, width, theme, ...props }) => {
+  const fontColor = Color(theme.palette.defaultCard.main)
   return (
     <Grid container
       spacing={24}
@@ -31,7 +33,7 @@ export const BottomLinks = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            { props.ui_values.LandingText.text_4 || 'Start using Signature Commons on your project'}
+            { props.ui_values.text_4 || 'Start using Signature Commons on your project'}
           </Typography>
         </div>
       </Grid>
@@ -44,8 +46,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
-                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
-                    <FileFind className={classes.icon} />
+                  <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
+                    <FileFind className={fontColor.isDark() ? classes.icon_light: classes.icon} />
                   </Button>
                 </Link>
               </Grid>
@@ -67,8 +69,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               direction={'column'}>
               <Grid item xs={12}>
                 <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
-                  <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} onClick={() => scroll.scrollToTop()}>
-                    <FindReplace className={classes.icon} />
+                  <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
+                    <FindReplace className={fontColor.isDark() ? classes.icon_light: classes.icon} />
                   </Button>
                 </Link>
               </Grid>
@@ -89,8 +91,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`} href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
-                  <NearMe className={classes.icon} />
+                <Button className={`${classes.bottomLink}`} variant="contained" color='default' href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
+                  <NearMe className={fontColor.isDark() ? classes.icon_light: classes.icon} />
                 </Button>
               </Grid>
               <Grid item xs={12}>
@@ -110,8 +112,8 @@ export const BottomLinks = ({ classes, width, ...props }) => {
             direction={'column'}>
             <Grid item xs={12}>
               <Link to="/API">
-                <Button className={`${classes.cardIcon} ${classes.GrayCardHeader}`}>
-                  <Earth className={classes.icon} />
+                <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
+                  <Earth className={fontColor.isDark() ? classes.icon_light: classes.icon} />
                 </Button>
               </Link>
             </Grid>
@@ -144,7 +146,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            {props.ui_values.LandingText.text_2 || 'Search across a broad gathering of perturbations'}
+            {props.ui_values.text_2 || 'Search across a broad gathering of perturbations'}
           </Typography>
         </div>
       </Grid>
@@ -181,7 +183,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-                {props.ui_values.LandingText.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
+                {props.ui_values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
               </Typography>
             </div>
           </Grid>
@@ -214,10 +216,11 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
-                <span className="mdi mdi-cloud-search mdi-36px"/>
-                &nbsp;&nbsp;
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              <Typography variant="h4" align={'center'} color="inherit">
+              {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={`${process.env.PREFIX}${props.ui_values.header_info.icon.src}`} />{props.ui_values.header_info.header_right}
+              </Typography>
+              <Typography variant="button" align={'center'} color="inherit">
+                {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -245,10 +248,11 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
-                <span className="mdi mdi-cloud-search mdi-36px"/>
-                &nbsp;&nbsp;
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              <Typography variant="h4" color={"inherit"} align={'center'}>
+              {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={`${process.env.PREFIX}${props.ui_values.header_info.icon.src}`} />{props.ui_values.header_info.header_right}
+              </Typography>
+              <Typography variant="button" align={'center'} color="inherit">
+                {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -270,10 +274,11 @@ export const SearchCard = ({ classes, width, ...props }) => {
             align="center"
             justify="center">
             <Grid item xs={12}>
-              <Typography variant="button" align={'center'} style={{ fontSize: 30, color: '#FFF' }}>
-                <span className="mdi mdi-cloud-search mdi-36px"/>
-                &nbsp;&nbsp;
-                {props.match.params.searchType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+              <Typography variant="h4" align={'center'} color="inherit">
+                {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={`${process.env.PREFIX}${props.ui_values.header_info.icon.src}`} />{props.ui_values.header_info.header_right}
+              </Typography>
+              <Typography variant="button" align={'center'} color="inherit">
+                {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -295,17 +300,14 @@ export const ListItemLink = (props) => (
   <ListItem button component="a" {...props} />
 )
 
-function getCallback(callback) {
+function getCallback(callback, searchTable) {
   return function(word) {
-    location.href = `#/MetadataSearch?q=${word.text}`
+    location.href = `#/MetadataSearch/${searchTable}?q={"search":["${word.text}"]}`
   }
 }
 
-const callbacks = {
-  onWordClick: getCallback('onWordClick'),
-}
 
-export const WordCloud = function({ classes, record = {}, ...props }) {
+export const WordCloud = function({ classes, searchTable, record = {}, ...props }) {
   const { stats } = props
   if (stats !== null && stats!==undefined) {
     const wordstats = stats.map(function(entry) {
@@ -316,7 +318,9 @@ export const WordCloud = function({ classes, record = {}, ...props }) {
     return (
       <div style={{ width: "100%", height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
-          callbacks={callbacks}
+          callbacks={{
+            onWordClick: getCallback('onWordClick', searchTable)
+          }}
           scale={'log'}
           options={{
             colors: ['#000'],
