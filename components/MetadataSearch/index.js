@@ -363,7 +363,6 @@ class MetadataSearch extends React.Component {
     if (current_table === undefined) {
       return <Redirect to="/not-found"/>
     }
-
     if (this.state.schemas===null || !this.props.completed) {
       return (
         <Grid container
@@ -398,7 +397,7 @@ class MetadataSearch extends React.Component {
           </Grid>
         </Grid>
       )
-    }else if (this.props.completed && this.props.models[current_table].results.count===0){
+    }else if (this.props.completed && (this.props.models[current_table] === undefined || this.props.models[current_table].results.count===0)){
       const redirect_to_table = Object.values(this.props.models).filter(model=>model!==undefined && model.table!==current_table && model.results.count>0)[0].table
       const preferred = this.props.preferred_name[redirect_to_table]
       return <Redirect to={{
