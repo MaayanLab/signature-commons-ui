@@ -99,7 +99,9 @@ class App extends React.Component {
 
   render() {
     if (!this.props.initialized) {
-      return <CircularProgress />
+      return  <div style={{ textAlign: 'center', marginTop: 100 }}>
+                <CircularProgress />
+              </div>
     }
     return (
       <div className="root">

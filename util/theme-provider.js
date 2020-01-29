@@ -5,6 +5,19 @@ import grey from '@material-ui/core/colors/grey'
 import green from '@material-ui/core/colors/green'
 import yellow from '@material-ui/core/colors/yellow'
 
+// card: {
+//   bottomCard: {
+//     palette: {
+//       main: xx,
+//       contrastText: xx,
+//       light: xx,
+//       dark,
+//     },
+//     overrides: {
+//       ...
+//     }
+//   }
+// }
 const defaultTheme = {
   palette: {
     primary: {
@@ -34,6 +47,16 @@ const defaultTheme = {
       main: grey[300]
     }
 
+  },
+  card: {
+    bottomCard: {
+      palette: {},
+      overrides: {}
+    },
+    topCard: {
+      palette: {},
+      overrides: {}
+    }
   },
   chipColors: {
     warning: { backgroundColor: amber[300], color: '#000' },
