@@ -62,7 +62,6 @@ class Resources extends React.PureComponent {
   )
 
   resource_page = (props) => {
-    console.log(this.state.resources)
     return (<ResourcePage
       cart={this.props.cart}
       {...props}

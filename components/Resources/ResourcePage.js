@@ -253,6 +253,7 @@ class ResourcePage extends React.Component {
                   >
                     <Grid item xs={12}>
                       <ShowMeta
+                        hidden={[resource_name]}
                         value={{
                           '@id': resource.id,
                           '@name': resource_name, // this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
