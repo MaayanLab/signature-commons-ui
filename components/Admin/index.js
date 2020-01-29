@@ -23,7 +23,7 @@ import Fingerprint from '@material-ui/icons/Fingerprint'
 import LibraryBooks from '@material-ui/icons/LibraryBooks'
 import JssProvider from 'react-jss/lib/JssProvider'
 
-import { base_url, fetch_meta, fetch_creds } from '../../util/fetch/meta'
+import { fetch_meta, fetch_creds } from '../../util/fetch/meta'
 import { fetchJson, patchJson } from '../../util/fetch/fetch'
 
 import loopbackProvider from './loopback-provider'
@@ -38,6 +38,7 @@ import { MyLogin } from './Login.js'
 import { generateClassName } from './classNameGenerator.js'
 
 class AdminView extends React.PureComponent {
+  // <Lazy>{async () => <AdminView base_url={await base_url()} ... />}</Lazy>
   constructor(props) {
     super(props)
     const token = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_CREDS : ''
@@ -54,7 +55,7 @@ class AdminView extends React.PureComponent {
       signature_fields: props.signature_keys[Object.keys(props.signature_keys)[0]],
       hash: window.location.hash,
     }
-    this.dataProvider = loopbackProvider(base_url, this.httpClient)
+    this.dataProvider = loopbackProvider(this.props.base_url, this.httpClient)
   }
 
   longTextInputFormat = (v) => typeof v === 'object' ? JSON.stringify(v, null, 2) : v
