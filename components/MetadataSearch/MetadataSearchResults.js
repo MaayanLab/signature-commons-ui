@@ -3,7 +3,7 @@ import React from 'react'
 import TablePagination from '@material-ui/core/TablePagination'
 
 import { makeTemplate } from '../../util/makeTemplate'
-import { findMatchedSchema } from '../../util/objectMatch'
+import { findMatchedSchema, objectMatch } from '../../util/objectMatch'
 import { connect } from 'react-redux'
 import { URLFormatter, ReadURLParams } from '../../util/helper/misc'
 import DataTable from './DataTable'
@@ -44,7 +44,8 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
-      if (prop.visibility && prop.visibility > 0){
+
+      if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data)){
         const val = value_by_type[prop.type]({ label, prop, data, highlight })
         if (prop.name) {
           processed.name = { text: data.id }
