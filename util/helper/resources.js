@@ -1,6 +1,6 @@
 import { fetch_meta } from '../fetch/meta'
 import { get_schemas } from './fetch_methods'
-import { objectMatch } from '../objectMatch'
+import { objectMatch, default_schemas } from '../objectMatch'
 import { makeTemplate } from '../makeTemplate'
 
 
@@ -8,8 +8,6 @@ export const iconOf = {
   'CREEDS': `static/images/creeds.png`,
   'CMAP': `static/images/clueio.ico`,
 }
-
-const default_schemas = []
 
 export async function get_library_resources() {
   // fetch schemas if missing
