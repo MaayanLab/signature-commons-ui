@@ -9,6 +9,13 @@ const model_mapper = {
   entities: 'Entity',
 }
 
+const plural_mapper = {
+  resource: 'resources',
+  library: 'libraries',
+  signature: 'signatures',
+  entity: 'entities',
+}
+
 export function build_where({ search, filters, order }) {
   if (search.length === 0 && filters===undefined && order===undefined) return undefined
   let where = {}
@@ -26,7 +33,7 @@ export function build_where({ search, filters, order }) {
         orClauses = [...orClauses, { id: q.substring(1) }]
       } else {
         // and
-        andClauses = [...andClauses, { id: q.substring(1) }]
+        andClauses = [...andClauses, { id: q }]
       }
     } else if (q.indexOf(':') !== -1) {
       const [key, ...value] = q.split(':')
@@ -136,11 +143,11 @@ export function build_where({ search, filters, order }) {
 }
 
 export default class Model {
-  constructor(table, parent, parents_meta) {
+  constructor(table, parent) {
     this.model = model_mapper[table]
     this.table = table
     this.parent = parent
-    this.parents_meta = parents_meta
+    this.parents_meta = {}
     this.where = null
     this.results = {count:0}
     this.search = null
@@ -315,7 +322,38 @@ export default class Model {
     }
   }
 
-  parse_bulk_result = ({ operations, bulk_response }) => {
+  fetch_parent_metadata = async (entries) => {
+    let unresolved_ids = []
+    for (const e of entries){
+      const parent_id = e[this.parent]
+      if (this.parents_meta[parent_id]=== undefined){
+        if (unresolved_ids.indexOf(parent_id)==-1){
+          unresolved_ids = [...unresolved_ids, parent_id]
+        }
+      }
+    }
+
+    const { response } = await fetch_meta_post({
+      endpoint: `/${plural_mapper[this.parent]}/find`,
+      body: {
+        filter: {
+          where: {
+           id: {
+              inq: unresolved_ids
+            }
+          },
+        },
+      },
+    })
+
+    for (const r of response){
+      const parent_id = r["id"]
+      this.parents_meta[parent_id] = r
+    }
+
+  }
+
+  parse_bulk_result = async ({ operations, bulk_response }) => {
     const {
       metadata_search,
       value_count,
@@ -325,6 +363,9 @@ export default class Model {
     let response = bulk_response
     if (metadata_search) {
       const [m, ...r] = response
+      if (this.parent!==undefined){
+        await this.fetch_parent_metadata(m.response)
+      }
       const res = this.parent === undefined ? m.response :
         m.response.map((r) => {
           const parent_id = r[this.parent]
@@ -497,7 +538,7 @@ export default class Model {
       body: params,
       signal: controller.signal,
     })
-    const result = this.parse_bulk_result({ operations, bulk_response })
+    const result = await this.parse_bulk_result({ operations, bulk_response })
     this.results = {
       metadata_search: result.metadata_search || this.results.metadata_search,
       value_count: result.value_count || this.results.value_count,
