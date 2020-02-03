@@ -7,6 +7,8 @@ import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+
 import Divider from '@material-ui/core/Divider'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import TablePagination from '@material-ui/core/TablePagination'
@@ -226,7 +228,6 @@ class ResourcePage extends React.Component {
     return (
       <Grid
         container
-        direction="row"
       >
         <Grid item xs={12}>
           <Card>
@@ -234,18 +235,20 @@ class ResourcePage extends React.Component {
               container
               direction="row"
             >
-              <Grid item xs={1}>
-                <Link
-                  to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                  className="waves-effect waves-teal"
-                >
-                  <IconButton
-                    src={`${makeTemplate(icon_prop, resource)}`}
-                    description={'Go back to resource list'}
-                  />
-                </Link>
+              <Grid item md={2} xs={4} style={{ textAlign: 'center' }}>
+                <CardMedia style={{ marginTop: -15, paddingLeft: 13 }}>
+                  <Link
+                    to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                    className="waves-effect waves-teal"
+                  >
+                    <IconButton
+                      src={`${makeTemplate(icon_prop, resource)}`}
+                      description={'Go back to resource list'}
+                    />
+                  </Link>
+                </CardMedia>
               </Grid>
-              <Grid item xs={11}>
+              <Grid item md={10} xs={8}>
                 <CardContent>
                   <Grid
                     container
