@@ -17,6 +17,45 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
+export const get_schema_props= (item, schemas) => {
+  const schema = findMatchedSchema(item, schemas)
+  const response = {schema}
+  for (const prop of Object.values(schema.properties)){
+    if (prop.name){
+      response["name_prop"] = prop.text
+    }
+    if (prop.icon){
+      response["icon_prop"] = prop.src
+    }
+    if (prop.description){
+      response["description_prop"] = prop.text
+    }
+  }
+  if (response["name_prop"] === undefined) prop.name = "${id}"
+  return {...response}
+}
+
+export const get_resources_and_libraries = async(fetch_libraries=true) => {
+  const { response: resources } = await fetch_meta({
+    endpoint: `/resources`,
+  })
+  if (fetch_libraries){
+    const { response: libraries } = await fetch_meta({
+      endpoint: `/libraries`,
+      body: {
+        filter: {
+          where: {
+            resource: { eq: null}
+          }
+        }
+      }
+    })
+    return {response: [...resources, ...libraries]}
+  }else {
+    return {response: resources}
+  }
+}
+
 class Resources extends React.PureComponent {
   constructor(props) {
     super(props)
@@ -28,17 +67,9 @@ class Resources extends React.PureComponent {
 
   componentDidMount = async () => {
     const schemas = await get_schemas()
-    const { response } = await fetch_meta({
-      endpoint: `/resources`,
-    })
-    const schema = await findMatchedSchema(response[0], schemas)
-    const name_props = Object.values(schema.properties).filter((prop) => prop.name)
-    const name_prop = name_props.length > 0 ? name_props[0].text : '${id}'
-    const icon_props = Object.values(schema.properties).filter((prop) => prop.icon)
-    const icon_prop = icon_props.length > 0 ? icon_props[0].src : '${id}'
-    const description_props = Object.values(schema.properties).filter((prop) => prop.description)
-    const description_prop = description_props.length > 0 ? description_props[0].text : '${id}'
+    const { response } = await get_resources_and_libraries()
     const resources = response.reduce((acc, resource) => {
+      const {name_prop} = get_schema_props(resource, schemas)
       let name = makeTemplate(name_prop, resource)
       if (name === 'undefined') name = resource.id
       acc[name] = resource
@@ -46,10 +77,7 @@ class Resources extends React.PureComponent {
     }, {})
     this.setState({
       resources,
-      schemas,
-      name_prop,
-      icon_prop,
-      description_prop,
+      schemas
     })
   }
 

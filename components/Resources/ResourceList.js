@@ -5,6 +5,7 @@ import IconButton from '../../components/IconButton'
 import { makeTemplate } from '../../util/makeTemplate'
 import { connect } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import {get_schema_props} from '../Resources'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -24,9 +25,12 @@ class ResourceList extends React.PureComponent {
   async componentDidMount() {
     window.scrollTo(0, 0)
     const sorted_resources = Object.values(this.props.resources).sort((r1, r2) => {
-      let r1_name = makeTemplate(this.props.name_prop, r1)
+      // const {schema, name_prop, icon_prop, description_prop} = get_schema_props(r1, schemas)
+      const {name_prop: r1_name_prop} = get_schema_props(r1, this.props.schemas)
+      let r1_name = makeTemplate(r1_name_prop, r1)
       if (r1_name === 'undefined') r1_name = r1.id
-      let r2_name = makeTemplate(this.props.name_prop, r2)
+      const {name_prop: r2_name_prop} = get_schema_props(r2, this.props.schemas)
+      let r2_name = makeTemplate(r2_name_prop, r2)
       if (r2_name === 'undefined') r2_name = r2.id
       return (r1_name.localeCompare(r2_name))
     })
@@ -36,9 +40,6 @@ class ResourceList extends React.PureComponent {
   }
 
   render() {
-    const { icon_prop,
-      name_prop,
-      description_prop } = this.props
     const sorted_resources = this.state.sorted_resources
     if (sorted_resources.length === 0) {
       return <CircularProgress />
@@ -54,6 +55,7 @@ class ResourceList extends React.PureComponent {
         alignItems="center"
       >
         {sorted_resources.map((resource) => {
+          const {name_prop, icon_prop, description_prop} = get_schema_props(resource, this.props.schemas)
           let name = makeTemplate(name_prop, resource)
           if (name==='undefined') name = resource.id
           return (

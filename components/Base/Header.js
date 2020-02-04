@@ -100,7 +100,6 @@ class Header extends React.Component {
   }
 
   toggleDrawer = () => {
-    console.log("Here")
     this.setState(prevState =>({
       open: !prevState.open,
     }));

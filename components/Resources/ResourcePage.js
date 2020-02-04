@@ -23,6 +23,7 @@ import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
 
+import {get_schema_props} from '../Resources'
 const download = {
   libraries: download_library_json,
   resources: download_resource_json,
@@ -53,7 +54,7 @@ class ResourcePage extends React.Component {
   async componentDidMount() {
     const res = this.props.match.params.resource.replace(/_/g, ' ')
     let resource
-    if (isUUID(res + '')) {
+    if (this.props.resources[res]===undefined && isUUID(res + '')) {
       // uuid fetch resource
       const { response } = await fetch_meta({
         endpoint: `/resources/${res}`,
@@ -104,11 +105,17 @@ class ResourcePage extends React.Component {
     const prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
     if (res != prevRes) {
       let resource
-
-      if (isUUID(res + '')) {
+      if (this.props.resources[res]===undefined && isUUID(res + '')) {
         // uuid fetch resource
         const { response } = await fetch_meta({
-          endpoint: `/resources/${res}`,
+          endpoint: `/resources`,
+          body: {
+            filter: {
+              where: {
+                id: res
+              }
+            }
+          }
         })
         resource = response
         const { response: libraries } = await fetch_meta_post({
@@ -217,12 +224,9 @@ class ResourcePage extends React.Component {
     if (this.state.resource === null) {
       return <CircularProgress />
     }
-    const { icon_prop,
-      name_prop,
-    } = this.props
 
     const resource = this.state.resource
-
+    const {name_prop, icon_prop} = get_schema_props(resource, this.props.schemas)
     let resource_name = makeTemplate(name_prop, resource)
     resource_name = resource_name === 'undefined' ? resource.id : resource_name
     return (

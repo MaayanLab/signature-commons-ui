@@ -4,10 +4,9 @@ import ResourceFilters from './ResourceFilters'
 import LibraryResults from './LibraryResults'
 import { connect } from 'react-redux'
 import { findSignaturesFromId } from '../../util/redux/actions'
-import { findMatchedSchema } from '../../util/objectMatch'
 import { get_schemas } from '../../util/helper/fetch_methods'
 import { fetch_meta } from '../../util/fetch/meta'
-
+import { get_resources_and_libraries } from '../Resources'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state) => {
@@ -42,24 +41,12 @@ class SignatureSearch extends React.Component {
     window.scrollTo(0, 0)
 
     const schemas = await get_schemas()
-    const { response: resources } = await fetch_meta({
-      endpoint: `/resources`,
-    })
-    const schema = findMatchedSchema(resources[0], schemas)
-    const name_props = Object.values(schema.properties).filter((prop) => prop.name)
-    const name_prop = name_props.length > 0 ? name_props[0].text : '${id}'
-    const icon_props = Object.values(schema.properties).filter((prop) => prop.icon)
-    const icon_prop = icon_props.length > 0 ? icon_props[0].src : '${id}'
-    const description_props = Object.values(schema.properties).filter((prop) => prop.description)
-    const description_prop = description_props.length > 0 ? description_props[0].text : '${id}'
+    const { response: resources } = await get_resources_and_libraries()
     if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
       this.props.search(this.props.match.params.type, this.props.match.params.id)
     }
     this.setState({
       schemas,
-      icon_prop,
-      name_prop,
-      description_prop,
       resources,
     })
   }
