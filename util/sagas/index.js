@@ -95,12 +95,12 @@ export function *workInitializeSigcom(action) {
     const lib_count = yield call(fetch_count, 'libraries')
 
     const parents_mapping = {}
-    const parent_ids_mapping = {}
+    // const parent_ids_mapping = {}
     let libraries = {}
     if (sig_count > 0) {
       libraries = yield call(fetch_all_as_dictionary, { table: 'libraries', controller })
       parents_mapping['signatures'] = 'library'
-      parent_ids_mapping['signatures'] = libraries
+      // parent_ids_mapping['signatures'] = libraries
     }
     if (lib_count > 0) {
       let resources = yield call(fetch_all_as_dictionary, { table: 'resources', controller })
@@ -110,11 +110,11 @@ export function *workInitializeSigcom(action) {
       } else {
         parents_mapping['libraries'] = 'resource'
       }
-      parent_ids_mapping['libraries'] = resources
+      // parent_ids_mapping['libraries'] = resources
     }
-
-    yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
-  } catch (error) {
+    yield put(initializeParents({ parents_mapping }))
+    // yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
+   } catch (error) {
     yield put(reportError(error))
     console.log(error)
     controller.abort()
