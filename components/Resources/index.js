@@ -38,6 +38,13 @@ export const get_schema_props= (item, schemas) => {
 export const get_resources_and_libraries = async(fetch_libraries=true) => {
   const { response: resources } = await fetch_meta({
     endpoint: `/resources`,
+    body: {
+      filter: {
+        where: {
+          "meta.$hidden": { eq: null}
+        }
+      }
+    }
   })
   if (fetch_libraries){
     const { response: libraries } = await fetch_meta({
@@ -67,7 +74,7 @@ class Resources extends React.PureComponent {
 
   componentDidMount = async () => {
     const schemas = await get_schemas()
-    const { response } = await get_resources_and_libraries()
+    const { response } = await get_resources_and_libraries(this.props.ui_values.showNonResource)
     const resources = response.reduce((acc, resource) => {
       const {name_prop} = get_schema_props(resource, schemas)
       let name = makeTemplate(name_prop, resource)

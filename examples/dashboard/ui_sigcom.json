@@ -43,6 +43,7 @@
           "active": true
         }
       },
+      "showNonResource": false,
       "footer_links": [
         {
           "href": "http://lincs-dcic.org/",

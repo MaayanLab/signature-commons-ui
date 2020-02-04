@@ -115,6 +115,7 @@ const default_values = {
     ui_schema: '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
     maxResourcesBeforeCollapse: 60,
     maxResourcesToShow: 40,
+    showNonResource: true,
     downloads: {
       gmt: 'Download gmt file',
       tsv: 'Download tsv file',
