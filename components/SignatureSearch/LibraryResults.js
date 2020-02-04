@@ -4,7 +4,8 @@ import MUIDataTable from 'mui-datatables'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import ShowMeta from '../../components/ShowMeta'
-import { Label, objectMatch } from '../../components/Label'
+import { Label } from '../../components/Label'
+import { findMatchedSchema } from '../../util/objectMatch'
 import { makeTemplate } from '../../util/makeTemplate'
 import { RunningSum, dataFromResults } from '@dcic/signature-commons-ui-components-running-sum'
 import { fetch_data } from '../../util/fetch/data'
@@ -42,12 +43,6 @@ const theme = createMuiTheme({
 })
 // Weird hack to remove table shadows
 theme.shadows[4] = theme.shadows[0]
-
-export const default_schemas = [
-  require('../../examples/library/default.json'),
-  require('../../examples/signature/default.json'),
-  require('../../examples/entities/default.json'),
-]
 
 export const rank_data_results = async ({ up, down, signature, database }) => {
   const { response } = await fetch_data({
@@ -91,22 +86,9 @@ export default class LibraryResults extends React.Component {
 
   render_table = ({ result }) => {
     const sigs = result.signatures
-    let matched_schemas = this.props.schemas.filter(
-        (schema) => objectMatch(schema.match, sigs[0])
-    )
-    // default if there is no match
-    if (matched_schemas.length < 1) {
-      matched_schemas = default_schemas.filter(
-          (schema) => objectMatch(schema.match, sigs[0])
-      )
-    }
-    if (matched_schemas.length < 1) {
-      console.error('Could not match ui-schema for item', item)
-      return null
-    }
-    const schema = matched_schemas[0]
-    const sorted_entries = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
-    const cols = sorted_entries.filter(
+    const schema = findMatchedSchema(sigs[0], this.props.schemas)
+    const sorted_props = Object.entries(schema.properties).sort((a, b) => a[1].priority - b[1].priority)
+    const cols = sorted_props.filter(
         ([prop, val]) => {
           if (this.check_column({ schema, prop, item: sigs[0] })) {
             if (this.props.match.params.type === 'Overlap') {

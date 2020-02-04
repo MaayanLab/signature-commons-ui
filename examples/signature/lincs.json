@@ -208,7 +208,7 @@
       "visibility": 1,
       "condition": {
         "${meta['logp-fisher']}": {
-          "ne": null
+          "ne": "undefined"
         }
       },
       "type": "text",

@@ -58,22 +58,35 @@ export function *workInitializeSigcom(action) {
     // if (theme.palette.default.dark===undefined){
     //   theme.palette.default.light = lighten(theme.palette.default.main, tonalOffset)
     // }
+
+    // Get variables for offsetting colors
     const tonalOffset = theme.palette.tonalOffset
     const contrastThreshold = theme.palette.contrastThreshold
+    //  default palette
     const default_palette = theme.palette.default
     theme.palette.default = fill_palette(default_palette, tonalOffset, contrastThreshold)
-    
+    //  default card
     const defaultCard = theme.palette.defaultCard
     theme.palette.defaultCard = fill_palette(defaultCard, tonalOffset, contrastThreshold)
-    
+    //  default button
     const defaultButton = theme.palette.defaultButton
     theme.palette.defaultButton = fill_palette(defaultButton, tonalOffset, contrastThreshold)
-
+    //  default chip
     const defaultChip = theme.palette.defaultChip
     theme.palette.defaultChip = fill_palette(defaultChip, tonalOffset, contrastThreshold)
-    
+    //  default chip light
     const defaultChipLight = theme.palette.defaultChipLight
     theme.palette.defaultChipLight = fill_palette(defaultChipLight, tonalOffset, contrastThreshold)
+
+    // card themes
+    for(const [ind, card_theme] of Object.entries(theme.card)){
+      if (card_theme.palette.main !== undefined){
+        const main = card_theme.palette
+        card_theme.palette = fill_palette(main, tonalOffset, contrastThreshold)
+        theme.card[ind] = card_theme
+      }
+    }
+    
 
     // theme.palette.action.disabledBackground = theme.palette.secondary.light
     yield put(initializeTheme(theme))
@@ -82,12 +95,12 @@ export function *workInitializeSigcom(action) {
     const lib_count = yield call(fetch_count, 'libraries')
 
     const parents_mapping = {}
-    const parent_ids_mapping = {}
+    // const parent_ids_mapping = {}
     let libraries = {}
     if (sig_count > 0) {
       libraries = yield call(fetch_all_as_dictionary, { table: 'libraries', controller })
       parents_mapping['signatures'] = 'library'
-      parent_ids_mapping['signatures'] = libraries
+      // parent_ids_mapping['signatures'] = libraries
     }
     if (lib_count > 0) {
       let resources = yield call(fetch_all_as_dictionary, { table: 'resources', controller })
@@ -97,11 +110,11 @@ export function *workInitializeSigcom(action) {
       } else {
         parents_mapping['libraries'] = 'resource'
       }
-      parent_ids_mapping['libraries'] = resources
+      // parent_ids_mapping['libraries'] = resources
     }
-
-    yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
-  } catch (error) {
+    yield put(initializeParents({ parents_mapping }))
+    // yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
+   } catch (error) {
     yield put(reportError(error))
     console.log(error)
     controller.abort()

@@ -1,6 +1,6 @@
 import { fetch_meta } from '../fetch/meta'
 import { get_schemas } from './fetch_methods'
-import { objectMatch } from '../objectMatch'
+import { objectMatch, default_schemas } from '../objectMatch'
 import { makeTemplate } from '../makeTemplate'
 
 
@@ -8,8 +8,6 @@ export const iconOf = {
   'CREEDS': `static/images/creeds.png`,
   'CMAP': `static/images/clueio.ico`,
 }
-
-const default_schemas = []
 
 export async function get_library_resources() {
   // fetch schemas if missing
@@ -37,7 +35,7 @@ export async function get_library_resources() {
     let resource_name
     const resource_id = lib.resource
     // lib resource matches with resource table
-    if (resource_id) {
+    if (resource_id!==undefined) {
       if (resource_id in resource_meta) {
         const resource = resource_meta[resource_id]
         // find matched schema
@@ -50,7 +48,6 @@ export async function get_library_resources() {
           )
         }
         if (matched_schemas.length < 1) {
-          console.log(schemas)
           console.error('Could not match ui-schema for', resource)
           return null
         }
@@ -70,7 +67,7 @@ export async function get_library_resources() {
         resources[resource_name].libraries.push({ ...lib })
         resources_id[resource_id] = resource
       } else {
-        console.error(`Resource not found: ${resource_name}`)
+        console.error(`Resource not found: ${resource_name} ${resource_id}`)
       }
     } else {
       // find matched schema
@@ -87,24 +84,22 @@ export async function get_library_resources() {
         console.error('Could not match ui-schemas for', lib)
         return null
       }
-      const name_prop = Object.keys(matched_schemas[0].properties).filter((prop) => matched_schemas[0].properties[prop].name)
-
-      if (name_prop.length > 0) {
-        resource_name = makeTemplate(matched_schemas[0].properties[name_prop[0]].text, lib)
-      } else {
-        console.warn('source of lib name is not defined, using either dataset or ids')
-        resource_name = lib.dataset || lib.id
-      }
+      const name_props = Object.keys(matched_schemas[0].properties).filter((prop) => matched_schemas[0].properties[prop].name)
+      const name_prop = name_props[0].text || "${id}"
+      const resource_name = makeTemplate(name_prop, lib)
       // render only library as resource if resource table is empty
-      if (response.length === 0) {
-        resources[resource_name] = {
-          ...lib,
-          libraries: [lib],
-        }
+      // if (response.length === 0) {
+      //   resources[resource_name] = {
+      //     ...lib,
+      //     libraries: [lib],
+      //   }
+      // }
+      resources[resource_name] = {
+        ...lib,
+        libraries: [lib],
       }
     }
   }
-
   const library_dict = libraries.reduce((L, l) => ({ ...L, [l.id]: l }), {})
 
   const library_resource = Object.keys(resources).reduce((groups, resource) => {

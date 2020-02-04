@@ -14,6 +14,7 @@
         "entities": "Entity",
         "resources": "Assay"
       },
+      "showNonResource": false,
       "signature_search": false,
       "deactivate_download": true,
       "deactivate_wordcloud": true,

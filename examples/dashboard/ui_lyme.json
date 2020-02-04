@@ -1,0 +1,119 @@
+[
+    {
+      "landing": true,
+      "content": {
+        "favicon": {
+          "src": "/static/lyme/favicon.png",
+          "alt": "LymeMIND",
+          "title": "LymeMIND Commons"
+        },
+        "font_families": [
+          "https://fonts.googleapis.com/css?family=Asap+Condensed&display=swap"
+        ],
+        "header_info": {
+            "icon": {
+                "src": "/static/lyme/lymemind-logo.svg",
+                "alt": "LymeMind",
+                "style": {
+                    "width": "auto",
+                    "height": 55,
+                    "marginBottom": -5
+                } 
+            },
+            "header_right": "Commons"
+        },
+        "metadata_placeholder": "Search over LymeMIND datasets",
+        "text_1": "Explore an extensive collection of LymeMIND datasets",
+        "text_4": " ",
+        "preferred_name_singular": {
+          "libraries": "Dataset",
+          "resources": "Consortium"
+        },
+        "preferred_name": {
+            "libraries": "Datasets",
+            "resources": "Consortia"
+          },
+        "nav": {
+          "MetadataSearch": {
+            "active": true,
+            "endpoint": "/MetadataSearch"
+          },
+          "SignatureSearch": {
+            "active": false,
+            "endpoint": "/SignatureSearch"
+          },
+          "Resources": {
+            "active": true,
+            "endpoint": "/Consortia"
+          },
+          "API": {
+            "active": true
+          }
+        },
+        "footer_links": [
+          {
+            "href": "http://www.lymemind.org/",
+            "src": "/static/lyme/lymemind-logo.svg",
+            "alt": "LymeMind"
+          }
+        ],
+        "theme_mod": {
+          "palette": {
+            "primary": {
+              "main": "#08507b"
+            },
+            "secondary": {
+              "main": "#f98c29"
+            },
+            "default": {
+              "main": "#08507b",
+              "contrastText": "#fff"
+            }
+          },
+          "typography": {
+            "fontFamily": "Asap Condensed, sans-serif"
+          }
+        },
+        "deactivate_download": true,
+        "bar_chart_style": {
+          "ResponsiveContainer": {
+            "height":420,
+            "width": 420
+          },
+          "Chart": {
+            "margin": {
+              "right": 80,
+              "left": 50
+            }
+          },
+          "XAxis": {
+            "axisLine": false,
+            "angle": 45,
+            "height": 180,
+            "textAnchor": "start",
+            "interval": 0,
+            "tick": {
+              "fontSize": 9
+            }
+          },
+          "Bar": {
+            "fill": "#1f9ad7"
+          }
+        },
+        "pie_chart_style": {
+          "Pie": {
+            "fill":  "#1f9ad7"
+          }
+        },
+        "showNonResource": false,
+        "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+        "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+        "search_terms": [
+          "Borrelia",
+          "Interferon",
+          "TL4",
+          "infammation"
+        ]
+      }
+    }
+  ]

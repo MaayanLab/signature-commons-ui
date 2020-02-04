@@ -67,6 +67,7 @@
           "alt": "dcic"
         }
       ],
+      "showNonResource": false,
       "theme_mod": {
         "palette": {
           "primary": {

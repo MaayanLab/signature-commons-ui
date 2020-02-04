@@ -81,10 +81,10 @@ class MetaFilter extends React.Component {
     if (curr_table === current_table && mapping_id_to_name !== undefined && mapping_name_to_id !== undefined) {
       return { mapping_name_to_id, mapping_id_to_name }
     } else {
-      const { schemas, parent_ids_mapping: mapping } = this.props
+      const { schemas, models } = this.props
 
-
-      const parent_ids_mapping = mapping[curr_table]
+      const model = models[curr_table]
+      const parent_ids_mapping = model.parents_meta
       let mapping_id_to_name = {}
       const mapping_name_to_id = Object.entries(parent_ids_mapping).reduce((acc, [id, val]) => {
         const matched_schema = findMatchedSchema(val, schemas)

@@ -51,7 +51,7 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
           {this.props.ui_values.font_families.map((family, ind)=>(
             <link href={family} key={ind} rel="stylesheet" type="text/css"/>
           ))}
-          <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
+          <link href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css" rel="stylesheet" />
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>

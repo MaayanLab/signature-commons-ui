@@ -69,11 +69,12 @@ function rootReducer(state = initialState, action) {
     }
   }
   if (action.type === action_definitions.INITIALIZE_PARENTS) {
-    const { parent_ids_mapping, parents_mapping } = action
+    // const { parent_ids_mapping, parents_mapping } = action
+    const { parents_mapping } = action
     return {
       ...state,
       initialized: true,
-      parent_ids_mapping,
+      // parent_ids_mapping,
       parents_mapping,
       selected_parent_ids: Object.keys(parents_mapping).reduce((acc, item) => {
         acc[item] = []
@@ -112,7 +113,7 @@ function rootReducer(state = initialState, action) {
       models: Object.keys(state.parents_mapping).reduce((acc, table) => {
         acc = {
           ...acc,
-          [table]: new Model(table, state.parents_mapping[table], state.parent_ids_mapping[table]),
+          [table]: new Model(table, state.parents_mapping[table]),
         }
         return acc
       }, {}),

@@ -61,6 +61,7 @@
           }
         }
       },
+      "showNonResource": false,
       "github": "https://github.com/MaayanLab/btools-ui",
       "github_issues": "https://github.com/MaayanLab/btools-ui/issues",
       "deactivate_download": true,

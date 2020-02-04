@@ -16,8 +16,12 @@ export function fetchUIValuesSucceeded(ui_values) {
   return { type: action_definitions.FETCH_UI_VALUES_SUCCEEDED, ui_values}
 }
 
-export function initializeParents({ parent_ids_mapping, parents_mapping }) {
-  return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
+// export function initializeParents({ parent_ids_mapping, parents_mapping }) {
+//   return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
+// }
+
+export function initializeParents({parents_mapping }) {
+  return { type: action_definitions.INITIALIZE_PARENTS, parents_mapping }
 }
 
 export function resetSigcom() {
