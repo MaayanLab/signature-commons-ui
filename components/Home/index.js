@@ -26,6 +26,18 @@ import { closeSnackBar, initializeTheme } from '../../util/redux/actions'
 import '../../styles/swagger.scss'
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
+import { iframeResize } from 'iframe-resizer'
+class IFrame extends React.Component {
+  componentDidMount() {
+    iframeResize({ log: false }, `#${this.props.id}`)
+  }
+  render() {
+    return (
+      <iframe {...this.props} />
+    )
+  }
+}
+
 
 const mapStateToProps = (state) => {
   return {
