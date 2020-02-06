@@ -79,6 +79,16 @@ export function Nav(props) {
           </Link>
         </MenuItem> : null
       }
+      {ui_values.about !== undefined ?
+        <MenuItem
+          selected={location.pathname === '/About'}
+          className={classes.menuItem}
+        >
+          <Link className={classes.link} to={'/About'}>
+            About
+          </Link>
+        </MenuItem> : null
+      }
       <MenuItem
         selected={location.pathname === '/API'}
         className={classes.menuItem}
