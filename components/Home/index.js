@@ -13,6 +13,7 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { withStyles } from '@material-ui/core/styles';
 
 import Base from '../../components/Base'
+import About from '../../components/About'
 import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
@@ -169,6 +170,12 @@ class Home extends React.PureComponent {
     )
   }
 
+  about = (props) => {
+    return (
+      <About {...props} ui_values={this.props.ui_values}/>
+    )
+  }
+
   render = () => {
     if (this.props.theme===null){
       return "Loading..."
@@ -248,6 +255,12 @@ class Home extends React.PureComponent {
               <Route
                 path={`${this.props.ui_values.nav.Resources.endpoint || '/Resources'}`}
                 component={this.resources}
+              /> : null
+            }
+            {this.props.ui_values.about !== undefined ?
+              <Route
+                path={'/About'}
+                component={this.about}
               /> : null
             }
             <Route
