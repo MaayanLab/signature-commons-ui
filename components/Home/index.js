@@ -18,6 +18,8 @@ import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
+import Network from '../Network'
+import Notebooks from '../Notebooks'
 
 import Pages from '../Pages'
 
@@ -176,6 +178,30 @@ class Home extends React.PureComponent {
     )
   }
 
+  network = (props) => {
+    return (
+      <Network {...props}/>
+    )
+  }
+
+  rppa = (props) => {
+    return (
+      <Notebooks {...props} endpoint={"/rppa"} path={"RPPA"}/>
+    )
+  }
+
+  rnaseq = (props) => {
+    return (
+      <Notebooks {...props}
+        iframe
+        endpoint={"/rna-seq"}
+        height={15000}
+        path={"RNASeq"}
+      />
+    )
+  }
+
+
   render = () => {
     if (this.props.theme===null){
       return "Loading..."
@@ -263,6 +289,28 @@ class Home extends React.PureComponent {
                 component={this.about}
               /> : null
             }
+            <Route
+              path={'/Network'}
+              component={this.network}
+            /> 
+            <Route
+              path={'/RNASeq'}
+              exact
+              component={this.rnaseq}
+            />
+            <Route
+              path={'/RNASeq/:notebook_title'}
+              component={this.rnaseq}
+            />  
+            <Route
+              path={'/RPPA'}
+              exact
+              component={this.rppa}
+            />
+            <Route
+              path={'/RPPA/:notebook_title'}
+              component={this.rppa}
+            /> 
             <Route
               path="/:table/:id"
               component={this.pages}

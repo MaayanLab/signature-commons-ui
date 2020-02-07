@@ -79,6 +79,38 @@ export function Nav(props) {
           </Link>
         </MenuItem> : null
       }
+      <MenuItem
+        selected={location.pathname === '/RNASeq'}
+        className={classes.menuItem}
+      >
+        <Link className={classes.link} to={'/RNASeq'}>
+          RNA-Seq Notebooks
+        </Link>
+      </MenuItem>
+      <MenuItem
+        selected={location.pathname === '/RPPA'}
+        className={classes.menuItem}
+      >
+        <Link className={classes.link} to={'/RPPA'}>
+          RPPA Notebooks
+        </Link>
+      </MenuItem> 
+      <MenuItem
+        selected={location.pathname === '/Network'}
+        className={classes.menuItem}
+      >
+        <Link className={classes.link} to={'/Network'}>
+          Integrative Network
+        </Link>
+      </MenuItem>
+      <MenuItem
+        selected={location.pathname === '/API'}
+        className={classes.menuItem}
+      >
+        <Link className={classes.link} to="/API">
+          API
+        </Link>
+      </MenuItem> 
       {ui_values.about !== undefined ?
         <MenuItem
           selected={location.pathname === '/About'}
@@ -89,14 +121,6 @@ export function Nav(props) {
           </Link>
         </MenuItem> : null
       }
-      <MenuItem
-        selected={location.pathname === '/API'}
-        className={classes.menuItem}
-      >
-        <Link className={classes.link} to="/API">
-          API
-        </Link>
-      </MenuItem>
     </React.Fragment>
   )
 }
