@@ -1,11 +1,11 @@
 import fetch from 'isomorphic-unfetch'
 
 export const base_url = process.env.NEXT_SERVER_EXTERNAL_API
-    || process.env.NEXT_STATIC_METADATA_API
-    || process.env.NEXT_PUBLIC_METADATA_API
+    || process.env.NEXT_STATIC_EXTERNAL_API
+    || process.env.NEXT_PUBLIC_EXTERNAL_API
 
 
-export function fetch_external({endpoint, body, signal, headers}) {
+export async function fetch_external({endpoint, body, signal, headers}) {
     const start = new Date()
     let duration
     if ( base_url === undefined ){
@@ -47,7 +47,7 @@ export function fetch_external({endpoint, body, signal, headers}) {
 
 
 
-export function fetch_external_post({endpoint, body, signal, headers}) {
+export async function fetch_external_post({endpoint, body, signal, headers}) {
     const start = new Date()
     let duration
     if ( base_url === undefined ){
