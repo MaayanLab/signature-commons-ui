@@ -104,6 +104,14 @@ export function Nav(props) {
         </Link>
       </MenuItem>
       <MenuItem
+        selected={location.pathname === '/Visualizations'}
+        className={classes.menuItem}
+      >
+        <Link className={classes.link} to={'/Visualizations'}>
+          Visualizations
+        </Link>
+      </MenuItem>
+      <MenuItem
         selected={location.pathname === '/API'}
         className={classes.menuItem}
       >
@@ -111,7 +119,7 @@ export function Nav(props) {
           API
         </Link>
       </MenuItem> 
-      {ui_values.about !== undefined ?
+      {/* {ui_values.about !== undefined ?
         <MenuItem
           selected={location.pathname === '/About'}
           className={classes.menuItem}
@@ -120,7 +128,7 @@ export function Nav(props) {
             About
           </Link>
         </MenuItem> : null
-      }
+      } */}
     </React.Fragment>
   )
 }
@@ -146,7 +154,7 @@ class Header extends React.Component {
       <header>
         <AppBar position="static" color="primary">
           <Toolbar>
-            <Hidden smDown>
+            <Hidden lgDown>
               { [this.props.ui_values.nav.MetadataSearch.endpoint, this.props.ui_values.nav.SignatureSearch.endpoint + "/Overlap", this.props.ui_values.nav.SignatureSearch.endpoint + "/Rank"].indexOf(this.props.location.pathname) > -1 ?
                 <div className={classes.grow}/>:
                 <Typography variant="h4" color="inherit" className={classes.grow}>
@@ -160,7 +168,7 @@ class Header extends React.Component {
                 }
                 <Nav classes={classes} {...rest}/>
               </Hidden>
-              <Hidden mdUp>
+              <Hidden xlUp>
               <Button edge="start" className={classes.menuButton} onClick={this.toggleDrawer} color="inherit" aria-label="menu">
                 <MenuIcon />
               </Button>

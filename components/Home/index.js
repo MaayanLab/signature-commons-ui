@@ -19,6 +19,7 @@ import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
 import Network from '../Network'
+import Visualization from '../Visualization'
 import Notebooks from '../Notebooks'
 
 import Pages from '../Pages'
@@ -201,6 +202,17 @@ class Home extends React.PureComponent {
     )
   }
 
+  visualization = (props) => {
+    return (
+      <Visualization {...props}
+        endpoint={"/givwe"}
+        path={"Visualizations"}
+        iframe
+        height={1000}
+      />
+    )
+  }
+
 
   render = () => {
     if (this.props.theme===null){
@@ -310,7 +322,16 @@ class Home extends React.PureComponent {
             <Route
               path={'/RPPA/:notebook_title'}
               component={this.rppa}
-            /> 
+            />
+            <Route
+              path={'/Visualizations'}
+              exact
+              component={this.visualization}
+            />
+            <Route
+              path={'/Visualizations/:assay_title'}
+              component={this.visualization}
+            />  
             <Route
               path="/:table/:id"
               component={this.pages}

@@ -40,7 +40,7 @@ export default class Network extends React.PureComponent {
                     />
                 </Grid>
                 <Grid item xs={12} md={2}>
-                    <Grid container direction={"column"}>
+                    <Grid container direction={"column"} style={{marginLeft: 10}}>
                         <Grid item>
                             <img src="https://amp.pharm.mssm.edu/mcf10a-deep-dive/app/static/R/networks/network_legend.png"
                                 style={{height: 300}}
