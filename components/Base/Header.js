@@ -9,10 +9,17 @@ import { withStyles } from '@material-ui/core/styles'
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
-import Paper from '@material-ui/core/Paper';
 import Hidden from '@material-ui/core/Hidden';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import MenuIcon from '@material-ui/icons/Menu';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import Collapse from '@material-ui/core/Collapse';
+import Popper from '@material-ui/core/Popper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import Paper from '@material-ui/core/Paper';
+
 const mapStateToProps = (state, ownProps) => {
   return {
     ui_values: state.ui_values,
@@ -35,7 +42,7 @@ const styles = theme => ({
     color: "inherit"
   },
   menuItem: {
-    color: "inherit"
+    color: "inherit",
   },
   paper: {
     padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
@@ -43,91 +50,255 @@ const styles = theme => ({
   menuButton: {
     margin: 0,
   },
+  nested: {
+    paddingLeft: theme.spacing.unit * 4,
+  },
 });
+export function NavList(props) {
+  const { 
+    location,
+    classes,
+    openMenuNotebook,
+    openMenuVisualization,
+    toggleDrawer,
+    handleClick } = props
+
+    return (
+      <React.Fragment>
+        <ListItem
+          button
+          className={classes.menuItem}
+          onClick={() => handleClick("notebook")}
+        >
+          Notebooks
+        </ListItem>
+        <Collapse in={openMenuNotebook} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem
+              onClick={toggleDrawer}
+              selected={location.pathname === '/RNASeq'}
+              className={classes.nested}
+            >
+              <Link className={classes.link} to={'/RNASeq'}>
+                RNA-Seq Notebooks
+              </Link>
+            </ListItem>
+            <ListItem
+              onClick={toggleDrawer}
+              selected={location.pathname === '/RPPA'}
+              className={classes.nested}
+            >
+              <Link className={classes.link} to={'/RPPA'}>
+                RPPA Notebooks
+              </Link>
+            </ListItem> 
+          </List>
+        </Collapse>
+        <ListItem
+          button
+          className={classes.menuItem}
+          onClick={() => handleClick("visualization")}
+        >
+          Visualization
+        </ListItem>
+        <Collapse in={openMenuVisualization} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem
+              onClick={toggleDrawer}
+              selected={location.pathname === '/Network'}
+              className={classes.nested}
+            >
+              <Link className={classes.link} to={'/Network'}>
+                Integrative Network
+              </Link>
+            </ListItem>
+            <ListItem
+              onClick={toggleDrawer}
+              selected={location.pathname === '/Visualizations'}
+              className={classes.nested}
+            >
+              <Link className={classes.link} to={'/Visualizations'}>
+                GIVWE Visualizations
+              </Link>
+            </ListItem>
+          </List>
+        </Collapse>
+      </React.Fragment>
+    )
+}
+
+export function NavMenu(props) {
+  const { 
+    location,
+    classes,
+    openMenuNotebook,
+    openMenuVisualization,
+    handleClick,
+    handleClose,
+    setAnchorEl,
+    anchorElNotebook,
+    anchorElVisualization
+   } = props
+    return (
+      <React.Fragment>
+        <ListItem
+          button
+          className={classes.menuItem}
+          buttonRef={node => {
+            setAnchorEl(node, "notebook")
+          }}
+          aria-owns={open ? 'menu-list-grow' : undefined}
+          aria-haspopup="true"
+          onClick={() => handleClick("notebook")}
+        >
+          Notebooks
+        </ListItem>
+        <Popper open={openMenuNotebook} anchorEl={anchorElNotebook} transition disablePortal>
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              id="menu-list-grow"
+              style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={(event)=>{ handleClose(event, "notebook")}}>
+                  <MenuList>
+                    <MenuItem
+                      onClick={(event)=>{ handleClose(event, "notebook")}}
+                      selected={location.pathname === '/RNASeq'}
+                      className={classes.nested}
+                    >
+                      <Link className={classes.link} to={'/RNASeq'}>
+                        RNA-Seq Notebooks
+                      </Link>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={(event)=>{ handleClose(event, "notebook")}}
+                      selected={location.pathname === '/RPPA'}
+                      className={classes.nested}
+                    >
+                      <Link className={classes.link} to={'/RPPA'}>
+                        RPPA Notebooks
+                      </Link>
+                    </MenuItem> 
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+        <ListItem
+          button
+          className={classes.menuItem}
+          buttonRef={node => {
+            setAnchorEl(node, "visualization")
+          }}
+          aria-owns={open ? 'menu-list-grow' : undefined}
+          aria-haspopup="true"
+          onClick={() => handleClick("visualization")}
+        >
+          Visualization
+        </ListItem>
+        <Popper open={openMenuVisualization} anchorEl={anchorElVisualization} transition disablePortal>
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              id="menu-list-grow"
+              style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={(event)=>{ handleClose(event, "visualization")}}>
+                  <MenuList>
+                    <MenuItem
+                      onClick={(event)=>{ handleClose(event, "visualization")}}
+                      selected={location.pathname === '/Network'}
+                      className={classes.nested}
+                    >
+                      <Link className={classes.link} to={'/Network'}>
+                        Integrative Network
+                      </Link>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={(event)=>{ handleClose(event, "visualization")}}
+                      selected={location.pathname === '/Visualizations'}
+                      className={classes.nested}
+                    >
+                      <Link className={classes.link} to={'/Visualizations'}>
+                        GIVWE Visualizations
+                      </Link>
+                    </MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+      </React.Fragment>
+    )
+}
 
 export function Nav(props) {
-  const { ui_values, location, classes } = props
+  const { ui_values,
+    location,
+    classes,
+    toggleDrawer,
+    CustomComponent
+   } = props
   return (
     <React.Fragment>
       {ui_values.nav.MetadataSearch && ui_values.nav.MetadataSearch.active ?
-        <MenuItem
+        <ListItem
+          onClick={toggleDrawer}
           selected={location.pathname === `${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
           className={classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
             {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
-        </MenuItem> : null
+        </ListItem> : null
       }
       {ui_values.nav.SignatureSearch && ui_values.nav.SignatureSearch.active ?
-        <MenuItem
+        <ListItem
+          onClick={toggleDrawer}
           selected={location.pathname === `${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
           className={ classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
             {ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
-        </MenuItem> : null
+        </ListItem> : null
       }
       {ui_values.nav.Resources && ui_values.nav.Resources.active ?
-        <MenuItem
+        <ListItem
+          onClick={toggleDrawer}
           selected={location.pathname === `${ui_values.nav.Resources.endpoint || '/Resources'}`}
           className={classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
             {ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
           </Link>
-        </MenuItem> : null
+        </ListItem> : null
       }
-      <MenuItem
-        selected={location.pathname === '/RNASeq'}
-        className={classes.menuItem}
-      >
-        <Link className={classes.link} to={'/RNASeq'}>
-          RNA-Seq Notebooks
-        </Link>
-      </MenuItem>
-      <MenuItem
-        selected={location.pathname === '/RPPA'}
-        className={classes.menuItem}
-      >
-        <Link className={classes.link} to={'/RPPA'}>
-          RPPA Notebooks
-        </Link>
-      </MenuItem> 
-      <MenuItem
-        selected={location.pathname === '/Network'}
-        className={classes.menuItem}
-      >
-        <Link className={classes.link} to={'/Network'}>
-          Integrative Network
-        </Link>
-      </MenuItem>
-      <MenuItem
-        selected={location.pathname === '/Visualizations'}
-        className={classes.menuItem}
-      >
-        <Link className={classes.link} to={'/Visualizations'}>
-          Visualizations
-        </Link>
-      </MenuItem>
-      <MenuItem
+      {CustomComponent !== undefined ? <CustomComponent {...props}/>: null}
+      <ListItem
+        onClick={toggleDrawer}
         selected={location.pathname === '/API'}
         className={classes.menuItem}
       >
         <Link className={classes.link} to="/API">
           API
         </Link>
-      </MenuItem> 
+      </ListItem> 
       {/* {ui_values.about !== undefined ?
-        <MenuItem
+        <ListItem
+          onClick={toggleDrawer}
           selected={location.pathname === '/About'}
           className={classes.menuItem}
         >
           <Link className={classes.link} to={'/About'}>
             About
           </Link>
-        </MenuItem> : null
+        </ListItem> : null
       } */}
     </React.Fragment>
   )
@@ -138,14 +309,50 @@ class Header extends React.Component {
     super(props)
     this.state = {
       open: false,
+      openMenuNotebook: false,
+      openMenuVisualization: false
+    }
+  }
+
+  handleClick = (menu) => {
+    if (menu === "notebook"){
+      this.setState(state => ({ openMenuNotebook: !state.openMenuNotebook }))
+    } else if (menu === "visualization"){
+      this.setState(state => ({ openMenuVisualization: !state.openMenuVisualization }))
     }
   }
 
   toggleDrawer = () => {
     this.setState(prevState =>({
       open: !prevState.open,
+      openMenuNotebook: false,
+      openMenuVisualization: false,
     }));
-  };
+  }
+
+  handleClose = (event, menu) => {
+    if (menu === "notebook"){
+      if (this.anchorElNotebook.contains(event.target)) {
+        return;
+      }
+  
+      this.setState({ openMenuNotebook: false });
+    }else if (menu === "visualization"){
+      if (this.anchorElVisualization.contains(event.target)) {
+        return;
+      }
+  
+      this.setState({ openMenuVisualization: false });
+    }
+  }
+
+  setAnchorEl = (node, menu) => {
+    if (menu === "notebook"){
+      this.anchorElNotebook = node
+    }else if (menu === "visualization"){
+      this.anchorElVisualization = node
+    }
+  }
 
   render = () => {
     const paths = this.props.location.pathname.split('/')
@@ -154,7 +361,7 @@ class Header extends React.Component {
       <header>
         <AppBar position="static" color="primary">
           <Toolbar>
-            <Hidden lgDown>
+            <Hidden smDown>
               { [this.props.ui_values.nav.MetadataSearch.endpoint, this.props.ui_values.nav.SignatureSearch.endpoint + "/Overlap", this.props.ui_values.nav.SignatureSearch.endpoint + "/Rank"].indexOf(this.props.location.pathname) > -1 ?
                 <div className={classes.grow}/>:
                 <Typography variant="h4" color="inherit" className={classes.grow}>
@@ -166,9 +373,26 @@ class Header extends React.Component {
                     </Link>
                   </Typography>
                 }
-                <Nav classes={classes} {...rest}/>
+                <List style={{
+                  display: 'flex',
+                  whiteSpace: "nowrap",
+                }}>
+                  <Nav
+                    classes={classes}
+                    {...rest}
+                    openMenuNotebook={this.state.openMenuNotebook}
+                    openMenuVisualization={this.state.openMenuVisualization}
+                    handleClick={this.handleClick}
+                    toggleDrawer={this.toggleDrawer}
+                    CustomComponent={NavMenu}
+                    handleClose={this.handleClose}
+                    setAnchorEl={this.setAnchorEl}
+                    anchorElNotebook={this.anchorElNotebook}
+                    anchorElVisualization={this.anchorElVisualization}
+                  />
+                </List>
               </Hidden>
-              <Hidden xlUp>
+              <Hidden mdUp>
               <Button edge="start" className={classes.menuButton} onClick={this.toggleDrawer} color="inherit" aria-label="menu">
                 <MenuIcon />
               </Button>
@@ -191,12 +415,19 @@ class Header extends React.Component {
                 <div
                   tabIndex={0}
                   role="button"
-                  onClick={this.toggleDrawer}
-                  onKeyDown={this.toggleDrawer}
                 >
-                  <MenuList>
-                    <Nav classes={classes} {...rest}/>
-                  </MenuList>
+                  <List>
+                    <Nav
+                      classes={classes}
+                      {...rest}
+                      openMenuNotebook={this.state.openMenuNotebook}
+                      openMenuVisualization={this.state.openMenuVisualization}
+                      handleClick={this.handleClick}
+                      toggleDrawer={this.toggleDrawer}
+                      CustomComponent={NavList}
+                      handleClose={this.handleClose}
+                    />
+                  </List>
                 </div>
               </SwipeableDrawer>
               </Hidden>
