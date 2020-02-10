@@ -121,17 +121,9 @@ class Home extends React.PureComponent {
 
   api = (props) => (
     <Grid container>
-      <Grid xs={12} lg={6}>
+      <Grid xs={12}>
         <SwaggerUI
           url={`${meta_url}/openapi.json`}
-          deepLinking={true}
-          displayOperationId={true}
-          filter={true}
-        />
-      </Grid>
-      <Grid xs={12} lg={6}>
-        <SwaggerUI
-          url={`${data_url}/swagger.yml`}
           deepLinking={true}
           displayOperationId={true}
           filter={true}
