@@ -99,7 +99,7 @@ export function NavList(props) {
           className={classes.menuItem}
           onClick={() => handleClick("visualization")}
         >
-          Visualization
+          Visualizations
         </ListItem>
         <Collapse in={openMenuVisualization} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
@@ -109,7 +109,7 @@ export function NavList(props) {
               className={classes.nested}
             >
               <Link className={classes.link} to={'/Network'}>
-                Integrative Network
+                Integrative Networks
               </Link>
             </ListItem>
             <ListItem
@@ -197,7 +197,7 @@ export function NavMenu(props) {
           aria-haspopup="true"
           onClick={() => handleClick("visualization")}
         >
-          Visualization
+          Visualizations
         </ListItem>
         <Popper open={openMenuVisualization} anchorEl={anchorElVisualization} transition disablePortal>
           {({ TransitionProps, placement }) => (
@@ -215,7 +215,7 @@ export function NavMenu(props) {
                       className={classes.nested}
                     >
                       <Link className={classes.link} to={'/Network'}>
-                        Integrative Network
+                        Integrative Networks
                       </Link>
                     </MenuItem>
                     <MenuItem
