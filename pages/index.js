@@ -2,20 +2,12 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import { fetch_meta_post } from '../util/fetch/meta'
-import { get_schemas } from '../util/helper/fetch_methods.js'
+import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
 import { UIValues } from '../util/ui_values'
 import { initializeSigcom } from '../util/redux/actions'
 import { connect } from 'react-redux'
-import { get_counts,
-  get_metacounts,
-  get_piecounts,
-  get_barcounts,
-  get_histograms,
-  get_barscores,
-  get_resource_signature_counts,
-  get_wordcounts,
-} from '../util/helper/server_side.js'
+import { findMatchedSchema } from '../util/objectMatch'
+import { makeTemplate } from '../util/makeTemplate'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
 const Route = dynamic(async () => (await import('react-router-dom')).Route, { ssr: false })
@@ -61,36 +53,37 @@ export async function get_ui_values() {
 
 class App extends React.Component {
   static async getInitialProps() {
-    const { ui_values } = await get_ui_values()
-    // Check if it has library_name and resource_from_library
-    const schemas = await get_schemas(ui_values.ui_schema)
-    // const { resource_signatures, resources, resources_id, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
-    const { table_counts, ui_values: ui_val } = await get_counts(ui_values)
-    const { meta_counts } = await get_metacounts(ui_val)
-    const { piecounts } = await get_piecounts(ui_val)
-    const { wordcounts } = await get_wordcounts(ui_val)
-    // const signature_keys = await get_signature_keys()
-    const { barcounts } = await get_barcounts(ui_val)
-    const { histograms } = await get_histograms(ui_val)
-    const { barscores } = await get_barscores(ui_val)
-    const { resource_signature_counts } = await get_resource_signature_counts()
-    const serverSideProps = {
-      table_counts,
-      meta_counts, // : {},
-      // resource_signatures,
-      piecounts, // : {},
-      wordcounts,
-      barcounts,
-      histograms,
-      barscores,
-      // signature_keys,
-      // resources,
-      // resources_id,
-      // library_resource,
-      schemas,
-      resource_signature_counts,
+    const {response: serverSideProps} = await fetch_meta({
+      endpoint: "/summary"
+    })
+    const {response: resources} = await fetch_meta({
+      endpoint: "/resources"
+    })
+    const resource_mapper = {}
+    for (const r of resources){
+      resource_mapper[r.id] = r
     }
-    return { serverSideProps }
+
+    const {resource_signature_count: response, schemas} = serverSideProps
+    const resource_signature_count = response.map(r=>{
+      const {count, id} = r
+      const resource = resource_mapper[id]
+      const schema = findMatchedSchema(resource, schemas)
+      const name_props = Object.values(schema.properties).filter((prop) => prop.name)
+      let name
+      if (name_props.length > 0) {
+        name = makeTemplate(name_props[0].text, resource)
+      } 
+      if (name_props.length===0 || name === 'undefined') {
+        console.warn('source of resource name is not defined, using either Resource_Name or ids')
+        name = resource.meta['Resource_Name'] || id
+      }
+      return {name, counts: count}
+    })
+    return { serverSideProps: {
+      ...serverSideProps,
+      resource_signature_count
+    } }
   }
 
   async componentDidMount() {
