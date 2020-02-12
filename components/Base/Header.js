@@ -90,6 +90,14 @@ export function Nav(props) {
         </MenuItem> : null
       }
       <MenuItem
+        selected={location.pathname === '/Workflows'}
+        className={classes.menuItem}
+      >
+        <Link className={classes.link} to="/Workflows">
+          Workflows
+        </Link>
+      </MenuItem>
+      <MenuItem
         selected={location.pathname === '/API'}
         className={classes.menuItem}
       >

@@ -28,6 +28,18 @@ import { closeSnackBar, initializeTheme } from '../../util/redux/actions'
 import '../../styles/swagger.scss'
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
+import { iframeResize } from 'iframe-resizer'
+class IFrame extends React.Component {
+  componentDidMount() {
+    iframeResize({ log: false }, `#${this.props.id}`)
+  }
+  render() {
+    return (
+      <iframe {...this.props} />
+    )
+  }
+}
+
 
 const mapStateToProps = (state) => {
   return {
@@ -170,6 +182,22 @@ class Home extends React.PureComponent {
       <Pages {...props}/>
     )
   }
+  
+  workflows = (props) => {
+    return (
+      <IFrame
+        id="hi"
+        frameBorder="0"
+        src="https://amp.pharm.mssm.edu/signature-commons-graph/lincsworkflows.html"
+      />
+    )
+  }
+
+  handleClose = () => {
+    this.setState({
+      snackOpen: false
+    })
+  }
 
   about = (props) => {
     return (
@@ -267,6 +295,10 @@ class Home extends React.PureComponent {
             <Route
               path="/:table/:id"
               component={this.pages}
+            />
+            <Route
+              path="/workflows"
+              component={this.workflows}
             />
             <Route
               path={`${this.props.ui_values.nav.API.endpoint || '/API'}`}
