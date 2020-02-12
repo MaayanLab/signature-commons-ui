@@ -35,14 +35,20 @@ class App_ extends App {
     if (process.env.NODE_ENV === 'development' && Component.getInitialProps && !this.state.loaded) {
       pageProps = await Component.getInitialProps()
     }
-    if (pageProps.error) {
+    if (pageProps!==undefined){
+      if (pageProps.error) {
+        this.setState({
+          error: 'error',
+          errorMessage: pageProps.error,
+        })
+      } else {
+        this.setState({
+          pageProps,
+          loaded: true,
+        })
+      }
+    }else {
       this.setState({
-        error: 'error',
-        errorMessage: pageProps.error,
-      })
-    } else {
-      this.setState({
-        pageProps,
         loaded: true,
       })
     }
