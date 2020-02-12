@@ -2,12 +2,10 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import { fetch_meta, fetch_meta_post } from '../util/fetch/meta'
+import { fetch_meta_post } from '../util/fetch/meta'
 import { UIValues } from '../util/ui_values'
 import { initializeSigcom } from '../util/redux/actions'
 import { connect } from 'react-redux'
-import { findMatchedSchema } from '../util/objectMatch'
-import { makeTemplate } from '../util/makeTemplate'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
 const Route = dynamic(async () => (await import('react-router-dom')).Route, { ssr: false })
@@ -53,41 +51,11 @@ export async function get_ui_values() {
 
 class App extends React.Component {
   static async getInitialProps() {
-    const {response: serverSideProps} = await fetch_meta({
-      endpoint: "/summary"
-    })
-    const {response: resources} = await fetch_meta({
-      endpoint: "/resources"
-    })
-    const resource_mapper = {}
-    for (const r of resources){
-      resource_mapper[r.id] = r
-    }
-
-    const {resource_signature_count: response, schemas} = serverSideProps
-    const resource_signature_count = response.map(r=>{
-      const {count, id} = r
-      const resource = resource_mapper[id]
-      const schema = findMatchedSchema(resource, schemas)
-      const name_props = Object.values(schema.properties).filter((prop) => prop.name)
-      let name
-      if (name_props.length > 0) {
-        name = makeTemplate(name_props[0].text, resource)
-      } 
-      if (name_props.length===0 || name === 'undefined') {
-        console.warn('source of resource name is not defined, using either Resource_Name or ids')
-        name = resource.meta['Resource_Name'] || id
-      }
-      return {name, counts: count}
-    })
-    return { serverSideProps: {
-      ...serverSideProps,
-      resource_signature_count
-    } }
+    
   }
 
   async componentDidMount() {
-    this.props.initializeSigcom(this.props.serverSideProps)
+    this.props.initializeSigcom()
   }
 
   render() {

@@ -1,7 +1,7 @@
 import { action_definitions } from './action-types'
 
-export function initializeSigcom(serverSideProps) {
-  return { type: action_definitions.INITIALIZE_SIGCOM, serverSideProps }
+export function initializeSigcom() {
+  return { type: action_definitions.INITIALIZE_SIGCOM }
 }
 
 export function initializePreferredName(ui_values) {
@@ -14,6 +14,10 @@ export function initializeTheme(theme) {
 
 export function fetchUIValuesSucceeded(ui_values) {
   return { type: action_definitions.FETCH_UI_VALUES_SUCCEEDED, ui_values}
+}
+
+export function fetchSummarySucceeded(serverSideProps) {
+  return { type: action_definitions.FETCH_SUMMARY_SUCCEEDED, serverSideProps}
 }
 
 // export function initializeParents({ parent_ids_mapping, parents_mapping }) {
