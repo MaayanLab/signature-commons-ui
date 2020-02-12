@@ -1,7 +1,8 @@
 import { put, takeLatest, cancelled, all, call, select } from 'redux-saga/effects'
 import { Set } from 'immutable'
 import { action_definitions } from '../redux/action-types'
-import { resolve_entities,
+import { get_summary_statistics,
+  resolve_entities,
   find_synonyms,
   query_overlap,
   query_rank,
@@ -21,7 +22,8 @@ import { fetchMetaDataSucceeded,
   initializeTheme,
   initializePreferredName,
   updateInput,
-  reportError
+  reportError,
+  fetchSummarySucceeded
  } from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
@@ -30,7 +32,6 @@ import uuid5 from 'uuid5'
 import defaultTheme from '../theme-provider'
 import { createMuiTheme } from '@material-ui/core'
 import merge from 'deepmerge'
-import { darken, getContrastRatio, lighten } from '@material-ui/core/styles/colorManipulator'
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -47,9 +48,15 @@ export function *workInitializeSigcom(action) {
   }
   const controller = new AbortController()
   try {
+    // Summary statistics
+    const { serverSideProps } = yield call(get_summary_statistics)
+    yield put(fetchSummarySucceeded(serverSideProps))
+    // ui values
     const {ui_values} = yield call(get_ui_values)
     yield put(fetchUIValuesSucceeded(ui_values))
     yield put(initializePreferredName(ui_values))
+    
+    // theme
     const theme = createMuiTheme(merge(defaultTheme, ui_values.theme_mod))
     theme.shadows[4] = theme.shadows[0]
     // if (theme.palette.default.dark===undefined){
@@ -93,19 +100,19 @@ export function *workInitializeSigcom(action) {
 
     const sig_count = yield call(fetch_count, 'signatures')
     const lib_count = yield call(fetch_count, 'libraries')
+    const resource_count = yield call(fetch_count, 'resources')
 
     const parents_mapping = {}
     // const parent_ids_mapping = {}
-    let libraries = {}
+    // let libraries = {}
     if (sig_count > 0) {
-      libraries = yield call(fetch_all_as_dictionary, { table: 'libraries', controller })
+      // libraries = yield call(fetch_all_as_dictionary, { table: 'libraries', controller })
       parents_mapping['signatures'] = 'library'
       // parent_ids_mapping['signatures'] = libraries
     }
     if (lib_count > 0) {
-      let resources = yield call(fetch_all_as_dictionary, { table: 'resources', controller })
-      if (resources === null) {
-        resources = libraries
+      if (resource_count === 0) {
+        // resources = libraries
         parents_mapping['libraries'] = 'library'
       } else {
         parents_mapping['libraries'] = 'resource'

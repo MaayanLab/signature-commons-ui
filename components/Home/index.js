@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { withStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import Base from '../../components/Base'
 import About from '../../components/About'
@@ -208,7 +209,7 @@ class Home extends React.PureComponent {
 
   render = () => {
     if (this.props.theme===null){
-      return "Loading..."
+      return <CircularProgress />
     }
     return (
       <MuiThemeProvider theme={this.props.theme}>

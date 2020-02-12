@@ -55,7 +55,7 @@ class LandingPage extends React.Component {
 
   componentDidMount = () => {
     this.props.resetSigcom()
-    const total_sig_per_resource = this.props.resource_signature_counts.reduce((tot,item)=>{
+    const total_sig_per_resource = this.props.resource_signature_count.reduce((tot,item)=>{
       return tot + item.counts
     },0)
     this.setState({
@@ -142,7 +142,7 @@ class LandingPage extends React.Component {
 
   pie_charts_stats = (props) => {
     if (Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0) return null
-    if (this.props.resource_signature_counts.length === 0  || this.state.total_sig_per_resource === 0 ) {
+    if (this.props.resource_signature_count.length === 0  || this.state.total_sig_per_resource === 0 ) {
       if (Object.keys(this.props.piecounts).length < 3){
         // Do not create selection
         const all_charts = Object.entries(this.props.piecounts).map(([key,val])=>(
@@ -241,14 +241,14 @@ class LandingPage extends React.Component {
               <StatDiv {...this.props}/>
             </Grid>
           }
-          { this.props.resource_signature_counts.length > 0 && this.state.total_sig_per_resource > 0 ?
+          { this.props.resource_signature_count.length > 0 && this.state.total_sig_per_resource > 0 ?
             <Grid item xs={12} md={Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0 ? 12 : 6}
               className={this.props.classes.stretched}>
               <Grid container
                 alignItems={'center'}>
                 <Grid item xs>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_counts} color={'Blue'} ui_values={this.props.ui_values}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_count} color={'Blue'} ui_values={this.props.ui_values}/>
                   </div>
                 </Grid>
                 <Grid item xs={12}>
