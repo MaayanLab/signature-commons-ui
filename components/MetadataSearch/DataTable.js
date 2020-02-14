@@ -264,8 +264,8 @@ class DataTable extends React.Component {
             open={this.state.open}
             onClose={this.handleClose}
           >
-            <Card style={{ minWidth: 700,
-              maxWidth: 1000,
+            <Card style={{ minWidth: 1000,
+              maxWidth: 2000,
               maxHeight: 500,
               overflow: 'scroll',
               position: 'absolute',
