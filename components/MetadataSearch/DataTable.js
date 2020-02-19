@@ -159,7 +159,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                   {Object.entries(data.processed.display).map(([label, value]) => {
                     if (value.hyperlink === undefined) {
                       return (
-                        <Grid item xs={12}>
+                        <Grid item xs={12} key={value.label}>
                           <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
                             {value.label}: {value.text}
                           </Typography>
@@ -167,7 +167,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                       )
                     } else {
                       return (
-                        <Grid item xs={12}>
+                        <Grid item xs={12} key={value.label}>
                           <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
                             {value.label}: <a href={value.hyperlink} target="_blank" rel="noopener noreferrer">{value.text}</a>
                           </Typography>
