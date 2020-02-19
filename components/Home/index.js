@@ -19,6 +19,7 @@ import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
+import About from '../About'
 
 import Pages from '../Pages'
 

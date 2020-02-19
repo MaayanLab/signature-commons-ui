@@ -332,8 +332,8 @@ class MetadataSearch extends React.Component {
         <Tabs
           value={this.state.index_value}
           onChange={this.handleChange}
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           centered
         >
           {this.props.tables.map((table) => {
