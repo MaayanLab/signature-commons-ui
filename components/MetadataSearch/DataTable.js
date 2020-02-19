@@ -197,6 +197,30 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                         />
                       </Tooltip>)}
                   </Grid>
+                  {Object.entries(data.processed.keywords).map(([label, value]) =>(
+                    <Grid item xs={12} key={value.label}>
+                      <Typography variant="caption">
+                        {value.label}: 
+                      </Typography>
+                      {value.value.map(v=>(
+                        <Tooltip title={v}
+                          key={v}
+                          placement="bottom">
+                          <Chip className={classes.chip} key={v}
+                            avatar={<Icon className={`${classes.icon} mdi ${value.icon || default_tag_icon} mdi-18px`} />}
+                            label={<Highlight
+                              Component={(props) => <span {...props} className={classes.chipLabel}>{props.children}</span>}
+                              text={`${v}`}
+                              highlight={search}
+                            />}
+                            onClick={() => {
+                              props.onChipClick(v)
+                            }}
+                          />
+                      </Tooltip>
+                      ))}
+                    </Grid>
+                  ))}
                 </Grid>
               </Grid>
             </Grid>
