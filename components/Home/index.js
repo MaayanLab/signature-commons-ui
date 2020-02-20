@@ -11,13 +11,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { withStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import Base from '../../components/Base'
+import About from '../../components/About'
 import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
-
 import Pages from '../Pages'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
@@ -118,7 +119,8 @@ class Home extends React.PureComponent {
 
   api = (props) => (
     <Grid container>
-      <Grid xs={12} lg={6}>
+      {this.props.ui_values.nav.SignatureSearch.active ?
+      <Grid xs={12} lg={this.props.ui_values.nav.MetadataSearch.active ? 6: 12}>
         <Lazy>{async () => (
           <SwaggerUI
             url={`${await meta_url()}/openapi.json`}
@@ -127,8 +129,9 @@ class Home extends React.PureComponent {
             filter={true}
           />
         )}</Lazy>
-      </Grid>
-      <Grid xs={12} lg={6}>
+      </Grid>: null }
+      {this.props.ui_values.nav.MetadataSearch.active ? 
+      <Grid xs={12} lg={this.props.ui_values.nav.SignatureSearch.active? 6: 12}>
         <Lazy>{async () => (
           <SwaggerUI
             url={`${await data_url()}/swagger.yml`}
@@ -137,7 +140,7 @@ class Home extends React.PureComponent {
             filter={true}
           />
         )}</Lazy>
-      </Grid>
+      </Grid>: null}
     </Grid>
   )
 
@@ -174,9 +177,15 @@ class Home extends React.PureComponent {
     )
   }
 
+  about = (props) => {
+    return (
+      <About {...props} ui_values={this.props.ui_values}/>
+    )
+  }
+
   render = () => {
     if (this.props.theme===null){
-      return "Loading..."
+      return <CircularProgress />
     }
     return (
       <MuiThemeProvider theme={this.props.theme}>
@@ -253,6 +262,12 @@ class Home extends React.PureComponent {
               <Route
                 path={`${this.props.ui_values.nav.Resources.endpoint || '/Resources'}`}
                 component={this.resources}
+              /> : null
+            }
+            {this.props.ui_values.about !== undefined ?
+              <Route
+                path={'/About'}
+                component={this.about}
               /> : null
             }
             <Route

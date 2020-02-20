@@ -369,19 +369,22 @@ export default class Model {
       //   await this.fetch_parent_metadata(m.response)
       // }
       const res = m.response
-      // const res = this.parent === undefined ? m.response :
-      //   m.response.map((r) => {
-      //     const parent_id = r[this.parent]
-      //     const parent_meta = this.parents_meta[parent_id]
-      //     return {
-      //       ...r,
-      //       [this.parent]: parent_meta,
-      //     }
-      //   })
+      if (this.parent!==undefined){
+        await this.fetch_parent_metadata(res.map(r=>r[this.parent]))
+      }
+      const updated_res = this.parent === undefined ? m.response :
+        m.response.map((r) => {
+          const parent_id = r[this.parent]
+          const parent_meta = this.parents_meta[parent_id]
+          return {
+            ...r,
+            [this.parent]: parent_meta,
+          }
+        })
       response = [...r]
       result = {
         ...result,
-        metadata_search: res,
+        metadata_search: updated_res,
       }
     }
     if (value_count) {
@@ -407,16 +410,16 @@ export default class Model {
       if (this.parent !== undefined && m.response[this.parent]!== undefined) {
         parents = m.response[this.parent]
         await this.fetch_parent_metadata(Object.keys(parents))
-        const res = result["metadata_search"].map(r=>{
-          const parent_id = r[this.parent]
-          const parent_meta = this.parents_meta[parent_id]
-          r[this.parent] = parent_meta
-          return r
-        })
-        result = {
-          ...result,
-          metadata_search: res,
-        }
+        // const res = result["metadata_search"].map(r=>{
+        //   const parent_id = r[this.parent]
+        //   const parent_meta = this.parents_meta[parent_id]
+        //   r[this.parent] = parent_meta
+        //   return r
+        // })
+        // result = {
+        //   ...result,
+        //   metadata_search: res,
+        // }
       }
 
       result = {

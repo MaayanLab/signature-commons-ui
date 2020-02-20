@@ -11,7 +11,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state) => {
   return {
-    ...state.serverSideProps,
     ...state.signature_result,
     ui_values: state.ui_values,
     input: state.signature_input,
@@ -41,7 +40,7 @@ class SignatureSearch extends React.Component {
     window.scrollTo(0, 0)
 
     const schemas = await get_schemas()
-    const { response: resources } = await get_resources_and_libraries()
+    const { response: resources } = await get_resources_and_libraries(this.props.ui_values.showNonResource)
     if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
       this.props.search(this.props.match.params.type, this.props.match.params.id)
     }
@@ -85,10 +84,9 @@ class SignatureSearch extends React.Component {
         )
       }
       signature_keys={this.props.signature_keys}
-      schemas={this.props.schemas}
       {...props}
-      {...this.state}
       {...this.props}
+      {...this.state}
     />
   )}
 

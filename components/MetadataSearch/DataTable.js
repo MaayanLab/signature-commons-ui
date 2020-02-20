@@ -159,7 +159,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                   {Object.entries(data.processed.display).map(([label, value]) => {
                     if (value.hyperlink === undefined) {
                       return (
-                        <Grid item xs={12}>
+                        <Grid item xs={12} key={value.label}>
                           <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
                             {value.label}: {value.text}
                           </Typography>
@@ -167,7 +167,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                       )
                     } else {
                       return (
-                        <Grid item xs={12}>
+                        <Grid item xs={12} key={value.label}>
                           <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
                             {value.label}: <a href={value.hyperlink} target="_blank" rel="noopener noreferrer">{value.text}</a>
                           </Typography>
@@ -197,6 +197,30 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                         />
                       </Tooltip>)}
                   </Grid>
+                  {Object.entries(data.processed.keywords).map(([label, value]) =>(
+                    <Grid item xs={12} key={value.label}>
+                      <Typography variant="caption">
+                        {value.label}: 
+                      </Typography>
+                      {value.value.map(v=>(
+                        <Tooltip title={v}
+                          key={v}
+                          placement="bottom">
+                          <Chip className={classes.chip} key={v}
+                            avatar={<Icon className={`${classes.icon} mdi ${value.icon || default_tag_icon} mdi-18px`} />}
+                            label={<Highlight
+                              Component={(props) => <span {...props} className={classes.chipLabel}>{props.children}</span>}
+                              text={`${v}`}
+                              highlight={search}
+                            />}
+                            onClick={() => {
+                              props.onChipClick(v)
+                            }}
+                          />
+                      </Tooltip>
+                      ))}
+                    </Grid>
+                  ))}
                 </Grid>
               </Grid>
             </Grid>
@@ -264,8 +288,8 @@ class DataTable extends React.Component {
             open={this.state.open}
             onClose={this.handleClose}
           >
-            <Card style={{ minWidth: 700,
-              maxWidth: 1000,
+            <Card style={{ minWidth: 1000,
+              maxWidth: 2000,
               maxHeight: 500,
               overflow: 'scroll',
               position: 'absolute',

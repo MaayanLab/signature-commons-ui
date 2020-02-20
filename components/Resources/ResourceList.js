@@ -17,7 +17,7 @@ class ResourceList extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      sorted_resources: [],
+      sorted_resources: null,
       schema: null,
     }
   }
@@ -41,7 +41,7 @@ class ResourceList extends React.PureComponent {
 
   render() {
     const sorted_resources = this.state.sorted_resources
-    if (sorted_resources.length === 0) {
+    if (sorted_resources === null) {
       return <CircularProgress />
     }
     const md = sorted_resources.length > 6 ? 2 : 4

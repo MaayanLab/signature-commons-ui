@@ -9,10 +9,11 @@ import { withStyles } from '@material-ui/core/styles'
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
-import Paper from '@material-ui/core/Paper';
 import Hidden from '@material-ui/core/Hidden';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import MenuIcon from '@material-ui/icons/Menu';
+import { makeTemplate } from '../../util/makeTemplate'
+
 const mapStateToProps = (state, ownProps) => {
   return {
     ui_values: state.ui_values,
@@ -79,6 +80,16 @@ export function Nav(props) {
           </Link>
         </MenuItem> : null
       }
+      {ui_values.about !== undefined ?
+        <MenuItem
+          selected={location.pathname === '/About'}
+          className={classes.menuItem}
+        >
+          <Link className={classes.link} to={'/About'}>
+            About
+          </Link>
+        </MenuItem> : null
+      }
       <MenuItem
         selected={location.pathname === '/API'}
         className={classes.menuItem}
@@ -120,7 +131,7 @@ class Header extends React.Component {
                       to="/"
                       className={classes.header}
                     >
-                    {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={`${process.env.PREFIX}${this.props.ui_values.header_info.icon.src}`} />{this.props.ui_values.header_info.header_right}
+                    {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
                     </Link>
                   </Typography>
                 }
@@ -137,7 +148,7 @@ class Header extends React.Component {
                     to="/"
                     className={classes.header}
                   >
-                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={`${process.env.PREFIX}${this.props.ui_values.header_info.icon.src}`} />{this.props.ui_values.header_info.header_right}
+                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
                   </Link>
                 </Typography>
               }
@@ -184,40 +195,5 @@ class Header extends React.Component {
 }
 
 
-// class Header extends React.Component {
-//   render = () => {
-//     const paths = this.props.location.pathname.split('/')
-//     const { staticContext, ...rest } = this.props
-//     return (
-//       <header>
-//         <nav className="nav-extended">
-//           <div className="nav-wrapper">
-//             <Link
-//               to="/"
-//               className="brand-logo left hide-on-med-and-down"
-//               style={{
-//                 whiteSpace: 'nowrap',
-//               }}
-//             >
-//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header_info || 'Signature Commons'}
-//             </Link>
-//             <Link
-//               to="/"
-//               className={`brand-logo ${location} hide-on-large-only`}
-//               style={{
-//                 whiteSpace: 'nowrap',
-//               }}
-//             >
-//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header_info || 'Signature Commons'}
-//             </Link>
-//             <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-//             <Nav id="nav-mobile" className="right hide-on-med-and-down" {...rest} />
-//           </div>
-//           <Nav className="sidenav" id="mobile-menu" {...rest}/>
-//         </nav>
-//       </header>
-//     )
-//   }
-// }
 
 export default connect(mapStateToProps)(withStyles(styles)(Header))
