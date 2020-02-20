@@ -11,6 +11,7 @@ import IconButton from './IconButton'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux'
 import { reportError } from '../util/redux/actions'
+import { makeTemplate } from '../util/makeTemplate'
 
 import {
   download_signature_json,
@@ -248,7 +249,7 @@ class Options extends React.Component {
             { this.props.ui_values.downloads.sigcom ?
                 <MenuItem onClick={this.handleSubmitSigcom}>
                   <img alt="Signature Commons"
-                    src={`${process.env.PREFIX}/static/favicon.ico`}
+                    src={makeTemplate(this.props.ui_values.favicon.src, {})}
                     style={{
                       width: 15,
                       height: 15,

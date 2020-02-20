@@ -6,7 +6,7 @@ const default_values = {
       "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     ],
     favicon: {
-      src: "/static/favicon.ico",
+      src: "${PREFIX}/static/favicon.ico",
       alt: "Signature Commons",
       title: "Signature Commons"
     },
@@ -14,7 +14,7 @@ const default_values = {
       header_left: '',
       header_right: ' Signature Commons',
       icon: {
-        src: "/static/favicon.ico",
+        src: "${PREFIX}/static/favicon.ico",
         alt: "Signature Commons",
         style: {
           width: 30
