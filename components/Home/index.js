@@ -119,7 +119,8 @@ class Home extends React.PureComponent {
 
   api = (props) => (
     <Grid container>
-      <Grid xs={12} lg={6}>
+      {this.props.ui_values.nav.SignatureSearch.active ?
+      <Grid xs={12} lg={this.props.ui_values.nav.MetadataSearch.active ? 6: 12}>
         <Lazy>{async () => (
           <SwaggerUI
             url={`${await meta_url()}/openapi.json`}
@@ -128,8 +129,9 @@ class Home extends React.PureComponent {
             filter={true}
           />
         )}</Lazy>
-      </Grid>
-      <Grid xs={12} lg={6}>
+      </Grid>: null }
+      {this.props.ui_values.nav.MetadataSearch.active ? 
+      <Grid xs={12} lg={this.props.ui_values.nav.SignatureSearch.active? 6: 12}>
         <Lazy>{async () => (
           <SwaggerUI
             url={`${await data_url()}/swagger.yml`}
@@ -138,7 +140,7 @@ class Home extends React.PureComponent {
             filter={true}
           />
         )}</Lazy>
-      </Grid>
+      </Grid>: null}
     </Grid>
   )
 
