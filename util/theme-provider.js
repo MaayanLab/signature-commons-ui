@@ -25,7 +25,7 @@ const defaultTheme = {
       contrastText: '#FFF'
     },
     secondary: {
-      main: yellow[400],
+      main: yellow[900],
     },
     error: {
       main: red[500],
