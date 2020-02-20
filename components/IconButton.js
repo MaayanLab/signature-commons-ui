@@ -17,7 +17,7 @@ const styles = (theme) => ({
     overflow: 'visible',
   },
   image: {
-    minHeight: 50,
+    maxHeight: 50,
     maxWidth: 100
   },
   margin: {
