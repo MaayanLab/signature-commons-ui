@@ -25,6 +25,7 @@ import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
 import { closeSnackBar, initializeTheme } from '../../util/redux/actions'
 import '../../styles/swagger.scss'
+import Lazy from '../Lazy'
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
 
@@ -118,26 +119,26 @@ class Home extends React.PureComponent {
 
   api = (props) => (
     <Grid container>
-      {this.props.ui_values.nav.MetadataSearch.active ?
-        <Grid xs={12} lg={this.props.ui_values.nav.SignatureSearch.active? 6: 12}>
+      <Grid xs={12} lg={6}>
+        <Lazy>{async () => (
           <SwaggerUI
-            url={`${meta_url}/openapi.json`}
+            url={`${await meta_url()}/openapi.json`}
             deepLinking={true}
             displayOperationId={true}
             filter={true}
           />
-        </Grid>: null
-      }
-      {this.props.ui_values.nav.SignatureSearch.active ?
-        <Grid xs={12} lg={this.props.ui_values.nav.MetadataSearch.active? 6:12}>
+        )}</Lazy>
+      </Grid>
+      <Grid xs={12} lg={6}>
+        <Lazy>{async () => (
           <SwaggerUI
-            url={`${data_url}/swagger.yml`}
+            url={`${await data_url()}/swagger.yml`}
             deepLinking={true}
             displayOperationId={true}
             filter={true}
           />
-        </Grid>: null
-      }
+        )}</Lazy>
+      </Grid>
     </Grid>
   )
 

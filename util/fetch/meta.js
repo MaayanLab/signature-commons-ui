@@ -1,14 +1,17 @@
 import fetch from 'isomorphic-unfetch'
+import config from '../config'
 
-export const base_url = process.env.NEXT_SERVER_METADATA_API
-  || process.env.NEXT_STATIC_METADATA_API
-  || process.env.NEXT_PUBLIC_METADATA_API
-  || (window.location.origin + '/signature-commons-metadata-api')
-export const base_scheme = /^(https?):\/\/.+/.exec(base_url)[1]
+export async function base_url() {
+  return (await config()).NEXT_PUBLIC_METADATA_API
+}
+
+export async function base_scheme() {
+  return /^(https?):\/\/.+/.exec(await base_url())[1]
+}
 
 export async function fetch_creds({ endpoint, body, signal, headers }) {
   const request = await fetch(
-      base_url
+      (await base_url())
     + (endpoint === undefined ? '' : endpoint)
     + (body === undefined ? '' : (
         '?'
@@ -48,7 +51,7 @@ export async function fetch_meta({ endpoint, body, signal, headers }) {
   const start = new Date()
 
   const request = await fetch(
-      base_url
+      (await base_url())
     + (endpoint === undefined ? '' : endpoint)
     + (body === undefined ? '' : (
         '?'
@@ -73,7 +76,7 @@ export async function fetch_meta({ endpoint, body, signal, headers }) {
       }
   )
   if (request.ok !== true) {
-    throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+    throw new Error(`Error communicating with API at ${await base_url()}${endpoint}`)
   }
 
   const response = await request.json()
@@ -104,7 +107,7 @@ export async function fetch_meta({ endpoint, body, signal, headers }) {
 export async function fetch_meta_post({ endpoint, body, signal }) {
   const start = new Date()
   const request = await fetch(
-      base_url
+      (await base_url())
     + (endpoint === undefined ? '' : endpoint),
       {
         method: 'POST',
@@ -118,7 +121,7 @@ export async function fetch_meta_post({ endpoint, body, signal }) {
       }
   )
   if (request.ok !== true) {
-    throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+    throw new Error(`Error communicating with API at ${await base_url()}${endpoint}`)
   }
 
   const response = await request.json()
