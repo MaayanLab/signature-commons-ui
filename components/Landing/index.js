@@ -152,7 +152,12 @@ class LandingPage extends React.Component {
               alignItems={'center'}>
               <Grid item xs={12}>
                 <div className={this.props.classes.centered}>
-                  <ChartCard cardheight={300} pie_stats={val.stats} ui_values={this.props.ui_values}/>
+                  <ChartCard
+                    cardheight={300}
+                    pie_stats={val.stats}
+                    ui_values={this.props.ui_values}
+                    searchTable={val.table}
+                  />
                 </div>
               </Grid>
               <Grid item xs={12}>
@@ -172,7 +177,13 @@ class LandingPage extends React.Component {
               alignItems={'center'}>
               <Grid item xs>
                 <div className={this.props.classes.centered}>
-                  <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+                  <ChartCard
+                  cardheight={300}
+                  pie_stats={this.state.pie_stats.stats}
+                  color={'Blue'}
+                  ui_values={this.props.ui_values}
+                  searchTable={this.state.pie_stats.table}
+                />
                 </div>
               </Grid>
               <Grid item xs={12}>
@@ -200,7 +211,13 @@ class LandingPage extends React.Component {
           alignItems={'center'}>
           <Grid item xs>
             <div className={this.props.classes.centered}>
-              <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+              <ChartCard
+                cardheight={300}
+                pie_stats={this.state.pie_stats.stats}
+                color={'Blue'}
+                ui_values={this.props.ui_values}
+                searchTable={this.state.pie_stats.table}
+              />
             </div>
           </Grid>
           <Grid item xs={12}>
@@ -253,7 +270,13 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_count.filter(r=>r.counts>0)} color={'Blue'} ui_values={this.props.ui_values}/>
+                    <ChartCard
+                      cardheight={300}
+                      pie_stats={this.props.resource_signature_count.filter(r=>r.counts>0)}
+                      color={'Blue'}
+                      ui_values={this.props.ui_values}
+                      searchTable={"signatures"}
+                    />
                   </div>
                 </Grid>
                 <Grid item xs={12}>
@@ -278,7 +301,10 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs md={12}>
                   <div className={this.props.classes.centered}>
-                    <WordCloud classes={this.props.classes} searchTable={this.state.word_stats.table} stats={this.state.word_stats.stats}/>
+                    <WordCloud classes={this.props.classes}
+                      ui_values={this.props.ui_values}
+                      searchTable={this.state.word_stats.table}
+                      stats={this.state.word_stats.stats}/>
                   </div>
                 </Grid>
 
@@ -303,6 +329,7 @@ class LandingPage extends React.Component {
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
                     <BarChart meta_counts={this.state.bar_stats.stats}
+                      searchTable={this.state.bar_stats.table}
                       ui_values={this.props.ui_values}
                       XAxis
                     />
@@ -335,6 +362,7 @@ class LandingPage extends React.Component {
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.histogram.stats}
                           ui_values={this.props.ui_values}
+                          searchTable={this.state.histogram.table}
                           YAxis
                         />
                         <Typography variant="overline">
@@ -363,6 +391,7 @@ class LandingPage extends React.Component {
                     <Grid item xs>
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.barscore.stats}
+                          searchTable={this.state.barscore.table}
                           ui_values={this.props.ui_values}
                           XAxis
                         />

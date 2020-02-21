@@ -2,7 +2,7 @@
 // http://recharts.org/en-US/examples/CustomActiveShapePieChart
 import React, { PureComponent } from 'react'
 import { PieChart as Chart, Pie, Sector, Text } from 'recharts'
-
+import { searchTerm } from "../Landing/Misc"
 const ActiveShape = (props) => {
   const RADIAN = Math.PI / 180
   const {
@@ -94,6 +94,7 @@ export default class DonutChart extends PureComponent {
           onMouseEnter={this.onPieEnter}
           innerRadius={80}
           outerRadius={100}
+          onClick={(data)=>searchTerm(this.props.ui_values, this.props.searchTable, data.name)}
           fill="linear-gradient(to bottom, rgb(124, 162, 206) 0%, rgb(179, 202, 225) 100%)"
           // onClick={this.handleClick}
           {...pie_chart_style.Pie}
