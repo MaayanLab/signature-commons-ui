@@ -3,7 +3,7 @@ import {
   BarChart as Chart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Text,
 } from 'recharts'
 
-const articles = ['a', 'of', 'the', 'for', 'and']
+const articles = ['a', 'of', 'the', 'for', 'and', 'at']
 
 const CustomTick = (props) => {
   const {
@@ -31,7 +31,7 @@ export const BarChart = ({ meta_counts, ui_values, ...props }) => {
       >
         <Bar dataKey="counts" {...bar_chart_style.Bar}/>
         <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />} hide={props.XAxis === undefined || !props.XAxis} />
-        <YAxis dataKey="counts" type="number" domain={['dataMin', 'dataMax']} {...bar_chart_style.YAxis} hide={props.YAxis === undefined || !props.YAxis} />
+        <YAxis dataKey="counts" type="number" {...bar_chart_style.YAxis} hide={props.YAxis === undefined || !props.YAxis} />
         <Tooltip {...bar_chart_style.Tooltip} />
       </Chart>
     </ResponsiveContainer>

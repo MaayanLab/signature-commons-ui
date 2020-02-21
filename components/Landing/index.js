@@ -34,7 +34,7 @@ class LandingPage extends React.Component {
     super(props)
     const selected_pie = Object.keys(props.piecounts)[0]
     const selected_word = Object.keys(props.wordcounts)[0]
-    const selected_bar = Object.keys(props.barcounts)[0]
+    const selected_bar = Object.keys(props.barcounts).sort()[0]
     const selected_histogram = Object.keys(props.histograms).sort()[0]
     const selected_barscore = Object.keys(props.barscores)[0]
     this.state = {
@@ -178,11 +178,14 @@ class LandingPage extends React.Component {
               <Grid item xs={12}>
                 <div className={this.props.classes.centered}>
                   <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
-                  <Selections
-                    value={this.state.selected_pie}
-                    values={Object.keys(this.props.piecounts).sort()}
-                    onChange={(e) => this.handleSelectPie(e)}
-                  />
+                  {Object.keys(this.props.piecounts).length>1?
+                    <Selections
+                      value={this.state.selected_pie}
+                      values={Object.keys(this.props.piecounts).sort()}
+                      onChange={(e) => this.handleSelectPie(e)}
+                    />: this.state.selected_pie
+                  }
+                  
                 </div>
               </Grid>
             </Grid>
@@ -203,11 +206,13 @@ class LandingPage extends React.Component {
           <Grid item xs={12}>
             <div className={this.props.classes.centered}>
               <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
-              <Selections
-                value={this.state.selected_pie}
-                values={Object.keys(this.props.piecounts).sort()}
-                onChange={(e) => this.handleSelectPie(e)}
-              />
+              {Object.keys(this.props.piecounts).length>1?
+                <Selections
+                  value={this.state.selected_pie}
+                  values={Object.keys(this.props.piecounts).sort()}
+                  onChange={(e) => this.handleSelectPie(e)}
+                />: <span> {this.state.selected_pie}</span>
+              }
             </div>
           </Grid>
         </Grid>
@@ -248,7 +253,7 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_count} color={'Blue'} ui_values={this.props.ui_values}/>
+                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_count.filter(r=>r.counts>0)} color={'Blue'} ui_values={this.props.ui_values}/>
                   </div>
                 </Grid>
                 <Grid item xs={12}>

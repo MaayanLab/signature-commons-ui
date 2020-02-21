@@ -219,7 +219,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               <Typography variant="h4" align={'center'} color="inherit">
               {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
               </Typography>
-              <Typography variant="button" align={'center'} color="inherit">
+              <Typography variant="h5" align={'center'} color="inherit">
                 {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
@@ -251,7 +251,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               <Typography variant="h4" color={"inherit"} align={'center'}>
               {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
               </Typography>
-              <Typography variant="button" align={'center'} color="inherit">
+              <Typography variant="h5" align={'center'} color="inherit">
                 {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
@@ -277,7 +277,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               <Typography variant="h4" align={'center'} color="inherit">
                 {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
               </Typography>
-              <Typography variant="button" align={'center'} color="inherit">
+              <Typography variant="h5" align={'center'} color="inherit">
                 {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
