@@ -219,9 +219,14 @@ export const SearchCard = ({ classes, width, ...props }) => {
               <Typography variant="h4" align={'center'} color="inherit">
               {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
               </Typography>
-              <Typography variant="h5" align={'center'} color="inherit">
-                {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
-              </Typography>
+              { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
+                <Typography variant="h5" align={'center'} color="inherit">
+                  { MetadataSearch.cardName || MetadataSearch.endpoint.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+                </Typography>:
+                <Typography variant="h5" align={'center'} color="inherit">
+                  { SignatureSearch.cardName || SignatureSearch.endpoint.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+                </Typography>
+              }
             </Grid>
             <Grid item xs={12}>
               { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
@@ -252,7 +257,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
               </Typography>
               <Typography variant="h5" align={'center'} color="inherit">
-                {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+                {MetadataSearch.cardName || props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -278,7 +283,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
                 {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
               </Typography>
               <Typography variant="h5" align={'center'} color="inherit">
-                {props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+                {MetadataSearch.cardName || props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
