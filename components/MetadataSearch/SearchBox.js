@@ -26,9 +26,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Imatinib'}
+                label={props.ui_values.helper_tooltip.term1}
                 onDelete={() => {}}
-              /> -Stat3
+              /> -{props.ui_values.helper_tooltip.term2}
             </Typography>
           </div>
         </li>
@@ -42,9 +42,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Imatinib'}
+                label={props.ui_values.helper_tooltip.term1}
                 onDelete={() => {}}
-              /> or Stat3
+              /> or {props.ui_values.helper_tooltip.term2}
             </Typography>
           </div>
         </li>
@@ -58,9 +58,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Disease: neuropathy'}
+                label={props.ui_values.helper_tooltip.term3}
                 onDelete={() => {}}
-              /> {'PMID: 12345'}
+              /> {props.ui_values.helper_tooltip.term4}
             </Typography>
           </div>
         </li>
