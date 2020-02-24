@@ -557,7 +557,6 @@ export default class Model {
       })
       parents = response[this.parent]
     }
-    console.log(parents)
     await this.fetch_grandparents_meta(Object.keys(parents))
     const grandparent_count = {}
     for (const [id,count] of Object.entries(parents)){
