@@ -71,7 +71,7 @@ export const get_summary_statistics = async () => {
           console.warn('source of resource name is not defined, using either Resource_Name or ids')
           name = resource.meta['Resource_Name'] || id
         }
-        resource_signature_count.push({name, counts: count})
+        resource_signature_count.push({name, id, counts: count})
       }
     }
     return { serverSideProps: {

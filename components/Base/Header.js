@@ -56,7 +56,7 @@ export function Nav(props) {
           className={classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
-            {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+            {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Link>
         </MenuItem> : null
       }
@@ -66,7 +66,7 @@ export function Nav(props) {
           className={ classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
-            {ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+            {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Link>
         </MenuItem> : null
       }
@@ -76,7 +76,7 @@ export function Nav(props) {
           className={classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
-            {ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+            {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Link>
         </MenuItem> : null
       }

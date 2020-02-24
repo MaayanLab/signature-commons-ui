@@ -3,7 +3,7 @@ import {
   BarChart as Chart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Text,
 } from 'recharts'
 
-const articles = ['a', 'of', 'the', 'for', 'and']
+const articles = ['a', 'of', 'the', 'for', 'and', 'at']
 
 const CustomTick = (props) => {
   const {
@@ -11,7 +11,10 @@ const CustomTick = (props) => {
   } = props
   let value = payload.value
   if (value.length > 23) {
-    value = value.split(',')[0].split(' ').filter((v) => articles.indexOf(v.toLowerCase()) === -1).map((v) => v[0]).join('')// .split(",").join(", ")
+    value = value.split('(')[0]
+    if (value.length > 23){
+      value = value.split(',')[0].replace(/-/g, ' ').split(' ').filter((v) => articles.indexOf(v.toLowerCase()) === -1).map((v) => v[0]).join('')// .split(",").join(", ")
+    }
   }
   return (
     <g transform={`translate(${x},${y})`}>
@@ -20,7 +23,7 @@ const CustomTick = (props) => {
   )
 }
 
-export const BarChart = ({ meta_counts, ui_values, ...props }) => {
+export const BarChart = ({ meta_counts, ui_values, searchTerm, searchTable, ...props }) => {
   const { bar_chart_style } = { ...ui_values }
   return (
     <ResponsiveContainer
@@ -29,10 +32,12 @@ export const BarChart = ({ meta_counts, ui_values, ...props }) => {
         data={meta_counts}
         {...bar_chart_style.Chart}
       >
-        <Bar dataKey="counts" {...bar_chart_style.Bar}/>
-        <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />} hide={props.XAxis === undefined || !props.XAxis} />
-        <YAxis dataKey="counts" type="number" domain={['dataMin', 'dataMax']} {...bar_chart_style.YAxis} hide={props.YAxis === undefined || !props.YAxis} />
         <Tooltip {...bar_chart_style.Tooltip} />
+        <Bar dataKey="counts" {...bar_chart_style.Bar} 
+            onClick={(data)=>searchTerm(ui_values, searchTable, data)}
+        />
+        <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />} hide={props.XAxis === undefined || !props.XAxis} />
+        <YAxis dataKey="counts" type="number" {...bar_chart_style.YAxis} hide={props.YAxis === undefined || !props.YAxis} />
       </Chart>
     </ResponsiveContainer>
   )

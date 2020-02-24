@@ -283,7 +283,8 @@ class ResourcePage extends React.Component {
                     </Grid>
                     <Grid item xs={1}>
                       <Link
-                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                        to={"#"}
+                        onClick={() => this.props.history.goBack()}
                         className="waves-effect waves-teal btn-flat"
                       >
                         <span style={{ color: 'orange' }}>BACK</span>

@@ -127,6 +127,12 @@ const default_values = {
       sigcom: true,
       enrichr: true,
     },
+    helper_tooltip: {
+      "term1": "imatinib",
+      "term2": "stat3",
+      "term3": "Disease: Neuropathy",
+      "term4": "PMID: 123456"
+    }
   }
 }
 

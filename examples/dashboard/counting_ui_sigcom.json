@@ -208,5 +208,17 @@
     "Table_Count": true,
     "Visible_On_Landing": true,
     "Visible_On_Admin": true
+  },
+  {
+    "Field_Name": "resource",
+    "Preferred_Name": "Resources",
+    "Preferred_Name_Singular": "Resource",
+    "Type": "string",
+    "MDI_Icon": "mdi-web",
+    "Table": "signatures",
+    "Parent_Table": "libraries",
+    "Grandparent_Table": "resources",
+    "Parent_Meta": true,
+    "Filter": true
   }
 ]
