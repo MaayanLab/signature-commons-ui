@@ -134,25 +134,37 @@ class Options extends React.Component {
       try {
         const schemas = await fetch_schemas()
         const signature = await get_signature({ item })
-        let data
+        let data = []
         if (signature.library.dataset_type === 'rank_matrix') {
           data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
         } else {
-          data = signature.data.map((d) => get_label(d, schemas))
+          // data = signature.data.map((d) => get_label(d, schemas))
+          for (const d of signature.data) {
+            if (d.meta!==undefined){
+              data = [...data, get_label(d, schemas)]
+            }
+          }
         }
         const filename = get_label(signature, schemas)
-        const formData = new FormData()
-        formData.append('list', data.join('\n'))
-        formData.append('description', filename + '')
-        const response = await (await fetch(`${ENRICHR_URL}/addList`, {
-          method: 'POST',
-          body: formData,
-        })).json()
-        this.setState((prevState) => ({
-          enrichr_ready: true,
-          enrichr_status: 'Analysis is ready',
-          enrichr_id: response['shortId'],
-        })) 
+        if (data.length > 0){
+          const formData = new FormData()
+          formData.append('list', data.join('\n'))
+          formData.append('description', filename + '')
+          const response = await (await fetch(`${ENRICHR_URL}/addList`, {
+            method: 'POST',
+            body: formData,
+          })).json()
+          this.setState((prevState) => ({
+            enrichr_ready: true,
+            enrichr_status: 'Analysis is ready',
+            enrichr_id: response['shortId'],
+          }))
+        } else {
+          this.props.reportError({message: "Empty entities"})
+          this.setState((prevState) => ({
+            enrichr_open: false
+          })) 
+        }       
       } catch (error) {
         this.props.reportError(error)
         this.setState((prevState) => ({
