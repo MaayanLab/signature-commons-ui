@@ -12,6 +12,8 @@ import { resetSigcom } from '../../util/redux/actions'
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
 import { BarChart } from '../Admin/BarChart.js'
+import { searchTerm } from "./Misc"
+
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -152,6 +154,11 @@ class LandingPage extends React.Component {
     )
   }
 
+  searchResource = (ui_values, searchTable, term) => {
+    const {preferred_name, nav} = ui_values
+     location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
+  }
+
   pie_charts_stats = (props) => {
     if (Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0) return null
     if (this.props.resource_signature_count.length === 0  || this.state.total_sig_per_resource === 0 ) {
@@ -169,6 +176,7 @@ class LandingPage extends React.Component {
                     pie_stats={val.stats}
                     ui_values={this.props.ui_values}
                     searchTable={val.table}
+                    searchTerm={searchTerm}
                   />
                 </div>
               </Grid>
@@ -190,12 +198,13 @@ class LandingPage extends React.Component {
               <Grid item xs>
                 <div className={this.props.classes.centered}>
                   <ChartCard
-                  cardheight={300}
-                  pie_stats={this.state.pie_stats.stats}
-                  color={'Blue'}
-                  ui_values={this.props.ui_values}
-                  searchTable={this.state.pie_stats.table}
-                />
+                    cardheight={300}
+                    pie_stats={this.state.pie_stats.stats}
+                    color={'Blue'}
+                    ui_values={this.props.ui_values}
+                    searchTable={this.state.pie_stats.table}
+                    searchTerm={searchTerm}
+                  />
                 </div>
               </Grid>
               <Grid item xs={12}>
@@ -229,6 +238,7 @@ class LandingPage extends React.Component {
                 color={'Blue'}
                 ui_values={this.props.ui_values}
                 searchTable={this.state.pie_stats.table}
+                searchTerm={searchTerm}
               />
             </div>
           </Grid>
@@ -288,6 +298,7 @@ class LandingPage extends React.Component {
                       color={'Blue'}
                       ui_values={this.props.ui_values}
                       searchTable={"signatures"}
+                      searchTerm={this.searchResource}
                     />
                   </div>
                 </Grid>
@@ -343,6 +354,7 @@ class LandingPage extends React.Component {
                     <BarChart meta_counts={this.state.bar_stats.stats}
                       searchTable={this.state.bar_stats.table}
                       ui_values={this.props.ui_values}
+                      searchTerm={searchTerm}
                       XAxis
                     />
                   </div>
@@ -375,6 +387,7 @@ class LandingPage extends React.Component {
                         <BarChart meta_counts={this.state.histogram.stats}
                           ui_values={this.props.ui_values}
                           searchTable={this.state.histogram.table}
+                          searchTerm={searchTerm}
                           YAxis
                         />
                         <Typography variant="overline">
@@ -405,6 +418,7 @@ class LandingPage extends React.Component {
                         <BarChart meta_counts={this.state.barscore.stats}
                           searchTable={this.state.barscore.table}
                           ui_values={this.props.ui_values}
+                          searchTerm={searchTerm}
                           XAxis
                         />
                       </div>

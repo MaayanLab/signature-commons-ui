@@ -17,6 +17,7 @@ const plural_mapper = {
 }
 
 export function build_where({ search, filters, order }) {
+  search = search || []
   if (search.length === 0 && filters===undefined && order===undefined) return undefined
   let where = {}
   let andClauses = []
@@ -163,7 +164,7 @@ export default class Model {
   }
 
   set_where = ({ search, filters, order }) => {
-    this.search = search
+    this.search = search || []
     // If we are filtering by grandparents e.g. signatures of a resource,
     // We first note the children of those grandparents (i.e. all possible parents)
     // and filter by the parents instead
@@ -528,7 +529,7 @@ export default class Model {
     }
   }
 
-  fetch_grandparent = async(parents) => {
+  fetch_grandparent = async(parents=[]) => {
     // if (this.grandparents_meta === undefined){
     //   await this.fetch_grandparents_meta()
     // }
@@ -545,6 +546,18 @@ export default class Model {
     //     },
     //   },
     // })
+    if (Object.keys(parents).length === 0){
+      const { response } = await fetch_meta({
+        endpoint: `/${this.table}/value_count`,
+        body: {
+          filter: {
+            fields: [this.parent],
+          },
+        },
+      })
+      parents = response[this.parent]
+    }
+    console.log(parents)
     await this.fetch_grandparents_meta(Object.keys(parents))
     const grandparent_count = {}
     for (const [id,count] of Object.entries(parents)){
@@ -579,6 +592,7 @@ export default class Model {
       if (i.meta.Parent_Meta){
         this.grandparent = i.meta.Field_Name
         this.grandparent_schema = i
+        await this.fetch_grandparent()
       }
     }
     // If we are querying for the grandparent, make sure we know the parent

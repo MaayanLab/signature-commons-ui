@@ -72,9 +72,9 @@ const Info = (props) => {
 const Input = (props) => (
   <ChipInput
     className={props.classes.ChipInput}
-    placeholder={props.search.length > 0 ? 'Add filter' :
+    placeholder={(props.search || []).length > 0 ? 'Add filter' :
         props.placeholder}
-    value={props.search}
+    value={(props.search || [])}
     chipRenderer={props.renderChips || props.renderChips}
     disableUnderline
     alwaysShowPlaceholder
@@ -117,7 +117,7 @@ const Input = (props) => (
       props.searchFunction(search)
     }}
     onDelete={(chip, index) => {
-      const search = props.search.filter((term) => term != chip)
+      const search = (props.search || []).filter((term) => term != chip)
       props.searchFunction(search)
     }}
     blurBehavior="add"

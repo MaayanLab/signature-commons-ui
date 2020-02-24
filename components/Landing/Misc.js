@@ -24,7 +24,7 @@ const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/
 
 const meta_default_icon = 'mdi-creation'
 
-export const BottomLinks = ({ classes, width, theme, ...props }) => {
+export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
   const fontColor = Color(theme.palette.defaultCard.main)
   return (
     <Grid container
@@ -33,11 +33,11 @@ export const BottomLinks = ({ classes, width, theme, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            { props.ui_values.text_4 || 'Start using Signature Commons on your project'}
+            { ui_values.text_4 || 'Start using Signature Commons on your project'}
           </Typography>
         </div>
       </Grid>
-      {props.ui_values.nav.MetadataSearch && props.ui_values.nav.MetadataSearch.active ?
+      {ui_values.nav.MetadataSearch && ui_values.nav.MetadataSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -45,7 +45,7 @@ export const BottomLinks = ({ classes, width, theme, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Link to={`${props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
+                <Link to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
                     <FileFind className={fontColor.isDark() ? classes.icon_light: classes.icon} />
                   </Button>
@@ -53,14 +53,14 @@ export const BottomLinks = ({ classes, width, theme, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                  {props.ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+                  {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.SignatureSearch && props.ui_values.nav.SignatureSearch.active ?
+      {ui_values.nav.SignatureSearch && ui_values.nav.SignatureSearch.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -68,7 +68,7 @@ export const BottomLinks = ({ classes, width, theme, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Link to={`${props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
+                <Link to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
                     <FindReplace className={fontColor.isDark() ? classes.icon_light: classes.icon} />
                   </Button>
@@ -76,14 +76,14 @@ export const BottomLinks = ({ classes, width, theme, ...props }) => {
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                  {props.ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+                  {ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
                 </Typography>
               </Grid>
             </Grid>
           </div>
         </Grid> : null
       }
-      {props.ui_values.nav.Resources && props.ui_values.nav.Resources.active ?
+      {ui_values.nav.Resources && ui_values.nav.Resources.active ?
         <Grid item xs>
           <div className={classes.centered}>
             <Grid container
@@ -91,13 +91,15 @@ export const BottomLinks = ({ classes, width, theme, ...props }) => {
               alignItems={'center'}
               direction={'column'}>
               <Grid item xs={12}>
-                <Button className={`${classes.bottomLink}`} variant="contained" color='default' href={`#/${props.ui_values.preferred_name.resources || 'Resources'}`}>
-                  <NearMe className={fontColor.isDark() ? classes.icon_light: classes.icon} />
-                </Button>
+                <Link to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
+                  <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
+                    <NearMe className={fontColor.isDark() ? classes.icon_light: classes.icon} />
+                  </Button>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subheading">
-                  {`Browse ${props.ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}`}
+                  {`Browse ${ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}`}
                 </Typography>
               </Grid>
             </Grid>
@@ -129,7 +131,7 @@ export const BottomLinks = ({ classes, width, theme, ...props }) => {
   )
 }
 
-export const CountsDiv = ({ classes, width, ...props }) => {
+export const CountsDiv = ({ classes, width, ui_values, ...props }) => {
   const { meta_counts } = props
   let sm = 3
   let xs = 4
@@ -146,7 +148,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
       <Grid item xs={12}>
         <div className={classes.centered}>
           <Typography variant="title">
-            {props.ui_values.text_2 || 'Search across a broad gathering of perturbations'}
+            {ui_values.text_2 || 'Search across a broad gathering of perturbations'}
           </Typography>
         </div>
       </Grid>
@@ -169,7 +171,7 @@ export const CountsDiv = ({ classes, width, ...props }) => {
   )
 }
 
-export const StatDiv = ({ classes, width, ...props }) => {
+export const StatDiv = ({ classes, width, ui_values, ...props }) => {
   const visible_stats = props.table_counts.filter((item) => item.Visible_On_Landing)
   const xs = visible_stats.length <= 4 ? 12 / visible_stats.length : 3
   return (
@@ -183,7 +185,7 @@ export const StatDiv = ({ classes, width, ...props }) => {
           <Grid item xs={12}>
             <div className={classes.centered}>
               <Typography variant="title">
-                {props.ui_values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
+                {ui_values.text_1 || 'Explore an extensive collection of well-annotated gene-sets and signatures'}
               </Typography>
             </div>
           </Grid>
@@ -204,8 +206,8 @@ export const StatDiv = ({ classes, width, ...props }) => {
   )
 }
 
-export const SearchCard = ({ classes, width, ...props }) => {
-  const { SignatureSearch, MetadataSearch } = props.ui_values.nav
+export const SearchCard = ({ classes, width, ui_values, ...props }) => {
+  const { SignatureSearch, MetadataSearch } = ui_values.nav
   if (SignatureSearch && SignatureSearch.active && MetadataSearch && MetadataSearch.active) {
     return (
       <Card className={`${classes.paddedCard} ${classes.topCard}`}>
@@ -217,7 +219,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             justify="center">
             <Grid item xs={12}>
               <Typography variant="h4" align={'center'} color="inherit">
-              {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
+              {ui_values.header_info.header_left}<img {...ui_values.header_info.icon} src={makeTemplate(ui_values.header_info.icon.src, {})} />{ui_values.header_info.header_right}
               </Typography>
               { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
                 <Typography variant="h5" align={'center'} color="inherit">
@@ -232,10 +234,12 @@ export const SearchCard = ({ classes, width, ...props }) => {
               { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
                 <MetadataSearchBox
                   id='MetadataSearch'
+                  ui_values={ui_values}
                   {...props}
                 /> :
                 <SearchBoxWrapper
                   {...props}
+                  ui_values={ui_values}
                 />
               }
             </Grid>
@@ -254,7 +258,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             justify="center">
             <Grid item xs={12}>
               <Typography variant="h4" color={"inherit"} align={'center'}>
-              {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
+              {ui_values.header_info.header_left}<img {...ui_values.header_info.icon} src={makeTemplate(ui_values.header_info.icon.src, {})} />{ui_values.header_info.header_right}
               </Typography>
               <Typography variant="h5" align={'center'} color="inherit">
                 {MetadataSearch.cardName || props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
@@ -263,6 +267,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             <Grid item xs={12}>
               <SearchBoxWrapper
                 {...props}
+                ui_values={ui_values}
               />
             </Grid>
           </Grid>
@@ -280,7 +285,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
             justify="center">
             <Grid item xs={12}>
               <Typography variant="h4" align={'center'} color="inherit">
-                {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
+                {ui_values.header_info.header_left}<img {...ui_values.header_info.icon} src={makeTemplate(ui_values.header_info.icon.src, {})} />{ui_values.header_info.header_right}
               </Typography>
               <Typography variant="h5" align={'center'} color="inherit">
                 {MetadataSearch.cardName || props.location.pathname.split("/")[1].replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
@@ -290,6 +295,7 @@ export const SearchCard = ({ classes, width, ...props }) => {
               <MetadataSearchBox
                 id='MetadataSearch'
                 {...props}
+                ui_values={ui_values}
               />
             </Grid>
           </Grid>
@@ -307,14 +313,12 @@ export const ListItemLink = (props) => (
 
 export const searchTerm = (ui_values, searchTable, term) => {
   const {preferred_name, nav} = ui_values
-  console.log(searchTable)
-  console.log(`#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"search":["${term}"]}`)
-  location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"search":["${term}"]}`
+  location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"search":["${term.name}"]}`
 }
 
 function getCallback(callback, ui_values, searchTable) {
   return function(word) {
-    searchTerm(ui_values, searchTable, word.text)
+    searchTerm(ui_values, searchTable, {name: word.text})
   }
 }
 
