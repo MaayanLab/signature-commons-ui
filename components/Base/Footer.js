@@ -1,13 +1,11 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import grey from '@material-ui/core/colors/grey'
 import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
 import Color from 'color'
 import { connect } from 'react-redux'
+import { makeTemplate } from '../../util/makeTemplate'
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -30,7 +28,7 @@ const FooterLink = ({src, alt, href, title, classes, containerProps, imageProps}
       <Button href={href} style={{width: 150}} {...containerProps}>
         <Grid container align={"center"}>
           <Grid item xs>
-            <img src={`${process.env.PREFIX}${src}`} alt={alt||title} style={{width: 150}} {...imageProps}/>
+            <img src={makeTemplate(src, {})} alt={alt||title} style={{width: 150}} {...imageProps}/>
           </Grid>
           <Grid item xs>
             <Typography variant="caption" className={classes.footer_links}>{title}</Typography>
@@ -43,7 +41,7 @@ const FooterLink = ({src, alt, href, title, classes, containerProps, imageProps}
       <Paper href={href} elevation={0} style={{width: 150, background:"inherit"}} {...containerProps}>
         <Grid container align={"center"}>
           <Grid item xs>
-            <img src={`${process.env.PREFIX}${src}`} alt={alt||title} style={{width: 150}} {...imageProps}/>
+            <img src={makeTemplate(src, {})} alt={alt||title} style={{width: 150}} {...imageProps}/>
           </Grid>
           <Grid item xs>
             <Typography variant="caption" className={classes.footer_links}>{title}</Typography>
@@ -81,7 +79,7 @@ function Footer(props) {
       >
         <Grid item>
           <a className="github-button" href={ui_values.github} data-size="large" aria-label="View Source Code on GitHub">View Source Code</a><br />
-          <a className="github-button" href={ui_values.github_issues} data-size="large" aria-label="Submit Bug Report on GitHub">Submit Bug Report</a>
+          <a className="github-button" href={ui_values.github_issues} data-size="large" aria-label="Submit Bug Report on GitHub">Submit Bugs and Corrections</a>
         </Grid>
         {ui_values.footer_links.map(itemProps=>(
           <Grid item key={itemProps.alt}>
