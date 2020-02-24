@@ -30,7 +30,6 @@ class SignatureSearch extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      input: {},
       controller: null,
       resources: null,
     }
