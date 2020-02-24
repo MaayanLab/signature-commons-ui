@@ -28,15 +28,27 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
+function sortCounts(values) {
+  const sorted = values.sort((a,b)=>{
+    const diff = (a[1].priority || 0) - (b[1].priority || 0)
+    if (diff === 0){
+      return a[0].localeCompare(b[0])
+    }else {
+      return diff
+    }
+  })
+  return sorted
+}
 
 class LandingPage extends React.Component {
   constructor(props) {
     super(props)
-    const selected_pie = Object.keys(props.piecounts)[0]
-    const selected_word = Object.keys(props.wordcounts)[0]
-    const selected_bar = Object.keys(props.barcounts).sort()[0]
-    const selected_histogram = Object.keys(props.histograms).sort()[0]
-    const selected_barscore = Object.keys(props.barscores)[0]
+    const selected_pie = (sortCounts(Object.entries(props.piecounts || {}))[0] || [])[0]
+    const selected_word = (sortCounts(Object.entries(props.wordcounts || {}))[0] || [])[0]
+    const selected_bar = (sortCounts(Object.entries(props.barcounts || {}))[0] || [])[0]
+    const selected_histogram = (sortCounts(Object.entries(props.histogram || {}))[0] || [])[0]
+    const selected_barscore = (sortCounts(Object.entries(props.barscores || {}))[0] || [])[0]
+    console.log(selected_pie)
     this.state = {
       scroll: false,
       selected_pie,
