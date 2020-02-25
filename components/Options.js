@@ -12,7 +12,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux'
 import { reportError } from '../util/redux/actions'
 import { makeTemplate } from '../util/makeTemplate'
-
+import config from '../util/config'
 import {
   download_signature_json,
   download_signatures_text,
@@ -25,9 +25,10 @@ import {
   get_label,
 } from './MetadataSearch/download'
 
-const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
-  || (window.location.origin + '/Enrichr')
 
+export async function enrichr_url() {
+  return (await config()).NEXT_PUBLIC_ENRICHR_URL
+}
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
@@ -45,6 +46,7 @@ const EnrichrDialog = (props) => {
     enrichr_status,
     enrichr_id,
     enrichr_ready,
+    ENRICHR_URL,
     ...other
   } = props
   return (
@@ -103,7 +105,13 @@ class Options extends React.Component {
       enrichr_ready: false,
       enrichr_open: false,
       enrichr_id: '',
+      ENRICHR_URL: null
     }
+  }
+
+  componentDidMount = async () => {
+    const ENRICHR_URL = await enrichr_url()
+    this.setState(ENRICHR_URL)
   }
 
   handleClick = (event) => {
@@ -150,7 +158,7 @@ class Options extends React.Component {
           const formData = new FormData()
           formData.append('list', data.join('\n'))
           formData.append('description', filename + '')
-          const response = await (await fetch(`${ENRICHR_URL}/addList`, {
+          const response = await (await fetch(`${this.state.ENRICHR_URL}/addList`, {
             method: 'POST',
             body: formData,
           })).json()
@@ -222,6 +230,9 @@ class Options extends React.Component {
 
   render = () => {
     if (this.props.type === 'signatures') {
+      if (this.state.ENRICHR_URL === null) {
+        return <CircularProgress />
+      }
       // TODO: Text here should be modified on the UI schemas + Enrichr link should be nullifiable
       return (
         <div>
@@ -290,6 +301,7 @@ class Options extends React.Component {
           <EnrichrDialog
             handleDialogClose={this.handleDialogClose}
             open={this.state.enrichr_open}
+            ENRICHR_URL={this.state.ENRICHR_URL}
             {...this.state}
           />
         </div>
