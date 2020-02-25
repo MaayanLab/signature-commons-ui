@@ -90,6 +90,9 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
             processed.icon = { ...val }
           }
         }
+        if (prop.homepage){
+          processed.homepage = { ...val }
+        }
         if (prop.score) {
           if (val !== null) {
             scores[prop.Field_Name] = {
