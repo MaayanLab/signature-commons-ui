@@ -23,6 +23,8 @@ import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
 
+import Insignia from '../../standalone/fairshake-insignia/src'
+
 import {get_schema_props} from '../Resources'
 const download = {
   libraries: download_library_json,
@@ -93,10 +95,11 @@ class ResourcePage extends React.Component {
       children = resource.libraries.slice(start, end)
     }
     const collection = children.map((data) => get_card_data(data, this.props.schemas))
-
+    const { processed } = get_card_data(resource, this.props.schemas)
     this.setState({
       resource,
       collection,
+      processed
     })
   }
 
@@ -150,10 +153,11 @@ class ResourcePage extends React.Component {
         children = resource.libraries.slice(start, end)
       }
       const collection = children.map((data) => get_card_data(data, this.props.schemas))
-
+      const { processed } = get_card_data(resource, this.props.schemas)
       this.setState({
         resource,
         collection,
+        processed,
       })
     }
   }
@@ -240,17 +244,34 @@ class ResourcePage extends React.Component {
               direction="row"
             >
               <Grid item md={2} xs={4} style={{ textAlign: 'center' }}>
-                <CardMedia style={{ marginTop: -15, paddingLeft: 13 }}>
-                  <Link
-                    to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
-                    className="waves-effect waves-teal"
-                  >
-                    <IconButton
-                      src={`${makeTemplate(icon_prop, resource)}`}
-                      description={'Go back to resource list'}
-                    />
-                  </Link>
-                </CardMedia>
+                <Grid
+                  container
+                  direction="column"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <CardMedia style={{ marginTop: -15, paddingLeft: 13 }}>
+                      <Link
+                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                        className="waves-effect waves-teal"
+                      >
+                        <IconButton
+                          src={`${makeTemplate(icon_prop, resource)}`}
+                          description={'Go back to resource list'}
+                        />
+                      </Link>
+                    </CardMedia>
+                  </Grid>
+                  {this.state.processed!== undefined &&
+                    this.state.processed.homepage!==undefined &&
+                    this.state.processed.homepage.hyperlink!==undefined ?
+                    <Grid item>
+                      <Insignia params={{url: this.state.processed.homepage.hyperlink}}/>
+                    </Grid>: null
+                  }
+                  
+                </Grid>
               </Grid>
               <Grid item md={10} xs={8}>
                 <CardContent>
