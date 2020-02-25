@@ -6,6 +6,7 @@
   "dependencies": {
     "@dcic/signature-commons-schema": "^1.2.1",
     "@dcic/signature-commons-ui-components-running-sum": "file:standalone/running-sum",
+    "@dcic/react-fairshake-insignia": "file:standalone/fairshake-insignia",
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.30",
@@ -80,7 +81,7 @@
     "version:major": "npm version --no-git-tag-version major",
     "version:minor": "npm version --no-git-tag-version minor",
     "version:patch": "npm version --no-git-tag-version patch",
-    "install": "cd standalone/running-sum && npm i"
+    "install": "cd standalone/running-sum && npm i && cd ../fairshake-insignia && npm i"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -93,7 +94,7 @@
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.7.1",
     "next-build-id": "^2.0.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "shelljs": "^0.8.3"
   }
 }
