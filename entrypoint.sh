@@ -5,7 +5,7 @@ if [ -z "${PREFIX}" ]; then
   export PREFIX="/sigcom"
 fi
 
-if [ ! -z "${NEXT_PUBLIC_ENRICHR_URL}" ]; then
+if [ -z "${NEXT_PUBLIC_ENRICHR_URL}" ]; then
   export NEXT_PUBLIC_ENRICHR_URL="https://amp.pharm.mssm.edu/Enrichr/"
 fi
 
