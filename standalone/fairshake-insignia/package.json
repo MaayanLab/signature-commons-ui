@@ -1,0 +1,36 @@
+{
+  "name": "@dcic/react-fairshake-insignia",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.tsx",
+  "scripts": {
+    "build": "microbundle build --jsx React.createElement --globals react=React -f es",
+    "dev": "parcel serve public/index.html -d build",
+    "prepare": "npm run build"
+  },
+  "author": "John Erol Evangelista <je.evangelista04@gmail.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "microbundle": "^0.11.0",
+    "parcel-bundler": "^1.12.3",
+    "react-dom": "^16.8.6",
+    "react": "^16.8.6"
+  },
+  "peerDependencies": {
+    "react": "^16.8.6"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.5.5",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "@material-ui/core": "^3.9.2",
+    "fairshakeinsignia": "^1.0.3"
+  }
+}
