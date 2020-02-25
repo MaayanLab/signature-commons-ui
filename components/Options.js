@@ -111,7 +111,7 @@ class Options extends React.Component {
 
   componentDidMount = async () => {
     const ENRICHR_URL = await enrichr_url()
-    this.setState(ENRICHR_URL)
+    this.setState({ENRICHR_URL})
   }
 
   handleClick = (event) => {
