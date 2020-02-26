@@ -23,7 +23,6 @@ import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
 
-import Insignia from '../../standalone/fairshake-insignia/src'
 
 import {get_schema_props} from '../Resources'
 const download = {
@@ -263,13 +262,6 @@ class ResourcePage extends React.Component {
                       </Link>
                     </CardMedia>
                   </Grid>
-                  {this.state.processed!== undefined &&
-                    this.state.processed.homepage!==undefined &&
-                    this.state.processed.homepage.hyperlink!==undefined ?
-                    <Grid item>
-                      <Insignia params={{url: this.state.processed.homepage.hyperlink}}/>
-                    </Grid>: null
-                  }
                   
                 </Grid>
               </Grid>
