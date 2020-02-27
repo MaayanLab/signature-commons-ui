@@ -15,7 +15,7 @@ export function get_formated_query(terms) {
 
 
 export function parse_entities(input) {
-  return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
+  return Set(input.split(/[ \t\r\n;]+/).reduce(
       (lines, line) => {
         const parsed = /^(.+?)(,(.+))?$/.exec(line)
         if (parsed !== null) {
