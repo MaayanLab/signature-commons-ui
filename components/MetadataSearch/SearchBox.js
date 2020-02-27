@@ -48,22 +48,6 @@ const Info = (props) => {
             </Typography>
           </div>
         </li>
-        <li>
-          <div>
-            <Typography variant="h6">
-                  Search for a specific field
-            </Typography>
-            <Typography variant="body2">
-              {'Prefix query with "[desired_field]:", e.g.'}
-            </Typography>
-            <Typography variant="overline" gutterBottom>
-              <Chip
-                label={props.ui_values.helper_tooltip.term3}
-                onDelete={() => {}}
-              /> {props.ui_values.helper_tooltip.term4}
-            </Typography>
-          </div>
-        </li>
       </ul>
     </div>
   )
