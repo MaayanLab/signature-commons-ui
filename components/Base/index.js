@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
 import { connect } from 'react-redux'
+import { makeTemplate } from '../../util/makeTemplate'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -46,7 +47,7 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
         <Head>
           <meta charSet="utf-8" />
           <title>{this.props.ui_values.favicon.title}</title>
-          <link rel="shortcut icon" alt={this.props.ui_values.favicon.alt} href={`${process.env.PREFIX}${this.props.ui_values.favicon.src}`} />
+          <link rel="shortcut icon" alt={this.props.ui_values.favicon.alt} href={makeTemplate(this.props.ui_values.favicon.src, {})} />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
           {this.props.ui_values.font_families.map((family, ind)=>(
             <link href={family} key={ind} rel="stylesheet" type="text/css"/>

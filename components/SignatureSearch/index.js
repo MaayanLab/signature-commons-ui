@@ -11,7 +11,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state) => {
   return {
-    ...state.serverSideProps,
     ...state.signature_result,
     ui_values: state.ui_values,
     input: state.signature_input,
@@ -31,7 +30,6 @@ class SignatureSearch extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      input: {},
       controller: null,
       resources: null,
     }
@@ -85,10 +83,9 @@ class SignatureSearch extends React.Component {
         )
       }
       signature_keys={this.props.signature_keys}
-      schemas={this.props.schemas}
       {...props}
-      {...this.state}
       {...this.props}
+      {...this.state}
     />
   )}
 

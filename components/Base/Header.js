@@ -20,6 +20,8 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
 
+import { makeTemplate } from '../../util/makeTemplate'
+
 const mapStateToProps = (state, ownProps) => {
   return {
     ui_values: state.ui_values,
@@ -253,7 +255,7 @@ export function Nav(props) {
           className={classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
-            {ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+            {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Link>
         </ListItem> : null
       }
@@ -264,7 +266,7 @@ export function Nav(props) {
           className={ classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
-            {ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+            {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Link>
         </ListItem> : null
       }
@@ -275,7 +277,7 @@ export function Nav(props) {
           className={classes.menuItem}
         >
           <Link className={classes.link} to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
-            {ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2')}
+            {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Link>
         </ListItem> : null
       }
@@ -369,7 +371,7 @@ class Header extends React.Component {
                       to="/"
                       className={classes.header}
                     >
-                    {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={`${process.env.PREFIX}${this.props.ui_values.header_info.icon.src}`} />{this.props.ui_values.header_info.header_right}
+                    {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
                     </Link>
                   </Typography>
                 }
@@ -403,7 +405,7 @@ class Header extends React.Component {
                     to="/"
                     className={classes.header}
                   >
-                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={`${process.env.PREFIX}${this.props.ui_values.header_info.icon.src}`} />{this.props.ui_values.header_info.header_right}
+                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
                   </Link>
                 </Typography>
               }
@@ -457,40 +459,5 @@ class Header extends React.Component {
 }
 
 
-// class Header extends React.Component {
-//   render = () => {
-//     const paths = this.props.location.pathname.split('/')
-//     const { staticContext, ...rest } = this.props
-//     return (
-//       <header>
-//         <nav className="nav-extended">
-//           <div className="nav-wrapper">
-//             <Link
-//               to="/"
-//               className="brand-logo left hide-on-med-and-down"
-//               style={{
-//                 whiteSpace: 'nowrap',
-//               }}
-//             >
-//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header_info || 'Signature Commons'}
-//             </Link>
-//             <Link
-//               to="/"
-//               className={`brand-logo ${location} hide-on-large-only`}
-//               style={{
-//                 whiteSpace: 'nowrap',
-//               }}
-//             >
-//               &nbsp;&nbsp; <img src={`${process.env.PREFIX}${this.props.ui_values.favicon.icon}`} width={this.props.ui_values.favicon.width} />&nbsp; {this.props.ui_values.header_info || 'Signature Commons'}
-//             </Link>
-//             <a href="#" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
-//             <Nav id="nav-mobile" className="right hide-on-med-and-down" {...rest} />
-//           </div>
-//           <Nav className="sidenav" id="mobile-menu" {...rest}/>
-//         </nav>
-//       </header>
-//     )
-//   }
-// }
 
 export default connect(mapStateToProps)(withStyles(styles)(Header))

@@ -11,7 +11,8 @@ import IconButton from './IconButton'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux'
 import { reportError } from '../util/redux/actions'
-
+import { makeTemplate } from '../util/makeTemplate'
+import config from '../util/config'
 import {
   download_signature_json,
   download_signatures_text,
@@ -24,9 +25,10 @@ import {
   get_label,
 } from './MetadataSearch/download'
 
-const ENRICHR_URL = process.env.NEXT_PUBLIC_ENRICHR_URL
-  || (window.location.origin + '/Enrichr')
 
+export async function enrichr_url() {
+  return (await config()).NEXT_PUBLIC_ENRICHR_URL
+}
 const FormData = require('form-data')
 const fetch = require('isomorphic-unfetch')
 
@@ -44,6 +46,7 @@ const EnrichrDialog = (props) => {
     enrichr_status,
     enrichr_id,
     enrichr_ready,
+    ENRICHR_URL,
     ...other
   } = props
   return (
@@ -102,7 +105,13 @@ class Options extends React.Component {
       enrichr_ready: false,
       enrichr_open: false,
       enrichr_id: '',
+      ENRICHR_URL: null
     }
+  }
+
+  componentDidMount = async () => {
+    const ENRICHR_URL = await enrichr_url()
+    this.setState({ENRICHR_URL})
   }
 
   handleClick = (event) => {
@@ -133,25 +142,37 @@ class Options extends React.Component {
       try {
         const schemas = await fetch_schemas()
         const signature = await get_signature({ item })
-        let data
+        let data = []
         if (signature.library.dataset_type === 'rank_matrix') {
           data = signature.data.slice(0, 250).map((d) => get_label(d, schemas))
         } else {
-          data = signature.data.map((d) => get_label(d, schemas))
+          // data = signature.data.map((d) => get_label(d, schemas))
+          for (const d of signature.data) {
+            if (d.meta!==undefined){
+              data = [...data, get_label(d, schemas)]
+            }
+          }
         }
         const filename = get_label(signature, schemas)
-        const formData = new FormData()
-        formData.append('list', data.join('\n'))
-        formData.append('description', filename + '')
-        const response = await (await fetch(`${ENRICHR_URL}/addList`, {
-          method: 'POST',
-          body: formData,
-        })).json()
-        this.setState((prevState) => ({
-          enrichr_ready: true,
-          enrichr_status: 'Analysis is ready',
-          enrichr_id: response['shortId'],
-        })) 
+        if (data.length > 0){
+          const formData = new FormData()
+          formData.append('list', data.join('\n'))
+          formData.append('description', filename + '')
+          const response = await (await fetch(`${this.state.ENRICHR_URL}/addList`, {
+            method: 'POST',
+            body: formData,
+          })).json()
+          this.setState((prevState) => ({
+            enrichr_ready: true,
+            enrichr_status: 'Analysis is ready',
+            enrichr_id: response['shortId'],
+          }))
+        } else {
+          this.props.reportError({message: "Empty entities"})
+          this.setState((prevState) => ({
+            enrichr_open: false
+          })) 
+        }       
       } catch (error) {
         this.props.reportError(error)
         this.setState((prevState) => ({
@@ -209,6 +230,9 @@ class Options extends React.Component {
 
   render = () => {
     if (this.props.type === 'signatures') {
+      if (this.state.ENRICHR_URL === null) {
+        return <CircularProgress />
+      }
       // TODO: Text here should be modified on the UI schemas + Enrichr link should be nullifiable
       return (
         <div>
@@ -248,7 +272,7 @@ class Options extends React.Component {
             { this.props.ui_values.downloads.sigcom ?
                 <MenuItem onClick={this.handleSubmitSigcom}>
                   <img alt="Signature Commons"
-                    src={`${process.env.PREFIX}/static/favicon.ico`}
+                    src={makeTemplate(this.props.ui_values.favicon.src, {})}
                     style={{
                       width: 15,
                       height: 15,
@@ -277,6 +301,7 @@ class Options extends React.Component {
           <EnrichrDialog
             handleDialogClose={this.handleDialogClose}
             open={this.state.enrichr_open}
+            ENRICHR_URL={this.state.ENRICHR_URL}
             {...this.state}
           />
         </div>

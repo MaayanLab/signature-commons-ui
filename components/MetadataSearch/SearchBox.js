@@ -26,9 +26,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Imatinib'}
+                label={props.ui_values.helper_tooltip.term1}
                 onDelete={() => {}}
-              /> -Stat3
+              /> -{props.ui_values.helper_tooltip.term2}
             </Typography>
           </div>
         </li>
@@ -42,25 +42,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Imatinib'}
+                label={props.ui_values.helper_tooltip.term1}
                 onDelete={() => {}}
-              /> or Stat3
-            </Typography>
-          </div>
-        </li>
-        <li>
-          <div>
-            <Typography variant="h6">
-                  Search for a specific field
-            </Typography>
-            <Typography variant="body2">
-              {'Prefix query with "[desired_field]:", e.g.'}
-            </Typography>
-            <Typography variant="overline" gutterBottom>
-              <Chip
-                label={'Disease: neuropathy'}
-                onDelete={() => {}}
-              /> {'PMID: 12345'}
+              /> or {props.ui_values.helper_tooltip.term2}
             </Typography>
           </div>
         </li>
@@ -72,9 +56,9 @@ const Info = (props) => {
 const Input = (props) => (
   <ChipInput
     className={props.classes.ChipInput}
-    placeholder={props.search.length > 0 ? 'Add filter' :
+    placeholder={(props.search || []).length > 0 ? 'Add filter' :
         props.placeholder}
-    value={props.search}
+    value={(props.search || [])}
     chipRenderer={props.renderChips || props.renderChips}
     disableUnderline
     alwaysShowPlaceholder
@@ -117,7 +101,7 @@ const Input = (props) => (
       props.searchFunction(search)
     }}
     onDelete={(chip, index) => {
-      const search = props.search.filter((term) => term != chip)
+      const search = (props.search || []).filter((term) => term != chip)
       props.searchFunction(search)
     }}
     blurBehavior="add"

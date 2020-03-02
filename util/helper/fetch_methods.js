@@ -26,6 +26,21 @@ export const get_summary_statistics = async () => {
   const {response: serverSideProps} = await fetch_meta({
     endpoint: "/summary"
   })
+  if (serverSideProps.length === 0){
+    return { serverSideProps: {
+        barcounts: {},
+        barscores: {},
+        histograms: {},
+        meta_counts: [],
+        pie_counts: {},
+        resource_signature_count: [],
+        schemas: [],
+        table_counts: [],
+        word_count: []
+      }
+    }
+  }
+  if (serverSideProps.table_counts === undefined) serverSideProps.table_counts = []
   const {response: resources} = await fetch_meta({
     endpoint: "/resources"
   })
@@ -35,25 +50,37 @@ export const get_summary_statistics = async () => {
   }
 
   const {resource_signature_count: response, schemas} = serverSideProps
-  const resource_signature_count = response.map(r=>{
-    const {count, id} = r
-    const resource = resource_mapper[id]
-    const schema = findMatchedSchema(resource, schemas)
-    const name_props = Object.values(schema.properties).filter((prop) => prop.name)
-    let name
-    if (name_props.length > 0) {
-      name = makeTemplate(name_props[0].text, resource)
-    } 
-    if (name_props.length===0 || name === 'undefined') {
-      console.warn('source of resource name is not defined, using either Resource_Name or ids')
-      name = resource.meta['Resource_Name'] || id
+  if (response.length > 0){
+    const resource_signature_count = []
+    for (const r of response){
+      const {count, id} = r
+      const resource = resource_mapper[id]
+      if (resource!==undefined){
+        const schema = findMatchedSchema(resource, schemas)
+        let name
+        if (schema!==null){
+          const name_props = Object.values(schema.properties).filter((prop) => prop.name)
+          if (name_props.length > 0) {
+            name = makeTemplate(name_props[0].text, resource)
+          } 
+          if (name_props.length===0 || name === 'undefined') {
+            console.warn('source of resource name is not defined, using either Resource_Name or ids')
+            name = resource.meta['Resource_Name'] || id
+          }
+        }else {
+          console.warn('source of resource name is not defined, using either Resource_Name or ids')
+          name = resource.meta['Resource_Name'] || id
+        }
+        resource_signature_count.push({name, id, counts: count})
+      }
     }
-    return {name, counts: count}
-  })
-  return { serverSideProps: {
-    ...serverSideProps,
-    resource_signature_count
-  } }
+    return { serverSideProps: {
+      ...serverSideProps,
+      resource_signature_count
+    } }
+  }else {
+    return { serverSideProps }
+  }
 }
 
 export const fetch_all_as_dictionary = async ({ table, controller }) => {
