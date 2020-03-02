@@ -48,7 +48,6 @@ export default class Visualization extends React.PureComponent {
     }
     
     componentDidMount = async() => {
-        console.log("HI")
         const {response} = await fetch_external({
             endpoint: this.props.endpoint
         })

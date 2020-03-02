@@ -6,7 +6,11 @@ export default class IFrame extends React.Component {
   }
   render() {
     return (
-      <iframe {...this.props} />
+      <iframe style={{
+        width: 1,
+        minWidth: "100%"
+      }}
+      {...this.props} />
     )
   }
 }

@@ -205,6 +205,7 @@ class Home extends React.PureComponent {
         iframe
         endpoint={"/rna-seq"}
         height={15000}
+        width={1200} 
         path={"RNASeq"}
       />
     )
@@ -217,6 +218,10 @@ class Home extends React.PureComponent {
         path={"Visualizations"}
         iframe
         height={1000}
+        style={{
+          width: 1,
+          minWidth: "100%"
+        }}
       />
     )
   }
