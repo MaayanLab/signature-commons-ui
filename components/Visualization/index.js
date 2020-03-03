@@ -71,12 +71,19 @@ export default class Visualization extends React.PureComponent {
 
     componentDidUpdate = async (prevProps) => {
         if (prevProps.match.params.assay_title!==this.props.match.params.assay_title){
-            const assay_title = this.props.match.params.assay_title
-            this.setState({
-                assay_title
-            }, async ()=>{
-                await this.get_assay(this.state.assay_title)
-            })
+            if (this.props.match.params.assay_title === undefined){
+                this.props.history.push({
+                    pathname: `${this.props.match.path}/${this.state.assay_list[0]}`
+                })
+            }else {
+                const assay_title = this.props.match.params.assay_title
+                console.log(assay_title)
+                this.setState({
+                    assay_title
+                }, async ()=>{
+                    await this.get_assay(this.state.assay_title)
+                })
+            }
         }
     }
 
@@ -98,7 +105,6 @@ export default class Visualization extends React.PureComponent {
                             {this.state.assay_list.map(assay_title=>
                                 <MenuItem
                                     selected={assay_title===this.state.assay_title}
-                                    onClick={()=>this.get_assay(assay_title)}
                                 >
                                     <Link to={`/${this.props.path}/${assay_title}`} style={{color: "inherit"}}>
                                         <Typography variant="inherit" noWrap>
@@ -132,6 +138,7 @@ export default class Visualization extends React.PureComponent {
                         <iframe
                             id="assay"
                             frameBorder="0"
+                            key={this.state.url}
                             src={`${this.state.url}`}
                             onLoad={this.finish_loading}
                             {...this.props}
