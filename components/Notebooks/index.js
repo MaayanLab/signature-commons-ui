@@ -71,12 +71,18 @@ export default class Notebooks extends React.PureComponent {
 
     componentDidUpdate = async (prevProps) => {
         if (prevProps.match.params.notebook_title!==this.props.match.params.notebook_title){
-            const notebook_title = this.props.match.params.notebook_title
-            this.setState({
-                notebook_title
-            }, async ()=>{
-                await this.get_notebook(this.state.notebook_title)
-            })
+            if (this.props.match.params.notebook_title === undefined){
+                this.props.history.push({
+                    pathname: `${this.props.match.path}/${this.state.notebook_list[0]}`
+                })
+            } else {
+                const notebook_title = this.props.match.params.notebook_title
+                this.setState({
+                    notebook_title
+                }, async ()=>{
+                    await this.get_notebook(this.state.notebook_title)
+                })
+            }
         }
     }
 
@@ -130,6 +136,7 @@ export default class Notebooks extends React.PureComponent {
                                 <CircularProgress />
                             </div> : null}
                         <iframe
+                            key={this.state.url}
                             id="notebook"
                             frameBorder="0"
                             src={`${this.state.url}`}
