@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ -z "${PREFIX}" ]; then
-  echo "warning: `PREFIX` environment variable should be specified explicitly"
+  echo "warning: PREFIX environment variable should be specified explicitly"
   export PREFIX="/"
 fi
 
@@ -16,7 +16,8 @@ fi
 
 echo "Mounting sigcom on '${PREFIX}'..."
 if [ "${PREFIX}" == "/" ]; then
-  ln -s /sigcom /usr/share/nginx/html/
+  mkdir -p /usr/share/nginx/
+  ln -s /sigcom /usr/share/nginx/html
 else
   mkdir -p /usr/share/nginx/html/
   ln -s /sigcom /usr/share/nginx/html${PREFIX}
