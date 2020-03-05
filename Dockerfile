@@ -8,7 +8,7 @@ COPY ./out /sigcom
 EXPOSE 80
 
 ENV PREFIX=/sigcom
-ENV NEXT_PUBLIC_METADATA_API=/sigcom
+ENV NEXT_PUBLIC_METADATA_API=/signature-commons-metadata-api
 ENV NEXT_PUBLIC_DATA_API=/enrichmentapi
 ENV NEXT_PUBLIC_ENRICHR_URL=https://amp.pharm.mssm.edu/Enrichr
 
