@@ -1,8 +1,8 @@
 #!/bin/sh
 
 if [ -z "${PREFIX}" ]; then
-  echo "deprecation warning: `PREFIX` environment variable should be specified explicitly"
-  export PREFIX="/sigcom"
+  echo "warning: `PREFIX` environment variable should be specified explicitly"
+  export PREFIX="/"
 fi
 
 if [ -z "${NEXT_PUBLIC_ENRICHR_URL}" ]; then
