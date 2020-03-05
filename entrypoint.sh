@@ -9,22 +9,28 @@ if [ -z "${NEXT_PUBLIC_ENRICHR_URL}" ]; then
   export NEXT_PUBLIC_ENRICHR_URL="https://amp.pharm.mssm.edu/Enrichr/"
 fi
 
-echo "Mounting sigcom on ${PREFIX}..."
+if [ -d /usr/share/nginx/html/ ]; then
+  echo "Removing old nginx directory..."
+  rm -r /usr/share/nginx/html/
+fi
 
-mkdir -p /usr/share/nginx/html/
-
+echo "Mounting sigcom on '${PREFIX}'..."
+if [ "${PREFIX}" == "/" ]; then
+  ln -s /sigcom /usr/share/nginx/html/
+else
+  mkdir -p /usr/share/nginx/html/
+  ln -s /sigcom /usr/share/nginx/html${PREFIX}
+fi
 
 # runtime config for website
 
-cat > /sigcom/static/config.json << EOF
+echo "Writing config.json..."
+tee /sigcom/static/config.json << EOF
 {
   "NEXT_PUBLIC_METADATA_API": "${NEXT_PUBLIC_METADATA_API}",
   "NEXT_PUBLIC_DATA_API": "${NEXT_PUBLIC_DATA_API}",
   "NEXT_PUBLIC_ENRICHR_URL": "${NEXT_PUBLIC_ENRICHR_URL}"
 }
 EOF
-
-# link sigcom into nginx directory
-ln -s /sigcom /usr/share/nginx/html${PREFIX}
 
 exec "$@"
