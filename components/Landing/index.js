@@ -50,7 +50,6 @@ class LandingPage extends React.Component {
     const selected_bar = (sortCounts(Object.entries(props.barcounts || {}))[0] || [])[0]
     const selected_histogram = (sortCounts(Object.entries(props.histogram || {}))[0] || [])[0]
     const selected_barscore = (sortCounts(Object.entries(props.barscores || {}))[0] || [])[0]
-    console.log(selected_pie)
     this.state = {
       scroll: false,
       selected_pie,
