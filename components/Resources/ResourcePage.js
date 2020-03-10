@@ -225,7 +225,7 @@ class ResourcePage extends React.Component {
   
   render() {
     if (this.state.resource === null) {
-      return <CircularProgress />
+      return <CircularProgress color="primary"/>
     }
 
     const resource = this.state.resource

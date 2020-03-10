@@ -42,7 +42,7 @@ class ResourceList extends React.PureComponent {
   render() {
     const sorted_resources = this.state.sorted_resources
     if (sorted_resources === null) {
-      return <CircularProgress />
+      return null
     }
     const md = sorted_resources.length > 6 ? 2 : 4
     const sm = sorted_resources.length > 6 ? 4 : 6

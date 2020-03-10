@@ -112,7 +112,7 @@ class Resources extends React.PureComponent {
 
   render() {
     if (this.state.resources === null) {
-      return <CircularProgress />
+      return <CircularProgress color="primary" />
     } else {
       return (
         <Switch>
