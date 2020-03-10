@@ -6,8 +6,9 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
-import MenuList from '@material-ui/core/MenuList';
-import MenuItem from '@material-ui/core/MenuItem';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
 import Hidden from '@material-ui/core/Hidden';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -46,58 +47,57 @@ const styles = theme => ({
   },
 });
 
+export const ListItemLink = (props) => {
+  return <ListItem button component="a" {...props} />;
+}
+
 export function Nav(props) {
   const { ui_values, location, classes } = props
   return (
     <React.Fragment>
-      {ui_values.nav.MetadataSearch && ui_values.nav.MetadataSearch.active ?
-        <MenuItem
+      {ui_values.nav.MetadataSearch.active ?
+        <ListItemLink
           selected={location.pathname === `${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
           className={classes.menuItem}
+          href={`#${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
         >
-          <Link className={classes.link} to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
-            {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
-          </Link>
-        </MenuItem> : null
+          <ListItemText primary={ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}/>
+        </ListItemLink> : null
       }
-      {ui_values.nav.SignatureSearch && ui_values.nav.SignatureSearch.active ?
-        <MenuItem
+      {ui_values.nav.SignatureSearch.active ?
+        <ListItemLink
           selected={location.pathname === `${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
           className={ classes.menuItem}
+          href={`#${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
         >
-          <Link className={classes.link} to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
-            {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
-          </Link>
-        </MenuItem> : null
+          <ListItemText primary={ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}/>
+        </ListItemLink> : null
       }
-      {ui_values.nav.Resources && ui_values.nav.Resources.active ?
-        <MenuItem
+      {ui_values.nav.Resources.active ?
+        <ListItemLink
           selected={location.pathname === `${ui_values.nav.Resources.endpoint || '/Resources'}`}
-          className={classes.menuItem}
+          className={ classes.menuItem}
+          href={`#${ui_values.nav.Resources.endpoint || '/Resources'}`}
         >
-          <Link className={classes.link} to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
-            {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
-          </Link>
-        </MenuItem> : null
+          <ListItemText primary={ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}/>
+        </ListItemLink> : null
       }
       {ui_values.about !== undefined ?
-        <MenuItem
+        <ListItemLink
           selected={location.pathname === '/About'}
-          className={classes.menuItem}
+          className={ classes.menuItem}
+          href={"#/About"}
         >
-          <Link className={classes.link} to={'/About'}>
-            About
-          </Link>
-        </MenuItem> : null
+          <ListItemText primary={"About"}/>
+        </ListItemLink> : null
       }
-      <MenuItem
+      <ListItemLink
         selected={location.pathname === '/API'}
-        className={classes.menuItem}
+        className={ classes.menuItem}
+        href={"#/API"}
       >
-        <Link className={classes.link} to="/API">
-          API
-        </Link>
-      </MenuItem>
+        <ListItemText primary={"API"}/>
+      </ListItemLink>
     </React.Fragment>
   )
 }
@@ -135,7 +135,14 @@ class Header extends React.Component {
                     </Link>
                   </Typography>
                 }
-                <Nav classes={classes} {...rest}/>
+                <List
+                  style={{
+                    display: 'flex',
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <Nav classes={classes} {...rest}/>
+                </List>
               </Hidden>
               <Hidden mdUp>
               <Button edge="start" className={classes.menuButton} onClick={this.toggleDrawer} color="inherit" aria-label="menu">
@@ -163,9 +170,9 @@ class Header extends React.Component {
                   onClick={this.toggleDrawer}
                   onKeyDown={this.toggleDrawer}
                 >
-                  <MenuList>
+                  <List>
                     <Nav classes={classes} {...rest}/>
-                  </MenuList>
+                  </List>
                 </div>
               </SwipeableDrawer>
               </Hidden>
