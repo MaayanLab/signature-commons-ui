@@ -61,7 +61,7 @@ export function Nav(props) {
           className={classes.menuItem}
           href={`#${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
         >
-          <ListItemText primary={ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}/>
+          {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
         </ListItemLink> : null
       }
       {ui_values.nav.SignatureSearch.active ?
@@ -70,7 +70,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
         >
-          <ListItemText primary={ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}/>
+          {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
         </ListItemLink> : null
       }
       {ui_values.nav.Resources.active ?
@@ -79,7 +79,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav.Resources.endpoint || '/Resources'}`}
         >
-          <ListItemText primary={ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}/>
+          {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
         </ListItemLink> : null
       }
       {ui_values.about !== undefined ?
@@ -88,7 +88,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={"#/About"}
         >
-          <ListItemText primary={"About"}/>
+          {"About"}
         </ListItemLink> : null
       }
       <ListItemLink
@@ -96,7 +96,7 @@ export function Nav(props) {
         className={ classes.menuItem}
         href={"#/API"}
       >
-        <ListItemText primary={"API"}/>
+        {"API"}
       </ListItemLink>
     </React.Fragment>
   )
