@@ -19,6 +19,10 @@ import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
+import Network from '../Network'
+import Visualization from '../Visualization'
+import Notebooks from '../Notebooks'
+
 import Pages from '../Pages'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
@@ -183,6 +187,46 @@ class Home extends React.PureComponent {
     )
   }
 
+  network = (props) => {
+    return (
+      <Network {...props}/>
+    )
+  }
+
+  rppa = (props) => {
+    return (
+      <Notebooks {...props} endpoint={"/rppa"} path={"RPPA"}/>
+    )
+  }
+
+  rnaseq = (props) => {
+    return (
+      <Notebooks {...props}
+        iframe
+        endpoint={"/rna-seq"}
+        height={15000}
+        width={1200} 
+        path={"RNASeq"}
+      />
+    )
+  }
+
+  visualization = (props) => {
+    return (
+      <Visualization {...props}
+        endpoint={"/givwe"}
+        path={"Visualizations"}
+        iframe
+        height={1000}
+        style={{
+          width: 1,
+          minWidth: "100%"
+        }}
+      />
+    )
+  }
+
+
   render = () => {
     if (this.props.theme===null){
       return <CircularProgress />
@@ -270,6 +314,37 @@ class Home extends React.PureComponent {
                 component={this.about}
               /> : null
             }
+            <Route
+              path={'/Network'}
+              component={this.network}
+            /> 
+            <Route
+              path={'/RNASeq'}
+              exact
+              component={this.rnaseq}
+            />
+            <Route
+              path={'/RNASeq/:notebook_title'}
+              component={this.rnaseq}
+            />  
+            <Route
+              path={'/RPPA'}
+              exact
+              component={this.rppa}
+            />
+            <Route
+              path={'/RPPA/:notebook_title'}
+              component={this.rppa}
+            />
+            <Route
+              path={'/Visualizations'}
+              exact
+              component={this.visualization}
+            />
+            <Route
+              path={'/Visualizations/:assay_title'}
+              component={this.visualization}
+            />  
             <Route
               path="/:table/:id"
               component={this.pages}
