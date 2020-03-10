@@ -26,9 +26,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Imatinib'}
+                label={props.ui_values.helper_tooltip.term1}
                 onDelete={() => {}}
-              /> -Stat3
+              /> -{props.ui_values.helper_tooltip.term2}
             </Typography>
           </div>
         </li>
@@ -42,25 +42,9 @@ const Info = (props) => {
             </Typography>
             <Typography variant="overline" gutterBottom>
               <Chip
-                label={'Imatinib'}
+                label={props.ui_values.helper_tooltip.term1}
                 onDelete={() => {}}
-              /> or Stat3
-            </Typography>
-          </div>
-        </li>
-        <li>
-          <div>
-            <Typography variant="h6">
-                  Search for a specific field
-            </Typography>
-            <Typography variant="body2">
-              {'Prefix query with "[desired_field]:", e.g.'}
-            </Typography>
-            <Typography variant="overline" gutterBottom>
-              <Chip
-                label={'Disease: neuropathy'}
-                onDelete={() => {}}
-              /> {'PMID: 12345'}
+              /> or {props.ui_values.helper_tooltip.term2}
             </Typography>
           </div>
         </li>
@@ -72,9 +56,9 @@ const Info = (props) => {
 const Input = (props) => (
   <ChipInput
     className={props.classes.ChipInput}
-    placeholder={props.search.length > 0 ? 'Add filter' :
+    placeholder={(props.search || []).length > 0 ? 'Add filter' :
         props.placeholder}
-    value={props.search}
+    value={(props.search || [])}
     chipRenderer={props.renderChips || props.renderChips}
     disableUnderline
     alwaysShowPlaceholder
@@ -117,7 +101,7 @@ const Input = (props) => (
       props.searchFunction(search)
     }}
     onDelete={(chip, index) => {
-      const search = props.search.filter((term) => term != chip)
+      const search = (props.search || []).filter((term) => term != chip)
       props.searchFunction(search)
     }}
     blurBehavior="add"
@@ -156,8 +140,11 @@ export class SearchBox extends React.Component {
     return (
       <Chip
         key={key}
+        style={{
+          maxWidth: 300,
+        }}
         avatar={<Icon className={`${this.props.classes.icon} mdi ${chip_icon} mdi-18px`} />}
-        label={chip_value}
+        label={chip_value.length < 25 ? chip_value: chip_value.substring(0,22)+"..."}
         onDelete={handleDelete}
         className={`${className} ${chip_class}`}
       />
@@ -177,7 +164,7 @@ export class SearchBox extends React.Component {
               </Grid>
               <Grid item xs={12} style={{ textAlign: 'center' }}>
                 <Button variant="contained"
-                  color="primary"
+                  className={this.props.classes.button}
                   style={{ marginTop: 5 }}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
@@ -213,14 +200,14 @@ export class SearchBox extends React.Component {
                     interactive placement="left-start"
                     classes={{ tooltip: this.props.classes.tooltip }}>
                     <Button className={this.props.classes.tooltipButton} >
-                      <span className="mdi mdi-information mdi-24px mdi-dark" />
+                      <span className="mdi mdi-information mdi-24px" />
                     </Button>
                   </Tooltip>
                 </Hidden>
                 <Input renderChips={this.renderChips} {...this.props} />
                 <span>&nbsp;&nbsp;</span>
                 <Button variant="contained"
-                  color="primary"
+                  className={this.props.classes.button}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
                   }>
@@ -249,7 +236,7 @@ export class SearchBox extends React.Component {
               <Tooltip title={this.props.Info || <Info {...this.props}/>}
                 interactive placement="left-start"
                 classes={{ tooltip: this.props.classes.tooltip }}>
-                <Button className={this.props.classes.tooltipButton} >
+                <Button className={this.props.classes.tooltipButton}>
                   <span className="mdi mdi-information mdi-24px mdi-dark" />
                 </Button>
               </Tooltip>

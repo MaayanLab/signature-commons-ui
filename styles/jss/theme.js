@@ -79,8 +79,9 @@ export const landingStyle = (theme) => ({
   },
   topCard: {
     padding: '20px',
-    background:
-      'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
+    background: theme.card["topCard"].palette.main || theme.palette.defaultCard.main,
+    color: theme.card["topCard"].palette.contrastText || theme.palette.defaultCard.contrastText,
+    ...theme.card["topCard"].overrides
   },
   stretched: {
     width: '80%',
@@ -117,12 +118,27 @@ export const landingStyle = (theme) => ({
     float: 'left',
     zIndex: 100,
   },
+  bottomLink: {
+    background: theme.card["bottomCard"].palette.main || theme.palette.defaultCard.main,
+    color: theme.card["bottomCard"].palette.contrastText || theme.palette.defaultCard.contrastText,
+    '&:hover': {
+      background: theme.card["bottomCard"].palette.dark || theme.palette.defaultCard.dark,
+    },
+    ...theme.card["bottomCard"].overrides
+  },
+  icon_light: {
+    float: 'right',
+    width: 75,
+    height: 75,
+    padding: 14,
+    color: theme.card["bottomCard"].palette.contrastText || theme.palette.defaultCard.contrastText || "#424242",
+  },
   icon: {
     float: 'right',
     width: 75,
     height: 75,
     padding: 14,
-    color: white,
+    color: theme.card["bottomCard"].palette.contrastText || theme.palette.defaultCard.contrastText || white,
   },
   textField: {
     margin: '-20px 8px 8px 8px',

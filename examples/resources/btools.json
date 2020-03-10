@@ -1,0 +1,31 @@
+{
+  "match": {
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/resource.json"
+  },
+  "properties": {
+    "Image": {
+      "visibility": 1,
+      "type": "img",
+      "src": "${meta.icon}",
+      "alt": "${meta.name}",
+      "text": "${meta.name}",
+      "priority": 1,
+      "icon": true,
+      "name": true
+    },
+    "Description": {
+      "visibility": 1,
+      "type": "text",
+      "field": "Description",
+      "text": "${meta['description']}",
+      "priority": 2
+    },
+    "homepage": {
+      "visibility": 1,
+      "type": "text",
+      "field": "URL",
+      "text": "${meta['homepage']}",
+      "priority": 3
+    }
+  }
+}

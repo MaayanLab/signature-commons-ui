@@ -14,10 +14,18 @@ const styles = (theme) => ({
     margin: theme.spacing.unit / 2,
   },
   defaultChip: {
-    ...theme.chipColors.default,
+    background: theme.palette.defaultChip.main,
+    color: theme.palette.defaultChip.contrastText,
+    '&:hover': {
+      background: theme.palette.defaultChip.dark,
+    }
   },
   defaultLightChip: {
-    ...theme.chipColors.defaultLight,
+    background: theme.palette.defaultChipLight.main,
+    color: theme.palette.defaultChipLight.contrastText,
+    '&:hover': {
+      background: theme.palette.defaultChipLight.dark,
+    }
   },
   notChip: {
     ...theme.chipColors.alert,
@@ -32,6 +40,13 @@ const styles = (theme) => ({
   tooltipButton: {
     marginTop: 5,
     padding: '5px 0',
+  },
+  button: {
+    background: theme.palette.defaultButton.main,
+    color: theme.palette.defaultButton.contrastText,
+    '&:hover': {
+      background: theme.palette.defaultButton.dark,
+    }
   },
   icon: {
     paddingBottom: 35,
@@ -49,11 +64,11 @@ const styles = (theme) => ({
 const mapStateToProps = (state) => {
   return { loading: state.loading,
     completed: state.completed,
-    examples: state.serverSideProps.ui_values.LandingText.search_terms,
-    placeholder: state.serverSideProps.ui_values.LandingText.metadata_placeholder,
-    preferred_name: state.serverSideProps.ui_values.preferred_name,
+    examples: state.ui_values.search_terms,
+    placeholder: state.ui_values.metadata_placeholder,
+    preferred_name: state.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
+    MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
   }
 }
 

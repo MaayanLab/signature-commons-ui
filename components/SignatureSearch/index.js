@@ -4,19 +4,18 @@ import ResourceFilters from './ResourceFilters'
 import LibraryResults from './LibraryResults'
 import { connect } from 'react-redux'
 import { findSignaturesFromId } from '../../util/redux/actions'
-import { findMatchedSchema } from '../../util/objectMatch'
 import { get_schemas } from '../../util/helper/fetch_methods'
 import { fetch_meta } from '../../util/fetch/meta'
-
+import { get_resources_and_libraries } from '../Resources'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state) => {
   return {
-    ...state.serverSideProps,
     ...state.signature_result,
+    ui_values: state.ui_values,
     input: state.signature_input,
     loading: state.loading_signature,
-    SignatureSearchNav: state.serverSideProps.ui_values.nav.SignatureSearch || {},
+    SignatureSearchNav: state.ui_values.nav.SignatureSearch || {},
   }
 }
 
@@ -31,7 +30,6 @@ class SignatureSearch extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      input: {},
       controller: null,
       resources: null,
     }
@@ -41,32 +39,22 @@ class SignatureSearch extends React.Component {
     window.scrollTo(0, 0)
 
     const schemas = await get_schemas()
-    const { response: resources } = await fetch_meta({
-      endpoint: `/resources`,
-    })
-    const schema = await findMatchedSchema(resources[0], schemas)
-    const name_props = Object.values(schema.properties).filter((prop) => prop.name)
-    const name_prop = name_props.length > 0 ? name_props[0].text : '${id}'
-    const icon_props = Object.values(schema.properties).filter((prop) => prop.icon)
-    const icon_prop = icon_props.length > 0 ? icon_props[0].src : '${id}'
-    const description_props = Object.values(schema.properties).filter((prop) => prop.description)
-    const description_prop = description_props.length > 0 ? description_props[0].text : '${id}'
+    const { response: resources } = await get_resources_and_libraries(this.props.ui_values.showNonResource)
     if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
       this.props.search(this.props.match.params.type, this.props.match.params.id)
     }
     this.setState({
       schemas,
-      icon_prop,
-      name_prop,
-      description_prop,
       resources,
     })
   }
 
   componentDidUpdate = async (prevProps) => {
     if (prevProps.loading === false && this.props.loading === false) {
-      if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
-        this.props.search(this.props.match.params.type, this.props.match.params.id)
+      if (prevProps.match.params.id !== this.props.match.params.id){
+        if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
+          this.props.search(this.props.match.params.type, this.props.match.params.id)
+        }
       }
     }
   }
@@ -86,20 +74,20 @@ class SignatureSearch extends React.Component {
     />
   )
 
-  library_results = (props) => (
+  library_results = (props) => {
+    return(
     <LibraryResults
       results={
-        (((this.props.resource_signatures || {})[props.match.params.resource.replace('_', ' ')] || {}).libraries || []).map(
+        (((this.props.resource_signatures || {})[props.match.params.resource.replace(/_/g, ' ')] || {}).libraries || []).map(
             (lib) => this.props.library_signatures[lib]
         )
       }
       signature_keys={this.props.signature_keys}
-      schemas={this.props.schemas}
       {...props}
-      {...this.state}
       {...this.props}
+      {...this.state}
     />
-  )
+  )}
 
   render_signature_search = () => {
     this.props.handleChange({}, 'signature', true)

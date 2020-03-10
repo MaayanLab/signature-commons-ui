@@ -71,7 +71,6 @@ export default class DataProvider {
 
   async serialize_library(lib, opts) {
     if (opts === undefined) opts = {}
-
     const library = await this.resolve_library(lib)
     const serialized = {}
 
@@ -90,9 +89,11 @@ export default class DataProvider {
         await this.fetch_data_for_signatures(await library.signatures)
       }
     }
-
     if (opts.resource === true) {
-      serialized.resource = await this.serialize_resource(await library.resource)
+      const resource = await library.resource
+      if (resource !== undefined){
+        serialized.resource = await this.serialize_resource(resource)
+      }
     }
 
     if (opts.signatures === true) {
@@ -171,7 +172,8 @@ export default class DataProvider {
       }
       return this.resources[resource.id]
     } else {
-      throw new Error(`Invalid object provided for resolution: ${resource}`)
+      return undefined
+      // throw new Error(`Invalid resource object provided for resolution: ${resource}`)
     }
   }
 
@@ -189,7 +191,7 @@ export default class DataProvider {
       }
       return this.libraries[library.id]
     } else {
-      throw new Error(`Invalid object provided for resolution ${library}`)
+      throw new Error(`Invalid library object provided for resolution ${library}`)
     }
   }
 
@@ -207,7 +209,7 @@ export default class DataProvider {
       }
       return this.signatures[signature.id]
     } else {
-      throw new Error(`Invalid object provided for resolution: ${signature}`)
+      throw new Error(`Invalid signature object provided for resolution: ${signature}`)
     }
   }
 
@@ -225,7 +227,7 @@ export default class DataProvider {
       }
       return this.entities[entity.id]
     } else {
-      throw new Error(`Invalid object provided for resolution: ${entity}`)
+      throw new Error(`Invalid entity object provided for resolution: ${entity}`)
     }
   }
 
@@ -413,8 +415,13 @@ export default class DataProvider {
           signature._data = entities
         } else if (endpoint === 'rank') {
           const ranks = sig.ranks
-          ranks.sort((a, b) => a - b)
-          const entities = await this.resolve_entities(ranks.map((rank) => response.entities[rank]).filter((ent) => ent !== undefined))
+          const ranked_entities = response.entities.map((ent, ind) => ({ ent, rank: ranks[ind] }));
+          ranked_entities.sort(({rank: rank_a}, {rank: rank_b}) => rank_a - rank_b);
+
+          const entities = await this.resolve_entities(ranked_entities.reduce((agg, { ent }) => ent !== undefined ? [...agg, ent] : agg, []));
+          // const rank_index = ranks.map((rank)=>sig.ranks.indexOf(rank))
+          // const entities = await this.resolve_entities(rank_index.map((rank) => response.entities[rank]).filter((ent) => ent !== undefined))
+          
           signature._data = entities
         } else {
           throw new Error(`endpoint ${endpoint} not recognized`)
@@ -656,6 +663,9 @@ export class Signature {
       }
 
       await this._parent.fetch_data_for_signatures([this])
+      if (this._data === undefined) {
+        throw new Error("Fetched data but we still don't have it!")
+      }
       return this._data
     })()
   }

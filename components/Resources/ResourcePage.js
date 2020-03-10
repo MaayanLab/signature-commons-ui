@@ -8,6 +8,7 @@ import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
+
 import Divider from '@material-ui/core/Divider'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import TablePagination from '@material-ui/core/TablePagination'
@@ -22,16 +23,16 @@ import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
 
+import {get_schema_props} from '../Resources'
 const download = {
   libraries: download_library_json,
   resources: download_resource_json,
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { ui_values } = state.serverSideProps
   return {
-    ui_values,
-    preferred_name_singular: ui_values.preferred_name_singular,
+    ui_values: state.ui_values,
+    preferred_name_singular: state.ui_values.preferred_name_singular,
   }
 }
 
@@ -53,7 +54,7 @@ class ResourcePage extends React.Component {
   async componentDidMount() {
     const res = this.props.match.params.resource.replace(/_/g, ' ')
     let resource
-    if (isUUID(res + '')) {
+    if (this.props.resources[res]===undefined && isUUID(res + '')) {
       // uuid fetch resource
       const { response } = await fetch_meta({
         endpoint: `/resources/${res}`,
@@ -104,11 +105,17 @@ class ResourcePage extends React.Component {
     const prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
     if (res != prevRes) {
       let resource
-
-      if (isUUID(res + '')) {
+      if (this.props.resources[res]===undefined && isUUID(res + '')) {
         // uuid fetch resource
         const { response } = await fetch_meta({
-          endpoint: `/resources/${res}`,
+          endpoint: `/resources`,
+          body: {
+            filter: {
+              where: {
+                id: res
+              }
+            }
+          }
         })
         resource = response
         const { response: libraries } = await fetch_meta_post({
@@ -212,23 +219,19 @@ class ResourcePage extends React.Component {
       },
     })
   }
-
+  
   render() {
     if (this.state.resource === null) {
       return <CircularProgress />
     }
-    const { icon_prop,
-      name_prop,
-    } = this.props
 
     const resource = this.state.resource
-
+    const {name_prop, icon_prop} = get_schema_props(resource, this.props.schemas)
     let resource_name = makeTemplate(name_prop, resource)
     resource_name = resource_name === 'undefined' ? resource.id : resource_name
     return (
       <Grid
         container
-        direction="row"
       >
         <Grid item xs={12}>
           <Card>
@@ -236,8 +239,8 @@ class ResourcePage extends React.Component {
               container
               direction="row"
             >
-              <Grid item xs={1}>
-                <CardMedia style={{ marginTop: -10 }}>
+              <Grid item md={2} xs={4} style={{ textAlign: 'center' }}>
+                <CardMedia style={{ marginTop: -15, paddingLeft: 13 }}>
                   <Link
                     to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
                     className="waves-effect waves-teal"
@@ -249,7 +252,7 @@ class ResourcePage extends React.Component {
                   </Link>
                 </CardMedia>
               </Grid>
-              <Grid item xs={11}>
+              <Grid item md={10} xs={8}>
                 <CardContent>
                   <Grid
                     container
@@ -257,6 +260,7 @@ class ResourcePage extends React.Component {
                   >
                     <Grid item xs={12}>
                       <ShowMeta
+                        hidden={[resource_name]}
                         value={{
                           '@id': resource.id,
                           '@name': resource_name, // this.props.ui_values.preferred_name_singular['resources'] || 'Resource',
@@ -279,7 +283,8 @@ class ResourcePage extends React.Component {
                     </Grid>
                     <Grid item xs={1}>
                       <Link
-                        to={`/${this.props.ui_values.preferred_name.resources || 'Resources'}`}
+                        to={"#"}
+                        onClick={() => this.props.history.goBack()}
                         className="waves-effect waves-teal btn-flat"
                       >
                         <span style={{ color: 'orange' }}>BACK</span>

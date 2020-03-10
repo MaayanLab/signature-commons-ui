@@ -40,6 +40,7 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
           className: classes.menu,
         },
       }}
+      style={{marginTop:-5}}
       margin="normal"
       style={{ marginTop: -5 }}
       onChange={props.onChange}
@@ -60,7 +61,7 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
 export const PieChart = withStyles(landingStyle)(function({ classes, record = {}, stats, ...props }) {
   
   if (stats === undefined) return null
-  let slice = props.slice || 14
+  let slice = props.slice || 14;
   stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
   let data
   if (stats.length <= stats){
@@ -129,7 +130,7 @@ const PieChartGroup = withScreenSize(function({ classes, record = {}, ...props }
                   onChange={(e) => props.handleSelectField(e)}
                 />
               </div> :
-              <span className={classes.vertical55}>{props.ui_values.LandingText.resource_pie_caption || 'Signatures per Resource'}</span>
+              <span className={classes.vertical55}>{props.ui_values.resource_pie_caption || 'Signatures per Resource'}</span>
           }
           <Divider />
         </Grid>

@@ -3,6 +3,7 @@
     "landing": true,
     "content": {
       "deactivate_download": false,
+      "powered": false,
       "bar_chart": {
         "Field_Name": "meta.Year",
         "Caption": "Datasets per Year"
@@ -15,7 +16,16 @@
       ],
       "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
-      "footer_type": "dcic",
+      "theme_mod": {
+        "palette": {
+          "defaultCard": {
+            "contrastText": "#FFF"
+          },
+          "defaultChip": {
+            "contrastText": "#FFF"
+          }
+        }
+      },
       "nav": {
         "MetadataSearch": {
           "active": true,
@@ -32,7 +42,15 @@
         "API": {
           "active": true
         }
-      }
+      },
+      "showNonResource": false,
+      "footer_links": [
+        {
+          "href": "http://lincs-dcic.org/",
+          "src": "${PREFIX}/static/images/dcic.png",
+          "alt": "dcic"
+        }
+      ]
     }
   },
   {

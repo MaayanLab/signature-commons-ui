@@ -1,11 +1,31 @@
 import { action_definitions } from './action-types'
 
-export function initializeSigcom(serverSideProps) {
-  return { type: action_definitions.INITIALIZE_SIGCOM, serverSideProps }
+export function initializeSigcom() {
+  return { type: action_definitions.INITIALIZE_SIGCOM }
 }
 
-export function initializeParents({ parent_ids_mapping, parents_mapping }) {
-  return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
+export function initializePreferredName(ui_values) {
+  return { type: action_definitions.INITIALIZE_PREFERRED_NAMES, ui_values }
+}
+
+export function initializeTheme(theme) {
+  return { type: action_definitions.INITIALIZE_THEME, theme}
+}
+
+export function fetchUIValuesSucceeded(ui_values) {
+  return { type: action_definitions.FETCH_UI_VALUES_SUCCEEDED, ui_values}
+}
+
+export function fetchSummarySucceeded(serverSideProps) {
+  return { type: action_definitions.FETCH_SUMMARY_SUCCEEDED, serverSideProps}
+}
+
+// export function initializeParents({ parent_ids_mapping, parents_mapping }) {
+//   return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
+// }
+
+export function initializeParents({parents_mapping }) {
+  return { type: action_definitions.INITIALIZE_PARENTS, parents_mapping }
 }
 
 export function resetSigcom() {
@@ -46,6 +66,16 @@ export function fetchMetaDataFromSearchBox(params) {
 //   return {type: action_definitions.PAGINATE_METADATA_FAILED, error}
 // }
 
+// Snackbar
+export function reportError(error) {
+  return { type: action_definitions.REPORT_ERROR,
+    error,
+  }
+}
+
+export function closeSnackBar() {
+  return { type: action_definitions.CLOSE_SNACK_BAR }
+}
 
 // Metadata search
 export function fetchMetaData(params) {

@@ -1,11 +1,11 @@
 {
   "name": "signature-commons-ui",
-  "version": "0.2.19",
+  "version": "0.3.8",
   "private": true,
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
   "dependencies": {
     "@dcic/signature-commons-schema": "^1.2.1",
-    "@dcic/signature-commons-ui-components-running-sum": "github:dcic/signature-commons-ui-running-sum",
+    "@dcic/signature-commons-ui-components-running-sum": "file:standalone/running-sum",
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.30",
@@ -16,9 +16,11 @@
     "abort-controller": "^1.1.0",
     "acorn": "^6.1.1",
     "ajv": "^6.9.2",
+    "color": "^3.1.2",
     "create-react-class": "^15.6.3",
     "d3": "^5.7.0",
     "date-fns": "^2.0.0-beta.4",
+    "deepmerge": "^4.2.2",
     "dotenv-load": "^1.1.0",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
@@ -54,7 +56,7 @@
     "redux-saga": "^1.0.5",
     "serialize-error": "^4.1.0",
     "swagger-client": "^3.8.22",
-    "swagger-ui-react": "^3.23.0",
+    "swagger-ui-react": "^3.24.3",
     "tween": "^0.9.0",
     "typescript": "^3.3.3333",
     "uuid5": "^1.0.2",
@@ -77,7 +79,8 @@
     "deploy:dev": "NODE_ENV=development npm run deploy",
     "version:major": "npm version --no-git-tag-version major",
     "version:minor": "npm version --no-git-tag-version minor",
-    "version:patch": "npm version --no-git-tag-version patch"
+    "version:patch": "npm version --no-git-tag-version patch",
+    "install": "cd standalone/running-sum && npm i"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -90,7 +93,7 @@
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.7.1",
     "next-build-id": "^2.0.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "shelljs": "^0.8.3"
   }
 }

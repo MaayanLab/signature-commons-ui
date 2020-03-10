@@ -19,7 +19,8 @@ function validAccession(str) {
   return str.match(RegExp('^[A-Za-z]+:([A-Za-z]+:)?[A-Za-z0-9]+$'))
 }
 
-export function ShowMeta({ value, highlight, classes }) {
+export function ShowMeta({ value, highlight, classes, hidden }) {
+  if (hidden === undefined) hidden = []
   if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
     if (validURL(value)) {
       if (! validAccession(value)) {
@@ -45,12 +46,12 @@ export function ShowMeta({ value, highlight, classes }) {
         spacing={24}>
         {value.map((value, ind) => (
           <Grid item xs={12} key={ind}>
-            <ShowMeta classes={classes} value={value} highlight={highlight} />
+            <ShowMeta hidden={hidden} classes={classes} value={value} highlight={highlight} />
           </Grid>
         ))}
       </Grid>
     )
-  } else if (typeof value === 'object') {
+  } else if (typeof value === 'object' && value !== null) {
     if (value['@id'] !== undefined && value['@type'] !== undefined && value.meta !== undefined) {
       return (
         <Grid container
@@ -64,7 +65,7 @@ export function ShowMeta({ value, highlight, classes }) {
             />
           </Grid>
           <Grid item xs={12}>
-            <ShowMeta classes={classes} value={value.meta} highlight={highlight} />
+            <ShowMeta hidden={hidden} classes={classes} value={value.meta} highlight={highlight} />
           </Grid>
         </Grid>
       )
@@ -87,7 +88,7 @@ export function ShowMeta({ value, highlight, classes }) {
             />
           </Grid>
           <Grid item xs={12}>
-            <ShowMeta classes={classes} value={value.meta} highlight={highlight} />
+            <ShowMeta hidden={hidden} classes={classes} value={value.meta} highlight={highlight} />
           </Grid>
         </Grid>
       )
@@ -101,7 +102,7 @@ export function ShowMeta({ value, highlight, classes }) {
     }
     return (
       <div>
-        {Object.keys(value).filter((key) => (!key.startsWith('$') && key.toLowerCase() !== 'icon')).map((key, ind) => (
+        {Object.keys(value).filter((key) => (!key.startsWith('$') && key.toLowerCase() !== 'icon' && key!== 'extraProperties' && key!== '@type' && hidden.indexOf(value[key])===-1)).map((key, ind) => (
           <Grid container
             spacing={24}
             key={key}>
@@ -114,7 +115,7 @@ export function ShowMeta({ value, highlight, classes }) {
               />
             </Grid>
             <Grid item xs={6} xl={10} md={9}>
-              <ShowMeta classes={classes} value={value[key]} highlight={highlight} />
+              <ShowMeta hidden={hidden} classes={classes} value={value[key]} highlight={highlight} />
             </Grid>
           </Grid>
         ))}

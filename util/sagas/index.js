@@ -1,13 +1,15 @@
 import { put, takeLatest, cancelled, all, call, select } from 'redux-saga/effects'
 import { Set } from 'immutable'
 import { action_definitions } from '../redux/action-types'
-import { resolve_entities,
+import { get_summary_statistics,
+  resolve_entities,
   find_synonyms,
   query_overlap,
   query_rank,
   fetch_all_as_dictionary } from '../helper/fetch_methods'
 import { fetch_count } from '../helper/server_side'
 import { parse_entities } from '../helper/misc'
+import { fill_palette } from '../helper/theme_filler'
 import { fetchMetaDataSucceeded,
   fetchMetaDataFailed,
   fetchMetaDataAborted,
@@ -15,10 +17,21 @@ import { fetchMetaDataSucceeded,
   matchFailed,
   findSignaturesSucceeded,
   findSignaturesFailed,
-  initializeParents } from '../redux/actions'
+  initializeParents,
+  fetchUIValuesSucceeded,
+  initializeTheme,
+  initializePreferredName,
+  updateInput,
+  reportError,
+  fetchSummarySucceeded
+ } from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
+import { get_ui_values } from '../../pages'
 import uuid5 from 'uuid5'
+import defaultTheme from '../theme-provider'
+import { createMuiTheme } from '@material-ui/core'
+import merge from 'deepmerge'
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -35,30 +48,81 @@ export function *workInitializeSigcom(action) {
   }
   const controller = new AbortController()
   try {
+    // Summary statistics
+    const { serverSideProps } = yield call(get_summary_statistics)
+    yield put(fetchSummarySucceeded(serverSideProps))
+    // ui values
+    const {ui_values} = yield call(get_ui_values)
+    yield put(fetchUIValuesSucceeded(ui_values))
+    yield put(initializePreferredName(ui_values))
+    
+    // theme
+    const theme = createMuiTheme(merge(defaultTheme, ui_values.theme_mod))
+    theme.shadows[4] = theme.shadows[0]
+    // if (theme.palette.default.dark===undefined){
+    //   theme.palette.default.dark = darken(theme.palette.default.main, tonalOffset*1.5)
+    // }
+    // if (theme.palette.default.dark===undefined){
+    //   theme.palette.default.light = lighten(theme.palette.default.main, tonalOffset)
+    // }
+
+    // Get variables for offsetting colors
+    const tonalOffset = theme.palette.tonalOffset
+    const contrastThreshold = theme.palette.contrastThreshold
+    //  default palette
+    const default_palette = theme.palette.default
+    theme.palette.default = fill_palette(default_palette, tonalOffset, contrastThreshold)
+    //  default card
+    const defaultCard = theme.palette.defaultCard
+    theme.palette.defaultCard = fill_palette(defaultCard, tonalOffset, contrastThreshold)
+    //  default button
+    const defaultButton = theme.palette.defaultButton
+    theme.palette.defaultButton = fill_palette(defaultButton, tonalOffset, contrastThreshold)
+    //  default chip
+    const defaultChip = theme.palette.defaultChip
+    theme.palette.defaultChip = fill_palette(defaultChip, tonalOffset, contrastThreshold)
+    //  default chip light
+    const defaultChipLight = theme.palette.defaultChipLight
+    theme.palette.defaultChipLight = fill_palette(defaultChipLight, tonalOffset, contrastThreshold)
+
+    // card themes
+    for(const [ind, card_theme] of Object.entries(theme.card)){
+      if (card_theme.palette.main !== undefined){
+        const main = card_theme.palette
+        card_theme.palette = fill_palette(main, tonalOffset, contrastThreshold)
+        theme.card[ind] = card_theme
+      }
+    }
+    
+
+    // theme.palette.action.disabledBackground = theme.palette.secondary.light
+    yield put(initializeTheme(theme))
+
     const sig_count = yield call(fetch_count, 'signatures')
     const lib_count = yield call(fetch_count, 'libraries')
+    const resource_count = yield call(fetch_count, 'resources')
 
     const parents_mapping = {}
-    const parent_ids_mapping = {}
-    let libraries = {}
+    // const parent_ids_mapping = {}
+    // let libraries = {}
     if (sig_count > 0) {
-      libraries = yield call(fetch_all_as_dictionary, { table: 'libraries', controller })
+      // libraries = yield call(fetch_all_as_dictionary, { table: 'libraries', controller })
       parents_mapping['signatures'] = 'library'
-      parent_ids_mapping['signatures'] = libraries
+      // parent_ids_mapping['signatures'] = libraries
     }
     if (lib_count > 0) {
-      let resources = yield call(fetch_all_as_dictionary, { table: 'resources', controller })
-      if (resources === null) {
-        resources = libraries
+      if (resource_count === 0) {
+        // resources = libraries
         parents_mapping['libraries'] = 'library'
       } else {
         parents_mapping['libraries'] = 'resource'
       }
-      parent_ids_mapping['libraries'] = resources
+      // parent_ids_mapping['libraries'] = resources
     }
-
-    yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
-  } catch (error) {
+    yield put(initializeParents({ parents_mapping }))
+    // yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
+   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     controller.abort()
   } finally {
@@ -115,6 +179,7 @@ export function *workFetchMetaData(action) {
     }, {})
     yield put(fetchMetaDataSucceeded(updated_models))
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     yield put(fetchMetaDataFailed(error))
     controller.abort()
@@ -250,6 +315,7 @@ export function *workMatchEntities(action) {
       yield put(updateResolvedEntities(input))
     }
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     yield put(matchFailed(error))
     controller.abort()
@@ -326,6 +392,7 @@ export function *workFindSignature(action) {
       yield put(findSignaturesSucceeded(results))
     }
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
     yield put(findSignaturesFailed(error))
     controller.abort()
@@ -350,8 +417,8 @@ export function *workFindSignatureFromId(action) {
     return
   }
   const controller = new AbortController()
+  const { id, search_type } = action
   try {
-    const { id, search_type } = action
     const data = yield call(get_signature_data, { item: id, search_type })
     const input = {
       type: search_type,
@@ -388,7 +455,24 @@ export function *workFindSignatureFromId(action) {
       yield put(findSignaturesSucceeded(results))
     }
   } catch (error) {
+    yield put(reportError(error))
     console.log(error)
+    let input = ({
+      type: search_type
+    })
+    if (search_type==='Overlap') {
+      input = {
+        ...input,
+        geneset: ''
+      }
+    } else {
+      input = {
+        ...input,
+        up_geneset: '',
+        down_geneset: ''
+      }
+    }
+    yield put(updateInput(input))
     yield put(findSignaturesFailed(error))
     controller.abort()
   } finally {

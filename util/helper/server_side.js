@@ -367,7 +367,7 @@ export async function get_barscores(ui_values) {
   return { barscores }
 }
 
-export async function get_resource_signature_counts() {
+export async function get_resource_signature_count() {
   const schemas = await get_schemas()
   let resource_list
   const { response } = await fetch_meta({
@@ -382,7 +382,7 @@ export async function get_resource_signature_counts() {
   } else {
     resource_list = response
   }
-  let resource_signature_counts = []
+  let resource_signature_count = []
   for (const resource of resource_list) {
     const resource_id = resource.id
     const schema = findMatchedSchema(resource, schemas)
@@ -396,9 +396,9 @@ export async function get_resource_signature_counts() {
       resource_name = resource.meta['Resource_Name'] || resource_id
     }
     const { response: res } = await fetch_meta({ endpoint: `/resources/${resource_id}/signatures/count` })
-    resource_signature_counts = [...resource_signature_counts, {name: resource_name, counts:res.count}]
+    resource_signature_count = [...resource_signature_count, {name: resource_name, counts:res.count}]
   }
-  return { resource_signature_counts }
+  return { resource_signature_count }
 }
 
 export async function get_signature_keys() {

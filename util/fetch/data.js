@@ -1,15 +1,19 @@
 import fetch from 'isomorphic-unfetch'
+import config from '../config'
 
-export const base_url = process.env.NEXT_SERVER_DATA_API
-  || process.env.NEXT_STATIC_DATA_API
-  || process.env.NEXT_PUBLIC_DATA_API
-  || (window.location.origin + '/enrichmentapi/api/v1')
+export async function base_url() {
+  return (await config()).NEXT_PUBLIC_DATA_API
+}
+
+export async function base_versioned_url() {
+  return (await base_url()) + '/api/v1'
+}
 
 export async function fetch_data({ endpoint, body, signal }) {
   const start = new Date()
 
   const request = await fetch(
-      base_url
+      (await base_versioned_url())
     + (endpoint === undefined ? '' : endpoint),
       {
         method: 'POST',
@@ -18,14 +22,13 @@ export async function fetch_data({ endpoint, body, signal }) {
       }
   )
   if (request.ok !== true) {
-    throw new Error(`Error communicating with API at ${base_url}${endpoint}`)
+    throw new Error(`Error communicating with API at ${await base_versioned_url()}${endpoint}`)
   }
 
   let response_text = (await request.text()).replace(/Infinity/g, 'null')
   if (response_text === '') { // normalize empty responses
     response_text = '{"signatures":[], "matchingEntities": [], "results": {}}'
   }
-
   let response
   try {
     response = JSON.parse(response_text)

@@ -1,0 +1,199 @@
+
+{
+    "match": {
+      "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
+      "${library.meta.assay}": "P100" 
+    },
+    "properties": {
+      "Image": {
+        "visibility": 1,
+        "type": "img",
+        "src": "${PREFIX}/${library.meta.icon}",
+        "alt": "${library.meta.libraryName}",
+        "text": "${library.meta.libraryName}",
+        "priority": 1,
+        "icon": true,
+        "subtitle": true
+      },
+      "ID": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${meta.id}",
+        "priority": 1,
+        "name": true
+      },
+      "Assay": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${library.meta.assay}",
+        "priority": 1
+      },
+      "Cell-line": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${meta.cellid}",
+        "priority": 4,
+        "MDI_Icon": "mdi-microscope",
+        "clickable": true
+      },
+      "Compound": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${meta.pert_iname}",
+        "priority": 2,
+        "MDI_Icon": "mdi-hexagon-multiple",
+        "clickable": true
+      },
+      "Pubchem ID": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${meta.pubchem_cid}",
+        "priority": 2,
+        "MDI_Icon": "mdi-database",
+        "clickable": true
+      },
+      "Concentration": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${meta.pert_dose}${meta.pert_dose_unit}",
+        "priority": 3,
+        "MDI_Icon": "mdi-eyedropper",
+        "clickable": false
+      },
+      "Time Point": {
+        "visibility": 1,
+        "type": "text",
+        "text": "${meta.pert_time}${meta.pert_time_unit}",
+        "priority": 5,
+        "MDI_Icon": "mdi-av-timer",
+        "clickable": true
+      },
+      "P-Value": {
+        "visibility": 1,
+        "condition": {
+          "${meta['p-value']}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "columnOptions": {
+          "sort": true,
+          "sortDirection": "asc"
+        },
+        "type": "text",
+        "text": "${meta['p-value']}",
+        "priority": 5
+      },
+      "Odds Ratio": {
+        "visibility": 1,
+        "condition": {
+          "${meta.oddsratio}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "type": "text",
+        "text": "${meta.oddsratio}",
+        "priority": 5
+      },
+      "Gene Set Size": {
+        "visibility": 1,
+        "condition": {
+          "${meta.setsize}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "type": "text",
+        "text": "${meta.setsize}",
+        "priority": 5
+      },
+      "P-Up": {
+        "visibility": 1,
+        "condition": {
+          "${meta['p-up']}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "type": "text",
+        "text": "${meta['p-up']}",
+        "priority": 5
+      },
+      "P-Down": {
+        "visibility": 1,
+        "condition": {
+          "${meta['p-down']}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "type": "text",
+        "text": "${meta['p-down']}",
+        "priority": 5
+      },
+      "Z-Up": {
+        "visibility": 1,
+        "condition": {
+          "${meta['z-up']}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "type": "text",
+        "text": "${meta['z-up']}",
+        "priority": 5
+      },
+      "Z-Down": {
+        "visibility": 1,
+        "condition": {
+          "${meta['z-down']}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "type": "text",
+        "text": "${meta['z-down']}",
+        "priority": 5
+      },
+      "Log(p) Fisher": {
+        "visibility": 1,
+        "condition": {
+          "${meta['logp-fisher']}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "columnOptions": {
+          "sort": true,
+          "sortDirection": "desc"
+        },
+        "type": "text",
+        "text": "${meta['logp-fisher']}",
+        "priority": 5
+      },
+      "Log(p) Average":{
+        "visibility": 1,
+        "condition": {
+          "${meta['logp-avg']}": {
+            "ne": null
+          }
+        },
+        "columnType": "number",
+        "type": "text",
+        "text": "${meta['logp-avg']}",
+        "priority": 5
+      },
+      "Direction": {
+        "visibility": 1,
+        "condition": {
+          "${meta['logp-fisher']}": {
+            "ne": "undefined"
+          }
+        },
+        "type": "text",
+        "text": "${meta['direction'] === 1 ? 'up' : 'down'}",
+        "priority": 4
+      }
+    }
+  }

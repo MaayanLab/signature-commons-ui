@@ -1,13 +1,14 @@
 
 {
   "match": {
-    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json"
+    "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
+    "${library.meta.assay}":  "^(?!P100$)"
   },
   "properties": {
     "Image": {
       "visibility": 1,
       "type": "img",
-      "src": "${PREFIX}/static/images/lincs/LINCS.ico",
+      "src": "${PREFIX}/${library.meta.icon || library.meta.creators[0].affiliations[0].extraProperties[0].values[0]}",
       "alt": "${library.dataset}",
       "text": "${library.dataset}",
       "priority": 1,
@@ -15,7 +16,7 @@
       "subtitle": true
     },
     "Signature ID": {
-      "visibility": 0,
+      "visibility": 1,
       "type": "text",
       "text": "${meta.signatureid}",
       "priority": 1,
@@ -26,49 +27,56 @@
       "type": "text",
       "text": "${meta.cellline}",
       "priority": 4,
-      "MDI_Icon": "mdi-microscope"
+      "MDI_Icon": "mdi-microscope",
+      "clickable": true
     },
     "Tissue": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.tissue}",
       "priority": 4,
-      "MDI_Icon": "mdi-camera-metering-matrix"
+      "MDI_Icon": "mdi-camera-metering-matrix",
+      "clickable": true
     },
     "Compound": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.clueIoCompound}",
       "priority": 2,
-      "MDI_Icon": "mdi-hexagon-multiple"
+      "MDI_Icon": "mdi-hexagon-multiple",
+      "clickable": true
     },
     "Gene Target": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.clueIoGeneTargets}",
       "priority": 2,
-      "MDI_Icon": "mdi-target-variant"
+      "MDI_Icon": "mdi-target-variant",
+      "clickable": true
     },
     "MoA": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.clueIoMOA}",
       "priority": 2,
-      "MDI_Icon": "mdi-settings-outline"
+      "MDI_Icon": "mdi-settings-outline",
+      "clickable": true
     },
     "Concentration": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.concentration}",
       "priority": 3,
-      "MDI_Icon": "mdi-eyedropper"
+      "MDI_Icon": "mdi-eyedropper",
+      "clickable": false
     },
     "Organism": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.organism}",
       "priority": 5,
-      "MDI_Icon": "mdi-human-child"
+      "MDI_Icon": "mdi-human-child",
+      "clickable": true
     },
     "P-Value": {
       "visibility": 1,
@@ -190,7 +198,7 @@
       "visibility": 1,
       "condition": {
         "${meta['logp-fisher']}": {
-          "ne": null
+          "ne": "undefined"
         }
       },
       "type": "text",

@@ -3,19 +3,9 @@ import dynamic from 'next/dynamic'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { fetch_meta_post } from '../util/fetch/meta'
-import { get_schemas } from '../util/helper/fetch_methods.js'
 import { UIValues } from '../util/ui_values'
 import { initializeSigcom } from '../util/redux/actions'
 import { connect } from 'react-redux'
-import { get_counts,
-  get_metacounts,
-  get_piecounts,
-  get_barcounts,
-  get_histograms,
-  get_barscores,
-  get_resource_signature_counts,
-  get_wordcounts,
-} from '../util/helper/server_side.js'
 
 const Router = dynamic(async () => (await import('react-router-dom')).HashRouter, { ssr: false })
 const Route = dynamic(async () => (await import('react-router-dom')).Route, { ssr: false })
@@ -61,46 +51,18 @@ export async function get_ui_values() {
 
 class App extends React.Component {
   static async getInitialProps() {
-    const { ui_values } = await get_ui_values()
-    // Check if it has library_name and resource_from_library
-    const schemas = await get_schemas(ui_values.ui_schema)
-    // const { resource_signatures, resources, resources_id, library_resource } = await get_signature_counts_per_resources(ui_values, schemas)
-    const { table_counts, ui_values: ui_val } = await get_counts(ui_values)
-    const { meta_counts } = await get_metacounts(ui_val)
-    const { piecounts } = await get_piecounts(ui_val)
-    const { wordcounts } = await get_wordcounts(ui_val)
-    // const signature_keys = await get_signature_keys()
-    const { barcounts } = await get_barcounts(ui_val)
-    const { histograms } = await get_histograms(ui_val)
-    const { barscores } = await get_barscores(ui_val)
-    const { resource_signature_counts } = await get_resource_signature_counts()
-    const serverSideProps = {
-      table_counts,
-      meta_counts, // : {},
-      // resource_signatures,
-      piecounts, // : {},
-      wordcounts,
-      barcounts,
-      histograms,
-      barscores,
-      // signature_keys,
-      // resources,
-      // resources_id,
-      // library_resource,
-      ui_values, // : ui_val,
-      schemas,
-      resource_signature_counts,
-    }
-    return { serverSideProps }
+    
   }
 
   async componentDidMount() {
-    this.props.initializeSigcom(this.props.serverSideProps)
+    this.props.initializeSigcom()
   }
 
   render() {
     if (!this.props.initialized) {
-      return <CircularProgress />
+      return  <div style={{ textAlign: 'center', marginTop: 100 }}>
+                <CircularProgress />
+              </div>
     }
     return (
       <div className="root">

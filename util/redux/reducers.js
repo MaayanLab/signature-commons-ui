@@ -28,14 +28,22 @@ export const initialState = {
     signatures_count: 'Signature.count',
     libraries_count: 'Library.count',
   },
+  theme: null,
+  ui_values: null,
+  error_message: null,
 }
 
 function rootReducer(state = initialState, action) {
-  if (action.type === action_definitions.INITIALIZE_SIGCOM) {
-    const preferred_name = action.serverSideProps.ui_values.preferred_name
+  if (action.type === action_definitions.FETCH_SUMMARY_SUCCEEDED) {
     return {
       ...state,
       serverSideProps: action.serverSideProps,
+    }
+  }
+  if (action.type === action_definitions.INITIALIZE_PREFERRED_NAMES) {
+    const preferred_name = action.ui_values.preferred_name
+    return {
+      ...state,
       reverse_preferred_name: Object.entries(preferred_name).reduce((acc, [name, preferred]) => {
         acc = {
           ...acc,
@@ -45,12 +53,28 @@ function rootReducer(state = initialState, action) {
       }, {}),
     }
   }
+  if (action.type === action_definitions.INITIALIZE_THEME){
+    const {theme} = action
+    return {
+      ...state,
+      theme
+    }
+  }
+
+  if (action.type === action_definitions.FETCH_UI_VALUES_SUCCEEDED) {
+    const {ui_values} = action
+    return {
+      ...state,
+      ui_values
+    }
+  }
   if (action.type === action_definitions.INITIALIZE_PARENTS) {
-    const { parent_ids_mapping, parents_mapping } = action
+    // const { parent_ids_mapping, parents_mapping } = action
+    const { parents_mapping } = action
     return {
       ...state,
       initialized: true,
-      parent_ids_mapping,
+      // parent_ids_mapping,
       parents_mapping,
       selected_parent_ids: Object.keys(parents_mapping).reduce((acc, item) => {
         acc[item] = []
@@ -89,7 +113,7 @@ function rootReducer(state = initialState, action) {
       models: Object.keys(state.parents_mapping).reduce((acc, table) => {
         acc = {
           ...acc,
-          [table]: new Model(table, state.parents_mapping[table], state.parent_ids_mapping[table]),
+          [table]: new Model(table, state.parents_mapping[table]),
         }
         return acc
       }, {}),
@@ -125,7 +149,6 @@ function rootReducer(state = initialState, action) {
   if (action.type === action_definitions.FETCH_METADATA_ABORTED) {
     return Object.assign({}, state, {
       results: {},
-      loading: true,
     })
   }
   if (action.type === action_definitions.INITIALIZE_SIGNATURE_SEARCH) {
@@ -191,6 +214,19 @@ function rootReducer(state = initialState, action) {
     return {
       ...state,
       loading_signature: false,
+    }
+  }
+  if (action.type === action_definitions.REPORT_ERROR) {
+    console.log(action)
+    return {
+      ...state,
+      error_message: action.error.message,
+    }
+  }
+  if (action.type === action_definitions.CLOSE_SNACK_BAR) {
+    return {
+      ...state,
+      error_message: null,
     }
   }
   return state

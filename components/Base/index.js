@@ -5,8 +5,15 @@ import Footer from './Footer'
 import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
+import { connect } from 'react-redux'
+import { makeTemplate } from '../../util/makeTemplate'
 
-export default withStyles(styles)(class Base extends React.PureComponent {
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ui_values: state.ui_values,
+  }
+}
+export default connect(mapStateToProps)(withStyles(styles)(class Base extends React.PureComponent {
   constructor(props) {
     super(props)
 
@@ -39,9 +46,13 @@ export default withStyles(styles)(class Base extends React.PureComponent {
       <div className="root">
         <Head>
           <meta charSet="utf-8" />
-          <link rel="shortcut icon" href={`${process.env.PREFIX}/static/favicon.ico`} />
+          <title>{this.props.ui_values.favicon.title}</title>
+          <link rel="shortcut icon" alt={this.props.ui_values.favicon.alt} href={makeTemplate(this.props.ui_values.favicon.src, {})} />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-          <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
+          {this.props.ui_values.font_families.map((family, ind)=>(
+            <link href={family} key={ind} rel="stylesheet" type="text/css"/>
+          ))}
+          <link href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css" rel="stylesheet" />
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>
@@ -51,8 +62,8 @@ export default withStyles(styles)(class Base extends React.PureComponent {
             {this.props.children}
           </div>
         </main>
-        <Footer {...this.props}/>
+        <Footer/>
       </div>
     )
   }
-})
+}))

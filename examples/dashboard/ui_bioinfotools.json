@@ -2,11 +2,18 @@
   {
     "landing": true,
     "content": {
-      "header": "BTools",
+      "favicon": {
+        "icon": "/static/btools.ico",
+        "width": 40,
+        "style": {
+          "marginBottom": 0
+        }
+      },
+      "header_left": "B",
+      "header_right": "ls",
       "metadata_placeholder": "Search over thousands of tools",
       "text_1": "Explore an extensive collection of bioinformatics tools",
       "text_4": "Explore BTools now",
-      "library_name": "title",
       "preferred_name_singular": {
         "libraries": "Tool",
         "resources": "Journal"
@@ -14,44 +21,6 @@
       "preferred_name": {
         "libraries": "Tools",
         "resources": "Journals"
-      },
-      "order_default": {
-        "libraries": "meta.total_pubmed_citations"
-      },
-      "footer_type": "powered",
-      "github": "https://github.com/MaayanLab/btools-ui",
-      "github_issues": "https://github.com/MaayanLab/btools-ui/issues",
-      "deactivate_download": true,
-      "deactivate_wordcloud": true,
-      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
-      "bar_chart": {
-        "Field_Name": "pub_year",
-        "Caption": "Publication Year"
-      },
-      "bar_chart_style": {
-        "ResponsiveContainer": {
-          "width": "100%",
-          "height": 300
-        },
-        "Chart": {
-          "margin": {
-            "right": 50,
-            "left": 50
-          }
-        },
-        "XAxis": {
-          "axisLine": false,
-          "angle": 45,
-          "height": 180,
-          "textAnchor": "start",
-          "interval": 0,
-          "tick": {
-            "fontSize": 9
-          }
-        },
-        "Bar": {
-          "fill": "#75bef5"
-        }
       },
       "nav": {
         "MetadataSearch": {
@@ -69,11 +38,66 @@
           "active": true
         }
       },
+      "order_default": {
+        "libraries": "meta.total_pubmed_citations"
+      },
+      "footer_links": [
+        {
+          "src": "/static/maayanlab.png",
+          "alt": "mssm"
+        }
+      ],
+      "theme_mod": {
+        "palette": {
+          "primary": {
+            "main": "#43B14B"
+          },
+          "secondary": {
+            "main": "#9E6F6D"
+          },
+          "default": {
+            "main": "#9E6F6D",
+            "contrastText": "#FFF"
+          }
+        }
+      },
+      "showNonResource": false,
+      "github": "https://github.com/MaayanLab/btools-ui",
+      "github_issues": "https://github.com/MaayanLab/btools-ui/issues",
+      "deactivate_download": true,
+      "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+      "bar_chart_style": {
+        "ResponsiveContainer": {
+          "width": "100%",
+          "height": 300
+        },
+        "Chart": {
+          "margin": {
+            "right": 50,
+            "left": 50
+          }
+        },
+        "XAxis": {
+          "axisLine": false,
+          "angle": 45,
+          "height": 50,
+          "textAnchor": "start",
+          "interval": 0,
+          "tick": {
+            "fontSize": 9
+          }
+        },
+        "Bar": {
+          "fill": "#43b14b"
+        }
+      },
+      "pie_chart_style": {
+        "Pie": {
+          "fill":  "#43b14b"
+        }
+      },
       "text_2": "Search across various fields",
-      "text_3": "Examine top",
-      "resource_name_from_library": "journal_name",
-      "resource_name": "${meta.name}",
-      "resource_icon": "${meta.icon}",
+      "text_3": "By",
       "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
       "search_terms": [
         "visualization",

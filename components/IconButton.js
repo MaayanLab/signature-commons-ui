@@ -18,6 +18,7 @@ const styles = (theme) => ({
   },
   image: {
     height: 50,
+    maxWidth: 100
   },
   margin: {
     margin: theme.spacing.unit * 2,

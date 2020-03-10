@@ -27,14 +27,16 @@
       "type": "text",
       "text": "${meta.last_author.name}",
       "MDI_Icon": "mdi-desktop-tower-monitor",
-      "priority": 4
+      "priority": 4,
+      "clickable": true
     },
     "Institution": {
       "visibility": 1,
       "type": "text",
       "text": "${meta.institution}",
       "MDI_Icon": "mdi-certificate",
-      "priority": 5
+      "priority": 5,
+      "clickable": true
     },
     "Pubmed Citations": {
       "visibility": 1,
@@ -62,20 +64,6 @@
       "MDI_Icon": "mdi-forum-outline",
       "priority": 10,
       "score": true
-    },
-    "Institution": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.institution}",
-      "MDI_Icon": "mdi-certificate",
-      "priority": 5
-    },
-    "Institution": {
-      "visibility": 1,
-      "type": "text",
-      "text": "${meta.institution}",
-      "MDI_Icon": "mdi-certificate",
-      "priority": 5
     },
     "Publication year": {
       "visibility": 1,

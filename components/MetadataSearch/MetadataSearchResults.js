@@ -2,8 +2,8 @@ import React from 'react'
 
 import TablePagination from '@material-ui/core/TablePagination'
 
-import { makeTemplate } from '../../util/makeTemplate'
-import { findMatchedSchema } from '../../util/objectMatch'
+import { makeTemplate, makeTemplateForObject } from '../../util/makeTemplate'
+import { findMatchedSchema, objectMatch } from '../../util/objectMatch'
 import { connect } from 'react-redux'
 import { URLFormatter, ReadURLParams } from '../../util/helper/misc'
 import DataTable from './DataTable'
@@ -17,7 +17,7 @@ export const value_by_type = {
       return null
     } else {
       return { text: val, hyperlink, label }
-    }
+    } 
   },
   'img': ({ label, prop, data }) => {
     const src = makeTemplate(prop.src, data)
@@ -32,6 +32,31 @@ export const value_by_type = {
       return { label, alt, src, text, hyperlink }
     }
   },
+  'object': ({ label, prop, data }) => {
+    if (prop.keywords){
+      const val = makeTemplateForObject("${JSON.stringify("+ prop.Field_Name +")}", data, prop.text)
+      if (val === 'undefined' || val.length === 0) {
+        return null
+      } else {
+        return { object: val, label }
+      }
+    }else {
+      const val = makeTemplateForObject("${JSON.stringify("+ prop.Field_Name +")}", data, prop.text)
+      if (val === 'undefined' || val.length === 0) {
+        return null
+      } else {
+        return { text: val, label }
+      }
+    }
+  },
+  'list': ({ label, prop, data }) => {
+    const val = makeTemplateForObject(prop.text, data, prop.subtext || null)
+    if (val === 'undefined' || val.length === 0) {
+      return null
+    } else {
+      return { list: val, label }
+    }
+  }
 }
 
 export const get_card_data = (data, schemas, highlight = undefined) => {
@@ -40,57 +65,76 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
     const { properties } = schema
     const scores = {}
     let tags = []
+    let keywords = {}
     const processed = { id: data.id, display: {} }
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
-      const val = value_by_type[prop.type]({ label, prop, data, highlight })
-      if (prop.name) {
-        processed.name = { text: data.id }
-        if (val !== null) {
-          processed.name = { ...processed.name, ...val }
-        }
-      }
-      if (prop.subtitle) {
-        if (val !== null) processed.subtitle = { ...val }
-      }
-      if (prop.display) {
-        if (val !== null) processed.display[label] = { ...val }
-      }
-      if (prop.icon) {
-        if (val !== null) {
-          processed.icon = { ...val }
-        }
-      }
-      if (prop.score) {
-        if (val !== null) {
-          scores[prop.Field_Name] = {
-            label,
-            value: val.text,
-            field_name: prop.Field_Name,
-            icon: prop.MDI_Icon || 'mdi-star',
-          }
-          sort_tags[prop.Field_Name] = {
-            label,
-            field_name: prop.Field_Name,
-            icon: prop.MDI_Icon || 'mdi-star',
+
+      if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data)){
+        const val = value_by_type[prop.type]({ label, prop, data, highlight })
+        if (prop.name) {
+          processed.name = { text: data.id }
+          if (val !== null) {
+            processed.name = { ...processed.name, ...val }
           }
         }
-      }
-      if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display)) {
-        if (val !== null) {
-          tags = [...tags, {
-            label,
-            value: val.text,
-            icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
-            priority: prop.priority,
-          }]
+        if (prop.subtitle) {
+          if (val !== null) processed.subtitle = { ...val }
+        }
+        if (prop.display) {
+          if (val !== null) processed.display[label] = { ...val }
+        }
+        if (prop.icon) {
+          if (val !== null) {
+            processed.icon = { ...val }
+          }
+        }
+        if (prop.homepage){
+          processed.homepage = { ...val }
+        }
+        if (prop.score) {
+          if (val !== null) {
+            scores[prop.Field_Name] = {
+              label,
+              value: val.text,
+              field_name: prop.Field_Name,
+              icon: prop.MDI_Icon || 'mdi-star',
+            }
+            sort_tags[prop.Field_Name] = {
+              label,
+              field_name: prop.Field_Name,
+              icon: prop.MDI_Icon || 'mdi-star',
+            }
+          }
+        }
+        if (prop.keywords) {
+          // TODO: Update schemas so it has list
+          if (val !== null){
+            keywords[label] = {
+              label,
+              value : val.object,
+              icon: prop.MDI_Icon || 'mdi-tag-multiple'
+            }
+          }
+        }
+        if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display || prop.keywords)) {
+          if (val !== null) {
+            tags = [...tags, {
+              label,
+              value: val.text,
+              icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
+              priority: prop.priority,
+              clickable: prop.clickable
+            }]
+          }
         }
       }
     }
     tags = tags.sort((a, b) => a.priority - b.priority)
     if (Object.keys(scores).length > 0) processed.scores = scores
     processed.tags = tags || []
+    processed.keywords = keywords
     return { original: data, processed, sort_tags }
   }
 }
@@ -99,15 +143,15 @@ const mapStateToProps = (state) => {
   return {
     search: state.search,
     models: state.models,
-    ui_values: state.serverSideProps.ui_values,
+    ui_values: state.ui_values,
     loading: state.loading,
     completed: state.completed,
     paginating: state.paginating,
     reverse_preferred_name: state.reverse_preferred_name,
-    preferred_name: state.serverSideProps.ui_values.preferred_name,
-    preferred_name_singular: state.serverSideProps.ui_values.preferred_name_singular,
-    deactivate_download: state.serverSideProps.ui_values.deactivate_download,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
+    preferred_name: state.ui_values.preferred_name,
+    preferred_name_singular: state.ui_values.preferred_name_singular,
+    deactivate_download: state.ui_values.deactivate_download,
+    MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
   }
 }
 

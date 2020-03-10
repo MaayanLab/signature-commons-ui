@@ -26,38 +26,33 @@ import { get_schemas } from '../../util/helper/fetch_methods'
 const operationMapper = {
   new_search: (table, current_table) => ({
     metadata_search: table === current_table,
-    per_parent_count: table === current_table,
     value_count: table === current_table,
     count: true,
   }),
   pagination: (table, current_table) => ({
     metadata_search: table === current_table,
-    per_parent_count: false,
     value_count: false,
     count: false,
   }),
   new_filter: (table, current_table) => ({
     metadata_search: table === current_table,
-    per_parent_count: table === current_table,
     value_count: table === current_table,
     count: true,
   }),
   change_tab: (table, current_table) => ({
     metadata_search: table === current_table,
-    per_parent_count: table === current_table,
     value_count: table === current_table,
     count: true,
   }),
   order: (table, current_table) => ({
     metadata_search: table === current_table,
-    per_parent_count: false,
     value_count: false,
     count: false,
   }),
 }
 
 const mapStateToProps = (state) => {
-  const preferred_name = state.serverSideProps.ui_values.preferred_name
+  const preferred_name = state.ui_values.preferred_name
   return {
     search: state.search,
     completed: state.completed,
@@ -66,8 +61,8 @@ const mapStateToProps = (state) => {
     tables: Object.keys(state.parents_mapping),
     preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
-    MetadataSearchNav: state.serverSideProps.ui_values.nav.MetadataSearch || {},
-    order_default: state.serverSideProps.ui_values.order_default || {},
+    MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
+    order_default: state.ui_values.order_default || {},
   }
 }
 
@@ -141,8 +136,9 @@ class MetadataSearch extends React.Component {
       }
     }
     this.props.searchBoxFunction(params)
+    const index = this.props.tables.filter(table=>this.props.models[table]!==undefined && this.props.models[table].results.count).indexOf(new_table)
     this.setState({
-      index_value: this.props.tables.indexOf(new_table),
+      index_value: index>-1 ? index:0,
       schemas
     })
   }
@@ -228,6 +224,11 @@ class MetadataSearch extends React.Component {
         },
       })
     }
+    if (this.props.completed && !prevProps.completed){
+      this.setState({
+        index_value: this.props.tables.filter(table=>this.props.models[table]!==undefined && this.props.models[table].results.count).indexOf(current_table),
+      })
+    }
   }
 
   format_param = (param_str, operations, table) => {
@@ -293,24 +294,35 @@ class MetadataSearch extends React.Component {
     const sorting_fields = model.sorting_fields
     const results = model.results
     if (sorting_fields === undefined || sorting_fields.length === 0 || results === undefined || results.value_count === undefined) return null
-    const filters = sorting_fields.map((field_item) => {
+    let filters = []
+    for (const field_item of sorting_fields ) {
       const value = results.value_count[field_item.meta.Field_Name]
       if (value === undefined) return null
       const stats = value.stats
-      return (
-        <Card key={field_item.meta.Field_Name}>
-          <ListItem button onClick={() => this.openFilter(field_item.meta.Field_Name)}>
-            <ListItemIcon>
-              <Icon className={`mdi ${field_item.meta.MDI_Icon} mdi-18px`} />
-            </ListItemIcon>
-            <ListItemText inset primary={field_item.meta.Preferred_Name} />
-          </ListItem>
-          <Collapse in={this.state.open[field_item.meta.Field_Name]} timeout="auto" unmountOnExit>
-            <MetaFilter stats={stats} schemas={this.state.schemas} field_name={field_item.meta.Field_Name} parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1} />
-          </Collapse>
-        </Card>
-      )
-    })
+      if (Object.keys(stats).length > 0){
+        const filter = (
+          <Card key={field_item.meta.Field_Name}>
+            <ListItem button onClick={() => this.openFilter(field_item.meta.Field_Name)}>
+              <ListItemIcon>
+                <Icon className={`mdi ${field_item.meta.MDI_Icon} mdi-18px`} />
+              </ListItemIcon>
+              <ListItemText inset primary={field_item.meta.Preferred_Name} />
+            </ListItem>
+            <Collapse in={this.state.open[field_item.meta.Field_Name]} timeout="auto" unmountOnExit>
+              <MetaFilter stats={stats}
+                schemas={this.state.schemas}
+                field_name={field_item.meta.Field_Name}
+                parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1 &&
+                  this.props.models[current_table].grandparent!==field_item.meta.Field_Name}
+                grandparent={this.props.models[current_table].grandparent!==undefined &&
+                             this.props.models[current_table].grandparent===field_item.meta.Field_Name}
+              />
+            </Collapse>
+          </Card>
+        )
+        filters = [...filters, filter]
+      }
+    }
     return <List>{filters}</List>
   }
 
@@ -320,8 +332,8 @@ class MetadataSearch extends React.Component {
         <Tabs
           value={this.state.index_value}
           onChange={this.handleChange}
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           centered
         >
           {this.props.tables.map((table) => {
@@ -348,11 +360,9 @@ class MetadataSearch extends React.Component {
 
   render = () => {
     const current_table = this.props.reverse_preferred_name[this.props.match.params.table]
-
     if (current_table === undefined) {
-      return <Redirect to="/not-found" />
+      return <Redirect to="/not-found"/>
     }
-
     if (this.state.schemas===null || !this.props.completed) {
       return (
         <Grid container
@@ -370,6 +380,31 @@ class MetadataSearch extends React.Component {
           </Grid>
         </Grid>
       )
+    }else if (this.props.completed && Object.values(this.props.models).filter(model=>model!==undefined && model.results.count>0).length===0){
+      return (
+        <Grid container
+          spacing={24}>
+          <Grid item xs={3}>
+            <Grid container
+              spacing={24}>
+              <Grid item xs={12}>
+                <Route path={`${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/:table`} component={this.searchBox} />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={9} style={{ textAlign: 'center', height: 500, marginTop: 50 }}>
+            Not found
+          </Grid>
+        </Grid>
+      )
+    }else if (this.props.completed && (this.props.models[current_table] === undefined || this.props.models[current_table].results.count===0)){
+      const redirect_to_table = Object.values(this.props.models).filter(model=>model!==undefined && model.table!==current_table && model.results.count>0)[0].table
+      const preferred = this.props.preferred_name[redirect_to_table]
+      return <Redirect to={{
+        pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${preferred}`,
+        search: this.props.location.search,
+        state: this.props.location.state
+      }} />
     }
     // else if (this.props.location.search===""){
     //   return <Redirect to="/" />
