@@ -5,15 +5,18 @@ import ReactWordcloud from 'react-wordcloud'
 
 export default class WordCloud extends Component {
     
-    getCallback = (callback, endpoint) => {
+    getCallback = (callback, endpoint, callbackProps) => {
+        const { clickTerm } = this.props
         return function(word) {
-            this.props.clickTerm(endpoint, word.text)
+            if (typeof(clickTerm) === func ){
+                clickTerm(endpoint, word.text, callbackProps)
+            }
         }
     }
 
     // endpoint = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"search":["${term.name}"]}`
     render = () => {
-        const {stats, wordcloudProps, ...rest} = this.props
+        const {stats, wordcloudProps, callbackProps, ...rest} = this.props
         if (stats === null || stats === undefined ){
             return null
         } else{
@@ -30,7 +33,7 @@ export default class WordCloud extends Component {
                 >
                   <ReactWordcloud words={wordstats}
                     callbacks={{
-                      onWordClick: getCallback('onWordClick', this.props.endpoint)
+                      onWordClick: getCallback('onWordClick', this.props.endpoint, callbackProps)
                     }}
                     scale={'log'}
                     options={{
@@ -54,10 +57,12 @@ WordCloud.PropTypes = {
             count: PropTypes.number.isRequired,
         })
     ).isRequired,
-    /* Function triggered upon clicking a term */
-    clickTerm: PropTypes.func.isRequired,
-    /* endpoint that is passed to clickTerm, can be an empty string */
-    endpoint: PropTypes.string.isRequired,
     /* props passed to ReactWordCloud */
     wordcloudProps: PropTypes.object,
+    /* Function triggered upon clicking a term. The following are passed to the function (endpoint, termClicked, callbackProps) */
+    clickTerm: PropTypes.func,
+    /* endpoint that is passed to clickTerm */
+    endpoint: PropTypes.string,
+    /* extra props to pass to the callback function */
+    callbackProps: PropTypes.object,
 }

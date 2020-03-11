@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 
 const articles = ['a', 'of', 'the', 'for', 'and', 'at']
 
+// Can be passed to xAxis as <XAxis tick={customTick} /> to provide short names
 export const CustomTick = (props) => {
   const {
     x, y, payload,
@@ -27,14 +28,15 @@ export default class BarChart extends React.Component {
   render = () => {
     const {
       stats,
-      endpoint,
-      clickTerm,
       responsiveProps,
       chartProps,
       tooltipProps,
       barProps,
       xAxisProps,
       yAxisProps,
+      endpoint,
+      clickTerm,
+      funcProps,
       ...rest
     } = this.props
     return (
@@ -45,36 +47,40 @@ export default class BarChart extends React.Component {
         >
           <Tooltip {...tooltip} />
           <Bar dataKey="count" {...bar} 
-            onClick={(data)=>clickTerm(endpoint, data.name)}
+            onClick={(data)=>clickTerm(endpoint, data.name, funcProps)}
           />
-          <XAxis dataKey="name" {...xAxis} tick={<CustomTick />} hide={!rest.XAxis} />
-          <YAxis dataKey="counts" type="number" {...bar_chart_style.YAxis} hide={!rest.YAxis} />
+          <XAxis dataKey="name" {...xAxis} tick={<CustomTick />} hide={!rest.XAxis} {...xAxisProps} />
+          <YAxis dataKey="counts" type="number" {...bar_chart_style.YAxis} hide={!rest.YAxis} {...yAxisProps}/>
         </Chart>
       </ResponsiveContainer>
     )
   }
 }
 
-export const BarChart = ({ meta_counts, ui_values, searchTerm, searchTable, ...props }) => {
-  const { bar_chart_style } = { ...ui_values }
-  return (
-    <ResponsiveContainer
-      {...bar_chart_style.ResponsiveContainer}>
-      <Chart
-        data={meta_counts}
-        {...bar_chart_style.Chart}
-      >
-        <Tooltip {...bar_chart_style.Tooltip} />
-        <Bar dataKey="counts" {...bar_chart_style.Bar} 
-            onClick={(data)=>searchTerm(ui_values, searchTable, data)}
-        />
-        <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />} hide={props.XAxis === undefined || !props.XAxis} />
-        <YAxis dataKey="counts" type="number" {...bar_chart_style.YAxis} hide={props.YAxis === undefined || !props.YAxis} />
-      </Chart>
-    </ResponsiveContainer>
-  )
-}
-
 BarChart.propTypes = {
-
+  /* Count stats */
+  stats: PropTypes.arrayOf(
+    PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        count: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  /* Props passed to rechart ResponsiveContainer */
+  responsiveProps: PropTypes.object,
+  /* Props passed to rechart BarChart */
+  chartProps: PropTypes.object,
+  /* Props passed to rechart Tooltip */
+  tooltipProps: PropTypes.object,
+  /* Props passed to rechart Bar */
+  barProps: PropTypes.object,
+  /* Props passed to rechart XAxis */
+  xAxisProps: PropTypes.object,
+  /* Props passed to rechart YAxis */
+  yAxisProps: PropTypes.object,
+  /* Function triggered upon clicking a term. The following are passed to the function (endpoint, termClicked, funcProps) */
+  clickTerm: PropTypes.func,
+  /* endpoint that is passed to clickTerm */
+  endpoint: PropTypes.string,
+  /* extra props to pass to the clickTerm function */
+  funcProps: PropTypes.object,
 }

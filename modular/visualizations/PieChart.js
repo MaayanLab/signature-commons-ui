@@ -2,11 +2,23 @@
 // http://recharts.org/en-US/examples/CustomActiveShapePieChart
 import React, { PureComponent } from 'react'
 import { PieChart as Chart, Pie, Sector, Text } from 'recharts'
+import PropTypes from 'prop-types'
+
 const ActiveShape = (props) => {
   const RADIAN = Math.PI / 180
   const {
-    cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
-    fill, payload, percent, counts,
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    fill,
+    payload,
+    percent,
+    counts,
+    labelProps,
   } = props
   const sin = Math.sin(-RADIAN * midAngle)
   const cos = Math.cos(-RADIAN * midAngle)
@@ -20,7 +32,7 @@ const ActiveShape = (props) => {
 
   return (
     <g>
-      <Text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} width={50} fontSize={10} {...props.pie_chart_style.Text_Label}>{payload.name}</Text>
+      <Text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} width={50} fontSize={10} {...labelProps}>{payload.name}</Text>
       <Sector
         cx={cx}
         cy={cy}
@@ -65,8 +77,8 @@ export default class DonutChart extends PureComponent {
   };
 
   activeShape = (props) => {
-    const { pie_chart_style } = this.props.ui_values
-    return <ActiveShape pie_chart_style={pie_chart_style} {...props}/>
+    const { labelProps } = this.props
+    return <ActiveShape labelProps={labelProps} {...props}/>
   }
 
   handleClick = (entry, index, e) => {
@@ -82,24 +94,52 @@ export default class DonutChart extends PureComponent {
   };
 
   render() {
-    const { searchTerm } = this.props
+    const { stats,
+      chartProps,
+      pieProps,
+      clickTerm,
+      endpoint,
+      funcProps,
+    } = this.props
     const { pie_chart_style } = this.props.ui_values
     return (
-      <Chart {...pie_chart_style.Chart}>
+      <Chart {...chartProps}>
         <Pie
           dataKey="counts"
           activeIndex={this.state.activeIndex}
           activeShape={this.activeShape}
-          data={this.props.data}
+          data={stats}
           onMouseEnter={this.onPieEnter}
           innerRadius={80}
           outerRadius={100}
-          onClick={(data)=>searchTerm(this.props.ui_values, this.props.searchTable, data)}
+          onClick={(data)=>clickTerm(endpoint, data.name, funcProps)}
           fill="linear-gradient(to bottom, rgb(124, 162, 206) 0%, rgb(179, 202, 225) 100%)"
           // onClick={this.handleClick}
-          {...pie_chart_style.Pie}
+          {...pieProps}
         />
       </Chart>
     )
   }
+}
+
+DonutChart.propTypes = {
+  /* Count stats */
+  stats: PropTypes.arrayOf(
+    PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        count: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  /* Props passed to rechart PieChart */
+  chartProps: PropTypes.object,
+  /* Props passed to rechart Pie */
+  pieProps: PropTypes.object,
+  /* Props passed to rechart Text (middle label) */
+  labelProps: PropTypes.object,
+  /* Function triggered upon clicking a term. The following are passed to the function (endpoint, termClicked, funcProps) */
+  clickTerm: PropTypes.func,
+  /* endpoint that is passed to clickTerm */
+  endpoint: PropTypes.string,
+  /* extra props to pass to the clickTerm function */
+  funcProps: PropTypes.object,
 }

@@ -311,7 +311,7 @@ export const ListItemLink = (props) => (
   <ListItem button component="a" {...props} />
 )
 
-export const searchTerm = (endpoint, term) => {
+export const searchTerm = (endpoint, term, callbackProps) => {
   // const {preferred_name, nav} = ui_values
   // location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"search":["${term.name}"]}`
   location.href = `#${endpoint}?q={"search":["${term}"]}`
