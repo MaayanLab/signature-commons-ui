@@ -1,7 +1,7 @@
 {
   "match": {
     "${$validator}": "/@?dcic/signature-commons-schema/(v[0-9]+/)?core/signature.json",
-    "${library.dataset}": "lincs_fwd"
+    "${library.dataset}": "creeds"
   },
   "properties": {
     "Image": {

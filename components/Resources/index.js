@@ -75,17 +75,23 @@ class Resources extends React.PureComponent {
   componentDidMount = async () => {
     const schemas = await get_schemas()
     const { response } = await get_resources_and_libraries(this.props.ui_values.showNonResource)
-    const resources = response.reduce((acc, resource) => {
-      const {name_prop} = get_schema_props(resource, schemas)
-      let name = makeTemplate(name_prop, resource)
-      if (name === 'undefined') name = resource.id
-      acc[name] = resource
-      return acc
-    }, {})
-    this.setState({
-      resources,
-      schemas
-    })
+    if (response.length === 0){
+      this.setState({
+        resources: []
+      })
+    }else{
+      const resources = response.reduce((acc, resource) => {
+        const {name_prop} = get_schema_props(resource, schemas)
+        let name = makeTemplate(name_prop, resource)
+        if (name === 'undefined') name = resource.id
+        acc[name] = resource
+        return acc
+      }, {})
+      this.setState({
+        resources,
+        schemas
+      })
+    }
   }
 
 
@@ -106,7 +112,7 @@ class Resources extends React.PureComponent {
 
   render() {
     if (this.state.resources === null) {
-      return <CircularProgress />
+      return <CircularProgress color="primary" />
     } else {
       return (
         <Switch>

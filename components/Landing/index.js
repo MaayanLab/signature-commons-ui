@@ -12,6 +12,8 @@ import { resetSigcom } from '../../util/redux/actions'
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
 import { BarChart } from '../Admin/BarChart.js'
+import { searchTerm } from "./Misc"
+
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -28,15 +30,26 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
+function sortCounts(values) {
+  const sorted = values.sort((a,b)=>{
+    const diff = (a[1].priority || 0) - (b[1].priority || 0)
+    if (diff === 0){
+      return a[0].localeCompare(b[0])
+    }else {
+      return diff
+    }
+  })
+  return sorted
+}
 
 class LandingPage extends React.Component {
   constructor(props) {
     super(props)
-    const selected_pie = Object.keys(props.piecounts)[0]
-    const selected_word = Object.keys(props.wordcounts)[0]
-    const selected_bar = Object.keys(props.barcounts)[0]
-    const selected_histogram = Object.keys(props.histograms).sort()[0]
-    const selected_barscore = Object.keys(props.barscores)[0]
+    const selected_pie = (sortCounts(Object.entries(props.piecounts || {}))[0] || [])[0]
+    const selected_word = (sortCounts(Object.entries(props.wordcounts || {}))[0] || [])[0]
+    const selected_bar = (sortCounts(Object.entries(props.barcounts || {}))[0] || [])[0]
+    const selected_histogram = (sortCounts(Object.entries(props.histogram || {}))[0] || [])[0]
+    const selected_barscore = (sortCounts(Object.entries(props.barscores || {}))[0] || [])[0]
     this.state = {
       scroll: false,
       selected_pie,
@@ -140,6 +153,11 @@ class LandingPage extends React.Component {
     )
   }
 
+  searchResource = (ui_values, searchTable, term) => {
+    const {preferred_name, nav} = ui_values
+     location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
+  }
+
   pie_charts_stats = (props) => {
     if (Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0) return null
     if (this.props.resource_signature_count.length === 0  || this.state.total_sig_per_resource === 0 ) {
@@ -152,7 +170,13 @@ class LandingPage extends React.Component {
               alignItems={'center'}>
               <Grid item xs={12}>
                 <div className={this.props.classes.centered}>
-                  <ChartCard cardheight={300} pie_stats={val.stats} ui_values={this.props.ui_values}/>
+                  <ChartCard
+                    cardheight={300}
+                    pie_stats={val.stats}
+                    ui_values={this.props.ui_values}
+                    searchTable={val.table}
+                    searchTerm={searchTerm}
+                  />
                 </div>
               </Grid>
               <Grid item xs={12}>
@@ -172,17 +196,27 @@ class LandingPage extends React.Component {
               alignItems={'center'}>
               <Grid item xs>
                 <div className={this.props.classes.centered}>
-                  <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+                  <ChartCard
+                    cardheight={300}
+                    pie_stats={this.state.pie_stats.stats}
+                    color={'Blue'}
+                    ui_values={this.props.ui_values}
+                    searchTable={this.state.pie_stats.table}
+                    searchTerm={searchTerm}
+                  />
                 </div>
               </Grid>
               <Grid item xs={12}>
                 <div className={this.props.classes.centered}>
                   <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
-                  <Selections
-                    value={this.state.selected_pie}
-                    values={Object.keys(this.props.piecounts).sort()}
-                    onChange={(e) => this.handleSelectPie(e)}
-                  />
+                  {Object.keys(this.props.piecounts).length>1?
+                    <Selections
+                      value={this.state.selected_pie}
+                      values={Object.keys(this.props.piecounts).sort()}
+                      onChange={(e) => this.handleSelectPie(e)}
+                    />: this.state.selected_pie
+                  }
+                  
                 </div>
               </Grid>
             </Grid>
@@ -197,17 +231,26 @@ class LandingPage extends React.Component {
           alignItems={'center'}>
           <Grid item xs>
             <div className={this.props.classes.centered}>
-              <ChartCard cardheight={300} pie_stats={this.state.pie_stats.stats} color={'Blue'} ui_values={this.props.ui_values}/>
+              <ChartCard
+                cardheight={300}
+                pie_stats={this.state.pie_stats.stats}
+                color={'Blue'}
+                ui_values={this.props.ui_values}
+                searchTable={this.state.pie_stats.table}
+                searchTerm={searchTerm}
+              />
             </div>
           </Grid>
           <Grid item xs={12}>
             <div className={this.props.classes.centered}>
               <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
-              <Selections
-                value={this.state.selected_pie}
-                values={Object.keys(this.props.piecounts).sort()}
-                onChange={(e) => this.handleSelectPie(e)}
-              />
+              {Object.keys(this.props.piecounts).length>1?
+                <Selections
+                  value={this.state.selected_pie}
+                  values={Object.keys(this.props.piecounts).sort()}
+                  onChange={(e) => this.handleSelectPie(e)}
+                />: <span> {this.state.selected_pie}</span>
+              }
             </div>
           </Grid>
         </Grid>
@@ -248,7 +291,14 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs>
                   <div className={this.props.classes.centered}>
-                    <ChartCard cardheight={300} pie_stats={this.props.resource_signature_count} color={'Blue'} ui_values={this.props.ui_values}/>
+                    <ChartCard
+                      cardheight={300}
+                      pie_stats={this.props.resource_signature_count.filter(r=>r.counts>0)}
+                      color={'Blue'}
+                      ui_values={this.props.ui_values}
+                      searchTable={"signatures"}
+                      searchTerm={this.searchResource}
+                    />
                   </div>
                 </Grid>
                 <Grid item xs={12}>
@@ -273,7 +323,10 @@ class LandingPage extends React.Component {
                 alignItems={'center'}>
                 <Grid item xs md={12}>
                   <div className={this.props.classes.centered}>
-                    <WordCloud classes={this.props.classes} searchTable={this.state.word_stats.table} stats={this.state.word_stats.stats}/>
+                    <WordCloud classes={this.props.classes}
+                      ui_values={this.props.ui_values}
+                      searchTable={this.state.word_stats.table}
+                      stats={this.state.word_stats.stats}/>
                   </div>
                 </Grid>
 
@@ -298,7 +351,9 @@ class LandingPage extends React.Component {
                 <Grid item xs={12}>
                   <div className={this.props.classes.centered}>
                     <BarChart meta_counts={this.state.bar_stats.stats}
+                      searchTable={this.state.bar_stats.table}
                       ui_values={this.props.ui_values}
+                      searchTerm={searchTerm}
                       XAxis
                     />
                   </div>
@@ -330,6 +385,8 @@ class LandingPage extends React.Component {
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.histogram.stats}
                           ui_values={this.props.ui_values}
+                          searchTable={this.state.histogram.table}
+                          searchTerm={searchTerm}
                           YAxis
                         />
                         <Typography variant="overline">
@@ -358,7 +415,9 @@ class LandingPage extends React.Component {
                     <Grid item xs>
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.barscore.stats}
+                          searchTable={this.state.barscore.table}
                           ui_values={this.props.ui_values}
+                          searchTerm={searchTerm}
                           XAxis
                         />
                       </div>

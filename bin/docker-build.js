@@ -5,7 +5,6 @@ var packageJson = require('../package.json')
 if (
   shell.exec(`
     docker build \
-      --build-arg PREFIX=${process.env.PREFIX} \
       -t ${process.env.DOCKER_TAG}:${packageJson.version} \
       .
   `).code !== 0

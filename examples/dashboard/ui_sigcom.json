@@ -47,7 +47,7 @@
       "footer_links": [
         {
           "href": "http://lincs-dcic.org/",
-          "src": "/static/images/dcic.png",
+          "src": "${PREFIX}/static/images/dcic.png",
           "alt": "dcic"
         }
       ]

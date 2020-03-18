@@ -14,7 +14,7 @@
     "@vx/vx": "0.0.186",
     "@zeit/next-sass": "^1.0.1",
     "abort-controller": "^1.1.0",
-    "acorn": "^6.1.1",
+    "acorn": "^6.4.1",
     "ajv": "^6.9.2",
     "color": "^3.1.2",
     "create-react-class": "^15.6.3",

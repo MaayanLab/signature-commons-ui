@@ -61,7 +61,7 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
 export const PieChart = withStyles(landingStyle)(function({ classes, record = {}, stats, ...props }) {
   
   if (stats === undefined) return null
-  let slice = props.slice || 14
+  let slice = props.slice || 14;
   stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
   let data
   if (stats.length <= stats){
