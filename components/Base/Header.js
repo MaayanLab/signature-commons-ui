@@ -92,6 +92,13 @@ export function Nav(props) {
         </ListItemLink> : null
       }
       <ListItemLink
+        selected={location.pathname === '/Workflows'}
+        className={ classes.menuItem}
+        href={"#/Workflows"}
+      >
+        {"Workflows"}
+      </ListItemLink>
+      <ListItemLink
         selected={location.pathname === '/API'}
         className={ classes.menuItem}
         href={"#/API"}
