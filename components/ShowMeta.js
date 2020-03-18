@@ -3,17 +3,9 @@ import { Highlight } from './Highlight'
 import Grid from '@material-ui/core/Grid'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-
+import { validURL } from '../util/helper/ui_functions'
 import { landingStyle } from '../styles/jss/theme.js'
 
-export function validURL(str) {
-  try {
-    new URL(str)
-  } catch {
-    return false
-  }
-  return true
-}
 
 function validAccession(str) {
   return str.match(RegExp('^[A-Za-z]+:([A-Za-z]+:)?[A-Za-z0-9]+$'))
