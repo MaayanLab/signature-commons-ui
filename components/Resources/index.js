@@ -31,7 +31,7 @@ export const get_schema_props= (item, schemas) => {
       response["description_prop"] = prop.text
     }
   }
-  if (response["name_prop"] === undefined) prop.name = "${id}"
+  if (response["name_prop"] === undefined) response["name_prop"] = "${id}"
   return {...response}
 }
 
