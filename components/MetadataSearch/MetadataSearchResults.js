@@ -65,6 +65,7 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
     const { properties } = schema
     const scores = {}
     let tags = []
+    let download = []
     let keywords = {}
     const processed = { id: data.id, display: {} }
     const sort_tags = {}
@@ -93,6 +94,18 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
         if (prop.homepage){
           processed.homepage = { ...val }
         }
+        if (prop.download) {
+          if (val !== null) {
+            download = [
+              ...download,
+              { 
+                ...val,
+                icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
+                priority: prop.priority,
+              }
+            ]
+          }
+        }
         if (prop.score) {
           if (val !== null) {
             scores[prop.Field_Name] = {
@@ -118,11 +131,10 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
             }
           }
         }
-        if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display || prop.keywords)) {
+        if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display || prop.keywords | prop.download)) {
           if (val !== null) {
             tags = [...tags, {
-              label,
-              value: val.text,
+              ...val,
               icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
               priority: prop.priority,
               clickable: prop.clickable
@@ -134,6 +146,7 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
     tags = tags.sort((a, b) => a.priority - b.priority)
     if (Object.keys(scores).length > 0) processed.scores = scores
     processed.tags = tags || []
+    processed.download = download || []
     processed.keywords = keywords
     return { original: data, processed, sort_tags }
   }

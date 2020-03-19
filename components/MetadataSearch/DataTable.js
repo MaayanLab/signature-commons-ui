@@ -23,6 +23,7 @@ import ShowMeta from '../ShowMeta'
 
 import IconButton from '../IconButton'
 import ScorePopper from '../ScorePopper'
+import DownloadButton from '../Downloads'
 
 
 const Options = dynamic(() => import('../Options'), { ssr: false })
@@ -84,7 +85,6 @@ const styles = (theme) => ({
     paddingBottom: 10,
   },
 })
-
 
 export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }) => {
   const score_icon = ui_values.score_icon || 'mdi-trophy-award'
@@ -179,19 +179,19 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                   </Grid>
                   <Grid item xs={12}>
                     {data.processed.tags.map((tag) =>
-                      <Tooltip title={tag.value}
-                        key={tag.value}
+                      <Tooltip title={tag.text}
+                        key={tag.text}
                         placement="bottom">
                         <Chip className={classes.chip} key={tag.label}
                           avatar={<Icon className={`${classes.icon} mdi ${tag.icon || default_tag_icon} mdi-18px`} />}
                           label={<Highlight
                             Component={(props) => <span {...props} className={classes.chipLabel}>{props.children}</span>}
-                            text={`${tag.label}: ${tag.value}`}
+                            text={`${tag.label}: ${tag.text}`}
                             highlight={search}
                           />}
                           onClick={() => {
                             if (tag.clickable){
-                              props.onChipClick(tag.value)
+                              props.onChipClick(tag.text)
                             }
                           }}
                         />
@@ -243,6 +243,11 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                     sortBy={props.sortBy}
                     classes={classes}
                   />
+                </Grid> : null
+              }
+              { data.processed.download !== undefined && data.processed.download.length > 0 ?
+                <Grid item style={{ textAlign: "center" }}>
+                  <DownloadButton data={data.processed.download} {...props} />
                 </Grid> : null
               }
             </Grid>
