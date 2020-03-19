@@ -35,7 +35,7 @@
     "next-env": "^1.1.0",
     "next-redux-wrapper": "^3.0.0-alpha.3",
     "nprogress": "^0.2.0",
-    "plotly.js": "^1.48.3",
+    "plotly.js": "^1.52.3",
     "prop-types": "^15.6.2",
     "ra-data-simple-rest": "^2.6.0",
     "react": "^16.7.0",
