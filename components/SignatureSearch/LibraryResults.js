@@ -280,12 +280,11 @@ export default class LibraryResults extends React.Component {
                 <div className="counter red lighten-1">
                   {result.signatures.length}
                 </div>
-                <a
-                  href="javascript:void(0);"
-                  style={{ border: 0 }}
+                <div
+                  style={{ border: 0, cursor: 'pointer' }}
                 >
                   <i className="material-icons">expand_more</i>
-                </a>
+                </div>
               </div>
               <div
                 className="collapsible-body"
