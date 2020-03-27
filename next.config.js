@@ -1,3 +1,4 @@
+const withCSS = require('@zeit/next-css')
 const withSass = require('@zeit/next-sass')
 const nextBuildId = require('next-build-id')
 const nextEnv = require('next-env')
@@ -8,7 +9,7 @@ const withNextEnv = nextEnv()
 
 const PREFIX = process.env.NEXT_EXPORT ? (process.env.PREFIX || '') : ''
 
-module.exports = withNextEnv(withSass({
+module.exports = withNextEnv(withCSS(withSass({
   assetPrefix: PREFIX,
   exportPathMap: async (defaultPathMap) => {
     return { ...defaultPathMap }
@@ -26,4 +27,4 @@ module.exports = withNextEnv(withSass({
     // number of pages that should be kept simultaneously without being disposed
     pagesBufferLength: 5,
   },
-}))
+})))
