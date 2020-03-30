@@ -43,9 +43,9 @@ const InformativeButton = (props) => {
         <Badge className={classes.margin} max={9999} badgeContent={counter === undefined ? 0 : counter} color="error">
           <Grid container>
             <Grid item xs={12}>
-              { src === undefined && icon!==undefined ?
-                <span class={`mdi ${icon} mdi-24px`}/>:
-                <img className={classes.image} alt={alt} src={src}/>
+              { icon === undefined ? 
+                <img className={classes.image} alt={alt} src={src}/>:
+                <span className={`mdi mdi-36px ${icon}`}/>
               }
             </Grid>
             <Grid item xs={12}>

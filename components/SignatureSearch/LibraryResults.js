@@ -11,6 +11,8 @@ import { RunningSum, dataFromResults } from '@dcic/signature-commons-ui-componen
 import { fetch_data } from '../../util/fetch/data'
 import Lazy from '../Lazy'
 import { createMuiTheme } from '@material-ui/core'
+import { buildHead, buildBody } from './mui-datatables-utils'
+
 const one_tailed_columns = [
   'P-Value',
   'Odds Ratio',
@@ -104,6 +106,10 @@ export default class LibraryResults extends React.Component {
           return false
         }
     ).map((entry) => entry[0])
+    const downloadOptions = {
+      filename: 'tableDownload.tsv',
+      separator: '\t',
+    }
     const options = {
       filter: true,
       filterType: 'dropdown',
@@ -111,6 +117,31 @@ export default class LibraryResults extends React.Component {
       selectableRows: 'none',
       selectableRowsOnClick: false,
       expandableRows: true,
+      downloadOptions,
+      textLabels: {
+        toolbar: {
+          downloadCsv: 'Download TSV',
+        }
+      },
+      onDownload: (buildHead_, buildBody_, columns, all_data) => {
+        const new_columns = [...columns, { label: 'Meta', name: 'Meta', download: true }]
+        const new_data = all_data.map(({ index, data }) => ({
+          index,
+          data: [...data, JSON.stringify({
+            '@id': sigs[index].id,
+            '@type': 'Signature',
+            'meta': sigs[index].meta,
+            'library': {
+              '@id': sigs[index].library.id,
+              '@type': 'Library',
+              'meta': sigs[index].library.meta,
+            },
+          })],
+        }))
+        const CSVHead = buildHead(new_columns, { downloadOptions } )
+        const CSVBody = buildBody(new_data, new_columns, { downloadOptions } )
+        return `${CSVHead}${CSVBody}`.trim()
+      },
       renderExpandableRow: (rowData, rowMeta) => (
         <TableRow>
           <TableCell colSpan={rowData.length}
@@ -249,12 +280,11 @@ export default class LibraryResults extends React.Component {
                 <div className="counter red lighten-1">
                   {result.signatures.length}
                 </div>
-                <a
-                  href="javascript:void(0);"
-                  style={{ border: 0 }}
+                <div
+                  style={{ border: 0, cursor: 'pointer' }}
                 >
                   <i className="material-icons">expand_more</i>
-                </a>
+                </div>
               </div>
               <div
                 className="collapsible-body"
