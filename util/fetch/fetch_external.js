@@ -1,13 +1,14 @@
 import fetch from 'isomorphic-unfetch'
+import config from '../config'
 
-export const base_url = process.env.NEXT_SERVER_EXTERNAL_API
-    || process.env.NEXT_STATIC_METADATA_API
-    || process.env.NEXT_PUBLIC_METADATA_API
+export async function get_base_url() {
+    return (await config()).NEXT_PUBLIC_EXTERNAL_API
+}
 
-
-export function fetch_external({endpoint, body, signal, headers}) {
+export async function fetch_external({endpoint, body, signal, headers}) {
     const start = new Date()
     let duration
+    const base_url = await get_base_url()
     if ( base_url === undefined ){
         duration = (new Date() - start) / 1000
         return {
@@ -47,9 +48,10 @@ export function fetch_external({endpoint, body, signal, headers}) {
 
 
 
-export function fetch_external_post({endpoint, body, signal, headers}) {
+export async function fetch_external_post({endpoint, body, signal, headers}) {
     const start = new Date()
     let duration
+    const base_url = await get_base_url()
     if ( base_url === undefined ){
         duration = (new Date() - start) / 1000
         return {
