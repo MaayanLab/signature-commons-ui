@@ -26,6 +26,7 @@ import ScorePopper from '../ScorePopper'
 
 
 const Options = dynamic(() => import('../Options'), { ssr: false })
+const UpChecker = dynamic(() => import('./UpChecker'), { ssr: false })
 
 const styles = (theme) => ({
   expansion: {
@@ -196,6 +197,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                           }}
                         />
                       </Tooltip>)}
+                      <UpChecker classes={classes} url={data.processed.homepage.hyperlink} />
                   </Grid>
                   {Object.entries(data.processed.keywords).map(([label, value]) =>(
                     <Grid item xs={12} key={value.label}>

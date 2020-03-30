@@ -25,7 +25,6 @@ export async function fetch_external({endpoint, body, signal, headers}) {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
                 // 'Authorization': auth,
                 ...(headers || {}),
               },
