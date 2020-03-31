@@ -66,6 +66,7 @@ class ResourcePage extends React.Component {
           filter: {
             where: {
               resource: res,
+              'meta.@type': "Dataset"
             },
           },
         },
@@ -79,6 +80,7 @@ class ResourcePage extends React.Component {
           filter: {
             where: {
               resource: resource.id,
+              'meta.@type': "Dataset"
             },
           },
         },
@@ -112,7 +114,8 @@ class ResourcePage extends React.Component {
           body: {
             filter: {
               where: {
-                id: res
+                id: res,
+                'meta.@type': "Dataset"
               }
             }
           }

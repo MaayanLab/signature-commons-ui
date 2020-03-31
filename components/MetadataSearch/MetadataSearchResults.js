@@ -12,7 +12,9 @@ export const value_by_type = {
   'text': ({ label, prop, data }) => {
     const val = makeTemplate(prop.text, data)
     let hyperlink
-    if (prop.hyperlink !== undefined) hyperlink = makeTemplate(prop.hyperlink, data)
+    if (prop.hyperlink !== undefined){
+      hyperlink = makeTemplate(prop.hyperlink, data)
+    } 
     if (val === 'undefined') {
       return null
     } else {
@@ -92,6 +94,7 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
           }
         }
         if (prop.homepage){
+          console.log(val)
           processed.homepage = { ...val }
         }
         if (prop.download) {
@@ -131,7 +134,7 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
             }
           }
         }
-        if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display || prop.keywords | prop.download)) {
+        if (!(prop.score || prop.icon || prop.name || prop.subtitle || prop.display || prop.keywords || prop.download || prop.homepage)) {
           if (val !== null) {
             tags = [...tags, {
               ...val,
