@@ -42,7 +42,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
-                    <span class={`mdi mdi-file-find mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
+                    <span class={`mdi mdi-file-find mdi-48px ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                   </Button>
                 </Link>
               </Grid>
@@ -65,7 +65,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
-                    <span class={`mdi mdi-find-replace mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
+                    <span class={`mdi mdi-find-replace mdi-48px ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                   </Button>
                 </Link>
               </Grid>
@@ -88,7 +88,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
-                    <span class={`mdi mdi-near-me mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
+                    <span class={`mdi mdi-near-me mdi-48px ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                   </Button>
                 </Link>
               </Grid>
@@ -110,7 +110,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
             <Grid item xs={12}>
               <Link to="/API">
                 <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
-                  <span class={`mdi mdi-earth mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
+                  <span class={`mdi mdi-earth mdi-48px ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                 </Button>
               </Link>
             </Grid>
