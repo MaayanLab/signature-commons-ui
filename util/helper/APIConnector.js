@@ -152,7 +152,7 @@ export default class Model {
     this.where = null
     this.results = {count:0}
     this.search = null
-    this.filters = undefined
+    this.filters = {}
     this.fields = undefined
     this.grandparents_meta = {}
     this.parent_to_grandparent = {}
@@ -297,7 +297,14 @@ export default class Model {
       query,
     } = query_params
     let params = []
-    const { search, filters, order } = query
+    const { search, order } = query
+    let { filters } = query
+    if (this.model==="Library") {
+      filters = {
+        ...filters,
+        'meta.@type': ["Dataset"]
+      }
+    }
     this.set_where({ search, filters, order })
     if (metadata_search) {
       const p = this.get_search_params({ ...query })
