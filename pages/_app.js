@@ -64,22 +64,18 @@ class App_ extends App {
     const { pageProps, loaded } = this.state
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
-        <Container className="root">
-          <Error code={this.props.errorCode} message={serializeError(this.props.error) || this.state.errorMessage} />
-        </Container>
+        <Error code={this.props.errorCode} message={serializeError(this.props.error) || this.state.errorMessage} />
       )
     }
     return (
       <Provider store={store}>
-        <Container className="root">
-          {loaded ? (
-              <Component {...pageProps} />
-          ) : (
-            <div style={{ textAlign: 'center', marginTop: 100 }}>
-              <CircularProgress />
-            </div>
-          )}
-        </Container>
+        {loaded ? (
+            <Component {...pageProps} />
+        ) : (
+          <div style={{ textAlign: 'center', marginTop: 100 }}>
+            <CircularProgress />
+          </div>
+        )}
       </Provider>
     )
   }

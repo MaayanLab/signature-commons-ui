@@ -8,6 +8,7 @@ import { objectMatch } from '../objectMatch'
 import isUUID from 'validator/lib/isUUID'
 import { fetch_count } from './server_side'
 import { findMatchedSchema } from '../objectMatch'
+import merge from 'deepmerge'
 
 export const operationIds = {
   libraries: {
@@ -660,10 +661,35 @@ export async function query_overlap(props) {
   // Get all supported dataset type in the data api
   const { response } = await fetch_data({ endpoint: '/listdata' })
   // Get enriched results (Note: we are only using geneset_library datasets)
-  const enriched_results = (await Promise.all(
-      response.repositories.filter((repo) => repo.datatype === 'geneset_library').map((repo) =>
+  const enriched_results_geneset = (await Promise.all(
+    response.repositories.filter((repo) => repo.datatype === 'geneset_library').map((repo) =>
+      fetch_data({
+        endpoint: '/enrich/overlap',
+        body: {
+          entities: entities,
+          signatures: [],
+          database: repo.uuid,
+          limit: 500,
+        },
+        signal: props.controller.signal,
+      })
+    )
+    )).reduce(
+        (results, res) => {
+          const { duration: duration_data_n, contentRange: contentRange_data_n, response: result } = res
+          duration_data += duration_data_n
+          count_data += (contentRange_data_n || {}).count || 0
+
+          return ({
+            ...results,
+            ...maybe_fix_obj(result.results),
+          })
+        }, {}
+    )
+  const enriched_results_rank = (await Promise.all(
+      response.repositories.filter((repo) => repo.datatype === 'rank_matrix').map((repo) =>
         fetch_data({
-          endpoint: '/enrich/overlap',
+          endpoint: '/enrich/rank',
           body: {
             entities: entities,
             signatures: [],
@@ -673,19 +699,19 @@ export async function query_overlap(props) {
           signal: props.controller.signal,
         })
       )
-  )).reduce(
-      (results, res) => {
-        const { duration: duration_data_n, contentRange: contentRange_data_n, response: result } = res
-        duration_data += duration_data_n
-        count_data += (contentRange_data_n || {}).count || 0
+      )).reduce(
+          (results, res) => {
+            const { duration: duration_data_n, contentRange: contentRange_data_n, response: result } = res
+            duration_data += duration_data_n
+            count_data += (contentRange_data_n || {}).count || 0
 
-        return ({
-          ...results,
-          ...maybe_fix_obj(result.results),
-        })
-      }, {}
-  )
-
+            return ({
+              ...results,
+              ...maybe_fix_obj(result.results),
+            })
+          }, {}
+      )
+  const enriched_results = merge.all([enriched_results_geneset, enriched_results_rank])
   // Get metadata of matched signatures
   const { duration: duration_meta, response: enriched_signatures_meta } = await fetch_meta_post({
     endpoint: '/signatures/find',

@@ -13,11 +13,6 @@ import Color from 'color'
 import { makeTemplate } from "../../util/makeTemplate"
 import ReactWordcloud from 'react-wordcloud'
 
-import { FindReplace,
-  FileFind,
-  NearMe,
-  Earth } from 'mdi-material-ui'
-
 import SearchBoxWrapper from '../SignatureSearch/SearchBoxWrapper'
 
 const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/MetadataSearchBox'))
@@ -47,7 +42,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
-                    <FileFind className={fontColor.isDark() ? classes.icon_light: classes.icon} />
+                    <span class={`mdi mdi-file-find mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                   </Button>
                 </Link>
               </Grid>
@@ -70,7 +65,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default' onClick={() => scroll.scrollToTop()}>
-                    <FindReplace className={fontColor.isDark() ? classes.icon_light: classes.icon} />
+                    <span class={`mdi mdi-find-replace mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                   </Button>
                 </Link>
               </Grid>
@@ -93,7 +88,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
               <Grid item xs={12}>
                 <Link to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
                   <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
-                    <NearMe className={fontColor.isDark() ? classes.icon_light: classes.icon} />
+                    <span class={`mdi mdi-near-me mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                   </Button>
                 </Link>
               </Grid>
@@ -115,7 +110,7 @@ export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
             <Grid item xs={12}>
               <Link to="/API">
                 <Button className={`${classes.bottomLink}`} variant="contained" color='default'>
-                  <Earth className={fontColor.isDark() ? classes.icon_light: classes.icon} />
+                  <span class={`mdi mdi-earth mdi-24 ${fontColor.isDark() ? "mdi-light": "mdi-dark"}`}/>
                 </Button>
               </Link>
             </Grid>
