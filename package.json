@@ -81,7 +81,9 @@
     "version:major": "npm version --no-git-tag-version major",
     "version:minor": "npm version --no-git-tag-version minor",
     "version:patch": "npm version --no-git-tag-version patch",
-    "install": "cd standalone/running-sum && npm i"
+    "install:standalone": "cd standalone/running-sum && npm i",
+    "install:fairshake-insignia": "cd standalone/fairshake-insignia && npm i",
+    "install": "npm run install:standalone && npm run install:fairshake-insignia"
   },
   "eslintConfig": {
     "extends": "react-app"
