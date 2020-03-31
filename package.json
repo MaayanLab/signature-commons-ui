@@ -31,7 +31,7 @@
     "materialize-css": "^1.0.0",
     "mdi-material-ui": "^5.24.0",
     "mui-datatables": "^2.14.0",
-    "next": "^9.3.1",
+    "next": "^9.3.2",
     "next-env": "^1.1.1",
     "next-redux-wrapper": "^3.0.0-alpha.3",
     "nprogress": "^0.2.0",
