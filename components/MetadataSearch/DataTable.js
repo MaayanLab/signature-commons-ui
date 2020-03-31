@@ -24,6 +24,7 @@ import ShowMeta from '../ShowMeta'
 import IconButton from '../IconButton'
 import ScorePopper from '../ScorePopper'
 import DownloadButton from '../Downloads'
+import Insignia from '../../standalone/fairshake-insignia/src'
 
 
 const Options = dynamic(() => import('../Options'), { ssr: false })
@@ -93,7 +94,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
     <Card>
       <CardContent style={{ paddingBottom: 3 }}>
         <Grid container>
-          <Grid item md={11} sm={10} xs={9}>
+          <Grid item md={11} sm={6} xs={12}>
             <Grid container>
               <Grid item md={2} xs={4} style={{ textAlign: 'center' }}>
                 <CardMedia style={{ marginTop: -30 }} {...data.processed.icon}>
@@ -225,7 +226,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
               </Grid>
             </Grid>
           </Grid>
-          <Grid item md={1} sm={2} xs={3}>
+          <Grid item md={1} sm={6} xs={12}>
             <Grid container direction={'column'}>
               { props.current_table === 'libraries' || props.deactivate_download ? null :
                 <Grid item>
@@ -243,6 +244,11 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                     sortBy={props.sortBy}
                     classes={classes}
                   />
+                </Grid> : null
+              }
+              { data.processed.homepage !== undefined && data.processed.homepage.hyperlink !== undefined ?
+                <Grid item style={{marginLeft: 10}}>
+                  <Insignia params={{url: data.processed.homepage.hyperlink}}/>
                 </Grid> : null
               }
               { data.processed.download !== undefined && data.processed.download.length > 0 ?
