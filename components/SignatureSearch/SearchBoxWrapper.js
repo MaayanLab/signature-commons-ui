@@ -122,7 +122,7 @@ class SearchBoxWrapper extends React.Component {
                 })
               }}
             />
-            <Chip label={"Example Weighted Signature"} key={"Example Weighted Signature"} className={this.props.classes.defaultChip}
+            {/* <Chip label={"Example Weighted Signature"} key={"Example Weighted Signature"} className={this.props.classes.defaultChip}
                onClick={() => {
                 const input = {
                   type: 'Overlap',
@@ -133,7 +133,7 @@ class SearchBoxWrapper extends React.Component {
                   pathname: '/SignatureSearch/Overlap',
                 })
               }}
-            />
+            /> */}
             <Chip label={"Example Up and Down Sets"} key={"Example Up and DOwn Sets"} className={this.props.classes.defaultChip}
                onClick={() => {
                 const input = {
