@@ -1,4 +1,5 @@
 import merge from 'deepmerge'
+import {makeTemplate} from '../util/makeTemplate'
 
 const default_values = {
   'landing': {
@@ -19,8 +20,15 @@ const default_values = {
         style: {
           width: 30
       }
+      },
+      menu_props: {
+        style: {
+          display: 'flex',
+          whiteSpace: "nowrap",
+        }
       }
     },
+    background_props: {},
     text_1: 'Explore an extensive collection of well-annotated gene-sets and signatures',
     text_2: 'Search across a broad gathering of perturbations',
     text_3: 'By',
@@ -67,6 +75,9 @@ const default_values = {
     github: 'https://github.com/dcic/signature-commons-ui',
     github_issues: 'https://github.com/dcic/signature-commons-ui/issues',
     deactivate_download: true,
+    ChipInputStyle: {
+      "disableUnderline": true
+    },
     bar_chart_style: {
       ResponsiveContainer: {
         width: '100%',
@@ -142,6 +153,9 @@ const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 export const UIValues = {
   'landing': (values) => {
     const ui_value = merge(default_values['landing'], values,  { arrayMerge: overwriteMerge })
+    if (ui_value.background_props.style && ui_value.background_props.style.backgroundImage){
+      ui_value.background_props.style.backgroundImage = "url(" + makeTemplate(ui_value.background_props.style.backgroundImage, {}) + ")"
+    }
     return (ui_value)
   },
   'admin': (values) => {
