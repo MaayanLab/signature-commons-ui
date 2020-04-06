@@ -60,8 +60,9 @@ const Input = (props) => (
         props.placeholder}
     value={(props.search || [])}
     chipRenderer={props.renderChips || props.renderChips}
-    disableUnderline
+    disableUnderline={props.ChipInputStyle.disableUnderline}
     alwaysShowPlaceholder
+    color="secondary"
     InputProps={{
       inputProps: {
         style: {
