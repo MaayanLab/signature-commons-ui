@@ -69,6 +69,7 @@ const mapStateToProps = (state) => {
     preferred_name: state.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
     MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
+    ChipInputStyle: state.ui_values.ChipInputStyle
   }
 }
 

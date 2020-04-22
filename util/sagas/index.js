@@ -69,21 +69,30 @@ export function *workInitializeSigcom(action) {
     // Get variables for offsetting colors
     const tonalOffset = theme.palette.tonalOffset
     const contrastThreshold = theme.palette.contrastThreshold
-    //  default palette
-    const default_palette = theme.palette.default
-    theme.palette.default = fill_palette(default_palette, tonalOffset, contrastThreshold)
-    //  default card
-    const defaultCard = theme.palette.defaultCard
-    theme.palette.defaultCard = fill_palette(defaultCard, tonalOffset, contrastThreshold)
-    //  default button
-    const defaultButton = theme.palette.defaultButton
-    theme.palette.defaultButton = fill_palette(defaultButton, tonalOffset, contrastThreshold)
-    //  default chip
-    const defaultChip = theme.palette.defaultChip
-    theme.palette.defaultChip = fill_palette(defaultChip, tonalOffset, contrastThreshold)
-    //  default chip light
-    const defaultChipLight = theme.palette.defaultChipLight
-    theme.palette.defaultChipLight = fill_palette(defaultChipLight, tonalOffset, contrastThreshold)
+    // fill theme
+    theme.palette = Object.entries(theme.palette).reduce((acc, [key,val])=>{
+      if (val.main !== undefined){
+        acc[key] = fill_palette(val, tonalOffset, contrastThreshold)
+      }else {
+        acc[key] = val
+      }
+      return acc
+    }, {})
+    // //  default palette
+    // const default_palette = theme.palette.default
+    // theme.palette.default = fill_palette(default_palette, tonalOffset, contrastThreshold)
+    // //  default card
+    // const defaultCard = theme.palette.defaultCard
+    // theme.palette.defaultCard = fill_palette(defaultCard, tonalOffset, contrastThreshold)
+    // //  default button
+    // const defaultButton = theme.palette.defaultButton
+    // theme.palette.defaultButton = fill_palette(defaultButton, tonalOffset, contrastThreshold)
+    // //  default chip
+    // const defaultChip = theme.palette.defaultChip
+    // theme.palette.defaultChip = fill_palette(defaultChip, tonalOffset, contrastThreshold)
+    // //  default chip light
+    // const defaultChipLight = theme.palette.defaultChipLight
+    // theme.palette.defaultChipLight = fill_palette(defaultChipLight, tonalOffset, contrastThreshold)
 
     // card themes
     for(const [ind, card_theme] of Object.entries(theme.card)){

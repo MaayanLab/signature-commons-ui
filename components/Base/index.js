@@ -11,6 +11,7 @@ import { makeTemplate } from '../../util/makeTemplate'
 const mapStateToProps = (state, ownProps) => {
   return {
     ui_values: state.ui_values,
+    theme: state.theme
   }
 }
 export default connect(mapStateToProps)(withStyles(styles)(class Base extends React.PureComponent {
@@ -41,7 +42,7 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, theme } = this.props
     return (
       <div className="root">
         <Head>
@@ -57,7 +58,7 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>
         <Header location={this.props.location}/>
-        <main>
+        <main style={{backgroundColor: theme.palette.background.main}} {...this.props.ui_values.background_props}>
           <div className={classes.container}>
             {this.props.children}
           </div>
