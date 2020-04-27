@@ -150,7 +150,8 @@ const default_values = {
     example_geneset_chip: "Example Crisp Gene Set",
     example_up_down_chip: "Example Up and Down Sets",
     geneset_switch: "Gene Set or Full Signature",
-    up_down_switch: "Up and Down Gene Sets"
+    up_down_switch: "Up and Down Gene Sets",
+    entity_strategy: "upper", // lower, keep
   }
 }
 

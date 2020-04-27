@@ -352,11 +352,13 @@ export function *workFindSignature(action) {
   try {
     const { input } = action
     if (input.type === 'Overlap') {
-      const unresolved_entities = parse_entities(input.geneset)
-      const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
+      const {ui_values} = yield call(get_ui_values)
+      const unresolved_entities = parse_entities(input.geneset, ui_values.entity_strategy)
+      const { matched: entities, mismatched } = yield call(resolve_entities, { 
+        entities: unresolved_entities,
+        controller })
       const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
       const signature_id = input.id || uuid5(JSON.stringify(resolved_entities))
-
       const signature_result = yield call(query_overlap, {
         input: {
           entities,
@@ -374,8 +376,9 @@ export function *workFindSignature(action) {
       }
       yield put(findSignaturesSucceeded(results))
     } else if (input.type === 'Rank') {
-      const unresolved_up_entities = parse_entities(input.up_geneset)
-      const unresolved_down_entities = parse_entities(input.down_geneset)
+      const {ui_values} = yield call(get_ui_values)
+      const unresolved_up_entities = parse_entities(input.up_geneset, ui_values.entity_strategy)
+      const unresolved_down_entities = parse_entities(input.down_geneset, ui_values.entity_strategy)
       const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
       const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
       const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
