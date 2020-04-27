@@ -29,6 +29,9 @@ export const value_by_type = {
       return null
     } else {
       if (text === 'undefined') text = alt
+      if (hyperlink === 'undefined') {
+        return { label, alt, src, text }  
+      }
       return { label, alt, src, text, hyperlink }
     }
   },
@@ -90,8 +93,8 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
             processed.icon = { ...val }
           }
         }
-        if (prop.homepage){
-          processed.homepage = { ...val }
+        if (prop.urlcheck){
+          processed.urlcheck = { ...val }
         }
         if (prop.score) {
           if (val !== null) {

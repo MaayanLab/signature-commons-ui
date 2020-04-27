@@ -8,7 +8,7 @@ export async function get_base_url() {
 export async function fetch_external({endpoint, body, signal, headers}) {
     const start = new Date()
     let duration
-    const base_url = await get_base_url()
+    const base_url = await get_base_url() || "https://amp.pharm.mssm.edu/isitup"
     if ( base_url === undefined ){
         duration = (new Date() - start) / 1000
         return {

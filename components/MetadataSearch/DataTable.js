@@ -197,7 +197,9 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                           }}
                         />
                       </Tooltip>)}
-                      <UpChecker classes={classes} url={data.processed.homepage.hyperlink} />
+                      {data.processed.urlcheck === undefined ? null:
+                        <UpChecker classes={classes} url={data.processed.urlcheck.hyperlink} />
+                      }
                   </Grid>
                   {Object.entries(data.processed.keywords).map(([label, value]) =>(
                     <Grid item xs={12} key={value.label}>
