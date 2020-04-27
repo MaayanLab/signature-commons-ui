@@ -56,21 +56,59 @@ class ResourcePage extends React.Component {
     let resource
     if (this.props.resources[res]===undefined && isUUID(res + '')) {
       // uuid fetch resource
-      const { response } = await fetch_meta({
-        endpoint: `/resources/${res}`,
-      })
-      resource = response
-      const { response: libraries } = await fetch_meta_post({
-        endpoint: `/libraries/find`,
+      const { response } = await fetch_meta_post({
+        endpoint: `/resources/find`,
         body: {
           filter: {
             where: {
-              resource: res,
+              id: res,
             },
           },
-        },
+        }
       })
-      resource.libraries = libraries
+      // it's in resources
+      if (response.length>0){
+        resource = response[0]
+        const { response: libraries } = await fetch_meta_post({
+          endpoint: `/libraries/find`,
+          body: {
+            filter: {
+              where: {
+                resource: res,
+              },
+            },
+          },
+        })
+        resource.libraries = libraries
+      } else {
+        // check in libraries
+        const { response } = await fetch_meta_post({
+          endpoint: `/libraries/find`,
+          body: {
+            filter: {
+              where: {
+                id: res,
+              },
+            },
+          }
+        })
+        if (response.length>0){
+          resource = response[0]
+          const { response: signatures } = await fetch_meta_post({
+            endpoint: `/signatures/find`,
+            body: {
+              filter: {
+                where: {
+                  library: res,
+                },
+              },
+            },
+          })
+          resource.libraries = signatures
+        } else {
+          resource = {}
+        }
+      }
     } else {
       resource = this.props.resources[res]
       const { response: libraries } = await fetch_meta_post({
@@ -107,28 +145,59 @@ class ResourcePage extends React.Component {
       let resource
       if (this.props.resources[res]===undefined && isUUID(res + '')) {
         // uuid fetch resource
-        const { response } = await fetch_meta({
-          endpoint: `/resources`,
+        const { response } = await fetch_meta_post({
+          endpoint: `/resources/find`,
           body: {
             filter: {
               where: {
-                id: res
-              }
-            }
-          }
-        })
-        resource = response
-        const { response: libraries } = await fetch_meta_post({
-          endpoint: `/libraries/find`,
-          body: {
-            filter: {
-              where: {
-                resource: res,
+                id: res,
               },
             },
-          },
+          }
         })
-        resource.libraries = libraries
+        // it's in resources
+        if (response.length>0){
+          resource = response[0]
+          const { response: libraries } = await fetch_meta_post({
+            endpoint: `/libraries/find`,
+            body: {
+              filter: {
+                where: {
+                  resource: res,
+                },
+              },
+            },
+          })
+          resource.libraries = libraries
+        } else {
+          // check in libraries
+          const { response } = await fetch_meta_post({
+            endpoint: `/libraries/find`,
+            body: {
+              filter: {
+                where: {
+                  id: res,
+                },
+              },
+            }
+          })
+          if (response.length>0){
+            resource = response[0]
+            const { response: signatures } = await fetch_meta_post({
+              endpoint: `/signatures/find`,
+              body: {
+                filter: {
+                  where: {
+                    library: res,
+                  },
+                },
+              },
+            })
+            resource.libraries = signatures
+          } else {
+            resource = {}
+          }
+        }
       } else {
         resource = this.props.resources[res]
         const { response: libraries } = await fetch_meta_post({
@@ -226,6 +295,8 @@ class ResourcePage extends React.Component {
     }
 
     const resource = this.state.resource
+    console.log(resource)
+    console.log(this.props.schemas)
     const {name_prop, icon_prop} = get_schema_props(resource, this.props.schemas)
     let resource_name = makeTemplate(name_prop, resource)
     resource_name = resource_name === 'undefined' ? resource.id : resource_name
