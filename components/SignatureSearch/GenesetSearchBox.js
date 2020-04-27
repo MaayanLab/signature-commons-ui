@@ -46,7 +46,7 @@ const Geneset = (props) => (
       <div className="switch">
         <label style={{ color: '#FFF',
           fontWeight: 'bold' }}>
-            Gene Set or Full Signature
+            {props.ui_values.geneset_switch}
           <Switch
             checked={false}
             onChange={() => {
@@ -56,7 +56,7 @@ const Geneset = (props) => (
             value="sigsearch"
             color="secondary"
           />
-            Up and Down Gene Sets
+            {props.ui_values.up_down_switch}
         </label>
       </div>
     </div>
@@ -64,7 +64,7 @@ const Geneset = (props) => (
       <div className="input-field">
         <textarea
           id="geneset"
-          placeholder={props.ui_values.geneset_placeholder || 'Genes that are regulated in signature or overlap with gene set.'}
+          placeholder={props.ui_values.geneset_placeholder}
           style={{
             height: 200,
             overflow: 'auto',
@@ -90,7 +90,7 @@ const UpDownGeneset = (props) => (
       <div className="switch">
         <label style={{ color: '#FFF',
           fontWeight: 'bold' }}>
-            Gene Set or Full Signature
+            {props.ui_values.geneset_switch}
           <Switch
             checked={true}
             onChange={() => {
@@ -99,7 +99,7 @@ const UpDownGeneset = (props) => (
             value="sigsearch"
             color="primary"
           />
-            Up and Down Gene Sets
+            {props.ui_values.up_down_switch}
         </label>
       </div>
     </div>
@@ -107,7 +107,7 @@ const UpDownGeneset = (props) => (
       <div className="input-field">
         <textarea
           id="up_geneset"
-          placeholder={props.ui_values.up_genes_placeholder || 'Genes that are up-regulated in signature or overlap with gene set.'}
+          placeholder={props.ui_values.up_genes_placeholder}
           style={{
             height: 200,
             overflow: 'auto',
