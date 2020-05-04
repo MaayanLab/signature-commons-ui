@@ -109,18 +109,18 @@ class SearchBoxWrapper extends React.Component {
         </Switch>
         <div className="col s12 center">
           <div className="input-field">
-            <Chip label={this.props.ui_values.example_geneset_chip} key={this.props.ui_values.example_up_down_chip} className={this.props.classes.defaultChip}
-               onClick={() => {
-                const input = {
-                  type: 'Overlap',
-                  geneset: this.props.ui_values.geneset_terms,
-                }
-                this.props.updateInput(input)
-                this.props.history.push({
-                  pathname: '/SignatureSearch/Overlap',
-                })
-              }}
-            />
+            {this.props.ui_values.examples.map(ex=>{
+              return (
+                <Chip label={ex.label} key={ex.label} className={this.props.classes.defaultChip}
+                  onClick={() => {
+                    this.props.updateInput(ex.input)
+                    this.props.history.push({
+                      pathname: `/SignatureSearch/${ex.input.type}`,
+                    })
+                  }}
+                />
+              )
+            })}
             {/* <Chip label={"Example Weighted Signature"} key={"Example Weighted Signature"} className={this.props.classes.defaultChip}
                onClick={() => {
                 const input = {
@@ -133,19 +133,6 @@ class SearchBoxWrapper extends React.Component {
                 })
               }}
             /> */}
-            <Chip label={this.props.ui_values.example_up_down_chip} key={this.props.ui_values.example_up_down_chip} className={this.props.classes.defaultChip}
-               onClick={() => {
-                const input = {
-                  type: 'Rank',
-                  up_geneset: this.props.ui_values.up_set_terms,
-                  down_geneset: this.props.ui_values.down_set_terms,
-                }
-                this.props.updateInput(input)
-                this.props.history.push({
-                  pathname: '/SignatureSearch/Rank',
-                })
-              }}
-            />
           </div>
         </div>
       </div>
