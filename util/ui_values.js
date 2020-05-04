@@ -160,11 +160,20 @@ const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 
 export const UIValues = {
   'landing': (values) => {
-    const ui_value = merge(default_values['landing'], values,  { arrayMerge: overwriteMerge })
-    if (ui_value.background_props.style && ui_value.background_props.style.backgroundImage){
-      ui_value.background_props.style.backgroundImage = "url(" + makeTemplate(ui_value.background_props.style.backgroundImage, {}) + ")"
+    const ui_values = merge(default_values['landing'], values,  { arrayMerge: overwriteMerge })
+    if (Array.isArray(ui_values.geneset_terms)){
+      ui_values.geneset_terms = ui_values.geneset_terms.join("\n")
     }
-    return (ui_value)
+    if (Array.isArray(ui_values.up_set_terms)){
+      ui_values.up_set_terms = ui_values.up_set_terms.join("\n")
+    }
+    if (Array.isArray(ui_values.down_set_terms)){
+      ui_values.down_set_terms = ui_values.down_set_terms.join("\n")
+    }
+    if (ui_values.background_props.style && ui_values.background_props.style.backgroundImage){
+      ui_values.background_props.style.backgroundImage = "url(" + makeTemplate(ui_values.background_props.style.backgroundImage, {}) + ")"
+    }
+    return (ui_values)
   },
   'admin': (values) => {
     return (
