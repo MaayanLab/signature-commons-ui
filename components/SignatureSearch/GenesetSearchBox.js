@@ -214,6 +214,11 @@ class GenesetSearchBox extends React.Component {
     return false
   }
 
+  componentDidMount = () => {
+    if (this.props.input.type!==this.props.match.params.type){
+      this.props.toggleInput(this.props.match.params.type)
+    }
+  }
 
   render() {
     return (
