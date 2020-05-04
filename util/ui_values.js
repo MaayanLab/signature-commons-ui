@@ -155,13 +155,6 @@ const default_values = {
         }
       },
       {
-        label: "Example Crisp Gene Setsss",
-        input: {
-          type: "Overlap",
-          geneset: "UTP14A\nS100A6\nSCAND1\nRRP12\nCIAPIN1\nADH5\nMTERF3\nSPR\nCHMP4A\nUFM1\nVAT1\nHACD3\nRFC5\nCOTL1\nNPRL2\nTRIB3\nPCCB\nTLE1\nCD58\nBACE2\nKDM3A\nTARBP1\nRNH1\nCHAC1\nMBNL2\nVDAC1\nTES\nOXA1L\nNOP56\nHAT1\nCPNE3\nDNMT1\nARHGAP1\nVPS28\nEIF2S2\nBAG3\nCDCA4\nNPDC1\nRPS6KA1\nFIS1\nSYPL1\nSARS\nCDC45\nCANT1\nHERPUD1\nSORBS3\nMRPS2\nTOR1A\nTNIP1\nSLC25A46\nMAL\nEPCAM\nHDAC6\nCAPN1\nTNRC6B\nPKD1\nRRS1\nHP\nANO10\nCEP170B\nIDE\nDENND2D\nCAMK2B\nZNF358\nRPP38\nMRPL19\nNUCB2\nGNAI1\nLSR\nADGRE2\nPKMYT1\nCDK5R1\nABL1\nPILRB\nAXIN1\nFBXL8\nMCF2L\nDBNDD1\nIGHMBP2\nWIPF2\nWFS1\nOGFOD2\nMAPK1IP1L\nCOL11A1\nREG3A\nSERPINA1\nMYCBP2\nPIGK\nTCAP\nCRADD\nELK1\nDNAJB2\nZBTB16\nDAZAP1\nMAPKAPK2\nEDRF1\nCRIP1\nUCP3\nAGR2\nP4HA2"
-        }
-      },
-      {
         label: "Example Up and Down Sets",
         input: {
           type: "Rank",
@@ -182,14 +175,8 @@ const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 export const UIValues = {
   'landing': (values) => {
     const ui_values = merge(default_values['landing'], values,  { arrayMerge: overwriteMerge })
-    if (Array.isArray(ui_values.geneset_terms)){
-      ui_values.geneset_terms = ui_values.geneset_terms.join("\n")
-    }
-    if (Array.isArray(ui_values.up_set_terms)){
-      ui_values.up_set_terms = ui_values.up_set_terms.join("\n")
-    }
-    if (Array.isArray(ui_values.down_set_terms)){
-      ui_values.down_set_terms = ui_values.down_set_terms.join("\n")
+    if (ui_values.overlap_search === false && ui_values.rank_search === false) {
+      ui_values.nav.SignatureSearch.active = false
     }
     if (ui_values.background_props.style && ui_values.background_props.style.backgroundImage){
       ui_values.background_props.style.backgroundImage = "url(" + makeTemplate(ui_values.background_props.style.backgroundImage, {}) + ")"
