@@ -63,7 +63,7 @@ class SearchBoxWrapper extends React.Component {
   }
 
   toggleInput = (type) => {
-    if (type === 'Overlap') {
+    if (this.props.ui_values.overlap_search === true && type === 'Overlap') {
       this.props.updateInput({
         type,
         geneset: '',
@@ -71,7 +71,7 @@ class SearchBoxWrapper extends React.Component {
       this.props.history.push({
         pathname: '/SignatureSearch/Overlap',
       })
-    } else if (type === 'Rank') {
+    } else if (this.props.ui_values.rank_search === true && type === 'Rank') {
       this.props.updateInput({
         type,
         up_geneset: '',
@@ -84,7 +84,6 @@ class SearchBoxWrapper extends React.Component {
       this.props.history.push('/not-found')
     }
   }
-
 
   componentDidUpdate(prevProps) {
     if (prevProps.loading === true && this.props.loading === false) {

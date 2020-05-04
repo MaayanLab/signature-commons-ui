@@ -42,24 +42,26 @@ const mapStateToProps = (state) => {
 
 const Geneset = (props) => (
   <div className="row">
-    <div className="col s12 center">
-      <div className="switch">
-        <label style={{ color: '#FFF',
-          fontWeight: 'bold' }}>
-            {props.ui_values.geneset_switch}
-          <Switch
-            checked={false}
-            onChange={() => {
-                props.toggleInput('Rank')
+    {props.ui_values.overlap_search && props.ui_values.rank_search ?
+      <div className="col s12 center">
+        <div className="switch">
+          <label style={{ color: '#FFF',
+            fontWeight: 'bold' }}>
+              {props.ui_values.geneset_switch}
+            <Switch
+              checked={false}
+              onChange={() => {
+                  props.toggleInput('Rank')
+                }
               }
-            }
-            value="sigsearch"
-            color="secondary"
-          />
-            {props.ui_values.up_down_switch}
-        </label>
-      </div>
-    </div>
+              value="sigsearch"
+              color="secondary"
+            />
+              {props.ui_values.up_down_switch}
+          </label>
+        </div>
+      </div>: null
+    }
     <div className="col s12">
       <div className="input-field">
         <textarea
@@ -86,23 +88,25 @@ const Geneset = (props) => (
 
 const UpDownGeneset = (props) => (
   <div className="row">
-    <div className="col s12 center">
-      <div className="switch">
-        <label style={{ color: '#FFF',
-          fontWeight: 'bold' }}>
-            {props.ui_values.geneset_switch}
-          <Switch
-            checked={true}
-            onChange={() => {
-              props.toggleInput('Overlap')
-            }}
-            value="sigsearch"
-            color="primary"
-          />
-            {props.ui_values.up_down_switch}
-        </label>
-      </div>
-    </div>
+    {props.ui_values.overlap_search && props.ui_values.rank_search ?
+      <div className="col s12 center">
+        <div className="switch">
+          <label style={{ color: '#FFF',
+            fontWeight: 'bold' }}>
+              {props.ui_values.geneset_switch}
+            <Switch
+              checked={true}
+              onChange={() => {
+                props.toggleInput('Overlap')
+              }}
+              value="sigsearch"
+              color="primary"
+            />
+              {props.ui_values.up_down_switch}
+          </label>
+        </div>
+      </div>: null
+    }
     <div className="col s6">
       <div className="input-field">
         <textarea
