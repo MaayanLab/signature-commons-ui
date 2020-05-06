@@ -69,7 +69,7 @@ class ResourceList extends React.PureComponent {
       <Grid
         container
         direction="row"
-        alignItems="center"
+        alignItems="flex-start"
       >
         {sorted_resources.map((resource) => {
           const {name_prop, icon_prop, description_prop} = get_schema_props(resource, this.props.schemas)
