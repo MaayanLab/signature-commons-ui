@@ -1,6 +1,6 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-
+import Grid from '@material-ui/core/Grid';
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { findSignatures, updateInput } from '../../util/redux/actions'
@@ -95,20 +95,25 @@ class SearchBoxWrapper extends React.Component {
 
   render() {
     return (
-      <div className="row">
-        <Switch>
-          <Route path="/SignatureSearch/:type" render={(props) =>
-            <GenesetSearchBox {...props}
-              input={this.props.input}
-              updateInput={this.props.updateInput}
-              toggleInput={this.toggleInput}
-              submit={this.props.submit}
-            />}
-          />
-          <Route path="/SignatureSearch" component={(props) => <Redirect to='/SignatureSearch/Overlap' />} />
-        </Switch>
-        <div className="col s12 center">
-          <div className="input-field">
+      <Grid container
+        alignItems={'center'}
+        spacing={32}
+      >
+        <Grid item xs={12}>
+          <Switch>
+            <Route path="/SignatureSearch/:type" render={(props) =>
+              <GenesetSearchBox {...props}
+                input={this.props.input}
+                updateInput={this.props.updateInput}
+                toggleInput={this.toggleInput}
+                submit={this.props.submit}
+              />}
+            />
+            <Route path="/SignatureSearch" component={(props) => <Redirect to='/SignatureSearch/Overlap' />} />
+          </Switch>
+        </Grid>
+        <Grid item xs={12}>
+          <React.Fragment>
             {this.props.ui_values.examples.map(ex=>{
               return (
                 <Chip label={ex.label} key={ex.label} className={this.props.classes.defaultChip}
@@ -121,21 +126,9 @@ class SearchBoxWrapper extends React.Component {
                 />
               )
             })}
-            {/* <Chip label={"Example Weighted Signature"} key={"Example Weighted Signature"} className={this.props.classes.defaultChip}
-               onClick={() => {
-                const input = {
-                  type: 'Overlap',
-                  geneset: this.props.ui_values.weighted_geneset_terms || example_geneset_weighted,
-                }
-                this.props.updateInput(input)
-                this.props.history.push({
-                  pathname: '/SignatureSearch/Overlap',
-                })
-              }}
-            /> */}
-          </div>
-        </div>
-      </div>
+          </React.Fragment>
+        </Grid>
+    </Grid>
     )
   }
 }

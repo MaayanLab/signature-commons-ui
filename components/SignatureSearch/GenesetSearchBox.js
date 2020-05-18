@@ -1,10 +1,12 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 import { call } from '../../util/call'
+import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import Switch from '@material-ui/core/Switch';
+import TextFieldSuggest from '@dcic/signature-commons-ui-components-text-field-suggest'
 
 const style = theme => ({
   chiplabel: {
@@ -41,115 +43,170 @@ const mapStateToProps = (state) => {
 }
 
 const Geneset = (props) => (
-  <div className="row">
-    {props.ui_values.overlap_search && props.ui_values.rank_search ?
-      <div className="col s12 center">
-        <div className="switch">
-          <label style={{ color: '#FFF',
-            fontWeight: 'bold' }}>
-              {props.ui_values.geneset_switch}
-            <Switch
-              checked={false}
-              onChange={() => {
-                  props.toggleInput('Rank')
+  <Grid container
+    alignItems={'center'}
+    spacing={32}
+  >
+    <Grid item xs={12}>
+      { props.ui_values.overlap_search && props.ui_values.rank_search ?
+          <div className="switch">
+            <label style={{ color: '#FFF',
+              fontWeight: 'bold' }}>
+                {props.ui_values.geneset_switch}
+              <Switch
+                checked={false}
+                onChange={() => {
+                    props.toggleInput('Rank')
+                  }
                 }
-              }
-              value="sigsearch"
-              color="secondary"
-            />
-              {props.ui_values.up_down_switch}
-          </label>
-        </div>
-      </div>: null
-    }
-    <div className="col s12">
-      <div className="input-field">
-        <textarea
-          id="geneset"
-          placeholder={props.ui_values.geneset_placeholder}
-          style={{
+                value="sigsearch"
+                color="secondary"
+              />
+                {props.ui_values.up_down_switch}
+            </label>
+          </div>
+        : null
+      }
+    </Grid>
+    <Grid item xs={12}>
+      <TextFieldSuggest 
+        id="geneset"
+        placeholder={props.ui_values.geneset_placeholder}
+        chipInputProps={{
+          style: {
             height: 200,
+            width: "100%",
             overflow: 'auto',
             background: '#f7f7f7',
-          }}
-          value={props.input.geneset}
-          onChange={(e) => {
-            const input = {
-              ...props.input,
-              geneset: e.target.value,
-            }
-            props.updateInput(input)
-          }}
-        ></textarea>
-      </div>
-    </div>
-  </div>
+          }
+        }}
+        input={[]}
+      />
+    </Grid>
+  </Grid>
 )
 
 const UpDownGeneset = (props) => (
-  <div className="row">
-    {props.ui_values.overlap_search && props.ui_values.rank_search ?
-      <div className="col s12 center">
-        <div className="switch">
-          <label style={{ color: '#FFF',
-            fontWeight: 'bold' }}>
-              {props.ui_values.geneset_switch}
-            <Switch
-              checked={true}
-              onChange={() => {
-                props.toggleInput('Overlap')
-              }}
-              value="sigsearch"
-              color="primary"
-            />
-              {props.ui_values.up_down_switch}
-          </label>
-        </div>
-      </div>: null
-    }
-    <div className="col s6">
-      <div className="input-field">
-        <textarea
-          id="up_geneset"
-          placeholder={props.ui_values.up_genes_placeholder}
-          style={{
+  <Grid container
+    alignItems={'center'}
+    spacing={32}
+  >
+    <Grid item xs={12}>
+      {props.ui_values.overlap_search && props.ui_values.rank_search ?
+        <div className="col s12 center">
+          <div className="switch">
+            <label style={{ color: '#FFF',
+              fontWeight: 'bold' }}>
+                {props.ui_values.geneset_switch}
+              <Switch
+                checked={true}
+                onChange={() => {
+                  props.toggleInput('Overlap')
+                }}
+                value="sigsearch"
+                color="primary"
+              />
+                {props.ui_values.up_down_switch}
+            </label>
+          </div>
+        </div>: null
+      }
+    </Grid>
+    <Grid item sm={6} xs={12}>
+      <TextFieldSuggest 
+        id="up_geneset"
+        placeholder={props.ui_values.geneset_placeholder}
+        chipInputProps={{
+          style: {
             height: 200,
+            width: "100%",
             overflow: 'auto',
             background: '#f7f7f7',
-          }}
-          value={props.input.up_geneset}
-          onChange={(e) => {
-            const input = {
-              ...props.input,
-              up_geneset: e.target.value,
-            }
-            props.updateInput(input)
-          }}
-        ></textarea>
-      </div>
-    </div>
-    <div className="col s6">
-      <div className="input-field">
-        <textarea
-          id="down_geneset"
-          placeholder={props.ui_values.down_genes_placeholder || 'Genes that are down-regulated in signature or overlap with gene set.'}
-          style={{
+          }
+        }}
+        input={[]}
+      />
+    </Grid>
+    <Grid item sm={6} xs={12}>
+      <TextFieldSuggest 
+        id="down_geneset"
+        placeholder={props.ui_values.geneset_placeholder}
+        chipInputProps={{
+          style: {
             height: 200,
+            width: "100%",
             overflow: 'auto',
             background: '#f7f7f7',
-          }}
-          value={props.input.down_geneset}
-          onChange={(e) => {
-            const input = {
-              ...props.input,
-              down_geneset: e.target.value,
-            }
-            props.updateInput(input)
-          }}
-        ></textarea>
-      </div>
-    </div>
-  </div>
+          }
+        }}
+        input={[]}
+      />
+    </Grid>
+  </Grid>
+  // <div className="row">
+  //   {props.ui_values.overlap_search && props.ui_values.rank_search ?
+  //     <div className="col s12 center">
+  //       <div className="switch">
+  //         <label style={{ color: '#FFF',
+  //           fontWeight: 'bold' }}>
+  //             {props.ui_values.geneset_switch}
+  //           <Switch
+  //             checked={true}
+  //             onChange={() => {
+  //               props.toggleInput('Overlap')
+  //             }}
+  //             value="sigsearch"
+  //             color="primary"
+  //           />
+  //             {props.ui_values.up_down_switch}
+  //         </label>
+  //       </div>
+  //     </div>: null
+  //   }
+  //   <div className="col s6">
+  //     <div className="input-field">
+  //       <textarea
+  //         id="up_geneset"
+  //         placeholder={props.ui_values.up_genes_placeholder}
+  //         style={{
+  //           height: 200,
+  //           width:"100%",
+  //           overflow: 'auto',
+  //           background: '#f7f7f7',
+  //         }}
+  //         value={props.input.up_geneset}
+  //         onChange={(e) => {
+  //           const input = {
+  //             ...props.input,
+  //             up_geneset: e.target.value,
+  //           }
+  //           props.updateInput(input)
+  //         }}
+  //       ></textarea>
+  //     </div>
+  //   </div>
+  //   <div className="col s6">
+  //     <div className="input-field">
+  //       <textarea
+  //         id="down_geneset"
+  //         placeholder={props.ui_values.down_genes_placeholder || 'Genes that are down-regulated in signature or overlap with gene set.'}
+  //         style={{
+  //           height: 200,
+  //           overflow: 'auto',
+  //           background: '#f7f7f7',
+  //         }}
+  //         value={props.input.down_geneset}
+  //         onChange={(e) => {
+  //           const input = {
+  //             ...props.input,
+  //             down_geneset: e.target.value,
+  //           }
+  //           props.updateInput(input)
+  //         }}
+  //       ></textarea>
+  //     </div>
+  //   </div>
+  // </div>
 )
 
 const SearchBox = (props) => {
@@ -226,9 +283,14 @@ class GenesetSearchBox extends React.Component {
 
   render() {
     return (
-      <div className="row">
-        <SearchBox {...this.props} />
-        <div className="col s12 center">
+      <Grid container
+        alignItems={'center'}
+        spacing={32}
+      >
+        <Grid item xs={12}>
+          <SearchBox {...this.props} />
+        </Grid>
+        <Grid item xs={12}>
           <Button
             className={this.props.classes.submit}
             variant="contained"
@@ -250,8 +312,8 @@ class GenesetSearchBox extends React.Component {
 
           </Button>
           <br /><br />
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     )
   }
 }
