@@ -148,6 +148,10 @@ export default class TextFieldSuggest extends React.Component {
                   disableUnderline
                   fullWidthInput
                   placeholder
+                  InputProps={{
+                    multiline: true,
+                    rows: 10
+                  }}
                   {...chipInputProps}
                   />
             </form>
