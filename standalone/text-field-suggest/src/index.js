@@ -128,7 +128,8 @@ export default class TextFieldSuggest extends React.Component {
             onClick,
             onSubmit,
             formProps,
-            chipInputProps
+            chipInputProps,
+            placeholder
         } = this.props
         return (
             <form onSubmit={onSubmit} {...formProps}>
@@ -145,7 +146,8 @@ export default class TextFieldSuggest extends React.Component {
                   onClick={onClick}
                   chipRenderer={this.props.chipRenderer || this.defaultChipRenderer}
                   disableUnderline
-                  fullWidthInput 
+                  fullWidthInput
+                  placeholder
                   {...chipInputProps}
                   />
             </form>
@@ -175,6 +177,7 @@ TextFieldSuggest.propTypes = {
         color: PropTypes.string,
         icon: PropTypes.string
     }),
+    placeholder: PropTypes.string,
     gridColumnProps: PropTypes.object,
     gridRowProps: PropTypes.object,
     avatarProps: PropTypes.object,

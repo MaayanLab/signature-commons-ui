@@ -25,6 +25,7 @@ TextFieldSuggest.propTypes = {
         color: PropTypes.string,
         icon: PropTypes.string
     }),
+    placeholder: PropTypes.string,
     gridColumnProps: PropTypes.object,
     gridRowProps: PropTypes.object,
     avatarProps: PropTypes.object,
