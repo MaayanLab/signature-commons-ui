@@ -10,6 +10,7 @@ import serializeError from 'serialize-error'
 import '../styles/index.scss'
 import withRedux from 'next-redux-wrapper'
 import initializeStore from '../util/redux/store'
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -69,6 +70,7 @@ class App_ extends App {
     }
     return (
       <Provider store={store}>
+        <CssBaseline />
         {loaded ? (
             <Component {...pageProps} />
         ) : (
