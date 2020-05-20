@@ -91,8 +91,6 @@ export default class App extends React.Component {
   }
 
   onSuggestionClick = (value, clicked) => {
-    console.log(value)
-    console.log(clicked)
     const input = this.state.input.map(v=>{
       if (v.id === value.id){
         return (clicked)
