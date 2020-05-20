@@ -20,6 +20,8 @@ export const initialState = {
   loading_signature: false,
   signature_input: {
     type: 'Overlap',
+    entities: [],
+    unprocessed_entities: []
   },
   signature_result: {},
   table_count: {}, // Number of result per table i.e. datasets, signatures
@@ -98,6 +100,8 @@ function rootReducer(state = initialState, action) {
       completed: true,
       signature_input: {
         type: 'Overlap',
+        entities: [],
+        unprocessed_entities: []
       },
       signature_result: {},
       loading_signature: false,

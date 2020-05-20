@@ -283,45 +283,24 @@ export function *workMatchEntities(action) {
   try {
     let { input } = action
     if (input.type === 'Overlap') {
-      const unresolved_entities = input.unresolved
-      const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
-      const unresolved = unresolved_entities.subtract(Set(Object.keys(entities)))
+      yield put(updateInput(input))
+      const { entities } = yield call(resolve_entities, { entities: input.entities, controller })
       input = {
         ...input,
-        entities: {
-          ...input.entities,
-          ...entities,
-        },
-        unresolved,
-        mismatched,
+        entities
       }
-      yield put(updateResolvedEntities(input))
+      console.log(input)
+      yield put(updateInput(input))
     } else if (input.type === 'Rank') {
-      const unresolved_entities = input.unresolved
-      const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
-      const unresolved = unresolved_entities.subtract(Set(Object.keys(entities)))
-      const up_entities = Set(input.up_geneset).intersect(Set(Object.keys(entities))).reduce((acc, entity) => {
-        acc[entity] = entities[entity]
-        return acc
-      }, { ...input.up_entities })
-      const down_entities = Set(input.down_geneset).intersect(Set(Object.keys(entities))).reduce((acc, entity) => {
-        acc[entity] = entities[entity]
-        return acc
-      }, { ...input.down_entities })
-      const resolvable_list = yield all([...mismatched.map((term) => call(find_synonyms, { term, controller }))])
-      const resolvable = resolvable_list.filter((r) => Object.keys(r.synonyms).length > 0).reduce((acc, r) => {
-        acc[r.term] = r.synonyms
-        return acc
-      }, {})
+      yield put(updateInput(input))
+      const { entities: up_entities } = yield call(resolve_entities, { entities: input.up_entities, controller })
+      const { entities: down_entities } = yield call(resolve_entities, { entities: input.down_entities, controller })
       input = {
         ...input,
         up_entities,
-        down_entities,
-        unresolved,
-        mismatched,
-        resolvable,
+        down_entities
       }
-      yield put(updateResolvedEntities(input))
+      yield put(updateInput(input))
     }
   } catch (error) {
     yield put(reportError(error))
