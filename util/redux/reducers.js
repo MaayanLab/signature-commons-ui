@@ -17,6 +17,7 @@ export const initialState = {
   failed: false,
   paginating: false,
   loading_matches: false,
+  loading_matches_failed: false,
   loading_signature: false,
   signature_input: {
     type: 'Overlap',
@@ -166,22 +167,22 @@ function rootReducer(state = initialState, action) {
       ...state,
       signature_input: action.input,
       loading_matches: true,
+      loading_matches_failed: false,
     }
   }
   if (action.type === action_definitions.MATCH_FAILED) {
     return {
       ...state,
       loading_matches: false,
+      loading_matches_failed: true,
     }
   }
   if (action.type === action_definitions.UPDATE_RESOLVED_ENTITIES) {
     return {
       ...state,
-      signature_input: {
-        ...state.signature_input,
-        ...action.input,
-      },
+      signature_input: action.input,
       loading_matches: false,
+      loading_matches_failed: false,
     }
   }
   if (action.type === action_definitions.UPDATE_INPUT) {

@@ -165,7 +165,8 @@ const default_values = {
     ],
     geneset_switch: "Gene Set or Full Signature",
     up_down_switch: "Up and Down Gene Sets",
-    entity_strategy: "upper", // lower, keep
+    entity_strategy: "upper", // lower, none
+    synonym_strategy: "none"
   }
 }
 

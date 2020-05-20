@@ -3,7 +3,7 @@ import { fetch_meta_post, fetch_meta } from '../fetch/meta'
 import { fetch_data } from '../fetch/data'
 import { get_library_resources } from './resources'
 import { makeTemplate, makeTemplateForObject } from '../makeTemplate'
-import { maybe_fix_obj } from './misc'
+import { maybe_fix_obj, parse_entities } from './misc'
 import { objectMatch } from '../objectMatch'
 import isUUID from 'validator/lib/isUUID'
 import { fetch_count } from './server_side'
@@ -480,6 +480,7 @@ export const resolve_entities = async (props) => {
    * ]
    */
   // Sort out unprocessed and processed entities
+  const { entity_strategy, synonym_strategy} = props
   let unprocessed_entities_names = Set([])
   let processed_entities_names = Set([])
   const processed_entities = []
@@ -515,10 +516,12 @@ export const resolve_entities = async (props) => {
   }
 
   // Process the query, we will or a list of name_prop: {inq: [...entities]}
+  // parse_entities parses the entities and transform it to upper or lower case depending on the strategy
+  const parsed_entities = parse_entities(unprocessed_entities_names.toArray(), entity_strategy)
   const or_name_query = name_props.map((prop) => {
     return ({
       [prop.field]: {
-        inq: unprocessed_entities_names.toArray(),
+        inq: Object.keys(parsed_entities),
       },
     })
   })
@@ -545,23 +548,27 @@ export const resolve_entities = async (props) => {
       prop.field !== undefined)
     for (const name_prop of n_props){
       const label = makeTemplate(name_prop.text, entity)
-      if (label!=='undefined' && unprocessed_entities_names.has(label)){
+      const original_label = parsed_entities[label]
+      if (label!=='undefined' && unprocessed_entities_names.has(original_label)){
         processed_entities.push({
           label,
           type: "valid",
           ...entity
         })
         processed_entities_names = processed_entities_names.add(label)
-        unprocessed_entities_names = unprocessed_entities_names.delete(label)
+        unprocessed_entities_names = unprocessed_entities_names.delete(original_label)
         break
       }
     }
   }
 
   // Format the synonyms query, we will or a list of name_prop: {inq: [...entities]}
+  // parse_entities parses the entities and transform it to upper or lower case depending on the strategy
+  const parsed_entities_for_synonyms = parse_entities(unprocessed_entities_names.toArray(), synonym_strategy)
+
   let or_synonym_query = []
   for (const prop of synonyms_props){
-    const subquery =  unprocessed_entities_names.map(name=>({
+    const subquery =  Object.keys(parsed_entities_for_synonyms).map(name=>({
       [prop.field]: name
     }))
     or_synonym_query = [...or_synonym_query, ...subquery]
@@ -603,10 +610,11 @@ export const resolve_entities = async (props) => {
     syn_names = syn_names.toArray()
     for (const synonym_prop of s_props){
       const synonyms = Set(makeTemplateForObject('${JSON.stringify(' + synonym_prop.field + ')}', entity))
-                          .intersect(unprocessed_entities_names)
+                          .intersect(Set(Object.keys(parsed_entities_for_synonyms)))
                           .map(syn=>{
-                            if (with_synonyms_meta[syn]===undefined){
-                              with_synonyms_meta[syn] = {
+                            const original_label = parsed_entities_for_synonyms[syn]
+                            if (with_synonyms_meta[original_label]===undefined){
+                              with_synonyms_meta[original_label] = {
                                 label: syn,
                                 type: "suggestions",
                                 id: syn,
@@ -614,7 +622,7 @@ export const resolve_entities = async (props) => {
                               }
                             }
                             for (const label of syn_names){
-                              with_synonyms_meta[syn].suggestions.push(
+                              with_synonyms_meta[original_label].suggestions.push(
                                 {
                                  label,
                                  type: "valid",
@@ -718,77 +726,6 @@ export const resolve_entities = async (props) => {
 //   }
 // }
 
-export async function find_synonyms(props) {
-  const schemas = await get_schemas()
-  const { response: entity } = await fetch_meta_post({
-    endpoint: `/entities/find`,
-    body: {
-      filter: {
-        limit: 1,
-      },
-    },
-    signal: props.controller.signal,
-  })
-  const matched_schemas = schemas.filter(
-      (schema) => objectMatch(schema.match, entity[0])
-  )
-  if (matched_schemas.length === 0) {
-    console.error('No matchcing schema')
-  }
-  const name_props = Object.keys(matched_schemas[0].properties).filter((prop) =>
-    matched_schemas[0].properties[prop].name &&
-    matched_schemas[0].properties[prop].field !== undefined)
-
-  const synonym_props = Object.keys(matched_schemas[0].properties).filter((prop) =>
-    matched_schemas[0].properties[prop].synonyms &&
-    matched_schemas[0].properties[prop].field !== undefined)
-
-  let entity_names = []
-  const or = name_props.map((prop) => {
-    entity_names = [...entity_names, prop.field]
-    return ({
-      [prop.field]: {
-        inq: entities.toArray(),
-      },
-    })
-  })
-  if (entity_synonyms === undefined || entity_synonyms.length === 0) {
-    return { term: props.term, synonyms: {} }
-  }
-  const { response: syns } = await fetch_meta_post({
-    endpoint: '/entities/find',
-    body: {
-      filter: {
-        where: {
-          or,
-        },
-        fields: [
-          'id',
-          ...entity_names,
-        ],
-      },
-    },
-    signal: props.controller.signal,
-  })
-  const synonyms = syns.map((s) => {
-    const ent_names = name_props.map((prop) => {
-      try {
-        const name = makeTemplate(prop.text, s)
-        return (name)
-      } catch (error) {
-        return 'undefined'
-      }
-    }).filter((n) => n !== 'undefined')
-    if (ent_names.length === 0) {
-      return {}
-    }
-    return { name: ent_names[0], val: s }
-  }).filter((item) => item.name !== undefined).reduce((acc, item) => ({
-    ...acc,
-    [item.name]: item.val,
-  }), {})
-  return { term: props.term, synonyms }
-}
 
 export async function get_schemas(schema_validator) {
   const { response: schema_db } = await fetch_meta_post({
@@ -823,7 +760,10 @@ export async function query_overlap(props) {
     libraries = l
     library_resource = lr
   }
-  const resolve_entities = Object.keys(input.entities).map((entity) => input.entities[entity])
+  const resolve_entities = input.entities.map(e=>{
+    const { label, type, ...entity} = e
+    return entity
+  })
 
 
   // fix input fields uuid -> id
