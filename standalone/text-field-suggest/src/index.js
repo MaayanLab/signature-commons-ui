@@ -106,12 +106,12 @@ export default class TextFieldSuggest extends React.Component {
                                             e.preventDefault()
                                             onSuggestionClick(value, s)}
                                         }
-                                        key={s}
+                                        key={s.label}
                                         style={{display: 'block'}}
                                         {...suggestionsProps}
                                         {...value.suggestionsProps}
                                     >
-                                        {s}
+                                        {s.label}
                                     </Link>
                             ))}
                         </React.Fragment>
@@ -147,10 +147,9 @@ export default class TextFieldSuggest extends React.Component {
                   chipRenderer={this.props.chipRenderer || this.defaultChipRenderer}
                   disableUnderline
                   fullWidthInput
-                  placeholder
+                  placeholder={placeholder}
                   InputProps={{
-                    multiline: true,
-                    rows: 10
+                    multiline: true
                   }}
                   {...chipInputProps}
                   />
@@ -163,7 +162,18 @@ TextFieldSuggest.propTypes = {
     input: PropTypes.arrayOf(PropTypes.shape({
         label: PropTypes.string.isRequired,
         type: PropTypes.oneOf(["valid", "suggestions", "invalid", "loading", "disabled"]),
-        suggestions: PropTypes.arrayOf(PropTypes.string),
+        id: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number
+          ]),
+        suggestions: PropTypes.arrayOf(PropTypes.shape({
+            label: PropTypes.string.isRequired,
+            type: PropTypes.oneOf(["valid", "suggestions", "invalid", "loading", "disabled"]),
+            id: PropTypes.oneOfType([
+                PropTypes.string,
+                PropTypes.number
+              ]),     
+        })),
         gridColumnProps: PropTypes.object,
         gridRowProps: PropTypes.object,
         avatarProps: PropTypes.object,

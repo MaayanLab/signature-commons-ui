@@ -2,8 +2,8 @@ import React from 'react'
 import TextFieldSuggest from '../src/index'
 
 const sample_data = {
-  STAT3: ["STAT4"],
-  STAT2: ["STAT1", "STAT4",],
+  ABC: {id: "abc", synonyms: ["abc"]},
+  DEF: {id: "def", synonyms:["def", "abc",]},
 }
 
 
@@ -15,7 +15,7 @@ export default class App extends React.Component {
         id: 5,
         input: [
             {
-                label: "STAT3",
+                label: "ABC",
                 type: "valid",
                 chipProps: {
                     style: {
@@ -25,11 +25,19 @@ export default class App extends React.Component {
                 id: 1
             },
             {
-                label: "STAT4",
+                label: "abc",
                 type: "suggestions",
                 suggestions: [
-                    "STAT3",
-                    "STAT2"
+                    {
+                      label: "ABC",
+                      id: "abc",
+                      type: "valid"
+                    },
+                    {
+                      label: "DEF",
+                      id: "def",
+                      type: "valid"
+                    },
                 ],
                 id: 2
             },
@@ -39,7 +47,7 @@ export default class App extends React.Component {
                 id: 3
             },
             {
-                label: "STTA4",
+                label: "STTA45",
                 type: "loading",
                 id: 4
             },
@@ -87,11 +95,7 @@ export default class App extends React.Component {
     console.log(clicked)
     const input = this.state.input.map(v=>{
       if (v.id === value.id){
-        return ({
-          label: clicked,
-          type: "valid",
-          id: v.id
-        })
+        return (clicked)
       }else return v
     })
     this.setState({input})
