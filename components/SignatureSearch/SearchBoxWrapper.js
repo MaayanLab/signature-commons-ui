@@ -105,7 +105,6 @@ class SearchBoxWrapper extends React.Component {
       id: label,
       type: "loading",
     }))
-    console.log(this.props.input)
     return [...entities, ...ents]
   }
 

@@ -38,6 +38,8 @@ const style = theme => ({
 const mapStateToProps = (state) => {
   return {
     loading: state.loading_signature,
+    loading_matches: state.loading_matches,
+    loading_matches_failed: state.loading_matches_failed,
     ui_values: state.ui_values,
   }
 }
@@ -86,7 +88,7 @@ const Geneset = (props) => (
         onAdd={value=>{
           const input = {
             ...props.input,
-            unprocessed_entities: [...props.input.unprocessed_entities, ...value.trim().split(/\s/)]
+            unprocessed_entities: [...props.input.unprocessed_entities, ...value.trim().split(/[ \t\r\n;]+/)]
           }
           props.updateInput(input)
         }}
@@ -158,7 +160,7 @@ const UpDownGeneset = (props) => (
         onAdd={value=>{
           const input = {
             ...props.input,
-            unprocessed_up_entities: [...props.input.unprocessed_up_entities, ...value.trim().split(/\s/)]
+            unprocessed_up_entities: [...props.input.unprocessed_up_entities, ...value.trim().split(/[ \t\r\n;]+/)]
           }
           props.updateInput(input)
         }}
@@ -201,7 +203,7 @@ const UpDownGeneset = (props) => (
         onAdd={value=>{
           const input = {
             ...props.input,
-            unprocessed_down_entities: [...props.input.unprocessed_down_entities, ...value.trim().split(/\s/)]
+            unprocessed_down_entities: [...props.input.unprocessed_down_entities, ...value.trim().split(/[ \t\r\n;]+/)]
           }
           props.updateInput(input)
         }}
@@ -348,13 +350,13 @@ class GenesetSearchBox extends React.Component {
   isEmpty = () => {
     if (this.props.input === undefined) return true
     if (this.props.input.type === 'Overlap') {
-      if (this.props.input.geneset === undefined) return true
-      if (this.props.input.geneset === '') return true
+      if (this.props.input.entities === undefined) return true
+      if (this.props.input.entities.length===0) return true
     } else if (this.props.input.type === 'Rank') {
-      if (this.props.input.up_geneset === '') return true
-      if (this.props.input.up_geneset === undefined) return true
-      if (this.props.input.down_geneset === '') return true
-      if (this.props.input.down_geneset === undefined) return true
+      if (this.props.input.up_entities.length===0) return true
+      if (this.props.input.up_entities === undefined) return true
+      if (this.props.input.down_entities.length===0) return true
+      if (this.props.input.down_entities === undefined) return true
     }
     return false
   }
@@ -378,7 +380,7 @@ class GenesetSearchBox extends React.Component {
           <Button
             className={this.props.classes.submit}
             variant="contained"
-            disabled={this.isEmpty() || this.props.loading} 
+            disabled={this.isEmpty() || this.props.loading || this.props.loading_matches || this.props.loading_matches_failed} 
             type="submit"
             name="action"
             onClick={call(this.props.submit, this.props.input)}
