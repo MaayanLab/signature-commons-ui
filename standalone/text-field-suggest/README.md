@@ -7,7 +7,18 @@ TextFieldSuggest.propTypes = {
     input: PropTypes.arrayOf(PropTypes.shape({
         label: PropTypes.string.isRequired,
         type: PropTypes.oneOf(["valid", "suggestions", "invalid", "loading", "disabled"]),
-        suggestions: PropTypes.arrayOf(PropTypes.string),
+        id: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number
+          ]),
+        suggestions: PropTypes.arrayOf(PropTypes.shape({
+            label: PropTypes.string.isRequired,
+            type: PropTypes.oneOf(["valid", "suggestions", "invalid", "loading", "disabled"]),
+            id: PropTypes.oneOfType([
+                PropTypes.string,
+                PropTypes.number
+              ]),     
+        })),
         gridColumnProps: PropTypes.object,
         gridRowProps: PropTypes.object,
         avatarProps: PropTypes.object,
@@ -15,10 +26,11 @@ TextFieldSuggest.propTypes = {
         chipProps: PropTypes.object,
         suggestionsProps: PropTypes.object,
     })).isRequired,
-    onAdd: PropTypes.func,
-    onDelete: PropTypes.func,
-    onClick: PropTypes.func,
-    onSuggestionClick: PropTypes.func,
+    onSubmit: PropTypes.func.isRequired,
+    onAdd: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
+    onSuggestionClick: PropTypes.func.isRequired,
     renderChip: PropTypes.func,
     colors_and_icon: PropTypes.shape({
         background: PropTypes.string,
