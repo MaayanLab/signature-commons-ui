@@ -97,6 +97,18 @@ const Geneset = (props) => (
           }
           props.updateInput(input)
         }}
+        onSuggestionClick={(value, clicked)=>{
+          const entities = props.input.entities.map(v=>{
+            if (v.id === value.id){
+              return (clicked)
+            }else return v
+          })
+          const input = {
+            ...props.input,
+            entities
+          }
+          props.updateInput(input)
+        }}
       />
     </Grid>
   </Grid>
@@ -157,6 +169,18 @@ const UpDownGeneset = (props) => (
           }
           props.updateInput(input)
         }}
+        onSuggestionClick={(value, clicked)=>{
+          const up_entities = props.input.up_entities.map(v=>{
+            if (v.id === value.id){
+              return (clicked)
+            }else return v
+          })
+          const input = {
+            ...props.input,
+            up_entities
+          }
+          props.updateInput(input)
+        }}
       />
     </Grid>
     <Grid item sm={6} xs={12}>
@@ -185,6 +209,18 @@ const UpDownGeneset = (props) => (
           const input = {
             ...props.input,
             down_entities: props.input.down_entities.filter(v=>v.id!==value.id)
+          }
+          props.updateInput(input)
+        }}
+        onSuggestionClick={(value, clicked)=>{
+          const down_entities = props.input.down_entities.map(v=>{
+            if (v.id === value.id){
+              return (clicked)
+            }else return v
+          })
+          const input = {
+            ...props.input,
+            down_entities
           }
           props.updateInput(input)
         }}

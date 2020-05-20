@@ -102,7 +102,7 @@ class SearchBoxWrapper extends React.Component {
     const processed_entities = Set(entities.map(v=>v.label))
     const ents = Set([unprocessed_entities]).subtract(processed_entities).toArray()[0].map((label, id)=>({
       label,
-      id,
+      id: label,
       type: "loading",
     }))
     console.log(this.props.input)
