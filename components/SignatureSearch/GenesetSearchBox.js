@@ -70,7 +70,7 @@ const Geneset = (props) => (
     </Grid>
     <Grid item xs={12}>
       <TextFieldSuggest 
-        id="geneset"
+        id="entities"
         placeholder={props.ui_values.geneset_placeholder}
         chipInputProps={{
           style: {
@@ -78,9 +78,25 @@ const Geneset = (props) => (
             width: "100%",
             overflow: 'auto',
             background: '#f7f7f7',
-          }
+            padding: "20px 10px"
+          },
+          blurBehavior: 'add'
         }}
-        input={[]}
+        input={props.input.entities}
+        onAdd={value=>{
+          const input = {
+            ...props.input,
+            unprocessed_entities: [...props.input.unprocessed_entities, ...value.trim().split(/\s/)]
+          }
+          props.updateInput(input)
+        }}
+        onDelete={value=>{
+          const input = {
+            ...props.input,
+            entities: props.input.entities.filter(v=>v.id!==value.id)
+          }
+          props.updateInput(input)
+        }}
       />
     </Grid>
   </Grid>
@@ -114,7 +130,7 @@ const UpDownGeneset = (props) => (
     </Grid>
     <Grid item sm={6} xs={12}>
       <TextFieldSuggest 
-        id="up_geneset"
+        id="up_entities"
         placeholder={props.ui_values.geneset_placeholder}
         chipInputProps={{
           style: {
@@ -122,14 +138,30 @@ const UpDownGeneset = (props) => (
             width: "100%",
             overflow: 'auto',
             background: '#f7f7f7',
-          }
+            padding: "20px 10px"
+          },
+          blurBehavior: 'add'
         }}
-        input={[]}
+        input={props.input.up_entities}
+        onAdd={value=>{
+          const input = {
+            ...props.input,
+            unprocessed_up_entities: [...props.input.unprocessed_up_entities, ...value.trim().split(/\s/)]
+          }
+          props.updateInput(input)
+        }}
+        onDelete={value=>{
+          const input = {
+            ...props.input,
+            up_entities: props.input.up_entities.filter(v=>v.id!==value.id)
+          }
+          props.updateInput(input)
+        }}
       />
     </Grid>
     <Grid item sm={6} xs={12}>
       <TextFieldSuggest 
-        id="down_geneset"
+        id="down_entities"
         placeholder={props.ui_values.geneset_placeholder}
         chipInputProps={{
           style: {
@@ -137,9 +169,25 @@ const UpDownGeneset = (props) => (
             width: "100%",
             overflow: 'auto',
             background: '#f7f7f7',
-          }
+            padding: "20px 10px"
+          },
+          blurBehavior: 'add'
         }}
-        input={[]}
+        input={props.input.down_entities}
+        onAdd={value=>{
+          const input = {
+            ...props.input,
+            unprocessed_down_entities: [...props.input.unprocessed_down_entities, ...value.trim().split(/\s/)]
+          }
+          props.updateInput(input)
+        }}
+        onDelete={value=>{
+          const input = {
+            ...props.input,
+            down_entities: props.input.down_entities.filter(v=>v.id!==value.id)
+          }
+          props.updateInput(input)
+        }}
       />
     </Grid>
   </Grid>
