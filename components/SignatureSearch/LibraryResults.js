@@ -248,6 +248,13 @@ export default class LibraryResults extends React.Component {
     const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
                             .map(r=>{
                               const data = get_card_data(r.library,this.props.schemas)
+                              data.processed.scores = {
+                                signature_count: {
+                                  label: `${this.props.ui_values.preferred_name_singular.signatures || "Signature"} Count`,
+                                  value: r.signatures.length,
+                                  icon: "mdi-counter"
+                                }
+                              }
                               return {
                                 ...data,
                                 signatures: r.signatures,
@@ -263,6 +270,13 @@ export default class LibraryResults extends React.Component {
       const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
                             .map(r=>{
                               const data = get_card_data(r.library,this.props.schemas)
+                              data.processed.scores = {
+                                signature_count: {
+                                  label: `${this.props.ui_values.preferred_name_singular.signatures || "Hits"} Count`,
+                                  value: r.signatures.length,
+                                  icon: "mdi-counter"
+                                }
+                              }
                               return {
                                 ...data,
                                 signatures: r.signatures,
