@@ -609,7 +609,8 @@ export const resolve_entities = async (props) => {
     }
     syn_names = syn_names.toArray()
     for (const synonym_prop of s_props){
-      const synonyms = Set(makeTemplateForObject('${JSON.stringify(' + synonym_prop.field + ')}', entity))
+      if (synonym_prop.type === "object") {
+        const synonyms = Set(makeTemplateForObject('${JSON.stringify(' + synonym_prop.field + ')}', entity))
                           .intersect(Set(Object.keys(parsed_entities_for_synonyms)))
                           .map(syn=>{
                             const original_label = parsed_entities_for_synonyms[syn]
@@ -632,6 +633,29 @@ export const resolve_entities = async (props) => {
                             }
                             return syn
                           })
+      }else if(synonym_prop.type === "text") {
+        const syn = makeTemplate(synonym_prop.text, entity)
+        if (Object.keys(parsed_entities_for_synonyms).indexOf(syn)>-1){
+          const original_label = parsed_entities_for_synonyms[syn]
+          if (with_synonyms_meta[original_label]===undefined){
+            with_synonyms_meta[original_label] = {
+              label: syn,
+              type: "suggestions",
+              id: syn,
+              suggestions: []
+            }
+          }
+          for (const label of syn_names){
+            with_synonyms_meta[original_label].suggestions.push(
+              {
+                label,
+                type: "valid",
+                ...entity
+              }
+            )
+          }
+        }
+      }
     }
   }
 
