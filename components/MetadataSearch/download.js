@@ -210,15 +210,18 @@ export async function download_signatures_text(item, schemas = undefined, provid
     if (provider === undefined) provider = new DataProvider()
     const signature = await get_signature({ item, schemas, provider })
     const filename = get_label(signature, schemas)
-    let data
     const entity_schemas = schemas.filter(i=>i.type==="entity")
     if (signature.library.dataset_type === 'rank_matrix') {
-      data = signature.data.slice(0, 250).map((d) => get_label(d, entity_schemas))
+      const up_data = signature.data.slice(signature.data.length - 250).map((d) => get_label(d, entity_schemas)).join('\t')
+      const down_data = signature.data.slice(0, 250).map((d) => get_label(d, entity_schemas)).join('\t')
+      NProgress.done()
+      const for_download = `${filename}_up\t\t${up_data}\n${filename}_down\t\t${down_data}`
+      fileDownload(for_download, `${filename}.txt`)
     } else {
-      data = signature.data.map((d) => get_label(d, entity_schemas))
+      const data = signature.data.map((d) => get_label(d, entity_schemas))
+      NProgress.done()
+      fileDownload(`${filename}\t\t${data.join('\t')}`, `${filename}.txt`)
     }
-    NProgress.done()
-    fileDownload(data.join('\n'), `${filename}.txt`)
     
   } catch (error) {
     NProgress.done()
@@ -297,14 +300,14 @@ export async function get_signature_data({ item, schemas, provider, search_type 
       }
     } else {
       data = {
-        up_entities: signature.data.slice(0, 250).reduce((acc, item) => {
+        up_entities: signature.data.slice(signature.data.length - 250).reduce((acc, item) => {
           acc = {
             ...acc,
             [get_label(item, schemas)]: item,
           }
           return acc
         }, {}),
-        down_entities: signature.data.slice((signature.data.length - 250)).reduce((acc, item) => {
+        down_entities: signature.data.slice(0, 250).reduce((acc, item) => {
           acc = {
             ...acc,
             [get_label(item, schemas)]: item,

@@ -7,6 +7,7 @@ import { findMatchedSchema, objectMatch } from '../../util/objectMatch'
 import { connect } from 'react-redux'
 import { URLFormatter, ReadURLParams } from '../../util/helper/misc'
 import DataTable from './DataTable'
+import { ExpandedMeta } from './ExpandedMeta'
 
 export const value_by_type = {
   'text': ({ label, prop, data }) => {
@@ -387,6 +388,7 @@ class MetadataSearchResults extends React.Component {
           search={this.props.search}
           sort_tags={this.state.sort_tags}
           deactivate_download={this.props.deactivate_download}
+          expandRenderer={(props)=>ExpandedMeta(props)}
         />
         <div align="right">
           <TablePagination

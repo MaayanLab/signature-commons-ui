@@ -4,7 +4,6 @@ import { ReadURLParams, URLFormatter } from '../../util/helper/misc'
 
 import { connect } from 'react-redux'
 import { SearchBox } from './SearchBox'
-
 const styles = (theme) => ({
   info: {
     paddingTop: theme.spacing.unit * 2,
@@ -69,6 +68,7 @@ const mapStateToProps = (state) => {
     preferred_name: state.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
     MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
+    ChipInputStyle: state.ui_values.ChipInputStyle
   }
 }
 

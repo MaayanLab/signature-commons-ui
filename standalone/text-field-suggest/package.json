@@ -1,0 +1,40 @@
+{
+  "name": "text-field-suggest",
+  "version": "1.0.0",
+  "description": "Text field that can display alternative suggestion to the user",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.js",
+  "scripts": {
+    "build": "microbundle build --jsx React.createElement --globals react=React -f es",
+    "dev": "parcel serve public/index.html -d build",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "chip",
+    "input"
+  ],
+  "author": "John Erol Evangelista <je.evangelista04@gmail.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "microbundle": "^0.11.0",
+    "parcel-bundler": "^1.12.3",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "peerDependencies": {
+    "react": "^16.8.6"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.5.5",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "material-ui-chip-input": "^1.1.0",
+    "@material-ui/core": "^3.9.2"
+  }
+}
