@@ -248,7 +248,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRend
                   />
                 </Grid> : null
               }
-              { data.processed.download !== undefined && data.processed.download.length > 0 ?
+              { !props.deactivate_download && data.processed.download !== undefined && data.processed.download.length > 0 ?
                 <Grid item style={{ textAlign: "center" }}>
                   <DownloadButton data={data.processed.download} {...props} />
                 </Grid> : null
