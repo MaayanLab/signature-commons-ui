@@ -282,44 +282,32 @@ export function *workMatchEntities(action) {
   const controller = new AbortController()
   try {
     let { input } = action
+    const {ui_values} = yield call(get_ui_values)
     if (input.type === 'Overlap') {
-      const unresolved_entities = input.unresolved
-      const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
-      const unresolved = unresolved_entities.subtract(Set(Object.keys(entities)))
+      // yield put(updateInput(input))\
+      const { entities } = yield call(resolve_entities, { entities: input.entities,
+        entity_strategy: ui_values.entity_strategy,
+        synonym_strategy: ui_values.synonym_strategy,
+        controller })
       input = {
         ...input,
-        entities: {
-          ...input.entities,
-          ...entities,
-        },
-        unresolved,
-        mismatched,
+        entities
       }
       yield put(updateResolvedEntities(input))
     } else if (input.type === 'Rank') {
-      const unresolved_entities = input.unresolved
-      const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
-      const unresolved = unresolved_entities.subtract(Set(Object.keys(entities)))
-      const up_entities = Set(input.up_geneset).intersect(Set(Object.keys(entities))).reduce((acc, entity) => {
-        acc[entity] = entities[entity]
-        return acc
-      }, { ...input.up_entities })
-      const down_entities = Set(input.down_geneset).intersect(Set(Object.keys(entities))).reduce((acc, entity) => {
-        acc[entity] = entities[entity]
-        return acc
-      }, { ...input.down_entities })
-      const resolvable_list = yield all([...mismatched.map((term) => call(find_synonyms, { term, controller }))])
-      const resolvable = resolvable_list.filter((r) => Object.keys(r.synonyms).length > 0).reduce((acc, r) => {
-        acc[r.term] = r.synonyms
-        return acc
-      }, {})
+      // yield put(updateInput(input))
+      const { entities: up_entities } = yield call(resolve_entities, { entities: input.up_entities,
+                                        entity_strategy: ui_values.entity_strategy,
+                                        synonym_strategy: ui_values.synonym_strategy,
+                                        controller })
+      const { entities: down_entities } = yield call(resolve_entities, { entities: input.down_entities,
+                                        entity_strategy: ui_values.entity_strategy,
+                                        synonym_strategy: ui_values.synonym_strategy,
+                                        controller })
       input = {
         ...input,
         up_entities,
-        down_entities,
-        unresolved,
-        mismatched,
-        resolvable,
+        down_entities
       }
       yield put(updateResolvedEntities(input))
     }
@@ -352,11 +340,8 @@ export function *workFindSignature(action) {
   try {
     const { input } = action
     if (input.type === 'Overlap') {
-      const unresolved_entities = parse_entities(input.geneset)
-      const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
-      const resolved_entities = [...(unresolved_entities.subtract(mismatched))].map((entity) => entities[entity])
-      const signature_id = input.id || uuid5(JSON.stringify(resolved_entities))
-
+      const entities = input.entities.filter(e=>e.type==="valid")
+      const signature_id = input.id || uuid5(JSON.stringify(entities))
       const signature_result = yield call(query_overlap, {
         input: {
           entities,
@@ -365,37 +350,31 @@ export function *workFindSignature(action) {
       })
       const results = {
         ...signature_result,
-        mismatched,
         input: {
           ...input,
           id: signature_id,
-          entities: resolved_entities,
+          entities,
         },
       }
       yield put(findSignaturesSucceeded(results))
     } else if (input.type === 'Rank') {
-      const unresolved_up_entities = parse_entities(input.up_geneset)
-      const unresolved_down_entities = parse_entities(input.down_geneset)
-      const unresolved_entities = unresolved_up_entities.union(unresolved_down_entities)
-      const { matched: entities, mismatched } = yield call(resolve_entities, { entities: unresolved_entities, controller })
-      const resolved_up_entities = [...unresolved_up_entities.subtract(mismatched)].map((entity) => entities[entity])
-      const resolved_down_entities = [...unresolved_down_entities.subtract(mismatched)].map((entity) => entities[entity])
-      const signature_id = input.id || uuid5(JSON.stringify([resolved_up_entities, resolved_down_entities]))
+      const up_entities = input.up_entities.filter(e=>e.type==="valid")
+      const down_entities = input.down_entities.filter(e=>e.type==="valid")
+      const signature_id = input.id || uuid5(JSON.stringify([up_entities, down_entities]))
       const signature_result = yield call(query_rank, {
         input: {
-          up_entities: resolved_up_entities,
-          down_entities: resolved_down_entities,
+          up_entities,
+          down_entities,
         },
         controller,
       })
       const results = {
         ...signature_result,
-        mismatched,
         input: {
           ...input,
           id: signature_id,
-          up_entities: resolved_up_entities,
-          down_entities: resolved_down_entities,
+          up_entities,
+          down_entities,
         },
       }
       yield put(findSignaturesSucceeded(results))
@@ -429,15 +408,17 @@ export function *workFindSignatureFromId(action) {
   const { id, search_type } = action
   try {
     const data = yield call(get_signature_data, { item: id, search_type })
-    const input = {
-      type: search_type,
-      ...data,
-    }
-    if (input.type === 'Overlap') {
+    if (search_type === 'Overlap') {
       const signature_id = id
-
+      const input = {
+        type: search_type,
+        ...data,
+        entities: Object.values(data.entities)
+      }
       const signature_result = yield call(query_overlap, {
-        input,
+        input: {
+          ...input
+        },
         controller,
       })
       const results = {
@@ -448,8 +429,14 @@ export function *workFindSignatureFromId(action) {
         },
       }
       yield put(findSignaturesSucceeded(results))
-    } else if (input.type === 'Rank') {
+    } else if (search_type === 'Rank') {
       const signature_id = id
+      const input = {
+        type: search_type,
+        ...data,
+        up_entities: Object.values(data.up_entities),
+        down_entities: Object.values(data.down_entities),
+      }
       const signature_result = yield call(query_rank, {
         input,
         controller,

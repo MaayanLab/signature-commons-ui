@@ -68,6 +68,7 @@ export default class ResourceFilters extends React.Component {
       <Grid
         container
         direction="row"
+        alignItems="flex-start"
         ref={(ref) => {
           if (!this.state.resourceAnchor) {
             this.setState({ resourceAnchor: ref })

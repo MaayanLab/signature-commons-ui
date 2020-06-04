@@ -238,7 +238,7 @@ class Home extends React.PureComponent {
                 path={this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}
                 exact
                 component={(props) => {
-                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/Overlap`} />
+                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}${this.props.ui_values.overlap_search ? '/Overlap': '/Rank'}`} />
                 }}
               />
               : null

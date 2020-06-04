@@ -15,6 +15,7 @@ import TablePagination from '@material-ui/core/TablePagination'
 import { URLFormatter } from '../../util/helper/misc'
 
 import DataTable from '../MetadataSearch/DataTable'
+import {ExpandedMeta} from '../MetadataSearch/ExpandedMeta'
 import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
 
 import { makeTemplate } from '../../util/makeTemplate'
@@ -53,9 +54,39 @@ class ResourcePage extends React.Component {
 
   async componentDidMount() {
     const res = this.props.match.params.resource.replace(/_/g, ' ')
-    let resource
-    if (this.props.resources[res]===undefined && isUUID(res + '')) {
-      // uuid fetch resource
+    const resource = await this.get_resource(res)
+      if (resource!==null){
+        const { collection, count } = await this.get_children(this.state.page, this.state.perPage, resource)
+        this.setState({
+          resource,
+          collection,
+          count
+        })
+      }
+  }
+
+  async componentDidUpdate(prevProps) {
+    const res = this.props.match.params.resource.replace(/_/g, ' ')
+    const prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
+    if (res != prevRes) {
+      const resource = await this.get_resource(res)
+      if (resource!==null){
+        const { collection, count } = await this.get_children(this.state.page, this.state.perPage, resource)
+        this.setState({
+          resource,
+          collection,
+          count
+        })
+      }
+    }
+  }
+
+  get_resource = async (res) => {
+    let resource = null
+    if (this.props.resources[res]!==undefined){
+      resource = this.props.resources[res]
+      resource.libraries = undefined
+    }else if (this.props.resources[res]===undefined && isUUID(res + '')) {
       const { response } = await fetch_meta_post({
         endpoint: `/resources/find`,
         body: {
@@ -67,21 +98,10 @@ class ResourcePage extends React.Component {
         }
       })
       // it's in resources
-      if (response.length>0){
+      if (response.length > 0){
         resource = response[0]
-        const { response: libraries } = await fetch_meta_post({
-          endpoint: `/libraries/find`,
-          body: {
-            filter: {
-              where: {
-                resource: res,
-              },
-            },
-          },
-        })
-        resource.libraries = libraries
-      } else {
-        // check in libraries
+      }else {
+        // find in libraries
         const { response } = await fetch_meta_post({
           endpoint: `/libraries/find`,
           body: {
@@ -92,139 +112,37 @@ class ResourcePage extends React.Component {
             },
           }
         })
-        if (response.length>0){
+        if (response.length > 0){
           resource = response[0]
-          const { response: signatures } = await fetch_meta_post({
-            endpoint: `/signatures/find`,
-            body: {
-              filter: {
-                where: {
-                  library: res,
-                },
-              },
-            },
-          })
-          resource.libraries = signatures
-        } else {
-          resource = {}
         }
       }
-    } else {
-      resource = this.props.resources[res]
-      const { response: libraries } = await fetch_meta_post({
-        endpoint: `/libraries/find`,
+    }
+    return resource
+  }
+
+  get_children = async (page, perPage, resource) => {
+    const endpoint = resource.dataset_type===undefined ? '/libraries/find': '/signatures/find'
+      const parent = resource.dataset_type===undefined ? 'resource': 'library'
+      const { response, contentRange } = await fetch_meta_post({
+        endpoint,
         body: {
           filter: {
             where: {
-              resource: resource.id,
+              [parent]: resource.id,
             },
+            limit: this.state.perPage,
+            skip: this.state.page*this.state.perPage,
           },
-        },
-      })
-      resource.libraries = libraries
-    }
-
-    const start = this.state.page * this.state.perPage
-    const end = (this.state.page + 1) * this.state.perPage
-    let children = []
-    if (resource !== null && !resource.is_library) {
-      children = resource.libraries.slice(start, end)
-    }
-    const collection = children.map((data) => get_card_data(data, this.props.schemas))
-
-    this.setState({
-      resource,
-      collection,
-    })
-  }
-
-  async componentDidUpdate(prevProps) {
-    const res = this.props.match.params.resource.replace(/_/g, ' ')
-    const prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
-    if (res != prevRes) {
-      let resource
-      if (this.props.resources[res]===undefined && isUUID(res + '')) {
-        // uuid fetch resource
-        const { response } = await fetch_meta_post({
-          endpoint: `/resources/find`,
-          body: {
-            filter: {
-              where: {
-                id: res,
-              },
-            },
-          }
-        })
-        // it's in resources
-        if (response.length>0){
-          resource = response[0]
-          const { response: libraries } = await fetch_meta_post({
-            endpoint: `/libraries/find`,
-            body: {
-              filter: {
-                where: {
-                  resource: res,
-                },
-              },
-            },
-          })
-          resource.libraries = libraries
-        } else {
-          // check in libraries
-          const { response } = await fetch_meta_post({
-            endpoint: `/libraries/find`,
-            body: {
-              filter: {
-                where: {
-                  id: res,
-                },
-              },
-            }
-          })
-          if (response.length>0){
-            resource = response[0]
-            const { response: signatures } = await fetch_meta_post({
-              endpoint: `/signatures/find`,
-              body: {
-                filter: {
-                  where: {
-                    library: res,
-                  },
-                },
-              },
-            })
-            resource.libraries = signatures
-          } else {
-            resource = {}
-          }
         }
-      } else {
-        resource = this.props.resources[res]
-        const { response: libraries } = await fetch_meta_post({
-          endpoint: `/libraries/find`,
-          body: {
-            filter: {
-              where: {
-                resource: resource.id,
-              },
-            },
-          },
-        })
-        resource.libraries = libraries
-      }
-      const start = this.state.page * this.state.perPage
-      const end = (this.state.page + 1) * this.state.perPage
-      let children = []
-      if (resource !== null && !resource.is_library) {
-        children = resource.libraries.slice(start, end)
-      }
-      const collection = children.map((data) => get_card_data(data, this.props.schemas))
-
-      this.setState({
-        resource,
-        collection,
       })
-    }
+      const collection = response.map((data) => {
+        if (data.library !== undefined) data.library = resource
+        return get_card_data(data, this.props.schemas)
+      })
+      return {
+        collection,
+        ...contentRange,
+      }
   }
 
   async handleDownload(type, id) {
@@ -245,29 +163,17 @@ class ResourcePage extends React.Component {
     }
   }
 
-  handleChangeRowsPerPage = (e, name) => {
+  handleChangeRowsPerPage = async (e, name) => {
     const perPage = e.target.value
-    const start = this.state.page * perPage
-    const end = (this.state.page + 1) * perPage
-    let children = []
-    if (!this.state.resource.is_library) {
-      children = this.state.resource.libraries.slice(start, end)
-    }
-    const collection = children.map((data) => get_card_data(data, this.props.schemas))
+    const { collection } = await this.get_children(this.state.page, perPage, this.state.resource)
     this.setState({
       perPage,
-      collection,
+      collection
     })
   }
 
-  handleChangePage = (event, page, name) => {
-    const start = page * this.state.perPage
-    const end = (page + 1) * this.state.perPage
-    let children = []
-    if (!this.state.resource.is_library) {
-      children = this.state.resource.libraries.slice(start, end)
-    }
-    const collection = children.map((data) => get_card_data(data, this.props.schemas))
+  handleChangePage = async (event, page, name) => {
+    const { collection } = await this.get_children(page, this.state.perPage, this.state.resource)
     this.setState({
       page,
       collection,
@@ -379,11 +285,12 @@ class ResourcePage extends React.Component {
                 type={this.props.preferred_name_singular['resources']}
                 history={this.props.history}
                 deactivate_download={true}
+                expandRenderer={(props)=>ExpandedMeta(props)}
               />
               <TablePagination
                 page={this.state.page}
                 rowsPerPage={this.state.perPage}
-                count={ this.state.resource.libraries.length}
+                count={ this.state.count}
                 onChangePage={(event, page) => this.handleChangePage(event, page)}
                 onChangeRowsPerPage={this.handleChangeRowsPerPage}
                 component="div"

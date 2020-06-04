@@ -4,7 +4,6 @@ import { ReadURLParams, URLFormatter } from '../../util/helper/misc'
 
 import { connect } from 'react-redux'
 import { SearchBox } from './SearchBox'
-
 const styles = (theme) => ({
   info: {
     paddingTop: theme.spacing.unit * 2,
