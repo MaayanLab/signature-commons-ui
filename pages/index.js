@@ -69,13 +69,13 @@ class App extends React.Component {
         <Router>
           <div className="root">
             <Route path="/" render={(router_props) => <Home {...router_props}/>} />
-            <Route exact path="/arbitrary-query" component={ArbitraryQuery} />
+            {/* <Route exact path="/arbitrary-query" component={ArbitraryQuery} />
             <Route exact path="/dbck" component={DBCK} />
             <Route exact path="/entity-page" component={EntityPage} />
             <Route exact path="/stats" component={Stats} />
             <Route exact path="/term-query" component={TermQuery} />
             <Route exact path="/values" component={Values} />
-            <Route exact path="/tests" component={Tests} />
+            <Route exact path="/tests" component={Tests} /> */}
           </div>
         </Router>
       </div>

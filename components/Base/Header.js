@@ -6,14 +6,14 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import MenuList from '@material-ui/core/MenuList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Breadcrumbs from '@material-ui/lab/Breadcrumbs';
 import Hidden from '@material-ui/core/Hidden';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import MenuIcon from '@material-ui/icons/Menu';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -239,6 +239,10 @@ export function NavMenu(props) {
     )
 }
 
+export const ListItemLink = (props) => {
+  return <ListItem button component="a" {...props} />;
+}
+
 export function Nav(props) {
   const { ui_values,
     location,
@@ -253,6 +257,7 @@ export function Nav(props) {
           onClick={toggleDrawer}
           selected={location.pathname === `${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
           className={classes.menuItem}
+          href={`#${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
         >
           <Link className={classes.link} to={`${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}>
             {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
@@ -264,6 +269,7 @@ export function Nav(props) {
           onClick={toggleDrawer}
           selected={location.pathname === `${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
           className={ classes.menuItem}
+          href={`#${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
         >
           <Link className={classes.link} to={`${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}>
             {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
@@ -274,7 +280,8 @@ export function Nav(props) {
         <ListItem
           onClick={toggleDrawer}
           selected={location.pathname === `${ui_values.nav.Resources.endpoint || '/Resources'}`}
-          className={classes.menuItem}
+          className={ classes.menuItem}
+          href={`#${ui_values.nav.Resources.endpoint || '/Resources'}`}
         >
           <Link className={classes.link} to={`${ui_values.nav.Resources.endpoint || '/Resources'}`}>
             {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
@@ -285,7 +292,8 @@ export function Nav(props) {
       <ListItem
         onClick={toggleDrawer}
         selected={location.pathname === '/API'}
-        className={classes.menuItem}
+        className={ classes.menuItem}
+        href={"#/API"}
       >
         <Link className={classes.link} to="/API">
           API
@@ -360,7 +368,7 @@ class Header extends React.Component {
     const paths = this.props.location.pathname.split('/')
     const { staticContext, classes, ...rest } = this.props
     return (
-      <header>
+      <header {...this.props.ui_values.header_info.header_props}>
         <AppBar position="static" color="primary">
           <Toolbar>
             <Hidden smDown>
@@ -378,7 +386,9 @@ class Header extends React.Component {
                 <List style={{
                   display: 'flex',
                   whiteSpace: "nowrap",
-                }}>
+                }}
+                {...this.props.ui_values.header_info.menu_props}
+                >
                   <Nav
                     classes={classes}
                     {...rest}

@@ -114,13 +114,12 @@ export default class MetadataSearchResults extends React.Component {
                     schemas={this.props.schemas}
                   />
                   <div style={{ flex: '1 0 auto' }}>&nbsp;</div>
-                  <a
-                    href="javascript:void(0);"
+                  <div
                     className="collapsible-header"
-                    style={{ border: 0 }}
+                    style={{ border: 0, cursor: 'pointer' }}
                   >
                     <i className="material-icons">expand_more</i>
-                  </a>
+                  </div>
                 </div>
               </div>
               <div

@@ -10,6 +10,7 @@ import serializeError from 'serialize-error'
 import '../styles/index.scss'
 import withRedux from 'next-redux-wrapper'
 import initializeStore from '../util/redux/store'
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -64,22 +65,19 @@ class App_ extends App {
     const { pageProps, loaded } = this.state
     if (this.props.errorCode || this.state.error !== undefined) {
       return (
-        <Container className="root">
-          <Error code={this.props.errorCode} message={serializeError(this.props.error) || this.state.errorMessage} />
-        </Container>
+        <Error code={this.props.errorCode} message={serializeError(this.props.error) || this.state.errorMessage} />
       )
     }
     return (
       <Provider store={store}>
-        <Container className="root">
-          {loaded ? (
-              <Component {...pageProps} />
-          ) : (
-            <div style={{ textAlign: 'center', marginTop: 100 }}>
-              <CircularProgress />
-            </div>
-          )}
-        </Container>
+        <CssBaseline />
+        {loaded ? (
+            <Component {...pageProps} />
+        ) : (
+          <div style={{ textAlign: 'center', marginTop: 100 }}>
+            <CircularProgress />
+          </div>
+        )}
       </Provider>
     )
   }

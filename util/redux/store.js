@@ -23,6 +23,7 @@ const store = createStore(
 
 sagaMiddleware.run(rootSaga)
 
-export default function initializeStore(initialState = initialState) {
+export default function initializeStore(initialState) {
+  if (initialState === undefined) { initialState = initialState }
   return store
 }

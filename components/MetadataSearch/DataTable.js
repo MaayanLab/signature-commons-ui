@@ -23,7 +23,8 @@ import ShowMeta from '../ShowMeta'
 
 import IconButton from '../IconButton'
 import ScorePopper from '../ScorePopper'
-
+import Collapse from '@material-ui/core/Collapse';
+import DownloadButton from '../Downloads'
 
 const Options = dynamic(() => import('../Options'), { ssr: false })
 
@@ -86,11 +87,13 @@ const styles = (theme) => ({
 })
 
 
-export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }) => {
+export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRenderer, ...props }) => {
   const score_icon = ui_values.score_icon || 'mdi-trophy-award'
   const default_tag_icon = 'mdi-arrow-top-right-thick'
   return (
-    <Card>
+    <Card style={{
+      overflow: 'auto',
+    }}>
       <CardContent style={{ paddingBottom: 3 }}>
         <Grid container>
           <Grid item md={11} sm={10} xs={9}>
@@ -106,7 +109,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                     className={classes.margin}
                     style={{ minWidth: 5, paddingTop: 0, paddingBottom: 0 }}
                   >
-                    <span className="mdi mdi-dots-horizontal mdi-24px"/>
+                    <span className={`mdi mdi-chevron-${props.expanded ? 'up': 'down'} mdi-24px`}/>
                   </Button>
                 </Tooltip>
               </Grid>
@@ -179,19 +182,19 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                   </Grid>
                   <Grid item xs={12}>
                     {data.processed.tags.map((tag) =>
-                      <Tooltip title={tag.value}
-                        key={tag.value}
+                      <Tooltip title={tag.text}
+                        key={tag.text}
                         placement="bottom">
                         <Chip className={classes.chip} key={tag.label}
                           avatar={<Icon className={`${classes.icon} mdi ${tag.icon || default_tag_icon} mdi-18px`} />}
                           label={<Highlight
                             Component={(props) => <span {...props} className={classes.chipLabel}>{props.children}</span>}
-                            text={`${tag.label}: ${tag.value}`}
+                            text={`${tag.label}: ${tag.text}`}
                             highlight={search}
                           />}
                           onClick={() => {
                             if (tag.clickable){
-                              props.onChipClick(tag.value)
+                              props.onChipClick(tag.text)
                             }
                           }}
                         />
@@ -245,10 +248,21 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, ...props }
                   />
                 </Grid> : null
               }
+              { !props.deactivate_download && data.processed.download !== undefined && data.processed.download.length > 0 ?
+                <Grid item style={{ textAlign: "center" }}>
+                  <DownloadButton data={data.processed.download} {...props} />
+                </Grid> : null
+              }
             </Grid>
           </Grid>
         </Grid>
       </CardContent>
+      <Collapse in={props.expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+          {expandRenderer({data, ...props})}
+          {/* <ExpandedMeta data={data} {...props}/> */}
+        </CardContent>
+      </Collapse>
     </Card>
   )
 }
@@ -257,19 +271,17 @@ class DataTable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      metadata: null,
-      open: false,
+      expanded: null,
     }
   }
   handleClick = (metadata) => {
-    this.setState({
-      metadata,
-      open: true,
-    })
+    this.setState((prevState)=>({
+      expanded: prevState.expanded === metadata.original.id ? null: metadata.original.id,
+    }))
   }
   handleClose = () => {
     this.setState({
-      open: false,
+      expanded: null,
     })
   }
   render() {
@@ -281,81 +293,31 @@ class DataTable extends React.Component {
     }
     return (
       <div>
-        {this.state.metadata !== null ?
-          <Modal
-            aria-labelledby="simple-modal-title"
-            aria-describedby="simple-modal-description"
-            open={this.state.open}
-            onClose={this.handleClose}
-          >
-            <Card style={{ minWidth: 1000,
-              maxWidth: 2000,
-              maxHeight: 500,
-              overflow: 'scroll',
-              position: 'absolute',
-              float: 'left',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}>
-              <Grid
-                container
-                direction="row"
-              >
-                <Grid item xs={2} style={{ textAlign: 'right' }}>
-                    <IconButton
-                      {...this.state.metadata.processed.icon}
-                    />
-                </Grid>
-                <Grid item xs={10}>
-                  <CardContent>
-                    <Grid
-                      container
-                      direction="row"
-                    >
-                      <Grid item xs={12}>
-                        <ShowMeta
-                          value={[
-                            {
-                              '@id': this.state.metadata.original.id,
-                              '@name': this.state.metadata.processed.name.text,
-                              'meta': this.state.metadata.original.meta,
-                            },
-                          ]}
-                          highlight={this.props.search}
-                        />
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Grid>
-              </Grid>
-            </Card>
-          </Modal> : null
-        }
-          <Grid container>
-            {this.props.sortBy !== undefined && Object.keys(this.props.sort_tags).length > 0 ?
-              <Grid item style={{ marginLeft: 'auto', marginRight: 0, marginBottom: 10}}>
-                <FormControl>
-                  <InputLabel>Sort by</InputLabel>
-                  <Select
-                    value={this.props.sorted}
-                    onChange={(e) => this.props.sortBy(e.target.value)}
-                  >
-                    {Object.entries(this.props.sort_tags).map(([field_name, values]) => (
-                      <MenuItem value={field_name} key={field_name}>{values.label}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid> : null
-            }
-            <Grid item style={{width:"100%"}}>
-              {this.props.collection.map((data, ind) => <InfoCard key={data.original.id}
-                {...this.props}
-                handleClick={this.handleClick}
-                data={data}
-              />)}
-            </Grid>
+        <Grid container>
+          {this.props.sortBy !== undefined && Object.keys(this.props.sort_tags).length > 0 ?
+            <Grid item style={{ marginLeft: 'auto', marginRight: 0, marginBottom: 10}}>
+              <FormControl>
+                <InputLabel>Sort by</InputLabel>
+                <Select
+                  value={this.props.sorted}
+                  onChange={(e) => this.props.sortBy(e.target.value)}
+                >
+                  {Object.entries(this.props.sort_tags).map(([field_name, values]) => (
+                    <MenuItem value={field_name} key={field_name}>{values.label}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid> : null
+          }
+          <Grid item style={{width:"100%"}}>
+            {this.props.collection.map((data, ind) => <InfoCard key={data.original.id}
+              {...this.props}
+              handleClick={this.handleClick}
+              data={data}
+              expanded={this.state.expanded===data.original.id}
+            />)}
           </Grid>
+        </Grid>
       </div>
     )
   }
