@@ -94,7 +94,7 @@ export default class TextFieldSuggest extends React.Component {
                         {...value.chipProps}
                         />
                     { value.type!=="suggestions" ? null:
-                        <React.Fragment>
+                        <div style={{textAlign:"left"}}>
                             <Typography variant="overline">
                                 Did you mean:
                             </Typography>
@@ -114,7 +114,7 @@ export default class TextFieldSuggest extends React.Component {
                                         {s.label}
                                     </Link>
                             ))}
-                        </React.Fragment>
+                        </div>
                     }
                 </Grid>
             </Grid>
