@@ -15,6 +15,7 @@ import TablePagination from '@material-ui/core/TablePagination'
 import { URLFormatter } from '../../util/helper/misc'
 
 import DataTable from '../MetadataSearch/DataTable'
+import {ExpandedMeta} from '../MetadataSearch/ExpandedMeta'
 import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
 
 import { makeTemplate } from '../../util/makeTemplate'
@@ -282,6 +283,7 @@ class ResourcePage extends React.Component {
                 type={this.props.preferred_name_singular['resources']}
                 history={this.props.history}
                 deactivate_download={true}
+                expandRenderer={(props)=>ExpandedMeta(props)}
               />
               <TablePagination
                 page={this.state.page}
