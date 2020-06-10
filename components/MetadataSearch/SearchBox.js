@@ -56,18 +56,19 @@ const Info = (props) => {
 const Input = (props) => (
   <ChipInput
     className={props.classes.ChipInput}
-    placeholder={(props.search || []).length > 0 ? 'Add filter' :
+    placeholder={(props.search || []).length > 0 ? '' :
         props.placeholder}
     value={(props.search || [])}
     chipRenderer={props.renderChips || props.renderChips}
-    disableUnderline
+    disableUnderline={props.ChipInputStyle.disableUnderline}
     alwaysShowPlaceholder
+    color="secondary"
     InputProps={{
       inputProps: {
         style: {
-          border: 'none',
           fontSize: props.small ? 12 : 15,
           textAlign: 'left',
+          height: "2rem",
         },
       },
       ...props.InputProps,
@@ -208,6 +209,7 @@ export class SearchBox extends React.Component {
                 <span>&nbsp;&nbsp;</span>
                 <Button variant="contained"
                   className={this.props.classes.button}
+                  style={{ marginTop: -10 }}
                   onClick={() =>
                     this.props.searchFunction(this.props.search)
                   }>

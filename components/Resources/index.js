@@ -35,31 +35,57 @@ export const get_schema_props= (item, schemas) => {
   return {...response}
 }
 
-export const get_resources_and_libraries = async(fetch_libraries=true) => {
+export const get_resources_and_libraries = async(fetch_libraries=true, limit=50, skip=0 ) => {
+  const { response: resource_count } = await fetch_meta({
+    endpoint: `/resources/count`,
+    body: {
+      where: {
+        "meta.$hidden": { eq: null}
+      }
+    }
+  })
   const { response: resources } = await fetch_meta({
     endpoint: `/resources`,
     body: {
       filter: {
         where: {
           "meta.$hidden": { eq: null}
-        }
+        },
+        limit,
+        skip
       }
     }
   })
-  if (fetch_libraries){
+  if (fetch_libraries || resource_count === 0){
+    const { response: library_count } = await fetch_meta({
+      endpoint: `/libraries/count`,
+      body: {
+        where: {
+          resource: { eq: null}
+        }
+      }
+    })
     const { response: libraries } = await fetch_meta({
       endpoint: `/libraries`,
       body: {
         filter: {
           where: {
             resource: { eq: null}
-          }
+          },
+          limit,
+          skip
         }
       }
     })
-    return {response: [...resources, ...libraries]}
+    return {
+      response: [...resources, ...libraries],
+      count: resource_count.count + library_count.count
+    }
   }else {
-    return {response: resources}
+    return {
+      response: resources,
+      count: resource_count.count
+    }
   }
 }
 
@@ -69,12 +95,15 @@ class Resources extends React.PureComponent {
 
     this.state = {
       resources: null,
+      limit: 50,
+      skip: 0
     }
   }
 
   componentDidMount = async () => {
     const schemas = await get_schemas()
-    const { response } = await get_resources_and_libraries(this.props.ui_values.showNonResource)
+    const {limit, skip} = this.state
+    const { response, count } = await get_resources_and_libraries(this.props.ui_values.showNonResource, limit, skip)
     if (response.length === 0){
       this.setState({
         resources: []
@@ -89,9 +118,37 @@ class Resources extends React.PureComponent {
       }, {})
       this.setState({
         resources,
-        schemas
+        schemas,
+        count
       })
     }
+  }
+
+  componentDidUpdate = async (prevProps, prevState) => {
+    
+    const {limit, skip, schemas} = this.state
+    if (prevState.limit !== limit || prevState.skip !== skip){
+      const { response } = await get_resources_and_libraries(this.props.ui_values.showNonResource, limit, skip)
+      if (response.length > 0){
+        const resources = response.reduce((acc, resource) => {
+          const {name_prop} = get_schema_props(resource, schemas)
+          let name = makeTemplate(name_prop, resource)
+          if (name === 'undefined') name = resource.id
+          acc[name] = resource
+          return acc
+        }, {})
+        console.log(resources)
+        this.setState( prevState => ({
+          resources: {...prevState.resources, ...resources}
+        }))
+      }
+    }
+  }
+
+  get_more_resources = () => {
+    this.setState(prevState=>({
+      skip: prevState.skip + prevState.limit
+    }))
   }
 
 
@@ -99,6 +156,8 @@ class Resources extends React.PureComponent {
     <ResourceList
       {...props}
       {...this.state}
+      onClickMore={this.get_more_resources}
+      total_count={this.state.count}
     />
   )
 

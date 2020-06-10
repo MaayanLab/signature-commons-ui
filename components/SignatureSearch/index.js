@@ -75,6 +75,7 @@ class SignatureSearch extends React.Component {
   )
 
   library_results = (props) => {
+    if (this.props.resource_signatures === undefined) return <CircularProgress />
     return(
     <LibraryResults
       results={
@@ -83,9 +84,9 @@ class SignatureSearch extends React.Component {
         )
       }
       signature_keys={this.props.signature_keys}
-      {...props}
       {...this.props}
       {...this.state}
+      {...props}
     />
   )}
 

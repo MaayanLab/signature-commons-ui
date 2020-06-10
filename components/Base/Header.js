@@ -120,7 +120,7 @@ class Header extends React.Component {
     const paths = this.props.location.pathname.split('/')
     const { staticContext, classes, ...rest } = this.props
     return (
-      <header>
+      <header {...this.props.ui_values.header_info.header_props}>
         <AppBar position="static" color="primary">
           <Toolbar>
             <Hidden smDown>
@@ -136,10 +136,7 @@ class Header extends React.Component {
                   </Typography>
                 }
                 <List
-                  style={{
-                    display: 'flex',
-                    whiteSpace: "nowrap",
-                  }}
+                  {...this.props.ui_values.header_info.menu_props}
                 >
                   <Nav classes={classes} {...rest}/>
                 </List>

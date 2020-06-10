@@ -13,17 +13,27 @@ export function get_formated_query(terms) {
   }
 }
 
+export const modify_entity_by_strategy = {
+  "upper": (input) => (
+    input.toUpperCase()
+  ),
+  "lower": (input) => (
+    input.toLowerCase()
+  ),
+  "none": (input) => (
+    input
+  ),
+} 
 
-export function parse_entities(input) {
-  return Set(input.toUpperCase().split(/[ \t\r\n;]+/).reduce(
-      (lines, line) => {
-        const parsed = /^(.+?)(,(.+))?$/.exec(line)
-        if (parsed !== null) {
-          return [...lines, parsed[1]]
-        }
-        return lines
-      }, []
-  ))
+export function parse_entities(entities, strategy="upper") {
+  const new_entities = {}
+  for (const entity of entities){
+    const parsed = /^(.+?)(,(.+))?$/.exec(entity)
+    if (parsed!==null){
+      new_entities[modify_entity_by_strategy[strategy](parsed[1])] = entity
+    }
+  }
+  return new_entities
 }
 
 export function maybe_fix_obj(obj) {
