@@ -289,6 +289,7 @@ class MetadataSearchResults extends React.Component {
           ...params[curr_table],
           limit: perPage,
           skip: page * perPage,
+          order: this.props.order[curr_table]
         },
       }
       const query = URLFormatter({ params, preferred_name: this.props.preferred_name })
@@ -319,6 +320,7 @@ class MetadataSearchResults extends React.Component {
           ...params[curr_table],
           limit: perPage,
           skip: page * perPage,
+          order: this.props.order[curr_table]
         },
       }
       const query = URLFormatter({ params, preferred_name: this.props.preferred_name })
