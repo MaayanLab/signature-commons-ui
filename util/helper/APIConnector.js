@@ -609,28 +609,30 @@ export default class Model {
     //   await this.fetch_grandparents_meta()
     // }
     const { params, operations } = this.build_query(query_params)
-    const { response: bulk_response } = await fetch_meta_post({
-      endpoint: '/bulk',
-      body: params,
-      signal: controller.signal,
-    })
-    const result = await this.parse_bulk_result({ operations, bulk_response })
-    this.results = {
-      metadata_search: result.metadata_search || this.results.metadata_search,
-      value_count: result.value_count || this.results.value_count,
-      count: result.count || this.results.count,
-    }
-    if (this.grandparent!==undefined && result.parents!==undefined){
-      const response = await this.fetch_grandparent(result.parents)
-      this.results.value_count[this.grandparent] = {
-        schema: this.grandparent_schema,
-        stats: Object.entries(response[this.grandparent] || {}).reduce((acc_1,[key, val])=>{
-          if (key==="null"){
+    if (params.length > 0){
+      const { response: bulk_response } = await fetch_meta_post({
+        endpoint: '/bulk',
+        body: params,
+        signal: controller.signal,
+      })
+      const result = await this.parse_bulk_result({ operations, bulk_response })
+      this.results = {
+        metadata_search: result.metadata_search || this.results.metadata_search,
+        value_count: result.value_count || this.results.value_count,
+        count: result.count || this.results.count,
+      }
+      if (this.grandparent!==undefined && result.parents!==undefined){
+        const response = await this.fetch_grandparent(result.parents)
+        this.results.value_count[this.grandparent] = {
+          schema: this.grandparent_schema,
+          stats: Object.entries(response[this.grandparent] || {}).reduce((acc_1,[key, val])=>{
+            if (key==="null"){
+              return acc_1
+            }
+            acc_1[key] = val
             return acc_1
-          }
-          acc_1[key] = val
-          return acc_1
-        },{}),
+          },{}),
+        }
       }
     }
     return { table: this.table, model: this }
