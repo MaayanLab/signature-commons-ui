@@ -37,7 +37,7 @@ const operationMapper = {
   new_filter: (table, current_table) => ({
     metadata_search: table === current_table,
     value_count: table === current_table,
-    count: true,
+    count: table === current_table,
   }),
   change_tab: (table, current_table) => ({
     metadata_search: table === current_table,
@@ -130,7 +130,7 @@ class MetadataSearch extends React.Component {
       }
     } else if (current_param_str !== old_param_str) {
       if (this.props.location.state === undefined || this.props.location.state.new_search) {
-        params = ReadURLParams(current_param_str, this.props.reverse_preferred_name)
+        params = this.format_param(current_param_str, current_table)
         this.props.searchBoxFunction(params)
       } else {
         params = this.format_param(current_param_str, current_table)
