@@ -46,8 +46,8 @@ const operationMapper = {
   }),
   order: (table, current_table) => ({
     metadata_search: table === current_table,
-    value_count: false,
-    count: false,
+    value_count: table === current_table,
+    count: table === current_table,
   }),
 }
 
