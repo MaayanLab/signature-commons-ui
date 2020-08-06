@@ -5,81 +5,34 @@ import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
+import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
+import { Highlight } from './Highlight'
+import { IconComponent } from './IconComponent'
 
-export const DefaultIconButton = ({
-        title,
-        alt,
-        src,
-        icon,
-        description,
-        TooltipTypProps,
-        TooltipProps,
-        IconProps,
-        IconTypProps,
-        ...props    
-    }) => {
-    let tooltip_title = ''
-    if (description !== undefined || description === '') {
-    tooltip_title = <Typography
-                        variant="subtitle2"
-                        style={{ color: '#FFF' }}
-                        gutterBottom
-                        {...TooltipTypProps}
-                    >
-                        {description}
-                    </Typography>
-    }
-    return (
-    <Tooltip title={tooltip_title}
-        placement="bottom"
-        {...TooltipProps}
-    >
-        <Grid container>
-            <Grid item xs={12}>
-                { icon === undefined ? 
-                    <img style={{
-                            height: 50,
-                            maxWidth: 100
-                            }}
-                            alt={alt}
-                            src={src}
-                            {...IconProps}
-                    />:
-                    <span className={`mdi mdi-36px ${icon}`}
-                            {...IconProps}
-                    />
-                }
-            </Grid>
-            <Grid item xs={12}>
-                <Typography variant="subtitle2" gutterBottom {...IconTypProps}>
-                    {title}
-                </Typography>
-            </Grid>
-        </Grid>
-    </Tooltip>
-    )
-}
+// Export Modules
+export { Highlight } from './Highlight'
+export { IconComponent } from './IconComponent'
+export { ShowMeta } from './ShowMeta'
+export { ExpandedMeta } from './ExpandedMeta'
+export { ExpandButton } from './ExpandButton'
 
-DefaultIconButton.propTypes = {
-    title: PropTypes.string,
-    alt: PropTypes.string,
-    src: PropTypes.string,
-    icon: PropTypes.string,
-    description: PropTypes.string,
-    TooltipTypProps: PropTypes.object,
-    TooltipProps: PropTypes.object,
-    IconProps: PropTypes.object,
-    IconTypProps: PropTypes.object,
-  }
 
 export const InfoCard = ({
     info,
-    classes,
+    highlight=[],
     CardProps,
     CardContentProps,
-    LeftComponents,
-    RightComponents,
+    titleProps,
+    subtitleProps,
+    displayProps,
+    tagProps,
+    keywordProps,
+    IconButton=IconComponent,
+    LeftComponents=[],
+    RightComponents=[],
+    BottomComponents=[],
     ...props }) => {
     const default_tag_icon = 'mdi-tag-text'
     return (
@@ -93,108 +46,113 @@ export const InfoCard = ({
             <Grid item md={11} sm={10} xs={9}>
               <Grid container>
                 <Grid item md={2} xs={4} style={{ textAlign: 'center' }}>
-                  <CardMedia style={{ marginTop: -30 }} {...info.icon}>
-                    <IconButton {...info.icon} onClick={props.handleClick} value={data}/>
+                  <CardMedia {...info.icon}>
+                    <IconButton {...info.icon}/>
                   </CardMedia>
-                  <Tooltip title={'See more'}
-                    placement="bottom">
-                    <Button aria-label="Expand"
-                      onClick={() => props.handleClick(data)}
-                      className={classes.margin}
-                      style={{ minWidth: 5, paddingTop: 0, paddingBottom: 0 }}
-                    >
-                      <span className={`mdi mdi-chevron-${props.expanded ? 'up': 'down'} mdi-24px`}/>
-                    </Button>
-                  </Tooltip>
+                  {LeftComponents.map((comp, i)=>{
+                    const {component, props} = comp
+                    return <div key={i}>{component(props)}</div>
+                  })}
                 </Grid>
                 <Grid item md={10} xs={8}>
                   <Grid container>
                     <Grid item xs={12}>
                       <Highlight
                         Component={(props) => {
-                          if (data.processed.name.hyperlink !== undefined) {
+                          if (info.name.hyperlink !== undefined) {
                             return (
-                              <Typography variant="subtitle1">
-                                <a href={data.processed.name.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a>
+                              <Typography variant="subtitle1" {...props}>
+                                <a href={info.name.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a>
                               </Typography>
                             )
                           } else {
                             return (
-                              <Typography variant="subtitle1">
+                              <Typography variant="subtitle1" {...props}>
                                 {props.children}
                               </Typography>
                             )
                           }
                         }}
-                        text={data.processed.name.text}
-                        highlight={search}
+                        text={info.name.text}
+                        highlight={highlight}
+                        {...titleProps}
                       />
                     </Grid>
-                    {data.processed.subtitle === undefined ? null :
+                    {info.subtitle === undefined ? null :
                       <Grid item xs={12}>
                         <Highlight
                           Component={(props) => {
-                            if (data.processed.subtitle.hyperlink !== undefined) {
+                            if (info.subtitle.hyperlink !== undefined) {
                               return (
-                                <Typography variant="subtitle2">
-                                  <i><a href={data.processed.subtitle.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a></i>
+                                <Typography variant="subtitle2" {...props}>
+                                  <i><a href={info.subtitle.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a></i>
                                 </Typography>
                               )
                             } else {
                               return (
-                                <Typography variant="subtitle2">
+                                <Typography variant="subtitle2" {...props}>
                                   {props.children}
                                 </Typography>
                               )
                             }
                           }}
-                          text={data.processed.subtitle.text}
-                          highlight={search}
+                          text={info.subtitle.text}
+                          highlight={highlight}
+                          {...subtitleProps}
                         />
                       </Grid>
                     }
-                    {Object.entries(data.processed.display).map(([label, value]) => {
-                      if (value.hyperlink === undefined) {
-                        return (
-                          <Grid item xs={12} key={value.label}>
-                            <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
-                              {value.label}: {value.text}
-                            </Typography>
-                          </Grid>
-                        )
-                      } else {
-                        return (
-                          <Grid item xs={12} key={value.label}>
-                            <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
-                              {value.label}: <a href={value.hyperlink} target="_blank" rel="noopener noreferrer">{value.text}</a>
-                            </Typography>
-                          </Grid>
-                        )
-                      }
+                    {Object.entries(info.display).map(([label, value]) => {
+                      <Highlight
+                        Component={(props) => {
+                          if (value.hyperlink !== undefined) {
+                            return (
+                              <Typography variant="caption" {...props}>
+                                {value.label}: <a href={value.hyperlink} target="_blank" rel="noopener noreferrer">{value.text}</a>
+                              </Typography>
+                            )
+                          } else {
+                            return (
+                              <Typography variant="caption" {...props}>
+                                {value.label}: {value.text}
+                              </Typography>
+                            )
+                          }
+                        }}
+                        text={info.subtitle.text}
+                        highlight={highlight}
+                        {...displayProps}
+                      />
                     })}
                     <Grid item xs={12}>
                     </Grid>
                     <Grid item xs={12}>
-                      {data.processed.tags.map((tag) =>
+                      {info.tags.map((tag) =>
                         <Tooltip title={tag.text}
                           key={tag.text}
                           placement="bottom">
-                          <Chip className={classes.chip} key={tag.label}
-                            avatar={<Icon className={`${classes.icon} mdi ${tag.icon || default_tag_icon} mdi-18px`} />}
+                          <Chip style={{
+                              margin: '5px 10px 5px 0',
+                              maxWidth: 500,
+                            }} key={tag.label}
+                            avatar={<Icon className={`mdi ${tag.icon || default_tag_icon} mdi-18px`} style={{
+                              paddingLeft: 10,
+                            }} />}
                             label={<Highlight
-                              Component={(props) => <span {...props} className={classes.chipLabel}>{props.children}</span>}
+                              Component={(props) => <span style={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                display: 'inline-block',
+                                maxWidth: 400,
+                              }} {...props} >{props.children}</span>}
                               text={`${tag.label}: ${tag.text}`}
-                              highlight={search}
+                              highlight={highlight}
                             />}
-                            onClick={() => {
-                              if (tag.clickable){
-                                props.onChipClick(tag.text)
-                              }
-                            }}
+                            {...tagProps}
                           />
                         </Tooltip>)}
                     </Grid>
-                    {Object.entries(data.processed.keywords).map(([label, value]) =>(
+                    {Object.entries(info.keywords).map(([label, value]) =>(
                       <Grid item xs={12} key={value.label}>
                         <Typography variant="caption">
                           {value.label}: 
@@ -203,16 +161,28 @@ export const InfoCard = ({
                           <Tooltip title={v}
                             key={v}
                             placement="bottom">
-                            <Chip className={classes.chip} key={v}
-                              avatar={<Icon className={`${classes.icon} mdi ${value.icon || default_tag_icon} mdi-18px`} />}
+                            <Chip style={{
+                                margin: '5px 10px 5px 0',
+                                maxWidth: 500,
+                              }} key={v}
+                              avatar={<Icon className={`mdi ${value.icon || default_tag_icon} mdi-18px`} style={{
+                                paddingLeft: 10,
+                              }}  />}
                               label={<Highlight
-                                Component={(props) => <span {...props} className={classes.chipLabel}>{props.children}</span>}
+                                Component={(props) => <span {...props} style={{
+                                  margin: '5px 10px 5px 0',
+                                  maxWidth: 400,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  display: 'inline-block',
+                                }}>{props.children}</span>}
                                 text={`${v}`}
-                                highlight={search}
+                                highlight={highlight}
                               />}
                               onClick={() => {
                                 props.onChipClick(v)
                               }}
+                              {...keywordProps}
                             />
                         </Tooltip>
                         ))}
@@ -224,40 +194,52 @@ export const InfoCard = ({
             </Grid>
             <Grid item md={1} sm={2} xs={3}>
               <Grid container direction={'column'}>
-                { props.current_table === 'libraries' || props.deactivate_download ? null :
-                  <Grid item>
-                    <Options type={props.current_table} item={data.original} ui_values={ui_values}
-                      submit={() => {
-                        console.log('submitted')
-                      }} schemas={schemas} history={props.history}/>
-                  </Grid>
-                }
-                { data.processed.scores !== undefined ?
-                  <Grid item>
-                    <ScorePopper scores={data.processed.scores}
-                      score_icon={score_icon}
-                      sorted={props.sorted}
-                      sortBy={props.sortBy}
-                      classes={classes}
-                    />
-                  </Grid> : null
-                }
-                { !props.deactivate_download && data.processed.download !== undefined && data.processed.download.length > 0 ?
-                  <Grid item style={{ textAlign: "center" }}>
-                    <DownloadButton data={data.processed.download} {...props} />
-                  </Grid> : null
-                }
+                {RightComponents.map((comp, i)=>{
+                    const {component, props} = comp
+                    return <div key={i}>{component(props)}</div>
+                  })}
               </Grid>
             </Grid>
           </Grid>
         </CardContent>
-        <Collapse in={props.expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            {expandRenderer({data, ...props})}
-            {/* <ExpandedMeta data={data} {...props}/> */}
-          </CardContent>
-        </Collapse>
+        {BottomComponents.map((comp, i)=>{
+          const {component, props} = comp
+          return <div key={i}>{component(props)}</div>
+        })}
       </Card>
     )
+  }
+
+  InfoCard.propTypes = {
+    info: PropTypes.shape({
+      icon: PropTypes.shape({
+        src: PropTypes.string,
+        alt: PropTypes.string,
+        title: PropTypes.string,
+        icon: PropTypes.string,
+        description: PropTypes.string,
+      })
+    }),
+    highlight: PropTypes.arrayOf(PropTypes.string),
+    CardProps: PropTypes.object,
+    CardContentProps: PropTypes.object,
+    titleProps: PropTypes.object,
+    subtitleProps: PropTypes.object,
+    displayProps: PropTypes.object,
+    tagProps: PropTypes.object,
+    keywordProps: PropTypes.object,
+    IconButton: PropTypes.node,
+    LeftComponents: PropTypes.arrayOf(PropTypes.shape({
+      Component: PropTypes.node,
+      props: PropTypes.object
+    })),
+    RightComponents: PropTypes.arrayOf(PropTypes.shape({
+      Component: PropTypes.node,
+      props: PropTypes.object
+    })),
+    BottomComponents: PropTypes.arrayOf(PropTypes.shape({
+      Component: PropTypes.node,
+      props: PropTypes.object
+    }))
   }
   
