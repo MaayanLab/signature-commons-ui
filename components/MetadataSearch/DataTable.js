@@ -29,16 +29,6 @@ import DownloadButton from '../Downloads'
 const Options = dynamic(() => import('../Options'), { ssr: false })
 
 const styles = (theme) => ({
-  expansion: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-    margin: 20,
-    overflowWrap: 'break-word',
-    wordWrap: 'break-word',
-    height: '300px',
-    overflow: 'auto',
-  },
   chipRoot: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -66,16 +56,6 @@ const styles = (theme) => ({
   },
   actions: {
     display: 'flex',
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
   },
   icon: {
     paddingBottom: 35,
