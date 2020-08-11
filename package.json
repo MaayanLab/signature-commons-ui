@@ -1,8 +1,8 @@
 {
-  "name": "signature-commons-ui",
+  "name": "biotoolstory",
   "version": "0.7.2",
   "private": true,
-  "homepage": "https://amp.pharm.mssm.edu/sigcom/",
+  "homepage": "https://maayanlab.cloud/biotoolstory",
   "dependencies": {
     "@dcic/signature-commons-schema": "^1.3.9",
     "@dcic/signature-commons-ui-components-running-sum": "file:standalone/running-sum",
