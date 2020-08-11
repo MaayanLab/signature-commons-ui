@@ -3,10 +3,8 @@ import { Set } from 'immutable'
 import { action_definitions } from '../redux/action-types'
 import { get_summary_statistics,
   resolve_entities,
-  find_synonyms,
   query_overlap,
-  query_rank,
-  fetch_all_as_dictionary } from '../helper/fetch_methods'
+  query_rank } from '../helper/fetch_methods'
 import { fetch_count } from '../helper/server_side'
 import { parse_entities } from '../helper/misc'
 import { fill_palette } from '../helper/theme_filler'

@@ -37,7 +37,7 @@ const operationMapper = {
   new_filter: (table, current_table) => ({
     metadata_search: table === current_table,
     value_count: table === current_table,
-    count: true,
+    count: table === current_table,
   }),
   change_tab: (table, current_table) => ({
     metadata_search: table === current_table,
@@ -46,8 +46,8 @@ const operationMapper = {
   }),
   order: (table, current_table) => ({
     metadata_search: table === current_table,
-    value_count: false,
-    count: false,
+    value_count: table === current_table,
+    count: table === current_table,
   }),
 }
 
@@ -104,37 +104,7 @@ class MetadataSearch extends React.Component {
     const schemas = await get_schemas()
     const new_table = this.props.reverse_preferred_name[this.props.match.params.table]
     const param_str = decodeURI(this.props.location.search)
-    let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-    for (const table of this.props.tables) {
-      const operations_key = this.getOperationsKey()
-      const operations = operationMapper[operations_key](table, new_table)
-      if (params[table]) {
-        params = {
-          ...params,
-          [table]: {
-            ...params[table],
-            operations,
-          },
-        }
-      } else {
-        params = {
-          ...params,
-          [table]: {
-            operations,
-          },
-        }
-      }
-      if (this.state.order[table] !== undefined && params[table].order !== undefined && params[table].order !== this.state.order[table]) {
-        this.setState({
-          order: {
-            ...this.state.order,
-            [table]: params[table].order,
-          },
-        })
-      } else if (this.state.order[table] !== undefined && params[table].order === undefined) {
-        params[table].order = this.state.order[table]
-      }
-    }
+    let params = this.format_param(param_str, new_table)
     this.props.searchBoxFunction(params)
     const index = this.props.tables.filter(table=>this.props.models[table]!==undefined && this.props.models[table].results.count).indexOf(new_table)
     this.setState({
@@ -155,47 +125,15 @@ class MetadataSearch extends React.Component {
       if (model.results.metadata_search === undefined) {
         const operations_key = this.getOperationsKey()
         const operations = operationMapper[operations_key](current_table, current_table)
-        params = this.format_param(current_param_str, operations, current_table)
+        params = this.format_param(current_param_str, current_table)
         this.props.searchFunction(params)
       }
     } else if (current_param_str !== old_param_str) {
       if (this.props.location.state === undefined || this.props.location.state.new_search) {
-        params = ReadURLParams(current_param_str, this.props.reverse_preferred_name)
-        for (const table of this.props.tables) {
-          const operations_key = this.getOperationsKey()
-          const operations = operationMapper[operations_key](table, current_table)
-          if (params[table]) {
-            params = {
-              ...params,
-              [table]: {
-                ...params[table],
-                operations,
-              },
-            }
-          } else {
-            params = {
-              ...params,
-              [table]: {
-                operations,
-              },
-            }
-          }
-          if (this.state.order[table] !== undefined && params[table].order !== undefined && params[table].order !== this.state.order[table]) {
-            this.setState({
-              order: {
-                ...this.state.order,
-                [table]: params[table].order,
-              },
-            })
-          } else if (this.state.order[table] !== undefined && params[table].order === undefined) {
-            params[table].order = this.state.order[table]
-          }
-        }
+        params = this.format_param(current_param_str, current_table)
         this.props.searchBoxFunction(params)
       } else {
-        const operations_key = this.getOperationsKey()
-        const operations = operationMapper[operations_key](current_table, current_table)
-        params = this.format_param(current_param_str, operations, current_table)
+        params = this.format_param(current_param_str, current_table)
         this.props.searchFunction(params)
       }
       let pagination = this.state.pagination
@@ -231,23 +169,36 @@ class MetadataSearch extends React.Component {
     }
   }
 
-  format_param = (param_str, operations, table) => {
+  format_param = (param_str, current_table) => {
     let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-
-    if (params[table]) {
-      params = {
-        ...params,
-        [table]: {
-          ...params[table],
-          operations,
-        },
+    for (const table of this.props.tables) {
+      const operations_key = this.getOperationsKey()
+      const operations = operationMapper[operations_key](table, current_table)
+      if (params[table]) {
+        params = {
+          ...params,
+          [table]: {
+            ...params[table],
+            operations,
+          },
+        }
+      } else {
+        params = {
+          ...params,
+          [table]: {
+            operations,
+          },
+        }
       }
-    } else {
-      params = {
-        ...params,
-        [table]: {
-          operations,
-        },
+      if (this.state.order[table] !== undefined && params[table].order !== undefined && params[table].order !== this.state.order[table]) {
+        this.setState({
+          order: {
+            ...this.state.order,
+            [table]: params[table].order,
+          },
+        })
+      } else if (this.state.order[table] !== undefined && params[table].order === undefined) {
+        params[table].order = this.state.order[table]
       }
     }
     return params
