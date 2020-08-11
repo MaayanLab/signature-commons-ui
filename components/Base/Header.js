@@ -114,15 +114,6 @@ export function NavList(props) {
                 Integrative Networks
               </Link>
             </ListItem>
-            <ListItem
-              onClick={toggleDrawer}
-              selected={location.pathname === '/Visualizations'}
-              className={classes.nested}
-            >
-              <Link className={classes.link} to={'/Visualizations'}>
-                GIVWE Visualizations
-              </Link>
-            </ListItem>
           </List>
         </Collapse>
       </React.Fragment>
@@ -218,15 +209,6 @@ export function NavMenu(props) {
                     >
                       <Link className={classes.link} to={'/Network'}>
                         Integrative Networks
-                      </Link>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={(event)=>{ handleClose(event, "visualization")}}
-                      selected={location.pathname === '/Visualizations'}
-                      className={classes.nested}
-                    >
-                      <Link className={classes.link} to={'/Visualizations'}>
-                        GIVWE Visualizations
                       </Link>
                     </MenuItem>
                   </MenuList>
