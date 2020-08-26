@@ -368,13 +368,15 @@ export const resolve_entities = async (props) => {
 // }
 
 
-export async function get_schemas(schema_validator) {
+export async function get_schemas() {
   const { response: schema_db } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {
       filter: {
         where: {
-          'meta.$validator': schema_validator || '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
+          'meta.$validator': {
+            like: '%/meta/schema/ui-schema.json%'
+          },
         },
       },
     },
