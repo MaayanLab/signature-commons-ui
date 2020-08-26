@@ -11,7 +11,7 @@ export const iconOf = {
 
 export async function get_library_resources() {
   // fetch schemas if missing
-  const schemas = await get_schemas('/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json')
+  const schemas = await get_schemas()
   // fetch resources on database
   const { response } = await fetch_meta({
     endpoint: '/resources',

@@ -306,7 +306,7 @@ export async function get_histograms(ui_values) {
 }
 
 export async function get_barscores(ui_values) {
-  const schemas = await get_schemas('/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json')
+  const schemas = await get_schemas()
   const { response: counting_fields } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {

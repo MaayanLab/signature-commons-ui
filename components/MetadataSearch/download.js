@@ -21,7 +21,9 @@ export async function fetch_schemas() {
       body: {
         filter: {
           where: {
-            'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json',
+            'meta.$validator': {
+              like: '%/meta/schema/ui-schema.json%'
+            }
           },
         },
       },
