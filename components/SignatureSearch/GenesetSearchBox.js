@@ -88,7 +88,7 @@ const Geneset = (props) => (
         onAdd={value=>{
           const input = {
             ...props.input,
-            unprocessed_entities: [...props.input.unprocessed_entities, ...value.trim().split(/[ \t\r\n;]+/)]
+            unprocessed_entities: [...props.input.unprocessed_entities, ...value.trim().split(/[\t\r\n;]+/)]
           }
           props.updateInput(input)
         }}
@@ -160,7 +160,7 @@ const UpDownGeneset = (props) => (
         onAdd={value=>{
           const input = {
             ...props.input,
-            unprocessed_up_entities: [...props.input.unprocessed_up_entities, ...value.trim().split(/[ \t\r\n;]+/)]
+            unprocessed_up_entities: [...props.input.unprocessed_up_entities, ...value.trim().split(/[\t\r\n;]+/)]
           }
           props.updateInput(input)
         }}
@@ -203,7 +203,7 @@ const UpDownGeneset = (props) => (
         onAdd={value=>{
           const input = {
             ...props.input,
-            unprocessed_down_entities: [...props.input.unprocessed_down_entities, ...value.trim().split(/[ \t\r\n;]+/)]
+            unprocessed_down_entities: [...props.input.unprocessed_down_entities, ...value.trim().split(/[\t\r\n;]+/)]
           }
           props.updateInput(input)
         }}
