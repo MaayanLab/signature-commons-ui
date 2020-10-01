@@ -7,10 +7,10 @@ import Color from 'color'
 import { connect } from 'react-redux'
 import { makeTemplate } from '../../util/makeTemplate'
 
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles'
 
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     ...theme.mixins.gutters(),
     paddingTop: theme.spacing.unit * 2,
@@ -20,15 +20,15 @@ const styles = theme => ({
   footer_links: {
     color: theme.palette.default.contrastText,
   },
-});
+})
 
-const FooterLink = ({src, alt, href, title, classes, containerProps, imageProps}) => {
-  if (href){
-    return(
-      <Button href={href} style={{width: 150}} {...containerProps}>
-        <Grid container align={"center"}>
+const FooterLink = ({ src, alt, href, title, classes, containerProps, imageProps }) => {
+  if (href) {
+    return (
+      <Button href={href} style={{ width: 150 }} {...containerProps}>
+        <Grid container align={'center'}>
           <Grid item xs>
-            <img src={makeTemplate(src, {})} alt={alt||title} style={{width: 150}} {...imageProps}/>
+            <img src={makeTemplate(src, {})} alt={alt || title} style={{ width: 150 }} {...imageProps}/>
           </Grid>
           <Grid item xs>
             <Typography variant="caption" className={classes.footer_links}>{title}</Typography>
@@ -36,12 +36,12 @@ const FooterLink = ({src, alt, href, title, classes, containerProps, imageProps}
         </Grid>
       </Button>
     )
-  }else {
-    return(
-      <Paper href={href} elevation={0} style={{width: 150, background:"inherit"}} {...containerProps}>
-        <Grid container align={"center"}>
+  } else {
+    return (
+      <Paper href={href} elevation={0} style={{ width: 150, background: 'inherit' }} {...containerProps}>
+        <Grid container align={'center'}>
           <Grid item xs>
-            <img src={makeTemplate(src, {})} alt={alt||title} style={{width: 150}} {...imageProps}/>
+            <img src={makeTemplate(src, {})} alt={alt || title} style={{ width: 150 }} {...imageProps}/>
           </Grid>
           <Grid item xs>
             <Typography variant="caption" className={classes.footer_links}>{title}</Typography>
@@ -62,9 +62,9 @@ const mapStateToProps = (state) => {
 function Footer(props) {
   const { classes, ui_values, theme, ...rest } = props
   const background = Color(theme.palette.default.main)
-  let powered_src = "${PREFIX}/static/powered.png"
-  if (background.isDark()){
-    powered_src = "${PREFIX}/static/powered_light.png"
+  let powered_src = '${PREFIX}/static/powered.png'
+  if (background.isDark()) {
+    powered_src = '${PREFIX}/static/powered_light.png'
   }
   return (
     <Paper className={classes.root} elevation={0} square >
@@ -81,17 +81,17 @@ function Footer(props) {
           <a className="github-button" href={ui_values.github} data-size="large" aria-label="View Source Code on GitHub">View Source Code</a><br />
           <a className="github-button" href={ui_values.github_issues} data-size="large" aria-label="Submit Bug Report on GitHub">Submit Bugs and Corrections</a>
         </Grid>
-        {ui_values.footer_links.map(itemProps=>(
+        {ui_values.footer_links.map((itemProps) => (
           <Grid item key={itemProps.alt}>
             <FooterLink classes={classes} {...itemProps} />
           </Grid>
         ))}
-        {ui_values.powered ? 
+        {ui_values.powered ?
           <Grid item>
-            <FooterLink classes={classes} 
+            <FooterLink classes={classes}
               src={powered_src}
               alt="sigcom" />
-          </Grid>: null
+          </Grid> : null
         }
       </Grid>
     </Paper>

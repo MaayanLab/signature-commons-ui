@@ -5,12 +5,12 @@ import dynamic from 'next/dynamic'
 import { connect } from 'react-redux'
 import { MuiThemeProvider } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
-import ErrorIcon from '@material-ui/icons/Error';
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import { withStyles } from '@material-ui/core/styles';
+import ErrorIcon from '@material-ui/icons/Error'
+import CloseIcon from '@material-ui/icons/Close'
+import IconButton from '@material-ui/core/IconButton'
+import Snackbar from '@material-ui/core/Snackbar'
+import SnackbarContent from '@material-ui/core/SnackbarContent'
+import { withStyles } from '@material-ui/core/styles'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import Base from '../../components/Base'
@@ -44,11 +44,11 @@ function mapDispatchToProps(dispatch) {
     },
     closeSnackBar: () => {
       dispatch(closeSnackBar())
-    }
+    },
   }
 }
 
-const snackStyles = theme => ({
+const snackStyles = (theme) => ({
   error: {
     backgroundColor: theme.palette.error.dark,
   },
@@ -63,10 +63,10 @@ const snackStyles = theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-});
+})
 
 const SigcomSnackbar = withStyles(snackStyles)((props) => {
-  const { classes, message, onClose, variant, ...other } = props;
+  const { classes, message, onClose, variant, ...other } = props
 
   return (
     <SnackbarContent
@@ -120,7 +120,7 @@ class Home extends React.PureComponent {
   api = (props) => (
     <Grid container>
       {this.props.ui_values.nav.MetadataSearch.active ?
-      <Grid xs={12} lg={this.props.ui_values.nav.SignatureSearch.active ? 6: 12}>
+      <Grid xs={12} lg={this.props.ui_values.nav.SignatureSearch.active ? 6 : 12}>
         <Lazy>{async () => (
           <SwaggerUI
             url={`${await meta_url()}/openapi.json`}
@@ -129,9 +129,9 @@ class Home extends React.PureComponent {
             filter={true}
           />
         )}</Lazy>
-      </Grid>: null }
-      {this.props.ui_values.nav.SignatureSearch.active ? 
-      <Grid xs={12} lg={this.props.ui_values.nav.MetadataSearch.active? 6: 12}>
+      </Grid> : null }
+      {this.props.ui_values.nav.SignatureSearch.active ?
+      <Grid xs={12} lg={this.props.ui_values.nav.MetadataSearch.active ? 6 : 12}>
         <Lazy>{async () => (
           <SwaggerUI
             url={`${await data_url()}/swagger.yml`}
@@ -140,7 +140,7 @@ class Home extends React.PureComponent {
             filter={true}
           />
         )}</Lazy>
-      </Grid>: null}
+      </Grid> : null}
     </Grid>
   )
 
@@ -184,7 +184,7 @@ class Home extends React.PureComponent {
   }
 
   render = () => {
-    if (this.props.theme===null){
+    if (this.props.theme === null) {
       return <CircularProgress />
     }
     return (
@@ -194,7 +194,7 @@ class Home extends React.PureComponent {
             vertical: 'bottom',
             horizontal: 'left',
           }}
-          open={this.props.error_message!==null}
+          open={this.props.error_message !== null}
           autoHideDuration={6000}
           onClose={this.props.closeSnackBar}
         >
@@ -238,7 +238,7 @@ class Home extends React.PureComponent {
                 path={this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}
                 exact
                 component={(props) => {
-                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}${this.props.ui_values.overlap_search ? '/Overlap': '/Rank'}`} />
+                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}${this.props.ui_values.overlap_search ? '/Overlap' : '/Rank'}`} />
                 }}
               />
               : null

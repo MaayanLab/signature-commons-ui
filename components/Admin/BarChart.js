@@ -12,7 +12,7 @@ const CustomTick = (props) => {
   let value = payload.value
   if (value.length > 23) {
     value = value.split('(')[0]
-    if (value.length > 23){
+    if (value.length > 23) {
       value = value.split(',')[0].replace(/-/g, ' ').split(' ').filter((v) => articles.indexOf(v.toLowerCase()) === -1).map((v) => v[0]).join('')// .split(",").join(", ")
     }
   }
@@ -33,8 +33,8 @@ export const BarChart = ({ meta_counts, ui_values, searchTerm, searchTable, ...p
         {...bar_chart_style.Chart}
       >
         <Tooltip {...bar_chart_style.Tooltip} />
-        <Bar dataKey="counts" {...bar_chart_style.Bar} 
-            onClick={(data)=>searchTerm(ui_values, searchTable, data)}
+        <Bar dataKey="counts" {...bar_chart_style.Bar}
+          onClick={(data) => searchTerm(ui_values, searchTable, data)}
         />
         <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />} hide={props.XAxis === undefined || !props.XAxis} />
         <YAxis dataKey="counts" type="number" {...bar_chart_style.YAxis} hide={props.YAxis === undefined || !props.YAxis} />

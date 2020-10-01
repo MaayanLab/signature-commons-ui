@@ -71,14 +71,13 @@ export const rank_data_results = async ({ up, down, signature, database }) => {
 }
 
 export default class LibraryResults extends React.Component {
-  
   constructor(props) {
     super(props)
     this.state = {
       sorted_results: null,
     }
   }
-  
+
   check_column = ({ schema, prop, item }) => {
     if (schema.properties[prop].text === undefined) {
       return false
@@ -132,7 +131,7 @@ export default class LibraryResults extends React.Component {
       textLabels: {
         toolbar: {
           downloadCsv: 'Download TSV',
-        }
+        },
       },
       onDownload: (buildHead_, buildBody_, columns, all_data) => {
         const new_columns = [...columns, { label: 'Meta', name: 'Meta', download: true }]
@@ -149,8 +148,8 @@ export default class LibraryResults extends React.Component {
             },
           })],
         }))
-        const CSVHead = buildHead(new_columns, { downloadOptions } )
-        const CSVBody = buildBody(new_data, new_columns, { downloadOptions } )
+        const CSVHead = buildHead(new_columns, { downloadOptions })
+        const CSVBody = buildBody(new_data, new_columns, { downloadOptions })
         return `${CSVHead}${CSVBody}`.trim()
       },
       renderExpandableRow: (rowData, rowMeta) => (
@@ -246,44 +245,44 @@ export default class LibraryResults extends React.Component {
 
   componentDidMount = () => {
     const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
-                            .map(r=>{
-                              const data = get_card_data(r.library,this.props.schemas)
-                              data.processed.scores = {
-                                signature_count: {
-                                  label: `${this.props.ui_values.preferred_name_singular.signatures || "Signature"} Count`,
-                                  value: r.signatures.length,
-                                  icon: "mdi-counter"
-                                }
-                              }
-                              return {
-                                ...data,
-                                signatures: r.signatures,
-                              }
-                            })
+        .map((r) => {
+          const data = get_card_data(r.library, this.props.schemas)
+          data.processed.scores = {
+            signature_count: {
+              label: `${this.props.ui_values.preferred_name_singular.signatures || 'Signature'} Count`,
+              value: r.signatures.length,
+              icon: 'mdi-counter',
+            },
+          }
+          return {
+            ...data,
+            signatures: r.signatures,
+          }
+        })
     this.setState({
-      sorted_results
+      sorted_results,
     })
   }
 
   componentDidUpdate = (prevProps) => {
-    if (prevProps.location.pathname !== this.props.location.pathname){
+    if (prevProps.location.pathname !== this.props.location.pathname) {
       const sorted_results = [...this.props.results].sort((a, b) => b.signatures.length - a.signatures.length)
-                            .map(r=>{
-                              const data = get_card_data(r.library,this.props.schemas)
-                              data.processed.scores = {
-                                signature_count: {
-                                  label: `${this.props.ui_values.preferred_name_singular.signatures || "Hits"} Count`,
-                                  value: r.signatures.length,
-                                  icon: "mdi-counter"
-                                }
-                              }
-                              return {
-                                ...data,
-                                signatures: r.signatures,
-                              }
-                            })
+          .map((r) => {
+            const data = get_card_data(r.library, this.props.schemas)
+            data.processed.scores = {
+              signature_count: {
+                label: `${this.props.ui_values.preferred_name_singular.signatures || 'Hits'} Count`,
+                value: r.signatures.length,
+                icon: 'mdi-counter',
+              },
+            }
+            return {
+              ...data,
+              signatures: r.signatures,
+            }
+          })
       this.setState({
-        sorted_results
+        sorted_results,
       })
     }
   }
@@ -294,16 +293,16 @@ export default class LibraryResults extends React.Component {
     }
     return (
       <div>
-        <Grid container spacing={32} style={{marginBottom:10}}>
+        <Grid container spacing={32} style={{ marginBottom: 10 }}>
           <Grid item xs={12}>
             <DataTable schemas={this.props.schemas}
               ui_values={this.props.ui_values}
               collection={this.state.sorted_results}
               loaded={true}
-              current_table={"libraries"}
+              current_table={'libraries'}
               history={this.props.history}
               deactivate_download={true}
-              expandRenderer={({data, ...props}) => this.render_table({ result: data })}
+              expandRenderer={({ data, ...props }) => this.render_table({ result: data })}
             />
           </Grid>
         </Grid>

@@ -18,7 +18,7 @@ export const value_by_type = {
       return null
     } else {
       return { text: val, hyperlink, label }
-    } 
+    }
   },
   'img': ({ label, prop, data }) => {
     const src = makeTemplate(prop.src, data)
@@ -37,15 +37,15 @@ export const value_by_type = {
     }
   },
   'object': ({ label, prop, data }) => {
-    if (prop.keywords){
-      const val = makeTemplateForObject("${JSON.stringify("+ prop.Field_Name +")}", data, prop.text)
+    if (prop.keywords) {
+      const val = makeTemplateForObject('${JSON.stringify(' + prop.Field_Name + ')}', data, prop.text)
       if (val === 'undefined' || val.length === 0) {
         return null
       } else {
         return { object: val, label }
       }
-    }else {
-      const val = makeTemplateForObject("${JSON.stringify("+ prop.Field_Name +")}", data, prop.text)
+    } else {
+      const val = makeTemplateForObject('${JSON.stringify(' + prop.Field_Name + ')}', data, prop.text)
       if (val === 'undefined' || val.length === 0) {
         return null
       } else {
@@ -60,7 +60,7 @@ export const value_by_type = {
     } else {
       return { list: val, label }
     }
-  }
+  },
 }
 
 export const get_card_data = (data, schemas, highlight = undefined) => {
@@ -70,13 +70,13 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
     const scores = {}
     let tags = []
     let download = []
-    let keywords = {}
+    const keywords = {}
     const processed = { id: data.id, display: {} }
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
 
-      if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data)){
+      if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data)) {
         const val = value_by_type[prop.type]({ label, prop, data, highlight })
         if (prop.name) {
           processed.name = { text: data.id }
@@ -102,11 +102,11 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
           if (val !== null) {
             download = [
               ...download,
-              { 
+              {
                 ...val,
                 icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
                 priority: prop.priority,
-              }
+              },
             ]
           }
         }
@@ -127,11 +127,11 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
         }
         if (prop.keywords) {
           // TODO: Update schemas so it has list
-          if (val !== null){
+          if (val !== null) {
             keywords[label] = {
               label,
-              value : val.object,
-              icon: prop.MDI_Icon || 'mdi-tag-multiple'
+              value: val.object,
+              icon: prop.MDI_Icon || 'mdi-tag-multiple',
             }
           }
         }
@@ -141,7 +141,7 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
               ...val,
               icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
               priority: prop.priority,
-              clickable: prop.clickable
+              clickable: prop.clickable,
             }]
           }
         }
@@ -289,7 +289,7 @@ class MetadataSearchResults extends React.Component {
           ...params[curr_table],
           limit: perPage,
           skip: page * perPage,
-          order: this.props.order[curr_table]
+          order: this.props.order[curr_table],
         },
       }
       const query = URLFormatter({ params, preferred_name: this.props.preferred_name })
@@ -320,7 +320,7 @@ class MetadataSearchResults extends React.Component {
           ...params[curr_table],
           limit: perPage,
           skip: page * perPage,
-          order: this.props.order[curr_table]
+          order: this.props.order[curr_table],
         },
       }
       const query = URLFormatter({ params, preferred_name: this.props.preferred_name })
@@ -390,7 +390,7 @@ class MetadataSearchResults extends React.Component {
           search={this.props.search}
           sort_tags={this.state.sort_tags}
           deactivate_download={this.props.deactivate_download}
-          expandRenderer={(props)=>ExpandedMeta(props)}
+          expandRenderer={(props) => ExpandedMeta(props)}
         />
         <div align="right">
           <TablePagination

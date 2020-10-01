@@ -68,7 +68,7 @@ const Input = (props) => (
         style: {
           fontSize: props.small ? 12 : 15,
           textAlign: 'left',
-          height: "2rem",
+          height: '2rem',
         },
       },
       ...props.InputProps,
@@ -145,7 +145,7 @@ export class SearchBox extends React.Component {
           maxWidth: 300,
         }}
         avatar={<Icon className={`${this.props.classes.icon} mdi ${chip_icon} mdi-18px`} />}
-        label={chip_value.length < 25 ? chip_value: chip_value.substring(0,22)+"..."}
+        label={chip_value.length < 25 ? chip_value : chip_value.substring(0, 22) + '...'}
         onDelete={handleDelete}
         className={`${className} ${chip_class}`}
       />

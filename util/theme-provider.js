@@ -22,7 +22,7 @@ const defaultTheme = {
   palette: {
     primary: {
       main: blue[500],
-      contrastText: '#FFF'
+      contrastText: '#FFF',
     },
     secondary: {
       main: yellow[900],
@@ -44,19 +44,19 @@ const defaultTheme = {
       main: grey[500],
     },
     defaultChipLight: {
-      main: grey[300]
-    }
+      main: grey[300],
+    },
 
   },
   card: {
     bottomCard: {
       palette: {},
-      overrides: {}
+      overrides: {},
     },
     topCard: {
       palette: {},
-      overrides: {}
-    }
+      overrides: {},
+    },
   },
   chipColors: {
     warning: { backgroundColor: amber[300], color: '#000' },

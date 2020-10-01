@@ -8,7 +8,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import IconButton from './IconButton'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { connect } from 'react-redux'
 import { reportError } from '../util/redux/actions'
 import { makeTemplate } from '../util/makeTemplate'
@@ -36,7 +36,7 @@ function mapDispatchToProps(dispatch) {
   return {
     reportError: (error) => {
       dispatch(reportError(error))
-    }
+    },
   }
 }
 
@@ -74,8 +74,8 @@ const EnrichrDialog = (props) => {
             <Typography style={{ fontSize: 15 }} align="center" variant="caption" display="block">
               Go to Enrichr
             </Typography>
-          </a>:
-          <div style={{textAlign: "center"}}>
+          </a> :
+          <div style={{ textAlign: 'center' }}>
             <CircularProgress />
           </div>
         }
@@ -85,11 +85,11 @@ const EnrichrDialog = (props) => {
 }
 
 async function submit_sigcom(item, history) {
-  if (item.library.dataset_type==="rank_matrix"){
+  if (item.library.dataset_type === 'rank_matrix') {
     history.push({
       pathname: `/SignatureSearch/Rank/${item.id}`,
     })
-  }else{
+  } else {
     history.push({
       pathname: `/SignatureSearch/Overlap/${item.id}`,
     })
@@ -105,13 +105,13 @@ class Options extends React.Component {
       enrichr_ready: false,
       enrichr_open: false,
       enrichr_id: '',
-      ENRICHR_URL: null
+      ENRICHR_URL: null,
     }
   }
 
   componentDidMount = async () => {
     const ENRICHR_URL = await enrichr_url()
-    this.setState({ENRICHR_URL})
+    this.setState({ ENRICHR_URL })
   }
 
   handleClick = (event) => {
@@ -148,13 +148,13 @@ class Options extends React.Component {
         } else {
           // data = signature.data.map((d) => get_label(d, schemas))
           for (const d of signature.data) {
-            if (d.meta!==undefined){
+            if (d.meta !== undefined) {
               data = [...data, get_label(d, schemas)]
             }
           }
         }
         const filename = get_label(signature, schemas)
-        if (data.length > 0){
+        if (data.length > 0) {
           const formData = new FormData()
           formData.append('list', data.join('\n'))
           formData.append('description', filename + '')
@@ -168,16 +168,16 @@ class Options extends React.Component {
             enrichr_id: response['shortId'],
           }))
         } else {
-          this.props.reportError({message: "Empty entities"})
+          this.props.reportError({ message: 'Empty entities' })
           this.setState((prevState) => ({
-            enrichr_open: false
-          })) 
-        }       
+            enrichr_open: false,
+          }))
+        }
       } catch (error) {
         this.props.reportError(error)
         this.setState((prevState) => ({
-          enrichr_open: false
-        })) 
+          enrichr_open: false,
+        }))
       }
       // window.open(`${ENRICHR_URL}/enrich?dataset=${response['shortId']}`, '_blank')
     })
