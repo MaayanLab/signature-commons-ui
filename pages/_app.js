@@ -10,7 +10,7 @@ import serializeError from 'serialize-error'
 import '../styles/index.scss'
 import withRedux from 'next-redux-wrapper'
 import initializeStore from '../util/redux/store'
-import CssBaseline from '@material-ui/core/CssBaseline';
+import CssBaseline from '@material-ui/core/CssBaseline'
 
 class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -36,7 +36,7 @@ class App_ extends App {
     if (process.env.NODE_ENV === 'development' && Component.getInitialProps && !this.state.loaded) {
       pageProps = await Component.getInitialProps()
     }
-    if (pageProps!==undefined){
+    if (pageProps !== undefined) {
       if (pageProps.error) {
         this.setState({
           error: 'error',
@@ -48,7 +48,7 @@ class App_ extends App {
           loaded: true,
         })
       }
-    }else {
+    } else {
       this.setState({
         loaded: true,
       })

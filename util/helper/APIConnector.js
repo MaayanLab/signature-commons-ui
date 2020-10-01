@@ -16,13 +16,13 @@ const plural_mapper = {
   entity: 'entities',
 }
 
-function process_search_clauses(search_clauses){
+function process_search_clauses(search_clauses) {
   let where = {}
   if (search_clauses.or.length > 0) {
     if (search_clauses.and.length > 0) {
       // or takes precedence over and
       where['or'] = [...search_clauses.or, { and: search_clauses.and }]
-    } else{
+    } else {
       where['or'] = search_clauses.or
     }
   } else {
@@ -49,16 +49,16 @@ function process_search_clauses(search_clauses){
     } else {
       where = {
         ...where,
-        and: search_clauses.not
+        and: search_clauses.not,
       }
     }
   }
-  return {where}
+  return { where }
 }
 
 export function build_where({ search, filters, order, indexed_keys }) {
   search = search || []
-  if (search.length === 0 && filters===undefined && order===undefined) return undefined
+  if (search.length === 0 && filters === undefined && order === undefined) return undefined
   let where = {}
   const search_clauses = {
     and: [],
@@ -68,62 +68,62 @@ export function build_where({ search, filters, order, indexed_keys }) {
       and: [],
       or: [],
       not: [],
-    }
+    },
   }
 
   for (const q of search) {
     let search_term = q
-    let context = "and"
+    let context = 'and'
     if (q.startsWith('!') || q.startsWith('-')) {
       // and not
       search_term = q.substring(1)
-      context = "not"
+      context = 'not'
     } else if (q.toLowerCase().startsWith('or ')) {
       search_term = q.substring(3)
-      context = "or"
+      context = 'or'
     } else if (q.startsWith('|')) {
       search_term = q.substring(1)
-      context = "or"
+      context = 'or'
     }
     search_term = search_term.trim()
-    if (isUUID(search_term)){
+    if (isUUID(search_term)) {
       const search_query = {
-        id: context==='not' ? {ne: search_term}: search_term
+        id: context === 'not' ? { ne: search_term } : search_term,
       }
       search_clauses[context].push(search_query)
     } else if (search_term.indexOf(':') !== -1) {
       const [key, ...value] = q.split(':')
-      if (indexed_keys.indexOf(`meta.${key.trim()}`) !== -1){
+      if (indexed_keys.indexOf(`meta.${key.trim()}`) !== -1) {
         // it is indexed
         const search_query = {
-          [`meta.${key.trim()}`]: context==='not' ? {nilike: '%' + value.join(':') + '%' }: {ilike: '%' + value.join(':') + '%' } 
+          [`meta.${key.trim()}`]: context === 'not' ? { nilike: '%' + value.join(':') + '%' } : { ilike: '%' + value.join(':') + '%' },
         }
         search_clauses[context].push(search_query)
       } else {
         // fulltextsearch
-        if (context === "not"){
-          search_clauses.fullTextSearch[context].push({ne: search_term})
-        }else{
+        if (context === 'not') {
+          search_clauses.fullTextSearch[context].push({ ne: search_term })
+        } else {
           search_clauses.fullTextSearch[context].push(search_term)
         }
       }
     } else {
       // fulltextsearch
-      if (context === "not"){
-        search_clauses.fullTextSearch[context].push({ne: search_term})
-      }else{
+      if (context === 'not') {
+        search_clauses.fullTextSearch[context].push({ ne: search_term })
+      } else {
         search_clauses.fullTextSearch[context].push(search_term)
       }
     }
   }
-  const {where: fullTextSearch} = process_search_clauses(search_clauses.fullTextSearch)
-  if (search_clauses.and.length===0 && search_clauses.or.length===0 && search_clauses.not.length===0){
-    where = {meta: {fullTextSearch}}
-  } else{
-    if (Object.values(fullTextSearch).filter(v=>(v.length>0)).length>0){
-      search_clauses.and.push({meta: {fullTextSearch}})
+  const { where: fullTextSearch } = process_search_clauses(search_clauses.fullTextSearch)
+  if (search_clauses.and.length === 0 && search_clauses.or.length === 0 && search_clauses.not.length === 0) {
+    where = { meta: { fullTextSearch } }
+  } else {
+    if (Object.values(fullTextSearch).filter((v) => (v.length > 0)).length > 0) {
+      search_clauses.and.push({ meta: { fullTextSearch } })
     }
-    const {where: w} = process_search_clauses(search_clauses)
+    const { where: w } = process_search_clauses(search_clauses)
     where = w
   }
 
@@ -136,13 +136,13 @@ export function build_where({ search, filters, order, indexed_keys }) {
     }
     for (const [filter, values] of Object.entries(filters)) {
       if (filter.indexOf('..') === -1) {
-        const or = values.map(v=>({
-          [filter]: v
+        const or = values.map((v) => ({
+          [filter]: v,
         }))
         where = {
           and: [...where.and, {
-              or,
-            },
+            or,
+          },
           ],
         }
         // where = {
@@ -179,7 +179,7 @@ export default class Model {
     this.parent = parent
     this.parents_meta = {}
     this.where = null
-    this.results = {count:0}
+    this.results = { count: 0 }
     this.search = null
     this.filters = undefined
     this.fields = undefined
@@ -198,16 +198,16 @@ export default class Model {
     // If we are filtering by grandparents e.g. signatures of a resource,
     // We first note the children of those grandparents (i.e. all possible parents)
     // and filter by the parents instead
-    if (filters!==undefined &&
-        this.grandparent!==undefined &&
-        filters[this.grandparent]!==undefined){
+    if (filters !== undefined &&
+        this.grandparent !== undefined &&
+        filters[this.grandparent] !== undefined) {
       let parents = filters[this.parent] || []
-      for (const i of filters[this.grandparent]){
+      for (const i of filters[this.grandparent]) {
         parents = [...parents, ...this.grandparent_to_parent[i]]
       }
       filters = {
         ...filters,
-        [this.parent]: parents
+        [this.parent]: parents,
       }
       delete filters[this.grandparent]
     }
@@ -358,9 +358,9 @@ export default class Model {
 
   fetch_parent_metadata = async (parent_ids) => {
     let unresolved_ids = []
-    for (const pid of parent_ids){
-      if (this.parents_meta[pid]=== undefined){
-        if (unresolved_ids.indexOf(pid)==-1){
+    for (const pid of parent_ids) {
+      if (this.parents_meta[pid] === undefined) {
+        if (unresolved_ids.indexOf(pid) == -1) {
           unresolved_ids = [...unresolved_ids, pid]
         }
       }
@@ -371,19 +371,18 @@ export default class Model {
       body: {
         filter: {
           where: {
-           id: {
-              inq: unresolved_ids
-            }
+            id: {
+              inq: unresolved_ids,
+            },
           },
         },
       },
     })
 
-    for (const r of response){
-      const parent_id = r["id"]
+    for (const r of response) {
+      const parent_id = r['id']
       this.parents_meta[parent_id] = r
     }
-
   }
 
   parse_bulk_result = async ({ operations, bulk_response }) => {
@@ -400,8 +399,8 @@ export default class Model {
       //   await this.fetch_parent_metadata(m.response)
       // }
       const res = m.response
-      if (this.parent!==undefined){
-        await this.fetch_parent_metadata(res.map(r=>r[this.parent]))
+      if (this.parent !== undefined) {
+        await this.fetch_parent_metadata(res.map((r) => r[this.parent]))
       }
       const updated_res = this.parent === undefined ? m.response :
         m.response.map((r) => {
@@ -422,23 +421,23 @@ export default class Model {
       const [m, ...r] = response
 
       response = [...r]
-      let value_count = {}
-      for (const i of this.sorting_fields){
-        if (i.meta.Parent_Meta===undefined || !i.meta.Parent_Meta){
+      const value_count = {}
+      for (const i of this.sorting_fields) {
+        if (i.meta.Parent_Meta === undefined || !i.meta.Parent_Meta) {
           const field_name = i.meta.Field_Name
           value_count[field_name] = {
             schema: i,
-            stats: Object.entries(m.response[field_name] || {}).reduce((acc_1,[key, val])=>{
-              if (key!=="null" && val !== 0){
+            stats: Object.entries(m.response[field_name] || {}).reduce((acc_1, [key, val]) => {
+              if (key !== 'null' && val !== 0) {
                 acc_1[key] = val
               }
               return acc_1
-            },{}),
+            }, {}),
           }
         }
       }
       let parents = {}
-      if (this.parent !== undefined && m.response[this.parent]!== undefined) {
+      if (this.parent !== undefined && m.response[this.parent] !== undefined) {
         parents = m.response[this.parent]
         await this.fetch_parent_metadata(Object.keys(parents))
         // const res = result["metadata_search"].map(r=>{
@@ -488,41 +487,41 @@ export default class Model {
 
   // This function fetches the grandparents metadata (provided that it is ever needed)
   // It also provides a mapping between parents and grandparents
-  fetch_grandparents_meta = async(parent_ids) => {
+  fetch_grandparents_meta = async (parent_ids) => {
     // Find grandparent ids
     let unresolved_parent_ids = []
     let unresolved_grandparent_ids = []
-    for (const pid of parent_ids){
-      if (this.parents_meta[pid]=== undefined){
-        if (unresolved_parent_ids.indexOf(pid)==-1){
+    for (const pid of parent_ids) {
+      if (this.parents_meta[pid] === undefined) {
+        if (unresolved_parent_ids.indexOf(pid) == -1) {
           unresolved_parent_ids = [...unresolved_parent_ids, pid]
         }
-      }else {
+      } else {
         const grandparent_id = this.parents_meta[pid][this.grandparent]
-        if (this.grandparents_meta[grandparent_id] === undefined){
-          unresolved_grandparent_ids = [...unresolved_grandparent_ids, grandparent_id] 
+        if (this.grandparents_meta[grandparent_id] === undefined) {
+          unresolved_grandparent_ids = [...unresolved_grandparent_ids, grandparent_id]
         }
       }
     }
-    if (unresolved_parent_ids.length>0){
+    if (unresolved_parent_ids.length > 0) {
       const { response: resolved_parents } = await fetch_meta_post({
         endpoint: `/${plural_mapper[this.parent]}/find`,
         body: {
           filter: {
             where: {
-             id: {
-                inq: unresolved_parent_ids
-              }
+              id: {
+                inq: unresolved_parent_ids,
+              },
             },
           },
         },
       })
-      for (const parent of resolved_parents){
+      for (const parent of resolved_parents) {
         const parent_id = parent.id
         const grandparent_id = parent[this.grandparent]
         this.parents_meta[parent_id] = parent
-        if (this.grandparents_meta[grandparent_id] === undefined){
-          unresolved_grandparent_ids = [...unresolved_grandparent_ids, grandparent_id] 
+        if (this.grandparents_meta[grandparent_id] === undefined) {
+          unresolved_grandparent_ids = [...unresolved_grandparent_ids, grandparent_id]
         }
       }
     }
@@ -532,34 +531,33 @@ export default class Model {
         body: {
           filter: {
             where: {
-             id: {
-                inq: unresolved_grandparent_ids
-              }
+              id: {
+                inq: unresolved_grandparent_ids,
+              },
             },
           },
         },
       })
       // Get grandparents meta
-      for (const grandparent of resolved_grandparent){
+      for (const grandparent of resolved_grandparent) {
         this.grandparents_meta[grandparent.id] = grandparent
       }
     }
 
-    
+
     // Get a mapping of the parent to the respective grandparent and vice versa
-    for (const [key,val] of Object.entries(this.parents_meta)){
+    for (const [key, val] of Object.entries(this.parents_meta)) {
       const grandparent_id = val[this.grandparent]
       this.parent_to_grandparent[key] = grandparent_id
-      if (this.grandparent_to_parent[grandparent_id]===undefined){
+      if (this.grandparent_to_parent[grandparent_id] === undefined) {
         this.grandparent_to_parent[grandparent_id] = [key]
-      }else {
+      } else {
         this.grandparent_to_parent[grandparent_id] = [...this.grandparent_to_parent[grandparent_id], key]
       }
-
     }
   }
 
-  fetch_grandparent = async(parents=[]) => {
+  fetch_grandparent = async (parents = []) => {
     // if (this.grandparents_meta === undefined){
     //   await this.fetch_grandparents_meta()
     // }
@@ -576,7 +574,7 @@ export default class Model {
     //     },
     //   },
     // })
-    if (Object.keys(parents).length === 0){
+    if (Object.keys(parents).length === 0) {
       const { response } = await fetch_meta({
         endpoint: `/${this.table}/value_count`,
         body: {
@@ -589,15 +587,15 @@ export default class Model {
     }
     await this.fetch_grandparents_meta(Object.keys(parents))
     const grandparent_count = {}
-    for (const [id,count] of Object.entries(parents)){
+    for (const [id, count] of Object.entries(parents)) {
       const grandparent_id = this.parent_to_grandparent[id]
-      if (grandparent_count[grandparent_id]===undefined){
+      if (grandparent_count[grandparent_id] === undefined) {
         grandparent_count[grandparent_id] = count
-      }else {
+      } else {
         grandparent_count[grandparent_id] = grandparent_count[grandparent_id] + count
       }
     }
-    return {[this.grandparent]: grandparent_count}
+    return { [this.grandparent]: grandparent_count }
   }
 
   get_value_count_fields = async () => {
@@ -614,19 +612,20 @@ export default class Model {
       },
     })
     this.fields = []
-    for (const i of sorting_fields){
-      if (i.meta.Parent_Meta === undefined || !i.meta.Parent_Meta){
+    for (const i of sorting_fields) {
+      if (i.meta.Parent_Meta === undefined || !i.meta.Parent_Meta) {
         this.fields = [...this.fields, i.meta.Field_Name]
       }
-      if (i.meta.Parent_Meta){
+      if (i.meta.Parent_Meta) {
         this.grandparent = i.meta.Field_Name
         this.grandparent_schema = i
         await this.fetch_grandparent()
       }
     }
     // If we are querying for the grandparent, make sure we know the parent
-    if (this.grandparent!==undefined && this.fields.indexOf(this.parent)===-1)
+    if (this.grandparent !== undefined && this.fields.indexOf(this.parent) === -1) {
       this.fields = [this.parent, ...this.fields]
+    }
     // this.fields = sorting_fields.map((i) => i.meta.Field_Name)
     this.sorting_fields = sorting_fields
   }
@@ -639,7 +638,7 @@ export default class Model {
     //   await this.fetch_grandparents_meta()
     // }
     const { params, operations } = this.build_query(query_params)
-    if (params.length > 0){
+    if (params.length > 0) {
       const { response: bulk_response } = await fetch_meta_post({
         endpoint: '/bulk',
         body: params,
@@ -651,17 +650,17 @@ export default class Model {
         value_count: result.value_count || this.results.value_count,
         count: result.count || this.results.count,
       }
-      if (this.grandparent!==undefined && result.parents!==undefined){
+      if (this.grandparent !== undefined && result.parents !== undefined) {
         const response = await this.fetch_grandparent(result.parents)
         this.results.value_count[this.grandparent] = {
           schema: this.grandparent_schema,
-          stats: Object.entries(response[this.grandparent] || {}).reduce((acc_1,[key, val])=>{
-            if (key==="null"){
+          stats: Object.entries(response[this.grandparent] || {}).reduce((acc_1, [key, val]) => {
+            if (key === 'null') {
               return acc_1
             }
             acc_1[key] = val
             return acc_1
-          },{}),
+          }, {}),
         }
       }
     }

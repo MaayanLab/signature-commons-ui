@@ -23,7 +23,7 @@ export const initialState = {
   signature_input: {
     type: 'Overlap',
     entities: [],
-    unprocessed_entities: []
+    unprocessed_entities: [],
   },
   signature_result: {},
   table_count: {}, // Number of result per table i.e. datasets, signatures
@@ -47,13 +47,13 @@ function rootReducer(state = initialState, action) {
   if (action.type === action_definitions.FETCH_KEY_COUNT_SUCCEEDED) {
     const indexed_keys = {}
     // top level keywords only
-    for (const table in action.key_count){
+    for (const table in action.key_count) {
       const key_count = action.key_count[table]
       indexed_keys[table] = []
-      for (const k in key_count){
-        const split_str = k.split(".").slice(0,2)
-        const joined = split_str.join(".")
-        if (split_str[0]=="meta" && indexed_keys[table].indexOf(joined)===-1){
+      for (const k in key_count) {
+        const split_str = k.split('.').slice(0, 2)
+        const joined = split_str.join('.')
+        if (split_str[0] == 'meta' && indexed_keys[table].indexOf(joined) === -1) {
           indexed_keys[table].push(joined)
         }
       }
@@ -77,19 +77,19 @@ function rootReducer(state = initialState, action) {
       }, {}),
     }
   }
-  if (action.type === action_definitions.INITIALIZE_THEME){
-    const {theme} = action
+  if (action.type === action_definitions.INITIALIZE_THEME) {
+    const { theme } = action
     return {
       ...state,
-      theme
+      theme,
     }
   }
 
   if (action.type === action_definitions.FETCH_UI_VALUES_SUCCEEDED) {
-    const {ui_values} = action
+    const { ui_values } = action
     return {
       ...state,
-      ui_values
+      ui_values,
     }
   }
   if (action.type === action_definitions.INITIALIZE_PARENTS) {
@@ -123,7 +123,7 @@ function rootReducer(state = initialState, action) {
       signature_input: {
         type: 'Overlap',
         entities: [],
-        unprocessed_entities: []
+        unprocessed_entities: [],
       },
       signature_result: {},
       loading_signature: false,
