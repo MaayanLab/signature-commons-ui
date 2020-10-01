@@ -11,7 +11,7 @@ export const iconOf = {
 
 export async function get_library_resources() {
   // fetch schemas if missing
-  const schemas = await get_schemas('/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json')
+  const schemas = await get_schemas()
   // fetch resources on database
   const { response } = await fetch_meta({
     endpoint: '/resources',
@@ -35,7 +35,7 @@ export async function get_library_resources() {
     let resource_name
     const resource_id = lib.resource
     // lib resource matches with resource table
-    if (resource_id!==undefined) {
+    if (resource_id !== undefined) {
       if (resource_id in resource_meta) {
         const resource = resource_meta[resource_id]
         // find matched schema
@@ -85,7 +85,7 @@ export async function get_library_resources() {
         return null
       }
       const name_props = Object.keys(matched_schemas[0].properties).filter((prop) => matched_schemas[0].properties[prop].name)
-      const name_prop = name_props[0].text || "${id}"
+      const name_prop = name_props[0].text || '${id}'
       const resource_name = makeTemplate(name_prop, lib)
       // render only library as resource if resource table is empty
       // if (response.length === 0) {

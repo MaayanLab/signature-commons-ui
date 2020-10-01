@@ -51,7 +51,7 @@ class SignatureSearch extends React.Component {
 
   componentDidUpdate = async (prevProps) => {
     if (prevProps.loading === false && this.props.loading === false) {
-      if (prevProps.match.params.id !== this.props.match.params.id){
+      if (prevProps.match.params.id !== this.props.match.params.id) {
         if (this.props.input === undefined || this.props.match.params.id !== this.props.input.id) {
           this.props.search(this.props.match.params.type, this.props.match.params.id)
         }
@@ -76,19 +76,20 @@ class SignatureSearch extends React.Component {
 
   library_results = (props) => {
     if (this.props.resource_signatures === undefined) return <CircularProgress />
-    return(
-    <LibraryResults
-      results={
-        (((this.props.resource_signatures || {})[props.match.params.resource.replace(/_/g, ' ')] || {}).libraries || []).map(
-            (lib) => this.props.library_signatures[lib]
-        )
-      }
-      signature_keys={this.props.signature_keys}
-      {...this.props}
-      {...this.state}
-      {...props}
-    />
-  )}
+    return (
+      <LibraryResults
+        results={
+          (((this.props.resource_signatures || {})[props.match.params.resource.replace(/_/g, ' ')] || {}).libraries || []).map(
+              (lib) => this.props.library_signatures[lib]
+          )
+        }
+        signature_keys={this.props.signature_keys}
+        {...this.props}
+        {...this.state}
+        {...props}
+      />
+    )
+  }
 
   render_signature_search = () => {
     this.props.handleChange({}, 'signature', true)

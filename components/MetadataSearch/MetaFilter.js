@@ -49,13 +49,13 @@ class MetaFilter extends React.Component {
       const grandparents_ids_mapping = model.grandparents_meta
       const grandparent_mapping_id_to_name = {}
       const grandparent_mapping_name_to_id = {}
-      for (const [id,val] of Object.entries(grandparents_ids_mapping)){
+      for (const [id, val] of Object.entries(grandparents_ids_mapping)) {
         const matched_schema = findMatchedSchema(val, schemas)
         const name_prop = Object.keys(matched_schema.properties).filter((prop) => matched_schema.properties[prop].name)
         let name
         if (name_prop.length > 0) {
           name = makeTemplate(matched_schema.properties[name_prop[0]].text, val)
-          if (name==="undefined"){
+          if (name === 'undefined') {
             console.log(matched_schema)
             console.log(val)
             name = id
@@ -92,7 +92,7 @@ class MetaFilter extends React.Component {
         let name
         if (name_prop.length > 0) {
           name = makeTemplate(matched_schema.properties[name_prop[0]].text, val)
-          if (name==="undefined"){
+          if (name === 'undefined') {
             console.log(matched_schema)
             console.log(val)
             name = id
@@ -134,7 +134,7 @@ class MetaFilter extends React.Component {
     if (this.props.parent) {
       const { mapping_id_to_name } = this.getParentMeta()
       for (const [id, count] of Object.entries(stats)) {
-        if (id!==null && count > 0) {
+        if (id !== null && count > 0) {
           const name = mapping_id_to_name[id]
           selected[name] = selected_values.indexOf(id) > -1
           data_count = [...data_count, { count, name, id }]
@@ -143,7 +143,7 @@ class MetaFilter extends React.Component {
     } else if (this.props.grandparent) {
       const { grandparent_mapping_id_to_name } = this.getGrandparentMeta()
       for (const [id, count] of Object.entries(stats)) {
-        if (id!==null && count > 0) {
+        if (id !== null && count > 0) {
           const name = grandparent_mapping_id_to_name[id]
           selected[name] = selected_values.indexOf(id) > -1
           data_count = [...data_count, { count, name, id }]

@@ -12,7 +12,7 @@ import { resetSigcom } from '../../util/redux/actions'
 import { SearchCard, StatDiv, CountsDiv, BottomLinks, WordCloud } from './Misc'
 import { ChartCard, Selections } from '../Admin/dashboard.js'
 import { BarChart } from '../Admin/BarChart.js'
-import { searchTerm } from "./Misc"
+import { searchTerm } from './Misc'
 
 
 const mapStateToProps = (state, ownProps) => {
@@ -20,7 +20,7 @@ const mapStateToProps = (state, ownProps) => {
     ...state.serverSideProps,
     ui_values: state.ui_values,
     nav: state.ui_values.nav,
-    theme: state.theme
+    theme: state.theme,
   }
 }
 
@@ -31,11 +31,11 @@ function mapDispatchToProps(dispatch) {
 }
 
 function sortCounts(values) {
-  const sorted = values.sort((a,b)=>{
+  const sorted = values.sort((a, b) => {
     const diff = (a[1].priority || 0) - (b[1].priority || 0)
-    if (diff === 0){
+    if (diff === 0) {
       return a[0].localeCompare(b[0])
-    }else {
+    } else {
       return diff
     }
   })
@@ -68,11 +68,11 @@ class LandingPage extends React.Component {
 
   componentDidMount = () => {
     this.props.resetSigcom()
-    const total_sig_per_resource = this.props.resource_signature_count.reduce((tot,item)=>{
+    const total_sig_per_resource = this.props.resource_signature_count.reduce((tot, item) => {
       return tot + item.counts
-    },0)
+    }, 0)
     this.setState({
-      total_sig_per_resource
+      total_sig_per_resource,
     })
   }
 
@@ -154,17 +154,17 @@ class LandingPage extends React.Component {
   }
 
   searchResource = (ui_values, searchTable, term) => {
-    const {preferred_name, nav} = ui_values
-     location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
+    const { preferred_name, nav } = ui_values
+    location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
   }
 
   pie_charts_stats = (props) => {
     if (Object.keys(this.props.piecounts).length === 0 || this.state.pie_stats.stats.length === 0) return null
-    if (this.props.resource_signature_count.length === 0  || this.state.total_sig_per_resource === 0 ) {
-      if (Object.keys(this.props.piecounts).length < 3){
+    if (this.props.resource_signature_count.length === 0 || this.state.total_sig_per_resource === 0) {
+      if (Object.keys(this.props.piecounts).length < 3) {
         // Do not create selection
-        const all_charts = Object.entries(this.props.piecounts).map(([key,val])=>(
-          <Grid item key={key} xs={12} md={Object.keys(this.props.piecounts).length > 1 ? 6: 12}
+        const all_charts = Object.entries(this.props.piecounts).map(([key, val]) => (
+          <Grid item key={key} xs={12} md={Object.keys(this.props.piecounts).length > 1 ? 6 : 12}
             className={this.props.classes.stretched}>
             <Grid container
               alignItems={'center'}>
@@ -188,7 +188,7 @@ class LandingPage extends React.Component {
           </Grid>
         ))
         return all_charts
-      }else {
+      } else {
         return (
           <Grid item xs
             className={this.props.classes.stretched}>
@@ -209,14 +209,14 @@ class LandingPage extends React.Component {
               <Grid item xs={12}>
                 <div className={this.props.classes.centered}>
                   <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
-                  {Object.keys(this.props.piecounts).length>1?
+                  {Object.keys(this.props.piecounts).length > 1 ?
                     <Selections
                       value={this.state.selected_pie}
                       values={Object.keys(this.props.piecounts).sort()}
                       onChange={(e) => this.handleSelectPie(e)}
-                    />: this.state.selected_pie
+                    /> : this.state.selected_pie
                   }
-                  
+
                 </div>
               </Grid>
             </Grid>
@@ -244,12 +244,12 @@ class LandingPage extends React.Component {
           <Grid item xs={12}>
             <div className={this.props.classes.centered}>
               <span>{this.props.ui_values.text_3 || 'Examine metadata:'}</span>
-              {Object.keys(this.props.piecounts).length>1?
+              {Object.keys(this.props.piecounts).length > 1 ?
                 <Selections
                   value={this.state.selected_pie}
                   values={Object.keys(this.props.piecounts).sort()}
                   onChange={(e) => this.handleSelectPie(e)}
-                />: <span> {this.state.selected_pie}</span>
+                /> : <span> {this.state.selected_pie}</span>
               }
             </div>
           </Grid>
@@ -293,10 +293,10 @@ class LandingPage extends React.Component {
                   <div className={this.props.classes.centered}>
                     <ChartCard
                       cardheight={300}
-                      pie_stats={this.props.resource_signature_count.filter(r=>r.counts>0)}
+                      pie_stats={this.props.resource_signature_count.filter((r) => r.counts > 0)}
                       color={'Blue'}
                       ui_values={this.props.ui_values}
-                      searchTable={"signatures"}
+                      searchTable={'signatures'}
                       searchTerm={this.searchResource}
                     />
                   </div>
@@ -343,7 +343,7 @@ class LandingPage extends React.Component {
               </Grid>
             </Grid>
           }
-          { Object.keys(this.props.barcounts).length === 0 || this.state.bar_stats.stats.length ===0 ? null :
+          { Object.keys(this.props.barcounts).length === 0 || this.state.bar_stats.stats.length === 0 ? null :
             <Grid item xs={12}
               className={this.props.classes.stretched}>
               <Grid container
@@ -376,7 +376,7 @@ class LandingPage extends React.Component {
               </Grid>
             </Grid>
           }
-          { Object.keys(this.props.histograms).length === 0 || this.state.histogram.stats.length ===0 ? null :
+          { Object.keys(this.props.histograms).length === 0 || this.state.histogram.stats.length === 0 ? null :
                 <Grid item xs={12} className={this.props.classes.stretched}>
                   <Grid container
                     spacing={24}
@@ -407,7 +407,7 @@ class LandingPage extends React.Component {
                   </Grid>
                 </Grid>
           }
-          { Object.keys(this.props.barscores).length === 0 || this.state.barscore.stats.length ===0 ? null :
+          { Object.keys(this.props.barscores).length === 0 || this.state.barscore.stats.length === 0 ? null :
                 <Grid item xs={12} className={this.props.classes.stretched}>
                   <Grid container
                     spacing={24}

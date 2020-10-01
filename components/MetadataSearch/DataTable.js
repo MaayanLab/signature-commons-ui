@@ -23,22 +23,12 @@ import ShowMeta from '../ShowMeta'
 
 import IconButton from '../IconButton'
 import ScorePopper from '../ScorePopper'
-import Collapse from '@material-ui/core/Collapse';
+import Collapse from '@material-ui/core/Collapse'
 import DownloadButton from '../Downloads'
 
 const Options = dynamic(() => import('../Options'), { ssr: false })
 
 const styles = (theme) => ({
-  expansion: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-    margin: 20,
-    overflowWrap: 'break-word',
-    wordWrap: 'break-word',
-    height: '300px',
-    overflow: 'auto',
-  },
   chipRoot: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -66,16 +56,6 @@ const styles = (theme) => ({
   },
   actions: {
     display: 'flex',
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
   },
   icon: {
     paddingBottom: 35,
@@ -109,7 +89,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRend
                     className={classes.margin}
                     style={{ minWidth: 5, paddingTop: 0, paddingBottom: 0 }}
                   >
-                    <span className={`mdi mdi-chevron-${props.expanded ? 'up': 'down'} mdi-24px`}/>
+                    <span className={`mdi mdi-chevron-${props.expanded ? 'up' : 'down'} mdi-24px`}/>
                   </Button>
                 </Tooltip>
               </Grid>
@@ -193,19 +173,19 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRend
                             highlight={search}
                           />}
                           onClick={() => {
-                            if (tag.clickable){
+                            if (tag.clickable) {
                               props.onChipClick(tag.text)
                             }
                           }}
                         />
                       </Tooltip>)}
                   </Grid>
-                  {Object.entries(data.processed.keywords).map(([label, value]) =>(
+                  {Object.entries(data.processed.keywords).map(([label, value]) => (
                     <Grid item xs={12} key={value.label}>
                       <Typography variant="caption">
-                        {value.label}: 
+                        {value.label}:
                       </Typography>
-                      {value.value.map(v=>(
+                      {value.value.map((v) => (
                         <Tooltip title={v}
                           key={v}
                           placement="bottom">
@@ -220,7 +200,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRend
                               props.onChipClick(v)
                             }}
                           />
-                      </Tooltip>
+                        </Tooltip>
                       ))}
                     </Grid>
                   ))}
@@ -249,7 +229,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRend
                 </Grid> : null
               }
               { !props.deactivate_download && data.processed.download !== undefined && data.processed.download.length > 0 ?
-                <Grid item style={{ textAlign: "center" }}>
+                <Grid item style={{ textAlign: 'center' }}>
                   <DownloadButton data={data.processed.download} {...props} />
                 </Grid> : null
               }
@@ -259,7 +239,7 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRend
       </CardContent>
       <Collapse in={props.expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          {expandRenderer({data, ...props})}
+          {expandRenderer({ data, ...props })}
           {/* <ExpandedMeta data={data} {...props}/> */}
         </CardContent>
       </Collapse>
@@ -275,8 +255,8 @@ class DataTable extends React.Component {
     }
   }
   handleClick = (metadata) => {
-    this.setState((prevState)=>({
-      expanded: prevState.expanded === metadata.original.id ? null: metadata.original.id,
+    this.setState((prevState) => ({
+      expanded: prevState.expanded === metadata.original.id ? null : metadata.original.id,
     }))
   }
   handleClose = () => {
@@ -295,7 +275,7 @@ class DataTable extends React.Component {
       <div>
         <Grid container>
           {this.props.sortBy !== undefined && Object.keys(this.props.sort_tags).length > 0 ?
-            <Grid item style={{ marginLeft: 'auto', marginRight: 0, marginBottom: 10}}>
+            <Grid item style={{ marginLeft: 'auto', marginRight: 0, marginBottom: 10 }}>
               <FormControl>
                 <InputLabel>Sort by</InputLabel>
                 <Select
@@ -309,12 +289,12 @@ class DataTable extends React.Component {
               </FormControl>
             </Grid> : null
           }
-          <Grid item style={{width:"100%"}}>
+          <Grid item style={{ width: '100%' }}>
             {this.props.collection.map((data, ind) => <InfoCard key={data.original.id}
               {...this.props}
               handleClick={this.handleClick}
               data={data}
-              expanded={this.state.expanded===data.original.id}
+              expanded={this.state.expanded === data.original.id}
             />)}
           </Grid>
         </Grid>

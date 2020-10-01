@@ -1,0 +1,364 @@
+[
+    {
+      "data": {
+        "$validator": "/dcic/signature-commons-schema/v5/core/signature.json",
+        "id": "5f2311ae-c1a1-11e8-b838-0242ac170004",
+        "library": {
+          "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+          "id": "310ddd3d-d3e2-11e8-8664-787b8ad942f3",
+          "resource": "d43a1e3e-a5b8-400d-b2ac-c58abaae493e",
+          "dataset": "enrichr_geneset",
+          "dataset_type": "geneset_library",
+          "meta": {
+            "DOI": "10.1093/bioinformatics/btr625",
+            "Icon": "static/images/PPI_Hub_Proteins.ico",
+            "PMID": "22080467",
+            "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Gene>.+?))\\t\\t(?P<Genes>.+)",
+            "Assay": "literature curation",
+            "Readout": "protein",
+            "Version": "2013",
+            "Filename": "PPI_Hub_Proteins",
+            "Organism": "Mus musculus; Homo sapiens",
+            "Weighted": "False",
+            "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+            "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=PPI_Hub_Proteins",
+            "Description": "Protein-protein interactions for proteins with more than 50 known partners extracted from several literature-based databases.",
+            "Library_name": "PPI Hub Proteins",
+            "Original_source": "MaayanLab",
+            "Link_to_resource": "http://www.maayanlab.net/X2K",
+            "Primary_Resource": "X2K",
+            "Perturbation_Type": "gene",
+            "Library_created_by": "MaayanLab"
+          }
+        },
+        "meta": {
+          "Gene": [
+            {
+              "Name": "STAT3"
+            }
+          ],
+          "Assay": "literature curation",
+          "Readout": "protein",
+          "Organism": "Mus musculus; Homo sapiens",
+          "$validator": "/@dcic/signature-commons-schema/v4/meta/signature/sigcom.json",
+          "Number_of_genes": 192,
+          "Original_String": "STAT3",
+          "Perturbation_Type": "gene"
+        }
+      },
+      "info": {
+        "id": "5f2311ae-c1a1-11e8-b838-0242ac170004",
+        "display": {},
+        "icon": {
+          "label": "Image",
+          "alt": "PPI Hub Proteins",
+          "src": "/static/images/PPI_Hub_Proteins.ico",
+          "text": "PPI Hub Proteins"
+        },
+        "subtitle": {
+          "text": "PPI Hub Proteins",
+          "label": "Library"
+        },
+        "name": {
+          "text": "STAT3",
+          "label": "Description"
+        },
+        "tags": [
+          {
+            "text": "literature curation",
+            "label": "Assay",
+            "icon": "mdi-flask-outline",
+            "priority": 1,
+            "clickable": true
+          },
+          {
+            "text": "STAT3",
+            "label": "Gene",
+            "icon": "mdi-dna",
+            "priority": 3,
+            "clickable": true
+          },
+          {
+            "text": "Mus musculus; Homo sapiens",
+            "label": "Organism",
+            "icon": "mdi-human-child",
+            "priority": 5,
+            "clickable": true
+          }
+        ],
+        "download": [],
+        "keywords": {}
+      }
+    },
+    {
+      "data": {
+        "$validator": "/dcic/signature-commons-schema/v5/core/signature.json",
+        "id": "080f42ba-c1a1-11e8-8162-0242ac170004",
+        "library": {
+          "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+          "id": "30a1e23d-d3e2-11e8-ac7c-787b8ad942f3",
+          "resource": "0f2461a4-decf-484d-90d2-d099f07096db",
+          "dataset": "enrichr_geneset",
+          "dataset_type": "geneset_library",
+          "meta": {
+            "Icon": "static/images/BioCarta_2016.ico",
+            "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Pathway>.+?))\\t\\t(?P<Genes>.+)",
+            "Year": "2016",
+            "Assay": "literature curation",
+            "Readout": "protein",
+            "Version": "2016",
+            "Filename": "BioCarta_2016",
+            "Organism": "Homo sapiens",
+            "Weighted": "False",
+            "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+            "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=BioCarta_2016",
+            "Description": "Metabolic pathways from BioCarta.",
+            "Library_name": "BioCarta 2016",
+            "Original_source": "BioCarta",
+            "Link_to_resource": "https://cgap.nci.nih.gov/Pathways/BioCarta_Pathways",
+            "Primary_Resource": "BioCarta",
+            "Perturbation_Type": "pathway",
+            "Library_created_by": "MaayanLab",
+            "Link_to_processing_scripts_on_GitHub": "https://github.com/MaayanLab/harmonizome_processing_scripts/tree/master/biocarta"
+          }
+        },
+        "meta": {
+          "Assay": "literature curation",
+          "Pathway": {
+            "Name": "Stat3 Signaling Pathway Homo sapiens h stat3Pathway"
+          },
+          "Readout": "protein",
+          "Organism": "Homo sapiens",
+          "$validator": "/@dcic/signature-commons-schema/v4/meta/signature/sigcom.json",
+          "Number_of_genes": 8,
+          "Original_String": "Stat3 Signaling Pathway Homo sapiens h stat3Pathway",
+          "Perturbation_Type": "pathway"
+        }
+      },
+      "info": {
+        "id": "080f42ba-c1a1-11e8-8162-0242ac170004",
+        "display": {},
+        "icon": {
+          "label": "Image",
+          "alt": "BioCarta 2016",
+          "src": "/static/images/BioCarta_2016.ico",
+          "text": "BioCarta 2016"
+        },
+        "subtitle": {
+          "text": "BioCarta 2016",
+          "label": "Library"
+        },
+        "name": {
+          "text": "Stat3 Signaling Pathway Homo sapiens h stat3Pathway",
+          "label": "Description"
+        },
+        "tags": [
+          {
+            "text": "literature curation",
+            "label": "Assay",
+            "icon": "mdi-flask-outline",
+            "priority": 1,
+            "clickable": true
+          },
+          {
+            "text": "Stat3 Signaling Pathway Homo sapiens h stat3Pathway",
+            "label": "Pathway",
+            "icon": "mdi-webhook",
+            "priority": 3,
+            "clickable": true
+          },
+          {
+            "text": "Homo sapiens",
+            "label": "Organism",
+            "icon": "mdi-human-child",
+            "priority": 5,
+            "clickable": true
+          }
+        ],
+        "download": [],
+        "keywords": {}
+      }
+    },
+    {
+      "data": {
+        "$validator": "/dcic/signature-commons-schema/v5/core/signature.json",
+        "id": "64ce8f78-c1a1-11e8-9c74-0242ac170004",
+        "library": {
+          "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+          "id": "312576cc-d3e2-11e8-8c2b-787b8ad942f3",
+          "resource": "d43a1e3e-a5b8-400d-b2ac-c58abaae493e",
+          "dataset": "enrichr_geneset",
+          "dataset_type": "geneset_library",
+          "meta": {
+            "DOI": "10.1186/1471-2105-13-156",
+            "Icon": "static/images/Transcription_Factor_PPIs.ico",
+            "PMID": "22748121",
+            "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Gene>.+?))\\t\\t(?P<Genes>.*)",
+            "Assay": "literature curation",
+            "Readout": "protein",
+            "Version": "2015",
+            "Filename": "Transcription_Factor_PPIs",
+            "Organism": "Mus musculus; Homo sapiens",
+            "Weighted": "False",
+            "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+            "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=Transcription_Factor_PPIs",
+            "Description": "A protein-protein interaction (PPI) network was constructed for the project Genes2FANS by consolidating 13 datasets from published results of experimentally-validated interactions. These datasets included: MINT; InnateDB; HPRD; KEGG; IntAct",
+            "Library_name": "Transcription Factor PPIs",
+            "Original_source": "MaayanLab",
+            "Link_to_resource": "http://amp.pharm.mssm.edu/X2K/",
+            "Primary_Resource": "X2K",
+            "Perturbation_Type": "gene",
+            "Library_created_by": "MaayanLab"
+          }
+        },
+        "meta": {
+          "Gene": [
+            {
+              "Name": "STAT3"
+            }
+          ],
+          "Assay": "literature curation",
+          "Readout": "protein",
+          "Organism": "Mus musculus; Homo sapiens",
+          "$validator": "/@dcic/signature-commons-schema/v4/meta/signature/sigcom.json",
+          "Number_of_genes": 246,
+          "Original_String": "STAT3",
+          "Perturbation_Type": "gene"
+        }
+      },
+      "info": {
+        "id": "64ce8f78-c1a1-11e8-9c74-0242ac170004",
+        "display": {},
+        "icon": {
+          "label": "Image",
+          "alt": "Transcription Factor PPIs",
+          "src": "/static/images/Transcription_Factor_PPIs.ico",
+          "text": "Transcription Factor PPIs"
+        },
+        "subtitle": {
+          "text": "Transcription Factor PPIs",
+          "label": "Library"
+        },
+        "name": {
+          "text": "STAT3",
+          "label": "Description"
+        },
+        "tags": [
+          {
+            "text": "literature curation",
+            "label": "Assay",
+            "icon": "mdi-flask-outline",
+            "priority": 1,
+            "clickable": true
+          },
+          {
+            "text": "STAT3",
+            "label": "Gene",
+            "icon": "mdi-dna",
+            "priority": 3,
+            "clickable": true
+          },
+          {
+            "text": "Mus musculus; Homo sapiens",
+            "label": "Organism",
+            "icon": "mdi-human-child",
+            "priority": 5,
+            "clickable": true
+          }
+        ],
+        "download": [],
+        "keywords": {}
+      }
+    },
+    {
+      "data": {
+        "$validator": "/dcic/signature-commons-schema/v5/core/signature.json",
+        "id": "1350f6e6-c1a1-11e8-abf8-0242ac170004",
+        "library": {
+          "$validator": "/dcic/signature-commons-schema/v5/core/library.json",
+          "id": "30bffc21-d3e2-11e8-a078-787b8ad942f3",
+          "resource": "32a36283-4958-4325-9929-446cc2206af7",
+          "dataset": "enrichr_geneset",
+          "dataset_type": "geneset_library",
+          "meta": {
+            "DOI": "10.1186/1471-2105-14-128",
+            "Icon": "static/images/Enrichr_Submissions_TF-Gene_Coocurrence.ico",
+            "PMID": "23586463",
+            "Spec": "(?P<Original_String>((?P<UUID>.*):SC=)?(?P<Gene>.+?))\\t\\t(?P<Genes>.+)",
+            "Assay": "literature curation",
+            "Readout": "gene",
+            "Version": "2018",
+            "Filename": "Enrichr_Submissions_TF-Gene_Coocurrence",
+            "Organism": "Mus musculus; Homo sapiens",
+            "Weighted": "False",
+            "$validator": "/@dcic/signature-commons-schema/v4/meta/library/sigcom.json",
+            "Access_URL": "http://amp.pharm.mssm.edu/Enrichr/geneSetLibrary?mode=text&libraryName=Enrichr_Submissions_TF-Gene_Coocurrence",
+            "Description": "The genes most commonly found in the same user-submitted lists in Enrichr as each transcription factor (TF).",
+            "Library_name": "Enrichr Submissions TF-Gene Coocurrence",
+            "Original_source": "MaayanLab",
+            "Link_to_resource": "http://amp.pharm.mssm.edu/Enrichr/",
+            "Primary_Resource": "ChEA",
+            "Perturbation_Type": "gene",
+            "Library_created_by": "MaayanLab"
+          }
+        },
+        "meta": {
+          "Gene": [
+            {
+              "Name": "STAT3"
+            }
+          ],
+          "Assay": "literature curation",
+          "Readout": "gene",
+          "Organism": "Mus musculus; Homo sapiens",
+          "$validator": "/@dcic/signature-commons-schema/v4/meta/signature/sigcom.json",
+          "Number_of_genes": 299,
+          "Original_String": "STAT3",
+          "Perturbation_Type": "gene"
+        }
+      },
+      "info": {
+        "id": "1350f6e6-c1a1-11e8-abf8-0242ac170004",
+        "display": {},
+        "icon": {
+          "label": "Image",
+          "alt": "Enrichr Submissions TF-Gene Coocurrence",
+          "src": "/static/images/Enrichr_Submissions_TF-Gene_Coocurrence.ico",
+          "text": "Enrichr Submissions TF-Gene Coocurrence"
+        },
+        "subtitle": {
+          "text": "Enrichr Submissions TF-Gene Coocurrence",
+          "label": "Library"
+        },
+        "name": {
+          "text": "STAT3",
+          "label": "Description"
+        },
+        "tags": [
+          {
+            "text": "literature curation",
+            "label": "Assay",
+            "icon": "mdi-flask-outline",
+            "priority": 1,
+            "clickable": true
+          },
+          {
+            "text": "STAT3",
+            "label": "Gene",
+            "icon": "mdi-dna",
+            "priority": 3,
+            "clickable": true
+          },
+          {
+            "text": "Mus musculus; Homo sapiens",
+            "label": "Organism",
+            "icon": "mdi-human-child",
+            "priority": 5,
+            "clickable": true
+          }
+        ],
+        "download": [],
+        "keywords": {}
+      }
+    }
+  ]
