@@ -1,12 +1,12 @@
 import { put, takeLatest, cancelled, all, call, select } from 'redux-saga/effects'
-import { Set } from 'immutable'
 import { action_definitions } from '../redux/action-types'
 import { get_summary_statistics,
   resolve_entities,
   query_overlap,
-  query_rank } from '../helper/fetch_methods'
+  query_rank,
+  get_key_count,
+ } from '../helper/fetch_methods'
 import { fetch_count } from '../helper/server_side'
-import { parse_entities } from '../helper/misc'
 import { fill_palette } from '../helper/theme_filler'
 import { fetchMetaDataSucceeded,
   fetchMetaDataFailed,
@@ -21,7 +21,8 @@ import { fetchMetaDataSucceeded,
   initializePreferredName,
   updateInput,
   reportError,
-  fetchSummarySucceeded
+  fetchSummarySucceeded,
+  fetchKeyCountSucceeded,
  } from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
@@ -53,6 +54,10 @@ export function *workInitializeSigcom(action) {
     const {ui_values} = yield call(get_ui_values)
     yield put(fetchUIValuesSucceeded(ui_values))
     yield put(initializePreferredName(ui_values))
+
+    // fetch key_counts
+    const {key_count} = yield call(get_key_count, Object.keys(ui_values.preferred_name))
+    yield put(fetchKeyCountSucceeded(key_count))
     
     // theme
     const theme = createMuiTheme(merge(defaultTheme, ui_values.theme_mod))

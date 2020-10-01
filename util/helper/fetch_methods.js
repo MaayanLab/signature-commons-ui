@@ -23,6 +23,17 @@ export const operationIds = {
   },
 }
 
+export const get_key_count = async (tables) => {
+  const key_counts = {}
+  for (const table of tables){
+    const {response: key_count} = await fetch_meta({
+      endpoint: `/${table}/key_count`
+    })
+    key_counts[table] = key_count
+  }
+  return {key_count: key_counts}
+}
+
 export const get_summary_statistics = async () => {
   const {response: serverSideProps} = await fetch_meta({
     endpoint: "/summary"

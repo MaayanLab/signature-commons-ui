@@ -20,6 +20,10 @@ export function fetchSummarySucceeded(serverSideProps) {
   return { type: action_definitions.FETCH_SUMMARY_SUCCEEDED, serverSideProps}
 }
 
+export function fetchKeyCountSucceeded(key_count) {
+  return { type: action_definitions.FETCH_KEY_COUNT_SUCCEEDED, key_count}
+}
+
 // export function initializeParents({ parent_ids_mapping, parents_mapping }) {
 //   return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
 // }

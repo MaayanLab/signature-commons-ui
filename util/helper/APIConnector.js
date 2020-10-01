@@ -16,97 +16,117 @@ const plural_mapper = {
   entity: 'entities',
 }
 
-export function build_where({ search, filters, order }) {
-  search = search || []
-  if (search.length === 0 && filters===undefined && order===undefined) return undefined
+function process_search_clauses(search_clauses){
   let where = {}
-  let andClauses = []
-  let orClauses = []
-  let notClauses = []
-  for (const q of search) {
-    if (isUUID(q) || isUUID(q.substring(1).trim()) || isUUID(q.substring(3).trim())) {
-      if (q.startsWith('!') || q.startsWith('-')) {
-        // and not
-        notClauses = [...andClauses, { id: {ne: q.substring(1)} }]
-      } else if (q.toLowerCase().startsWith('or ')) {
-        orClauses = [...orClauses, { id: q.substring(3) }]
-      } else if (q.startsWith('|')) {
-        orClauses = [...orClauses, { id: q.substring(1) }]
-      } else {
-        // and
-        andClauses = [...andClauses, { id: q }]
-      }
-    } else if (q.indexOf(':') !== -1) {
-      const [key, ...value] = q.split(':')
-      if (key.startsWith('!') || key.startsWith('-')) {
-        notClauses = [...notClauses, { ['meta.' + key.substring(1).trim()]: { nilike: '%' + value.join(':') + '%' } }]
-      } else if (key.toLowerCase().startsWith('or ')) {
-        orClauses = [...orClauses, { ['meta.' + key.substring(3).trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      } else if (key.startsWith('|')) {
-        orClauses = [...orClauses, { ['meta.' + key.substring(1).trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      } else {
-        andClauses = [...andClauses, { ['meta.' + key.trim()]: { ilike: '%' + value.join(':') + '%' } }]
-      }
-    } else {
-      // full text query
-      if (q.startsWith('!') || q.startsWith('-')) {
-        // and not
-        const slist = q.substring(1).trim().split(' ')
-        const query = slist.map((s) => ({ meta: { fullTextSearch: { ne: s } } }))
-        notClauses = [...notClauses, ...query]
-        // andClauses = [...andClauses, { meta: { fullTextSearch: { ne: q.substring(1).trim() } } }]
-      } else if (q.toLowerCase().startsWith('or ')) {
-        // const slist = q.substring(3).trim().split(" ")
-        // const query = {and: slist.map(s=>({ fullTextSearch: { eq: s } } ))}
-        // orClauses = [...andClauses, query]
-        const slist = q.substring(3).trim().split(' ')
-        const query = { and: slist.map((s) => ({ meta: { fullTextSearch: { eq: s } } })) }
-        orClauses = [...orClauses, query]
-        // orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(3).trim() } } }]
-      } else if (q.startsWith('|')) {
-        // const slist = q.substring(1).trim().split(" ")
-        // const query = {and: slist.map(s=>({ fullTextSearch: { eq: s } } ))}
-        // orClauses = [...andClauses, query]
-        const slist = q.substring(1).trim().split(' ')
-        const query = { and: slist.map((s) => ({ meta: { fullTextSearch: { eq: s } } })) }
-        orClauses = [...orClauses, query]
-        // orClauses = [...orClauses, { meta: { fullTextSearch: { eq: q.substring(1).trim() } } }]
-      } else {
-        // and
-        const slist = q.trim().split(' ')
-        const query = slist.map((s) => ({ meta: { fullTextSearch: { eq: s } } }))
-        andClauses = [...andClauses, ...query]
-
-        // andClauses = [...andClauses, { meta: { fullTextSearch: { eq: q.trim() } } }]
-      }
+  if (search_clauses.or.length > 0) {
+    if (search_clauses.and.length > 0) {
+      // or takes precedence over and
+      where['or'] = [...search_clauses.or, { and: search_clauses.and }]
+    } else{
+      where['or'] = search_clauses.or
     }
-  }
-  if (orClauses.length > 0) {
-    if (andClauses.length > 0) {
-      orClauses = [...orClauses, { and: andClauses }]
-    }
-    where['or'] = orClauses
   } else {
-    where['and'] = andClauses
+    // no or
+    where['and'] = search_clauses.and
   }
-  if (notClauses.length > 0) {
+  if (search_clauses.not.length > 0) {
     if (where.and !== undefined) {
       where = {
         ...where,
         and: [
           ...where.and,
-          ...notClauses,
+          ...search_clauses.not,
         ],
       }
     } else if (where.or !== undefined) {
+      // not takes precedence
       where = {
         and: [
           { ...where },
-          ...notClauses,
+          ...search_clauses.not,
         ],
+      }
+    } else {
+      where = {
+        ...where,
+        and: search_clauses.not
       }
     }
   }
+  return {where}
+}
+
+export function build_where({ search, filters, order, indexed_keys }) {
+  search = search || []
+  if (search.length === 0 && filters===undefined && order===undefined) return undefined
+  let where = {}
+  const search_clauses = {
+    and: [],
+    or: [],
+    not: [],
+    fullTextSearch: {
+      and: [],
+      or: [],
+      not: [],
+    }
+  }
+
+  for (const q of search) {
+    let search_term = q
+    let context = "and"
+    if (q.startsWith('!') || q.startsWith('-')) {
+      // and not
+      search_term = q.substring(1)
+      context = "not"
+    } else if (q.toLowerCase().startsWith('or ')) {
+      search_term = q.substring(3)
+      context = "or"
+    } else if (q.startsWith('|')) {
+      search_term = q.substring(1)
+      context = "or"
+    }
+    search_term = search_term.trim()
+    if (isUUID(search_term)){
+      const search_query = {
+        id: context==='not' ? {ne: search_term}: search_term
+      }
+      search_clauses[context].push(search_query)
+    } else if (search_term.indexOf(':') !== -1) {
+      const [key, ...value] = q.split(':')
+      if (indexed_keys.indexOf(`meta.${key.trim()}`) !== -1){
+        // it is indexed
+        const search_query = {
+          [`meta.${key.trim()}`]: context==='not' ? {nilike: '%' + value.join(':') + '%' }: {ilike: '%' + value.join(':') + '%' } 
+        }
+        search_clauses[context].push(search_query)
+      } else {
+        // fulltextsearch
+        if (context === "not"){
+          search_clauses.fullTextSearch[context].push({ne: search_term})
+        }else{
+          search_clauses.fullTextSearch[context].push(search_term)
+        }
+      }
+    } else {
+      // fulltextsearch
+      if (context === "not"){
+        search_clauses.fullTextSearch[context].push({ne: search_term})
+      }else{
+        search_clauses.fullTextSearch[context].push(search_term)
+      }
+    }
+  }
+  const {where: fullTextSearch} = process_search_clauses(search_clauses.fullTextSearch)
+  if (search_clauses.and.length===0 && search_clauses.or.length===0 && search_clauses.not.length===0){
+    where = {meta: {fullTextSearch}}
+  } else{
+    if (Object.values(fullTextSearch).filter(v=>(v.length>0)).length>0){
+      search_clauses.and.push({meta: {fullTextSearch}})
+    }
+    const {where: w} = process_search_clauses(search_clauses)
+    where = w
+  }
+
 
   if (filters !== undefined) {
     if (where.and === undefined) {
@@ -116,12 +136,21 @@ export function build_where({ search, filters, order }) {
     }
     for (const [filter, values] of Object.entries(filters)) {
       if (filter.indexOf('..') === -1) {
+        const or = values.map(v=>({
+          [filter]: v
+        }))
         where = {
           and: [...where.and, {
-            [filter]: { inq: [...values] },
-          },
+              or,
+            },
           ],
         }
+        // where = {
+        //   and: [...where.and, {
+        //     [filter]: { inq: [...values] },
+        //   },
+        //   ],
+        // }
       }
     }
   }
@@ -144,7 +173,7 @@ export function build_where({ search, filters, order }) {
 }
 
 export default class Model {
-  constructor(table, parent) {
+  constructor(table, parent, indexed_keys) {
     this.model = model_mapper[table]
     this.table = table
     this.parent = parent
@@ -161,6 +190,7 @@ export default class Model {
       limit: 10,
     }
     this.order = undefined
+    this.indexed_keys = indexed_keys
   }
 
   set_where = ({ search, filters, order }) => {
@@ -182,7 +212,7 @@ export default class Model {
       delete filters[this.grandparent]
     }
     this.filters = filters
-    this.where = build_where({ search, filters, order })
+    this.where = build_where({ search, filters, order, indexed_keys: this.indexed_keys })
   }
 
   get_count_params = ({ search, filters }) => {
