@@ -116,15 +116,17 @@ export function build_where({ search, filters, order, indexed_keys }) {
       }
     }
   }
-  const { where: fullTextSearch } = process_search_clauses(search_clauses.fullTextSearch)
-  if (search_clauses.and.length === 0 && search_clauses.or.length === 0 && search_clauses.not.length === 0) {
-    where = { meta: { fullTextSearch } }
-  } else {
-    if (Object.values(fullTextSearch).filter((v) => (v.length > 0)).length > 0) {
-      search_clauses.and.push({ meta: { fullTextSearch } })
+  if (search.length > 0){
+    const { where: fullTextSearch } = process_search_clauses(search_clauses.fullTextSearch)
+    if (search_clauses.and.length === 0 && search_clauses.or.length === 0 && search_clauses.not.length === 0) {
+      where = { meta: { fullTextSearch } }
+    } else {
+      if (Object.values(fullTextSearch).filter((v) => (v.length > 0)).length > 0) {
+        search_clauses.and.push({ meta: { fullTextSearch } })
+      }
+      const { where: w } = process_search_clauses(search_clauses)
+      where = w
     }
-    const { where: w } = process_search_clauses(search_clauses)
-    where = w
   }
 
 
