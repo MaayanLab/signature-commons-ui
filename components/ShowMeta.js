@@ -106,7 +106,7 @@ export function ShowMeta({ value, highlight, classes, hidden }) {
           <Grid container
             spacing={24}
             key={key}>
-            <Grid item xs={6} xl={2} md={3} className={classes.KeyLabel} style={{ 'textAlign': 'right' }}>
+            <Grid item xs={6} xl={2} md={3} className={classes.KeyLabel} style={{ 'textAlign': 'left' }}>
               <Highlight
                 Component={(props) => <b {...props}>{props.children}</b>}
                 HighlightComponent={(props) => <i {...props}>{props.children}</i>}
