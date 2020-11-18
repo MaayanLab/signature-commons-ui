@@ -60,8 +60,23 @@ export const get_summary_statistics = async () => {
   for (const r of resources) {
     resource_mapper[r.id] = r
   }
-
-  const { resource_signature_count: response, schemas } = serverSideProps
+  let schemas = serverSideProps.schemas
+  const { resource_signature_count: response } = serverSideProps
+  if (schemas.length === 0 ){
+    const { response: schema_db } = await fetch_meta_post({
+      endpoint: '/schemas/find',
+      body: {
+        filter: {
+          where: {
+            'meta.$validator': {
+              like: '%/meta/schema/ui-schema.json%',
+            },
+          },
+        },
+      },
+    })
+    schemas = schema_db.map((schema) => (schema.meta))
+  }
   if (response.length > 0) {
     const resource_signature_count = []
     for (const r of response) {
