@@ -75,7 +75,10 @@ export const get_card_data = (data, schemas, highlight = undefined) => {
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
-
+      if (prop.insignia){
+        const val = value_by_type[prop.type]({ label, prop, data, highlight })
+        processed.insignia = { ...val, project: prop.project }
+      }
       if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data)) {
         const val = value_by_type[prop.type]({ label, prop, data, highlight })
         if (prop.name) {

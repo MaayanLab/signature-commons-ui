@@ -233,9 +233,9 @@ export const InfoCard = ({ data, schemas, ui_values, classes, search, expandRend
                   />
                 </Grid> : null
               }
-              { data.processed.homepage !== undefined && data.processed.homepage.hyperlink !== undefined ?
+              { data.processed.insignia ?
                 <Grid item style={{marginLeft: 10}}>
-                  <Insignia params={{url: data.processed.homepage.hyperlink, project: 99}}/>
+                  <Insignia params={{url: data.processed.insignia.text, project: data.processed.insignia.project}}/>
                 </Grid> : null
               }
               { !props.deactivate_download && data.processed.download !== undefined && data.processed.download.length > 0 ?
