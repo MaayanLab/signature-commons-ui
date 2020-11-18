@@ -1,14 +1,14 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 import { call } from '../../util/call'
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
-import Switch from '@material-ui/core/Switch';
+import Switch from '@material-ui/core/Switch'
 import TextFieldSuggest from '@dcic/signature-commons-ui-components-text-field-suggest'
 
-const style = theme => ({
+const style = (theme) => ({
   chiplabel: {
     'maxWidth': 100,
     'overflow': 'hidden',
@@ -24,15 +24,15 @@ const style = theme => ({
     marginBottom: 10,
   },
   submit: {
-    background: theme.palette.defaultButton.main,
-    color: theme.palette.defaultButton.contrastText,
+    'background': theme.palette.defaultButton.main,
+    'color': theme.palette.defaultButton.contrastText,
     '&:hover': {
       background: theme.palette.defaultButton.dark,
     },
     '&:disabled': {
       background: theme.palette.defaultButton.disabled,
     },
-  }
+  },
 })
 
 const mapStateToProps = (state) => {
@@ -54,60 +54,60 @@ const Geneset = (props) => (
           <div className="switch">
             <label style={{ color: '#FFF',
               fontWeight: 'bold' }}>
-                {props.ui_values.geneset_switch}
+              {props.ui_values.geneset_switch}
               <Switch
                 checked={false}
                 onChange={() => {
-                    props.toggleInput('Rank')
-                  }
+                  props.toggleInput('Rank')
+                }
                 }
                 value="sigsearch"
                 color="secondary"
               />
-                {props.ui_values.up_down_switch}
+              {props.ui_values.up_down_switch}
             </label>
           </div>
         : null
       }
     </Grid>
     <Grid item xs={12}>
-      <TextFieldSuggest 
+      <TextFieldSuggest
         id="entities"
         placeholder={props.ui_values.geneset_placeholder}
         chipInputProps={{
           style: {
             height: 200,
-            width: "100%",
+            width: '100%',
             overflow: 'auto',
             background: '#f7f7f7',
-            padding: "20px 10px"
+            padding: '20px 10px',
           },
-          blurBehavior: 'add'
+          blurBehavior: 'add',
         }}
         input={props.input.entities}
-        onAdd={value=>{
+        onAdd={(value) => {
           const input = {
             ...props.input,
-            unprocessed_entities: [...props.input.unprocessed_entities, ...value.trim().split(/[ \t\r\n;]+/)]
+            unprocessed_entities: [...props.input.unprocessed_entities, ...value.trim().split(/[\t\r\n;]+/)],
           }
           props.updateInput(input)
         }}
-        onDelete={value=>{
+        onDelete={(value) => {
           const input = {
             ...props.input,
-            entities: props.input.entities.filter(v=>v.id!==value.id)
+            entities: props.input.entities.filter((v) => v.id !== value.id),
           }
           props.updateInput(input)
         }}
-        onSuggestionClick={(value, clicked)=>{
-          const entities = props.input.entities.map(v=>{
-            if (v.id === value.id){
+        onSuggestionClick={(value, clicked) => {
+          const entities = props.input.entities.map((v) => {
+            if (v.id === value.id) {
               return (clicked)
-            }else return v
+            } else return v
           })
           const input = {
             ...props.input,
-            entities
+            entities,
           }
           props.updateInput(input)
         }}
@@ -127,7 +127,7 @@ const UpDownGeneset = (props) => (
           <div className="switch">
             <label style={{ color: '#FFF',
               fontWeight: 'bold' }}>
-                {props.ui_values.geneset_switch}
+              {props.ui_values.geneset_switch}
               <Switch
                 checked={true}
                 onChange={() => {
@@ -136,93 +136,93 @@ const UpDownGeneset = (props) => (
                 value="sigsearch"
                 color="primary"
               />
-                {props.ui_values.up_down_switch}
+              {props.ui_values.up_down_switch}
             </label>
           </div>
-        </div>: null
+        </div> : null
       }
     </Grid>
     <Grid item sm={6} xs={12}>
-      <TextFieldSuggest 
+      <TextFieldSuggest
         id="up_entities"
         placeholder={props.ui_values.geneset_placeholder}
         chipInputProps={{
           style: {
             height: 200,
-            width: "100%",
+            width: '100%',
             overflow: 'auto',
             background: '#f7f7f7',
-            padding: "20px 10px"
+            padding: '20px 10px',
           },
-          blurBehavior: 'add'
+          blurBehavior: 'add',
         }}
         input={props.input.up_entities}
-        onAdd={value=>{
+        onAdd={(value) => {
           const input = {
             ...props.input,
-            unprocessed_up_entities: [...props.input.unprocessed_up_entities, ...value.trim().split(/[ \t\r\n;]+/)]
+            unprocessed_up_entities: [...props.input.unprocessed_up_entities, ...value.trim().split(/[\t\r\n;]+/)],
           }
           props.updateInput(input)
         }}
-        onDelete={value=>{
+        onDelete={(value) => {
           const input = {
             ...props.input,
-            up_entities: props.input.up_entities.filter(v=>v.id!==value.id)
+            up_entities: props.input.up_entities.filter((v) => v.id !== value.id),
           }
           props.updateInput(input)
         }}
-        onSuggestionClick={(value, clicked)=>{
-          const up_entities = props.input.up_entities.map(v=>{
-            if (v.id === value.id){
+        onSuggestionClick={(value, clicked) => {
+          const up_entities = props.input.up_entities.map((v) => {
+            if (v.id === value.id) {
               return (clicked)
-            }else return v
+            } else return v
           })
           const input = {
             ...props.input,
-            up_entities
+            up_entities,
           }
           props.updateInput(input)
         }}
       />
     </Grid>
     <Grid item sm={6} xs={12}>
-      <TextFieldSuggest 
+      <TextFieldSuggest
         id="down_entities"
         placeholder={props.ui_values.geneset_placeholder}
         chipInputProps={{
           style: {
             height: 200,
-            width: "100%",
+            width: '100%',
             overflow: 'auto',
             background: '#f7f7f7',
-            padding: "20px 10px"
+            padding: '20px 10px',
           },
-          blurBehavior: 'add'
+          blurBehavior: 'add',
         }}
         input={props.input.down_entities}
-        onAdd={value=>{
+        onAdd={(value) => {
           const input = {
             ...props.input,
-            unprocessed_down_entities: [...props.input.unprocessed_down_entities, ...value.trim().split(/[ \t\r\n;]+/)]
+            unprocessed_down_entities: [...props.input.unprocessed_down_entities, ...value.trim().split(/[\t\r\n;]+/)],
           }
           props.updateInput(input)
         }}
-        onDelete={value=>{
+        onDelete={(value) => {
           const input = {
             ...props.input,
-            down_entities: props.input.down_entities.filter(v=>v.id!==value.id)
+            down_entities: props.input.down_entities.filter((v) => v.id !== value.id),
           }
           props.updateInput(input)
         }}
-        onSuggestionClick={(value, clicked)=>{
-          const down_entities = props.input.down_entities.map(v=>{
-            if (v.id === value.id){
+        onSuggestionClick={(value, clicked) => {
+          const down_entities = props.input.down_entities.map((v) => {
+            if (v.id === value.id) {
               return (clicked)
-            }else return v
+            } else return v
           })
           const input = {
             ...props.input,
-            down_entities
+            down_entities,
           }
           props.updateInput(input)
         }}
@@ -351,18 +351,18 @@ class GenesetSearchBox extends React.Component {
     if (this.props.input === undefined) return true
     if (this.props.input.type === 'Overlap') {
       if (this.props.input.entities === undefined) return true
-      if (this.props.input.entities.length===0) return true
+      if (this.props.input.entities.length === 0) return true
     } else if (this.props.input.type === 'Rank') {
-      if (this.props.input.up_entities.length===0) return true
+      if (this.props.input.up_entities.length === 0) return true
       if (this.props.input.up_entities === undefined) return true
-      if (this.props.input.down_entities.length===0) return true
+      if (this.props.input.down_entities.length === 0) return true
       if (this.props.input.down_entities === undefined) return true
     }
     return false
   }
 
   componentDidMount = () => {
-    if (this.props.input.type!==this.props.match.params.type){
+    if (this.props.input.type !== this.props.match.params.type) {
       this.props.toggleInput(this.props.match.params.type)
     }
   }
@@ -380,7 +380,7 @@ class GenesetSearchBox extends React.Component {
           <Button
             className={this.props.classes.submit}
             variant="contained"
-            disabled={this.isEmpty() || this.props.loading || this.props.loading_matches || this.props.loading_matches_failed} 
+            disabled={this.isEmpty() || this.props.loading || this.props.loading_matches || this.props.loading_matches_failed}
             type="submit"
             name="action"
             onClick={call(this.props.submit, this.props.input)}

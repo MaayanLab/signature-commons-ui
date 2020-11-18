@@ -40,7 +40,7 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
           className: classes.menu,
         },
       }}
-      style={{marginTop:-5}}
+      style={{ marginTop: -5 }}
       margin="normal"
       style={{ marginTop: -5 }}
       onChange={props.onChange}
@@ -59,19 +59,18 @@ export const Selections = withStyles(landingStyle)(function({ classes, record = 
 })
 
 export const PieChart = withStyles(landingStyle)(function({ classes, record = {}, stats, ...props }) {
-  
   if (stats === undefined) return null
-  let slice = props.slice || 14;
+  let slice = props.slice || 14
   stats.sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
   let data
-  if (stats.length <= stats){
+  if (stats.length <= stats) {
     data = stats
-  }else {
+  } else {
     const total = sum(stats, 'counts')
     let included = stats.slice(0, slice)
     let included_sum = sum(included, 'counts')
-    if (included_sum<total/2){
-      while (included_sum<total/2){
+    if (included_sum < total / 2) {
+      while (included_sum < total / 2) {
         included_sum = included_sum + stats[slice].counts
         slice++
       }

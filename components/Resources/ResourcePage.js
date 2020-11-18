@@ -15,7 +15,7 @@ import TablePagination from '@material-ui/core/TablePagination'
 import { URLFormatter } from '../../util/helper/misc'
 
 import DataTable from '../MetadataSearch/DataTable'
-import {ExpandedMeta} from '../MetadataSearch/ExpandedMeta'
+import { ExpandedMeta } from '../MetadataSearch/ExpandedMeta'
 import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
 
 import { makeTemplate } from '../../util/makeTemplate'
@@ -24,8 +24,7 @@ import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,
   download_library_json } from '../MetadataSearch/download'
 
-
-import {get_schema_props} from '../Resources'
+import { get_schema_props } from '../Resources'
 const download = {
   libraries: download_library_json,
   resources: download_resource_json,
@@ -56,14 +55,14 @@ class ResourcePage extends React.Component {
   async componentDidMount() {
     const res = this.props.match.params.resource.replace(/_/g, ' ')
     const resource = await this.get_resource(res)
-      if (resource!==null){
-        const { collection, count } = await this.get_children(this.state.page, this.state.perPage, resource)
-        this.setState({
-          resource,
-          collection,
-          count
-        })
-      }
+    if (resource !== null) {
+      const { collection, count } = await this.get_children(this.state.page, this.state.perPage, resource)
+      this.setState({
+        resource,
+        collection,
+        count,
+      })
+    }
   }
 
   async componentDidUpdate(prevProps) {
@@ -71,12 +70,12 @@ class ResourcePage extends React.Component {
     const prevRes = prevProps.match.params.resource.replace(/_/g, ' ')
     if (res != prevRes) {
       const resource = await this.get_resource(res)
-      if (resource!==null){
+      if (resource !== null) {
         const { collection, count } = await this.get_children(this.state.page, this.state.perPage, resource)
         this.setState({
           resource,
           collection,
-          count
+          count,
         })
       }
     }
@@ -84,10 +83,10 @@ class ResourcePage extends React.Component {
 
   get_resource = async (res) => {
     let resource = null
-    if (this.props.resources[res]!==undefined){
+    if (this.props.resources[res] !== undefined) {
       resource = this.props.resources[res]
       resource.libraries = undefined
-    }else if (this.props.resources[res]===undefined && isUUID(res + '')) {
+    } else if (this.props.resources[res] === undefined && isUUID(res + '')) {
       const { response } = await fetch_meta_post({
         endpoint: `/resources/find`,
         body: {
@@ -96,12 +95,12 @@ class ResourcePage extends React.Component {
               id: res,
             },
           },
-        }
+        },
       })
       // it's in resources
-      if (response.length > 0){
+      if (response.length > 0) {
         resource = response[0]
-      }else {
+      } else {
         // find in libraries
         const { response } = await fetch_meta_post({
           endpoint: `/libraries/find`,
@@ -111,9 +110,9 @@ class ResourcePage extends React.Component {
                 id: res,
               },
             },
-          }
+          },
         })
-        if (response.length > 0){
+        if (response.length > 0) {
           resource = response[0]
         }
       }
@@ -122,28 +121,28 @@ class ResourcePage extends React.Component {
   }
 
   get_children = async (page, perPage, resource) => {
-    const endpoint = resource.dataset_type===undefined ? '/libraries/find': '/signatures/find'
-      const parent = resource.dataset_type===undefined ? 'resource': 'library'
-      const { response, contentRange } = await fetch_meta_post({
-        endpoint,
-        body: {
-          filter: {
-            where: {
-              [parent]: resource.id,
-            },
-            limit: this.state.perPage,
-            skip: this.state.page*this.state.perPage,
+    const endpoint = resource.dataset_type === undefined ? '/libraries/find' : '/signatures/find'
+    const parent = resource.dataset_type === undefined ? 'resource' : 'library'
+    const { response, contentRange } = await fetch_meta_post({
+      endpoint,
+      body: {
+        filter: {
+          where: {
+            [parent]: resource.id,
           },
-        }
-      })
-      const collection = response.map((data) => {
-        if (data.library !== undefined) data.library = resource
-        return get_card_data(data, this.props.schemas)
-      })
-      return {
-        collection,
-        ...contentRange,
-      }
+          limit: this.state.perPage,
+          skip: this.state.page * this.state.perPage,
+        },
+      },
+    })
+    const collection = response.map((data) => {
+      if (data.library !== undefined) data.library = resource
+      return get_card_data(data, this.props.schemas)
+    })
+    return {
+      collection,
+      ...contentRange,
+    }
   }
 
   async handleDownload(type, id) {
@@ -169,7 +168,7 @@ class ResourcePage extends React.Component {
     const { collection } = await this.get_children(this.state.page, perPage, this.state.resource)
     this.setState({
       perPage,
-      collection
+      collection,
     })
   }
 
@@ -195,14 +194,14 @@ class ResourcePage extends React.Component {
       },
     })
   }
-  
+
   render() {
     if (this.state.resource === null) {
       return <CircularProgress color="primary"/>
     }
 
     const resource = this.state.resource
-    const {name_prop, icon_prop} = get_schema_props(resource, this.props.schemas)
+    const { name_prop, icon_prop } = get_schema_props(resource, this.props.schemas)
     let resource_name = makeTemplate(name_prop, resource)
     resource_name = resource_name === 'undefined' ? resource.id : resource_name
     return (
@@ -269,7 +268,7 @@ class ResourcePage extends React.Component {
                     </Grid>
                     <Grid item xs={1}>
                       <Link
-                        to={"#"}
+                        to={'#'}
                         onClick={() => this.props.history.goBack()}
                         className="waves-effect waves-teal btn-flat"
                       >
@@ -294,7 +293,7 @@ class ResourcePage extends React.Component {
                 type={this.props.preferred_name_singular['resources']}
                 history={this.props.history}
                 deactivate_download={true}
-                expandRenderer={(props)=>ExpandedMeta(props)}
+                expandRenderer={(props) => ExpandedMeta(props)}
               />
               <TablePagination
                 page={this.state.page}

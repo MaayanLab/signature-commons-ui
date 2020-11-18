@@ -17,74 +17,74 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-export const get_schema_props= (item, schemas) => {
+export const get_schema_props = (item, schemas) => {
   const schema = findMatchedSchema(item, schemas)
-  const response = {schema}
-  for (const prop of Object.values(schema.properties)){
-    if (prop.name){
-      response["name_prop"] = prop.text
+  const response = { schema }
+  for (const prop of Object.values(schema.properties)) {
+    if (prop.name) {
+      response['name_prop'] = prop.text
     }
-    if (prop.icon){
-      response["icon_prop"] = prop.src
+    if (prop.icon) {
+      response['icon_prop'] = prop.src
     }
-    if (prop.description){
-      response["description_prop"] = prop.text
+    if (prop.description) {
+      response['description_prop'] = prop.text
     }
   }
-  if (response["name_prop"] === undefined) prop.name = "${id}"
-  return {...response}
+  if (response['name_prop'] === undefined) prop.name = '${id}'
+  return { ...response }
 }
 
-export const get_resources_and_libraries = async(fetch_libraries=true, limit=50, skip=0 ) => {
+export const get_resources_and_libraries = async (fetch_libraries = true, limit = 50, skip = 0) => {
   const { response: resource_count } = await fetch_meta({
     endpoint: `/resources/count`,
     body: {
       where: {
-        "meta.$hidden": { eq: null}
-      }
-    }
+        'meta.$hidden': { eq: null },
+      },
+    },
   })
   const { response: resources } = await fetch_meta({
     endpoint: `/resources`,
     body: {
       filter: {
         where: {
-          "meta.$hidden": { eq: null}
+          'meta.$hidden': { eq: null },
         },
         limit,
-        skip
-      }
-    }
+        skip,
+      },
+    },
   })
-  if (fetch_libraries || resource_count === 0){
+  if (fetch_libraries || resource_count === 0) {
     const { response: library_count } = await fetch_meta({
       endpoint: `/libraries/count`,
       body: {
         where: {
-          resource: { eq: null}
-        }
-      }
+          resource: { eq: null },
+        },
+      },
     })
     const { response: libraries } = await fetch_meta({
       endpoint: `/libraries`,
       body: {
         filter: {
           where: {
-            resource: { eq: null}
+            resource: { eq: null },
           },
           limit,
-          skip
-        }
-      }
+          skip,
+        },
+      },
     })
     return {
       response: [...resources, ...libraries],
-      count: resource_count.count + library_count.count
+      count: resource_count.count + library_count.count,
     }
-  }else {
+  } else {
     return {
       response: resources,
-      count: resource_count.count
+      count: resource_count.count,
     }
   }
 }
@@ -96,21 +96,21 @@ class Resources extends React.PureComponent {
     this.state = {
       resources: null,
       limit: 50,
-      skip: 0
+      skip: 0,
     }
   }
 
   componentDidMount = async () => {
     const schemas = await get_schemas()
-    const {limit, skip} = this.state
+    const { limit, skip } = this.state
     const { response, count } = await get_resources_and_libraries(this.props.ui_values.showNonResource, limit, skip)
-    if (response.length === 0){
+    if (response.length === 0) {
       this.setState({
-        resources: []
+        resources: [],
       })
-    }else{
+    } else {
       const resources = response.reduce((acc, resource) => {
-        const {name_prop} = get_schema_props(resource, schemas)
+        const { name_prop } = get_schema_props(resource, schemas)
         let name = makeTemplate(name_prop, resource)
         if (name === 'undefined') name = resource.id
         acc[name] = resource
@@ -119,35 +119,34 @@ class Resources extends React.PureComponent {
       this.setState({
         resources,
         schemas,
-        count
+        count,
       })
     }
   }
 
   componentDidUpdate = async (prevProps, prevState) => {
-    
-    const {limit, skip, schemas} = this.state
-    if (prevState.limit !== limit || prevState.skip !== skip){
+    const { limit, skip, schemas } = this.state
+    if (prevState.limit !== limit || prevState.skip !== skip) {
       const { response } = await get_resources_and_libraries(this.props.ui_values.showNonResource, limit, skip)
-      if (response.length > 0){
+      if (response.length > 0) {
         const resources = response.reduce((acc, resource) => {
-          const {name_prop} = get_schema_props(resource, schemas)
+          const { name_prop } = get_schema_props(resource, schemas)
           let name = makeTemplate(name_prop, resource)
           if (name === 'undefined') name = resource.id
           acc[name] = resource
           return acc
         }, {})
         console.log(resources)
-        this.setState( prevState => ({
-          resources: {...prevState.resources, ...resources}
+        this.setState((prevState) => ({
+          resources: { ...prevState.resources, ...resources },
         }))
       }
     }
   }
 
   get_more_resources = () => {
-    this.setState(prevState=>({
-      skip: prevState.skip + prevState.limit
+    this.setState((prevState) => ({
+      skip: prevState.skip + prevState.limit,
     }))
   }
 

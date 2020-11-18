@@ -51,7 +51,7 @@ export async function get_ui_values() {
 
 class App extends React.Component {
   static async getInitialProps() {
-    
+
   }
 
   async componentDidMount() {
@@ -60,9 +60,9 @@ class App extends React.Component {
 
   render() {
     if (!this.props.initialized) {
-      return  <div style={{ textAlign: 'center', marginTop: 100 }}>
-                <CircularProgress />
-              </div>
+      return <div style={{ textAlign: 'center', marginTop: 100 }}>
+        <CircularProgress />
+      </div>
     }
     return (
       <div className="root">

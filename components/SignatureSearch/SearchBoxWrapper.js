@@ -1,6 +1,6 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import Grid from '@material-ui/core/Grid';
+import Grid from '@material-ui/core/Grid'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { findSignatures, updateInput, matchEntity } from '../../util/redux/actions'
@@ -13,7 +13,7 @@ import { Set } from 'immutable'
 // const example_geneset_up = 'UTP14A S100A6 SCAND1 RRP12 CIAPIN1 ADH5 MTERF3 SPR CHMP4A UFM1 VAT1 HACD3 RFC5 COTL1 NPRL2 TRIB3 PCCB TLE1 CD58 BACE2 KDM3A TARBP1 RNH1 CHAC1 MBNL2 VDAC1 TES OXA1L NOP56 HAT1 CPNE3 DNMT1 ARHGAP1 VPS28 EIF2S2 BAG3 CDCA4 NPDC1 RPS6KA1 FIS1 SYPL1 SARS CDC45 CANT1 HERPUD1 SORBS3 MRPS2 TOR1A TNIP1 SLC25A46'.split(' ').join('\n')
 // const example_geneset_down = 'MAL EPCAM HDAC6 CAPN1 TNRC6B PKD1 RRS1 HP ANO10 CEP170B IDE DENND2D CAMK2B ZNF358 RPP38 MRPL19 NUCB2 GNAI1 LSR ADGRE2 PKMYT1 CDK5R1 ABL1 PILRB AXIN1 FBXL8 MCF2L DBNDD1 IGHMBP2 WIPF2 WFS1 OGFOD2 MAPK1IP1L COL11A1 REG3A SERPINA1 MYCBP2 PIGK TCAP CRADD ELK1 DNAJB2 ZBTB16 DAZAP1 MAPKAPK2 EDRF1 CRIP1 UCP3 AGR2 P4HA2'.split(' ').join('\n')
 
-const style = theme => ({
+const style = (theme) => ({
   chiplabel: {
     'maxWidth': 100,
     'overflow': 'hidden',
@@ -24,11 +24,11 @@ const style = theme => ({
     },
   },
   defaultChip: {
-    background: theme.palette.defaultChip.main,
-    color: theme.palette.defaultChip.contrastText,
+    'background': theme.palette.defaultChip.main,
+    'color': theme.palette.defaultChip.contrastText,
     '&:hover': {
       background: theme.palette.defaultChip.dark,
-    }
+    },
   },
   card: {
     overflow: 'auto',
@@ -38,7 +38,7 @@ const style = theme => ({
   submit: {
     background: theme.palette.defaultButton.main,
     color: theme.palette.defaultButton.contrastText,
-  }
+  },
 })
 
 const mapStateToProps = (state) => {
@@ -69,7 +69,7 @@ class SearchBoxWrapper extends React.Component {
       this.props.updateInput({
         type,
         unprocessed_entities: [],
-        entities: []
+        entities: [],
       })
       this.props.history.push({
         pathname: '/SignatureSearch/Overlap',
@@ -99,11 +99,11 @@ class SearchBoxWrapper extends React.Component {
   }
 
   get_entities = (unprocessed_entities, entities) => {
-    const processed_entities = Set(entities.map(v=>v.label))
-    const ents = Set([unprocessed_entities]).subtract(processed_entities).toArray()[0].map((label, id)=>({
+    const processed_entities = Set(entities.map((v) => v.label))
+    const ents = Set([unprocessed_entities]).subtract(processed_entities).toArray()[0].map((label, id) => ({
       label,
       id: label,
-      type: "loading",
+      type: 'loading',
     }))
     return [...entities, ...ents]
   }
@@ -120,24 +120,24 @@ class SearchBoxWrapper extends React.Component {
      *  }]
      * }
      */
-    if (input.type === "Overlap"){
-      const {unprocessed_entities, entities} = input
+    if (input.type === 'Overlap') {
+      const { unprocessed_entities, entities } = input
       input = {
         ...input,
         unprocessed_entities: [],
-        entities: this.get_entities(unprocessed_entities, entities)
+        entities: this.get_entities(unprocessed_entities, entities),
       }
-    }else if (input.type === "Rank"){
-      const {unprocessed_up_entities,
+    } else if (input.type === 'Rank') {
+      const { unprocessed_up_entities,
         up_entities,
         unprocessed_down_entities,
-        down_entities} = input
+        down_entities } = input
       input = {
         ...input,
         unprocessed_up_entities: [],
         unprocessed_down_entities: [],
         up_entities: this.get_entities(unprocessed_up_entities, up_entities),
-        down_entities: this.get_entities(unprocessed_down_entities, down_entities)
+        down_entities: this.get_entities(unprocessed_down_entities, down_entities),
       }
     }
     this.props.matchEntity(input)
@@ -164,21 +164,21 @@ class SearchBoxWrapper extends React.Component {
         </Grid>
         <Grid item xs={12}>
           <React.Fragment>
-            {this.props.ui_values.examples.map(ex=>{
+            {this.props.ui_values.examples.map((ex) => {
               return (
                 <Chip label={ex.label} key={ex.label} className={this.props.classes.defaultChip}
                   onClick={() => {
-                    const input = ex.input.type === "Overlap" ? {
-                      type: "Overlap",
-                      unprocessed_entities: ex.input.geneset.split("\n"),
-                      entities: []
-                    }:{
-                      type: "Rank",
-                      unprocessed_up_entities: ex.input.up_geneset.split("\n"),
+                    const input = ex.input.type === 'Overlap' ? {
+                      type: 'Overlap',
+                      unprocessed_entities: ex.input.geneset.split('\n'),
+                      entities: [],
+                    } : {
+                      type: 'Rank',
+                      unprocessed_up_entities: ex.input.up_geneset.split('\n'),
                       up_entities: [],
-                      unprocessed_down_entities: ex.input.down_geneset.split("\n"),
+                      unprocessed_down_entities: ex.input.down_geneset.split('\n'),
                       down_entities: [],
-                    } 
+                    }
                     this.updateInput(input)
                     this.props.history.push({
                       pathname: `/SignatureSearch/${ex.input.type}`,
@@ -189,7 +189,7 @@ class SearchBoxWrapper extends React.Component {
             })}
           </React.Fragment>
         </Grid>
-    </Grid>
+      </Grid>
     )
   }
 }

@@ -79,9 +79,9 @@ export const landingStyle = (theme) => ({
   },
   topCard: {
     padding: '20px',
-    background: theme.card["topCard"].palette.main || theme.palette.defaultCard.main,
-    color: theme.card["topCard"].palette.contrastText || theme.palette.defaultCard.contrastText,
-    ...theme.card["topCard"].overrides
+    background: theme.card['topCard'].palette.main || theme.palette.defaultCard.main,
+    color: theme.card['topCard'].palette.contrastText || theme.palette.defaultCard.contrastText,
+    ...theme.card['topCard'].overrides,
   },
   stretched: {
     width: '80%',
@@ -119,26 +119,26 @@ export const landingStyle = (theme) => ({
     zIndex: 100,
   },
   bottomLink: {
-    background: theme.card["bottomCard"].palette.main || theme.palette.defaultCard.main,
-    color: theme.card["bottomCard"].palette.contrastText || theme.palette.defaultCard.contrastText,
+    'background': theme.card['bottomCard'].palette.main || theme.palette.defaultCard.main,
+    'color': theme.card['bottomCard'].palette.contrastText || theme.palette.defaultCard.contrastText,
     '&:hover': {
-      background: theme.card["bottomCard"].palette.dark || theme.palette.defaultCard.dark,
+      background: theme.card['bottomCard'].palette.dark || theme.palette.defaultCard.dark,
     },
-    ...theme.card["bottomCard"].overrides
+    ...theme.card['bottomCard'].overrides,
   },
   icon_light: {
     float: 'right',
     width: 75,
     height: 75,
     padding: 14,
-    color: theme.card["bottomCard"].palette.contrastText || theme.palette.defaultCard.contrastText || "#424242",
+    color: theme.card['bottomCard'].palette.contrastText || theme.palette.defaultCard.contrastText || '#424242',
   },
   icon: {
     float: 'right',
     width: 75,
     height: 75,
     padding: 14,
-    color: theme.card["bottomCard"].palette.contrastText || theme.palette.defaultCard.contrastText || white,
+    color: theme.card['bottomCard'].palette.contrastText || theme.palette.defaultCard.contrastText || white,
   },
   textField: {
     margin: '-20px 8px 8px 8px',

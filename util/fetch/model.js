@@ -91,7 +91,7 @@ export default class DataProvider {
     }
     if (opts.resource === true) {
       const resource = await library.resource
-      if (resource !== undefined){
+      if (resource !== undefined) {
         serialized.resource = await this.serialize_resource(resource)
       }
     }
@@ -415,13 +415,13 @@ export default class DataProvider {
           signature._data = entities
         } else if (endpoint === 'rank') {
           const ranks = sig.ranks
-          const ranked_entities = response.entities.map((ent, ind) => ({ ent, rank: ranks[ind] }));
-          ranked_entities.sort(({rank: rank_a}, {rank: rank_b}) => rank_a - rank_b);
+          const ranked_entities = response.entities.map((ent, ind) => ({ ent, rank: ranks[ind] }))
+          ranked_entities.sort(({ rank: rank_a }, { rank: rank_b }) => rank_a - rank_b)
 
-          const entities = await this.resolve_entities(ranked_entities.reduce((agg, { ent }) => ent !== undefined ? [...agg, ent] : agg, []));
+          const entities = await this.resolve_entities(ranked_entities.reduce((agg, { ent }) => ent !== undefined ? [...agg, ent] : agg, []))
           // const rank_index = ranks.map((rank)=>sig.ranks.indexOf(rank))
           // const entities = await this.resolve_entities(rank_index.map((rank) => response.entities[rank]).filter((ent) => ent !== undefined))
-          
+
           signature._data = entities
         } else {
           throw new Error(`endpoint ${endpoint} not recognized`)
@@ -664,7 +664,7 @@ export class Signature {
 
       await this._parent.fetch_data_for_signatures([this])
       if (this._data === undefined) {
-        throw new Error("Fetched data but we still don't have it!")
+        throw new Error('Fetched data but we still don\'t have it!')
       }
       return this._data
     })()

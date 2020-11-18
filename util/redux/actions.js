@@ -9,22 +9,26 @@ export function initializePreferredName(ui_values) {
 }
 
 export function initializeTheme(theme) {
-  return { type: action_definitions.INITIALIZE_THEME, theme}
+  return { type: action_definitions.INITIALIZE_THEME, theme }
 }
 
 export function fetchUIValuesSucceeded(ui_values) {
-  return { type: action_definitions.FETCH_UI_VALUES_SUCCEEDED, ui_values}
+  return { type: action_definitions.FETCH_UI_VALUES_SUCCEEDED, ui_values }
 }
 
 export function fetchSummarySucceeded(serverSideProps) {
-  return { type: action_definitions.FETCH_SUMMARY_SUCCEEDED, serverSideProps}
+  return { type: action_definitions.FETCH_SUMMARY_SUCCEEDED, serverSideProps }
+}
+
+export function fetchKeyCountSucceeded(key_count) {
+  return { type: action_definitions.FETCH_KEY_COUNT_SUCCEEDED, key_count }
 }
 
 // export function initializeParents({ parent_ids_mapping, parents_mapping }) {
 //   return { type: action_definitions.INITIALIZE_PARENTS, parent_ids_mapping, parents_mapping }
 // }
 
-export function initializeParents({parents_mapping }) {
+export function initializeParents({ parents_mapping }) {
   return { type: action_definitions.INITIALIZE_PARENTS, parents_mapping }
 }
 
