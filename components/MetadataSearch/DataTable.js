@@ -27,8 +27,6 @@ import Collapse from '@material-ui/core/Collapse'
 import DownloadButton from '../Downloads'
 import Insignia from '../../standalone/fairshake-insignia/src'
 
-import Collapse from '@material-ui/core/Collapse';
-
 const Options = dynamic(() => import('../Options'), { ssr: false })
 
 const styles = (theme) => ({
