@@ -6,7 +6,7 @@
   "dependencies": {
     "@dcic/signature-commons-ui-components-running-sum": "file:standalone/running-sum",
     "@dcic/signature-commons-ui-components-text-field-suggest": "file:standalone/text-field-suggest",
-    "@maayanlab/signature-commons-schema": "file:../signature-commons-schema",
+    "@maayanlab/signature-commons-schema": "^1.5.5",
     "@material-ui/core": "^3.9.4",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.30",

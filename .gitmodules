@@ -1,0 +1,3 @@
+[submodule "standalone/components"]
+	path = standalone/components
+	url = https://github.com/MaayanLab/signature-commons-components.git
