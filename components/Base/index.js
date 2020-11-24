@@ -11,7 +11,7 @@ import { makeTemplate } from '../../util/makeTemplate'
 const mapStateToProps = (state, ownProps) => {
   return {
     ui_values: state.ui_values,
-    theme: state.theme
+    theme: state.theme,
   }
 }
 export default connect(mapStateToProps)(withStyles(styles)(class Base extends React.PureComponent {
@@ -50,7 +50,7 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
           <title>{this.props.ui_values.favicon.title}</title>
           <link rel="shortcut icon" alt={this.props.ui_values.favicon.alt} href={makeTemplate(this.props.ui_values.favicon.src, {})} />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-          {this.props.ui_values.font_families.map((family, ind)=>(
+          {this.props.ui_values.font_families.map((family, ind) => (
             <link href={family} key={ind} rel="stylesheet" type="text/css"/>
           ))}
           <link href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css" rel="stylesheet" />
@@ -58,7 +58,7 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
           <script async defer src="https://buttons.github.io/buttons.js"></script>
         </Head>
         <Header location={this.props.location}/>
-        <main style={{backgroundColor: theme.palette.background.main}} {...this.props.ui_values.background_props}>
+        <main style={{ backgroundColor: theme.palette.background.main }} {...this.props.ui_values.background_props}>
           <div className={classes.container}>
             {this.props.children}
           </div>

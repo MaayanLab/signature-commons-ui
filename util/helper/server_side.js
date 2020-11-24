@@ -144,7 +144,7 @@ export async function get_piecounts(ui_values) {
     }
   })
   const piecounts = pie_stats.reduce((piestats, stats) => {
-    piestats[stats.Preferred_Name] = { stats: Object.entries(stats.stats).map(([name, counts]) => ({ name, counts })), 
+    piestats[stats.Preferred_Name] = { stats: Object.entries(stats.stats).map(([name, counts]) => ({ name, counts })),
       table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name, slice: stats.slice }
     return piestats
   }, {})
@@ -194,7 +194,7 @@ export async function get_wordcounts(ui_values) {
     }
   })
   const wordcounts = word_stats.reduce((wordstats, stats) => {
-    wordstats[stats.Preferred_Name] = { stats: Object.entries(stats.stats).map(([name, counts]) => ({ name, counts })), 
+    wordstats[stats.Preferred_Name] = { stats: Object.entries(stats.stats).map(([name, counts]) => ({ name, counts })),
       table: ui_values.preferred_name[stats.table], Preferred_Name: stats.Preferred_Name, slice: stats.slice }
     return wordstats
   }, {})
@@ -306,7 +306,7 @@ export async function get_histograms(ui_values) {
 }
 
 export async function get_barscores(ui_values) {
-  const schemas = await get_schemas('/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json')
+  const schemas = await get_schemas()
   const { response: counting_fields } = await fetch_meta_post({
     endpoint: '/schemas/find',
     body: {
@@ -390,13 +390,13 @@ export async function get_resource_signature_count() {
     let resource_name
     if (name_props.length > 0) {
       resource_name = makeTemplate(name_props[0].text, resource)
-    } 
-    if (name_props.length===0 || resource_name === 'undefined') {
+    }
+    if (name_props.length === 0 || resource_name === 'undefined') {
       console.warn('source of resource name is not defined, using either Resource_Name or ids')
       resource_name = resource.meta['Resource_Name'] || resource_id
     }
     const { response: res } = await fetch_meta({ endpoint: `/resources/${resource_id}/signatures/count` })
-    resource_signature_count = [...resource_signature_count, {name: resource_name, counts:res.count}]
+    resource_signature_count = [...resource_signature_count, { name: resource_name, counts: res.count }]
   }
   return { resource_signature_count }
 }

@@ -14,22 +14,22 @@ export function get_formated_query(terms) {
 }
 
 export const modify_entity_by_strategy = {
-  "upper": (input) => (
+  'upper': (input) => (
     input.toUpperCase()
   ),
-  "lower": (input) => (
+  'lower': (input) => (
     input.toLowerCase()
   ),
-  "none": (input) => (
+  'none': (input) => (
     input
   ),
-} 
+}
 
-export function parse_entities(entities, strategy="upper") {
+export function parse_entities(entities, strategy = 'upper') {
   const new_entities = {}
-  for (const entity of entities){
+  for (const entity of entities) {
     const parsed = /^(.+?)(,(.+))?$/.exec(entity)
-    if (parsed!==null){
+    if (parsed !== null) {
       new_entities[modify_entity_by_strategy[strategy](parsed[1])] = entity
     }
   }

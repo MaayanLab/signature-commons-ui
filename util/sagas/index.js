@@ -1,14 +1,12 @@
 import { put, takeLatest, cancelled, all, call, select } from 'redux-saga/effects'
-import { Set } from 'immutable'
 import { action_definitions } from '../redux/action-types'
 import { get_summary_statistics,
   resolve_entities,
-  find_synonyms,
   query_overlap,
   query_rank,
-  fetch_all_as_dictionary } from '../helper/fetch_methods'
+  get_key_count,
+} from '../helper/fetch_methods'
 import { fetch_count } from '../helper/server_side'
-import { parse_entities } from '../helper/misc'
 import { fill_palette } from '../helper/theme_filler'
 import { fetchMetaDataSucceeded,
   fetchMetaDataFailed,
@@ -23,8 +21,9 @@ import { fetchMetaDataSucceeded,
   initializePreferredName,
   updateInput,
   reportError,
-  fetchSummarySucceeded
- } from '../redux/actions'
+  fetchSummarySucceeded,
+  fetchKeyCountSucceeded,
+} from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
 import { get_ui_values } from '../../pages'
@@ -52,10 +51,14 @@ export function *workInitializeSigcom(action) {
     const { serverSideProps } = yield call(get_summary_statistics)
     yield put(fetchSummarySucceeded(serverSideProps))
     // ui values
-    const {ui_values} = yield call(get_ui_values)
+    const { ui_values } = yield call(get_ui_values)
     yield put(fetchUIValuesSucceeded(ui_values))
     yield put(initializePreferredName(ui_values))
-    
+
+    // fetch key_counts
+    const { key_count } = yield call(get_key_count, Object.keys(ui_values.preferred_name))
+    yield put(fetchKeyCountSucceeded(key_count))
+
     // theme
     const theme = createMuiTheme(merge(defaultTheme, ui_values.theme_mod))
     theme.shadows[4] = theme.shadows[0]
@@ -70,10 +73,10 @@ export function *workInitializeSigcom(action) {
     const tonalOffset = theme.palette.tonalOffset
     const contrastThreshold = theme.palette.contrastThreshold
     // fill theme
-    theme.palette = Object.entries(theme.palette).reduce((acc, [key,val])=>{
-      if (val.main !== undefined){
+    theme.palette = Object.entries(theme.palette).reduce((acc, [key, val]) => {
+      if (val.main !== undefined) {
         acc[key] = fill_palette(val, tonalOffset, contrastThreshold)
-      }else {
+      } else {
         acc[key] = val
       }
       return acc
@@ -95,14 +98,14 @@ export function *workInitializeSigcom(action) {
     // theme.palette.defaultChipLight = fill_palette(defaultChipLight, tonalOffset, contrastThreshold)
 
     // card themes
-    for(const [ind, card_theme] of Object.entries(theme.card)){
-      if (card_theme.palette.main !== undefined){
+    for (const [ind, card_theme] of Object.entries(theme.card)) {
+      if (card_theme.palette.main !== undefined) {
         const main = card_theme.palette
         card_theme.palette = fill_palette(main, tonalOffset, contrastThreshold)
         theme.card[ind] = card_theme
       }
     }
-    
+
 
     // theme.palette.action.disabledBackground = theme.palette.secondary.light
     yield put(initializeTheme(theme))
@@ -130,7 +133,7 @@ export function *workInitializeSigcom(action) {
     }
     yield put(initializeParents({ parents_mapping }))
     // yield put(initializeParents({ parent_ids_mapping, parents_mapping }))
-   } catch (error) {
+  } catch (error) {
     yield put(reportError(error))
     console.log(error)
     controller.abort()
@@ -282,7 +285,7 @@ export function *workMatchEntities(action) {
   const controller = new AbortController()
   try {
     let { input } = action
-    const {ui_values} = yield call(get_ui_values)
+    const { ui_values } = yield call(get_ui_values)
     if (input.type === 'Overlap') {
       // yield put(updateInput(input))\
       const { entities } = yield call(resolve_entities, { entities: input.entities,
@@ -291,23 +294,23 @@ export function *workMatchEntities(action) {
         controller })
       input = {
         ...input,
-        entities
+        entities,
       }
       yield put(updateResolvedEntities(input))
     } else if (input.type === 'Rank') {
       // yield put(updateInput(input))
       const { entities: up_entities } = yield call(resolve_entities, { entities: input.up_entities,
-                                        entity_strategy: ui_values.entity_strategy,
-                                        synonym_strategy: ui_values.synonym_strategy,
-                                        controller })
+        entity_strategy: ui_values.entity_strategy,
+        synonym_strategy: ui_values.synonym_strategy,
+        controller })
       const { entities: down_entities } = yield call(resolve_entities, { entities: input.down_entities,
-                                        entity_strategy: ui_values.entity_strategy,
-                                        synonym_strategy: ui_values.synonym_strategy,
-                                        controller })
+        entity_strategy: ui_values.entity_strategy,
+        synonym_strategy: ui_values.synonym_strategy,
+        controller })
       input = {
         ...input,
         up_entities,
-        down_entities
+        down_entities,
       }
       yield put(updateResolvedEntities(input))
     }
@@ -340,7 +343,7 @@ export function *workFindSignature(action) {
   try {
     const { input } = action
     if (input.type === 'Overlap') {
-      const entities = input.entities.filter(e=>e.type==="valid")
+      const entities = input.entities.filter((e) => e.type === 'valid')
       const signature_id = input.id || uuid5(JSON.stringify(entities))
       const signature_result = yield call(query_overlap, {
         input: {
@@ -358,8 +361,8 @@ export function *workFindSignature(action) {
       }
       yield put(findSignaturesSucceeded(results))
     } else if (input.type === 'Rank') {
-      const up_entities = input.up_entities.filter(e=>e.type==="valid")
-      const down_entities = input.down_entities.filter(e=>e.type==="valid")
+      const up_entities = input.up_entities.filter((e) => e.type === 'valid')
+      const down_entities = input.down_entities.filter((e) => e.type === 'valid')
       const signature_id = input.id || uuid5(JSON.stringify([up_entities, down_entities]))
       const signature_result = yield call(query_rank, {
         input: {
@@ -413,11 +416,11 @@ export function *workFindSignatureFromId(action) {
       const input = {
         type: search_type,
         ...data,
-        entities: Object.values(data.entities)
+        entities: Object.values(data.entities),
       }
       const signature_result = yield call(query_overlap, {
         input: {
-          ...input
+          ...input,
         },
         controller,
       })
@@ -454,18 +457,18 @@ export function *workFindSignatureFromId(action) {
     yield put(reportError(error))
     console.log(error)
     let input = ({
-      type: search_type
+      type: search_type,
     })
-    if (search_type==='Overlap') {
+    if (search_type === 'Overlap') {
       input = {
         ...input,
-        geneset: ''
+        geneset: '',
       }
     } else {
       input = {
         ...input,
         up_geneset: '',
-        down_geneset: ''
+        down_geneset: '',
       }
     }
     yield put(updateInput(input))

@@ -37,7 +37,7 @@ const operationMapper = {
   new_filter: (table, current_table) => ({
     metadata_search: table === current_table,
     value_count: table === current_table,
-    count: true,
+    count: table === current_table,
   }),
   change_tab: (table, current_table) => ({
     metadata_search: table === current_table,
@@ -46,8 +46,8 @@ const operationMapper = {
   }),
   order: (table, current_table) => ({
     metadata_search: table === current_table,
-    value_count: false,
-    count: false,
+    value_count: table === current_table,
+    count: table === current_table,
   }),
 }
 
@@ -104,42 +104,12 @@ class MetadataSearch extends React.Component {
     const schemas = await get_schemas()
     const new_table = this.props.reverse_preferred_name[this.props.match.params.table]
     const param_str = decodeURI(this.props.location.search)
-    let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-    for (const table of this.props.tables) {
-      const operations_key = this.getOperationsKey()
-      const operations = operationMapper[operations_key](table, new_table)
-      if (params[table]) {
-        params = {
-          ...params,
-          [table]: {
-            ...params[table],
-            operations,
-          },
-        }
-      } else {
-        params = {
-          ...params,
-          [table]: {
-            operations,
-          },
-        }
-      }
-      if (this.state.order[table] !== undefined && params[table].order !== undefined && params[table].order !== this.state.order[table]) {
-        this.setState({
-          order: {
-            ...this.state.order,
-            [table]: params[table].order,
-          },
-        })
-      } else if (this.state.order[table] !== undefined && params[table].order === undefined) {
-        params[table].order = this.state.order[table]
-      }
-    }
+    const params = this.format_param(param_str, new_table)
     this.props.searchBoxFunction(params)
-    const index = this.props.tables.filter(table=>this.props.models[table]!==undefined && this.props.models[table].results.count).indexOf(new_table)
+    const index = this.props.tables.filter((table) => this.props.models[table] !== undefined && this.props.models[table].results.count).indexOf(new_table)
     this.setState({
-      index_value: index>-1 ? index:0,
-      schemas
+      index_value: index > -1 ? index : 0,
+      schemas,
     })
   }
 
@@ -155,47 +125,15 @@ class MetadataSearch extends React.Component {
       if (model.results.metadata_search === undefined) {
         const operations_key = this.getOperationsKey()
         const operations = operationMapper[operations_key](current_table, current_table)
-        params = this.format_param(current_param_str, operations, current_table)
+        params = this.format_param(current_param_str, current_table)
         this.props.searchFunction(params)
       }
     } else if (current_param_str !== old_param_str) {
       if (this.props.location.state === undefined || this.props.location.state.new_search) {
-        params = ReadURLParams(current_param_str, this.props.reverse_preferred_name)
-        for (const table of this.props.tables) {
-          const operations_key = this.getOperationsKey()
-          const operations = operationMapper[operations_key](table, current_table)
-          if (params[table]) {
-            params = {
-              ...params,
-              [table]: {
-                ...params[table],
-                operations,
-              },
-            }
-          } else {
-            params = {
-              ...params,
-              [table]: {
-                operations,
-              },
-            }
-          }
-          if (this.state.order[table] !== undefined && params[table].order !== undefined && params[table].order !== this.state.order[table]) {
-            this.setState({
-              order: {
-                ...this.state.order,
-                [table]: params[table].order,
-              },
-            })
-          } else if (this.state.order[table] !== undefined && params[table].order === undefined) {
-            params[table].order = this.state.order[table]
-          }
-        }
+        params = this.format_param(current_param_str, current_table)
         this.props.searchBoxFunction(params)
       } else {
-        const operations_key = this.getOperationsKey()
-        const operations = operationMapper[operations_key](current_table, current_table)
-        params = this.format_param(current_param_str, operations, current_table)
+        params = this.format_param(current_param_str, current_table)
         this.props.searchFunction(params)
       }
       let pagination = this.state.pagination
@@ -224,30 +162,43 @@ class MetadataSearch extends React.Component {
         },
       })
     }
-    if (this.props.completed && !prevProps.completed){
+    if (this.props.completed && !prevProps.completed) {
       this.setState({
-        index_value: this.props.tables.filter(table=>this.props.models[table]!==undefined && this.props.models[table].results.count).indexOf(current_table),
+        index_value: this.props.tables.filter((table) => this.props.models[table] !== undefined && this.props.models[table].results.count).indexOf(current_table),
       })
     }
   }
 
-  format_param = (param_str, operations, table) => {
+  format_param = (param_str, current_table) => {
     let params = ReadURLParams(param_str, this.props.reverse_preferred_name)
-
-    if (params[table]) {
-      params = {
-        ...params,
-        [table]: {
-          ...params[table],
-          operations,
-        },
+    for (const table of this.props.tables) {
+      const operations_key = this.getOperationsKey()
+      const operations = operationMapper[operations_key](table, current_table)
+      if (params[table]) {
+        params = {
+          ...params,
+          [table]: {
+            ...params[table],
+            operations,
+          },
+        }
+      } else {
+        params = {
+          ...params,
+          [table]: {
+            operations,
+          },
+        }
       }
-    } else {
-      params = {
-        ...params,
-        [table]: {
-          operations,
-        },
+      if (this.state.order[table] !== undefined && params[table].order !== undefined && params[table].order !== this.state.order[table]) {
+        this.setState({
+          order: {
+            ...this.state.order,
+            [table]: params[table].order,
+          },
+        })
+      } else if (this.state.order[table] !== undefined && params[table].order === undefined) {
+        params[table].order = this.state.order[table]
       }
     }
     return params
@@ -295,11 +246,11 @@ class MetadataSearch extends React.Component {
     const results = model.results
     if (sorting_fields === undefined || sorting_fields.length === 0 || results === undefined || results.value_count === undefined) return null
     let filters = []
-    for (const field_item of sorting_fields ) {
+    for (const field_item of sorting_fields) {
       const value = results.value_count[field_item.meta.Field_Name]
       if (value === undefined) return null
       const stats = value.stats
-      if (Object.keys(stats).length > 0){
+      if (Object.keys(stats).length > 0) {
         const filter = (
           <Card key={field_item.meta.Field_Name}>
             <ListItem button onClick={() => this.openFilter(field_item.meta.Field_Name)}>
@@ -313,9 +264,9 @@ class MetadataSearch extends React.Component {
                 schemas={this.state.schemas}
                 field_name={field_item.meta.Field_Name}
                 parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1 &&
-                  this.props.models[current_table].grandparent!==field_item.meta.Field_Name}
-                grandparent={this.props.models[current_table].grandparent!==undefined &&
-                             this.props.models[current_table].grandparent===field_item.meta.Field_Name}
+                  this.props.models[current_table].grandparent !== field_item.meta.Field_Name}
+                grandparent={this.props.models[current_table].grandparent !== undefined &&
+                             this.props.models[current_table].grandparent === field_item.meta.Field_Name}
               />
             </Collapse>
           </Card>
@@ -363,7 +314,7 @@ class MetadataSearch extends React.Component {
     if (current_table === undefined) {
       return <Redirect to="/not-found"/>
     }
-    if (this.state.schemas===null || !this.props.completed) {
+    if (this.state.schemas === null || !this.props.completed) {
       return (
         <Grid container
           spacing={24}>
@@ -380,7 +331,7 @@ class MetadataSearch extends React.Component {
           </Grid>
         </Grid>
       )
-    }else if (this.props.completed && Object.values(this.props.models).filter(model=>model!==undefined && model.results.count>0).length===0){
+    } else if (this.props.completed && Object.values(this.props.models).filter((model) => model !== undefined && model.results.count > 0).length === 0) {
       return (
         <Grid container
           spacing={24}>
@@ -397,13 +348,13 @@ class MetadataSearch extends React.Component {
           </Grid>
         </Grid>
       )
-    }else if (this.props.completed && (this.props.models[current_table] === undefined || this.props.models[current_table].results.count===0)){
-      const redirect_to_table = Object.values(this.props.models).filter(model=>model!==undefined && model.table!==current_table && model.results.count>0)[0].table
+    } else if (this.props.completed && (this.props.models[current_table] === undefined || this.props.models[current_table].results.count === 0)) {
+      const redirect_to_table = Object.values(this.props.models).filter((model) => model !== undefined && model.table !== current_table && model.results.count > 0)[0].table
       const preferred = this.props.preferred_name[redirect_to_table]
       return <Redirect to={{
         pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${preferred}`,
         search: this.props.location.search,
-        state: this.props.location.state
+        state: this.props.location.state,
       }} />
     }
     // else if (this.props.location.search===""){

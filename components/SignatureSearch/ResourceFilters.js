@@ -24,10 +24,10 @@ export default class ResourceFilters extends React.Component {
   sort_resources = () => {
     return this.props.resources.sort(
         (r1, r2) => {
-          const {name_prop: r1_name_prop} = get_schema_props(r1, this.props.schemas)
+          const { name_prop: r1_name_prop } = get_schema_props(r1, this.props.schemas)
           let r1_name = makeTemplate(r1_name_prop, r1)
           if (r1_name === 'undefined') r1_name = r1.id
-          const {name_prop: r2_name_prop} = get_schema_props(r2, this.props.schemas)
+          const { name_prop: r2_name_prop } = get_schema_props(r2, this.props.schemas)
           let r2_name = makeTemplate(r2_name_prop, r2)
           if (r2_name === 'undefined') r2_name = r2.id
           const diff = (((this.props.resource_signatures || {})[r2_name] || {}).count || 0) - (((this.props.resource_signatures || {})[r1_name] || {}).count || 0)
@@ -75,10 +75,9 @@ export default class ResourceFilters extends React.Component {
           }
         }}>
         {sorted_resources.map((resource, ind) => {
-          
-          const {name_prop, icon_prop, description_prop} = get_schema_props(resource, this.props.schemas)
+          const { name_prop, icon_prop, description_prop } = get_schema_props(resource, this.props.schemas)
           const name = makeTemplate(name_prop, resource)
-          
+
           const count = ((this.props.resource_signatures || {})[name] || {}).count
           const btn = count === undefined ? (
             <IconButton

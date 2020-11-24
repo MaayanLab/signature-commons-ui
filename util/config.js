@@ -11,8 +11,8 @@ export default async function config() {
     return {
       NEXT_PUBLIC_METADATA_API: process.env.NEXT_PUBLIC_METADATA_API !== undefined ? process.env.NEXT_PUBLIC_METADATA_API : (window.location.origin + '/signature-commons-metadata-api'),
       NEXT_PUBLIC_DATA_API: process.env.NEXT_PUBLIC_DATA_API !== undefined ? process.env.NEXT_PUBLIC_DATA_API : (window.location.origin + '/enrichmentapi'),
-      NEXT_PUBLIC_ENRICHR_URL: 'https://amp.pharm.mssm.edu/Enrichr',
-      NEXT_PUBLIC_EXTERNAL_API: 'https://amp.pharm.mssm.edu/mcf10a-notebooks/api',
+      NEXT_PUBLIC_ENRICHR_URL: process.env.NEXT_PUBLIC_ENRICHR_URL === undefined ? 'https://amp.pharm.mssm.edu/Enrichr' : process.env.NEXT_PUBLIC_ENRICHR_URL,
+      NEXT_PUBLIC_EXTERNAL_API: process.env.NEXT_PUBLIC_EXTERNAL_API === undefined ? 'https://amp.pharm.mssm.edu/isitup' : process.env.NEXT_PUBLIC_EXTERNAL_API,
     }
   }
 }

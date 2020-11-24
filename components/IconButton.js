@@ -18,7 +18,7 @@ const styles = (theme) => ({
   },
   image: {
     height: 50,
-    maxWidth: 100
+    maxWidth: 100,
   },
   margin: {
     margin: theme.spacing.unit * 2,
@@ -29,7 +29,7 @@ const styles = (theme) => ({
 const InformativeButton = (props) => {
   const { classes, counter, title, alt, src, icon, description } = props
   let tooltip_title = ''
-  if (description !== undefined) {
+  if (description !== undefined || description !== '') {
     tooltip_title = <Typography variant="subtitle2" style={{ color: '#FFF' }} gutterBottom>
       {description}
     </Typography>
@@ -43,8 +43,8 @@ const InformativeButton = (props) => {
         <Badge className={classes.margin} max={9999} badgeContent={counter === undefined ? 0 : counter} color="error">
           <Grid container>
             <Grid item xs={12}>
-              { icon === undefined ? 
-                <img className={classes.image} alt={alt} src={src}/>:
+              { icon === undefined ?
+                <img className={classes.image} alt={alt} src={src}/> :
                 <span className={`mdi mdi-36px ${icon}`}/>
               }
             </Grid>

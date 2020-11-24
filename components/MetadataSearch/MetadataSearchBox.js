@@ -13,18 +13,18 @@ const styles = (theme) => ({
     margin: theme.spacing.unit / 2,
   },
   defaultChip: {
-    background: theme.palette.defaultChip.main,
-    color: theme.palette.defaultChip.contrastText,
+    'background': theme.palette.defaultChip.main,
+    'color': theme.palette.defaultChip.contrastText,
     '&:hover': {
       background: theme.palette.defaultChip.dark,
-    }
+    },
   },
   defaultLightChip: {
-    background: theme.palette.defaultChipLight.main,
-    color: theme.palette.defaultChipLight.contrastText,
+    'background': theme.palette.defaultChipLight.main,
+    'color': theme.palette.defaultChipLight.contrastText,
     '&:hover': {
       background: theme.palette.defaultChipLight.dark,
-    }
+    },
   },
   notChip: {
     ...theme.chipColors.alert,
@@ -41,11 +41,11 @@ const styles = (theme) => ({
     padding: '5px 0',
   },
   button: {
-    background: theme.palette.defaultButton.main,
-    color: theme.palette.defaultButton.contrastText,
+    'background': theme.palette.defaultButton.main,
+    'color': theme.palette.defaultButton.contrastText,
     '&:hover': {
       background: theme.palette.defaultButton.dark,
-    }
+    },
   },
   icon: {
     paddingBottom: 35,
@@ -68,7 +68,7 @@ const mapStateToProps = (state) => {
     preferred_name: state.ui_values.preferred_name,
     reverse_preferred_name: state.reverse_preferred_name,
     MetadataSearchNav: state.ui_values.nav.MetadataSearch || {},
-    ChipInputStyle: state.ui_values.ChipInputStyle
+    ChipInputStyle: state.ui_values.ChipInputStyle,
   }
 }
 
