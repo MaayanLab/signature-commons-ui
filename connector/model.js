@@ -1,6 +1,7 @@
-import { validate } from '@maayanlab/signature-commons-schema'
 import isUUID from 'validator/lib/isUUID'
 import merge from 'deepmerge'
+
+const validate = require('@maayanlab/signature-commons-schema').validate.bind({})
 
 const singular_form = {
     resources: "resource",
@@ -53,9 +54,10 @@ export class Model {
 		// as defined by the core validator, hence it is resolved
 		if (this.resolved) return this.resolved
 		try {
-			const obj = await validate(this._entry)
+			await validate(this._entry)
 			this.resolved = true
 		} catch (error) {
+			console.log(error)
 			this.resolved = false
 		}
 		return this.resolved
@@ -141,7 +143,7 @@ export class Model {
 
 	serialize = async () => {
 		const entry = await this.entry()
-		const parent = await (await this.parent()).entry()
+		const parent = await this.parent()
 		await this.children()
 		const children = []
 		for (const child of Object.values(this._children)) {

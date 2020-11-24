@@ -73,7 +73,11 @@ export default class DataResolver {
 						resolved_entries[entry.id] = resolved_entry
 					} else {
 						const entry_object = new entry_model[model](model, entry, this)
-						unresolved_entries[entry.id] = entry_object
+						if (await entry_object.validate_entry()){
+							resolved_entries[entry.id] = entry_object
+						}else {
+							unresolved_entries[entry.id] = entry_object
+						}
 					}
 				}else {
 					invalid_entries.push(entry)
@@ -174,7 +178,7 @@ export default class DataResolver {
         for (const entry of entries){
 			await entry.entry()
 			const uid = entry.id
-			const parent = await (await entry.parent()).entry()
+			const parent = await entry.parent()
             const dataset_type = parent["dataset_type"]
 			const dataset = parent["dataset"]
             if (dataset_id_map[dataset] === undefined){
