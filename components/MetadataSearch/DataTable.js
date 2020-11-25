@@ -26,6 +26,9 @@ import ScorePopper from '../ScorePopper'
 import Collapse from '@material-ui/core/Collapse'
 import DownloadButton from '../Downloads'
 
+import DataResolver from '../../connector/data_resolver'
+
+
 const Options = dynamic(() => import('../Options'), { ssr: false })
 
 const styles = (theme) => ({
@@ -254,7 +257,13 @@ class DataTable extends React.Component {
       expanded: null,
     }
   }
-  handleClick = (metadata) => {
+  handleClick = async (metadata) => {
+    // const resolver = new DataResolver()
+    // const uid = "c981dd58-ed1c-11e8-9724-787b8ad942f3"
+    // const {resolved_entries} = await resolver.resolve_entries({model: "entities", entries: [uid]})
+    // console.log(resolved_entries)
+    // const entry = resolved_entries[uid]
+    // console.log(await entry.serialize())
     this.setState((prevState) => ({
       expanded: prevState.expanded === metadata.original.id ? null : metadata.original.id,
     }))

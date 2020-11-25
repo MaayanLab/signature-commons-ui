@@ -234,7 +234,7 @@ export default class DataResolver {
             "limit": 10,
             ...query
 		}
-		const endpoint = enrich_endpoint[data_type][entity_type]
+		const endpoint = enrich_endpoint[datatype][entity_type]
 		const {response, contentRange } = await fetch_data({
 			endpoint,
 			body,
@@ -263,7 +263,6 @@ export default class DataResolver {
 		} else {
 			throw new Error("Invalid query: " + query)
 		}
-
 		if (repo === undefined) {
 			const { response: r } = await fetch_data({ endpoint: '/listdata' })
 			repo = r
@@ -274,26 +273,26 @@ export default class DataResolver {
 		for (const r of repo.repositories){
 			const {uuid: database, datatype} = r
 			if (entity_type === "set"){
-				const query = {
+				const q = {
                     ...query,
                     database,
                     entity_type,
                     datatype
 				}
-				const {entries, count:c} = await this.enrich_entities(query)
+				const {entries, count:c} = await this.enrich_entities(q)
 				all_count += c
                 signatures = [...signatures, ...entries]
 				results[database] = {"set": entries, query}
 				
 			}else if (entity_type === "up_down"){
 				if (datatype === "rank_matrix"){
-					const query = {
+					const q = {
                         ...query,
                         database,
                         entity_type,
                         datatype,
 					}
-					const {entries, count:c} = await this.enrich_entities(query)
+					const {entries, count:c} = await this.enrich_entities(q)
 					all_count += c
 					signatures = [...signatures, ...entries]
 					results[database] = {rank: entries, query}
@@ -329,34 +328,32 @@ export default class DataResolver {
 			}
 		}
 
-		const {resolved_entries} = await this._data_resolver.resolve_entries(
+		const {resolved_entries} = await this.resolve_entries(
 			{
 				model: "signatures",
 				entries: signatures
 			}
 		)
 		const resolved_results = {}
-		for (const [k,v] of Object.entries(resolved_entries)){
-			resolved_results[k] = {}
-			for (const [key,val] of Object.entries(resolved_entries)){
-				resolved_results[k][key] = []
-				for (const e of val){
-					const entry = resolved_entries[e.id]
-					if (entry!==undefined){
-						const ent = entry.entry()
-						const resolved_entry_meta  = ent.meta || {}
-						const unresolved_entry_meta = e.entry().meta || {}
-						const updated_entry = {
-							...ent,
-							meta: {
-								...unresolved_entry_meta,
-								...resolved_entry_meta
-							}
+		for (const [dataset_name,sigs] of Object.entries(results)){
+			resolved_results[dataset_name] = []
+			for (const sig of sigs["set"]){
+				// resolved_results[dataset_name][key] = []
+				const entry = resolved_entries[sig.id]
+				if (entry!==undefined){
+					const ent = await entry.entry()
+					const resolved_entry_meta  = ent.meta || {}
+					const unresolved_entry_meta = sig.meta || {}
+					const updated_entry = {
+						...ent,
+						meta: {
+							...unresolved_entry_meta,
+							...resolved_entry_meta
 						}
-						entry.update_entry(updated_entry)
-						resolved_results[k][key].push(entry)
-						this.data_repo["signatures"][entry.id] = entry
 					}
+					entry.update_entry(updated_entry)
+					resolved_results[dataset_name].push(entry)
+					this.data_repo["signatures"][entry.id] = entry
 				}
 			}
 		}

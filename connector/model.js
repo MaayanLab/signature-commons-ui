@@ -57,7 +57,7 @@ export class Model {
 			await validate(this._entry)
 			this.resolved = true
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 			this.resolved = false
 		}
 		return this.resolved
@@ -187,7 +187,7 @@ export class Signature extends Model {
 }
 
 export class Entity extends Model {
-	resolve_children = async ({limit, ...filter}) => {
+	resolve_children = async ({limit, ...filter}={limit:10}) => {
 		const query = {
 			entities: [this.id],
 			...filter	
@@ -198,6 +198,23 @@ export class Entity extends Model {
 		const { entries,
 			count } = await this._data_resolver.get_signatures_from_entities({query})
 		this._children = entries
-        this._children_count = count
+		this._children_count = count
+	}
+
+	serialize = async () => {
+		const entry = await this.entry()
+		// const parent = await this.parent()
+		await this.children()
+		const children = {}
+		for (const [dataset,v] of Object.entries(this._children)) {
+			if (v.length>0){
+				children[dataset] = []
+				for (const child of v)
+					children[dataset].push(await child.entry())
+			}
+		  }
+		// entry[singular_form[this._parent_model]] = parent
+		entry[this._child_model] = children
+		return entry
 	}
 }
