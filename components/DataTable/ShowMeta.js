@@ -1,7 +1,6 @@
 import React from 'react'
 import { Highlight } from './Highlight'
 import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
 
 export function validURL(str) {
     try {
