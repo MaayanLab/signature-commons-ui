@@ -4,9 +4,8 @@ import Grid from '@material-ui/core/Grid'
 import IconButton from '../../components/IconButton'
 import { call } from '../../util/call'
 import M from 'materialize-css'
-import { makeTemplate } from '../../util/makeTemplate'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { findMatchedSchema } from '../../util/objectMatch'
 import { get_schema_props } from '../Resources'
 
 export default class ResourceFilters extends React.Component {

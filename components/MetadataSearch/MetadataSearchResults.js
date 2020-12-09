@@ -2,8 +2,8 @@ import React from 'react'
 
 import TablePagination from '@material-ui/core/TablePagination'
 
-import { makeTemplate, makeTemplateForObject } from '../../util/makeTemplate'
-import { findMatchedSchema, objectMatch } from '../../util/objectMatch'
+import { makeTemplate, makeTemplateForObject } from '../../util/ui/makeTemplate'
+import { findMatchedSchema, objectMatch } from '../../util/ui/objectMatch'
 import { connect } from 'react-redux'
 import { URLFormatter, ReadURLParams } from '../../util/helper/misc'
 import DataTable from './DataTable'

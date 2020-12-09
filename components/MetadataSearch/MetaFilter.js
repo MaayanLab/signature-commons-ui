@@ -4,8 +4,8 @@ import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { findMatchedSchema } from '../../util/objectMatch'
-import { makeTemplate } from '../../util/makeTemplate'
+import { findMatchedSchema } from '../../util/ui/objectMatch'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 import { ReadURLParams, URLFormatter } from '../../util/helper/misc'
 import Filter from './Filter'
 

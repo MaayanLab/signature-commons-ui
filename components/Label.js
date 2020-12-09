@@ -1,6 +1,6 @@
 import React from 'react'
 import { Highlight } from './Highlight'
-import { makeTemplate } from '../util/makeTemplate'
+import { makeTemplate } from '../util/ui/makeTemplate'
 
 export const default_schemas = [
   require('../examples/library/default.json'),

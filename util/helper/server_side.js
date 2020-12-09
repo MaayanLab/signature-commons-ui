@@ -1,7 +1,7 @@
 import { fetch_meta, fetch_meta_post } from '../fetch/meta'
-import { makeTemplate } from '../makeTemplate'
+import { makeTemplate } from '../ui/makeTemplate'
 import { get_schemas } from './fetch_methods'
-import { objectMatch, findMatchedSchema } from '../objectMatch'
+import { objectMatch, findMatchedSchema } from '../ui/objectMatch'
 
 export async function fetch_count(source) {
   const { response } = await fetch_meta({ endpoint: `/${source}/count`,

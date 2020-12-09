@@ -13,7 +13,7 @@ import Breadcrumbs from '@material-ui/lab/Breadcrumbs'
 import Hidden from '@material-ui/core/Hidden'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import MenuIcon from '@material-ui/icons/Menu'
-import { makeTemplate } from '../../util/makeTemplate'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -40,7 +40,7 @@ const styles = (theme) => ({
     color: 'inherit',
   },
   paper: {
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
   menuButton: {
     margin: 0,

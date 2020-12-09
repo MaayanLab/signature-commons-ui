@@ -7,7 +7,7 @@ import { get_summary_statistics,
   get_key_count,
 } from '../helper/fetch_methods'
 import { fetch_count } from '../helper/server_side'
-import { fill_palette } from '../helper/theme_filler'
+import { fill_palette } from '../ui/theme_filler'
 import { fetchMetaDataSucceeded,
   fetchMetaDataFailed,
   fetchMetaDataAborted,
@@ -28,7 +28,7 @@ import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
 import { get_ui_values } from '../../pages'
 import uuid5 from 'uuid5'
-import defaultTheme from '../theme-provider'
+import defaultTheme from '../ui/theme-provider'
 import { createMuiTheme } from '@material-ui/core'
 import merge from 'deepmerge'
 

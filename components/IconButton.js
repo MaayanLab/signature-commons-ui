@@ -8,7 +8,7 @@ import Badge from '@material-ui/core/Badge'
 
 const styles = (theme) => ({
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     textTransform: 'none',
     width: 100,
     minHeight: 100,
@@ -21,7 +21,7 @@ const styles = (theme) => ({
     maxWidth: 100,
   },
   margin: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
   },
 })
 

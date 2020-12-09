@@ -18,7 +18,7 @@ import DataTable from '../MetadataSearch/DataTable'
 import { ExpandedMeta } from '../MetadataSearch/ExpandedMeta'
 import { fetch_meta_post, fetch_meta } from '../../util/fetch/meta'
 
-import { makeTemplate } from '../../util/makeTemplate'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 import { connect } from 'react-redux'
 import { get_card_data } from '../MetadataSearch/MetadataSearchResults'
 import { download_resource_json,

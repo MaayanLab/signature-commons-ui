@@ -1,7 +1,7 @@
 import { fetch_meta } from '../fetch/meta'
 import { get_schemas } from './fetch_methods'
-import { objectMatch, default_schemas } from '../objectMatch'
-import { makeTemplate } from '../makeTemplate'
+import { objectMatch, default_schemas } from '../ui/objectMatch'
+import { makeTemplate } from '../ui/makeTemplate'
 
 
 export const iconOf = {

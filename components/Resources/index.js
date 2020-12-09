@@ -5,8 +5,8 @@ import { Route, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetch_meta } from '../../util/fetch/meta'
 import { get_schemas } from '../../util/helper/fetch_methods'
-import { makeTemplate } from '../../util/makeTemplate'
-import { findMatchedSchema } from '../../util/objectMatch'
+import { makeTemplate } from '../../util/ui/makeTemplate'
+import { findMatchedSchema } from '../../util/ui/objectMatch'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 const mapStateToProps = (state, ownProps) => {

@@ -6,11 +6,11 @@ import { connect } from 'react-redux'
 import { SearchBox } from './SearchBox'
 const styles = (theme) => ({
   info: {
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
   chip: {
-    margin: theme.spacing.unit / 2,
+    margin: theme.spacing(0.5),
   },
   defaultChip: {
     'background': theme.palette.defaultChip.main,

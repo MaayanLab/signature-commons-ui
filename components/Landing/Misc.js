@@ -10,7 +10,7 @@ import ListItem from '@material-ui/core/ListItem'
 import Button from '@material-ui/core/Button'
 import { animateScroll as scroll } from 'react-scroll'
 import Color from 'color'
-import { makeTemplate } from '../../util/makeTemplate'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 import ReactWordcloud from 'react-wordcloud'
 
 import SearchBoxWrapper from '../SignatureSearch/SearchBoxWrapper'

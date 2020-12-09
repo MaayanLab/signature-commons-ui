@@ -11,7 +11,7 @@ import IconButton from './IconButton'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { connect } from 'react-redux'
 import { reportError } from '../util/redux/actions'
-import { makeTemplate } from '../util/makeTemplate'
+import { makeTemplate } from '../util/ui/makeTemplate'
 import config from '../util/config'
 import {
   download_signature_json,

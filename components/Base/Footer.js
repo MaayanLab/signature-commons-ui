@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
 import Color from 'color'
 import { connect } from 'react-redux'
-import { makeTemplate } from '../../util/makeTemplate'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 
 import { withStyles } from '@material-ui/core/styles'
 
@@ -13,8 +13,8 @@ import { withStyles } from '@material-ui/core/styles'
 const styles = (theme) => ({
   root: {
     ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
     background: theme.palette.default.main,
   },
   footer_links: {

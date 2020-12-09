@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
 import { connect } from 'react-redux'
-import { makeTemplate } from '../../util/makeTemplate'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 
 const mapStateToProps = (state, ownProps) => {
   return {

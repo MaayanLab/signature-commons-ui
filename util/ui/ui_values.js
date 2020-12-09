@@ -1,5 +1,5 @@
 import merge from 'deepmerge'
-import { makeTemplate } from '../util/makeTemplate'
+import { makeTemplate } from './makeTemplate'
 
 const default_values = {
   'landing': {

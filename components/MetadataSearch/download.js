@@ -1,8 +1,8 @@
 import DataProvider from '../../util/fetch/model'
 import fileDownload from 'js-file-download'
-import { objectMatch, default_schemas } from '../../util/objectMatch'
+import { objectMatch, default_schemas } from '../../util/ui/objectMatch'
 import { fetch_meta_post } from '../../util/fetch/meta'
-import { makeTemplate } from '../../util/makeTemplate'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 import NProgress from 'nprogress'
 
 let cached_schemas = []
