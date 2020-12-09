@@ -21,7 +21,7 @@ export default class MetadataPage extends React.PureComponent {
 		const {model, id, schemas} = this.props
 		const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
 		const entry_object = resolved_entries[id]
-		const entry = labelGenerator(await entry_object.entry(), schemas)
+		const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas)
 		const parent = labelGenerator(await entry_object.parent(), schemas)
 		const children_object = await entry_object.children()
 		const children_count = children_object.count
