@@ -10,7 +10,7 @@ const singular_form = {
     entities: "entity"
 }
 
-const parent_mapper = {
+export const parent_mapper = {
     resources: null,
     libraries: "resources",
     signatures: "libraries",
@@ -34,9 +34,9 @@ export class Model {
 		this._parent = parent
 		this._children = undefined
         this._children_count = undefined
-        this._model = model
-        this._parent_model = parent_mapper[model]
-		this._child_model = child_mapper[model]
+        this.model = model
+        this.parent_model = parent_mapper[model]
+		this.child_model = child_mapper[model]
 		if (typeof entry === "string" && isUUID(entry)){
 			this._entry = {"id": entry}
             this.resolved = false 
@@ -53,12 +53,16 @@ export class Model {
 		// If the entry is valid then it have all the necessary fields
 		// as defined by the core validator, hence it is resolved
 		if (this.resolved) return this.resolved
-		try {
-			await validate(this._entry)
-			this.resolved = true
-		} catch (error) {
-			console.error(error)
+		if (this._entry.validator === undefined){
 			this.resolved = false
+		} else {
+			try {
+				await validate(this._entry)
+				this.resolved = true
+			} catch (error) {
+				console.error(error)
+				this.resolved = false
+			}
 		}
 		return this.resolved
 	}
@@ -68,27 +72,28 @@ export class Model {
 		if (!this.resolved){
 			const {resolved_entries, invalid_entries} = await this._data_resolver.resolve_entries(
 				{
-					model: this._model,
+					model: this.model,
 					entries: [this]
 				}
 			)
 			if (resolved_entries[this.id]!==undefined){
-				this._entry = resolved_entries[this.id]
+				this._entry = await resolved_entries[this.id].entry()
 				this.resolved = true
+				this._data_resolver.data_repo[this.model][this.id] = this
 			} else {
-				throw new Error(`Cannot resolve ${singular_form[this._model]} with id ${this._entry.id}`)
+				throw new Error(`Cannot resolve ${singular_form[this.model]} with id ${this._entry.id}`)
 			}
 		}
 	}
 
 	resolve_parent = async () => {
 		if (!this.resolved) await this.resolve_entry()
-		if (this._parent_model == null) {
+		if (this.parent_model == null) {
 			this._parent = null
 		}else {
 			if (this._parent === undefined){
-				const parent_model = singular_form[this._parent_model]
-				this._parent = new Model(this._parent_model, this._entry[parent_model], this._data_resolver)
+				const parent_model = singular_form[this.parent_model]
+				this._parent = new Model(this.parent_model, this._entry[parent_model], this._data_resolver)
 			}
 			await this._parent.resolve_entry()
 		}
@@ -100,13 +105,13 @@ export class Model {
 				and: [
 					filter.where,
 					{
-						[singular_form[this._model]]: this.id
+						[singular_form[this.model]]: this.id
 					}
 				]
 			}
 		}else {
 			filter.where = {
-				[singular_form[this._model]]: this.id
+				[singular_form[this.model]]: this.id
 			}
 		}
 		filter = {
@@ -114,7 +119,7 @@ export class Model {
 			...filter
 		}
 		const { entries, count} = await this._data_resolver.filter_metadata({
-			model: this._child_model,
+			model: this.child_model,
 			filter: filter,
 			parent: this
 		})
@@ -128,29 +133,34 @@ export class Model {
 	}
 
 	parent = async () => {
-		if (this._parent === undefined) await this.resolve_parent()
+		if (this._parent === undefined || !this._parent.resolved) await this.resolve_parent()
 		if (this._parent === null) return null
 		return await this._parent.entry()
 	}
 
 	children = async () => {
 		if (this._children === undefined) await this.resolve_children()
+		const children = []
+		for (const c of Object.values(this._children)){
+			const child = await c.entry()
+			child[singular_form[c.parent_model]] = await c.parent()
+			children.push(child)
+		}
 		return {
 			count: this._children_count,
-			[this._child_model]: this._children
+			[this.child_model]: children
 		}
 	}
 
 	serialize = async () => {
 		const entry = await this.entry()
 		const parent = await this.parent()
-		await this.children()
-		const children = []
-		for (const child of Object.values(this._children)) {
-			children.push(await child.entry())
-		  }
-		entry[singular_form[this._parent_model]] = parent
-		entry[this._child_model] = children
+		const children = (await this.children())[this.child_model]
+		// for (const child of Object.values(this._children)) {
+		// 	children.push(await child.entry())
+		//   }
+		entry[singular_form[this.parent_model]] = parent
+		entry[this.child_model] = children
 		return entry
 	}
 
@@ -178,7 +188,7 @@ export class Signature extends Model {
 		}
 		
 		const { resolved_entries } = await this._data_resolver.resolve_entries({
-				model: this._child_model,
+				model: this.child_model,
 				entries: entities,
 				parent: this
 			})
@@ -201,20 +211,32 @@ export class Entity extends Model {
 		this._children_count = count
 	}
 
-	serialize = async () => {
-		const entry = await this.entry()
-		// const parent = await this.parent()
-		await this.children()
+	children = async () => {
+		if (this._children === undefined) await this.resolve_children()
 		const children = {}
 		for (const [dataset,v] of Object.entries(this._children)) {
 			if (v.length>0){
 				children[dataset] = []
-				for (const child of v)
-					children[dataset].push(await child.entry())
+				for (const c of v){
+					const child = await c.entry()
+					child[singular_form[c.parent_model]] = await c.parent()
+					children[dataset].push(child)
+				}
 			}
 		  }
-		// entry[singular_form[this._parent_model]] = parent
-		entry[this._child_model] = children
+		return {
+			count: this._children_count,
+			[this.child_model]: children
+		}
+	}
+
+	serialize = async () => {
+		const entry = await this.entry()
+		// const parent = await this.parent()
+		await this.children()
+		const children = (await this.children())[this.child_model]
+		// entry[singular_form[this.parent_model]] = parent
+		entry[this.child_model] = children
 		return entry
 	}
 }

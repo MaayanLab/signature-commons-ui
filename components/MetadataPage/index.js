@@ -4,6 +4,8 @@ import CardContent from '@material-ui/core/CardContent'
 import {DataTable, ShowMeta} from '../DataTable'
 import DataResolver from '../../connector/data_resolver'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { labelGenerator } from '../../util/ui/labelGenerator'
+import PropTypes from 'prop-types'
 
 
 export default class MetadataPage extends React.PureComponent {
@@ -15,20 +17,42 @@ export default class MetadataPage extends React.PureComponent {
 		}
 	}
 
-	componentDidMount = async () => {
-		const {model, id} = this.props.match.params
-		console.log(this.props.match.params)
+	process_entry = async () => {
+		const {model, id, schemas} = this.props
 		const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
-		console.log(resolved_entries)
-		const entry = await resolved_entries[id].entry()
-		const parent = await resolved_entries[id].parent()
-		const children = await resolved_entries[id].children()
+		const entry_object = resolved_entries[id]
+		const entry = labelGenerator(await entry_object.entry(), schemas)
+		const parent = labelGenerator(await entry_object.parent(), schemas)
+		const children_object = await entry_object.children()
+		const children_count = children_object.count
+		const children_results = children_object[entry_object.child_model]
+
+		let children
+		if (entry_object.model === "entities"){
+			children = {}
+			for (const [k,v] of Object.entries(children_results)){
+				children[k] = v.map(c=>labelGenerator(c, schemas))
+			}
+		}else {
+			children = Object.values(children_results).map(c=>labelGenerator(c, schemas))	
+		}
 		this.setState({
-			entry_object: resolved_entries[id],
+			entry_object,
 			entry,
 			parent,
+			children_count,
 			children
 		})
+	}
+
+	componentDidMount = async () => {
+		await this.process_entry()	
+	}
+
+	componentDidUpdate = async (prevProps) => {
+		if (prevProps.id !== this.props.id){
+			await this.process_entry()
+		}
 	}
 
 	render = () => {
@@ -36,19 +60,30 @@ export default class MetadataPage extends React.PureComponent {
 			return <CircularProgress />
 		}
 		return(
-			<Card>
-				<CardContent>
-					<ShowMeta
-						value={[
-							{
-							// '@id': props.data.id,
-							// '@name': props.data.processed.name.text,
-							'meta': this.state.entry.meta,
-							},
-						]}
-                    />
-				</CardContent>
-			</Card>
+			<React.Fragment>
+				<Card>
+					<CardContent>
+						<ShowMeta
+							value={[
+								{
+								// '@id': props.data.id,
+								// '@name': props.data.processed.name.text,
+								'meta': this.state.entry.data.meta,
+								},
+							]}
+						/>
+					</CardContent>
+				</Card>
+				{this.state.entry_object.model==="entities"?null:
+					<DataTable entries={this.state.children}/>
+				}
+			</React.Fragment>
 		)
 	}
+}
+
+MetadataPage.propTypes = {
+	model: PropTypes.string.isRequired,
+	id: PropTypes.string.isRequired,
+	schemas: PropTypes.array.isRequired,
 }

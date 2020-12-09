@@ -47,7 +47,7 @@ export default class DataResolver {
 		this._controller.abort()
 	}
 
-	resolve_entries = async ({model, entries, filter={}, parent}) => {
+	resolve_entries = async ({model, entries, filter={}, parent=undefined}) => {
 		const start_time = new Date()
 		this.controller()
 		const resolved_entries = {}
