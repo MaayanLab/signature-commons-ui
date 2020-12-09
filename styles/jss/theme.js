@@ -62,11 +62,11 @@ export const landingStyle = (theme) => ({
   },
   toggleContainer: {
     height: 56,
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
+    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: `${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(1)}px 0`,
   },
   centered: {
     textAlign: 'center',
@@ -101,13 +101,13 @@ export const landingStyle = (theme) => ({
   button: {
     background:
       'linear-gradient(45deg, ' + Blues[0] + ', ' + Blues[1] + ')',
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   leftIcon: {
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing(1),
   },
   rightIcon: {
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
   },
   iconSmall: {
     fontSize: 20,
@@ -190,7 +190,7 @@ export const styles = (theme) => ({
         'linear-gradient(45deg, ' + Grays[0] + ', ' + Grays[1] + ')',
   },
   progress: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
   },
   ProgressContainer: {
     marginLeft: 'auto',
@@ -252,8 +252,8 @@ export const styles = (theme) => ({
     width: 200,
   },
   namebox: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     margin: '8px 8px 8px 8px',
     fontSize: '15px',
   },
