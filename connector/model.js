@@ -147,7 +147,9 @@ export class Model {
 			children.push(child)
 		}
 		return {
-			count: this._children_count,
+			count: {
+				[this.child_model]: this._children_count,
+			},
 			[this.child_model]: children
 		}
 	}

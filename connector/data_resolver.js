@@ -267,7 +267,7 @@ export default class DataResolver {
 			const { response: r } = await fetch_data({ endpoint: '/listdata' })
 			repo = r
 		}
-		let all_count = 0
+		let count = {}
 		let signatures = []
 		const results = {}
 		for (const r of repo.repositories){
@@ -280,7 +280,7 @@ export default class DataResolver {
                     datatype
 				}
 				const {entries, count:c} = await this.enrich_entities(q)
-				all_count += c
+				count[database] = c
                 signatures = [...signatures, ...entries]
 				results[database] = {"set": entries, query}
 				
@@ -293,7 +293,7 @@ export default class DataResolver {
                         datatype,
 					}
 					const {entries, count:c} = await this.enrich_entities(q)
-					all_count += c
+					count[database] = c
 					signatures = [...signatures, ...entries]
 					results[database] = {rank: entries, query}
 				} else {
@@ -307,9 +307,9 @@ export default class DataResolver {
                         datatype: data_type
                     }
 					const {entries: up_entries, count:up_count} = await this.enrich_entities(up_query)
-					all_count += up_count
+					count[database] = up_count
 					signatures = [...signatures, ...up_entries]
-					results[database] = {up: up_entries, query}
+					results[database] = {up: up_entries, query, count: up_count}
 
 					// Down genes
                     const down_query = {
@@ -321,9 +321,9 @@ export default class DataResolver {
                         datatype: data_type
                     }
 					const {entries: down_entries, count:down_count} = await this.enrich_entities(down_query)
-					all_count += down_count
+					count[database] = down_count
 					signatures = [...signatures, ...down_entries]
-					results[database] = {down: down_entries, query}
+					results[database] = {down: down_entries, query, count: down_count}
 				}
 			}
 		}
@@ -359,7 +359,7 @@ export default class DataResolver {
 		}
 		return {
 			entries: resolved_results,
-            count: all_count,
+            count,
             duration: (new Date() - start_time) / 1000,
 		}
 	}
