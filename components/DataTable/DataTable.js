@@ -26,7 +26,7 @@ export const DataTable = (props) => {
                 {typeof entries === 'undefined' || entries.length == 0 ?
                 <Typography variant="h5" >No entries</Typography>:
                 entries.map(entry=>(
-                    <InfoCardComponent {...entry}/>
+                    <InfoCardComponent key={entry.data.id} {...entry}/>
                 ))}
             </Grid>
             {BottomComponents.map(comp=>{
