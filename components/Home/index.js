@@ -20,6 +20,7 @@ import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
 import Pages from '../Pages'
+import MetadataPage from '../MetadataPage'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
@@ -34,6 +35,7 @@ const mapStateToProps = (state) => {
     ui_values: state.ui_values,
     theme: state.theme,
     error_message: state.error_message,
+    schemas: state.serverSideProps.schemas
   }
 }
 
@@ -57,7 +59,7 @@ const snackStyles = (theme) => ({
   },
   iconVariant: {
     opacity: 0.9,
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing(1),
   },
   message: {
     display: 'flex',
@@ -177,6 +179,12 @@ class Home extends React.PureComponent {
     )
   }
 
+  metadata_pages = (props) => {
+    return (
+      <MetadataPage schemas={this.props.schemas} {...props.match.params} {...props}/>
+    )
+  }
+
   about = (props) => {
     return (
       <About {...props} ui_values={this.props.ui_values}/>
@@ -271,8 +279,8 @@ class Home extends React.PureComponent {
               /> : null
             }
             <Route
-              path="/:table/:id"
-              component={this.pages}
+              path="/:model/:id"
+              component={this.metadata_pages}
             />
             <Route
               path={`${this.props.ui_values.nav.API.endpoint || '/API'}`}
