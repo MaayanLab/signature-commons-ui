@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { fetch_meta_post } from '../util/fetch/meta'
-import { UIValues } from '../util/ui_values'
+import { UIValues } from '../util/ui/ui_values'
 import { initializeSigcom } from '../util/redux/actions'
 import { connect } from 'react-redux'
 
