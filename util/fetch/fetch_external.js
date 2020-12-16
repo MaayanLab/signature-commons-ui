@@ -5,10 +5,10 @@ export async function get_base_url() {
   return (await config()).NEXT_PUBLIC_EXTERNAL_API
 }
 
-export async function fetch_external({ endpoint, body, signal, headers }) {
+export async function fetch_external({ url, endpoint, body, signal, headers }) {
   const start = new Date()
   let duration
-  const base_url = await get_base_url()
+  const base_url = (url || await get_base_url())
   if (base_url === undefined) {
     duration = (new Date() - start) / 1000
     return {
@@ -25,7 +25,6 @@ export async function fetch_external({ endpoint, body, signal, headers }) {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json',
           // 'Authorization': auth,
           ...(headers || {}),
         },
@@ -47,10 +46,10 @@ export async function fetch_external({ endpoint, body, signal, headers }) {
 }
 
 
-export async function fetch_external_post({ endpoint, body, signal, headers }) {
+export async function fetch_external_post({ url, endpoint, body, signal, headers }) {
   const start = new Date()
   let duration
-  const base_url = await get_base_url()
+  const base_url = (url || await get_base_url())
   if (base_url === undefined) {
     duration = (new Date() - start) / 1000
     return {
