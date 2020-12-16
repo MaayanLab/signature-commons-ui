@@ -138,9 +138,10 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	handleChangePage = async (event, page) => {
-		const { entry_object, perPage:limit } = this.state
+		const { entry_object, perPage:limit, tab } = this.state
 		const skip = limit*page
-		const children_object = await entry_object.children({limit, skip})
+		const query = this.state.children[tab].query
+		const children_object = await entry_object.children({...query, limit, skip})
 		const children_count = children_object.count
 		const children_results = children_object[entry_object.child_model]
 

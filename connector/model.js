@@ -206,6 +206,17 @@ export class Signature extends Model {
 
 export class Entity extends Model {
 	resolve_children = async (filters, merge) => {
+		let repo
+		if (filters.datatype !== undefined && filters.database !== undefined){
+			repo = {
+				repositories: [
+					{
+						datatype: filters.datatype,
+						uuid: filters.database
+					}
+				]
+			}
+		}
 		const {
 			limit=10,
 			skip=0,
@@ -216,14 +227,15 @@ export class Entity extends Model {
 		const query = {
 			entities: [this.id],
 			datasets,
+			...filter,
 			offset: skip,
-			...filter	
+				
 		}
 		if (limit!==0) {
 			query.limit = limit
 		}
 		const { entries,
-			count } = await this._data_resolver.get_signatures_from_entities({query, merge})
+			count } = await this._data_resolver.get_signatures_from_entities({query, repo, merge})
 		this._children = entries
 		this._children_count = count
 	}
