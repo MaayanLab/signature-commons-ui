@@ -253,7 +253,7 @@ export default class DataResolver {
         }
 	}
 
-	get_signatures_from_entities = async ({query, repo}) => {
+	get_signatures_from_entities = async ({query, repo, merge}) => {
 		const start_time = new Date()
 		let entity_type
 		if (query.entities !== undefined){
@@ -347,11 +347,21 @@ export default class DataResolver {
 					const ent = await entry.entry()
 					const resolved_entry_meta  = ent.meta || {}
 					const unresolved_entry_meta = sig.meta || {}
-					const updated_entry = {
-						...ent,
-						meta: {
-							...unresolved_entry_meta,
-							...resolved_entry_meta
+					let updated_entry
+					if (merge) {
+						updated_entry = {
+							...ent,
+							meta: {
+								...unresolved_entry_meta,
+								...resolved_entry_meta
+							}
+						}
+					} else {
+						updated_entry = {
+							...ent,
+							meta: {
+								...resolved_entry_meta
+							}
 						}
 					}
 					entry.update_entry(updated_entry)

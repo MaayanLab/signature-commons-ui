@@ -205,7 +205,7 @@ export class Signature extends Model {
 }
 
 export class Entity extends Model {
-	resolve_children = async (filters) => {
+	resolve_children = async (filters, merge) => {
 		const {
 			limit=10,
 			skip=0,
@@ -223,13 +223,13 @@ export class Entity extends Model {
 			query.limit = limit
 		}
 		const { entries,
-			count } = await this._data_resolver.get_signatures_from_entities({query})
+			count } = await this._data_resolver.get_signatures_from_entities({query, merge})
 		this._children = entries
 		this._children_count = count
 	}
 
-	children = async (filter={}) => {
-		if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
+	children = async (filter={}, merge=false) => {
+		if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter, merge)
 		const children = {}
 		for (const [dataset,v] of Object.entries(this._children)) {
 			if (v.signatures.length>0){
