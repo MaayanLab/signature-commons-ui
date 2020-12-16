@@ -27,8 +27,9 @@ const styles = (theme) => ({
 
 
 const InformativeButton = (props) => {
-  const { classes, counter, title, alt, src, icon, description } = props
-  let tooltip_title = ''
+  const { classes, counter, title, alt, src, icon } = props
+  let tooltip_title
+  const description = props.description || props.text
   if (description !== undefined || description !== '') {
     tooltip_title = <Typography variant="subtitle2" style={{ color: '#FFF' }} gutterBottom>
       {description}
