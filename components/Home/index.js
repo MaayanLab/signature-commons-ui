@@ -180,8 +180,21 @@ class Home extends React.PureComponent {
   }
 
   metadata_pages = (props) => {
+    const reverse_preferred = Object.entries(this.props.ui_values.preferred_name).reduce((names,[k,v])=>{
+      names[v] = k
+      return names
+    }, {})
+    const id = props.match.params.id
+    const model = reverse_preferred[props.match.params.model]
+    if (model === undefined) return <Redirect to='/not-found'/>
     return (
-      <MetadataPage schemas={this.props.schemas} {...props.match.params} {...props}/>
+      <MetadataPage schemas={this.props.schemas}
+                    preferred_name={this.props.ui_values.preferred_name}
+                    id={id}
+                    model={model}
+                    label={props.match.params.label}
+                    {...props}
+      />
     )
   }
 
@@ -269,6 +282,7 @@ class Home extends React.PureComponent {
             {this.props.ui_values.nav.Resources.active ?
               <Route
                 path={`${this.props.ui_values.nav.Resources.endpoint || '/Resources'}`}
+                exact
                 component={this.resources}
               /> : null
             }
@@ -283,13 +297,17 @@ class Home extends React.PureComponent {
               component={this.metadata_pages}
             />
             <Route
+              path="/:model/:id/:label"
+              component={this.metadata_pages}
+            />
+            <Route
               path={`${this.props.ui_values.nav.API.endpoint || '/API'}`}
               component={this.api}
             />
             <Route
               path="/not-found"
               component={(props) => {
-                return <div />
+                return <div>You're not supposed to be here</div>
               }}// {this.landing}
             />
             <Route
