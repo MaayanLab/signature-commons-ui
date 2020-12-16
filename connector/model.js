@@ -31,7 +31,7 @@ export class Model {
 		}
 		this._data_resolver = data_resolver
 		this.resolved = resolved
-		this._parent = parent
+		this._parent = parent_mapper[model] !== null ? parent: null
 		this._children = undefined
         this._children_count = undefined
         this.model = model
@@ -133,8 +133,8 @@ export class Model {
 	}
 
 	parent = async () => {
-		if (this._parent === undefined || !this._parent.resolved) await this.resolve_parent()
 		if (this._parent === null) return null
+		if (this._parent === undefined || !this._parent.resolved) await this.resolve_parent()
 		return await this._parent.entry()
 	}
 
