@@ -175,7 +175,7 @@ class Resources extends React.PureComponent {
       return (
         <Switch>
           <Route exact path={`${this.props.ResourcesNav.endpoint || '/Resources'}`}component={this.resource_list} />
-          <Route path={`${this.props.ResourcesNav.endpoint || '/Resources'}/:resource`} component={this.resource_page} />
+          {/* <Route path={`${this.props.ResourcesNav.endpoint || '/Resources'}/:resource`} component={this.resource_page} /> */}
         </Switch>
       )
     }
