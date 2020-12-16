@@ -16,7 +16,7 @@ export function validURL(str) {
   }
   
   export function ShowMeta({ value, highlight, hidden }) {
-    if (value.meta!==undefined) value = value.meta
+    // if (value.meta!==undefined) value = value.meta
     if (hidden === undefined) hidden = []
     if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
       if (validURL(value)) {
