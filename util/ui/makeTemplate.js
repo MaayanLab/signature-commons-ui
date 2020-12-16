@@ -12,6 +12,22 @@ export function makeTemplate(
   }
 }
 
+export function makeTemplateObject(
+  templateString,
+  templateVariables
+) {
+const keys = [...Object.keys(templateVariables).map((key) => key.replace(/ /g, '_')), 'PREFIX']
+const values = [...Object.values(templateVariables), process.env.PREFIX]
+const templateFunction = new Function(...keys, `return ${templateString};`)
+try {
+
+  return templateFunction(...values)
+} catch (error) {
+
+  return 'undefined'
+}
+}
+
 export function makeTemplateForObject(
     templateString,
     templateVariables,
