@@ -52,19 +52,24 @@ export const InfoCard = ({
                     <Grid item xs={12}>
                       <Highlight
                         Component={(props) => {
-                          if (info.name.hyperlink !== undefined) {
-                            return (
-                              <Typography variant="subtitle1" {...props}>
-                                <a href={info.name.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a>
-                              </Typography>
-                            )
-                          } else {
-                            return (
-                              <Typography variant="subtitle1" {...props}>
-                                {props.children}
-                              </Typography>
-                            )
-                          }
+                          return (
+                            <Typography variant="subtitle1" {...props}>
+                              <a href={info.endpoint}>{props.children}</a>
+                            </Typography>
+                          )
+                          // if (info.name.hyperlink !== undefined) {
+                          //   return (
+                          //     <Typography variant="subtitle1" {...props}>
+                          //       <a href={info.name.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a>
+                          //     </Typography>
+                          //   )
+                          // } else {
+                          //   return (
+                          //     <Typography variant="subtitle1" {...props}>
+                          //       {props.children}
+                          //     </Typography>
+                          //   )
+                          // }
                         }}
                         text={info.name.text}
                         highlight={highlight}
