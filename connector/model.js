@@ -99,7 +99,7 @@ export class Model {
 		}
 	}
 
-	resolve_children = async ({...filter}) => {
+	resolve_children = async (filter) => {
 		if (filter.where!==undefined){
 			filter.where = {
 				and: [
@@ -138,8 +138,8 @@ export class Model {
 		return await this._parent.entry()
 	}
 
-	children = async () => {
-		if (this._children === undefined) await this.resolve_children()
+	children = async (filter={}) => {
+		if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
 		const children = []
 		for (const c of Object.values(this._children)){
 			const child = await c.entry()
@@ -154,15 +154,16 @@ export class Model {
 		}
 	}
 
-	serialize = async () => {
+	serialize = async (serialize_parent=true, serialize_children=true) => {
 		const entry = await this.entry()
-		const parent = await this.parent()
-		const children = (await this.children())[this.child_model]
-		// for (const child of Object.values(this._children)) {
-		// 	children.push(await child.entry())
-		//   }
-		entry[singular_form[this.parent_model]] = parent
-		entry[this.child_model] = children
+		if (serialize_parent){
+			const parent = await this.parent()
+			entry[singular_form[this.parent_model]] = parent
+		}
+		if (serialize_children){
+			const children = (await this.children())[this.child_model]
+			entry[this.child_model] = children
+		}
 		return entry
 	}
 
@@ -177,7 +178,12 @@ export class Model {
 }
 
 export class Signature extends Model {
-	resolve_children = async ({limit=10, skip=0, ...filter}={limit:10, skip:0}) => {
+	resolve_children = async (filters) => {
+		const {
+			limit=10,
+			skip=0,
+			...filter
+		} = filters
 		const start = skip
 		const end = (start + 1) * limit
 		const {results,
@@ -199,9 +205,18 @@ export class Signature extends Model {
 }
 
 export class Entity extends Model {
-	resolve_children = async ({limit, ...filter}={limit:10}) => {
+	resolve_children = async (filters) => {
+		const {
+			limit=10,
+			skip=0,
+			datasets=[],
+			...filter
+		} = filters
+
 		const query = {
 			entities: [this.id],
+			datasets,
+			offset: skip,
 			...filter	
 		}
 		if (limit!==0) {
@@ -213,16 +228,19 @@ export class Entity extends Model {
 		this._children_count = count
 	}
 
-	children = async () => {
-		if (this._children === undefined) await this.resolve_children()
+	children = async (filter={}) => {
+		if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
 		const children = {}
 		for (const [dataset,v] of Object.entries(this._children)) {
-			if (v.length>0){
-				children[dataset] = []
-				for (const c of v){
+			if (v.signatures.length>0){
+				children[dataset] = {
+					...v,
+					signatures: [],
+				}
+				for (const c of v.signatures){
 					const child = await c.entry()
 					child[singular_form[c.parent_model]] = await c.parent()
-					children[dataset].push(child)
+					children[dataset].signatures.push(child)
 				}
 			}
 		  }

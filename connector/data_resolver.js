@@ -282,7 +282,7 @@ export default class DataResolver {
 				const {entries, count:c} = await this.enrich_entities(q)
 				count[database] = c
                 signatures = [...signatures, ...entries]
-				results[database] = {"set": entries, query}
+				results[database] = {"set": entries, query: q}
 				
 			}else if (entity_type === "up_down"){
 				if (datatype === "rank_matrix"){
@@ -295,7 +295,7 @@ export default class DataResolver {
 					const {entries, count:c} = await this.enrich_entities(q)
 					count[database] = c
 					signatures = [...signatures, ...entries]
-					results[database] = {rank: entries, query}
+					results[database] = {rank: entries, query: q}
 				} else {
 					// Up genes
                     const up_query = {
@@ -307,9 +307,9 @@ export default class DataResolver {
                         datatype: data_type
                     }
 					const {entries: up_entries, count:up_count} = await this.enrich_entities(up_query)
-					count[database] = up_count
+					count[`${database} [Up]`] = up_count
 					signatures = [...signatures, ...up_entries]
-					results[database] = {up: up_entries, query, count: up_count}
+					results[database] = {up: up_entries, query: q, count: up_count}
 
 					// Down genes
                     const down_query = {
@@ -321,9 +321,9 @@ export default class DataResolver {
                         datatype: data_type
                     }
 					const {entries: down_entries, count:down_count} = await this.enrich_entities(down_query)
-					count[database] = down_count
+					count[`${database} [down]`] = down_count
 					signatures = [...signatures, ...down_entries]
-					results[database] = {down: down_entries, query, count: down_count}
+					results[database] = {down: down_entries, query: q, count: down_count}
 				}
 			}
 		}
@@ -336,7 +336,10 @@ export default class DataResolver {
 		)
 		const resolved_results = {}
 		for (const [dataset_name,sigs] of Object.entries(results)){
-			resolved_results[dataset_name] = []
+			resolved_results[dataset_name] = {
+				signatures: [],
+				query: sigs.query
+			}
 			for (const sig of sigs["set"]){
 				// resolved_results[dataset_name][key] = []
 				const entry = resolved_entries[sig.id]
@@ -352,7 +355,7 @@ export default class DataResolver {
 						}
 					}
 					entry.update_entry(updated_entry)
-					resolved_results[dataset_name].push(entry)
+					resolved_results[dataset_name]['signatures'].push(entry)
 					this.data_repo["signatures"][entry.id] = entry
 				}
 			}
