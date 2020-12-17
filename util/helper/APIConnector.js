@@ -27,7 +27,9 @@ function process_search_clauses(search_clauses) {
     }
   } else {
     // no or
-    where['and'] = search_clauses.and
+    if (search_clauses.and.length > 0) {
+      where['and'] = search_clauses.and
+    }
   }
   if (search_clauses.not.length > 0) {
     if (where.and !== undefined) {
@@ -117,8 +119,12 @@ export function build_where({ search, filters, order, indexed_keys }) {
     }
   }
   const { where: fullTextSearch } = process_search_clauses(search_clauses.fullTextSearch)
-  if (search_clauses.and.length === 0 && search_clauses.or.length === 0 && search_clauses.not.length === 0) {
-    where = { meta: { fullTextSearch } }
+  if (search_clauses.and.length === 0 &&
+      search_clauses.or.length === 0 &&
+      search_clauses.not.length === 0 &&
+      Object.keys(fullTextSearch).length > 0) {
+    
+        where = { meta: { fullTextSearch } }
   } else {
     if (Object.values(fullTextSearch).filter((v) => (v.length > 0)).length > 0) {
       search_clauses.and.push({ meta: { fullTextSearch } })
@@ -130,14 +136,21 @@ export function build_where({ search, filters, order, indexed_keys }) {
 
   if (filters !== undefined) {
     if (where.and === undefined) {
-      where = {
-        and: [{ ...where }],
+      if (Object.keys(where).length>0){
+        where = {
+          and: [{ ...where }],
+        }
+      }else {
+        where = {
+          and: [],
+        }
       }
+      
     }
     for (const [filter, values] of Object.entries(filters)) {
       if (filter.indexOf('..') === -1) {
         const or = values.map((v) => ({
-          [filter]: v,
+          [filter]: {ilike: `%${v}%`},
         }))
         where = {
           and: [...where.and, {
