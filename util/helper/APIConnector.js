@@ -149,13 +149,11 @@ export function build_where({ search, filters, order, indexed_keys }) {
     }
     for (const [filter, values] of Object.entries(filters)) {
       if (filter.indexOf('..') === -1) {
-        const or = values.map((v) => ({
+        const and = values.map((v) => ({
           [filter]: {ilike: `%${v}%`},
         }))
         where = {
-          and: [...where.and, {
-            or,
-          },
+          and: [...where.and, ...and,
           ],
         }
         // where = {
