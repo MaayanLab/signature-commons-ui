@@ -98,6 +98,13 @@ export function Nav(props) {
       >
         {'API'}
       </ListItemLink>
+      <ListItemLink
+        selected={location.pathname === '/Help'}
+        className={ classes.menuItem}
+        href={'#/Help'}
+      >
+        {'Help'}
+      </ListItemLink>
     </React.Fragment>
   )
 }
