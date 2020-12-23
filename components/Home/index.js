@@ -20,6 +20,7 @@ import Resources from '../Resources'
 import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
 import Pages from '../Pages'
+import Help from '../Help'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
@@ -183,6 +184,13 @@ class Home extends React.PureComponent {
     )
   }
 
+  help = (props) => {
+    return (
+      <Help {...props} ui_values={this.props.ui_values}/>
+    )
+  }
+
+
   render = () => {
     if (this.props.theme === null) {
       return <CircularProgress />
@@ -270,6 +278,10 @@ class Home extends React.PureComponent {
                 component={this.about}
               /> : null
             }
+            <Route
+              path={'/Help'}
+              component={this.help}
+            />
             <Route
               path="/:table/:id"
               component={this.pages}

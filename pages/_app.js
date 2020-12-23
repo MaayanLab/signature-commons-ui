@@ -10,8 +10,15 @@ import serializeError from 'serialize-error'
 import '../styles/index.scss'
 import withRedux from 'next-redux-wrapper'
 import initializeStore from '../util/redux/store'
-import CssBaseline from '@material-ui/core/CssBaseline'
+import CssBaseline from '@material-ui/core/CssBaseline';
+import ReactGA from 'react-ga';
 
+const initialize_analytics = () => {
+  if (typeof window !== 'undefined'){
+    ReactGA.initialize(process.env.NEXT_PUBLIC_GOOGLE_TAG);
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }
+}
 class App_ extends App {
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {}
@@ -32,6 +39,7 @@ class App_ extends App {
   }
 
   async componentDidMount() {
+    initialize_analytics()
     let { Component, pageProps } = this.props
     if (process.env.NODE_ENV === 'development' && Component.getInitialProps && !this.state.loaded) {
       pageProps = await Component.getInitialProps()

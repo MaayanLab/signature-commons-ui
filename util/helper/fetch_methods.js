@@ -56,12 +56,30 @@ export const get_summary_statistics = async () => {
   const { response: resources } = await fetch_meta({
     endpoint: '/resources',
   })
+  
   const resource_mapper = {}
   for (const r of resources) {
     resource_mapper[r.id] = r
   }
 
-  const { resource_signature_count: response, schemas } = serverSideProps
+  const { resource_signature_count: response } = serverSideProps
+  let schemas = serverSideProps.schemas
+  if (schemas.length === 0){
+    const { response } = await fetch_meta_post({
+      endpoint: '/schemas/find',
+      body: {
+        filter: {
+          where: {
+            'meta.$validator': {
+              like: '%/meta/schema/ui-schema.json%',
+            },
+          },
+        },
+      },
+    })
+    schemas = response.map(i=>i.meta)
+  }
+      
   if (response.length > 0) {
     const resource_signature_count = []
     for (const r of response) {
@@ -69,6 +87,7 @@ export const get_summary_statistics = async () => {
       const resource = resource_mapper[id]
       if (resource !== undefined) {
         const schema = findMatchedSchema(resource, schemas)
+        console.log(schema)
         let name
         if (schema !== null) {
           const name_props = Object.values(schema.properties).filter((prop) => prop.name)

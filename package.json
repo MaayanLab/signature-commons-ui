@@ -24,7 +24,7 @@
     "date-fns": "^2.11.0",
     "deepmerge": "^4.2.2",
     "dotenv-load": "^1.1.0",
-    "iframe-resizer": "^4.2.10",
+    "iframe-resizer": "^4.2.11",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
     "js-file-download": "^0.4.10",

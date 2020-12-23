@@ -262,7 +262,7 @@ class MetadataSearch extends React.Component {
             <Collapse in={this.state.open[field_item.meta.Field_Name]} timeout="auto" unmountOnExit>
               <MetaFilter stats={stats}
                 schemas={this.state.schemas}
-                field_name={field_item.meta.Field_Name}
+                field_name={field_item.meta.Search_Field || field_item.meta.Field_Name}
                 parent={Object.values(this.props.parents).indexOf(field_item.meta.Field_Name) > -1 &&
                   this.props.models[current_table].grandparent !== field_item.meta.Field_Name}
                 grandparent={this.props.models[current_table].grandparent !== undefined &&
