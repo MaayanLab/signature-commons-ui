@@ -113,14 +113,14 @@ export default class Help extends React.Component {
 								Signature Commons includes signatures taken from over 40 different resources. Clicking on “Resources” on the app bar will redirect the users to the resources page that shows an overview of all the included resources in Signature Commons. Clicking on an icon will open a page that gives more information about a specific resource, as well as the datasets included for that resource.
 							</Typography>
 						</Grid>
-						
+
 						<Grid xs={12} style={{marginTop: 20}}>
 							<Typography variant="h4" gutterBottom>
 								API
 							</Typography>
 						</Grid>
 						<Grid xs={12} style={{marginBottom: 20}}>
-							<IFrame src={"https://nbviewer.jupyter.org/github/MaayanLab/lymemind-commons-schema/blob/master/Tutorial/API%20Tutorial.ipynb"}
+							<IFrame src={"https://nbviewer.jupyter.org/github/MaayanLab/signature-commons-ui/blob/master/public/static/tutorial/SigCom.ipynb"}
 								height={1500}
 								width={1500}
 							/>
