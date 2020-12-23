@@ -122,7 +122,7 @@ export default class Help extends React.Component {
 						<Grid xs={12} style={{marginBottom: 20}}>
 							<IFrame src={"https://nbviewer.jupyter.org/github/MaayanLab/signature-commons-ui/blob/master/public/static/tutorial/SigCom.ipynb"}
 								height={1500}
-								width={1500}
+								width={1200}
 							/>
 						</Grid>
 					</Grid>
