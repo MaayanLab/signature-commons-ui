@@ -4,6 +4,8 @@ import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import IFrame from '../IFrame'
 
+const prefix = process.env.PREFIX
+
 export default class Help extends React.Component {
 	render = () => {
 		return (
@@ -22,82 +24,96 @@ export default class Help extends React.Component {
 						</Grid>
 						<Grid xs={12} style={{marginTop: 20}}>
 							<Typography variant="h5" gutterBottom>
-								Search LymeMIND Commons by keyword
+								Searching Signature Commons by keyword
 							</Typography>
 						</Grid>
 						<Grid xs={12} lg={6} md={7}>
-							<img src="https://github.com/MaayanLab/lymemind-commons-schema/raw/master/Tutorial/images/search.png"
+							<img src={`${prefix}/static/tutorial/images/metadata-search.png`}
 								alt="search" width={500}/> 
 						</Grid>
 						<Grid xs={12} lg={6}  md={5}>
 							<Typography variant="body1">
-							LymeMIND allows users to search for key terms including diseases, drug compounds, organism, or technology. You can exclude a term from your search by prefixing the excluded query with “-“ or “!”; combine search terms by prefixing the second term with “or” or “|”. Enter the term of inquiry within the textbox on the home page and hit “Search.” <br/><br/>
- 							Clicking “search” without a term in the search box shows all datasets and projects. 
+								Users can query Signature Commons for key terms like drugs, diseases, cell lines, or assays. Furthermore, they can exclude a term from the search by prefixing a query with “-” or “!”. They can also perform OR searches by prefixing terms with “or” or “|”.<br/><br/>
+								Clicking “search” without a term in the search box shows all signatures and datasets.
+							</Typography>
+						</Grid>
+						<Grid xs={12} lg={6} md={7}>
+							<img src={`${prefix}/static/tutorial/images/metadata-search-result.png`}
+								alt="search" width={500}/> 
+						</Grid>
+						<Grid xs={12} lg={6}  md={5}>
+							<Typography variant="body1">
+								Upon performing metadata search, users are redirected to a search results page. Users can view results for signatures or datasets by clicking the respective tabs. They can further narrow down their results by (1) adding keywords on the search box, (2) checking boxes on the filters, (3) clicking on a chip on from the results.
+							</Typography>
+						</Grid>
+						<Grid xs={12} lg={6} md={7}>
+							<img src={`${prefix}/static/tutorial/images/options.png`}
+								alt="search" width={500}/> 
+						</Grid>
+						<Grid xs={12} lg={6}  md={5}>
+							<Typography variant="body1">
+								Users can also download the signatures or perform enrichment analysis on the result by clicking at the triple dots at the upper right corner of each search result.
+							</Typography>
+						</Grid>
+						<Grid xs={12} lg={6} md={7}>
+							<img src={`${prefix}/static/tutorial/images/expand-meta.png`}
+								alt="search" width={500}/> 
+						</Grid>
+						<Grid xs={12} lg={6}  md={5}>
+							<Typography variant="body1">
+								Clicking on the arrow button at the lower left corner expands the panel and displays the metadata.
+							</Typography>
+						</Grid>
+
+						<Grid xs={12} style={{marginTop: 20}}>
+							<Typography variant="h5" gutterBottom>
+								Performing Signature Search
+							</Typography>
+						</Grid>
+						<Grid xs={12} lg={6} md={7}>
+							<img src={`${prefix}/static/tutorial/images/signature-search.png`}
+								alt="search" width={500}/> 
+						</Grid>
+						<Grid xs={12} lg={6} md={5}>
+							<Typography variant="body1">
+								Users are given the option to do signature search with either (1) a gene set, or (2) up and down gene set. SigCom automatically checks the validity of a gene name and offers suggestions if a synonym exists.
+							</Typography>
+						</Grid>
+						<Grid xs={12} lg={6} md={7}>
+							<img src={`${prefix}/static/tutorial/images/sigsearch-results.png`}
+								alt="search" width={500}/> 
+						</Grid>
+						<Grid xs={12} lg={6} md={5}>
+							<Typography variant="body1">
+								Users are redirected to the results page upon clicking search. Results are grouped by resource. Clicking on a resource shows the signature hits for that resource.
+							</Typography>
+						</Grid>
+
+						<Grid xs={12} lg={6} md={7}>
+							<img src={`${prefix}/static/tutorial/images/dataset-results.png`}
+								alt="search" width={500}/> 
+						</Grid>
+						<Grid xs={12} lg={6} md={5}>
+							<Typography variant="body1">
+								Results are grouped per dataset and is presented as a table. Users can sort the table by clicking on the columns. Clicking on a row expands the metadata of the signature.
+							</Typography>
+						</Grid>
+
+						<Grid xs={12} style={{marginTop: 20}}>
+							<Typography variant="h5" gutterBottom>
+								Browsing Resources
+							</Typography>
+						</Grid>
+						<Grid xs={12} lg={6} md={7}>
+						<img src={`${prefix}/static/tutorial/images/resources.png`}
+								alt="search" width={500}/> 
+						</Grid>
+						<Grid xs={12} lg={6} md={5}>
+							<Typography variant="body1">
+								Signature Commons includes signatures taken from over 40 different resources. Clicking on “Resources” on the app bar will redirect the users to the resources page that shows an overview of all the included resources in Signature Commons. Clicking on an icon will open a page that gives more information about a specific resource, as well as the datasets included for that resource.
 							</Typography>
 						</Grid>
 						
-						
-						<Grid xs={12} style={{marginTop: 20}}>
-							<Typography variant="h5" gutterBottom>
-								Browse LymeMIND Consortium members
-							</Typography>
-						</Grid>
-						<Grid xs={12} lg={6} md={7}>
-							<img src="https://github.com/MaayanLab/lymemind-commons-schema/raw/master/Tutorial/images/consortium.PNG"
-								alt="consortium" width={500}/>
-						</Grid>
-						<Grid xs={12} lg={6} md={5}>
-							<Typography variant="body1">
-								LymeMIND Commons is powered by the innovation and research of consortium members from the Steven and Alexandra Cohen Foundation Lyme & Tickborne Disease Initiative. Users can view the list of members and explore their information.<br/><br/>
-								From any page on the website, click the “Consortium” button on the top right of the page. The user is brought to a list of all active members of the LymeMIND consortium. Click on a lab or organization name to view their details and have direct access to information on their projects, including descriptions of the data and status of the project.
-							</Typography>
-						</Grid>
-
-						<Grid xs={12} style={{marginTop: 20}}>
-							<Typography variant="h5" gutterBottom>
-								Finding and narrowing searches using filters
-							</Typography>
-						</Grid>
-						<Grid xs={12} lg={6} md={7}>
-							<img src="https://github.com/MaayanLab/lymemind-commons-schema/raw/master/Tutorial/images/filters.PNG"
-								alt="filters" width={500}/>
-						</Grid>
-						<Grid xs={12} lg={6} md={5}>
-							<Typography variant="body1">
-								Multiple filters are present to allow you to narrow down your search results. Click a category from the dropdown on the left of the search results page. Check the box of any filter you wish to add, such as narrowing down the species or project type. You can add multiple filters to find the exact results you want. 
-							</Typography>
-						</Grid>
-
-						<Grid xs={12} style={{marginTop: 20}}>
-							<Typography variant="h5" gutterBottom>
-								View and explore LymeMIND datasets
-							</Typography>
-						</Grid>
-						<Grid xs={12} lg={6} md={7}>
-							<img src="https://github.com/MaayanLab/lymemind-commons-schema/raw/master/Tutorial/images/dataset.PNG"
-								alt="dataset" width={500}/>
-						</Grid>
-						<Grid xs={12} lg={6} md={5}>
-							<Typography variant="body1">
-								After searching and finding a dataset of interest, you can click the title name to be brought to the dataset’s download page on GEO, FigShare, or other hosts. The gray tags are clickable and launch a search of other datasets tagged with the selected term. Click the down-arrow to expand a menu detailing additional information about the dataset, including meta descriptions, data IDs, and citations. Not all datasets may contain the same information; it is dependent on the information provided by the data host or researcher.
-							</Typography>
-						</Grid>
-
-						<Grid xs={12} style={{marginTop: 20}}>
-							<Typography variant="h5" gutterBottom>
-								View and explore LymeMIND projects
-							</Typography>
-						</Grid>
-						<Grid xs={12} lg={6} md={7}>
-							<img src="https://github.com/MaayanLab/lymemind-commons-schema/raw/master/Tutorial/images/project.PNG"
-								alt="project" width={500}/>
-						</Grid>
-						<Grid xs={12} lg={6} md={5}>
-							<Typography variant="body1">
-								The default view after searching for a term is datasets; click the “Projects” tab at the top of the search results page to view projects matching your search. The gray tags are clickable and launch a search of other projects tagged with the selected term. Click the down-arrow to expand the project description page which includes information on the researchers, university or organization hosting the project, project category, a description about the project, a description about the data the project is generating, and whether the project is ongoing or complete.   
-							</Typography>
-						</Grid>
-
 						<Grid xs={12} style={{marginTop: 20}}>
 							<Typography variant="h4" gutterBottom>
 								API
