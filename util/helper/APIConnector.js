@@ -147,13 +147,24 @@ export function build_where({ search, filters, order, indexed_keys }) {
     }
     for (const [filter, values] of Object.entries(filters)) {
       if (filter.indexOf('..') === -1) {
-        const and = values.map((v) => ({
-          [filter]: {ilike: `%${v}%`},
-        }))
+        const and = []
+        const or = []
+        for (const v of values){
+          if (isUUID(v)){
+            or.push({
+              [filter]: v
+            })
+          }else {
+            and.push({
+              [filter]: {ilike: `%${v}%`},
+            })
+          }
+        }
         where = {
           and: [...where.and, ...and,
           ],
         }
+        if (or.length > 0) where.and.push({or})
         // where = {
         //   and: [...where.and, {
         //     [filter]: { inq: [...values] },
@@ -211,8 +222,10 @@ export default class Model {
         this.grandparent !== undefined &&
         filters[this.grandparent] !== undefined) {
       let parents = filters[this.parent] || []
-      for (const i of filters[this.grandparent]) {
-        parents = [...parents, ...this.grandparent_to_parent[i]]
+      if (parents.length === 0){
+        for (const i of filters[this.grandparent]) {
+          parents = [...parents, ...this.grandparent_to_parent[i]]
+        } 
       }
       filters = {
         ...filters,
