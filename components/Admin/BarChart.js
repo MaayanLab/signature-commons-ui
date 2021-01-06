@@ -34,7 +34,7 @@ export const BarChart = ({ meta_counts, ui_values, searchTerm, searchTable, ...p
       >
         <Tooltip {...bar_chart_style.Tooltip} />
         <Bar dataKey="counts" {...bar_chart_style.Bar}
-          onClick={(data) => searchTerm(ui_values, searchTable, data)}
+          onClick={(data) => searchTerm(ui_values, searchTable, data, this.props.field_name)}
         />
         <XAxis dataKey="name" {...bar_chart_style.XAxis} tick={<CustomTick />} hide={props.XAxis === undefined || !props.XAxis} />
         <YAxis dataKey="counts" type="number" {...bar_chart_style.YAxis} hide={props.YAxis === undefined || !props.YAxis} />

@@ -91,7 +91,7 @@ export const PieChart = withStyles(landingStyle)(function({ classes, record = {}
 })
 
 export const ChartCard = withStyles(cardChartStyle)(function({ classes, ...props }) {
-  const { pie_stats } = props
+  const { pie_stats, field_name } = props
   return (
     <Grid container
       spacing={0}
@@ -103,7 +103,7 @@ export const ChartCard = withStyles(cardChartStyle)(function({ classes, ...props
             <div className={classes.progress}>
               <CircularProgress />
             </div> :
-            <PieChart stats={pie_stats} {...props}/>
+            <PieChart stats={pie_stats} field_name={field_name}  {...props}/>
         }
       </Grid>
     </Grid>
