@@ -307,14 +307,16 @@ export const ListItemLink = (props) => (
   <ListItem button component="a" {...props} />
 )
 
-export const searchTerm = (ui_values, searchTable, term) => {
-  const { preferred_name, nav } = ui_values
-  location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"search":["${term.name}"]}`
+export const searchTerm = (ui_values, searchTable, term, field_name) => {
+  if (term.name!=="others"){
+    const { preferred_name, nav } = ui_values
+    location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"${field_name}": ["${term.name}"]}}}`
+  }
 }
 
-function getCallback(callback, ui_values, searchTable) {
+function getCallback(callback, ui_values, searchTable, field_name) {
   return function(word) {
-    searchTerm(ui_values, searchTable, { name: word.text })
+    searchTerm(ui_values, searchTable, { name: word.text }, field_name)
   }
 }
 
@@ -331,7 +333,7 @@ export const WordCloud = function({ classes, searchTable, ui_values, record = {}
       <div style={{ width: '100%', height: 420, display: 'block', margin: 'auto' }}>
         <ReactWordcloud words={wordstats}
           callbacks={{
-            onWordClick: getCallback('onWordClick', ui_values, searchTable),
+            onWordClick: getCallback('onWordClick', ui_values, searchTable, props.field_name),
           }}
           scale={'log'}
           options={{
