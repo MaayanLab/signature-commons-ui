@@ -87,7 +87,6 @@ export const get_summary_statistics = async () => {
       const resource = resource_mapper[id]
       if (resource !== undefined) {
         const schema = findMatchedSchema(resource, schemas)
-        console.log(schema)
         let name
         if (schema !== null) {
           const name_props = Object.values(schema.properties).filter((prop) => prop.name)
