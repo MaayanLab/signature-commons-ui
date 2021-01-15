@@ -81,7 +81,7 @@ class ResourceList extends React.PureComponent {
               key={name}>
               <Link
                 key={resource.id}
-                to={`${this.props.ui_values.nav.Resources.endpoint}/${ name.replace(/ /g, '_')}`}
+                to={`${this.props.ui_values.nav.Resources.endpoint}/${ resource.id }`}
               >
                 <IconButton
                   alt={name}
