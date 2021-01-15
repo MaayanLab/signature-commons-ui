@@ -256,7 +256,7 @@ class MetadataSearchResults extends React.Component {
       }
     }
     params = {
-      search: [...search, value],
+      search: [...(search || []), value],
       ...rest,
     }
     const query = URLFormatter({ params, preferred_name: this.props.preferred_name })

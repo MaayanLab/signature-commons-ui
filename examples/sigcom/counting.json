@@ -28,6 +28,7 @@
   },
   {
     "Field_Name": "meta.Cell_Line.Name",
+    "Filter_Field": "meta.Cell_Line",
     "Preferred_Name": "Cell lines",
     "Preferred_Name_Singular": "Cell line",
     "Type": "object",
@@ -38,6 +39,7 @@
   },
   {
     "Field_Name": "meta.Disease.Name",
+    "Filter_Field": "meta.Disease",
     "Preferred_Name": "Diseases",
     "Preferred_Name_Singular": "Disease",
     "Type": "object",
@@ -48,6 +50,7 @@
   },
   {
     "Field_Name": "meta.Metabolite.Name",
+    "Filter_Field": "meta.Metabolite",
     "Preferred_Name": "Metabolites",
     "Preferred_Name_Singular": "Metabolite",
     "Type": "object",
@@ -84,6 +87,7 @@
   },
   {
     "Field_Name": "meta.Gene.Name",
+    "Filter_Field": "meta.Gene",
     "Preferred_Name": "Genes",
     "Preferred_Name_Singular": "Gene",
     "Type": "object",
@@ -103,6 +107,7 @@
   },
   {
     "Field_Name": "meta.Small_Molecule.Name",
+    "Filter_Field": "meta.Small_Molecule",
     "Preferred_Name": "Small Molecules",
     "Preferred_Name_Singular": "Small Molecule",
     "Type": "object",
@@ -113,6 +118,7 @@
   },
   {
     "Field_Name": "meta.Tissue.Name",
+    "Filter_Field": "meta.Tissue",
     "Preferred_Name": "Tissues",
     "Preferred_Name_Singular": "Tissue",
     "Type": "object",

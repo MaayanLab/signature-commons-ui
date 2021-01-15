@@ -94,7 +94,7 @@ export default class DonutChart extends PureComponent {
           onMouseEnter={this.onPieEnter}
           innerRadius={80}
           outerRadius={100}
-          onClick={(data) => searchTerm(this.props.ui_values, this.props.searchTable, data)}
+          onClick={(data) => searchTerm(this.props.ui_values, this.props.searchTable, data, this.props.field_name)}
           fill="linear-gradient(to bottom, rgb(124, 162, 206) 0%, rgb(179, 202, 225) 100%)"
           // onClick={this.handleClick}
           {...pie_chart_style.Pie}

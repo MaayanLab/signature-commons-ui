@@ -154,8 +154,10 @@ class LandingPage extends React.Component {
   }
 
   searchResource = (ui_values, searchTable, term) => {
-    const { preferred_name, nav } = ui_values
-    location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
+    if (term.id !== undefined){
+      const { preferred_name, nav } = ui_values
+      location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
+    }
   }
 
   pie_charts_stats = (props) => {
@@ -173,6 +175,7 @@ class LandingPage extends React.Component {
                   <ChartCard
                     cardheight={300}
                     pie_stats={val.stats}
+                    field_name={val.Field_Name}
                     ui_values={this.props.ui_values}
                     searchTable={val.table}
                     searchTerm={searchTerm}
@@ -199,6 +202,7 @@ class LandingPage extends React.Component {
                   <ChartCard
                     cardheight={300}
                     pie_stats={this.state.pie_stats.stats}
+                    field_name={this.state.pie_stats.Field_Name}
                     color={'Blue'}
                     ui_values={this.props.ui_values}
                     searchTable={this.state.pie_stats.table}
@@ -234,6 +238,7 @@ class LandingPage extends React.Component {
               <ChartCard
                 cardheight={300}
                 pie_stats={this.state.pie_stats.stats}
+                field_name={this.state.pie_stats.Field_Name}
                 color={'Blue'}
                 ui_values={this.props.ui_values}
                 searchTable={this.state.pie_stats.table}
@@ -326,6 +331,7 @@ class LandingPage extends React.Component {
                     <WordCloud classes={this.props.classes}
                       ui_values={this.props.ui_values}
                       searchTable={this.state.word_stats.table}
+                      field_name={this.state.word_stats.Field_Name}
                       stats={this.state.word_stats.stats}/>
                   </div>
                 </Grid>
@@ -352,6 +358,7 @@ class LandingPage extends React.Component {
                   <div className={this.props.classes.centered}>
                     <BarChart meta_counts={this.state.bar_stats.stats}
                       searchTable={this.state.bar_stats.table}
+                      field_name={this.state.bar_stats.Field_Name}
                       ui_values={this.props.ui_values}
                       searchTerm={searchTerm}
                       XAxis
@@ -385,6 +392,7 @@ class LandingPage extends React.Component {
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.histogram.stats}
                           ui_values={this.props.ui_values}
+                          field_name={this.state.histogram.Field_Name}
                           searchTable={this.state.histogram.table}
                           searchTerm={searchTerm}
                           YAxis
@@ -416,6 +424,7 @@ class LandingPage extends React.Component {
                       <div className={this.props.classes.centered}>
                         <BarChart meta_counts={this.state.barscore.stats}
                           searchTable={this.state.barscore.table}
+                          field_name={this.state.barscore.Field_Name}
                           ui_values={this.props.ui_values}
                           searchTerm={searchTerm}
                           XAxis

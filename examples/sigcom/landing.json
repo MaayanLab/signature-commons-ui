@@ -1,0 +1,54 @@
+{
+  "landing": true,
+  "content": {
+    "deactivate_download": false,
+    "powered": false,
+    "bar_chart": {
+      "Field_Name": "meta.Year",
+      "Caption": "Datasets per Year"
+    },
+    "entity_name": [
+      "meta.Name"
+    ],
+    "entity_synonyms": [
+      "meta.Synonyms"
+    ],
+    "counting_validator": "/dcic/signature-commons-schema/v5/meta/schema/counting.json",
+    "ui_schema": "/dcic/signature-commons-schema/v5/meta/schema/ui-schema.json",
+    "theme_mod": {
+      "palette": {
+        "defaultCard": {
+          "contrastText": "#FFF"
+        },
+        "defaultChip": {
+          "contrastText": "#FFF"
+        }
+      }
+    },
+    "nav": {
+      "MetadataSearch": {
+        "active": true,
+        "endpoint": "/MetadataSearch"
+      },
+      "SignatureSearch": {
+        "active": true,
+        "endpoint": "/SignatureSearch"
+      },
+      "Resources": {
+        "active": true,
+        "endpoint": "/Resources"
+      },
+      "API": {
+        "active": true
+      }
+    },
+    "showNonResource": false,
+    "footer_links": [
+      {
+        "href": "http://lincs-dcic.org/",
+        "src": "${PREFIX}/static/images/dcic.png",
+        "alt": "dcic"
+      }
+    ]
+  }
+}
