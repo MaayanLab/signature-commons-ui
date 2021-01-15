@@ -12,7 +12,7 @@ export const ResultsTab = (props) => {
 			const label = t.count ? `${t.label} (${t.count})`: `${t.label}`
 			allTabs.push(
 				<Tab 
-					label={label} 
+					label={label.replace(/_/g, " ")} 
 					value={t.value||t.label}
 					onClick={(event) => {
 						event.preventDefault();
