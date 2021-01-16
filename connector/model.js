@@ -31,9 +31,13 @@ export class Model {
 		}
 		this._data_resolver = data_resolver
 		this.resolved = resolved
-		this._parent = parent_mapper[model] !== null ? parent: null
+		if (parent_mapper[model] !== null){
+			if (parent instanceof Model) this._parent = parent
+		}else {
+			this._parent = null
+		}
 		this._children = undefined
-        this._children_count = undefined
+        this.children_count = undefined
         this.model = model
         this.parent_model = parent_mapper[model]
 		this.child_model = child_mapper[model]
@@ -41,6 +45,9 @@ export class Model {
 			this._entry = {"id": entry}
             this.resolved = false 
 		}else if (!(entry instanceof Array) && typeof entry === "object"){
+			if (entry.id === undefined || !isUUID(entry.id)){
+				throw new Error(`Invalid parent model`)
+			}
 			this._entry = entry
 			// if (!this.resolved){
 			// 	this.validate_entry()
@@ -88,7 +95,7 @@ export class Model {
 
 	resolve_parent = async () => {
 		if (!this.resolved) await this.resolve_entry()
-		if (this.parent_model == null) {
+		if (this.parent_model === null) {
 			this._parent = null
 		}else {
 			if (this._parent === undefined){
@@ -100,31 +107,17 @@ export class Model {
 	}
 
 	resolve_children = async (filter) => {
-		if (filter.where!==undefined){
-			filter.where = {
-				and: [
-					filter.where,
-					{
-						[singular_form[this.model]]: this.id
-					}
-				]
-			}
-		}else {
-			filter.where = {
-				[singular_form[this.model]]: this.id
-			}
-		}
 		filter = {
 			limit: 10,
 			...filter
 		}
-		const { entries, count} = await this._data_resolver.filter_metadata({
-			model: this.child_model,
+		const { entries, count} = await this._data_resolver.filter_through({
+			model: this.model,
+			entry: this,
 			filter: filter,
-			parent: this
 		})
 		this._children = entries
-		this._children_count = count
+		this.children_count = count
 	}
 
 	entry = async () => {
@@ -148,7 +141,7 @@ export class Model {
 		}
 		return {
 			count: {
-				[this.child_model]: this._children_count,
+				[this.child_model]: this.children_count,
 			},
 			[this.child_model]: children
 		}
@@ -168,7 +161,7 @@ export class Model {
 	}
 
 	update_entry = async (updated_entry) => {
-		this._entry = merge(this._entry, updated_entry)
+		this._entry = {...this._entry, ...updated_entry}
 		await this.validate_entry()
 	}
 
@@ -177,98 +170,106 @@ export class Model {
 	}
 }
 
-export class Signature extends Model {
-	resolve_children = async (filters) => {
-		const {
-			limit=10,
-			skip=0,
-			...filter
-		} = filters
-		const start = skip
-		const end = (start + 1) * limit
-		const {results,
-			all_entities} = await this._data_resolver.get_entities_from_signatures([this])
-		this._children_count = results[this.id].length
-		let entities = results[this.id]
-		// if limit = 0 get everything
-		if (limit > 0){
-			entities = results[this.id].slice(start, end)
-		}
+// export class Signature extends Model {
+// 	resolve_children = async (filters) => {
+// 		const {
+// 			limit=10,
+// 			skip=0,
+// 			...filter
+// 		} = filters
+// 		const start = skip
+// 		const end = (start + 1) * limit
+// 		const {results,
+// 			all_entities} = await this._data_resolver.get_entities_from_signatures([this])
+// 		this.children_count = results[this.id].length
+// 		let entities = results[this.id]
+// 		// if limit = 0 get everything
+// 		if (limit > 0){
+// 			entities = results[this.id].slice(start, end)
+// 		}
 		
-		const { resolved_entries } = await this._data_resolver.resolve_entries({
-				model: this.child_model,
-				entries: entities,
-				parent: this
-			})
-		this._children = entities.map(e=>resolved_entries[e])
-	}
-}
+// 		const { resolved_entries } = await this._data_resolver.resolve_entries({
+// 				model: this.child_model,
+// 				entries: entities,
+// 				parent: this
+// 			})
+// 		this._children = entities.map(e=>resolved_entries[e])
+// 	}
+// }
 
-export class Entity extends Model {
-	resolve_children = async (filters, merge) => {
-		let repo
-		if (filters.datatype !== undefined && filters.database !== undefined){
-			repo = {
-				repositories: [
-					{
-						datatype: filters.datatype,
-						uuid: filters.database
-					}
-				]
-			}
-		}
-		const {
-			limit=10,
-			skip=0,
-			datasets=[],
-			...filter
-		} = filters
+// export class Entity extends Model {
+// 	resolve_children = async (filters, merge) => {
+// 		let repo
+// 		if (filters.datatype !== undefined && filters.database !== undefined){
+// 			repo = {
+// 				repositories: [
+// 					{
+// 						datatype: filters.datatype,
+// 						uuid: filters.database
+// 					}
+// 				]
+// 			}
+// 		}
+// 		const {
+// 			limit=10,
+// 			skip=0,
+// 			datasets=[],
+// 			...filter
+// 		} = filters
 
-		const query = {
-			entities: [this.id],
-			datasets,
-			...filter,
-			offset: skip,
+// 		const query = {
+// 			entities: [this.id],
+// 			datasets,
+// 			...filter,
+// 			offset: skip,
 				
-		}
-		if (limit!==0) {
-			query.limit = limit
-		}
-		const { entries,
-			count } = await this._data_resolver.get_signatures_from_entities({query, repo, merge})
-		this._children = entries
-		this._children_count = count
-	}
+// 		}
+// 		if (limit!==0) {
+// 			query.limit = limit
+// 		}
+// 		const { entries,
+// 			count } = await this._data_resolver.get_signatures_from_entities({query, repo, merge})
+// 		if (this.child_filter === undefined){
+// 			this.child_filter = {[this.child_model]: {}}
+			
+// 		}
+// 		this.child_filter[this.child_model] = Object.entries(entries).reduce((acc,[k,v])=>({
+// 			...acc,
+// 			[k]: {...v.query, skip: v.query.offset}
+// 		}), this.child_filter)
+// 		this._children = entries
+// 		this.children_count = count
+// 	}
 
-	children = async (filter={}, merge=false) => {
-		if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter, merge)
-		const children = {}
-		for (const [dataset,v] of Object.entries(this._children)) {
-			if (v.signatures.length>0){
-				children[dataset] = {
-					...v,
-					signatures: [],
-				}
-				for (const c of v.signatures){
-					const child = await c.entry()
-					child[singular_form[c.parent_model]] = await c.parent()
-					children[dataset].signatures.push(child)
-				}
-			}
-		  }
-		return {
-			count: this._children_count,
-			[this.child_model]: children
-		}
-	}
+// 	children = async (filter={}, merge=false) => {
+// 		if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter, merge)
+// 		const children = {}
+// 		for (const [dataset,v] of Object.entries(this._children)) {
+// 			if (v.signatures.length>0){
+// 				children[dataset] = {
+// 					...v,
+// 					signatures: [],
+// 				}
+// 				for (const c of v.signatures){
+// 					const child = await c.entry()
+// 					child[singular_form[c.parent_model]] = await c.parent()
+// 					children[dataset].signatures.push(child)
+// 				}
+// 			}
+// 		  }
+// 		return {
+// 			count: this.children_count,
+// 			[this.child_model]: children
+// 		}
+// 	}
 
-	serialize = async () => {
-		const entry = await this.entry()
-		// const parent = await this.parent()
-		await this.children()
-		const children = (await this.children())[this.child_model]
-		// entry[singular_form[this.parent_model]] = parent
-		entry[this.child_model] = children
-		return entry
-	}
-}
+// 	serialize = async () => {
+// 		const entry = await this.entry()
+// 		// const parent = await this.parent()
+// 		await this.children()
+// 		const children = (await this.children())[this.child_model]
+// 		// entry[singular_form[this.parent_model]] = parent
+// 		entry[this.child_model] = children
+// 		return entry
+// 	}
+// }

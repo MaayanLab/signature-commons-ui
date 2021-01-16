@@ -75,28 +75,35 @@ export default class MetadataPage extends React.PureComponent {
 
 	process_entry = async () => {
 		const {model, id, schemas} = this.props
-		const {page, perPage:limit} = this.state
-		const skip = limit*page
+		// const skip = limit*page
 		const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
 		const entry_object = resolved_entries[id]
+		let child_filter = entry_object.child_filter[entry_object.child_model] || {}
+		if (entry_object.model==="entities"){
+			child_filter = child_filter[this.state.tab] || {}
+		}
+		const {
+			skip=0,
+			limit=10
+		} = child_filter
 		const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
 									"#/" + this.props.preferred_name[entry_object.model] +"/")
 		const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
-		const children_object = await entry_object.children({limit, skip})
+		const children_object = await entry_object.children({skip,limit})
 		const children_count = children_object.count
 		const children_results = children_object[entry_object.child_model]
-		let children
-		if (entry_object.model === "entities"){
-			children = {}
-			for (const [k,v] of Object.entries(children_results)){
-				children[k] = {
-					...v,
-					signatures: v.signatures.map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/")),
-				}
-			}
-		}else {
-			children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/"))	
-		}
+		const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/"))
+		// if (entry_object.model === "entities"){
+		// 	children = {}
+		// 	for (const [k,v] of Object.entries(children_results)){
+		// 		children[k] = {
+		// 			...v,
+		// 			signatures: v.signatures.map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/")),
+		// 		}
+		// 	}
+		// }else {
+		// 	children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/"))	
+		// }
 		const meta = {
 			metadata: entry.data.meta
 		}
@@ -150,7 +157,7 @@ export default class MetadataPage extends React.PureComponent {
 			for (const [k,v] of Object.entries(children_results)){
 				children[k] = {
 					...v,
-					signatures: v.signatures.map(c=>labelGenerator(c, this.props.schemas)),
+					signatures: v.signatures.map(c=>labelGenerator(c, this.props.schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/")),
 				}
 			}
 		}else {

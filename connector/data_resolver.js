@@ -1,15 +1,15 @@
-import { fetch_meta_post } from '../util/fetch/meta'
+import { fetch_meta_post, fetch_meta } from '../util/fetch/meta'
 import { fetch_data } from '../util/fetch/data'
-import { Model, Signature, Entity } from './model'
+import { Model } from './model'
 import isUUID from 'validator/lib/isUUID'
 import { Set } from 'immutable'
 
-const entry_model = {
-	resources: Model,
-	libraries: Model,
-	signatures: Signature,
-	entities: Entity,
-}
+// const entry_model = {
+// 	resources: Model,
+// 	libraries: Model,
+// 	signatures: Signature,
+// 	entities: Entity,
+// }
 
 const fetch_endpoint = {
     geneset_library: "/fetch/set",
@@ -60,7 +60,7 @@ export default class DataResolver {
 					if (typeof resolved_entry !== "undefined"){
 						resolved_entries[entry] = resolved_entry
 					}else {
-						const entry_object = new entry_model[model](model, entry, this)
+						const entry_object = new Model(model, entry, this)
 						unresolved_entries[entry] = entry_object
 					}
 				}else {
@@ -72,7 +72,7 @@ export default class DataResolver {
 					if (typeof resolved_entry !== "undefined"){
 						resolved_entries[entry.id] = resolved_entry
 					} else {
-						const entry_object = new entry_model[model](model, entry, this)
+						const entry_object = new Model(model, entry, this)
 						if (await entry_object.validate_entry()){
 							resolved_entries[entry.id] = entry_object
 						}else {
@@ -123,7 +123,7 @@ export default class DataResolver {
 				let entry = this.data_repo[model][e.id]
 				if (entry === undefined){
 					// If you don't have a field option, then you are resolving everything
-					entry = new entry_model[model](model, e, this, filter.fields===undefined, parent)
+					entry = new Model(model, e, this, filter.fields===undefined, parent)
 					resolved_entries[entry.id] = entry
 				} else {
 					entry.update_entry(e)
@@ -156,7 +156,43 @@ export default class DataResolver {
 			let entry = this.data_repo[model][e.id]
 			if (entry === undefined){
 				// If you don't have a field option, then you are resolving everything
-				entry = new entry_model[model](model, e, this, filter.fields===undefined, parent)
+				entry = new Model(model, e, this, filter.fields===undefined, parent)
+				resolved_entries[entry.id] = entry
+			} else {
+				entry.update_entry(e)
+			}
+			
+			this.data_repo[model][entry.id] = entry
+			resolved_entries[entry.id] = entry
+		}
+		return {
+			entries: resolved_entries,
+			count: contentRange.count,
+			duration: (new Date() - start_time) / 1000
+		}
+	}
+
+	filter_through = async ({model, entry, filter}) => {
+		const start_time = new Date()
+		this.controller()
+		const resolved_entries = {}
+		if (!entry instanceof Model) {
+			entry = Model(model, entry, this)
+			await entry.resolve()
+		}
+		const child_model = entry.child_model
+		const { response: entries, contentRange, duration } = await fetch_meta({
+			endpoint: `/${model}/${entry.id}/${child_model}`,
+			body: {
+			  filter,
+			},
+			signal: this._controller.signal,
+		  })
+		for (const e of entries){
+			let entry = this.data_repo[model][e.id]
+			if (entry === undefined){
+				// If you don't have a field option, then you are resolving everything
+				entry = new Model(child_model, e, this, filter.fields===undefined, parent)
 				resolved_entries[entry.id] = entry
 			} else {
 				entry.update_entry(e)
