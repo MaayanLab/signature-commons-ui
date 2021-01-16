@@ -33,6 +33,15 @@ const external = [
 		label: "Harmonizome",
 	}
 ]
+export const get_filter = (filter_string) => {
+	try {
+		filter_string = decodeURI(filter_string).replace("?filter=","")
+		return JSON.parse(filter_string)	
+	} catch (error) {
+		return {limit:10}
+	}
+	
+}
 
 const fetch_external_meta = async (data, external) => {
 	const external_meta = []
@@ -70,40 +79,27 @@ export default class MetadataPage extends React.PureComponent {
 			page: 0,
 			perPage: 10,
 			metaTab: "metadata",
+			query: {skip:0, limit:10}
 		}
 	}
 
 	process_entry = async () => {
 		const {model, id, schemas} = this.props
+		const {search} = this.props.location
+		const query = get_filter(search)
+		const {limit=10, skip=0} = query
+		console.log(limit, skip)
 		// const skip = limit*page
 		const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
 		const entry_object = resolved_entries[id]
-		let child_filter = entry_object.child_filter[entry_object.child_model] || {}
-		if (entry_object.model==="entities"){
-			child_filter = child_filter[this.state.tab] || {}
-		}
-		const {
-			skip=0,
-			limit=10
-		} = child_filter
+		
 		const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
 									"#/" + this.props.preferred_name[entry_object.model] +"/")
 		const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
-		const children_object = await entry_object.children({skip,limit})
+		const children_object = await entry_object.children(query)
 		const children_count = children_object.count
 		const children_results = children_object[entry_object.child_model]
 		const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/"))
-		// if (entry_object.model === "entities"){
-		// 	children = {}
-		// 	for (const [k,v] of Object.entries(children_results)){
-		// 		children[k] = {
-		// 			...v,
-		// 			signatures: v.signatures.map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/")),
-		// 		}
-		// 	}
-		// }else {
-		// 	children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/"))	
-		// }
 		const meta = {
 			metadata: entry.data.meta
 		}
@@ -122,9 +118,10 @@ export default class MetadataPage extends React.PureComponent {
 			children_count,
 			children,
 			tab: this.props.label || Object.keys(children_count)[0],
-			page: 0,
-			perPage: 10,
+			page: skip/limit,
+			perPage: limit,
 			meta,
+			query,
 		})
 	}
 
@@ -133,7 +130,7 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	componentDidUpdate = async (prevProps) => {
-		if (prevProps.id !== this.props.id){
+		if (prevProps.id !== this.props.id || prevProps.location.search !== this.props.location.search){
 			await this.process_entry()
 		}
 	}
@@ -145,32 +142,16 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	paginate = async (limit, skip) => {
-		const { entry_object, tab } = this.state
-		const query = this.state.children[tab].query
-		const children_object = await entry_object.children({...query, limit, skip})
-		const children_count = children_object.count
-		const children_results = children_object[entry_object.child_model]
-
-		let children
-		if (entry_object.model === "entities"){
-			children = {}
-			for (const [k,v] of Object.entries(children_results)){
-				children[k] = {
-					...v,
-					signatures: v.signatures.map(c=>labelGenerator(c, this.props.schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/")),
-				}
-			}
-		}else {
-			children = Object.values(children_results).map(c=>labelGenerator(c, this.props.schemas))	
+		const query = {
+			...this.state.query,
+			limit,
+			skip
 		}
-
-		this.setState({
-			entry_object,
-			children_count,
-			children,
-			page: skip/limit,
-			perPage: limit,
-		})
+		
+		this.props.history.push({
+			pathname: this.props.location.pathname,
+			search: `?filter=${JSON.stringify(query)}`,
+		  })
 	}
 
 	handleChangePage = async (event, page) => {
@@ -206,7 +187,7 @@ export default class MetadataPage extends React.PureComponent {
 						centered: true
 					}}
 				/>
-				<DataTable entries={(this.state.children[this.state.tab]||{}).signatures || this.state.children}/>
+				<DataTable entries={this.state.children}/>
 				<div align="right">
 					<TablePagination
 						page={this.state.page}
