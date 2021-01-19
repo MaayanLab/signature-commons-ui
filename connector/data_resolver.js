@@ -413,4 +413,37 @@ export default class DataResolver {
 		}
 	}
 
+	get_value_count = async (model, filter) => {
+		const { response: value_count } = await fetch_meta({
+			endpoint: `/${model}/value_count`,
+			body: {
+			  depth: 2,
+			  filter,
+			},
+		  })
+		return value_count
+	}
+
+	get_key_count = async (model, filter) => {
+		const { response: key_count } = await fetch_meta({
+			endpoint: `/${model}/key_count`,
+			body: {
+			  depth: 2,
+			  filter,
+			},
+		  })
+		return key_count
+	}
+
+	get_distinct_value_count = async (model, filter) => {
+		const { response: distinct_value_count } = await fetch_meta({
+			endpoint: `/${model}/distinct_value_count`,
+			body: {
+			  depth: 2,
+			  filter,
+			},
+		  })
+		return distinct_value_count
+	}
+
 }
