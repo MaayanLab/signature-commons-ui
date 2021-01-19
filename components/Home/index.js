@@ -21,6 +21,7 @@ import MetadataSearch from '../MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
 import Pages from '../Pages'
 import Help from '../Help'
+import Viewer from '../Viewer'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
@@ -190,6 +191,10 @@ class Home extends React.PureComponent {
     )
   }
 
+  viewer = (props) => {
+    return <Viewer {...props} />
+  }
+
 
   render = () => {
     if (this.props.theme === null) {
@@ -281,6 +286,10 @@ class Home extends React.PureComponent {
             <Route
               path={'/Help'}
               component={this.help}
+            />
+            <Route
+              path={'/Viewer'}
+              component={this.viewer}
             />
             <Route
               path="/:table/:id"
