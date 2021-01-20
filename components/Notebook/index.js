@@ -16,7 +16,7 @@ export default class Notebook extends React.PureComponent {
                         iframe
                         id="notebook-iframe"
                         frameBorder="0"
-                        height={32100}
+                        height={31800}
                         src={`${process.env.PREFIX}/static/notebook/2021-01-19-all-figures.html`}
                     />
                 </Grid>
