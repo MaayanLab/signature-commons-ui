@@ -92,11 +92,18 @@ export function Nav(props) {
         </ListItemLink> : null
       }
       <ListItemLink
+        selected={location.pathname === '/Notebook'}
+        className={ classes.menuItem}
+        href={'#/Notebook'}
+      >
+        {'LymeMIND 2 Analysis'}
+      </ListItemLink>
+      <ListItemLink
         selected={location.pathname === '/Viewer'}
         className={ classes.menuItem}
         href={'#/Viewer'}
       >
-        {'Viewer'}
+        {'LymeMIND 2 Viewer'}
       </ListItemLink>
       <ListItemLink
         selected={location.pathname === '/API'}
