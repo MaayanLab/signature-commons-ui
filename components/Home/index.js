@@ -22,6 +22,7 @@ import SignatureSearch from '../SignatureSearch'
 import Pages from '../Pages'
 import Help from '../Help'
 import Viewer from '../Viewer'
+import Notebook from '../Notebook'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
@@ -194,7 +195,10 @@ class Home extends React.PureComponent {
   viewer = (props) => {
     return <Viewer {...props} />
   }
-
+  
+  notebook = (props) => {
+    return <Notebook {...props} />
+  }
 
   render = () => {
     if (this.props.theme === null) {
@@ -290,6 +294,10 @@ class Home extends React.PureComponent {
             <Route
               path={'/Viewer'}
               component={this.viewer}
+            />
+            <Route
+              path={'/Notebook'}
+              component={this.notebook}
             />
             <Route
               path="/:table/:id"
