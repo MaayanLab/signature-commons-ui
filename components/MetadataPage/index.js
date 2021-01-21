@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import {DataTable, ShowMeta} from '../DataTable'
-import DataResolver from '../../connector/data_resolver'
+import {DataResolver, build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
@@ -15,6 +15,7 @@ import {ResultsTab} from './ResultsTab'
 import TablePagination from '@material-ui/core/TablePagination'
 import { makeTemplate, makeTemplateObject } from '../../util/ui/makeTemplate' 
 import { fetch_external } from '../../util/fetch/fetch_external'
+import { SearchResult } from './SearchResult'
 
 const external = [
 	{
@@ -73,7 +74,17 @@ const fetch_external_meta = async (data, external) => {
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){
 		super(props)
+		// query = {
+		// 	search: [],
+		// 	filters: {
+		// 		[field]: []
+		// 	},
+		// 	order: [],
+		// 	limit: int,
+		// 	skip: int
+		// }
 		this.state = {
+			search_terms: [],
 			resolver: new DataResolver(),
 			entry: null,
 			page: 0,
@@ -85,10 +96,10 @@ export default class MetadataPage extends React.PureComponent {
 
 	process_entry = async () => {
 		const {model, id, schemas} = this.props
-		const {search} = this.props.location
-		const query = get_filter(search)
-		const {limit=10, skip=0} = query
-		console.log(limit, skip)
+		const {search: filter_string} = this.props.location
+		const query = get_filter(filter_string)
+		const where = build_where(query)
+		const {limit=10, skip=0, order} = query
 		// const skip = limit*page
 		const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
 		const entry_object = resolved_entries[id]
@@ -96,7 +107,7 @@ export default class MetadataPage extends React.PureComponent {
 		const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
 									"#/" + this.props.preferred_name[entry_object.model] +"/")
 		const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
-		const children_object = await entry_object.children(query)
+		const children_object = await entry_object.children({where, limit, skip, order})
 		const children_count = children_object.count
 		const children_results = children_object[entry_object.child_model]
 		const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/"))
@@ -122,16 +133,25 @@ export default class MetadataPage extends React.PureComponent {
 			perPage: limit,
 			meta,
 			query,
+			searching: false
 		})
 	}
 
-	componentDidMount = async () => {
-		await this.process_entry()	
+	componentDidMount = () => {
+		this.setState({
+			searching: true,
+		}, ()=>{
+			this.process_entry()
+		})	
 	}
 
-	componentDidUpdate = async (prevProps) => {
+	componentDidUpdate = (prevProps) => {
 		if (prevProps.id !== this.props.id || prevProps.location.search !== this.props.location.search){
-			await this.process_entry()
+			this.setState({
+				searching: true,
+			}, ()=>{
+				this.process_entry()
+			})
 		}
 	}
 
@@ -167,6 +187,22 @@ export default class MetadataPage extends React.PureComponent {
 		await this.paginate(limit, skip)
 	}
 
+	onSearch = (search) => {
+		const query = {
+			...this.state.query,
+			search
+		}
+		this.setState({
+			query,
+			searching: true,
+		}, ()=>{
+			this.props.history.push({
+				pathname: this.props.location.pathname,
+				search: `?filter=${JSON.stringify(query)}`,
+			})
+		})
+	}
+
 	ChildComponent = () => {
 		const tabs = Object.entries(this.state.children_count).map(([k,count])=>{
 			const label = this.props.preferred_name[k] || k
@@ -179,25 +215,30 @@ export default class MetadataPage extends React.PureComponent {
 		})
 		return(
 			<React.Fragment>
-				<ResultsTab
-					tabs={tabs}
-					value={this.state.tab}
-					handleChange={this.handleTabChange}
-					tabsProps={{
-						centered: true
+				<SearchResult
+					searching={this.state.searching}
+					search_terms={this.state.query.search || []}
+					search_examples={[]}
+					filters={[]}
+					onSearch={this.onSearch}
+					entries={this.state.children}
+					PaginationProps={{
+						page: this.state.page,
+						rowsPerPage: this.state.perPage,
+						count:  this.state.children_count[this.state.tab],
+						onChangePage: (event, page) => this.handleChangePage(event, page),
+						onChangeRowsPerPage: this.handleChangeRowsPerPage,
 					}}
+					TabProps={{
+						tabs,
+						value:this.state.tab,
+						handleChange:this.handleTabChange,
+						tabsProps:{
+							centered: true
+						},
+					}}
+
 				/>
-				<DataTable entries={this.state.children}/>
-				<div align="right">
-					<TablePagination
-						page={this.state.page}
-						rowsPerPage={this.state.perPage}
-						count={ this.state.children_count[this.state.tab] }
-						onChangePage={(event, page) => this.handleChangePage(event, page)}
-						onChangeRowsPerPage={this.handleChangeRowsPerPage}
-						component="div"
-					/>
-				</div>
 			</React.Fragment>
 		)
 	}
