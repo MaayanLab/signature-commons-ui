@@ -27,7 +27,7 @@ const enrich_endpoint = {
     }
 }
 
-export default class DataResolver {
+export class DataResolver {
 	constructor(){
 		this.data_repo = {
 			resources: {},
