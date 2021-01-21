@@ -67,7 +67,7 @@ export const defaultChipRenderer = (input, onDelete) => {
   return chips
 }
 
-class ChipInput extends React.Component {
+export class ChipInput extends React.Component {
   constructor(props) {
     super(props)
 
@@ -136,9 +136,6 @@ class ChipInput extends React.Component {
               {this.props.chipRenderer(this.props.input, this.props.onDelete)}
             </React.Fragment>
         }
-        inputProps={{
-          style: {minWidth: 0, width: "10%"}
-        }}
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -161,4 +158,3 @@ ChipInput.defaultProps = {
   chipRenderer: defaultChipRenderer
 }
 
-export default ChipInput
