@@ -1,0 +1,65 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100vw;
+  min-width: 500px;
+  min-height: max(750px, 100vh);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+/* #root {} */
+
+.App {
+  margin-left: auto;
+  margin-right: auto;
+  width: 95vw;
+  height: max(750px, 100vh);
+  max-height: max(750px, 100vh);
+  display: grid;
+  grid-template-areas:
+    "header"
+    "canvas"
+    "table"
+  ;
+  grid-template-columns: 1fr;
+  grid-template-rows:
+    auto
+    50%
+    50%
+  ;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  align-content: stretch;
+  justify-content: stretch;
+}
+
+.App .header {
+  margin-top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 90vw;
+}
+
+.App .header h1.title {
+  margin-bottom: 0;
+}
+.App .header p.description {
+  color: '#444';
+  text-align: justify;
+  word-wrap: break-word;
+}
+
+.App > .canvas {
+  width: 95vw;
+  height: 100%;
+}
+
+.App .table {
+  height: 100%;
+}
