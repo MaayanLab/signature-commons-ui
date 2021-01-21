@@ -16,7 +16,7 @@ export default class Viewer extends React.PureComponent {
                         iframe
                         id="viewer-iframe"
                         frameBorder="0"
-                        height={1000}
+                        height={2000}
                         src={`${process.env.PREFIX}/static/webview/build/index.html`}
                     />
                 </Grid>
