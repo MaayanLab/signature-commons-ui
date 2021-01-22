@@ -1,4 +1,5 @@
 import isUUID from 'validator/lib/isUUID'
+import { array } from 'prop-types';
 
 function process_search_clauses(search_clauses) {
 	let where = {}
@@ -39,6 +40,38 @@ function process_search_clauses(search_clauses) {
 	}
 	return { where }
   }
+
+export const empty_cleaner = (obj) => {
+	if (Array.isArray(obj)){
+		if (obj.length === 0) return null
+		else {
+			const new_obj = []
+			for (const i of obj){
+				const cleaned = empty_cleaner(i)
+				if (cleaned !== null && cleaned !== undefined){
+					new_obj.push(cleaned)
+				}
+			}
+			if (new_obj.length>0) return new_obj
+			else return null
+		}
+	}else if(typeof obj === 'object'){
+		if (Object.keys(obj).length === 0) return null
+		else {
+			const new_obj = {}
+			for (const [k,v] of Object.entries(obj)){
+				const cleaned = empty_cleaner(v)
+				if (cleaned !== null && cleaned !== undefined){
+					new_obj[k] = cleaned
+				}
+			}
+			if (Object.keys(new_obj).length>0) return new_obj
+			else return null
+		}
+	} else {
+		return obj
+	}
+}
   
 export function build_where({ search, filters, order, indexed_keys }) {
 	search = search || []
@@ -115,7 +148,11 @@ export function build_where({ search, filters, order, indexed_keys }) {
   
   
 	if (filters !== undefined) {
-	  if (where.and === undefined) {
+	  if (Object.keys(where).length === 0){
+		  where = {
+			  and: []
+		  }
+	  }else if (where.and === undefined) {
 		where = {
 		  and: [{ ...where }],
 		}
@@ -135,12 +172,7 @@ export function build_where({ search, filters, order, indexed_keys }) {
 			  })
 			}
 		  }
-		  where = {
-			and: [...where.and, {
-			  or,
-			},
-			],
-		  }
+		  if (and.length > 0) where.and = [...where.and, ...and]
 		  if (or.length > 0) where.and.push({or})
 		  // where = {
 		  //   and: [...where.and, {
@@ -166,6 +198,6 @@ export function build_where({ search, filters, order, indexed_keys }) {
 	  }
 	}
   
-	return where
+	return empty_cleaner(where)
   }
   

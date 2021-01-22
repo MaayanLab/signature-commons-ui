@@ -3,6 +3,7 @@ import { fetch_data } from '../util/fetch/data'
 import { Model } from './model'
 import isUUID from 'validator/lib/isUUID'
 import { Set } from 'immutable'
+import {empty_cleaner} from './build_where'
 
 // const entry_model = {
 // 	resources: Model,
@@ -44,12 +45,12 @@ export class DataResolver {
 	}
 
 	abort_controller = () => {
-		this._controller.abort()
+		if (this._controller) this._controller.abort()
 	}
 
 	resolve_entries = async ({model, entries, filter={}, parent=undefined}) => {
 		const start_time = new Date()
-		this.controller()
+		
 		const resolved_entries = {}
         const unresolved_entries = {}
 		const invalid_entries = []
@@ -112,6 +113,7 @@ export class DataResolver {
 					]
 				}
 			}
+			filter = empty_cleaner(filter) || {}
 			const { response: entries } = await fetch_meta_post({
 				endpoint: `/${model}/find`,
 				body: {
@@ -142,8 +144,7 @@ export class DataResolver {
 	}
 
 	filter_metadata = async ({model, filter, parent}) => {
-		const start_time = new Date()
-		this.controller()
+		const start_time = new Date()		
 		const resolved_entries = {}
 		const { response: entries, contentRange, duration } = await fetch_meta_post({
 			endpoint: `/${model}/find`,
@@ -173,8 +174,7 @@ export class DataResolver {
 	}
 
 	filter_through = async ({model, entry, filter}) => {
-		const start_time = new Date()
-		this.controller()
+		const start_time = new Date()		
 		const resolved_entries = {}
 		if (!entry instanceof Model) {
 			entry = Model(model, entry, this)
@@ -209,8 +209,8 @@ export class DataResolver {
 	}
 
 	get_entities_from_signatures = async (entries) => {
-		this.controller()
 		const dataset_id_map = {}
+		
         for (const entry of entries){
 			await entry.entry()
 			const uid = entry.id
@@ -265,7 +265,7 @@ export class DataResolver {
 
 	enrich_entities = async ({entity_type, datatype, ...query}) => {
 		const start_time = new Date()
-		this.controller()
+		
 		const body = {
             "limit": 10,
             ...query
@@ -291,6 +291,8 @@ export class DataResolver {
 
 	get_signatures_from_entities = async ({query, repo, merge}) => {
 		const start_time = new Date()
+		this.controller()
+		
 		let entity_type
 		if (query.entities !== undefined){
 			entity_type = "set"
@@ -413,37 +415,16 @@ export class DataResolver {
 		}
 	}
 
-	get_value_count = async (model, filter) => {
-		const { response: value_count } = await fetch_meta({
-			endpoint: `/${model}/value_count`,
+	aggregate = async (endpoint, filter) => {
+		
+		const { response: aggregate } = await fetch_meta({
+			endpoint,
 			body: {
-			  depth: 2,
 			  filter,
 			},
+			signal: this._controller.signal,
 		  })
-		return value_count
-	}
-
-	get_key_count = async (model, filter) => {
-		const { response: key_count } = await fetch_meta({
-			endpoint: `/${model}/key_count`,
-			body: {
-			  depth: 2,
-			  filter,
-			},
-		  })
-		return key_count
-	}
-
-	get_distinct_value_count = async (model, filter) => {
-		const { response: distinct_value_count } = await fetch_meta({
-			endpoint: `/${model}/distinct_value_count`,
-			body: {
-			  depth: 2,
-			  filter,
-			},
-		  })
-		return distinct_value_count
+		return aggregate
 	}
 
 }

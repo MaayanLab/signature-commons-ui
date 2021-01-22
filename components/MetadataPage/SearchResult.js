@@ -52,6 +52,9 @@ export const SearchResult = (props) => {
 							</Button>
 						}
 					</Grid>
+					<Grid item xs={12} align="center">
+						{filters.map(filter=><Filter {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+					</Grid>
 				</Grid>
 				<Typography align={"center"}  style={{marginTop:10}}>
 				{search_examples.map((v,i)=>(
@@ -91,6 +94,7 @@ SearchResult.propTypes = {
 	chipRenderer: PropTypes.func,
 	filters: PropTypes.arrayOf(PropTypes.shape({
 		name: PropTypes.string,
+		field: PropTypes.string,
 		values: PropTypes.objectOf(PropTypes.number),
 		checked: PropTypes.objectOf(PropTypes.bool),
 	})),

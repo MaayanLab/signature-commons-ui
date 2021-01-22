@@ -7,12 +7,12 @@ import {DataTable, ShowMeta} from '../DataTable'
 import {DataResolver, build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
+import { findMatchedSchema } from '../../util/ui/objectMatch'
 import PropTypes from 'prop-types'
 import IconButton from '../../components/IconButton'
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import {ResultsTab} from './ResultsTab'
-import TablePagination from '@material-ui/core/TablePagination'
 import { makeTemplate, makeTemplateObject } from '../../util/ui/makeTemplate' 
 import { fetch_external } from '../../util/fetch/fetch_external'
 import { SearchResult } from './SearchResult'
@@ -44,33 +44,6 @@ export const get_filter = (filter_string) => {
 	
 }
 
-const fetch_external_meta = async (data, external) => {
-	const external_meta = []
-	for (const e of external){
-		const url = makeTemplate(e.url, data)
-		const { response } = await fetch_external({
-			url 
-		})
-		if (makeTemplate(e.error, response) !== "true"){
-			if (e.field){
-				const field = makeTemplate(e.field, data)
-				// const field = "${JSON.stringify("+f+")}"
-				const r = makeTemplateObject(field, response)
-				external_meta.push({
-					meta: r,
-					label: e.label
-				})
-			}else{
-				external_meta.push({
-					meta: response,
-					label: e.label
-				})
-			}
-		}
-	}
-	return external_meta
-}
-
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -90,16 +63,16 @@ export default class MetadataPage extends React.PureComponent {
 			page: 0,
 			perPage: 10,
 			metaTab: "metadata",
-			query: {skip:0, limit:10}
+			query: {skip:0, limit:10},
+			filters: {},
+			paginate: false
 		}
 	}
 
 	process_entry = async () => {
+		this.state.resolver.abort_controller()
+		this.state.resolver.controller()
 		const {model, id, schemas} = this.props
-		const {search: filter_string} = this.props.location
-		const query = get_filter(filter_string)
-		const where = build_where(query)
-		const {limit=10, skip=0, order} = query
 		// const skip = limit*page
 		const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
 		const entry_object = resolved_entries[id]
@@ -107,34 +80,110 @@ export default class MetadataPage extends React.PureComponent {
 		const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
 									"#/" + this.props.preferred_name[entry_object.model] +"/")
 		const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
-		const children_object = await entry_object.children({where, limit, skip, order})
-		const children_count = children_object.count
-		const children_results = children_object[entry_object.child_model]
-		const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[entry_object.child_model] +"/"))
 		const meta = {
 			metadata: entry.data.meta
-		}
-		if (entry_object.model === 'entities'){
-			const external_meta = await fetch_external_meta(entry.data, [])
-			if (external_meta.length > 0){
-				for (const v of external_meta){
-					meta[v.label] = v.meta
-				}
-			}
 		}
 		this.setState({
 			entry_object,
 			entry,
 			parent,
+			meta
+		}, ()=> {
+			this.process_children()
+		})
+	}
+
+	process_children = async () => {
+		this.state.resolver.abort_controller()
+		this.state.resolver.controller()
+		const {schemas} = this.props
+		const {search: filter_string} = this.props.location
+		const query = get_filter(filter_string)
+		const where = build_where(query)
+		console.log(where)
+		const {limit=10, skip=0, order} = query
+		// const skip = limit*page
+		const q = {
+			limit, skip, order
+		}
+		if (where) q["where"] = where
+		const children_object = await this.state.entry_object.children({...q})
+		const children_count = children_object.count
+		const children_results = children_object[this.state.entry_object.child_model]
+		const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[this.state.entry_object.child_model] +"/"))
+		if (!this.state.paginate) this.get_value_count(where, query)	
+		this.setState({
 			children_count,
 			children,
 			tab: this.props.label || Object.keys(children_count)[0],
 			page: skip/limit,
 			perPage: limit,
-			meta,
 			query,
-			searching: false
-		})
+			searching: false,
+			paginate: false,
+		})	
+	}
+
+
+	get_value_count = async (where, query) =>{
+		const filter_fields = {}
+		const fields = []
+		for (const prop of Object.values(this.state.entry.schema.properties)){
+			if (prop.type === "filter"){
+				const checked = {}
+				if ((query.filters || {})[prop.field]){
+					for (const i of query.filters[prop.field]){
+						checked[i] = true
+					}
+				}
+				filter_fields[prop.field] = {
+					name: prop.text,
+					field: prop.field,
+					search_field: prop.search_field || prop.field,
+					checked: checked,
+					priority: prop.priority,
+					icon: prop.icon,
+				}
+				fields.push(prop.field)
+			}
+		}
+		if (fields.length > 0){
+			const value_count = await this.state.resolver.aggregate(
+				`/${this.state.entry_object.model}/${this.state.entry_object.id}/${this.state.entry_object.child_model}/value_count`, 
+				{
+					where,
+					fields,
+					limit: 20,
+				})
+			const filters = {}
+			for (const [field, values] of Object.entries(value_count)){
+				filters[field] = {
+					...filter_fields[field],
+					values
+				}
+			}
+			
+			this.setState({
+				filters
+			})
+		}
+	}
+
+	onClickFilter = (field, value) => {
+		const {filters} = this.state
+		filters[field].checked[value] = filters[field].checked[value] === undefined ? true : !filters[field].checked[value]
+		const search_field = filters[field].search_field
+		const checked = filters[field].checked
+		const query = {
+			...this.state.query,
+			filters: {
+				...filters,
+				[search_field]: Object.keys(checked).filter(k=>checked[k])				}
+		}
+		this.props.history.push({
+			pathname: this.props.location.pathname,
+			search: `?filter=${JSON.stringify(query)}`,
+			})
 	}
 
 	componentDidMount = () => {
@@ -146,11 +195,22 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	componentDidUpdate = (prevProps) => {
-		if (prevProps.id !== this.props.id || prevProps.location.search !== this.props.location.search){
+		const prev_search = decodeURI(prevProps.location.search)
+		const curr_search = decodeURI(this.props.location.search)
+		if (prevProps.id !== this.props.id){
 			this.setState({
 				searching: true,
+				filters: {},
+				paginate: (this.props.location.state || {}).paginate ? true: false
 			}, ()=>{
 				this.process_entry()
+			})
+		} else if (prev_search !== curr_search){
+			this.setState({
+				searching: true,
+				paginate: (this.props.location.state || {}).paginate ? true: false
+			}, ()=>{
+				this.process_children()
 			})
 		}
 	}
@@ -171,6 +231,9 @@ export default class MetadataPage extends React.PureComponent {
 		this.props.history.push({
 			pathname: this.props.location.pathname,
 			search: `?filter=${JSON.stringify(query)}`,
+			state: {
+				paginate: true
+			}
 		  })
 	}
 
@@ -204,6 +267,7 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	ChildComponent = () => {
+		if (this.state.children_count === undefined) return <CircularProgress />
 		const tabs = Object.entries(this.state.children_count).map(([k,count])=>{
 			const label = this.props.preferred_name[k] || k
 			return {
@@ -219,8 +283,9 @@ export default class MetadataPage extends React.PureComponent {
 					searching={this.state.searching}
 					search_terms={this.state.query.search || []}
 					search_examples={[]}
-					filters={[]}
+					filters={Object.values(this.state.filters)}
 					onSearch={this.onSearch}
+					onFilter={this.onClickFilter}
 					entries={this.state.children}
 					PaginationProps={{
 						page: this.state.page,
@@ -237,7 +302,7 @@ export default class MetadataPage extends React.PureComponent {
 							centered: true
 						},
 					}}
-
+					schema={this.state.entry.schema}
 				/>
 			</React.Fragment>
 		)

@@ -1,4 +1,4 @@
-import { makeTemplate, makeTemplateForObject } from './makeTemplate'
+import { makeTemplate } from './makeTemplate'
 import { findMatchedSchema, objectMatch } from './objectMatch'
 
 export const value_by_type = {
@@ -8,6 +8,24 @@ export const value_by_type = {
 		return null
 	  } else {
 		return { text: val, label }
+	  }
+  },
+  'url': ({ label, prop, data }) => {
+    const url = makeTemplate(prop.url, data)
+    const text = makeTemplate(prop.text, data)
+	  if (url === 'undefined') {
+		  return null
+	  } else {
+		  return { text, url, label }
+	  }
+  },
+  'display': ({ label, prop, data }) => {
+    const url = makeTemplate(prop.href, data)
+    const text = makeTemplate(prop.text, data)
+	  if (url === 'undefined') {
+		  return null
+	  } else {
+		  return { text, url, label }
 	  }
   },
   'title': ({ label, prop, data }) => {
@@ -45,31 +63,24 @@ export const value_by_type = {
 	  }
 	},
 	'array': ({ label, prop, data }) => {
-	  if (prop.keywords) {
-		const val = makeTemplateForObject('${JSON.stringify(' + prop.Field_Name + ')}', data, prop.text)
-		if (val === 'undefined' || val.length === 0) {
-		  return null
-		} else {
-		  return { object: val, label }
-		}
-	  } else {
-		const val = makeTemplateForObject('${JSON.stringify(' + prop.Field_Name + ')}', data, prop.text)
-		if (val === 'undefined' || val.length === 0) {
-		  return null
-		} else {
-		  return { text: val, label }
-		}
-	  }
-	},
-	'list': ({ label, prop, data }) => {
-	  const val = makeTemplateForObject(prop.text, data, prop.subtext || null)
-	  if (val === 'undefined' || val.length === 0) {
-		return null
-	  } else {
-		return { list: val, label }
-	  }
-	},
+    const extracted_str = makeTemplate('${JSON.stringify(' + prop.field + ')}', data)
+    if (extracted_str === 'undefined'){
+      return null
+    }else {
+      const extracted = JSON.parse(extracted_str)
+      if (extracted.length === 0) return null
+      const val = []
+      for (const i of extracted){
+        if (typeof i === 'object' && prop.text !== undefined && prop.text!==""){
+          val.push(makeTemplate(prop.text, i))
+        } else {
+          val.push(i)
+        }
+      }
+      return { object: val, label }
+    }
   }
+}
 
 export const labelGenerator = (data, schemas, endpoint="", highlight = undefined) => {
   const schema = findMatchedSchema(data, schemas)
@@ -79,13 +90,13 @@ export const labelGenerator = (data, schemas, endpoint="", highlight = undefined
     let tags = []
     let download = []
     const keywords = {}
-    const info = { id: data.id, display: {}, endpoint: endpoint + data.id }
+    const info = { id: data.id, display: {}, url: {}, components: {}, endpoint: endpoint + data.id }
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
 
       if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data) && value_by_type[prop.type]!==undefined) {
-        const val = value_by_type[prop.type]({ label, prop, data, highlight })
+        const val = value_by_type[prop.type]({ label, prop, data })
         if (prop.type === "title") {
           info.name = { text: data.id }
           if (val !== null) {
@@ -96,25 +107,18 @@ export const labelGenerator = (data, schemas, endpoint="", highlight = undefined
           if (val !== null) info.subtitle = { ...val }
         }
         if (prop.type === "display") {
+          if (info.display === undefined ) info.display = {}
           if (val !== null) info.display[label] = { ...val }
+        }
+        if (prop.type === "url") {
+          if (info.url === undefined ) info.url = {}
+          if (val !== null) info.url[label] = { ...val }
         }
         if (prop.type === "img" || prop.type === "head-img") {
           if (val !== null) {
             info.icon = { ...val }
           }
         }
-        // if (prop.type === "component" && prop.text=== "download") {
-        //   if (val !== null) {
-        //     download = [
-        //       ...download,
-        //       {
-        //         ...val,
-        //         icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
-        //         priority: prop.priority,
-        //       },
-        //     ]
-        //   }
-        // }
         if (prop.type === "score") {
           if (val !== null) {
             scores[prop.field] = {
@@ -157,7 +161,7 @@ export const labelGenerator = (data, schemas, endpoint="", highlight = undefined
     info.tags = tags || []
     info.download = download || []
     info.keywords = keywords
-    return { data, info, sort_tags }
+    return { data, info, schema, sort_tags }
   }
 }
 
