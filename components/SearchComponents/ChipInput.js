@@ -128,11 +128,7 @@ export class ChipInput extends React.Component {
         onBlur={this.onBlur}
         fullWidth={true}
         startAdornment={
-          <React.Fragment
-              style={{
-                flex: 1,
-              }}
-            >
+          <React.Fragment>
               {this.props.chipRenderer(this.props.input, this.props.onDelete)}
             </React.Fragment>
         }
