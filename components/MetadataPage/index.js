@@ -162,7 +162,6 @@ export default class MetadataPage extends React.PureComponent {
 					values
 				}
 			}
-			
 			this.setState({
 				filters
 			})
