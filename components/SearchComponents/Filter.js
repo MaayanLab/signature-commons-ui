@@ -20,7 +20,7 @@ export const Filter = (props) => {
 		loading,
 	} = props
 
-	const [expanded, setExpanded] = React.useState(false);
+	const [expanded, setExpanded] = React.useState(Object.keys(checked).length>0);
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
@@ -35,7 +35,7 @@ export const Filter = (props) => {
 			</Card>
 		)
 	}
-
+	const sorted_values = Object.entries(values).sort((a,b)=>b[1]-a[1])
 	return (
 		<Card>
 			<CardHeader
@@ -53,7 +53,7 @@ export const Filter = (props) => {
 			/>
 			<Collapse in={expanded} timeout="auto" unmountOnExit>
 				<FormGroup>
-						{Object.entries(values).map(([label, count])=>
+						{sorted_values.map(([label, count])=>
 							<FormControlLabel
 								key={label}
 								control={<Checkbox checked={checked[label] || false} onChange={onClick} name={label} value={label} />}
