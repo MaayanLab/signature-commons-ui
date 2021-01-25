@@ -55,6 +55,7 @@ export const Filter = (props) => {
 				<FormGroup>
 						{Object.entries(values).map(([label, count])=>
 							<FormControlLabel
+								key={label}
 								control={<Checkbox checked={checked[label] || false} onChange={onClick} name={label} value={label} />}
 								label={<Typography align="left">{`${label} (${count})`}</Typography>}
 								style={{margin:10}}
