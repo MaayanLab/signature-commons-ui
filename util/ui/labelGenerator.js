@@ -82,7 +82,7 @@ export const value_by_type = {
   }
 }
 
-export const labelGenerator = (data, schemas, endpoint="", highlight = undefined) => {
+export const labelGenerator = (data, schemas, endpoint="", highlight=undefined) => {
   const schema = findMatchedSchema(data, schemas)
   if (schema !== null) {
     const { properties } = schema
