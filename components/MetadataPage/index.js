@@ -3,19 +3,17 @@ import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
-import {DataTable, ShowMeta} from '../DataTable'
+import {ShowMeta} from '../DataTable'
 import {DataResolver, build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
-import { findMatchedSchema } from '../../util/ui/objectMatch'
 import PropTypes from 'prop-types'
 import IconButton from '../../components/IconButton'
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import {ResultsTab} from './ResultsTab'
-import { makeTemplate, makeTemplateObject } from '../../util/ui/makeTemplate' 
-import { fetch_external } from '../../util/fetch/fetch_external'
 import { SearchResult } from './SearchResult'
+import { Set } from 'immutable'
 
 const external = [
 	{
@@ -34,11 +32,52 @@ const external = [
 		label: "Harmonizome",
 	}
 ]
+
+export const resolve_ids = ({
+	query,
+	model,
+	lib_name_to_id,
+	resource_name_to_id,
+	resource_to_lib,
+}) => {
+	let filters = {...query.filters}
+	if (filters.library){
+		filters.library = filters.library.map(lib=>lib_name_to_id[lib])
+	}
+	if (filters.resource) {
+		if (model === "signatures") {
+			const {library=[], resource, ...rest} = filters
+			let libraries = [...library]
+			let not_exist = true
+			for (const r of resource){
+				const resource_id = resource_name_to_id[r]
+				for (const lib of resource_to_lib[resource_id]){
+					if (libraries.indexOf(lib) >= 0){
+						not_exist = false
+						break;
+					}
+					libraries.push(lib)
+				}
+			}
+			if (not_exist){
+				filters = {...rest, library: libraries}
+			} else {
+				filters = { ...rest, library}
+			}
+		} else {
+			filters.resource = filters.resource.map(res=>resource_name_to_id[res])
+		}
+	}
+	return {
+		...query,
+		filters
+	}
+}
 export const get_filter = (filter_string) => {
 	try {
-		filter_string = decodeURI(filter_string).replace("?filter=","")
-		return JSON.parse(filter_string)	
+		return JSON.parse(decodeURI(filter_string.replace("?query=", "")))
 	} catch (error) {
+		console.error(error)
 		return {limit:10}
 	}
 	
@@ -47,15 +86,6 @@ export const get_filter = (filter_string) => {
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){
 		super(props)
-		// query = {
-		// 	search: [],
-		// 	filters: {
-		// 		[field]: []
-		// 	},
-		// 	order: [],
-		// 	limit: int,
-		// 	skip: int
-		// }
 		this.state = {
 			search_terms: [],
 			resolver: new DataResolver(),
@@ -97,10 +127,23 @@ export default class MetadataPage extends React.PureComponent {
 		this.state.resolver.abort_controller()
 		this.state.resolver.controller()
 		const {schemas} = this.props
+		const {
+			lib_name_to_id,
+			lib_id_to_name,
+			resource_name_to_id,
+			resource_to_lib
+		} = this.props.resource_libraries
 		const {search: filter_string} = this.props.location
 		const query = get_filter(filter_string)
-		const where = build_where(query)
-		console.log(where)
+		const resolved_query = resolve_ids({
+			query,
+			model: this.state.entry_object.child_model,
+			lib_name_to_id,
+			lib_id_to_name,
+			resource_name_to_id,
+			resource_to_lib
+		})
+		const where = build_where(resolved_query)
 		const {limit=10, skip=0, order} = query
 		// const skip = limit*page
 		const q = {
@@ -111,7 +154,8 @@ export default class MetadataPage extends React.PureComponent {
 		const children_count = children_object.count
 		const children_results = children_object[this.state.entry_object.child_model]
 		const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[this.state.entry_object.child_model] +"/"))
-		if (!this.state.paginate) this.get_value_count(where, query)	
+		
+		if (!this.state.paginate) this.get_value_count(where, query)
 		this.setState({
 			children_count,
 			children,
@@ -128,11 +172,15 @@ export default class MetadataPage extends React.PureComponent {
 	get_value_count = async (where, query) =>{
 		const filter_fields = {}
 		const fields = []
+		const {lib_id_to_name, resource_id_to_name, lib_to_resource} = this.props.resource_libraries
+		// const resource_lib = {}
+		// let resource_prop
 		for (const prop of Object.values(this.state.entry.schema.properties)){
 			if (prop.type === "filter"){
 				const checked = {}
-				if ((query.filters || {})[prop.field]){
-					for (const i of query.filters[prop.field]){
+				const filters = query.filters || {}
+				if (filters[prop.field]){
+					for (const i of filters[prop.field]){
 						checked[i] = true
 					}
 				}
@@ -144,7 +192,8 @@ export default class MetadataPage extends React.PureComponent {
 					priority: prop.priority,
 					icon: prop.icon,
 				}
-				fields.push(prop.field)
+				if (this.state.entry_object.child_model !== "signatures" || prop.field !== "resource")
+					fields.push(prop.field)
 			}
 		}
 		if (fields.length > 0){
@@ -157,10 +206,47 @@ export default class MetadataPage extends React.PureComponent {
 				})
 			const filters = {}
 			for (const [field, values] of Object.entries(value_count)){
-				filters[field] = {
-					...filter_fields[field],
-					values
+				if (field === "library"){
+					filters[field] = {
+						...filter_fields[field],
+						values: Object.entries(values).reduce((acc, [id, count])=> {
+							acc[lib_id_to_name[id]] = count
+							return acc
+						},{})
+					}
+					if (filter_fields.resource !== undefined){
+						// resolve resources
+						const {lib_to_resource} = this.props.resource_libraries
+						const vals = {}
+						for (const [k,v] of Object.entries(values)){
+							const resource = lib_to_resource[k]
+							if (vals[resource_id_to_name[resource]] === undefined){
+								vals[resource_id_to_name[resource]] = v
+							}
+							else {
+								vals[resource_id_to_name[resource]] = vals[resource_id_to_name[resource]] + v
+							}
+						}
+						filters["resource"] = {
+							...filter_fields["resource"],
+							values: vals,
+						}
+					}
+				} else if(field === "resource"){
+					filters[field] = {
+						...filter_fields[field],
+						values: Object.entries(values).reduce((acc, [id, count])=> {
+							acc[resource_id_to_name[id]] = count
+							return acc
+						},{})
+					}
+				}else {
+					filters[field] = {
+						...filter_fields[field],
+						values
+					}
 				}
+				
 			}
 			this.setState({
 				filters
@@ -169,19 +255,16 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	onClickFilter = (field, value) => {
-		const {filters} = this.state
-		filters[field].checked[value] = filters[field].checked[value] === undefined ? true : !filters[field].checked[value]
-		const search_field = filters[field].search_field
-		const checked = filters[field].checked
-		const query = {
-			...this.state.query,
-			filters: {
-				...filters,
-				[search_field]: Object.keys(checked).filter(k=>checked[k])				}
+		const {filters, query} = this.state
+		const {checked} = filters[field]
+		checked[value] = checked[value] === undefined? true: !checked[value]
+		query.filters = {
+			...query.filters,
+			[field]: Object.keys(checked).filter(k=>checked[k])
 		}
 		this.props.history.push({
 			pathname: this.props.location.pathname,
-			search: `?filter=${JSON.stringify(query)}`,
+			search: `?query=${JSON.stringify(query)}`,
 			})
 	}
 
@@ -229,7 +312,7 @@ export default class MetadataPage extends React.PureComponent {
 		
 		this.props.history.push({
 			pathname: this.props.location.pathname,
-			search: `?filter=${JSON.stringify(query)}`,
+			search: `?query=${JSON.stringify(query)}`,
 			state: {
 				paginate: true
 			}
@@ -260,7 +343,7 @@ export default class MetadataPage extends React.PureComponent {
 		}, ()=>{
 			this.props.history.push({
 				pathname: this.props.location.pathname,
-				search: `?filter=${JSON.stringify(query)}`,
+				search: `?query=${JSON.stringify(query)}`,
 			})
 		})
 	}
@@ -440,4 +523,12 @@ MetadataPage.propTypes = {
 	topComponents: PropTypes.func,
 	middleComponents: PropTypes.func,
 	bottomComponents: PropTypes.func,
+	resource_libraries: PropTypes.shape({
+		lib_id_to_name: PropTypes.objectOf(PropTypes.string),
+		lib_name_to_id: PropTypes.objectOf(PropTypes.string),
+		resource_id_to_name: PropTypes.objectOf(PropTypes.string),
+		resource_name_to_id: PropTypes.objectOf(PropTypes.string),
+		lib_to_resource: PropTypes.objectOf(PropTypes.string),
+		resource_to_lib: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
+	})
 }

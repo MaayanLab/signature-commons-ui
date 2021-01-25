@@ -24,6 +24,8 @@ export const SearchResult = (props) => {
 		TabProps,
 	} = props
 
+	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
+
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12} md={4} lg={3}>
@@ -48,12 +50,12 @@ export const SearchResult = (props) => {
 							</Button>
 						:
 							<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
-								<span class="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
+								<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
 							</Button>
 						}
 					</Grid>
 					<Grid item xs={12} align="center">
-						{filters.map(filter=><Filter {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+						{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
 					</Grid>
 				</Grid>
 				<Typography align={"center"}  style={{marginTop:10}}>
@@ -95,11 +97,12 @@ SearchResult.propTypes = {
 	filters: PropTypes.arrayOf(PropTypes.shape({
 		name: PropTypes.string,
 		field: PropTypes.string,
+		priority: PropTypes.number,
 		values: PropTypes.objectOf(PropTypes.number),
 		checked: PropTypes.objectOf(PropTypes.bool),
 	})),
 	onSearch: PropTypes.func,
-	onFilter: PropTypes.filter,
+	onFilter: PropTypes.func,
 	entries: PropTypes.arrayOf(PropTypes.object).isRequired,
 	DataTableProps: PropTypes.shape({
 		InfoCardComponent: PropTypes.node,
@@ -111,7 +114,7 @@ SearchResult.propTypes = {
 			component: PropTypes.func,
 			props: PropTypes.object
 		})
-	}).isRequired,
+	}),
 	PaginationProps: PropTypes.shape({
 		page: PropTypes.number,
 		rowsPerPage: PropTypes.number,
