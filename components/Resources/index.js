@@ -21,17 +21,17 @@ export const get_schema_props = (item, schemas) => {
   const schema = findMatchedSchema(item, schemas)
   const response = { schema }
   for (const prop of Object.values(schema.properties)) {
-    if (prop.name) {
+    if (prop.type === 'title') {
       response['name_prop'] = prop.text
     }
-    if (prop.icon) {
+    if (prop.type === 'img') {
       response['icon_prop'] = prop.src
     }
-    if (prop.description) {
+    if (prop.type === 'tooltip') {
       response['description_prop'] = prop.text
     }
   }
-  if (response['name_prop'] === undefined) prop.name = '${id}'
+  if (response['name_prop'] === undefined) response['name_prop'] = '${id}'
   return { ...response }
 }
 
