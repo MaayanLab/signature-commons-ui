@@ -208,6 +208,19 @@ export class DataResolver {
 		}
 	}
 
+	aggregate = async (endpoint, filter) => {
+		
+		const { response: aggregate } = await fetch_meta({
+			endpoint,
+			body: {
+			  filter,
+			},
+			signal: this._controller.signal,
+		  })
+		return aggregate
+	}
+
+	// Data API
 	get_entities_from_signatures = async (entries) => {
 		const dataset_id_map = {}
 		
@@ -413,18 +426,6 @@ export class DataResolver {
             count,
             duration: (new Date() - start_time) / 1000,
 		}
-	}
-
-	aggregate = async (endpoint, filter) => {
-		
-		const { response: aggregate } = await fetch_meta({
-			endpoint,
-			body: {
-			  filter,
-			},
-			signal: this._controller.signal,
-		  })
-		return aggregate
 	}
 
 }
