@@ -255,6 +255,14 @@ function rootReducer(state = initialState, action) {
       error_message: null,
     }
   }
+
+  if (action.type === action_definitions.GET_RESOURCES_AND_LIBRARIES_SUCCEEDED) {
+    const { props } = action
+    return {
+      ...state,
+      ...props,
+    }
+  }
   return state
 };
 

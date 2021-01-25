@@ -35,7 +35,15 @@ const mapStateToProps = (state) => {
     ui_values: state.ui_values,
     theme: state.theme,
     error_message: state.error_message,
-    schemas: state.serverSideProps.schemas
+    schemas: state.serverSideProps.schemas,
+    resource_libraries: {
+      lib_id_to_name: state.lib_id_to_name,
+      lib_name_to_id: state.lib_name_to_id,
+      resource_name_to_id: state.resource_name_to_id,
+      resource_id_to_name: state.resource_id_to_name,
+      lib_to_resource: state.lib_to_resource,
+      resource_to_lib: state.resource_to_lib,
+    },
   }
 }
 
@@ -189,6 +197,7 @@ class Home extends React.PureComponent {
     if (model === undefined) return <Redirect to='/not-found'/>
     return (
       <MetadataPage schemas={this.props.schemas}
+                    resource_libraries={this.props.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
                     id={id}
                     model={model}

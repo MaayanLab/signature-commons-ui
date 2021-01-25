@@ -23,6 +23,7 @@ import { fetchMetaDataSucceeded,
   reportError,
   fetchSummarySucceeded,
   fetchKeyCountSucceeded,
+  getResourcesAndLibrariesSucceeded,
 } from '../redux/actions'
 import { getStateFromStore } from './selectors'
 import { get_signature_data } from '../../components/MetadataSearch/download'
@@ -31,6 +32,7 @@ import uuid5 from 'uuid5'
 import defaultTheme from '../ui/theme-provider'
 import { createMuiTheme } from '@material-ui/core'
 import merge from 'deepmerge'
+import {getResourcesAndLibraries} from '../ui/getResourcesAndLibraries'
 
 const allWatchedActions = [
   action_definitions.FIND_SIGNATURES,
@@ -50,6 +52,11 @@ export function *workInitializeSigcom(action) {
     // Summary statistics
     const { serverSideProps } = yield call(get_summary_statistics)
     yield put(fetchSummarySucceeded(serverSideProps))
+    
+    // Get library and resource mapping
+    const lib_resource_props = yield call(getResourcesAndLibraries, serverSideProps.schemas)
+    yield put(getResourcesAndLibrariesSucceeded(lib_resource_props))
+
     // ui values
     const { ui_values } = yield call(get_ui_values)
     yield put(fetchUIValuesSucceeded(ui_values))

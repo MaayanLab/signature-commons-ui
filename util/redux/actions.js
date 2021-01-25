@@ -134,3 +134,7 @@ export function findSignaturesSucceeded(signature_result) {
 export function findSignaturesFailed(error) {
   return { type: action_definitions.FIND_SIGNATURES_FAILED, error }
 }
+
+export function getResourcesAndLibrariesSucceeded(props) {
+  return { type: action_definitions.GET_RESOURCES_AND_LIBRARIES_SUCCEEDED, props }
+}
