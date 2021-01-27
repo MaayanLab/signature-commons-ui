@@ -7,7 +7,6 @@ import {ResultsTab} from './ResultsTab'
 import {DataTable, ShowMeta} from '../DataTable'
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import FormGroup from '@material-ui/core/FormGroup'
 
 export const SearchResult = (props) => {
 	const {
@@ -41,6 +40,13 @@ export const SearchResult = (props) => {
 								}
 							}
 							chipRenderer={chipRenderer}
+							ChipInputProps={{
+								divProps: {
+									style: {
+										background: "#f7f7f7"
+									}
+								}
+							}}
 						/>
 					</Grid>
 					<Grid item xs={12} align="center">
@@ -78,7 +84,7 @@ export const SearchResult = (props) => {
 					}}
 					{...TabProps}
 				/>
-				<DataTable entries={entries}/>
+				<DataTable entries={entries} {...DataTableProps}/>
 				<TablePagination
 					{...PaginationProps}
 					component="div"
@@ -105,6 +111,7 @@ SearchResult.propTypes = {
 	onFilter: PropTypes.func,
 	entries: PropTypes.arrayOf(PropTypes.object).isRequired,
 	DataTableProps: PropTypes.shape({
+		onChipClick: PropTypes.func,
 		InfoCardComponent: PropTypes.node,
 		TopComponents: PropTypes.shape({
 			component: PropTypes.func,
