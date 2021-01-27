@@ -17,7 +17,7 @@ import Base from '../../components/Base'
 import About from '../../components/About'
 import Landing from '../Landing'
 import Resources from '../Resources'
-import MetadataSearch from '../MetadataSearch'
+import MetadataSearch from '../Search/MetadataSearch'
 import SignatureSearch from '../SignatureSearch'
 import Pages from '../Pages'
 import MetadataPage from '../MetadataPage'
@@ -36,6 +36,7 @@ const mapStateToProps = (state) => {
     theme: state.theme,
     error_message: state.error_message,
     schemas: state.serverSideProps.schemas,
+    search_filters: state.search_filters,
     resource_libraries: {
       lib_id_to_name: state.lib_id_to_name,
       lib_name_to_id: state.lib_name_to_id,
@@ -169,11 +170,26 @@ class Home extends React.PureComponent {
     )
   }
 
-  metadata_search = (props) => (
-    <MetadataSearch
-      {...props}
-    />
-  )
+
+  metadata_search = (props) => {
+    const reverse_preferred = Object.entries(this.props.ui_values.preferred_name).reduce((names,[k,v])=>{
+      names[v] = k
+      return names
+    }, {})
+    const model = reverse_preferred[props.match.params.model]
+    if (model === undefined) return <Redirect to='/not-found'/>
+    return (
+      <MetadataSearch schemas={this.props.schemas}
+                    resource_libraries={this.props.resource_libraries}
+                    preferred_name={this.props.ui_values.preferred_name}
+                    model={model}
+                    label={props.match.params.label}
+                    filter_props={this.props.search_filters[model]}
+                    nav={this.props.ui_values.nav}
+                    {...props}
+      />
+    )
+  }
 
   signature_search = (props) => (
     <SignatureSearch
@@ -258,7 +274,7 @@ class Home extends React.PureComponent {
             }
             {this.props.ui_values.nav.MetadataSearch.active ?
               <Route
-                path={`${this.props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}/:table`}
+                path={`${this.props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}/:model`}
                 component={this.metadata_search}
               />
               : null

@@ -118,6 +118,7 @@ export class ChipInput extends React.Component {
             minHeight: 40,
             display: 'flex',
             flexFlow: 'row wrap',
+            ...(((this.props.ChipInputProps || {}).divProps || {}).style || {})
           }}
     >
       <Input
@@ -147,7 +148,11 @@ ChipInput.propTypes = {
   chipRenderer: PropTypes.func,
   input: PropTypes.array,
   onDelete: PropTypes.func,
-  onSubmit: PropTypes.func
+  onSubmit: PropTypes.func,
+  ChipInputProps: PropTypes.objectOf({
+    divProps: PropTypes.object,
+    inputProps: PropTypes.object,
+  }),
 }
 
 ChipInput.defaultProps = {

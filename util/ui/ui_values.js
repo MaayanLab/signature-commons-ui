@@ -43,10 +43,12 @@ const default_values = {
       MetadataSearch: {
         active: true,
         endpoint: '/MetadataSearch',
+        navName: "Metadata Search"
       },
       SignatureSearch: {
         active: false,
         endpoint: '/SignatureSearch',
+        navName: "Signature Search"
       },
       Resources: {
         active: true,

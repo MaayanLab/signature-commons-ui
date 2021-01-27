@@ -113,7 +113,7 @@ class MetadataSearchBox extends React.Component {
         preferred_name: this.props.preferred_name })
       this.props.history.push({
         pathname: `${this.props.MetadataSearchNav.endpoint || '/MetadataSearch'}/${current_table}`,
-        search: `?q=${query}`,
+        search: `?query=${query}`,
         state: {
           new_search: true,
           pagination: false,

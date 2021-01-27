@@ -21,6 +21,7 @@ export const InfoCard = ({
     subtitleProps,
     displayProps,
     tagProps,
+    onTagClick,
     keywordProps,
     IconButton=IconComponent,
     LeftComponents=[],
@@ -80,10 +81,10 @@ export const InfoCard = ({
                       <Grid item xs={12}>
                         <Highlight
                           Component={(props) => {
-                            if (info.subtitle.hyperlink !== undefined) {
+                            if (info.subtitle.url !== undefined) {
                               return (
                                 <Typography variant="subtitle2" {...props}>
-                                  <i><a href={info.subtitle.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a></i>
+                                  <i><a href={info.subtitle.url} target="_blank" rel="noopener noreferrer" >{props.children}</a></i>
                                 </Typography>
                               )
                             } else {
@@ -104,10 +105,10 @@ export const InfoCard = ({
                       <Grid item xs={12} key={`${label}_display`}>
                         <Highlight
                           Component={(props) => {
-                            if (value.hyperlink !== undefined) {
+                            if (value.url !== undefined) {
                               return (
                                 <Typography variant="caption" {...props}>
-                                  {value.label}: <a href={value.hyperlink} target="_blank" rel="noopener noreferrer">{value.text}</a>
+                                  {value.label}: <a href={value.url} target="_blank" rel="noopener noreferrer">{value.text}</a>
                                 </Typography>
                               )
                             } else {
@@ -148,6 +149,9 @@ export const InfoCard = ({
                               text={`${tag.label}: ${tag.text}`}
                               highlight={highlight}
                             />}
+                            onClick={() => {
+                              props.onChipClick(tag)
+                            }}
                             {...tagProps}
                           />
                         </Tooltip>)}
@@ -246,6 +250,7 @@ export const InfoCard = ({
     subtitleProps: PropTypes.object,
     displayProps: PropTypes.object,
     tagProps: PropTypes.object,
+    onChipClick: PropTypes.func,
     keywordProps: PropTypes.object,
     IconButton: PropTypes.node,
     LeftComponents: PropTypes.arrayOf(PropTypes.shape({

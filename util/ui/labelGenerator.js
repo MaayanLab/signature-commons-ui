@@ -150,7 +150,8 @@ export const labelGenerator = (data, schemas, endpoint="", highlight=undefined) 
               ...val,
               icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
               priority: prop.priority,
-              clickable: prop.clickable,
+              clickable: prop.clickable || true,
+              field: prop.search_field || prop.field,
             }]
           }
         }

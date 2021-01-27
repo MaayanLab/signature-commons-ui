@@ -138,3 +138,6 @@ export function findSignaturesFailed(error) {
 export function getResourcesAndLibrariesSucceeded(props) {
   return { type: action_definitions.GET_RESOURCES_AND_LIBRARIES_SUCCEEDED, props }
 }
+export function getSearchFiltersSucceeded(search_filters) {
+  return { type: action_definitions.GET_SEARCH_FILTERS_SUCCEEDED, search_filters }
+}

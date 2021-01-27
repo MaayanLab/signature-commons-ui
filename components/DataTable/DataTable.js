@@ -8,6 +8,7 @@ export const DataTable = (props) => {
     const {TopComponents=[],
         BottomComponents=[],
         InfoCardComponent=InfoCard,
+        onChipClick,
         entries} = props
     return(
         <Grid container>
@@ -26,7 +27,7 @@ export const DataTable = (props) => {
                 {typeof entries === 'undefined' || entries.length == 0 ?
                 <Typography variant="h5" >No entries</Typography>:
                 entries.map(entry=>(
-                    <InfoCardComponent key={entry.data.id} {...entry}/>
+                    <InfoCardComponent key={entry.data.id} {...entry} onChipClick={onChipClick}/>
                 ))}
             </Grid>
             {BottomComponents.map(comp=>{
@@ -47,6 +48,7 @@ export const DataTable = (props) => {
 DataTable.propTypes = {
     // See prop types of InfoCard
     entries: PropTypes.arrayOf(PropTypes.object),
+    onChipClick: PropTypes.func,
     InfoCardComponent: PropTypes.node,
     TopComponents: PropTypes.shape({
         component: PropTypes.func,

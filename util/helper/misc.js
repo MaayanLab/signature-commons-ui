@@ -5,11 +5,11 @@ export function get_formated_query(terms) {
     if (terms.length === 0) {
       return ''
     }
-    return `?q=${terms.join('%26')}`
+    return `?query=${terms.join('%26')}`
   } else if (typeof terms === 'string') {
-    return `?q=${terms}`
+    return `?query=${terms}`
   } else {
-    return `?q=${Object.keys(terms).join('%26')}`
+    return `?query=${Object.keys(terms).join('%26')}`
   }
 }
 

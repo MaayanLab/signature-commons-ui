@@ -263,6 +263,14 @@ function rootReducer(state = initialState, action) {
       ...props,
     }
   }
+
+  if (action.type === action_definitions.GET_SEARCH_FILTERS_SUCCEEDED) {
+    const { search_filters } = action
+    return {
+      ...state,
+      search_filters,
+    }
+  }
   return state
 };
 
