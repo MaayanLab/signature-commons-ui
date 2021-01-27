@@ -13,8 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import {ResultsTab} from './ResultsTab'
 import { SearchResult } from './SearchResult'
-import { Set } from 'immutable'
-
+import { get_filter, resolve_ids } from '../Search/utils'
 const external = [
 	{
 		url: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=${meta.Gene_ID}&retmode=json",
@@ -33,56 +32,6 @@ const external = [
 	}
 ]
 
-export const resolve_ids = ({
-	query,
-	model,
-	lib_name_to_id,
-	resource_name_to_id,
-	resource_to_lib,
-}) => {
-	let filters = {...query.filters}
-	if (filters.library){
-		filters.library = filters.library.map(lib=>lib_name_to_id[lib])
-	}
-	if (filters.resource) {
-		if (model === "signatures") {
-			const {library=[], resource, ...rest} = filters
-			let libraries = [...library]
-			let not_exist = true
-			for (const r of resource){
-				const resource_id = resource_name_to_id[r]
-				for (const lib of resource_to_lib[resource_id]){
-					if (libraries.indexOf(lib) >= 0){
-						not_exist = false
-						break;
-					}
-					libraries.push(lib)
-				}
-			}
-			if (not_exist){
-				filters = {...rest, library: libraries}
-			} else {
-				filters = { ...rest, library}
-			}
-		} else {
-			filters.resource = filters.resource.map(res=>resource_name_to_id[res])
-		}
-	}
-	return {
-		...query,
-		filters
-	}
-}
-export const get_filter = (filter_string) => {
-	try {
-		return JSON.parse(decodeURI(filter_string.replace("?query=", "")))
-	} catch (error) {
-		console.error(error)
-		return {limit:10}
-	}
-	
-}
-
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -100,163 +49,176 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	process_entry = async () => {
-		this.state.resolver.abort_controller()
-		this.state.resolver.controller()
-		const {model, id, schemas} = this.props
-		// const skip = limit*page
-		const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
-		const entry_object = resolved_entries[id]
-		
-		const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
-									"#/" + this.props.preferred_name[entry_object.model] +"/")
-		const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
-		const meta = {
-			metadata: entry.data.meta
+		try {
+			this.state.resolver.abort_controller()
+			this.state.resolver.controller()
+			const {model, id, schemas} = this.props
+			// const skip = limit*page
+			const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
+			const entry_object = resolved_entries[id]
+			
+			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
+										"#/" + this.props.preferred_name[entry_object.model] +"/")
+			const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
+			const meta = {
+				metadata: entry.data.meta
+			}
+			this.setState({
+				entry_object,
+				entry,
+				parent,
+				meta
+			}, ()=> {
+				this.process_children()
+			})	
+		} catch (error) {
+			console.error(error)
 		}
-		this.setState({
-			entry_object,
-			entry,
-			parent,
-			meta
-		}, ()=> {
-			this.process_children()
-		})
 	}
 
 	process_children = async () => {
-		this.state.resolver.abort_controller()
-		this.state.resolver.controller()
-		const {schemas} = this.props
-		const {
-			lib_name_to_id,
-			lib_id_to_name,
-			resource_name_to_id,
-			resource_to_lib
-		} = this.props.resource_libraries
-		const {search: filter_string} = this.props.location
-		const query = get_filter(filter_string)
-		const resolved_query = resolve_ids({
-			query,
-			model: this.state.entry_object.child_model,
-			lib_name_to_id,
-			lib_id_to_name,
-			resource_name_to_id,
-			resource_to_lib
-		})
-		const where = build_where(resolved_query)
-		const {limit=10, skip=0, order} = query
-		// const skip = limit*page
-		const q = {
-			limit, skip, order
+		try {
+			this.state.resolver.abort_controller()
+			this.state.resolver.controller()
+			const {schemas} = this.props
+			const {
+				lib_name_to_id,
+				lib_id_to_name,
+				resource_name_to_id,
+				resource_to_lib
+			} = this.props.resource_libraries
+			const {search: filter_string} = this.props.location
+			const query = get_filter(filter_string)
+			const resolved_query = resolve_ids({
+				query,
+				model: this.state.entry_object.child_model,
+				lib_name_to_id,
+				lib_id_to_name,
+				resource_name_to_id,
+				resource_to_lib
+			})
+			const where = build_where(resolved_query)
+			const {limit=10, skip=0, order} = query
+			// const skip = limit*page
+			const q = {
+				limit, skip, order
+			}
+			if (where) q["where"] = where
+			const children_object = await this.state.entry_object.children({...q})
+			const children_count = children_object.count
+			const children_results = children_object[this.state.entry_object.child_model]
+			const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[this.state.entry_object.child_model] +"/"))
+			
+			if (!this.state.paginate) this.get_value_count(where, query)
+			this.setState({
+				children_count,
+				children,
+				tab: this.props.label || Object.keys(children_count)[0],
+				page: skip/limit,
+				perPage: limit,
+				query,
+				searching: false,
+				paginate: false,
+			})	
+		} catch (error) {
+			console.error(error)
 		}
-		if (where) q["where"] = where
-		const children_object = await this.state.entry_object.children({...q})
-		const children_count = children_object.count
-		const children_results = children_object[this.state.entry_object.child_model]
-		const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[this.state.entry_object.child_model] +"/"))
-		
-		if (!this.state.paginate) this.get_value_count(where, query)
-		this.setState({
-			children_count,
-			children,
-			tab: this.props.label || Object.keys(children_count)[0],
-			page: skip/limit,
-			perPage: limit,
-			query,
-			searching: false,
-			paginate: false,
-		})	
+			
 	}
 
 
 	get_value_count = async (where, query) =>{
-		const filter_fields = {}
-		const fields = []
-		const {lib_id_to_name, resource_id_to_name, lib_to_resource} = this.props.resource_libraries
-		// const resource_lib = {}
-		// let resource_prop
-		for (const prop of Object.values(this.state.entry.schema.properties)){
-			if (prop.type === "filter"){
-				const checked = {}
-				const filters = query.filters || {}
-				if (filters[prop.field]){
-					for (const i of filters[prop.field]){
-						checked[i] = true
+		try {
+			const filter_fields = {}
+			const fields = []
+			const {lib_id_to_name, resource_id_to_name, lib_to_resource} = this.props.resource_libraries
+			// const resource_lib = {}
+			// let resource_prop
+			for (const prop of Object.values(this.state.entry.schema.properties)){
+				if (prop.type === "filter"){
+					const checked = {}
+					const filters = query.filters || {}
+					if (filters[prop.field]){
+						for (const i of filters[prop.field]){
+							checked[i] = true
+						}
 					}
+					filter_fields[prop.field] = {
+						name: prop.text,
+						field: prop.field,
+						search_field: prop.search_field || prop.field,
+						checked: checked,
+						priority: prop.priority,
+						icon: prop.icon,
+					}
+					if (this.state.entry_object.child_model !== "signatures" || prop.field !== "resource")
+						fields.push(prop.field)
 				}
-				filter_fields[prop.field] = {
-					name: prop.text,
-					field: prop.field,
-					search_field: prop.search_field || prop.field,
-					checked: checked,
-					priority: prop.priority,
-					icon: prop.icon,
-				}
-				if (this.state.entry_object.child_model !== "signatures" || prop.field !== "resource")
-					fields.push(prop.field)
 			}
-		}
-		if (fields.length > 0){
-			const value_count = await this.state.resolver.aggregate(
-				`/${this.state.entry_object.model}/${this.state.entry_object.id}/${this.state.entry_object.child_model}/value_count`, 
-				{
-					where,
-					fields,
-					limit: 20,
+			if (fields.length > 0){
+				const value_count = await this.state.resolver.aggregate(
+					`/${this.state.entry_object.model}/${this.state.entry_object.id}/${this.state.entry_object.child_model}/value_count`, 
+					{
+						where,
+						fields,
+						limit: 20,
+					})
+				const filters = {}
+				for (const [field, values] of Object.entries(value_count)){
+					if (field === "library"){
+						filters[field] = {
+							...filter_fields[field],
+							values: Object.entries(values).reduce((acc, [id, count])=> {
+								acc[lib_id_to_name[id]] = count
+								return acc
+							},{})
+						}
+						if (filter_fields.resource !== undefined){
+							// resolve resources
+							const {lib_to_resource} = this.props.resource_libraries
+							const vals = {}
+							for (const [k,v] of Object.entries(values)){
+								const resource = lib_to_resource[k]
+								if (vals[resource_id_to_name[resource]] === undefined){
+									vals[resource_id_to_name[resource]] = v
+								}
+								else {
+									vals[resource_id_to_name[resource]] = vals[resource_id_to_name[resource]] + v
+								}
+							}
+							filters["resource"] = {
+								...filter_fields["resource"],
+								values: vals,
+							}
+						}
+					} else if(field === "resource"){
+						filters[field] = {
+							...filter_fields[field],
+							values: Object.entries(values).reduce((acc, [id, count])=> {
+								acc[resource_id_to_name[id]] = count
+								return acc
+							},{})
+						}
+					}else {
+						filters[field] = {
+							...filter_fields[field],
+							values
+						}
+					}
+					
+				}
+				this.setState({
+					filters
 				})
-			const filters = {}
-			for (const [field, values] of Object.entries(value_count)){
-				if (field === "library"){
-					filters[field] = {
-						...filter_fields[field],
-						values: Object.entries(values).reduce((acc, [id, count])=> {
-							acc[lib_id_to_name[id]] = count
-							return acc
-						},{})
-					}
-					if (filter_fields.resource !== undefined){
-						// resolve resources
-						const {lib_to_resource} = this.props.resource_libraries
-						const vals = {}
-						for (const [k,v] of Object.entries(values)){
-							const resource = lib_to_resource[k]
-							if (vals[resource_id_to_name[resource]] === undefined){
-								vals[resource_id_to_name[resource]] = v
-							}
-							else {
-								vals[resource_id_to_name[resource]] = vals[resource_id_to_name[resource]] + v
-							}
-						}
-						filters["resource"] = {
-							...filter_fields["resource"],
-							values: vals,
-						}
-					}
-				} else if(field === "resource"){
-					filters[field] = {
-						...filter_fields[field],
-						values: Object.entries(values).reduce((acc, [id, count])=> {
-							acc[resource_id_to_name[id]] = count
-							return acc
-						},{})
-					}
-				}else {
-					filters[field] = {
-						...filter_fields[field],
-						values
-					}
-				}
-				
 			}
-			this.setState({
-				filters
-			})
+		} catch (error) {
+			console.error(error)
 		}
 	}
 
 	onClickFilter = (field, value) => {
 		const {filters, query} = this.state
-		const {checked} = filters[field]
+		const checked = (filters[field] || {}).checked || {} 
 		checked[value] = checked[value] === undefined? true: !checked[value]
 		query.filters = {
 			...query.filters,
@@ -369,6 +331,11 @@ export default class MetadataPage extends React.PureComponent {
 					onSearch={this.onSearch}
 					onFilter={this.onClickFilter}
 					entries={this.state.children}
+					DataTableProps={{
+						onChipClick: v=>{
+							if (v.clickable) this.onClickFilter(v.field, v.text)
+						}
+					}}
 					PaginationProps={{
 						page: this.state.page,
 						rowsPerPage: this.state.perPage,
