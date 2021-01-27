@@ -186,7 +186,7 @@ class ResourcePage extends React.Component {
       reverse_preferred_name: this.props.reverse_preferred_name })
     this.props.history.push({
       pathname: `/MetadataSearch/Datasets`,
-      search: `?q=${query}`,
+      search: `?query=${query}`,
       state: {
         new_search: true,
         pagination: false,

@@ -76,7 +76,7 @@ export default class DonutChart extends PureComponent {
       if (resources) {
         location.href = `#/${resource_path}/${entry.name.replace(/ /g, '_')}`
       } else {
-        location.href = `#/MetadataSearch?q=${entry.name}`
+        location.href = `#/MetadataSearch?query=${entry.name}`
       }
     }
   };

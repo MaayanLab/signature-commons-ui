@@ -156,7 +156,7 @@ class LandingPage extends React.Component {
   searchResource = (ui_values, searchTable, term) => {
     if (term.id !== undefined){
       const { preferred_name, nav } = ui_values
-      location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
+      location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?query={"${preferred_name[searchTable]}":{"filters":{"resource": ["${term.id}"]}}}`
     }
   }
 

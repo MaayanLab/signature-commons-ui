@@ -310,7 +310,7 @@ export const ListItemLink = (props) => (
 export const searchTerm = (ui_values, searchTable, term, field_name) => {
   if (term.name!=="others"){
     const { preferred_name, nav } = ui_values
-    location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?q={"${preferred_name[searchTable]}":{"filters":{"${field_name}": ["${term.name}"]}}}`
+    location.href = `#${nav.MetadataSearch.endpoint}/${preferred_name[searchTable]}?query={"${preferred_name[searchTable]}":{"filters":{"${field_name}": ["${term.name}"]}}}`
   }
 }
 
