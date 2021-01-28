@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
-import Input from '@material-ui/core/Input';
+import { InputBase } from '@material-ui/core';
 
 const all_chip_props = {
   "or": {
@@ -33,7 +33,7 @@ const defaultChipProps = {
   avatar: "#bdbdbd"
 }
 
-export const defaultChipRenderer = (input, onDelete) => {
+export const defaultChipRenderer = ({input, onDelete}) => {
   const chips = []
   for (const i of input){
     const tokens = i.split(" ");
@@ -115,13 +115,12 @@ export class ChipInput extends React.Component {
 
   render = () => (
     <div style={{
-            minHeight: 40,
             display: 'flex',
             flexFlow: 'row wrap',
             ...(((this.props.ChipInputProps || {}).divProps || {}).style || {})
           }}
     >
-      <Input
+      <InputBase
         id="input-with-icon-textfield"
         value={this.state.value}
         onChange={this.onChange}
@@ -130,13 +129,15 @@ export class ChipInput extends React.Component {
         fullWidth={true}
         startAdornment={
           <React.Fragment>
-              {this.props.chipRenderer(this.props.input, this.props.onDelete)}
+              {this.props.chipRenderer({...this.props})}
             </React.Fragment>
         }
+        {...((this.props.ChipInputProps || {}).inputProps || {})}
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          minHeight: 40
+          minHeight: 40,
+          ...(((this.props.ChipInputProps || {}).inputProps || {}).style || {})
         }}
       />
     </div>
