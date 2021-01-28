@@ -221,69 +221,15 @@ export class DataResolver {
 	}
 
 	// Data API
-	get_entities_from_signatures = async (entries) => {
-		const dataset_id_map = {}
-		
-        for (const entry of entries){
-			await entry.entry()
-			const uid = entry.id
-			const parent = await entry.parent()
-            const dataset_type = parent["dataset_type"]
-			const dataset = parent["dataset"]
-            if (dataset_id_map[dataset] === undefined){
-				dataset_id_map[dataset] = {
-                    endpoint: fetch_endpoint[dataset_type],
-                    dataset_type: dataset_type,
-                    signatures: []
-                }
-			}
-            dataset_id_map[dataset]["signatures"].push(uid)
-		}
-		
-		let signature_entity_map = {}
-		let entities = Set()
-		for (const [dataset, val] of Object.entries(dataset_id_map)) {
-			const body = {
-                database: dataset,
-                signatures: val.signatures
-			}
-
-			const {response} = await fetch_data({
-				endpoint: val.endpoint,
-				body,
-				signal: this._controller.signal,
-			  })
-		
-			if (val.dataset_type === "geneset_library"){
-				for (const sig of response.signatures){
-					signature_entity_map[sig["uid"]] = sig["entities"]
-					entities = entities.union(sig["entities"])
-				}
-			}else {
-				entities = entities.union(response.entities)
-				for (const sig of response.signatures){
-					const ranks = sig.ranks
-					const ranked = response.entities.map((ent, ind) => ({ ent, rank: ranks[ind] }))
-					ranked.sort(({ rank: rank_a }, { rank: rank_b }) => rank_a - rank_b)
-					signature_entity_map[sig.uid] = ranked.reduce((agg, { ent }) => ent !== undefined ? [...agg, ent] : agg, [])
-				}
-			}
-			
-		}
-		return {
-			results: signature_entity_map,
-			all_entities: entities.toArray(),
-		}
-	}
-
-	enrich_entities = async ({entity_type, datatype, ...query}) => {
+	
+	enrich_entities = async ({input_type, datatype, ...query}) => {
 		const start_time = new Date()
 		
 		const body = {
             "limit": 10,
             ...query
 		}
-		const endpoint = enrich_endpoint[datatype][entity_type]
+		const endpoint = enrich_endpoint[datatype][input_type]
 		const {response, contentRange } = await fetch_data({
 			endpoint,
 			body,
@@ -300,132 +246,6 @@ export class DataResolver {
             duration: (new Date() - start_time) / 1000,
             database: query.database
         }
-	}
-
-	get_signatures_from_entities = async ({query, repo, merge}) => {
-		const start_time = new Date()
-		this.controller()
-		
-		let entity_type
-		if (query.entities !== undefined){
-			entity_type = "set"
-		} else if (query.up_entities !== undefined && query.down_entities !== undefined){
-			entity_type = "up_down"
-		} else {
-			throw new Error("Invalid query: " + query)
-		}
-		if (repo === undefined) {
-			const { response: r } = await fetch_data({ endpoint: '/listdata' })
-			repo = r
-		}
-		let count = {}
-		let signatures = []
-		const results = {}
-		for (const r of repo.repositories){
-			const {uuid: database, datatype} = r
-			if (entity_type === "set"){
-				const q = {
-                    ...query,
-                    database,
-                    entity_type,
-                    datatype
-				}
-				const {entries, count:c} = await this.enrich_entities(q)
-				count[database] = c
-                signatures = [...signatures, ...entries]
-				results[database] = {"set": entries, query: q}
-				
-			}else if (entity_type === "up_down"){
-				if (datatype === "rank_matrix"){
-					const q = {
-                        ...query,
-                        database,
-                        entity_type,
-                        datatype,
-					}
-					const {entries, count:c} = await this.enrich_entities(q)
-					count[database] = c
-					signatures = [...signatures, ...entries]
-					results[database] = {rank: entries, query: q}
-				} else {
-					// Up genes
-                    const up_query = {
-                        limit: query.limit,
-                        offset: query.offset,
-                        entities: query.up_entities,
-                        database: database,
-                        entity_type: entity_type,
-                        datatype: data_type
-                    }
-					const {entries: up_entries, count:up_count} = await this.enrich_entities(up_query)
-					count[`${database} [Up]`] = up_count
-					signatures = [...signatures, ...up_entries]
-					results[database] = {up: up_entries, query: q, count: up_count}
-
-					// Down genes
-                    const down_query = {
-                        limit: query.limit,
-                        offset: query.offset,
-                        entities: query.down_entities,
-                        database: database,
-                        entity_type: entity_type,
-                        datatype: data_type
-                    }
-					const {entries: down_entries, count:down_count} = await this.enrich_entities(down_query)
-					count[`${database} [down]`] = down_count
-					signatures = [...signatures, ...down_entries]
-					results[database] = {down: down_entries, query: q, count: down_count}
-				}
-			}
-		}
-
-		const {resolved_entries} = await this.resolve_entries(
-			{
-				model: "signatures",
-				entries: signatures
-			}
-		)
-		const resolved_results = {}
-		for (const [dataset_name,sigs] of Object.entries(results)){
-			resolved_results[dataset_name] = {
-				signatures: [],
-				query: sigs.query
-			}
-			for (const sig of sigs["set"]){
-				// resolved_results[dataset_name][key] = []
-				const entry = resolved_entries[sig.id]
-				if (entry!==undefined){
-					const ent = await entry.entry()
-					const resolved_entry_meta  = ent.meta || {}
-					const unresolved_entry_meta = sig.meta || {}
-					let updated_entry
-					if (merge) {
-						updated_entry = {
-							...ent,
-							meta: {
-								...unresolved_entry_meta,
-								...resolved_entry_meta
-							}
-						}
-					} else {
-						updated_entry = {
-							...ent,
-							meta: {
-								...resolved_entry_meta
-							}
-						}
-					}
-					entry.update_entry(updated_entry)
-					resolved_results[dataset_name]['signatures'].push(entry)
-					this.data_repo["signatures"][entry.id] = entry
-				}
-			}
-		}
-		return {
-			entries: resolved_results,
-            count,
-            duration: (new Date() - start_time) / 1000,
-		}
 	}
 
 }
