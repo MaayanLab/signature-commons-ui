@@ -37,7 +37,7 @@ export default class MetadataPage extends React.PureComponent {
 		super(props)
 		this.state = {
 			search_terms: [],
-			resolver: new DataResolver(),
+			resolver: null,
 			entry: null,
 			page: 0,
 			perPage: 10,
@@ -231,9 +231,10 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	componentDidMount = () => {
-		this.setState({
+		this.setState(prevState=>({
 			searching: true,
-		}, ()=>{
+			resolver: this.props.resolver !== undefined ? this.props.resolver: new DataResolver(),
+		}), ()=>{
 			this.process_entry()
 		})	
 	}
