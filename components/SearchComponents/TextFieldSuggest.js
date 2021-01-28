@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
-import ChipInput from 'material-ui-chip-input'
+import {ChipInput} from './ChipInput'
 import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
 import amber from '@material-ui/core/colors/amber';
@@ -41,57 +41,36 @@ export const default_colors_and_icon = {
 
 export class TextFieldSuggest extends React.Component {
 
-    defaultChipRenderer = (props, key) => {
+    defaultChipRenderer = (props) => {
         const {
-            value,
-            isDisabled,
-            className,
-            handleDelete,
-            handleClick
-          } = props
-        const {
-            gridColumnProps,
-            gridRowProps,
-            avatarProps,
-            labelProps,
-            chipProps,
-            suggestionsProps,
+            onSubmit,
+            onAdd,
+            onDelete,
+            onClick,
             onSuggestionClick,
-        } = this.props
-        const colors_and_icon = this.props.colors_and_icon || default_colors_and_icon
-        const {background, color, icon} = colors_and_icon[value.type || "loading"]
-        return(
-            <Grid
-                container
-                direction="column"
-                justify="flex-start"
-                alignItems="flex-start"
-                key={key}
-                {...gridColumnProps}
-                {...value.gridColumnProps}
-            >
-                <Grid item xs={12}
-                    {...gridRowProps}
-                    {...value.gridRowProps}
-                >
+            colors_and_icon,
+            input,
+            field,
+        } = props
+        const children = input.map(value=>{
+            const {background, color, icon} = colors_and_icon[value.type || "loading"]
+            return(                
+                <Grid item key={value.label}>
                     <Chip
-                        avatar={<Avatar className={`mdi ${icon} mdi-24px`}
-                                        style={{
-                                            background,
-                                        }}
-                                        {...avatarProps}
-                                        {...value.avatarProps}/>}
-                        label={<span {...labelProps} {...value.labelProps}>{value.label}</span>}
+                        avatar={<Avatar 
+                                    style={{
+                                        background,
+                                    }}>
+                                        <span className={`mdi ${icon} mdi-24px`} />
+                                </Avatar>}
+                        label={<span>{value.label}</span>}
                         style={{
                             background,
                             color,
-                            pointerEvents: isDisabled ? 'none' : undefined,
+                            maxWidth: 300,
                         }}
-                        onDelete={handleDelete}
-                        onClick={handleClick}
-                        className={className}
-                        {...chipProps}
-                        {...value.chipProps}
+                        onDelete={()=>onDelete(value)}
+                        onClick={onClick}
                         />
                     { value.type!=="suggestions" ? null:
                         <div style={{textAlign:"left"}}>
@@ -108,8 +87,6 @@ export class TextFieldSuggest extends React.Component {
                                         }
                                         key={s.label}
                                         style={{display: 'block'}}
-                                        {...suggestionsProps}
-                                        {...value.suggestionsProps}
                                     >
                                         {s.label}
                                     </Link>
@@ -117,43 +94,54 @@ export class TextFieldSuggest extends React.Component {
                         </div>
                     }
                 </Grid>
+            )
+        })
+        return(
+            <Grid
+                container
+                direction="column"
+            >
+                {children}
             </Grid>
-        )
+        ) 
     }
 
     render = () => {
         const {
+            input,
+            onSubmit,
             onAdd,
             onDelete,
-            onClick,
-            onSubmit,
-            formProps,
-            chipInputProps,
-            placeholder
+            onSuggestionClick,
+            chipRenderer=this.defaultChipRenderer,
+            colors_and_icon=default_colors_and_icon,
+            chipInputProps={},
         } = this.props
+        const rows = 15 - input.length
         return (
-            <form onSubmit={onSubmit} {...formProps}>
-                <ChipInput defaultValue={['foo', 'bar']}
-                  style={{width:"100%",
-                    height:300,
-                    overflow: 'scroll',
-                    background: "#f7f7f7",
-                    padding: 10,
-                  }}
-                  value={this.props.input || []}
-                  onAdd={onAdd}
-                  onDelete={onDelete}
-                  onClick={onClick}
-                  chipRenderer={this.props.chipRenderer || this.defaultChipRenderer}
-                  disableUnderline
-                  fullWidthInput
-                  placeholder={placeholder}
-                  InputProps={{
-                    multiline: true
-                  }}
-                  {...chipInputProps}
-                  />
-            </form>
+                <ChipInput 
+							input={input}
+							onSubmit={onSubmit}
+                            onAdd={onAdd}
+                            onDelete={onDelete}
+                            chipRenderer={chipRenderer}
+                            onSuggestionClick={onSuggestionClick}
+                            colors_and_icon={colors_and_icon}
+							ChipInputProps={{
+								inputProps: {
+                                    multiline: true,
+                                    rows: rows<0? 0: rows,
+                                    style: {
+                                        width:"100%",
+                                        overflow: 'scroll',
+                                        background: "#f7f7f7",
+                                        padding: 10,
+                                        height: 300,
+                                    }
+                                },
+                            }}
+                            {...chipInputProps}
+						/>
           )
     }
 }
