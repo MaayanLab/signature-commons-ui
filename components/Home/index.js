@@ -18,7 +18,7 @@ import About from '../../components/About'
 import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../Search/MetadataSearch'
-import SignatureSearch from '../SignatureSearch'
+import SignatureSearch from '../Search/SignatureSearch'
 import Pages from '../Pages'
 import MetadataPage from '../MetadataPage'
 
@@ -186,16 +186,27 @@ class Home extends React.PureComponent {
                     label={props.match.params.label}
                     filter_props={this.props.search_filters[model]}
                     nav={this.props.ui_values.nav}
+                    search_examples={this.props.ui_values.search_examples[model] || []}
                     {...props}
       />
     )
   }
 
-  signature_search = (props) => (
-    <SignatureSearch
-      {...props}
-    />
-  )
+  signature_search = (props) => {
+    const reverse_preferred = Object.entries(this.props.ui_values.preferred_name).reduce((names,[k,v])=>{
+      names[v] = k
+      return names
+    }, {})
+    return (
+      <SignatureSearch schemas={this.props.schemas}
+                    resource_libraries={this.props.resource_libraries}
+                    preferred_name={this.props.ui_values.preferred_name}
+                    label={props.match.params.label}
+                    nav={this.props.ui_values.nav}
+                    {...props}
+      />
+    )
+  }
 
   pages = (props) => {
     return (
@@ -293,7 +304,7 @@ class Home extends React.PureComponent {
               <Route
                 path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type`}
                 exact
-                component={this.landing}
+                component={this.signature_search}
               />
              : null
             }
