@@ -1,17 +1,9 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
-import {ShowMeta} from '../DataTable'
 import {DataResolver, build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
-import IconButton from '../../components/IconButton'
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
-import { SearchComponent } from './SearchComponent'
+import { MetadataSearchComponent } from './MetadataSearchComponent'
 import { get_filter, resolve_ids } from './utils'
 
 
@@ -283,10 +275,10 @@ export default class MetadataSearch extends React.PureComponent {
 			return <CircularProgress />
 		}
 		return (
-			<SearchComponent
+			<MetadataSearchComponent
 					searching={this.state.searching}
 					search_terms={this.state.query.search || []}
-					search_examples={[]}
+					search_examples={this.props.search_examples}
 					filters={Object.values(this.state.filters)}
 					onSearch={this.onSearch}
 					onFilter={this.onClickFilter}
@@ -357,7 +349,6 @@ MetadataSearch.propTypes = {
 		}),
 	}).isRequired,
 	model: PropTypes.string.isRequired,
-	id: PropTypes.string.isRequired,
 	schemas: PropTypes.array.isRequired,
 	filter_props: PropTypes.arrayOf(PropTypes.shape({
 		type: PropTypes.string,

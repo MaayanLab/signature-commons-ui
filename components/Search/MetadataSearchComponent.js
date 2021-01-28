@@ -9,7 +9,7 @@ import { Typography, Divider } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
 
-export const SearchComponent = (props) => {
+export const MetadataSearchComponent = (props) => {
 	const {
 		searching=false,
 		search_terms=[],
@@ -78,23 +78,23 @@ export const SearchComponent = (props) => {
 								<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
 							</Button>
 						}
+						<Typography align={"center"}  style={{marginTop:10}}>
+						{search_examples.map((v,i)=>(
+							<React.Fragment>
+								<Button variant="text" color="primary" style={{fontSize:10}} onClick={()=>{
+									if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
+								}}>
+									{v}
+								</Button>
+								{i === search_examples.length - 1 ? null: "/"}
+							</React.Fragment>
+						))}
+						</Typography>
 					</Grid>
 					<Grid item xs={12} align="center">
 						{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
 					</Grid>
 				</Grid>
-				<Typography align={"center"}  style={{marginTop:10}}>
-				{search_examples.map((v,i)=>(
-					<React.Fragment>
-						<Button variant="text" color="primary" onClick={()=>{
-							if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
-						}}>
-							{v}
-						</Button>
-						{i === search_examples.length - 1 ? null: " / "}
-					</React.Fragment>
-				))}
-				</Typography>
 			</Grid>
 			<Grid item xs={12} md={6} lg={7}>
 				<ResultsTab
@@ -119,7 +119,7 @@ export const SearchComponent = (props) => {
 	)
 }
 
-SearchComponent.propTypes = {
+MetadataSearchComponent.propTypes = {
 	searching: PropTypes.bool,
 	search_terms: PropTypes.arrayOf(PropTypes.string),
 	search_examples: PropTypes.arrayOf(PropTypes.string),
