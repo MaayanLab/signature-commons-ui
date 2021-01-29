@@ -58,19 +58,6 @@ export const InfoCard = ({
                               <a href={info.endpoint}>{props.children}</a>
                             </Typography>
                           )
-                          // if (info.name.hyperlink !== undefined) {
-                          //   return (
-                          //     <Typography variant="subtitle1" {...props}>
-                          //       <a href={info.name.hyperlink} target="_blank" rel="noopener noreferrer" >{props.children}</a>
-                          //     </Typography>
-                          //   )
-                          // } else {
-                          //   return (
-                          //     <Typography variant="subtitle1" {...props}>
-                          //       {props.children}
-                          //     </Typography>
-                          //   )
-                          // }
                         }}
                         text={info.name.text}
                         highlight={highlight}
@@ -199,10 +186,10 @@ export const InfoCard = ({
               </Grid>
             </Grid>
             <Grid item md={1} sm={2} xs={3}>
-              <Grid container direction={'column'}>
+              <Grid container>
                 {RightComponents.map((comp, i)=>{
                     const {component, props} = comp
-                    return <div key={i}>{component(props)}</div>
+                    return <Grid key={i} item xs={12} {...props.GridProps}>{component(props)}</Grid>
                   })}
               </Grid>
             </Grid>
