@@ -79,7 +79,15 @@ export const value_by_type = {
       }
       return { object: val, label }
     }
-  }
+  },
+  'score': ({ label, prop, data }) => {
+	  const val = makeTemplate(prop.text, data)
+	  if (val === 'undefined') {
+		return null
+	  } else {
+		return { text: val, label }
+	  }
+  },
 }
 
 export const labelGenerator = (data, schemas, endpoint="", highlight=undefined) => {
@@ -97,6 +105,14 @@ export const labelGenerator = (data, schemas, endpoint="", highlight=undefined) 
 
       if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data) && value_by_type[prop.type]!==undefined) {
         const val = value_by_type[prop.type]({ label, prop, data })
+        if (prop.synonyms){
+          if (info.synonyms===undefined) info.synonyms = []
+          if (prop.type === "array"){
+            if (val!==null) info.synonyms = [...info.synonyms, ...val.object]
+          }else {
+            if (val!==null) info.synonyms = [...info.synonyms, val.text]
+          }
+        }
         if (prop.type === "title") {
           info.name = { text: data.id }
           if (val !== null) {
@@ -124,12 +140,12 @@ export const labelGenerator = (data, schemas, endpoint="", highlight=undefined) 
             scores[prop.field] = {
               label,
               value: val.text,
-              field_name: prop.field,
+              field: prop.field,
               icon: prop.MDI_Icon || 'mdi-star',
             }
             sort_tags[prop.field] = {
               label,
-              field_name: prop.field,
+              field: prop.field,
               icon: prop.MDI_Icon || 'mdi-star',
             }
           }
