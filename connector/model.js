@@ -107,10 +107,16 @@ export class Model {
 	}
 
 	resolve_children = async (filter) => {
-		filter = {
-			limit: 10,
-			...filter
+		const {limit, ...rest} = filter
+		if (limit === undefined){ 
+			filter = {
+				limit: 10,
+				...rest
+			}
+		}else if (filter.limit === 0) {
+			filter = rest
 		}
+		
 		const { entries, count} = await this._data_resolver.filter_through({
 			model: this.model,
 			entry: this,
@@ -131,20 +137,118 @@ export class Model {
 		return await this._parent.entry()
 	}
 
-	children = async (filter={}) => {
-		if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
-		const children = []
-		for (const c of Object.values(this._children)){
-			const child = await c.entry()
-			child[singular_form[c.parent_model]] = await c.parent()
-			children.push(child)
+	parent_object = async () => {
+		if (this._parent === null) return null
+		if (this._parent === undefined || !this._parent.resolved){
+			await this.resolve_parent()
 		}
-		return {
-			count: {
-				[this.child_model]: this.children_count,
-			},
-			[this.child_model]: children
+		return this._parent
+	}
+
+	children = async (filter={}, entries=null) => {
+		if (entries!==null){
+			await this.set_children(entries)
 		}
+		if (this._preset_children!==null && this._preset_children!==undefined){
+			const {limit=10, skip=0, ...rest} = filter
+			if (Object.keys(rest).length===0){
+				const children = []
+				for (const c of Object.values(this._preset_children)){
+					const child = await c.entry()
+					child[singular_form[c.parent_model]] = await c.parent()
+					children.push(child)
+				}
+				return {
+					count: {
+						[this.child_model]: this._preset_children.length,
+					},
+					[this.child_model]: limit===0? children: children.slice(skip, skip+limit),
+					ids: this._preset_children.map(c=>c.id)
+				}
+			} else {
+				const ids = this._preset_children.map(c=>c.id)
+				if (filter.where === undefined){
+					filter = {
+						...filter,
+						where: {
+							id: {inq: ids}
+						}
+					}
+				} else if (filter.where.and !== undefined) {
+					filter = {
+						...filter,
+						where: {
+							...where,
+							and: [
+								...filter.where.and,
+								{id: {inq: ids}}
+							]
+						}
+					}
+				}else if (filter.where.or !== undefined) {
+					filter = {
+						...filter,
+						where: {
+							...where,
+							and: [
+								{or: filter.where.or},
+								{id: {inq: ids}}
+							]
+						}
+					}
+				} else {
+					filter = {
+						...filter,
+						where: {
+							and: [
+								{...where},
+								{id: {inq: ids}}
+							]
+						}
+					}
+				}
+				await this.resolve_children(filter)
+				const children = []
+				for (const c of Object.values(this._children)){
+					const child = await c.entry()
+					child[singular_form[c.parent_model]] = await c.parent()
+					children.push(child)
+				}
+				return {
+					count: {
+						[this.child_model]: this.children_count,
+					},
+					[this.child_model]: children
+				}
+			}
+		}else{
+			if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
+			const children = []
+			for (const c of Object.values(this._children)){
+				const child = await c.entry()
+				child[singular_form[c.parent_model]] = await c.parent()
+				children.push(child)
+			}
+			return {
+				count: {
+					[this.child_model]: this.children_count,
+				},
+				[this.child_model]: children
+			}
+		}
+	}
+
+	set_children = async (entries) => {
+		const {resolved_entries} = await this._data_resolver.resolve_entries({
+			model:this.child_model,
+			entries}
+		)
+		const children = Object.values(resolved_entries)
+			// for (const c of Object.values(resolved_entries)){
+			// 	children.push(c)
+			// }
+		this._preset_children = children
+		this.children_count = this._preset_children.length
 	}
 
 	serialize = async (serialize_parent=true, serialize_children=true) => {
