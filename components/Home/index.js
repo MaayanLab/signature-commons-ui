@@ -12,6 +12,7 @@ import Snackbar from '@material-ui/core/Snackbar'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
 import { withStyles } from '@material-ui/core/styles'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import {DataResolver} from '../../connector'
 
 import Base from '../../components/Base'
 import About from '../../components/About'
@@ -110,6 +111,7 @@ class Home extends React.PureComponent {
     this.state = {
       cart: Set(),
       theme: null,
+      resolver: new DataResolver()
     }
   }
 
@@ -187,6 +189,7 @@ class Home extends React.PureComponent {
                     filter_props={this.props.search_filters[model]}
                     nav={this.props.ui_values.nav}
                     search_examples={this.props.ui_values.search_examples[model] || []}
+                    resolver={this.state.resolver}
                     {...props}
       />
     )
@@ -203,6 +206,8 @@ class Home extends React.PureComponent {
                     preferred_name={this.props.ui_values.preferred_name}
                     label={props.match.params.label}
                     nav={this.props.ui_values.nav}
+                    examples={this.props.ui_values.examples}
+                    resolver={this.state.resolver}
                     {...props}
       />
     )
@@ -215,6 +220,7 @@ class Home extends React.PureComponent {
   }
 
   metadata_pages = (props) => {
+    console.log(props)
     const reverse_preferred = Object.entries(this.props.ui_values.preferred_name).reduce((names,[k,v])=>{
       names[v] = k
       return names
@@ -229,6 +235,7 @@ class Home extends React.PureComponent {
                     id={id}
                     model={model}
                     label={props.match.params.label}
+                    resolver={this.state.resolver}
                     {...props}
       />
     )
@@ -310,8 +317,17 @@ class Home extends React.PureComponent {
             }
             {this.props.ui_values.nav.SignatureSearch.active ?
               <Route
-                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:id`}
+                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id`}
                 component={this.signature_search}
+                exact
+              />
+             : null
+            }
+            {this.props.ui_values.nav.SignatureSearch.active ?
+              <Route
+                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model/:id`}
+                component={this.metadata_pages}
+                exact
               />
              : null
             }
