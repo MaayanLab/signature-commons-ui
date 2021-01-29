@@ -1,5 +1,5 @@
 import React from 'react'
-import {DataResolver, build_where} from '../../connector'
+import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
@@ -12,7 +12,6 @@ export default class MetadataSearch extends React.PureComponent {
 		super(props)
 		this.state = {
 			search_terms: [],
-			resolver: new DataResolver(),
 			entries: null,
 			page: 0,
 			perPage: 10,
@@ -25,8 +24,8 @@ export default class MetadataSearch extends React.PureComponent {
 
 	process_search = async () => {
 		try {
-			this.state.resolver.abort_controller()
-			this.state.resolver.controller()
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
 			const {schemas} = this.props
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
@@ -42,7 +41,7 @@ export default class MetadataSearch extends React.PureComponent {
 				limit, skip, order
 			}
 			if (where) filter["where"] = where
-			const {entries: results, count} = await this.state.resolver.filter_metadata({
+			const {entries: results, count} = await this.props.resolver.filter_metadata({
 				model: this.props.model,
 				filter,
 			})
@@ -98,7 +97,7 @@ export default class MetadataSearch extends React.PureComponent {
 				}
 			}
 			if (fields.length > 0){
-				const value_count = await this.state.resolver.aggregate(
+				const value_count = await this.props.resolver.aggregate(
 					`/${this.props.model}/value_count`, 
 					{
 						where,

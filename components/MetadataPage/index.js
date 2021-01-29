@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import {ShowMeta} from '../DataTable'
-import {DataResolver, build_where} from '../../connector'
+import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
@@ -37,7 +37,6 @@ export default class MetadataPage extends React.PureComponent {
 		super(props)
 		this.state = {
 			search_terms: [],
-			resolver: null,
 			entry: null,
 			page: 0,
 			perPage: 10,
@@ -50,11 +49,11 @@ export default class MetadataPage extends React.PureComponent {
 
 	process_entry = async () => {
 		try {
-			this.state.resolver.abort_controller()
-			this.state.resolver.controller()
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
 			const {model, id, schemas} = this.props
 			// const skip = limit*page
-			const {resolved_entries} = await this.state.resolver.resolve_entries({model, entries: [id]})
+			const {resolved_entries} = await this.props.resolver.resolve_entries({model, entries: [id]})
 			const entry_object = resolved_entries[id]
 			
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
@@ -78,8 +77,8 @@ export default class MetadataPage extends React.PureComponent {
 
 	process_children = async () => {
 		try {
-			this.state.resolver.abort_controller()
-			this.state.resolver.controller()
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
 			const {schemas} = this.props
 			const {
 				lib_name_to_id,
@@ -156,7 +155,7 @@ export default class MetadataPage extends React.PureComponent {
 				}
 			}
 			if (fields.length > 0){
-				const value_count = await this.state.resolver.aggregate(
+				const value_count = await this.props.resolver.aggregate(
 					`/${this.state.entry_object.model}/${this.state.entry_object.id}/${this.state.entry_object.child_model}/value_count`, 
 					{
 						where,

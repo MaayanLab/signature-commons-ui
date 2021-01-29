@@ -34,7 +34,7 @@ export const ResultsTab = ({
 			)
 			if (divider && i < tabs.length-1) {
 				allTabs.push(
-					<Divider orientation="vertical" flexItem />
+					<Divider key={i} orientation="vertical" flexItem />
 				)
 			}
 		} 
