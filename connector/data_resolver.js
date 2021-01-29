@@ -2,7 +2,7 @@ import { fetch_meta_post, fetch_meta } from '../util/fetch/meta'
 import { fetch_data } from '../util/fetch/data'
 import { Model } from './model'
 import isUUID from 'validator/lib/isUUID'
-import { Set } from 'immutable'
+import uuid5 from 'uuid5'
 import {empty_cleaner} from './build_where'
 
 // const entry_model = {
@@ -34,7 +34,8 @@ export class DataResolver {
 			resources: {},
 			libraries: {},
 			signatures: {},
-			entities: {}
+			entities: {},
+			enrichment: {},
 		}
 		this._controller = null
 	}
@@ -50,7 +51,6 @@ export class DataResolver {
 
 	resolve_entries = async ({model, entries, filter={}, parent=undefined}) => {
 		const start_time = new Date()
-		
 		const resolved_entries = {}
         const unresolved_entries = {}
 		const invalid_entries = []
@@ -221,12 +221,46 @@ export class DataResolver {
 	}
 
 	// Data API
+
+	get_enrichment = (enrichment_id) => {
+		return this.data_repo.enrichment[enrichment_id]
+	}
+
+	enrichment = async (query, input) => {
+		const enrichment_id = query.signature_id || uuid5(JSON.stringify(query))
+		const { response } = await fetch_data({
+			endpoint: "/listdata",
+			signal: this._controller.signal,
+		  })
+		const results = {}
+		let signatures = []
+		for (const {datatype, uuid} of response.repositories){
+			query.database = uuid
+			query.datatype = datatype
+			const {entries, count} = await this.enrich_entities(query)
+			if (entries.length>0){
+				results[uuid] = { entries, count: entries.length }
+				signatures = [...signatures, ...entries]
+			}
+		}
+		this.data_repo.enrichment[enrichment_id] = {
+			results,
+			entries: signatures,
+			input,
+		}
+		return {
+			results,
+			entries: signatures,
+			enrichment_id,
+			input
+		}
+	}
 	
 	enrich_entities = async ({input_type, datatype, ...query}) => {
 		const start_time = new Date()
 		
 		const body = {
-            "limit": 10,
+            "limit": 100,
             ...query
 		}
 		const endpoint = enrich_endpoint[datatype][input_type]
@@ -235,9 +269,9 @@ export class DataResolver {
 			body,
 			signal: this._controller.signal,
 		  })
-		const signatures = response.results.map(({uuid, ...meta})=>({
+		const signatures = response.results.map(({uuid, ...scores})=>({
 			id: uuid,
-			meta
+			scores
 		}))
 
 		return {
