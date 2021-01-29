@@ -150,10 +150,7 @@ ChipInput.propTypes = {
   input: PropTypes.array,
   onDelete: PropTypes.func,
   onSubmit: PropTypes.func,
-  ChipInputProps: PropTypes.objectOf({
-    divProps: PropTypes.object,
-    inputProps: PropTypes.object,
-  }),
+  ChipInputProps: PropTypes.object,
 }
 
 ChipInput.defaultProps = {

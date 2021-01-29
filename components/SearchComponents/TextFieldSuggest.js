@@ -172,7 +172,7 @@ TextFieldSuggest.propTypes = {
     onSubmit: PropTypes.func.isRequired,
     onAdd: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-    onClick: PropTypes.func.isRequired,
+    onClick: PropTypes.func,
     onSuggestionClick: PropTypes.func.isRequired,
     renderChip: PropTypes.func,
     colors_and_icon: PropTypes.shape({
