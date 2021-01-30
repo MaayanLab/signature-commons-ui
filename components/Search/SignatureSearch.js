@@ -19,7 +19,9 @@ export default class SignatureSearch extends React.PureComponent {
 			searching: false,
 			resolving: false,
 			query: {},
-			error: null
+			error: null,
+			page: 0,
+			perPage: 10,
 		}
 	}
 
@@ -62,11 +64,20 @@ export default class SignatureSearch extends React.PureComponent {
 				page: skip/limit,
 				perPage: limit,
 				query,
-				searching: searching !== null ? searching : this.props.match.params.enrichment_id!==undefined,
+				searching: false,
 				paginate: false,
 			})
 		} catch (error) {
 			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "search_resources error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
 		}
 	}
 
@@ -152,6 +163,15 @@ export default class SignatureSearch extends React.PureComponent {
 			})
 		} catch (error) {
 			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "resolve_entities error: "+ error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
 		}
 	}
 	
@@ -204,157 +224,33 @@ export default class SignatureSearch extends React.PureComponent {
 
 	badge = (props) => {
 		return <Badge badgeContent={props.score} color="error"/>
-	}
+	}	
+	
 
-	get_signature_entities = async (signature_id) => {
+	resolve_enrichment = async (enrichment_id) => {
 		try {
+			const schemas = this.props.schemas
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
-			const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [signature_id]})
-			const signature = resolved_entries[signature_id]
-			if (signature === undefined) return null
-			else {
-				const children = await signature.children({limit: 0})
-				const input_entities = []
-				const query_entities = []
-				for (const c of children.entities){
-					const entry = labelGenerator(c, this.props.schemas)
-					query_entities.push(c.id)
-					input_entities.push({
-						label: entry.info.name.text,
-						id: [c.id],
-						type: "valid"
-					})
-				}
-				const input = {
-					entities: input_entities
-				}
-				const query = {
-					entities: query_entities,
-					signature_id,
-					input
-				}
-				this.setState({input})
-				return query
-				
-			}
-		} catch (error) {
-			console.error(error)
-		}
-			
-	}
-	
-	get_enrichment = async (enrichment_id) => {
-		let enrichment = this.props.resolver.get_enrichment(enrichment_id)
-		if (enrichment === undefined){
-			const query = await this.get_signature_entities(enrichment_id)
-			// check if enrichment id is a signature instead
-			if (query === null) {
-				const input = {}
-				if (this.props.match.params.type === "Overlap"){
-					input.entities = {}
-				} else {
-					input.up_entities = {}
-					input.down_entities = {}
-				}
-				this.setState({
-					error: "Invalid signature",
-					input,
-				}, ()=>this.search_resources(false))
-				return null
-			}
-			else {
-				const {entities, signature_id, input} = query
-				enrichment = await this.enrichment({entities, signature_id, input, input_type: "set"})
-			}
-		}
-		return enrichment
-	}
-
-	process_enrichment = async (enrichment) => {
-		try {
-			const { entries } = enrichment
-			const {resolved_entries: signatures} = await this.props.resolver.resolve_entries({model: "signatures", entries})
-			const libids = []
-			for (const e of Object.values(signatures)){
-				libids.push((await e.entry()).library)
-			} 
-			const {resolved_entries: libraries} = await this.props.resolver.resolve_entries({model: "libraries", entries: libids})
-			const libraries_count = {}
-			const libraries_children = {}
-			const resources = {}
-			const resources_count = {}
-			const resources_children = {}
-			
-			let unresolved_entitites = []
-			for (const unresolved_entry of entries ) {
-				const {overlap, ...scores} = unresolved_entry.scores
-				unresolved_entitites = [...unresolved_entitites, ...overlap]
-			}
-			const {resolved_entries: entities} = await this.props.resolver.resolve_entries({model: "entities", entries: unresolved_entitites})
-			
-			for (const unresolved_entry of entries ) {
-				if (signatures[unresolved_entry.id]!==undefined){
-					const signature = signatures[unresolved_entry.id]
-					const {overlap, ...scores} = unresolved_entry.scores
-					signature.update_entry({
-						id: unresolved_entry.id,
-						scores
-					})
-					await signature.set_children(overlap)
-					signatures[signature.id] = signature
-					
-					// Get Parents for counting
-					const library = await signature.parent_object()
-					const resource = await library.parent_object()
-
-					if (resources[resource.id] === undefined) resources[resource.id] = resource
-
-					if (libraries_count[library.id]===undefined) libraries_count[library.id]={"Results": 0}
-					if (resources_count[resource.id]===undefined) resources_count[resource.id]={"Results": 0}
-
-					if (libraries_children[library.id]===undefined) libraries_children[library.id]=[]
-					if (resources_children[resource.id]===undefined) resources_children[resource.id]=[]
-					libraries_children[library.id].push(signature)
-					resources_children[resource.id].push(library)
-
-					libraries_count[library.id].Results = libraries_count[library.id].Results + 1
-					library.update_entry({
-						score: libraries_count[library.id]
-					})
-					resources_count[resource.id].Results = resources_count[resource.id].Results + 1
-					resource.update_entry({
-						score: resources_count[resource.id]
-					})
-					libraries[library.id] = library
-					resources[resource.id] = resource
-				}
-			}
-			for (const [id, children] of Object.entries(resources_children)){
-				const resource = resources[id]
-				await resource.set_children(children)
-			}
-			for (const [id, children] of Object.entries(libraries_children)){
-				const library = libraries[id]
-				await library.set_children(children)
-			}
-			const {limit=10, skip=0} = this.state.query
-			const resource_entries = []
-			for (const r of Object.values(resources)){
-				resource_entries.push(await r.entry())
-			}
-			const sorted_entries = resource_entries.sort((a,b)=>b.score.Results - a.score.Results)
-			const new_entries = []
-			for (const entry of sorted_entries){
-				const e = labelGenerator(entry,
-					this.props.schemas,
-					`#${this.props.location.pathname}/${this.props.preferred_name.resources}/`)
-				if (entry.score !== undefined && entry.score.Results !== undefined){
+			const {lib_to_resource,
+				resource_to_lib } = this.props.resource_libraries
+			const results = await this.props.resolver.resolve_enrichment({
+				enrichment_id,
+				lib_to_resource,
+				resource_to_lib
+			})
+			const entries = []
+			for (const c of Object.values(results)){
+				const entry = await c.entry()
+				const e = labelGenerator(await entry,
+					schemas,
+					`#${this.props.location.pathname}resources`)
+				if (entry.signature_count !== undefined && entry.signature_count.count !== undefined){
 					e["RightComponents"] = [
 						{
 							component: this.badge,
 							props: {
-								score: entry.score.Results,
+								score: entry.signature_count.count,
 								GridProps: {
 									style: {
 										textAlign: "right",
@@ -365,95 +261,196 @@ export default class SignatureSearch extends React.PureComponent {
 						}
 					]
 				}	
-				new_entries.push(e)
+				entries.push(e)
 			}
-			let input = enrichment.input
-			if (input === undefined){
-				input = {}
-				if (this.props.match.params.type === "Overlap"){
-					input.entities = {}
-				} else {
-					input.up_entities = {}
-					input.down_entities = {}
-				}
-			}
-			this.setState({
-				searching: false,
-				entries: new_entries,
-				count: resource_entries.length,
-				resources,
-				input
-			})
-		} catch (error) {
-			console.error(error)
-		}
-	}
-	enrichment = async (query) => {
-		try {
-			this.props.resolver.abort_controller()
-			this.props.resolver.controller()
-			const {enrichment_id, ...enrichment} =  await this.props.resolver.enrichment(query, this.state.input)
-			if (query.signature_id===undefined){
-				this.props.history.push({
-					pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}/${enrichment_id}`,
-					state: {input: this.state.input}
-				})
-			}else {
-				return enrichment
-			}
+			const sorted_entries = entries.sort((a,b)=>b.data.signature_count.count - a.data.signature_count.count)
 			
+			this.setState({
+				entries: sorted_entries,
+				count: entries.length,
+				searching: false,
+				page: 0,
+				perPage: entries.length,
+			})
+
 		} catch (error) {
 			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "resolve_enrichment error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
 		}
 	}
 
-	performSigSearch = async () => {
-		const input = this.state.input
-		const query = {
-			input_type: input.up_entities !== undefined ? "up_down": "set"
-		}
-		for (const [field, entities] of Object.entries(input)){
-			query[field] = []
-			for (const e of Object.values(entities)){
-				query[field] = [...query[field], ...e.id]
-			}
-		}
+
+	signature_search = async () => {
+		const {input} = this.state
+		const query = this.create_query(input)
 		this.setState({
-			searching: true,
 			query
-		}, ()=>this.enrichment(this.state.query))
+		}, async ()=>{
+			const enrichment_id = await this.enrichment(query, input)
+			this.props.history.push({
+				pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}/${enrichment_id}`,
+				state: {input: this.state.input}
+			})
+		})
+	}
+	
+	enrichment = async (query, input) => {
+		try {
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
+			const enrichment_id =  await this.props.resolver.enrichment(query, input)
+			return enrichment_id
+		} catch (error) {
+			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "enrichment error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
+		}
+	}
+	
+	get_signature_entities = async (signature_id) => {
+		try {
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
+			const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [signature_id]})
+			const signature = resolved_entries[signature_id]
+			if (signature === undefined){
+				return null
+			}
+			else {
+				const children = await signature.children({limit: 0})
+				const input_entities = {}
+				const query_entities = []
+				for (const c of children.entities){
+					const entry = labelGenerator(c, this.props.schemas)
+					input_entities[entry.info.name.text] = {
+						label: entry.info.name.text,
+						id: [c.id],
+						type: "valid"
+					}
+				}
+				const input = {
+					entities: input_entities
+				}			
+				return input			
+			}
+		} catch (error) {
+			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "get_signature_entities error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
+		}		
+	}
+	
+	create_query = (input, enrichment_id=null) => {
+		try {
+			const query = {
+				input_type: input.up_entities !== undefined ? "up_down": "set"
+			}
+			if (enrichment_id!==null){
+				query["enrichment_id"] = enrichment_id
+			} 
+			for (const [field, values] of Object.entries(input)){
+				query[field] = []
+				for (const i of Object.values(values)){
+					query[field] = [...query[field], ...i.id]
+				}
+			}
+			return query
+		} catch (error) {
+			console.error(error)
+			this.setState({
+				error: error.message
+			})
+		}
+	}
+	reset_input = (type) => {
+		const input = {}
+		if (type === "Overlap"){
+			input.entities = {}
+		} else {
+			input.up_entities = {}
+			input.down_entities = {}
+		}
+		return input
+	}
+	process_input = async () => {
+		try {
+			const enrichment_id = this.props.match.params.enrichment_id
+			let input
+			let query = {}
+			let error = null
+			if (enrichment_id === undefined){
+				input = this.reset_input(this.props.match.params.type)
+			} else {
+				// there's an enrichment_id
+				const match = this.props.resolver.get_enrichment(enrichment_id)
+				if (match === undefined){
+					input = await this.get_signature_entities(enrichment_id)
+					if (input!==null){
+						query = this.create_query(input, enrichment_id)
+						const eid = await this.enrichment(query, input)
+					} else{
+						input = this.reset_input(this.props.match.params.type)
+						error = "Invalid signature"
+					}
+				} else {
+					input = match.input
+				}
+				console.log(input)
+			}
+			this.setState({
+				input,
+				query,
+				error,
+				searching: true
+			}, () => {
+				if (this.props.match.params.enrichment_id!==undefined){
+					this.resolve_enrichment(this.props.match.params.enrichment_id)
+				} else {
+					this.search_resources()
+				}	
+			})
+		} catch (error) {
+			console.error(error)
+			this.setState({
+				error:error.message
+			})
+		}
 	}
 
 	componentDidUpdate = async (prevProps) => {
 		const prevEnrichmentID = prevProps.match.params.enrichment_id
-		const currEnrichmentID = this.props.match.params.enrichment_id
-		if (prevEnrichmentID !== currEnrichmentID) {
-			let input = {}
-				if (this.props.match.params.type === "Overlap"){
-					input.entities = {}
-				} else {
-					input.up_entities = {}
-					input.down_entities = {}
-				}
-			if (currEnrichmentID !== undefined){
-				if ((this.props.location.state|| {}).input !== undefined) input = this.props.location.state.input
-				this.setState({
-					input, 
-					searching: true
-				}, async () => {
-					const enrichment = await this.get_enrichment(this.props.match.params.enrichment_id)
-					if (enrichment) await this.process_enrichment(enrichment)
-				})
-			}else {
-				await this.search_resources()
-				this.setState({input})
-			}
-		}	
+		const enrichment_id = this.props.match.params.enrichment_id
+		if (prevEnrichmentID !== enrichment_id) {
+			this.process_input()
+		}
 	}
-	
 	componentDidMount = async () => {
 		const { schemas } = this.props
 		const {type, enrichment_id} = this.props.match.params	
+
+		// Get title and synonyms
 		const entity_schemas = schemas.filter(s=>s.type==="entity")
 		const titles = []
 		const synonyms = []
@@ -463,6 +460,7 @@ export default class SignatureSearch extends React.PureComponent {
 				else if (prop.synonyms) synonyms.push(prop.field)
 			}
 		}
+		// Process search tabs
 		const search_tabs = []
 		for (const k of ['MetadataSearch', 'SignatureSearch']){
 			const v = this.props.nav[k]
@@ -472,34 +470,11 @@ export default class SignatureSearch extends React.PureComponent {
 				value: v.navName,
 			})
 		}
-		await this.search_resources()
-		let input
-		if (enrichment_id === undefined){
-			input = {}
-			if (type === "Overlap"){
-				input.entities = {}
-			} else {
-				input.up_entities = {}
-				input.down_entities = {}
-			}
-			this.setState({
-				titles,
-				synonyms,
-				search_tabs,
-				input,
-				searching: false
-			})
-		} else {
-			this.setState({
-				titles,
-				synonyms,
-				search_tabs,
-				searching: true
-			}, async () => {
-				const enrichment = await this.get_enrichment(this.props.match.params.enrichment_id)
-				if (enrichment) await this.process_enrichment(enrichment)
-			})
-		}
+		this.setState({
+			titles,
+			synonyms,
+			search_tabs,
+		}, () => this.process_input());
 	}
 
 	handleSnackBarClose = (event, reason) => {
@@ -573,7 +548,7 @@ export default class SignatureSearch extends React.PureComponent {
 						TextFieldSuggestProps={{
 							input: this.state.input,
 							onAdd: this.onAddEntity,
-							onSubmit: this.performSigSearch,
+							onSubmit: this.signature_search,
 							onDelete: this.onDeleteEntity,
 							onSuggestionClick: this.onSuggestionClickEntity,
 							examples: this.props.examples,
