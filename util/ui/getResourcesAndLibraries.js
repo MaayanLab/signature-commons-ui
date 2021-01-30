@@ -2,8 +2,37 @@ import {findMatchedSchema} from './objectMatch'
 import {makeTemplate} from './makeTemplate'
 import {DataResolver} from '../../connector'
 
-export const getResourcesAndLibraries = async (schemas) => {
-	const resolver = new DataResolver()
+export const getLibToResource = async(resolver) => {
+	const lib_counts = await resolver.aggregate(
+		`/signatures/value_count`, 
+		{
+			fields: ["library"]
+		})
+	const library_entries = Object.keys(lib_counts.library)
+	const {resolved_entries: resources} = await resolver.filter_metadata({
+		model: "resources"
+	})
+	const {resolved_entries} = await resolver.resolve_entries({
+		model: "libraries",
+		entries: library_entries
+	})
+	const lib_to_resource = {}
+	const resource_to_lib = {}
+	for (const [id, lib] of Object.entries(resolved_entries)){
+		const entry = await lib.serialize(true, false)
+		const parent = entry["resource"]
+		lib_to_resource[entry.id] = parent.id
+		if (resource_to_lib[parent.id] === undefined) resource_to_lib[parent.id] = []
+		resource_to_lib[parent.id].push(entry.id)
+	}
+	return {
+		lib_to_resource,
+		resource_to_lib,
+	}
+}
+
+export const getResourcesAndLibraries = async (schemas, resolver=null) => {
+	if (resolver === null) resolver = new DataResolver()
 	resolver.controller()
 	// Get libraries from signatures
 	// We do this so we don't include libraries that don't have signatures
