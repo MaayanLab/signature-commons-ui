@@ -90,7 +90,7 @@ export const value_by_type = {
   },
 }
 
-export const labelGenerator = (data, schemas, endpoint="", highlight=undefined) => {
+export const labelGenerator = (data, schemas, endpoint=undefined, highlight=undefined) => {
   const schema = findMatchedSchema(data, schemas)
   if (schema !== null) {
     const { properties } = schema
@@ -98,7 +98,10 @@ export const labelGenerator = (data, schemas, endpoint="", highlight=undefined) 
     let tags = []
     let download = []
     const keywords = {}
-    const info = { id: data.id, display: {}, url: {}, components: {}, endpoint: endpoint + data.id }
+    const info = { id: data.id, display: {}, url: {}, components: {}}
+    if (endpoint){
+      info.endpoint = endpoint + data.id
+    }
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
