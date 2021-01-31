@@ -14,6 +14,7 @@ import Link from '@material-ui/core/Link';
 import { SearchResult } from './SearchResult'
 import { get_filter, resolve_ids, get_signature_entities, create_query, enrichment } from '../Search/utils'
 import Badge from '@material-ui/core/Badge';
+import ScorePopper from '../ScorePopper'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -32,7 +33,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			metaTab: "metadata",
 			query: {skip:0, limit:10},
 			filters: {},
-			paginate: false
+			paginate: false,
 		}
 	}
 
@@ -53,6 +54,14 @@ export default class EnrichmentPage extends React.PureComponent {
 				lib_to_resource,
 				resource_to_lib,
 			})
+			let order_field, order
+			if (entry_object.child_model === "signatures"){
+				order_field = 'p-value'
+				order = 'ASC'
+			}else if (entry_object.child_model !== "entities"){
+				order_field = 'signature_count'
+				order = 'DESC'
+			}
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
 										`#${this.props.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${model_name}/id`)
 			const parent = labelGenerator(await entry_object.parent(), schemas, 
@@ -61,6 +70,8 @@ export default class EnrichmentPage extends React.PureComponent {
 				entry_object,
 				entry,
 				parent,
+				order_field,
+				order
 			}, ()=> {
 				this.process_children()
 			})	
@@ -101,9 +112,11 @@ export default class EnrichmentPage extends React.PureComponent {
 			const {entry_object} = this.state
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
-			query.filters = {
-				...(query.filters || {}),
-				id: await this.state.entry_object.get_children_ids()
+			if (query.search!==undefined || query.filters!==undefined){
+				query.filters = {
+					...(query.filters || {}),
+					id: await this.state.entry_object.get_children_ids()
+				}
 			}
 			const resolved_query = resolve_ids({
 				query,
@@ -120,7 +133,7 @@ export default class EnrichmentPage extends React.PureComponent {
 				limit, skip, order
 			}
 			if (where) q["where"] = where
-			const children_object = await this.state.entry_object.children({...q})
+			const children_object = await this.state.entry_object.children({...q}, null, this.state.order_field, this.state.order)
 			const children_count = children_object.count
 			const children_results = children_object[this.state.entry_object.child_model]
 			
@@ -134,12 +147,19 @@ export default class EnrichmentPage extends React.PureComponent {
 				}else {
 					e = labelGenerator(entry, schemas)
 				}
-				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
+				if (entry.scores !== undefined && entry.scores[this.state.order_field] !== undefined){
 					e["RightComponents"] = [
 						{
-							component: this.badge,
+							component: this.score_popper,
 							props: {
-								score: entry.scores.signature_count,
+								scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
+									...acc,
+									[label]: {
+										label: label.replace(/_/,' ').replace('-bonferroni',' bonferroni'),
+										value, 
+									}
+								}), {}),
+								sorted: this.state.order_field,
 								GridProps: {
 									style: {
 										textAlign: "right",
@@ -291,9 +311,20 @@ export default class EnrichmentPage extends React.PureComponent {
 		})	
 	}
 
-	badge = (props) => {
-		return <Badge badgeContent={props.score} color="error"/>
-	}	
+	score_popper = (props) => {
+		console.log(props)
+		return <ScorePopper {...props} sortBy={this.sortBy}/>
+	}
+	
+	sortBy = (order_field) => {
+		this.setState(prevProps=>({
+			order_field,
+			order: order_field === 'oddsratio' ? 'DESC': prevProps.order,
+			searching: true,
+		}), ()=>{
+			this.process_children()
+		})
+	}
 
 	componentDidUpdate = (prevProps) => {
 		const prev_search = decodeURI(prevProps.location.search)

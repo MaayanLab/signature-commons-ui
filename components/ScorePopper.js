@@ -26,8 +26,46 @@ export default class ScorePopper extends React.Component {
     })
   }
 
+  precise = (value) => {
+    if (Number.isInteger(value)) return value
+    let v = Number.parseFloat(value).toPrecision(4);
+    if (v.length > 5){
+      return Number.parseFloat(value).toExponential(4);
+    } else {
+      return v
+    }
+  }
+
+  menu = () => {
+    const { scores, sorted, sortBy } = this.props
+    return(
+      <Menu
+        id="simple-menu"
+        anchorEl={this.state.anchorEl}
+        open={Boolean(this.state.anchorEl)}
+        onClose={this.handleClose}
+      >
+        {Object.keys(this.props.scores).map((key) => (
+          <MenuItem onClick={() => {
+            if (sortBy !== undefined) sortBy(key)
+            this.handleClose()
+          }}
+          key={key}
+          selected={sorted === key}
+          >
+            <Icon className={`mdi mdi-18px ${scores[key].icon || 'mdi-trophy-award'}`} />
+              &nbsp;
+            <Typography style={{ fontSize: 15 }} variant="caption" display="block">
+              {`${scores[key].label}: ${scores[key].value}`}
+            </Typography>
+          </MenuItem>
+        ))}
+      </Menu>
+    )
+  }
+
   render = () => {
-    let { scores, sorted, sortBy, classes } = this.props
+    let { scores, sorted } = this.props
     if (sorted === null || scores[sorted] === undefined) {
       sorted = Object.keys(scores)[0]
     }
@@ -45,36 +83,15 @@ export default class ScorePopper extends React.Component {
             textAlign: 'left',
           }}
           variant="subtitle2">
-            <Icon className={`${classes.menuIcon} mdi mdi-18px ${scores[sorted].icon || 'mdi-trophy-award'}`} />
+            <Icon className={`mdi mdi-18px ${scores[sorted].icon || 'mdi-trophy-award'}`} />
                 &nbsp;
             <Typography style={{ fontSize: 10, display: 'block', width: 20, overflow: 'visible' }} variant="caption" display="block">
               {`${scores[sorted].label}:`}
             </Typography>
-            {scores[sorted].value}
+            {this.precise(scores[sorted].value)}
           </Typography>
         </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={this.state.anchorEl}
-          open={Boolean(this.state.anchorEl)}
-          onClose={this.handleClose}
-        >
-          {Object.keys(scores).map((key) => (
-            <MenuItem onClick={() => {
-              if (sortBy !== undefined) sortBy(key)
-              this.handleClose()
-            }}
-            key={key}
-            selected={sorted === key}
-            >
-              <Icon className={`${classes.menuIcon} mdi mdi-18px ${scores[key].icon || 'mdi-trophy-award'}`} />
-                &nbsp;
-              <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-                {`${scores[key].label}: ${scores[key].value}`}
-              </Typography>
-            </MenuItem>
-          ))}
-        </Menu>
+        {Object.keys(scores).length > 1? this.menu(): null}
       </div>
     )
   }
@@ -85,5 +102,4 @@ ScorePopper.propTypes = {
   score_icon: PropTypes.string,
   sortBy: PropTypes.func,
   sorted: PropTypes.string,
-  classes: PropTypes.object,
 }
