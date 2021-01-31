@@ -52,7 +52,7 @@ export const SearchResult = (props) => {
 					<Grid item xs={12} align="center">
 						{searching ? 
 							<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
-								<span class="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
+								<span className="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
 							</Button>
 						:
 							<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
