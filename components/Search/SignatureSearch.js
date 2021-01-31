@@ -2,7 +2,7 @@ import React from 'react'
 import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
-import { get_filter, resolve_ids } from './utils'
+import { get_filter, resolve_ids, get_signature_entities, create_query, reset_input, enrichment } from './utils'
 import PropTypes from 'prop-types'
 import {SignatureSearchComponent} from './SignatureSearchComponent'
 import Badge from '@material-ui/core/Badge';
@@ -68,6 +68,7 @@ export default class SignatureSearch extends React.PureComponent {
 				paginate: false,
 			})
 		} catch (error) {
+			this.props.resolver.abort_controller()
 			console.error(error)
 			this.setState(prevState=>{
 				if (prevState.error === null) {
@@ -162,6 +163,7 @@ export default class SignatureSearch extends React.PureComponent {
 				resolving: false,
 			})
 		} catch (error) {
+			this.props.resolver.abort_controller()
 			console.error(error)
 			this.setState(prevState=>{
 				if (prevState.error === null) {
@@ -244,7 +246,7 @@ export default class SignatureSearch extends React.PureComponent {
 				const entry = await c.entry()
 				const e = labelGenerator(await entry,
 					schemas,
-					`#${this.props.location.pathname}resources`)
+					`#${this.props.location.pathname}/${this.props.preferred_name[c.model]}/`)
 				if (entry.signature_count !== undefined && entry.signature_count.count !== undefined){
 					e["RightComponents"] = [
 						{
@@ -274,6 +276,7 @@ export default class SignatureSearch extends React.PureComponent {
 			})
 
 		} catch (error) {
+			this.props.resolver.abort_controller()
 			console.error(error)
 			this.setState(prevState=>{
 				if (prevState.error === null) {
@@ -290,11 +293,11 @@ export default class SignatureSearch extends React.PureComponent {
 
 	signature_search = async () => {
 		const {input} = this.state
-		const query = this.create_query(input)
+		const query = create_query(input)
 		this.setState({
 			query
 		}, async ()=>{
-			const enrichment_id = await this.enrichment(query, input)
+			const enrichment_id = await enrichment(query, input, this.props.resolver, this.handleError)
 			this.props.history.push({
 				pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}/${enrichment_id}`,
 				state: {input: this.state.input}
@@ -302,98 +305,14 @@ export default class SignatureSearch extends React.PureComponent {
 		})
 	}
 	
-	enrichment = async (query, input) => {
-		try {
-			this.props.resolver.abort_controller()
-			this.props.resolver.controller()
-			const enrichment_id =  await this.props.resolver.enrichment(query, input)
-			return enrichment_id
-		} catch (error) {
-			console.error(error)
-			this.setState(prevState=>{
-				if (prevState.error === null) {
-					return {
-						error: "enrichment error: " + error.message
-					}
-				} else return {
-					error: prevState.error
-				}
-			})
-		}
+	
+	
+	handleError = (error) => {
+		this.setState({
+			error: error.message
+		})
 	}
 	
-	get_signature_entities = async (signature_id) => {
-		try {
-			this.props.resolver.abort_controller()
-			this.props.resolver.controller()
-			const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [signature_id]})
-			const signature = resolved_entries[signature_id]
-			if (signature === undefined){
-				return null
-			}
-			else {
-				const children = await signature.children({limit: 0})
-				const input_entities = {}
-				const query_entities = []
-				for (const c of children.entities){
-					const entry = labelGenerator(c, this.props.schemas)
-					input_entities[entry.info.name.text] = {
-						label: entry.info.name.text,
-						id: [c.id],
-						type: "valid"
-					}
-				}
-				const input = {
-					entities: input_entities
-				}			
-				return input			
-			}
-		} catch (error) {
-			console.error(error)
-			this.setState(prevState=>{
-				if (prevState.error === null) {
-					return {
-						error: "get_signature_entities error: " + error.message
-					}
-				} else return {
-					error: prevState.error
-				}
-			})
-		}		
-	}
-	
-	create_query = (input, enrichment_id=null) => {
-		try {
-			const query = {
-				input_type: input.up_entities !== undefined ? "up_down": "set"
-			}
-			if (enrichment_id!==null){
-				query["enrichment_id"] = enrichment_id
-			} 
-			for (const [field, values] of Object.entries(input)){
-				query[field] = []
-				for (const i of Object.values(values)){
-					query[field] = [...query[field], ...i.id]
-				}
-			}
-			return query
-		} catch (error) {
-			console.error(error)
-			this.setState({
-				error: error.message
-			})
-		}
-	}
-	reset_input = (type) => {
-		const input = {}
-		if (type === "Overlap"){
-			input.entities = {}
-		} else {
-			input.up_entities = {}
-			input.down_entities = {}
-		}
-		return input
-	}
 	process_input = async () => {
 		try {
 			const enrichment_id = this.props.match.params.enrichment_id
@@ -401,17 +320,20 @@ export default class SignatureSearch extends React.PureComponent {
 			let query = {}
 			let error = null
 			if (enrichment_id === undefined){
-				input = this.reset_input(this.props.match.params.type)
+				input = reset_input(this.props.match.params.type)
 			} else {
 				// there's an enrichment_id
 				const match = this.props.resolver.get_enrichment(enrichment_id)
 				if (match === undefined){
-					input = await this.get_signature_entities(enrichment_id)
+					input = await get_signature_entities(enrichment_id,
+						this.props.resolver,
+						this.props.schemas,
+						this.handleError)
 					if (input!==null){
-						query = this.create_query(input, enrichment_id)
-						const eid = await this.enrichment(query, input)
+						query = create_query(input, enrichment_id)
+						const eid = await enrichment(query, input, this.props.resolver, this.handleError)
 					} else{
-						input = this.reset_input(this.props.match.params.type)
+						input = reset_input(this.props.match.params.type)
 						error = "Invalid signature"
 					}
 				} else {
@@ -432,6 +354,7 @@ export default class SignatureSearch extends React.PureComponent {
 				}	
 			})
 		} catch (error) {
+			this.props.resolver.abort_controller()
 			console.error(error)
 			this.setState({
 				error:error.message

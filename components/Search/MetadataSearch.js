@@ -66,6 +66,7 @@ export default class MetadataSearch extends React.PureComponent {
 				paginate: false,
 			})	
 		} catch (error) {
+			this.props.resolver.abort_controller()
 			console.error(error)
 		}
 	}
@@ -153,6 +154,7 @@ export default class MetadataSearch extends React.PureComponent {
 				})
 			}
 		} catch (error) {
+			this.props.resolver.abort_controller()
 			console.error(error)
 		}
 	}
