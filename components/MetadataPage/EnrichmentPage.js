@@ -13,7 +13,6 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import { SearchResult } from './SearchResult'
 import { get_filter, resolve_ids, get_signature_entities, create_query, enrichment } from '../Search/utils'
-import Badge from '@material-ui/core/Badge';
 import ScorePopper from '../ScorePopper'
 
 const id_mapper = {
@@ -312,7 +311,6 @@ export default class EnrichmentPage extends React.PureComponent {
 	}
 
 	score_popper = (props) => {
-		console.log(props)
 		return <ScorePopper {...props} sortBy={this.sortBy}/>
 	}
 	

@@ -5,7 +5,7 @@ import { labelGenerator } from '../../util/ui/labelGenerator'
 import { get_filter, resolve_ids, get_signature_entities, create_query, reset_input, enrichment } from './utils'
 import PropTypes from 'prop-types'
 import {SignatureSearchComponent} from './SignatureSearchComponent'
-import Badge from '@material-ui/core/Badge';
+import ScorePopper from '../ScorePopper';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 
@@ -224,9 +224,9 @@ export default class SignatureSearch extends React.PureComponent {
 		})
 	}
 
-	badge = (props) => {
-		return <Badge badgeContent={props.score} color="error"/>
-	}	
+	score_popper = (props) => {
+		return <ScorePopper {...props}/>
+	}
 	
 
 	resolve_enrichment = async (enrichment_id) => {
@@ -250,9 +250,15 @@ export default class SignatureSearch extends React.PureComponent {
 				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
 					e["RightComponents"] = [
 						{
-							component: this.badge,
+							component: this.score_popper,
 							props: {
-								score: entry.scores.signature_count,
+								scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
+									...acc,
+									[label]: {
+										label: label.replace(/_/,' ').replace('-bonferroni',' bonferroni'),
+										value, 
+									}
+								}), {}),								
 								GridProps: {
 									style: {
 										textAlign: "right",
