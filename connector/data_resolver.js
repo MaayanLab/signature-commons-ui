@@ -67,22 +67,6 @@ export class DataResolver {
 				}else {
 					invalid_entries.push(entry)
 				}
-			} else if (typeof entry === "object"){
-				if (typeof entry.id !== "undefined" && isUUID(entry.id)){
-					const resolved_entry = this.data_repo[model][entry.id]
-					if (typeof resolved_entry !== "undefined"){
-						resolved_entries[entry.id] = resolved_entry
-					} else {
-						const entry_object = new Model(model, entry, this)
-						if (await entry_object.validate_entry()){
-							resolved_entries[entry.id] = entry_object
-						}else {
-							unresolved_entries[entry.id] = entry_object
-						}
-					}
-				}else {
-					invalid_entries.push(entry)
-				}
 			} else if (entry instanceof Model){
 				const resolved_entry = this.data_repo[model][entry.id]
 				if (typeof resolved_entry !== "undefined"){
@@ -97,7 +81,24 @@ export class DataResolver {
 					}
 					
 				}
-			}
+			} else if (typeof entry === "object"){
+				if (typeof entry.id !== "undefined" && isUUID(entry.id)){
+					const resolved_entry = this.data_repo[model][entry.id]
+					if (typeof resolved_entry !== "undefined"){
+						resolved_entry.update_entry(entry)
+						resolved_entries[entry.id] = resolved_entry
+					} else {
+						const entry_object = new Model(model, entry, this)
+						if (await entry_object.validate_entry()){
+							resolved_entries[entry.id] = entry_object
+						}else {
+							unresolved_entries[entry.id] = entry_object
+						}
+					}
+				}else {
+					invalid_entries.push(entry)
+				}
+			} 
 		}
 		if (Object.keys(unresolved_entries).length > 0){
 			filter = {
@@ -126,7 +127,7 @@ export class DataResolver {
 				if (entry === undefined){
 					// If you don't have a field option, then you are resolving everything
 					entry = new Model(model, e, this, filter.fields===undefined, parent)
-					resolved_entries[entry.id] = entry
+					// resolved_entries[entry.id] = entry
 				} else {
 					entry.update_entry(e)
 				}
@@ -219,6 +220,17 @@ export class DataResolver {
 		return aggregate
 	}
 
+	aggregate_post = async ({endpoint, filter}) => {
+		const { response: aggregate } = await fetch_meta_post({
+			endpoint,
+			body: {
+			  filter,
+			},
+			signal: this._controller.signal,
+		  })
+		return aggregate
+	}
+
 	// Data API
 
 	get_enrichment = (enrichment_id) => {
@@ -295,7 +307,7 @@ export class DataResolver {
 			// Resolve signature
 			const {resolved_entries} = await this.resolve_entries({
 				model: "signatures",
-				entries: [entries[signature_id]]
+				entries: [entries[signature_id].id]
 			})
 			const signature = resolved_entries[signature_id]
 			const {id, overlap, ...scores} = entries[signature_id]
@@ -306,7 +318,7 @@ export class DataResolver {
 				model: "entities",
 				entries: overlap
 			})
-			signature.set_children(entities)
+			await signature.set_children(Object.values(entities))
 			return signature
 		}else if (library_id !== undefined){
 			// Resolve library
@@ -318,7 +330,7 @@ export class DataResolver {
 			// And its signatures
 			const {resolved_entries} = await this.resolve_entries({
 				model: "signatures",
-				entries: Object.values(entries),
+				entries: Object.keys(entries),
 				filter: {
 					where: {library: library_id}
 				}
@@ -326,14 +338,15 @@ export class DataResolver {
 			const signatures = []
 			for (const sig of Object.values(resolved_entries)){
 				const entry = await sig.serialize(true, false)
-				if (entry.library.id === library_id){
-					const {id, overlap, ...scores} = entries[signature_id]
-					entry.update_entry({scores})
-					signatures.push(entry)
+				const libid = entry.library.id
+				if (libid === library_id){
+					const {id, overlap, ...scores} = entries[entry.id]
+					sig.update_entry({scores})
+					signatures.push(sig)
 				}
 			}
 			library.update_entry({signature_count: {count: signatures.length}})
-			library.set_children(signatures)
+			await library.set_children(signatures)
 			return library
 		} else if(resource_id !== undefined) {
 			// Resolve lib_to_resource
@@ -342,14 +355,14 @@ export class DataResolver {
 			}
 			// Resolve Resource
 			const {resolved_entries: resources} = await this.resolve_entries({
-				model: "resource",
+				model: "resources",
 				entries: [resource_id]
 			})
 			const resource = resources[resource_id]
 			// Resolve libraries
 			const libids = resource_to_lib[resource_id]
 			const {resolved_entries: libs} = await this.resolve_entries({
-				model: "library",
+				model: "libraries",
 				entries: libids,
 				filter: {
 					where: {resource: resource_id}
@@ -366,10 +379,10 @@ export class DataResolver {
 
 			//update counts
 			const lib_counts = {}
-			const resource_count = 0
-			for (const sig of signatures){
+			let resource_count = 0
+			for (const sig of Object.values(signatures)){
 				const parent_id = (await sig.parent()).id
-				const grandparent_id = lib_to_resource[parent]
+				const grandparent_id = lib_to_resource[parent_id]
 				if (grandparent_id === resource_id){
 					if (lib_counts[parent_id] === undefined) lib_counts[parent_id] = 0
 					lib_counts[parent_id] = lib_counts[parent_id] + 1
@@ -383,16 +396,16 @@ export class DataResolver {
 					libraries.push(l)
 				}
 			}
-			resource.set_children(libraries)
+			await resource.set_children(libraries)
 			resource.update_entry({signature_count: {count: resource_count}})
 			return resource
 		} else {
 			// top level
 			// Resolve lib_to_resource
 			const r = await getLibToResource(this)
-			resource_to_lib = r.resource_to_lib
-			lib_to_resource = r.lib_to_resource  
-
+			// resource_to_lib = r.resource_to_lib
+			// lib_to_resource = r.lib_to_resource  
+			
 			// Resolve signatures last (DEF NOT FIRST)
 			const {resolved_entries: signatures} = await this.resolve_entries({
 				model: "signatures",
@@ -434,7 +447,7 @@ export class DataResolver {
 						libraries.push(library)
 					}
 				}
-				resource.set_children(libraries)
+				await resource.set_children(libraries)
 				resource.update_entry({signature_count: {count: res_counts[resource_id]}})
 				resources.push(resource)
 			}

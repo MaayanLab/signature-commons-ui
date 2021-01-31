@@ -80,7 +80,7 @@ export class Model {
 			const {resolved_entries, invalid_entries} = await this._data_resolver.resolve_entries(
 				{
 					model: this.model,
-					entries: [this]
+					entries: [this._entry]
 				}
 			)
 			if (resolved_entries[this.id]!==undefined){
@@ -166,22 +166,25 @@ export class Model {
 					ids: this._preset_children.map(c=>c.id)
 				}
 			} else {
-				const ids = this._preset_children.map(c=>c.id)
+				const preset_children = this._preset_children.reduce((acc, c)=>{
+					acc[c.id] = c
+					return acc
+				}, {})
 				if (filter.where === undefined){
 					filter = {
 						...filter,
 						where: {
-							id: {inq: ids}
+							id: {inq: Object.keys(preset_children)}
 						}
 					}
 				} else if (filter.where.and !== undefined) {
 					filter = {
 						...filter,
 						where: {
-							...where,
+							...filter.where,
 							and: [
 								...filter.where.and,
-								{id: {inq: ids}}
+								{id: {inq: Object.keys(preset_children)}}
 							]
 						}
 					}
@@ -189,10 +192,10 @@ export class Model {
 					filter = {
 						...filter,
 						where: {
-							...where,
+							...filter.where,
 							and: [
 								{or: filter.where.or},
-								{id: {inq: ids}}
+								{id: {inq: Object.keys(preset_children)}}
 							]
 						}
 					}
@@ -201,8 +204,8 @@ export class Model {
 						...filter,
 						where: {
 							and: [
-								{...where},
-								{id: {inq: ids}}
+								{...filter.where},
+								{id: {inq: Object.keys(preset_children)}}
 							]
 						}
 					}
@@ -210,6 +213,8 @@ export class Model {
 				await this.resolve_children(filter)
 				const children = []
 				for (const c of Object.values(this._children)){
+					const preset_entry = await preset_children[c.id].entry()
+					c.update_entry(preset_entry)
 					const child = await c.entry()
 					child[singular_form[c.parent_model]] = await c.parent()
 					children.push(child)
@@ -243,12 +248,26 @@ export class Model {
 			model:this.child_model,
 			entries}
 		)
-		const children = Object.values(resolved_entries)
+		const children = []
+		for (const entry of entries){
+			const resolved_entry = resolved_entries[entry.id]
+			if (resolved_entry){
+				resolved_entry.update_entry(await entry.entry())
+				children.push(entry)
+			}
+		}
 			// for (const c of Object.values(resolved_entries)){
 			// 	children.push(c)
 			// }
 		this._preset_children = children
 		this.children_count = this._preset_children.length
+	}
+
+	get_children_ids = async () => {
+		if (this._preset_children!==undefined) return this._preset_children.map(c=>c.id)
+		if (this._children === undefined) await this.children()
+		return Object.keys(this._children)
+		
 	}
 
 	serialize = async (serialize_parent=true, serialize_children=true) => {
