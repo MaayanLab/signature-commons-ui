@@ -14,6 +14,7 @@ import Link from '@material-ui/core/Link';
 import { SearchResult } from './SearchResult'
 import { get_filter, resolve_ids, get_signature_entities, create_query, enrichment } from '../Search/utils'
 import ScorePopper from '../ScorePopper'
+import uuid5 from 'uuid5'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -109,8 +110,9 @@ export default class EnrichmentPage extends React.PureComponent {
 				resource_to_lib
 			} = this.props.resource_libraries
 			const {entry_object} = this.state
-			const {search: filter_string} = this.props.location
-			const query = get_filter(filter_string)
+			// const {search: filter_string} = this.props.location.search
+			// const query = get_filter(filter_string)
+			const query = this.state.unprocessed_query
 			if (query.search!==undefined || query.filters!==undefined){
 				query.filters = {
 					...(query.filters || {}),
@@ -291,7 +293,8 @@ export default class EnrichmentPage extends React.PureComponent {
 		}
 		this.props.history.push({
 			pathname: this.props.location.pathname,
-			search: `?query=${JSON.stringify(query)}`,
+			search: `?query=${uuid5(JSON.stringify(query))}`,
+			state: {query}
 			})
 	}
 
@@ -304,6 +307,7 @@ export default class EnrichmentPage extends React.PureComponent {
 	componentDidMount = () => {
 		this.setState(prevState=>({
 			searching: true,
+			unprocessed_query: {},
 			resolver: this.props.resolver !== undefined ? this.props.resolver: new DataResolver(),
 		}), ()=>{
 			this.process_entry()
@@ -325,20 +329,26 @@ export default class EnrichmentPage extends React.PureComponent {
 	}
 
 	componentDidUpdate = (prevProps) => {
-		const prev_search = decodeURI(prevProps.location.search)
-		const curr_search = decodeURI(this.props.location.search)
+		// const prev_search = decodeURI(prevProps.location.search)
+		// const curr_search = decodeURI(this.props.location.search)
+		const prev_search = JSON.stringify(prevProps.location.state || {})
+		const curr_search = JSON.stringify(this.props.location.state || {})
+		
 		if (prevProps.id !== this.props.id){
 			this.setState({
 				searching: true,
 				filters: {},
+				unprocessed_query: {},
 				paginate: (this.props.location.state || {}).paginate ? true: false
 			}, ()=>{
 				this.process_entry()
 			})
 		} else if (prev_search !== curr_search){
+			console.log(this.props.location.state)
 			this.setState({
 				searching: true,
-				paginate: (this.props.location.state || {}).paginate ? true: false
+				paginate: (this.props.location.state || {}).paginate ? true: false,
+				unprocessed_query: (this.props.location.state || {}).query || {}
 			}, ()=>{
 				this.process_children()
 			})
@@ -360,9 +370,10 @@ export default class EnrichmentPage extends React.PureComponent {
 		
 		this.props.history.push({
 			pathname: this.props.location.pathname,
-			search: `?query=${JSON.stringify(query)}`,
+			search: `?query=${uuid5(JSON.stringify(query))}`,
 			state: {
-				paginate: true
+				paginate: true,
+				query
 			}
 		  })
 	}
@@ -391,7 +402,8 @@ export default class EnrichmentPage extends React.PureComponent {
 		}, ()=>{
 			this.props.history.push({
 				pathname: this.props.location.pathname,
-				search: `?query=${JSON.stringify(query)}`,
+				search: `?query=${uuid5(JSON.stringify(query))}`,
+				state: {query}
 			})
 		})
 	}
