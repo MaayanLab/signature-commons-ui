@@ -247,12 +247,12 @@ export default class SignatureSearch extends React.PureComponent {
 				const e = labelGenerator(await entry,
 					schemas,
 					`#${this.props.location.pathname}/${this.props.preferred_name[c.model]}/`)
-				if (entry.signature_count !== undefined && entry.signature_count.count !== undefined){
+				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
 					e["RightComponents"] = [
 						{
 							component: this.badge,
 							props: {
-								score: entry.signature_count.count,
+								score: entry.scores.signature_count,
 								GridProps: {
 									style: {
 										textAlign: "right",
@@ -265,7 +265,7 @@ export default class SignatureSearch extends React.PureComponent {
 				}	
 				entries.push(e)
 			}
-			const sorted_entries = entries.sort((a,b)=>b.data.signature_count.count - a.data.signature_count.count)
+			const sorted_entries = entries.sort((a,b)=>b.data.scores.signature_count - a.data.scores.signature_count)
 			
 			this.setState({
 				entries: sorted_entries,

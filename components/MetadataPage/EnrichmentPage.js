@@ -134,12 +134,12 @@ export default class EnrichmentPage extends React.PureComponent {
 				}else {
 					e = labelGenerator(entry, schemas)
 				}
-				if (entry.signature_count !== undefined && entry.signature_count.count !== undefined){
+				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
 					e["RightComponents"] = [
 						{
 							component: this.badge,
 							props: {
-								score: entry.signature_count.count,
+								score: entry.scores.signature_count,
 								GridProps: {
 									style: {
 										textAlign: "right",

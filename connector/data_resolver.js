@@ -345,7 +345,7 @@ export class DataResolver {
 					signatures.push(sig)
 				}
 			}
-			library.update_entry({signature_count: {count: signatures.length}})
+			library.update_entry({scores: {signature_count: signatures.length}})
 			await library.set_children(signatures)
 			return library
 		} else if(resource_id !== undefined) {
@@ -392,12 +392,12 @@ export class DataResolver {
 			const libraries = []
 			for (const l of Object.values(libs)) {
 				if (libids.indexOf(l.id)>=0){
-					l.update_entry({signature_count: {count: lib_counts[l.id]}})
+					l.update_entry({scores: {signature_count: lib_counts[l.id]}})
 					libraries.push(l)
 				}
 			}
 			await resource.set_children(libraries)
-			resource.update_entry({signature_count: {count: resource_count}})
+			resource.update_entry({scores: {signature_count: resource_count}})
 			return resource
 		} else {
 			// top level
@@ -443,12 +443,12 @@ export class DataResolver {
 				for (const library_id of resource_to_lib[resource_id]){
 					const library = libs[library_id]
 					if (library!==undefined){
-						library.update_entry({signature_count: {count: lib_counts[library_id]}})
+						library.update_entry({scores: {signature_count: lib_counts[library_id]}})
 						libraries.push(library)
 					}
 				}
 				await resource.set_children(libraries)
-				resource.update_entry({signature_count: {count: res_counts[resource_id]}})
+				resource.update_entry({scores: {signature_count: res_counts[resource_id]}})
 				resources.push(resource)
 			}
 			return resources
