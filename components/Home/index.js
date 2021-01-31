@@ -220,7 +220,6 @@ class Home extends React.PureComponent {
   }
 
   metadata_pages = (props) => {
-    console.log(props)
     const reverse_preferred = Object.entries(this.props.ui_values.preferred_name).reduce((names,[k,v])=>{
       names[v] = k
       return names
@@ -234,6 +233,7 @@ class Home extends React.PureComponent {
                     preferred_name={this.props.ui_values.preferred_name}
                     id={id}
                     model={model}
+                    nav={this.props.ui_values.nav}
                     label={props.match.params.label}
                     resolver={this.state.resolver}
                     {...props}
