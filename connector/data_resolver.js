@@ -310,7 +310,7 @@ export class DataResolver {
 				entries: [entries[signature_id].id]
 			})
 			const signature = resolved_entries[signature_id]
-			const {id, overlap, ...scores} = entries[signature_id]
+			const {id, overlap, setsize, ...scores} = entries[signature_id]
 			if (signature === 'undefined') throw new Error('Invalid Signature ID')
 			signature.update_entry({scores})
 			// and its entities
@@ -340,7 +340,7 @@ export class DataResolver {
 				const entry = await sig.serialize(true, false)
 				const libid = entry.library.id
 				if (libid === library_id){
-					const {id, overlap, ...scores} = entries[entry.id]
+					const {id, overlap, setsize, ...scores} = entries[entry.id]
 					sig.update_entry({scores})
 					signatures.push(sig)
 				}
@@ -371,7 +371,7 @@ export class DataResolver {
 			// resolve signatures that belong to these libraries (for sig counts)
 			const {resolved_entries: signatures} = await this.resolve_entries({
 				model: "signatures",
-				entries: Object.values(entries),
+				entries: Object.keys(entries),
 				filter: {
 					where: {library: {inq: libids}}
 				}

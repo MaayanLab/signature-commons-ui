@@ -145,19 +145,20 @@ export class Model {
 		return this._parent
 	}
 
-	children = async (filter={}, entries=null) => {
+	children = async (filter={}, entries=null, field=null, order_type="DESC") => {
 		if (entries!==null){
 			await this.set_children(entries)
 		}
 		if (this._preset_children!==null && this._preset_children!==undefined){
-			const {limit=10, skip=0, ...rest} = filter
+			const {limit=10, skip=0, order,...rest} = filter
 			if (Object.keys(rest).length===0){
-				const children = []
-				for (const c of Object.values(this._preset_children)){
+				let children = []
+				for (const c of this._preset_children){
 					const child = await c.entry()
 					child[singular_form[c.parent_model]] = await c.parent()
 					children.push(child)
 				}
+				if (field) children = this.sort_children_by_score(children, field, order_type)
 				return {
 					count: {
 						[this.child_model]: this._preset_children.length,
@@ -171,15 +172,16 @@ export class Model {
 					return acc
 				}, {})
 				if (filter.where === undefined){
+					const {limit=10, skip=0, order,...rest} = filter
 					filter = {
-						...filter,
+						...rest,
 						where: {
 							id: {inq: Object.keys(preset_children)}
 						}
 					}
 				} else if (filter.where.and !== undefined) {
 					filter = {
-						...filter,
+						...rest,
 						where: {
 							...filter.where,
 							and: [
@@ -190,7 +192,7 @@ export class Model {
 					}
 				}else if (filter.where.or !== undefined) {
 					filter = {
-						...filter,
+						...rest,
 						where: {
 							...filter.where,
 							and: [
@@ -201,7 +203,7 @@ export class Model {
 					}
 				} else {
 					filter = {
-						...filter,
+						...rest,
 						where: {
 							and: [
 								{...filter.where},
@@ -211,7 +213,7 @@ export class Model {
 					}
 				}
 				await this.resolve_children(filter)
-				const children = []
+				let children = []
 				for (const c of Object.values(this._children)){
 					const preset_entry = await preset_children[c.id].entry()
 					c.update_entry(preset_entry)
@@ -219,21 +221,23 @@ export class Model {
 					child[singular_form[c.parent_model]] = await c.parent()
 					children.push(child)
 				}
+				if (field) children = this.sort_children_by_score(children, field, order_type)
 				return {
 					count: {
 						[this.child_model]: this.children_count,
 					},
-					[this.child_model]: children
+					[this.child_model]: limit===0? children: children.slice(skip, skip+limit),
 				}
 			}
 		}else{
 			if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
-			const children = []
+			let children = []
 			for (const c of Object.values(this._children)){
 				const child = await c.entry()
 				child[singular_form[c.parent_model]] = await c.parent()
 				children.push(child)
 			}
+			if (field) children = this.sort_children_by_score(children, field, order_type)
 			return {
 				count: {
 					[this.child_model]: this.children_count,
@@ -241,6 +245,16 @@ export class Model {
 				[this.child_model]: children
 			}
 		}
+	}
+
+	sort_children_by_score = (children, field, order="DESC") => {
+		let sorted_children
+		if (order === "DESC"){
+			sorted_children = children.sort((a,b)=>b.scores[field]-a.scores[field])
+		}else {
+			sorted_children = children.sort((a,b)=>a.scores[field]-b.scores[field])
+		}
+		return children
 	}
 
 	set_children = async (entries) => {
@@ -256,9 +270,6 @@ export class Model {
 				children.push(entry)
 			}
 		}
-			// for (const c of Object.values(resolved_entries)){
-			// 	children.push(c)
-			// }
 		this._preset_children = children
 		this.children_count = this._preset_children.length
 	}
