@@ -7,6 +7,7 @@ import {ResultsTab} from '../MetadataPage/ResultsTab'
 import {DataTable} from '../DataTable'
 import { Typography, Divider } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 
 export const MetadataSearchComponent = (props) => {
@@ -62,7 +63,8 @@ export const MetadataSearchComponent = (props) => {
 							ChipInputProps={{
 								divProps: {
 									style: {
-										background: "#f7f7f7"
+										background: "#f7f7f7",
+										marginTop: 10
 									}
 								}
 							}}
@@ -97,18 +99,23 @@ export const MetadataSearchComponent = (props) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12} md={6} lg={7}>
-				<ResultsTab
-					tabsProps={{
-						centered: true,
-					}}
-					{...TabProps}
-				/>
-				<DataTable entries={entries} {...DataTableProps}/>
-				<TablePagination
-					{...PaginationProps}
-					component="div"
-					align="right"
-				/>
+			{ entries===null ? <CircularProgress/>:
+				<React.Fragment>
+					<ResultsTab
+						tabsProps={{
+							centered: true,
+						}}
+						{...TabProps}
+					/>
+					<DataTable entries={entries} {...DataTableProps}/>
+					<TablePagination
+						{...PaginationProps}
+						component="div"
+						align="right"
+					/>
+				</React.Fragment>
+			}
+				
 			</Grid>
 			<Grid item xs={12} md={2}>
 				<ResultsTab
