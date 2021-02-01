@@ -288,7 +288,7 @@ export class Model {
 			entry[singular_form[this.parent_model]] = parent
 		}
 		if (serialize_children){
-			const children = (await this.children())[this.child_model]
+			const children = (await this.children({limit:0}))[this.child_model]
 			entry[this.child_model] = children
 		}
 		return entry
