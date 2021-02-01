@@ -199,7 +199,7 @@ export class DataResolver {
 				entry.update_entry(e)
 			}
 			
-			this.data_repo[model][entry.id] = entry
+			this.data_repo[child_model][entry.id] = entry
 			resolved_entries[entry.id] = entry
 		}
 		return {
