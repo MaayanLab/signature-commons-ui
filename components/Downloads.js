@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import Icon from '@material-ui/core/Icon'
 import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip';
 
 export default class Downloads extends React.Component {
   constructor(props) {
@@ -15,7 +16,6 @@ export default class Downloads extends React.Component {
   }
 
   handleClick = (event) => {
-    console.log(this.props.data)
     this.setState({
       anchorEl: event.currentTarget,
     })
@@ -29,14 +29,24 @@ export default class Downloads extends React.Component {
 
   render = () => {
     const { data } = this.props
+    console.log(data)
     if (data.length === 1) {
+      const {url, onClick, text, icon} = data[0]
       return (
-        <Button
-          onClick={() => window.location = data[0].hyperlink}
-          style={{ width: 50, height: 50 }}
-        >
-          <Icon className={`mdi mdi-24px ${data[0].icon || 'mdi-download'}`} />
-        </Button>
+        <Tooltip title={text} arrow>
+          <Button
+            onClick={() => {
+              if (url){
+                window.location = url
+              }else {
+                onClick()
+              }
+            }}
+            style={{ width: 50, height: 50 }}
+          >
+            <Icon className={`mdi mdi-24px ${icon || 'mdi-download'}`} />
+          </Button>
+        </Tooltip>
       )
     } else {
       return (
@@ -55,17 +65,19 @@ export default class Downloads extends React.Component {
             open={Boolean(this.state.anchorEl)}
             onClose={this.handleClose}
           >
-            {data.map((d) => (
+            {data.map(({url, onClick, text, icon}) => (
               <MenuItem onClick={() => {
                 this.handleClose()
-                window.location = d.hyperlink
+                if (url){
+                  window.location = data[0].url
+                }else onClick()
               }}
-              key={d.text}
+              key={text}
               >
-                <Icon className={`mdi mdi-18px ${d.icon || 'mdi-download'}`} />
+                <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} />
                               &nbsp;
                 <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-                  {`Download ${d.text}`}
+                  {`Download ${text}`}
                 </Typography>
               </MenuItem>
             ))}
@@ -77,9 +89,16 @@ export default class Downloads extends React.Component {
 }
 
 Downloads.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape({
-    hyperlink: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-  })).isRequired,
+  data: PropTypes.arrayOf(PropTypes.oneOf([
+    PropTypes.shape({
+      url: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+      icon: PropTypes.string,
+    }),
+    PropTypes.shape({
+      onClick: PropTypes.func.isRequired,
+      text: PropTypes.string.isRequired,
+      icon: PropTypes.string,
+    }),
+  ])).isRequired,
 }
