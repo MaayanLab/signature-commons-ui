@@ -192,7 +192,7 @@ class Home extends React.PureComponent {
                     preferred_name={this.props.ui_values.preferred_name}
                     model={model}
                     label={props.match.params.label}
-                    filter_props={this.props.search_filters[model]}
+                    filter_props={this.props.search_filters[model] || []}
                     nav={this.props.ui_values.nav}
                     search_examples={this.props.ui_values.search_examples[model] || []}
                     resolver={this.state.metadata_resolver}
@@ -326,6 +326,17 @@ class Home extends React.PureComponent {
               <Route
                 path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id`}
                 component={this.signature_search}
+                exact
+              />
+             : null
+            }
+            {this.props.ui_values.nav.SignatureSearch.active ?
+              <Route
+                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model`}
+                component={(props)=>{
+                  const {type, enrichment_id} = props.match.params
+                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}`}/>
+                }}
                 exact
               />
              : null
