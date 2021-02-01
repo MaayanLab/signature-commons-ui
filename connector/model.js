@@ -1,5 +1,9 @@
 import isUUID from 'validator/lib/isUUID'
 import merge from 'deepmerge'
+import FlexSearch from 'flexsearch'
+import { findMatchedSchema } from '../util/ui/objectMatch'
+import { makeTemplate } from '../util/ui/makeTemplate'
+
 
 const validate = require('@dcic/signature-commons-schema').validate.bind({})
 
@@ -145,10 +149,7 @@ export class Model {
 		return this._parent
 	}
 
-	children = async (filter={}, entries=null, field=null, order_type="DESC") => {
-		if (entries!==null){
-			await this.set_children(entries)
-		}
+	children = async (filter={}, field=null, order_type="DESC") => {
 		if (this._preset_children!==null && this._preset_children!==undefined){
 			const {limit=10, skip=0, order,...rest} = filter
 			if (Object.keys(rest).length===0){
@@ -167,56 +168,9 @@ export class Model {
 					ids: this._preset_children.map(c=>c.id)
 				}
 			} else {
-				const preset_children = this._preset_children.reduce((acc, c)=>{
-					acc[c.id] = c
-					return acc
-				}, {})
-				if (filter.where === undefined){
-					const {limit=10, skip=0, order,...rest} = filter
-					filter = {
-						...rest,
-						where: {
-							id: {inq: Object.keys(preset_children)}
-						}
-					}
-				} else if (filter.where.and !== undefined) {
-					filter = {
-						...rest,
-						where: {
-							...filter.where,
-							and: [
-								...filter.where.and,
-								{id: {inq: Object.keys(preset_children)}}
-							]
-						}
-					}
-				}else if (filter.where.or !== undefined) {
-					filter = {
-						...rest,
-						where: {
-							...filter.where,
-							and: [
-								{or: filter.where.or},
-								{id: {inq: Object.keys(preset_children)}}
-							]
-						}
-					}
-				} else {
-					filter = {
-						...rest,
-						where: {
-							and: [
-								{...filter.where},
-								{id: {inq: Object.keys(preset_children)}}
-							]
-						}
-					}
-				}
-				await this.resolve_children(filter)
+				let results = await this.search_children(filter)
 				let children = []
-				for (const c of Object.values(this._children)){
-					const preset_entry = await preset_children[c.id].entry()
-					c.update_entry(preset_entry)
+				for (const c of Object.values(results)){
 					const child = await c.entry()
 					child[singular_form[c.parent_model]] = await c.parent()
 					children.push(child)
@@ -224,7 +178,7 @@ export class Model {
 				if (field) children = this.sort_children_by_score(children, field, order_type)
 				return {
 					count: {
-						[this.child_model]: this.children_count,
+						[this.child_model]: results.length,
 					},
 					[this.child_model]: limit===0? children: children.slice(skip, skip+limit),
 				}
@@ -264,10 +218,11 @@ export class Model {
 		)
 		const children = []
 		for (const entry of entries){
-			const resolved_entry = resolved_entries[entry.id]
+			const entry_id = typeof entry === 'object' ? entry.id: entry
+			const resolved_entry = resolved_entries[entry_id]
 			if (resolved_entry){
-				resolved_entry.update_entry(await entry.entry())
-				children.push(entry)
+				if (typeof entry === 'object') resolved_entry.update_entry(await entry.entry())
+				children.push(resolved_entry)
 			}
 		}
 		this._preset_children = children
@@ -279,6 +234,81 @@ export class Model {
 		if (this._children === undefined) await this.children()
 		return Object.keys(this._children)
 		
+	}
+
+	create_search_index = async (schema=null, grandchild=false) => {
+		// If grandchild is true, then it will serialize the grandchild
+		const docs = []
+		for (const child of this._preset_children){
+			const e = await child.serialize(true, grandchild)
+			const entry = {
+				id: e.id,
+				meta: JSON.stringify(e),
+			}
+			if (schema!==null){
+				for (const prop of Object.values(schema.properties)){
+					if (prop.type === 'filter'){
+						const field = prop.search_field || prop.field
+						const templateString = '${'+field+'}'
+						entry[field] = makeTemplate(templateString, e)
+					}
+				}
+			}
+			docs.push(entry)
+		}
+		if (docs.length > 0){
+			this._index = new FlexSearch({
+				doc: {
+					id: "id",
+					field: Object.keys(docs[0]).filter(i=>i!=="id")
+				}
+			})
+			this._index.add(docs)
+		}
+	}
+
+	search_children = async (filter) => {
+		let results
+		if (filter.search){
+			if (filter.search.length > 1){
+				const for_query = []
+				for (const query of filter.search){
+					for_query.push({
+						query,
+						field: "meta",
+						bool: "and"
+					})	
+				}
+				results = this._index.search(for_query)
+			}else if (filter.search.length===1){
+				results = this._index.search(filter.search[0])
+			}else {
+				return this._preset_children
+			}
+			
+		} else {
+			return this._preset_children
+		}
+		
+		const {resolved_entries} = await this._data_resolver.resolve_entries({
+			model:this.child_model,
+			entries: results.map(r=>r.id)}
+		)
+		const children = []
+		for (const r of results){
+			const resolved_entry = resolved_entries[r.id]
+			if (resolved_entry) children.push(resolved_entry)
+		}
+		return children
+	}
+	
+	create_value_counts = async (fields, filter) => {
+		const value_counts = {}
+		for (const child of this._preset_children) {
+			for(const field of fields){
+				const templateString = '${'+field+'}'
+			}
+		}
 	}
 
 	serialize = async (serialize_parent=true, serialize_children=true) => {

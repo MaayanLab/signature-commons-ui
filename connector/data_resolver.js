@@ -342,6 +342,7 @@ export class DataResolver {
 				if (libid === library_id){
 					const {id, overlap, setsize, ...scores} = entries[entry.id]
 					sig.update_entry({scores})
+					await sig.set_children(overlap)
 					signatures.push(sig)
 				}
 			}
