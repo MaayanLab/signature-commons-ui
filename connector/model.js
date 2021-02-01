@@ -1,7 +1,7 @@
 import isUUID from 'validator/lib/isUUID'
 import merge from 'deepmerge'
 
-const validate = require('@maayanlab/signature-commons-schema').validate.bind({})
+const validate = require('@dcic/signature-commons-schema').validate.bind({})
 
 const singular_form = {
     resources: "resource",

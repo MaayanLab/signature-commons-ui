@@ -6,7 +6,7 @@
   "dependencies": {
     "@dcic/signature-commons-ui-components-running-sum": "file:standalone/running-sum",
     "@dcic/signature-commons-ui-components-text-field-suggest": "file:standalone/text-field-suggest",
-    "@maayanlab/signature-commons-schema": "^1.5.5",
+    "@dcic/signature-commons-schema": "1.5.10",
     "@material-ui/core": "^4.11.1",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.30",
@@ -25,6 +25,7 @@
     "deepmerge": "^4.2.2",
     "dotenv-load": "^1.1.0",
     "file-system": "^2.2.2",
+    "flexsearch": "^0.6.32",
     "form-data": "^3.0.0",
     "iframe-resizer": "^4.2.10",
     "immutable": "^4.0.0-rc.12",
