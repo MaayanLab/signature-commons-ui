@@ -111,14 +111,15 @@ export default class EnrichmentPage extends React.PureComponent {
 			const {entry_object} = this.state
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
-			if (query.search!==undefined || query.filters!==undefined){
-				query.filters = {
-					...(query.filters || {}),
+			const final_query = {...query}
+			if (final_query.search!==undefined || final_query.filters!==undefined){
+				final_query.filters = {
+					...(final_query.filters || {}),
 					id: await this.state.entry_object.get_children_ids()
 				}
 			}
 			const resolved_query = resolve_ids({
-				query,
+				query: final_query,
 				model: this.state.entry_object.child_model,
 				lib_name_to_id,
 				lib_id_to_name,
