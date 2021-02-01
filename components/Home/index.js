@@ -195,7 +195,7 @@ class Home extends React.PureComponent {
                     filter_props={this.props.search_filters[model]}
                     nav={this.props.ui_values.nav}
                     search_examples={this.props.ui_values.search_examples[model] || []}
-                    resolver={this.state.resolver}
+                    resolver={this.state.metadata_resolver}
                     {...props}
       />
     )
@@ -213,7 +213,7 @@ class Home extends React.PureComponent {
                     label={props.match.params.label}
                     nav={this.props.ui_values.nav}
                     examples={this.props.ui_values.examples}
-                    resolver={this.state.resolver}
+                    resolver={this.state.enrichment_resolver}
                     {...props}
       />
     )
@@ -241,7 +241,8 @@ class Home extends React.PureComponent {
                     model={model}
                     nav={this.props.ui_values.nav}
                     label={props.match.params.label}
-                    resolver={this.state.resolver}
+                    metadata_resolver={this.state.metadata_resolver}
+                    enrichment_resolver={this.state.enrichment_resolver}
                     {...props}
       />
     )
@@ -292,7 +293,7 @@ class Home extends React.PureComponent {
               <Route
                 path={this.props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}
                 exact
-                component={this.landing}
+                component={()=><Redirect to={`${this.props.ui_values.nav.MetadataSearch.endpoint}/${this.props.ui_values.preferred_name.signatures}`} />}
               />
               : null
             }
