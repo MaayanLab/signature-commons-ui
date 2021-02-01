@@ -15,7 +15,7 @@ const Examples = (props) => {
 	for (const ex of examples){
 		if (ex.type === type){
 			example_buttons.push(
-				<Button variant="text" color="primary" key={ex.label} onClick={()=>{
+				<Button variant="text" color="primary" style={{fontSize:11}} key={ex.label} onClick={()=>{
 					if (type === "Overlap") {
 						onAdd(ex.entities, "entities")
 					} else {

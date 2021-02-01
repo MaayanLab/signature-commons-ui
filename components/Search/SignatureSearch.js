@@ -301,14 +301,25 @@ export default class SignatureSearch extends React.PureComponent {
 		const {input} = this.state
 		const query = create_query(input)
 		this.setState({
-			query
+			query,
+			searching: true,
 		}, async ()=>{
 			const enrichment_id = await enrichment(query, input, this.props.resolver, this.handleError)
+			this.redirect_or_stay(enrichment_id)
+		})
+	}
+
+	redirect_or_stay = (enrichment_id) => {
+		if (this.props.match.params.enrichment_id === enrichment_id){
+			this.setState({
+				searching: false
+			})
+		}else {
 			this.props.history.push({
 				pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}/${enrichment_id}`,
 				state: {input: this.state.input}
 			})
-		})
+		}
 	}
 	
 	
