@@ -1,12 +1,12 @@
 import React from 'react'
 import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { labelGenerator } from '../../util/ui/labelGenerator'
+import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
 import { MetadataSearchComponent } from './MetadataSearchComponent'
-import { get_filter, resolve_ids } from './utils'
-
-
+import { get_filter, resolve_ids, download_signature } from './utils'
+import Downloads from '../Downloads'
+import Options from './Options'
 export default class MetadataSearch extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -19,8 +19,19 @@ export default class MetadataSearch extends React.PureComponent {
 			filters: {},
 			paginate: false,
 			searching: false,
+			processing: false
 		}
 	}
+
+	download = (props) => {
+		return <Downloads {...props}/>
+	}
+
+	options = (props) => {
+		return <Options {...props}/>
+	}
+
+	
 
 	process_search = async () => {
 		try {
@@ -52,6 +63,38 @@ export default class MetadataSearch extends React.PureComponent {
 				const e = labelGenerator(await entry,
 					schemas,
 					"#" + this.props.preferred_name[this.props.model] +"/")
+				e.RightComponents = []
+				if (this.props.model==='signatures'){
+					e.RightComponents.push({
+						component: this.options,
+						props: {
+							options: [
+								{
+									label: "Perform Signature Search",
+									icon: 'mdi-magnify-scan',
+									href: `#${this.props.nav.SignatureSearch.endpoint}/Overlap/${e.data.id}`
+								},
+								{
+									label: `Download ${this.props.preferred_name.signatures}`,
+									onClick: () => {
+										download_signature({
+											entry: c,
+											schemas,
+											filename: `${e.info.name.text}.txt`
+										})
+									},
+									icon: "mdi-download"
+								}
+							]
+						}
+					})
+				}
+				if (e.info.download !== undefined) {
+					e.RightComponents.push({
+						component: this.download,
+						props: {...e.info.download.props}
+					})
+				} 
 				entries.push(e)
 			}
 			

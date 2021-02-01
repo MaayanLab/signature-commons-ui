@@ -1,4 +1,5 @@
-import { labelGenerator } from '../../util/ui/labelGenerator'
+import { labelGenerator, getName } from '../../util/ui/labelGenerator'
+import fileDownload from 'js-file-download'
 
 export const resolve_ids = ({
 	query,
@@ -126,4 +127,14 @@ export const enrichment = async (query, input, resolver, handleError=null) => {
 		console.error(error)
 		if (handleError) handleError(error)
 	}
+}
+
+export const download_signature = async ({entry, schemas, filename}) => {
+	const {entities} = await entry.children({limit: 0})
+	const names = []
+	for (const child of entities){
+		const val = getName(child, schemas)
+		if (val!==null) names.push(val)
+	}
+	fileDownload(names.join('\n'), filename)
 }

@@ -12,8 +12,9 @@ import IconButton from '../IconButton'
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import { SearchResult } from './SearchResult'
-import { get_filter, resolve_ids, get_signature_entities, create_query, enrichment } from '../Search/utils'
+import { get_filter, resolve_ids, get_signature_entities, create_query, enrichment, download_signature } from '../Search/utils'
 import ScorePopper from '../ScorePopper'
+import Downloads from '../Downloads'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -141,28 +142,53 @@ export default class EnrichmentPage extends React.PureComponent {
 				}else {
 					e = labelGenerator(entry, schemas)
 				}
+				e["RightComponents"] = []
+				e["LeftComponents"] = []
 				if (entry.scores !== undefined && entry.scores[this.state.order_field] !== undefined){
-					e["RightComponents"] = [
-						{
-							component: this.score_popper,
-							props: {
-								scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
-									...acc,
-									[label]: {
-										label: label.replace(/_/,' ').replace('-bonferroni',' bonferroni'),
-										value, 
-									}
-								}), {}),
-								sorted: this.state.order_field,
-								GridProps: {
-									style: {
-										textAlign: "right",
-										marginRight: 5
-									}
+					e["RightComponents"].push({
+						component: this.score_popper,
+						props: {
+							scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
+								...acc,
+								[label]: {
+									label: label.replace(/_/,' ').replace('-bonferroni',' bonferroni'),
+									value, 
+								}
+							}), {}),
+							sorted: this.state.order_field,
+							GridProps: {
+								style: {
+									textAlign: "right",
+									marginRight: 5
 								}
 							}
 						}
-					]
+					})
+				}
+				if (entry_object.child_model==='signatures'){
+					const {resolved_entries} = await this.props.resolver.resolve_entries({
+						model: entry_object.child_model,
+						entries: [entry]
+					})
+					const c = resolved_entries[entry.id]
+					e.LeftComponents.push({
+						component: this.downloads,
+						props: {
+							data: [
+								{
+									text: `Download Overlaps`,
+									onClick: () => {
+										download_signature({
+											entry: c,
+											schemas,
+											filename: `${e.info.name.text}.txt`
+										})
+									},
+									icon: "mdi-download"
+								}
+							]
+						}
+					})
 				}	
 				children.push(e)
 			}
@@ -292,6 +318,10 @@ export default class EnrichmentPage extends React.PureComponent {
 		this.setState({
 			error: error.message
 		})
+	}
+
+	downloads = (props) => {
+		return <Downloads {...props}/>
 	}
 
 	componentDidMount = () => {

@@ -11,9 +11,10 @@ import PropTypes from 'prop-types'
 import IconButton from '../IconButton'
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-import {ResultsTab} from './ResultsTab'
 import { SearchResult } from './SearchResult'
-import { get_filter, resolve_ids } from '../Search/utils'
+import { get_filter, resolve_ids, download_signature } from '../Search/utils'
+import Downloads from '../Downloads'
+import Options from '../Search/Options'
 
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){
@@ -28,6 +29,14 @@ export default class MetadataPage extends React.PureComponent {
 			filters: {},
 			paginate: false
 		}
+	}
+
+	download = (props) => {
+		return <Downloads {...props}/>
+	}
+
+	options = (props) => {
+		return <Options {...props}/>
 	}
 
 	process_entry = async () => {
@@ -85,8 +94,52 @@ export default class MetadataPage extends React.PureComponent {
 			const children_object = await this.state.entry_object.children({...q})
 			const children_count = children_object.count
 			const children_results = children_object[this.state.entry_object.child_model]
-			const children = Object.values(children_results).map(c=>labelGenerator(c, schemas, "#/" + this.props.preferred_name[this.state.entry_object.child_model] +"/"))
 			
+			const children = []
+			for (const entry of Object.values(children_results)){
+				const e = labelGenerator(await entry,
+					schemas,
+					"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
+				e.RightComponents = []
+				if (this.state.entry_object.child_model==='signatures'){
+					const {resolved_entries} = await this.props.resolver.resolve_entries({
+						model: this.state.entry_object.child_model,
+						entries: [entry]
+					})
+					const c = resolved_entries[entry.id]	
+					e.RightComponents.push({
+						component: this.options,
+						props: {
+							options: [
+								{
+									label: "Perform Signature Search",
+									icon: 'mdi-magnify-scan',
+									href: `#${this.props.nav.SignatureSearch.endpoint}/Overlap/${e.data.id}`
+								},
+								{
+									label: `Download ${this.props.preferred_name.signatures}`,
+									onClick: () => {
+										download_signature({
+											entry: c,
+											schemas,
+											filename: `${e.info.name.text}.txt`
+										})
+									},
+									icon: "mdi-download"
+								}
+							]
+						}
+					})
+				}
+				if (e.info.download !== undefined) {
+					e.RightComponents.push({
+						component: this.download,
+						props: {...e.info.download.props}
+					})
+				} 
+				children.push(e)
+			}
+
 			if (!this.state.paginate) this.get_value_count(where, query)
 			this.setState({
 				children_count,
