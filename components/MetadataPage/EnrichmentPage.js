@@ -65,6 +65,7 @@ export default class EnrichmentPage extends React.PureComponent {
 										`#${this.props.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${model_name}/id`)
 			const parent = labelGenerator(await entry_object.parent(), schemas, 
 										`#${this.props.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${this.props.preferred_name[entry_object.parent_model]}/`)
+			await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
 			this.setState({
 				entry_object,
 				entry,
@@ -111,33 +112,26 @@ export default class EnrichmentPage extends React.PureComponent {
 			const {entry_object} = this.state
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
-			const final_query = {...query}
-			if (final_query.search!==undefined || final_query.filters!==undefined){
-				final_query.filters = {
-					...(final_query.filters || {}),
-					id: await this.state.entry_object.get_children_ids()
-				}
-			}
+			
 			const resolved_query = resolve_ids({
-				query: final_query,
+				query: query,
 				model: this.state.entry_object.child_model,
 				lib_name_to_id,
 				lib_id_to_name,
 				resource_name_to_id,
 				resource_to_lib
 			})
-			const where = build_where(resolved_query)
+			// const where = build_where(resolved_query)
 			const {limit=10, skip=0, order} = query
 			// const skip = limit*page
-			const q = {
-				limit, skip, order
-			}
-			if (where) q["where"] = where
-			const children_object = await this.state.entry_object.children({...q}, null, this.state.order_field, this.state.order)
+			// const q = {
+			// 	limit, skip, order
+			// }
+			// if (where) q["where"] = where
+			const children_object = await this.state.entry_object.children({...resolved_query}, this.state.order_field, this.state.order)
 			const children_count = children_object.count
 			const children_results = children_object[this.state.entry_object.child_model]
-			
-			const children = [] 
+			const children = []
 			for (const entry of Object.values(children_results)){
 				let e
 				if (entry_object.child_model!=="entities"){
@@ -172,9 +166,7 @@ export default class EnrichmentPage extends React.PureComponent {
 				}	
 				children.push(e)
 			}
-
-
-			if (!this.state.paginate) this.get_value_count(where, query)
+			// if (!this.state.paginate) this.get_value_count(where, query)
 			this.setState({
 				children_count,
 				children,
