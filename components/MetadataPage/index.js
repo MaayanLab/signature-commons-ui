@@ -5,11 +5,21 @@ import EnrichmentPage from './EnrichmentPage'
 export default class Pages extends React.PureComponent {
 	
 	metadata_page = (props) => {
-		return <MetadataPage {...this.props} {...props}/>
+		const {
+			metadata_resolver,
+			enrichment_resolver,
+			...rest
+		} = this.props
+		return <MetadataPage {...rest} {...props} resolver={metadata_resolver}/>
 	}
 
 	enrichment_page = (props) => {
-		return <EnrichmentPage {...this.props} {...props}/>
+		const {
+			metadata_resolver,
+			enrichment_resolver,
+			...rest
+		} = this.props
+		return <EnrichmentPage {...rest} {...props} resolver={enrichment_resolver}/>
 	}
 	
 	render = () => (
