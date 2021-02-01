@@ -77,7 +77,7 @@ export function Nav(props) {
         <ListItemLink
           selected={location.pathname === `${ui_values.nav.Resources.endpoint || '/Resources'}`}
           className={ classes.menuItem}
-          href={`#${ui_values.nav.Resources.endpoint || '/Resources'}`}
+          href={`#${ui_values.nav.Resources.endpoint}`}
         >
           {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
         </ListItemLink> : null
@@ -124,17 +124,14 @@ class Header extends React.Component {
         <AppBar position="static" color="primary">
           <Toolbar>
             <Hidden smDown>
-              { [this.props.ui_values.nav.MetadataSearch.endpoint, this.props.ui_values.nav.SignatureSearch.endpoint + '/Overlap', this.props.ui_values.nav.SignatureSearch.endpoint + '/Rank'].indexOf(this.props.location.pathname) > -1 ?
-                <div className={classes.grow}/> :
-                <Typography variant="h4" color="inherit" className={classes.grow}>
-                  <Link
-                    to="/"
-                    className={classes.header}
-                  >
-                    {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
-                  </Link>
-                </Typography>
-              }
+              <Typography variant="h4" color="inherit" className={classes.grow}>
+                <Link
+                  to="/"
+                  className={classes.header}
+                >
+                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
+                </Link>
+              </Typography>
               <List
                 {...this.props.ui_values.header_info.menu_props}
               >

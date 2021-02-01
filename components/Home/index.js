@@ -111,14 +111,20 @@ class Home extends React.PureComponent {
     this.state = {
       cart: Set(),
       theme: null,
-      resolver: new DataResolver()
+      enrichment_resolver: new DataResolver(),
+      metadata_resolver: new DataResolver()
     }
   }
+
 
 
   resources = (props) => (
     <Resources
       {...props}
+      schemas={this.props.schemas}
+      preferred_name={this.props.ui_values.preferred_name}
+      model={"resources"}
+      resolver={this.state.metadata_resolver}
     />
   )
 

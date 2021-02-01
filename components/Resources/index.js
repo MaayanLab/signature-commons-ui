@@ -1,146 +1,70 @@
 import React from 'react'
-import ResourcePage from './ResourcePage'
-import ResourceList from './ResourceList'
-import { Route, Switch } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { fetch_meta } from '../../util/fetch/meta'
-import { get_schemas } from '../../util/helper/fetch_methods'
-import { makeTemplate } from '../../util/ui/makeTemplate'
-import { findMatchedSchema } from '../../util/ui/objectMatch'
+import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+import { labelGenerator } from '../../util/ui/labelGenerator'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import PropTypes from 'prop-types'
+import { IconComponent } from '../DataTable/IconComponent'
+import { Typography } from '@material-ui/core'
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    ...state.serverSideProps,
-    ui_values: state.ui_values,
-    ResourcesNav: state.ui_values.nav.Resources || {},
-  }
-}
-
-export const get_schema_props = (item, schemas) => {
-  const schema = findMatchedSchema(item, schemas)
-  const response = { schema }
-  for (const prop of Object.values(schema.properties)) {
-    if (prop.type === 'title') {
-      response['name_prop'] = prop.text
-    }
-    if (prop.type === 'img') {
-      response['icon_prop'] = prop.src
-    }
-    if (prop.type === 'tooltip') {
-      response['description_prop'] = prop.text
-    }
-  }
-  if (response['name_prop'] === undefined) response['name_prop'] = '${id}'
-  return { ...response }
-}
-
-export const get_resources_and_libraries = async (fetch_libraries = true, limit = 50, skip = 0) => {
-  const { response: resource_count } = await fetch_meta({
-    endpoint: `/resources/count`,
-    body: {
-      where: {
-        'meta.$hidden': { eq: null },
-      },
-    },
-  })
-  const { response: resources } = await fetch_meta({
-    endpoint: `/resources`,
-    body: {
-      filter: {
-        where: {
-          'meta.$hidden': { eq: null },
-        },
-        limit,
-        skip,
-      },
-    },
-  })
-  if (fetch_libraries || resource_count === 0) {
-    const { response: library_count } = await fetch_meta({
-      endpoint: `/libraries/count`,
-      body: {
-        where: {
-          resource: { eq: null },
-        },
-      },
-    })
-    const { response: libraries } = await fetch_meta({
-      endpoint: `/libraries`,
-      body: {
-        filter: {
-          where: {
-            resource: { eq: null },
-          },
-          limit,
-          skip,
-        },
-      },
-    })
-    return {
-      response: [...resources, ...libraries],
-      count: resource_count.count + library_count.count,
-    }
-  } else {
-    return {
-      response: resources,
-      count: resource_count.count,
-    }
-  }
-}
 
 class Resources extends React.PureComponent {
   constructor(props) {
     super(props)
 
     this.state = {
-      resources: null,
-      limit: 50,
+      entries: null,
+      limit: 10,
       skip: 0,
+      complete: false
     }
   }
 
-  componentDidMount = async () => {
-    const schemas = await get_schemas()
-    const { limit, skip } = this.state
-    const { response, count } = await get_resources_and_libraries(this.props.ui_values.showNonResource, limit, skip)
-    if (response.length === 0) {
-      this.setState({
-        resources: [],
+  get_entries = async () => {
+    try {
+      this.props.resolver.abort_controller()
+      this.props.resolver.controller()
+      const {model, preferred_name, schemas} = this.props
+      const {limit, skip} = this.state
+      const {entries: results, count} = await this.props.resolver.filter_metadata({
+        model,
+        filter: {
+          limit,
+          skip
+        }
       })
-    } else {
-      const resources = response.reduce((acc, resource) => {
-        const { name_prop } = get_schema_props(resource, schemas)
-        let name = makeTemplate(name_prop, resource)
-        if (name === 'undefined') name = resource.id
-        acc[name] = resource
-        return acc
-      }, {})
-      this.setState({
-        resources,
-        schemas,
-        count,
+      const entries = []
+			for (const c of Object.values(results)){
+				const entry = await c.serialize(true,false)
+				const e = labelGenerator(await entry,
+					schemas,
+					"#" + preferred_name[model] +"/")
+				entries.push(e)
+      }
+      this.setState(prevState=>{
+        const all_entries = [...(prevState.entries || []), ...entries]
+        return {
+          entries: all_entries,
+          complete: count === all_entries.length
+        }
+
       })
-    }
+    } catch (error) {
+      console.error(error)
+    } 
+  }
+
+  componentDidMount = () => {
+    this.get_entries()
   }
 
   componentDidUpdate = async (prevProps, prevState) => {
-    const { limit, skip, schemas } = this.state
+    const { limit, skip } = this.state
     if (prevState.limit !== limit || prevState.skip !== skip) {
-      const { response } = await get_resources_and_libraries(this.props.ui_values.showNonResource, limit, skip)
-      if (response.length > 0) {
-        const resources = response.reduce((acc, resource) => {
-          const { name_prop } = get_schema_props(resource, schemas)
-          let name = makeTemplate(name_prop, resource)
-          if (name === 'undefined') name = resource.id
-          acc[name] = resource
-          return acc
-        }, {})
-        console.log(resources)
-        this.setState((prevState) => ({
-          resources: { ...prevState.resources, ...resources },
-        }))
-      }
+      this.get_entries()
     }
   }
 
@@ -151,35 +75,86 @@ class Resources extends React.PureComponent {
   }
 
 
-  resource_list = (props) => (
-    <ResourceList
-      {...props}
-      {...this.state}
-      onClickMore={this.get_more_resources}
-      total_count={this.state.count}
-    />
-  )
-
-  resource_page = (props) => {
-    return (<ResourcePage
-      cart={this.props.cart}
-      {...props}
-      {...this.state}
-    />)
-  }
-
   render() {
-    if (this.state.resources === null) {
+    if (this.state.entries === null) {
       return <CircularProgress color="primary" />
     } else {
+      console.log(this.state.entries[0].info.icon)
       return (
-        <Switch>
-          <Route exact path={`${this.props.ResourcesNav.endpoint || '/Resources'}`}component={this.resource_list} />
-          {/* <Route path={`${this.props.ResourcesNav.endpoint || '/Resources'}/:resource`} component={this.resource_page} /> */}
-        </Switch>
+        <Grid container spacing={3} style={{marginBottom: 20}}>
+          {this.state.entries.map(entry=>(
+            <Grid item xs={12} md={6} lg={4}>
+              <Button href={entry.info.endpoint || undefined} style={{textTransform: "none"}}>
+              <Card style={{height: 400, padding: 10}}>
+                  {entry.info.icon!==undefined ?
+                    <CardMedia
+                      style={{ textAlign: 'center',  margin: 20}}
+                    >
+                      
+                        <IconComponent {...entry.info.icon}/>
+                    </CardMedia>: 
+                    <CardMedia
+                      style={{ textAlign: 'center',  margin: 20}}
+                    >
+                      <IconComponent icon={"mdi-clipboard-outline"}/>
+                    </CardMedia>
+                  }
+                  <CardContent>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12}>
+                        <Typography variant={"h6"} style={{textAlign: "center"}}>
+                          {entry.info.name.text}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography style={{maxHeight: 150, overflow: "auto"}}>
+                          {entry.info.subtitle.text}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Button>
+            </Grid> 
+          ))}
+          { this.state.complete? null:
+            <Grid item xs={12} md={6} lg={4}>
+              <Button onClick={this.get_more_resources} style={{textTransform: "none", width: "100%"}}>
+                <Card style={{height: 400, padding: 10, width: "100%"}}>
+                  <CardMedia
+                    style={{ textAlign: 'center',  margin: 20}}
+                  >
+                      <IconComponent icon="mdi-dots-horizontal"/>
+                  </CardMedia>
+                  <CardContent>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12}>
+                        <Typography variant={"h6"} style={{textAlign: "center"}}>
+                          See More
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Button>
+            </Grid>
+          }
+       </Grid>
       )
     }
   }
 }
 
-export default connect(mapStateToProps)(Resources)
+Resources.propTypes = {
+  model: PropTypes.string,
+  resolver: PropTypes.object,
+  schemas: PropTypes.array.isRequired,
+	preferred_name: PropTypes.shape({
+		resources: PropTypes.string,
+		libraries: PropTypes.string,
+		signatures: PropTypes.string,
+		entities: PropTypes.string,
+	}),
+}
+
+export default Resources
