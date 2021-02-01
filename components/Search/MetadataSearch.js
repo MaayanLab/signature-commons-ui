@@ -73,6 +73,8 @@ export default class MetadataSearch extends React.PureComponent {
 
 	get_value_count = async (where, query) =>{
 		try {
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
 			const filter_fields = {}
 			const fields = []
 			const {lib_id_to_name, resource_id_to_name} = this.props.resource_libraries
@@ -272,7 +274,7 @@ export default class MetadataSearch extends React.PureComponent {
 	}
 
 	render = () => {
-		if (this.state.entries==null){
+		if (this.state.search_tabs==undefined){
 			return <CircularProgress />
 		}
 		return (
