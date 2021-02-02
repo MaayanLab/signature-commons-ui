@@ -189,6 +189,7 @@ class Home extends React.PureComponent {
       <MetadataSearch schemas={this.props.schemas}
                     resource_libraries={this.props.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
+                    preferred_name_singular={this.props.ui_values.preferred_name_singular}
                     model={model}
                     label={props.match.params.label}
                     filter_props={this.props.search_filters[model] || []}
@@ -209,6 +210,7 @@ class Home extends React.PureComponent {
       <SignatureSearch schemas={this.props.schemas}
                     resource_libraries={this.props.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
+                    preferred_name_singular={this.props.ui_values.preferred_name_singular}
                     label={props.match.params.label}
                     nav={this.props.ui_values.nav}
                     examples={this.props.ui_values.examples}
@@ -230,6 +232,7 @@ class Home extends React.PureComponent {
       <MetadataPage schemas={this.props.schemas}
                     resource_libraries={this.props.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
+                    preferred_name_singular={this.props.ui_values.preferred_name_singular}
                     id={id}
                     model={model}
                     nav={this.props.ui_values.nav}

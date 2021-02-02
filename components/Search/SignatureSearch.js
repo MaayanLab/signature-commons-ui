@@ -356,7 +356,6 @@ export default class SignatureSearch extends React.PureComponent {
 				} else {
 					input = match.input
 				}
-				console.log(input)
 			}
 			this.setState({
 				input,

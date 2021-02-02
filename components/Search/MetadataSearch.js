@@ -70,7 +70,7 @@ export default class MetadataSearch extends React.PureComponent {
 						props: {
 							options: [
 								{
-									label: "Perform Signature Search",
+									label: `Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`,
 									icon: 'mdi-magnify-scan',
 									href: `#${this.props.nav.SignatureSearch.endpoint}/Overlap/${e.data.id}`
 								},
