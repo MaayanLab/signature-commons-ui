@@ -392,7 +392,7 @@ export class DataResolver {
 			}
 			const libraries = []
 			for (const l of Object.values(libs)) {
-				if (libids.indexOf(l.id)>=0){
+				if (libids.indexOf(l.id)>=0 && lib_counts[l.id]!==undefined){
 					l.update_entry({scores: {signature_count: lib_counts[l.id]}})
 					libraries.push(l)
 				}
