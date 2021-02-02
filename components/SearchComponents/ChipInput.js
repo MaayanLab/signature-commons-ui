@@ -85,7 +85,7 @@ export class ChipInput extends React.Component {
       this.setState((prevState) =>({
         value: "",
       }))
-    } else if(e.keyCode == 8){
+    }else if(e.keyCode == 8 && this.state.value === ""){
       if (this.props.input.length>0){
         const value = this.props.input[this.props.input.length-1]
         this.props.onDelete(value)
@@ -97,9 +97,9 @@ export class ChipInput extends React.Component {
     if (this.state.value.trim()){
       const value = this.state.value
       this.props.onSubmit(value)
-      this.setState((prevState) =>({
+      this.setState({
         value: "",
-      }))
+      })
     } else {
       this.setState({
         value: "",
