@@ -13,10 +13,6 @@ import Color from 'color'
 import { makeTemplate } from '../../util/ui/makeTemplate'
 import ReactWordcloud from 'react-wordcloud'
 
-import SearchBoxWrapper from '../SignatureSearch/SearchBoxWrapper'
-
-const MetadataSearchBox = dynamic(() => import('../../components/MetadataSearch/MetadataSearchBox'))
-
 const meta_default_icon = 'mdi-creation'
 
 export const BottomLinks = ({ classes, width, theme, ui_values, ...props }) => {
@@ -227,17 +223,7 @@ export const SearchCard = ({ classes, width, ui_values, ...props }) => {
               }
             </Grid>
             <Grid item xs={12}>
-              { MetadataSearch && props.match.params.searchType == MetadataSearch.endpoint.substring(1) ?
-                <MetadataSearchBox
-                  id='MetadataSearch'
-                  ui_values={ui_values}
-                  {...props}
-                /> :
-                <SearchBoxWrapper
-                  {...props}
-                  ui_values={ui_values}
-                />
-              }
+             
             </Grid>
           </Grid>
         </CardContent>

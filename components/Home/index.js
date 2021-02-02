@@ -20,7 +20,6 @@ import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../Search/MetadataSearch'
 import SignatureSearch from '../Search/SignatureSearch'
-import Pages from '../Pages'
 import MetadataPage from '../MetadataPage'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
@@ -216,12 +215,6 @@ class Home extends React.PureComponent {
                     resolver={this.state.enrichment_resolver}
                     {...props}
       />
-    )
-  }
-
-  pages = (props) => {
-    return (
-      <Pages {...props}/>
     )
   }
 

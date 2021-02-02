@@ -27,7 +27,6 @@ import { fetchMetaDataSucceeded,
   getSearchFiltersSucceeded,
 } from '../redux/actions'
 import { getStateFromStore } from './selectors'
-import { get_signature_data } from '../../components/MetadataSearch/download'
 import { get_ui_values } from '../../pages'
 import uuid5 from 'uuid5'
 import defaultTheme from '../ui/theme-provider'
@@ -417,92 +416,6 @@ function *watchFindSignature() {
   yield takeLatest(allWatchedActions, workFindSignature)
 }
 
-export function *workFindSignatureFromId(action) {
-  if (action.type !== action_definitions.FIND_SIGNATURES_FROM_ID) {
-    return
-  }
-  const controller = new AbortController()
-  const { id, search_type } = action
-  try {
-    const data = yield call(get_signature_data, { item: id, search_type })
-    if (search_type === 'Overlap') {
-      const signature_id = id
-      const input = {
-        type: search_type,
-        ...data,
-        entities: Object.values(data.entities),
-      }
-      const signature_result = yield call(query_overlap, {
-        input: {
-          ...input,
-        },
-        controller,
-      })
-      const results = {
-        ...signature_result,
-        input: {
-          ...input,
-          id: signature_id,
-        },
-      }
-      yield put(findSignaturesSucceeded(results))
-    } else if (search_type === 'Rank') {
-      const signature_id = id
-      const input = {
-        type: search_type,
-        ...data,
-        up_entities: Object.values(data.up_entities),
-        down_entities: Object.values(data.down_entities),
-      }
-      const signature_result = yield call(query_rank, {
-        input,
-        controller,
-      })
-      const results = {
-        ...signature_result,
-        input: {
-          ...input,
-          id: signature_id,
-        },
-      }
-      yield put(findSignaturesSucceeded(results))
-    }
-  } catch (error) {
-    yield put(reportError(error))
-    console.log(error)
-    let input = ({
-      type: search_type,
-    })
-    if (search_type === 'Overlap') {
-      input = {
-        ...input,
-        geneset: '',
-      }
-    } else {
-      input = {
-        ...input,
-        up_geneset: '',
-        down_geneset: '',
-      }
-    }
-    yield put(updateInput(input))
-    yield put(findSignaturesFailed(error))
-    controller.abort()
-  } finally {
-    if (yield cancelled()) {
-      controller.abort()
-      yield put(findSignaturesFailed('aborted'))
-    }
-  }
-}
-
-function *watchFindSignatureFromId() {
-  // const task = yield takeEvery([action_definitions.FETCH_METADATA_COUNT], workMatchEntities)
-  // for (const t in task){
-  //   yield cancel(task)
-  // }
-  yield takeLatest(allWatchedActions, workFindSignatureFromId)
-}
 
 export default function *rootSaga() {
   yield all([
@@ -510,7 +423,6 @@ export default function *rootSaga() {
     watchMatchEntities(),
     watchFindSignature(),
     watchResetSigcom(),
-    watchFindSignatureFromId(),
     watchInitializeSigcom(),
   ])
 }
