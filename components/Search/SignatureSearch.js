@@ -41,7 +41,7 @@ export default class SignatureSearch extends React.PureComponent {
 			const {limit=10, skip=0, order} = query
 			// const skip = limit*page
 			const filter = {
-				limit, skip, order
+				skip, order
 			}
 			if (where) filter["where"] = where
 			const {entries: results, count} = await this.props.resolver.filter_metadata({
@@ -62,7 +62,7 @@ export default class SignatureSearch extends React.PureComponent {
 				count,
 				entries,
 				page: skip/limit,
-				perPage: limit,
+				perPage: count,
 				query,
 				searching: false,
 				paginate: false,
