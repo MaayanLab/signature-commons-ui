@@ -306,10 +306,12 @@ export default class MetadataSearch extends React.PureComponent {
 		const prev_search = decodeURI(prevProps.location.search)
 		const curr_search = decodeURI(this.props.location.search)
 		if (prevProps.model !== this.props.model || prev_search !== curr_search){
-			this.setState({
-				searching: true,
-				paginate: (this.props.location.state || {}).paginate ? true: false,
-				filters: {},
+			this.setState(prevState=>{
+				return {
+					searching: true,
+					paginate: (this.props.location.state || {}).paginate ? true: false,
+					filters: (this.props.location.state || {}).paginate ? prevState.filters: {},
+				}
 			}, ()=>{
 				this.process_search()
 			})
