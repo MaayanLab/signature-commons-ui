@@ -396,6 +396,7 @@ export default class SignatureSearch extends React.PureComponent {
 		for (const schema of entity_schemas){
 			for (const prop of Object.values(schema.properties)){
 				if (prop.type==="title") titles.push(prop.field)
+				else if (prop.type==="name") titles.push(prop.field)
 				else if (prop.synonyms) synonyms.push(prop.field)
 			}
 		}
