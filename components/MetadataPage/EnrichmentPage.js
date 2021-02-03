@@ -157,6 +157,26 @@ export default class EnrichmentPage extends React.PureComponent {
 				}
 				e["RightComponents"] = []
 				e["LeftComponents"] = []
+				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
+					e["RightComponents"].push({
+						component: this.score_popper,
+						props: {
+							scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
+								...acc,
+								[label]: {
+									label: label.replace(/_/,' '),
+									value, 
+								}
+							}), {}),								
+							GridProps: {
+								style: {
+									textAlign: "right",
+									marginRight: 5
+								}
+							}
+						}
+					})
+				}
 				if (entry_object.child_model==='signatures'){
 					const {resolved_entries} = await this.props.resolver.resolve_entries({
 						model: entry_object.child_model,
@@ -348,6 +368,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			this.setState({
 				searching: true,
 				filters: {},
+				visualize: false,
 				paginate: (this.props.location.state || {}).paginate ? true: false
 			}, ()=>{
 				this.process_entry()
