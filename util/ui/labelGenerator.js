@@ -139,6 +139,19 @@ export const props_resolver = (properties, data, info=null) => {
   
 }
 
+export const getPropType = (data, schemas, type) => {
+  const schema = findMatchedSchema(data, schemas)
+  if (schema !== null) {
+    for (const prop of Object.values(schema.properties)) {
+      if (prop.visibility && prop.type===type){
+        const val = value_by_type[prop.type]({ label: "title", prop, data })
+        if (val!==null) return val
+      }
+    }
+  }
+  return null
+}
+
 export const getName = (data, schemas) => {
   const schema = findMatchedSchema(data, schemas)
   if (schema !== null) {
@@ -206,12 +219,12 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
               label,
               value: val.text,
               field: prop.field,
-              icon: prop.MDI_Icon || 'mdi-star',
+              icon: prop.icon || 'mdi-star',
             }
             sort_tags[prop.field] = {
               label,
               field: prop.field,
-              icon: prop.MDI_Icon || 'mdi-star',
+              icon: prop.icon || 'mdi-star',
             }
           }
         }
@@ -222,7 +235,7 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
               keywords[label] = {
                 label,
                 value: val.object,
-                icon: prop.MDI_Icon || 'mdi-tag-multiple',
+                icon: prop.icon || 'mdi-tag-multiple',
               }
             }
           }
@@ -236,7 +249,7 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
           if (val !== null) {
             tags = [...tags, {
               ...val,
-              icon: prop.MDI_Icon || 'mdi-arrow-top-right-thick',
+              icon: prop.icon || 'mdi-arrow-top-right-thick',
               priority: prop.priority,
               clickable: prop.clickable || true,
               field: prop.search_field || prop.field,
