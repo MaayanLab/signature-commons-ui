@@ -328,20 +328,29 @@ class Home extends React.PureComponent {
             }
             {this.props.ui_values.nav.SignatureSearch.active ?
               <Route
-                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model`}
-                component={(props)=>{
-                  const {type, enrichment_id} = props.match.params
-                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}`}/>
-                }}
+                path={`/Enrichment/:type/:enrichment_id/:model/:id`}
+                component={this.metadata_pages}
                 exact
               />
              : null
             }
             {this.props.ui_values.nav.SignatureSearch.active ?
               <Route
-                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model/:id`}
-                component={this.metadata_pages}
-                exact
+                path={`/Enrichment/:type/:enrichment_id`}
+                component={(props)=>{
+                  const {type, enrichment_id} = props.match.params
+                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}`}/>
+                }}
+              />
+             : null
+            }
+            {this.props.ui_values.nav.SignatureSearch.active ?
+              <Route
+                path={`/Enrichment/:type`}
+                component={(props)=>{
+                  const {type, enrichment_id} = props.match.params
+                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/${type}`}/>
+                }}
               />
              : null
             }
