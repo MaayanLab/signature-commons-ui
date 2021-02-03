@@ -31,8 +31,10 @@ export const MetadataSearchComponent = (props) => {
 
 	return(
 		<Grid container spacing={1}>
-			<Grid item xs={12} md={4} lg={3}>
-				<Grid container>
+			<Grid item xs={12} md={2}/>
+			<Grid item xs={12} md={6} lg={7}>
+				<Grid container spacing={1}>
+					{/* Search Components */}
 					<Grid item xs={12}>
 						{ SearchTabProps.tabs.length < 2 ? null:
 							<ResultsTab
@@ -41,7 +43,6 @@ export const MetadataSearchComponent = (props) => {
 									variant: "fullWidth",
 								}}
 								tabProps={{
-									wrapped: true,
 									style:{
 										minWidth: 100
 									}
@@ -50,6 +51,9 @@ export const MetadataSearchComponent = (props) => {
 								{...SearchTabProps}
 							/>
 						}
+						<ResultsTab
+							{...ModelTabProps}
+						/>
 						<ChipInput 
 							input={search_terms}
 							onSubmit={(term)=>{
@@ -72,11 +76,11 @@ export const MetadataSearchComponent = (props) => {
 					</Grid>
 					<Grid item xs={12} align="center">
 						{searching ? 
-							<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
+							<Button variant="contained" color="primary" size="small" style={{height: 40}}>
 								<span class="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
 							</Button>
 						:
-							<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
+							<Button variant="contained" color="primary" size="small" style={{height: 40}}>
 								<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
 							</Button>
 						}
@@ -92,35 +96,34 @@ export const MetadataSearchComponent = (props) => {
 							</React.Fragment>
 						))}
 						</Typography>
-					</Grid>
-					<Grid item xs={12} align="center">
-						{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+						<ResultsTab
+							tabsProps={{
+								centered: true,
+							}}
+							{...TabProps}
+						/>
 					</Grid>
 				</Grid>
 			</Grid>
-			<Grid item xs={12} md={6} lg={7}>
-			{ entries===null ? <CircularProgress/>:
-				<React.Fragment>
-					<ResultsTab
-						tabsProps={{
-							centered: true,
-						}}
-						{...TabProps}
-					/>
-					<DataTable entries={entries} {...DataTableProps}/>
-					<TablePagination
-						{...PaginationProps}
-						component="div"
-						align="right"
-					/>
-				</React.Fragment>
-			}
-				
-			</Grid>
-			<Grid item xs={12} md={2}>
-				<ResultsTab
-					{...ModelTabProps}
-				/>
+			<Grid item xs={12}>
+				<Grid container spacing={1}>
+					<Grid item xs={12} md={2} lg={2}/>
+					<Grid item xs={12} md={6} lg={7}>
+						{ entries===null ? <CircularProgress/>:
+							<Grid item xs={12}>
+								<DataTable entries={entries} {...DataTableProps}/>
+								<TablePagination
+									{...PaginationProps}
+									component="div"
+									align="right"
+								/>
+							</Grid>
+						}
+					</Grid>
+					<Grid item xs={12} md={4} lg={3} align="center">
+						{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+					</Grid>
+				</Grid>
 			</Grid>
 		</Grid>
 	)

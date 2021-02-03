@@ -352,7 +352,6 @@ export default class MetadataSearch extends React.PureComponent {
 						tabs: this.state.vertical_tab_props,
 						value: this.props.preferred_name[this.props.model],
 						tabsProps:{
-							orientation: "vertical",
 							TabIndicatorProps: {
 								style: {"left": 0}
 							}
@@ -376,7 +375,7 @@ export default class MetadataSearch extends React.PureComponent {
 						tabs: this.state.search_tabs,
 						value:"Metadata Search",
 						tabsProps:{
-							centered: true
+							centered: true,
 						},
 						handleChange: this.handleTabChange
 					}}
