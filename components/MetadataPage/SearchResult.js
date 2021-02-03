@@ -28,42 +28,36 @@ export const SearchResult = (props) => {
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12} md={4} lg={3}>
-				<Grid container>
-					<Grid item xs={12}>
-						<ChipInput 
-							input={search_terms}
-							onSubmit={(term)=>{
-								if (search_terms.indexOf(term)<0) onSearch([...search_terms, term])
-							}}
-							onDelete={ (term)=>{
-									onSearch(search_terms.filter(t=>t!==term))
-								}
-							}
-							chipRenderer={chipRenderer}
-							ChipInputProps={{
-								divProps: {
-									style: {
-										background: "#f7f7f7"
-									}
-								}
-							}}
-						/>
-					</Grid>
-					<Grid item xs={12} align="center">
-						{searching ? 
-							<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
-								<span className="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
-							</Button>
-						:
-							<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
-								<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
-							</Button>
+				<ChipInput 
+					input={search_terms}
+					onSubmit={(term)=>{
+						if (search_terms.indexOf(term)<0) onSearch([...search_terms, term])
+					}}
+					onDelete={ (term)=>{
+							onSearch(search_terms.filter(t=>t!==term))
 						}
-					</Grid>
-					<Grid item xs={12} align="center">
-						{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
-					</Grid>
-				</Grid>
+					}
+					chipRenderer={chipRenderer}
+					ChipInputProps={{
+						divProps: {
+							style: {
+								background: "#f7f7f7"
+							}
+						}
+					}}
+				/>
+				<div style={{textAlign: "center"}}>
+					{searching ? 
+						<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
+							<span className="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
+						</Button>
+					:
+						<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
+							<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
+						</Button>
+					}
+				</div>
+				{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
 				<Typography align={"center"}  style={{marginTop:10}}>
 				{search_examples.map((v,i)=>(
 					<React.Fragment>
