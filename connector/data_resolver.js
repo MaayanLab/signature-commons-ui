@@ -250,9 +250,13 @@ export class DataResolver {
 			body,
 			signal: this._controller.signal,
 		  })
-		const signatures = response.results.map(({uuid, ...scores})=>({
+		const signatures = response.results.map(({uuid, overlap, ...scores})=>({
 			id: uuid,
-			...scores
+			overlap,
+			"p-value": scores["p-value"],
+			"q-value (BH)": scores.fdr,
+			"q-value (Bonferroni)": scores["p-value-bonferroni"],
+			"odds ratio": scores.oddsratio,
 		}))
 
 		return {
