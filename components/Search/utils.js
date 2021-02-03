@@ -1,5 +1,6 @@
 import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import fileDownload from 'js-file-download'
+import Color from 'color'
 
 export const resolve_ids = ({
 	query,
@@ -137,4 +138,24 @@ export const download_signature = async ({entry, schemas, filename}) => {
 		if (val!==null) names.push(val)
 	}
 	fileDownload(names.join('\n'), filename)
+}
+
+export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_field, order}) => {
+	const color = Color(barColor)
+	const data = []
+	const f = entries[0].data.scores[order_field]
+	const firstVal = order === 'DESC' ? f: -Math.log(f)
+	for (const c of entries){
+		const v = c.data.scores[order_field]
+		const value = order === 'DESC' ? v: -Math.log(v)
+		const col = color.darken(-((value/firstVal) - 1))
+		const d = {
+			name: c.info.name.text,
+			value,
+			color: c.data.scores['p-value'] < 0.5 ? col.hex(): inactiveColor,
+			id: c.data.id,
+		}	
+		data.push(d)		
+	}
+	return data
 }
