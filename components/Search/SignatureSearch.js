@@ -54,7 +54,7 @@ export default class SignatureSearch extends React.PureComponent {
 				const entry = await c.entry()
 				const e = labelGenerator(await entry,
 					schemas,
-					"#" + this.props.preferred_name[this.state.model] +"/")
+					"#/" + this.props.preferred_name[this.state.model] +"/")
 				entries.push(e)
 			}
 			
@@ -234,6 +234,7 @@ export default class SignatureSearch extends React.PureComponent {
 			const schemas = this.props.schemas
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
+			const { type } = this.props.match.params
 			const {lib_to_resource,
 				resource_to_lib } = this.props.resource_libraries
 			const results = await this.props.resolver.resolve_enrichment({
@@ -246,7 +247,7 @@ export default class SignatureSearch extends React.PureComponent {
 				const entry = await c.entry()
 				const e = labelGenerator(await entry,
 					schemas,
-					`#${this.props.location.pathname}/${this.props.preferred_name[c.model]}/`)
+					`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[c.model]}/`)
 				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
 					e["RightComponents"] = [
 						{
