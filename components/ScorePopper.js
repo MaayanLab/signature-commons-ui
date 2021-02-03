@@ -56,7 +56,7 @@ export default class ScorePopper extends React.Component {
             <Icon className={`mdi mdi-18px ${scores[key].icon || 'mdi-trophy-award'}`} />
               &nbsp;
             <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-              {`${scores[key].label}: ${scores[key].value}`}
+              {`${scores[key].label}: ${this.precise(scores[key].value)}`}
             </Typography>
           </MenuItem>
         ))}

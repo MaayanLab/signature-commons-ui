@@ -6,15 +6,26 @@ import CardMedia from '@material-ui/core/CardMedia'
 import {ShowMeta} from '../DataTable'
 import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { labelGenerator } from '../../util/ui/labelGenerator'
+import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
 import IconButton from '../IconButton'
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import Button from '@material-ui/core/Button'
 import { SearchResult } from './SearchResult'
-import { get_filter, resolve_ids, get_signature_entities, create_query, enrichment, download_signature } from '../Search/utils'
+import { get_filter,
+	resolve_ids,
+	get_signature_entities,
+	create_query,
+	enrichment,
+	download_signature,
+	get_data_for_bar_chart
+ } from '../Search/utils'
 import ScorePopper from '../ScorePopper'
 import Downloads from '../Downloads'
+import {EnrichmentBar} from './EnrichmentBar'
+import {ScatterPlot} from './ScatterPlot'
+import Lazy from '../Lazy'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -34,6 +45,8 @@ export default class EnrichmentPage extends React.PureComponent {
 			query: {skip:0, limit:10},
 			filters: {},
 			paginate: false,
+			visualization: "bar",
+			visualize: false,
 		}
 	}
 
@@ -63,9 +76,9 @@ export default class EnrichmentPage extends React.PureComponent {
 				order = 'DESC'
 			}
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
-										`#${this.props.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${model_name}/id`)
+										`#/Enrichment/${type}/${enrichment_id}/${model_name}/id`)
 			const parent = labelGenerator(await entry_object.parent(), schemas, 
-										`#${this.props.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${this.props.preferred_name[entry_object.parent_model]}/`)
+										`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[entry_object.parent_model]}/`)
 			await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
 			this.setState({
 				entry_object,
@@ -138,40 +151,19 @@ export default class EnrichmentPage extends React.PureComponent {
 				if (entry_object.child_model!=="entities"){
 					e = labelGenerator(entry,
 						schemas,
-						`#${this.props.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${this.props.preferred_name[entry_object.child_model]}/`)
+						`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[entry_object.child_model]}/`)
 				}else {
 					e = labelGenerator(entry, schemas)
 				}
 				e["RightComponents"] = []
 				e["LeftComponents"] = []
-				if (entry.scores !== undefined && entry.scores[this.state.order_field] !== undefined){
-					e["RightComponents"].push({
-						component: this.score_popper,
-						props: {
-							scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
-								...acc,
-								[label]: {
-									label: label.replace(/_/,' ').replace('-bonferroni',' bonferroni'),
-									value, 
-								}
-							}), {}),
-							sorted: this.state.order_field,
-							GridProps: {
-								style: {
-									textAlign: "right",
-									marginRight: 5
-								}
-							}
-						}
-					})
-				}
 				if (entry_object.child_model==='signatures'){
 					const {resolved_entries} = await this.props.resolver.resolve_entries({
 						model: entry_object.child_model,
 						entries: [entry]
 					})
 					const c = resolved_entries[entry.id]
-					e.LeftComponents.push({
+					e.RightComponents.push({
 						component: this.downloads,
 						props: {
 							data: [
@@ -202,6 +194,7 @@ export default class EnrichmentPage extends React.PureComponent {
 				query,
 				searching: false,
 				paginate: false,
+				visualize: entry_object.child_model === 'signatures'
 			})	
 		} catch (error) {
 			console.error(error)
@@ -328,6 +321,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		this.setState(prevState=>({
 			searching: true,
 			resolver: this.props.resolver !== undefined ? this.props.resolver: new DataResolver(),
+			children: undefined
 		}), ()=>{
 			this.process_entry()
 		})	
@@ -340,17 +334,17 @@ export default class EnrichmentPage extends React.PureComponent {
 	sortBy = (order_field) => {
 		this.setState(prevProps=>({
 			order_field,
-			order: order_field === 'oddsratio' ? 'DESC': prevProps.order,
+			order: order_field === 'odds ratio' ? 'DESC': 'ASC',
 			searching: true,
 		}), ()=>{
 			this.process_children()
 		})
 	}
 
-	componentDidUpdate = (prevProps) => {
+	componentDidUpdate = (prevProps, prevState) => {
 		const prev_search = decodeURI(prevProps.location.search)
 		const curr_search = decodeURI(this.props.location.search)
-		if (prevProps.id !== this.props.id){
+		if (prevProps.match.params.id !== this.props.match.params.id){
 			this.setState({
 				searching: true,
 				filters: {},
@@ -442,7 +436,7 @@ export default class EnrichmentPage extends React.PureComponent {
 					entries={this.state.children}
 					DataTableProps={{
 						onChipClick: v=>{
-							if (v.clickable) this.onClickFilter(v.field, v.text)
+							if (v.field.includes('scores.')) this.sortBy(v.field.replace('scores.',''))
 						}
 					}}
 					PaginationProps={{
@@ -505,6 +499,98 @@ export default class EnrichmentPage extends React.PureComponent {
 		)
 	}
 
+	enrichment_bar = () => {
+		const {
+			barColor="#0063ff",
+			inactiveColor="#713939"
+		} = this.props
+		const data= get_data_for_bar_chart({
+			entries: this.state.children,
+			barColor,
+			inactiveColor,
+			order: this.state.order,
+			order_field: this.state.order_field,
+		})
+		const score_fields = Object.keys(this.state.children[0].data.scores)
+
+		return (
+			<React.Fragment>
+				<Typography variant="h6">{this.state.entry.info.name.text} Enrichment Results</Typography>
+				<Typography>Click the bars to sort. Now sorted by {this.state.order_field}.</Typography>
+				<EnrichmentBar data={data} field={this.state.order_field} fontColor={"#FFF"} 
+				barProps={{isAnimationActive:false}}
+				barChartProps={{
+					onClick: () => {
+						const new_index = (score_fields.indexOf(this.state.order_field) + 1)%score_fields.length
+						const new_field = score_fields[new_index]
+						this.sortBy(new_field)
+					}
+				}}/>
+			</React.Fragment>
+		)
+	}
+
+	scatter_plot = async () => {
+		const {
+			scatterColor="#0063ff",
+		} = this.props
+		const {signatures} = await this.state.entry_object.children({limit:0})
+		const data = signatures.map(s=>({
+			name: getName(s, this.props.schemas),
+			id: s.id,
+			oddsratio: s.scores["odds ratio"],
+			pval: s.scores["p-value"]
+		}))
+		return (
+			<React.Fragment>
+				<Typography variant="h6">{this.state.entry.info.name.text} Enrichment Results Scatter Plot</Typography>
+				<Typography>Click on a node to explore a {this.props.preferred_name_singular.signatures}.</Typography>
+				<ScatterPlot data={data} color={scatterColor} scatterProps={{onClick: (v) => {
+					const {type, enrichment_id} = this.props.match.params
+					const model = this.props.preferred_name[this.state.entry_object.child_model]
+					const id = v.id
+					this.props.history.push({
+						pathname: `/Enrichment/${type}/${enrichment_id}/${model}/${id}`,
+					})
+				}}}/>		
+			</React.Fragment>
+		)
+	}
+
+
+	visualizations = () => {
+		if (!this.state.visualize) return null
+		return (
+			<Card>
+				<CardContent>
+					<Grid container spacing={1}>
+						<Grid item xs={12} align="right">
+							<Button
+								color="primary"
+								disabled={this.state.visualization==="bar"}
+								onClick={()=>this.setState({visualization: "bar"})}
+							>
+								Bar Chart
+							</Button>
+							<Button
+								color="primary"
+								disabled={this.state.visualization==="scatter"}
+								onClick={()=>this.setState({visualization: "scatter"})}
+							>
+								Scatter Plot
+							</Button>
+						</Grid>
+						<Grid item xs={12} align="center">
+							{this.state.visualization==="bar" ? this.enrichment_bar(): 
+								<Lazy>{async () => this.scatter_plot()}</Lazy>
+							}
+						</Grid>
+					</Grid>
+				</CardContent>
+			</Card>
+		) 
+	}
+
 	render = () => {
 		if (this.state.entry==null){
 			return <CircularProgress />
@@ -547,7 +633,8 @@ export default class EnrichmentPage extends React.PureComponent {
 				{this.props.middleComponents!==undefined ? 
 					<Grid item xs={12}>
 						{this.props.middleComponents()}
-					</Grid> : null}
+					</Grid> 
+					: <Grid item xs={12}>{this.visualizations()}</Grid>}
 				<Grid item xs={12}>
 					{this.ChildComponent()}
 				</Grid>
