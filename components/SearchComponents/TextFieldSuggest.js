@@ -139,6 +139,12 @@ export class TextFieldSuggest extends React.Component {
                                         height: 300,
                                     }
                                 },
+                                divProps: {
+                                    style: {
+										background: "#f7f7f7",
+										marginTop: 10
+									}
+                                }
                             }}
                             {...chipInputProps}
 						/>
