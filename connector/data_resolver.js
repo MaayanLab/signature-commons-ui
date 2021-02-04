@@ -250,9 +250,10 @@ export class DataResolver {
 			body,
 			signal: this._controller.signal,
 		  })
-		const signatures = response.results.map(({uuid, overlap, ...scores})=>({
+		const signatures = response.results.map(({uuid, overlap, setsize, ...scores})=>({
 			id: uuid,
 			overlap,
+			setsize,
 			"p-value": scores["p-value"],
 			"q-value (BH)": scores.fdr,
 			"q-value (Bonferroni)": scores["p-value-bonferroni"],
@@ -314,7 +315,7 @@ export class DataResolver {
 				entries: [entries[signature_id].id]
 			})
 			const signature = resolved_entries[signature_id]
-			const {id, overlap, setsize, ...scores} = entries[signature_id]
+			const {id, overlap, ...scores} = entries[signature_id]
 			if (signature === 'undefined') throw new Error('Invalid Signature ID')
 			signature.update_entry({scores})
 			// and its entities
@@ -344,7 +345,7 @@ export class DataResolver {
 				const entry = await sig.serialize(true, false)
 				const libid = entry.library.id
 				if (libid === library_id){
-					const {id, overlap, setsize, ...scores} = entries[entry.id]
+					const {id, overlap, ...scores} = entries[entry.id]
 					sig.update_entry({scores})
 					await sig.set_children(overlap)
 					signatures.push(sig)
