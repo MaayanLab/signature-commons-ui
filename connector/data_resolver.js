@@ -405,60 +405,76 @@ export class DataResolver {
 			await resource.set_children(libraries)
 			resource.update_entry({scores: {signature_count: resource_count}})
 			return resource
-		} else {
-			// top level
-			// Resolve lib_to_resource
-			const r = await getLibToResource(this)
-			// resource_to_lib = r.resource_to_lib
-			// lib_to_resource = r.lib_to_resource  
-			
-			// Resolve signatures last (DEF NOT FIRST)
-			const {resolved_entries: signatures} = await this.resolve_entries({
-				model: "signatures",
-				entries: Object.keys(entries)
-			})
-			// Get libraries and resources and their counts
-			const lib_counts = {}
-			const res_counts = {}
-			for (const sig of Object.values(signatures)){
-				const libid = (await sig.parent()).id
-				const resid = lib_to_resource[libid]
-				if (lib_counts[libid] === undefined) lib_counts[libid] = 0
-				if (res_counts[resid] === undefined) res_counts[resid] = 0
-				lib_counts[libid] = lib_counts[libid] + 1
-				res_counts[resid] = res_counts[resid] + 1
-			}
+		} 
+	}
 
-			// resolve resources
-			const {resolved_entries: resource_dict} = await this.resolve_entries({
-				model: "resources",
-				entries: Object.keys(res_counts)
-			})
-			// resolve libraries
-			const {resolved_entries: libs} = await this.resolve_entries({
-				model: "libraries",
-				entries: Object.keys(lib_counts)
-			})
+	resolve_all_enrichment = async ({
+		enrichment_id,
+		lib_to_resource,
+		resource_to_lib,
+	}) => {
+		// Get enrichment
+		const enrichment = this.data_repo.enrichment[enrichment_id]
+		if (enrichment === undefined) throw new Error("No Enrichment Found")
 
-			
+		const {entries} = enrichment
 
-			const resources = []
-			for (const resource of Object.values(resource_dict)){
-				const resource_id = resource.id
-				const libraries = []
-				for (const library_id of resource_to_lib[resource_id]){
-					const library = libs[library_id]
-					if (library!==undefined){
-						library.update_entry({scores: {signature_count: lib_counts[library_id]}})
-						libraries.push(library)
-					}
-				}
-				await resource.set_children(libraries)
-				resource.update_entry({scores: {signature_count: res_counts[resource_id]}})
-				resources.push(resource)
-			}
-			return resources
+		// Resolve lib_to_resource
+		const r = await getLibToResource(this)
+		// resource_to_lib = r.resource_to_lib
+		// lib_to_resource = r.lib_to_resource  
+		
+		// Resolve signatures
+		const {resolved_entries: signatures} = await this.resolve_entries({
+			model: "signatures",
+			entries: Object.keys(entries)
+		})
+		// Get libraries and resources and their counts
+		const lib_counts = {}
+		const res_counts = {}
+		for (const sig of Object.values(signatures)){
+			const libid = (await sig.parent()).id
+			const resid = lib_to_resource[libid]
+			if (lib_counts[libid] === undefined) lib_counts[libid] = 0
+			if (res_counts[resid] === undefined) res_counts[resid] = 0
+			lib_counts[libid] = lib_counts[libid] + 1
+			res_counts[resid] = res_counts[resid] + 1
+			const {id, overlap, ...scores} = entries[sig.id]
+			sig.update_entry({scores})
+			sig.set_children(overlap)
 		}
+
+		// resolve resources
+		const {resolved_entries: resource_dict} = await this.resolve_entries({
+			model: "resources",
+			entries: Object.keys(res_counts)
+		})
+		// resolve libraries
+		const {resolved_entries: libs} = await this.resolve_entries({
+			model: "libraries",
+			entries: Object.keys(lib_counts)
+		})
+
+		const resources = {}
+		for (const resource of Object.values(resource_dict)){
+			const resource_id = resource.id
+			const libraries = []
+			for (const library_id of resource_to_lib[resource_id]){
+				const library = libs[library_id]
+				if (library!==undefined){
+					library.update_entry({scores: {signature_count: lib_counts[library_id]}})
+					libraries.push(library)
+				}
+			}
+			await resource.set_children(libraries)
+			resource.update_entry({scores: {signature_count: res_counts[resource_id]}})
+			resources[resource.id] = resource
+		}
+		return {
+			resources,
+			signatures
+		}
+		
 	}
 
 }
