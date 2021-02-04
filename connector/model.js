@@ -1,7 +1,5 @@
 import isUUID from 'validator/lib/isUUID'
-import merge from 'deepmerge'
 import FlexSearch from 'flexsearch'
-import { findMatchedSchema } from '../util/ui/objectMatch'
 import { makeTemplate } from '../util/ui/makeTemplate'
 
 
@@ -149,41 +147,11 @@ export class Model {
 		return this._parent
 	}
 
-	children = async (filter={}, field=null, order_type="DESC") => {
+	children = async (filter={}, crawl=false) => {
 		if (this._preset_children!==null && this._preset_children!==undefined){
-			const {limit=10, skip=0, order,...rest} = filter
-			if (Object.keys(rest).length===0){
-				let children = []
-				for (const c of this._preset_children){
-					const child = await c.entry()
-					child[singular_form[c.parent_model]] = await c.parent()
-					children.push(child)
-				}
-				if (field) children = this.sort_children_by_score(children, field, order_type)
-				return {
-					count: {
-						[this.child_model]: this._preset_children.length,
-					},
-					[this.child_model]: limit===0? children: children.slice(skip, skip+limit),
-					ids: this._preset_children.map(c=>c.id)
-				}
-			} else {
-				let results = await this.search_children(filter)
-				let children = []
-				for (const c of Object.values(results)){
-					const child = await c.entry()
-					child[singular_form[c.parent_model]] = await c.parent()
-					children.push(child)
-				}
-				if (field) children = this.sort_children_by_score(children, field, order_type)
-				return {
-					count: {
-						[this.child_model]: results.length,
-					},
-					[this.child_model]: limit===0? children: children.slice(skip, skip+limit),
-				}
-			}
+			return this.search_children(filter, crawl)
 		}else{
+			// Proper API Call
 			if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
 			let children = []
 			for (const c of Object.values(this._children)){
@@ -191,7 +159,6 @@ export class Model {
 				child[singular_form[c.parent_model]] = await c.parent()
 				children.push(child)
 			}
-			if (field) children = this.sort_children_by_score(children, field, order_type)
 			return {
 				count: {
 					[this.child_model]: this.children_count,
@@ -201,13 +168,11 @@ export class Model {
 		}
 	}
 
-	sort_children_by_score = (children, field, order="DESC") => {
-		let sorted_children
-		if (order === "DESC"){
-			sorted_children = children.sort((a,b)=>b.scores[field]-a.scores[field])
-		}else {
-			sorted_children = children.sort((a,b)=>a.scores[field]-b.scores[field])
-		}
+	sort_children_by_score = (children,order_by, ordering) => {
+		children.sort((a,b)=>{
+			if (ordering === "DESC") return (b.scores[order_by] || -9999)-(a.scores[order_by] || -9999)
+			else return (a.scores[order_by] || 9999)-(b.scores[order_by] || 9999)
+		})
 		return children
 	}
 
@@ -238,12 +203,14 @@ export class Model {
 
 	create_search_index = async (schema=null, grandchild=false) => {
 		// If grandchild is true, then it will serialize the grandchild
+		if (this._index !== undefined) return
 		const docs = []
 		for (const child of this._preset_children){
 			const e = await child.serialize(true, grandchild)
 			const entry = {
 				id: e.id,
 				meta: JSON.stringify(e),
+				scores: e.scores || {},
 			}
 			if (schema!==null){
 				for (const prop of Object.values(schema.properties)){
@@ -266,40 +233,90 @@ export class Model {
 			this._index.add(docs)
 		}
 	}
+	
+	filter_preset_children = async (filter, crawl=false) => {
+		const {order=[], limit=10, skip=0} = filter
+		const order_by = order[0]
+		const ordering = order[1]
+		let children = []
+		for (const c of this._preset_children){
+			let child
+			if (crawl && this.child_model !== "entities"){
+				child = await c.serialize(true, true, crawl)
+			} else {
+				child = await c.serialize(true, false)
+			}
+			children.push(child)
+		}
+		if (order_by) children = this.sort_children_by_score(children, order_by, ordering)
+		children = limit===0 ? children: children.slice(skip, skip+limit)
+		return children
+	}
 
-	search_children = async (filter) => {
-		let results
-		if (filter.search){
-			if (filter.search.length > 1){
-				const for_query = []
-				for (const query of filter.search){
-					for_query.push({
-						query,
+	search_children = async (filter, crawl=false) => {
+		const {search, order=[], limit=10, skip=0} = filter
+		if (search===undefined || search.length===0){
+			const children = await this.filter_preset_children(filter, crawl)
+			return {
+				[this.child_model]: children,
+				count: {
+					[this.child_model]: this._preset_children.length,
+				},
+			}
+		} else {
+			const order_by = order[0]
+			const ordering = order[1]
+			let query
+			const options = {}
+			// if (limit > 0) {
+			// 	options.limit = limit
+			// 	options.page = true
+			// }
+			if (order_by!==undefined){
+				if (ordering === "DESC") {
+					options.sort = (a,b) => ((b.scores[order_by] || -9999)-(a.scores[order_by] || -9999))
+				} else {
+					options.sort = (a,b) => ((a.scores[order_by] || 9999)-(b.scores[order_by] || 9999))
+				}
+			}
+			if (filter.search.length===1){
+				query = filter.search[0]
+			}else {
+				query = []
+				for (const q of filter.search){
+					query.push({
+						query: q,
 						field: "meta",
 						bool: "and"
 					})	
 				}
-				results = this._index.search(for_query)
-			}else if (filter.search.length===1){
-				results = this._index.search(filter.search[0])
-			}else {
-				return this._preset_children
 			}
-			
-		} else {
-			return this._preset_children
+			const results = this._index.search(query, options)
+			const for_resolving = limit===0 ? results: results.slice(skip, skip+limit)
+			const {resolved_entries} = await this._data_resolver.resolve_entries({
+				model:this.child_model,
+				entries: for_resolving.map(r=>r.id)}
+			)
+			const children = []
+			for (const r of results){
+				const c = await resolved_entries[r.id]
+				if (c) {
+					let child
+					if (crawl && this.child_model !== "entities"){
+						child = await c.serialize(true, true, crawl)
+					} else {
+						child = await c.serialize(true, false)
+					}
+					children.push(child)
+				}
+			}
+			return {
+				[this.child_model]: children,
+				count: {
+					[this.child_model]: results.length,
+				},
+			}
 		}
-		
-		const {resolved_entries} = await this._data_resolver.resolve_entries({
-			model:this.child_model,
-			entries: results.map(r=>r.id)}
-		)
-		const children = []
-		for (const r of results){
-			const resolved_entry = resolved_entries[r.id]
-			if (resolved_entry) children.push(resolved_entry)
-		}
-		return children
 	}
 	
 	create_value_counts = async (fields, filter) => {
@@ -311,14 +328,14 @@ export class Model {
 		}
 	}
 
-	serialize = async (serialize_parent=true, serialize_children=true) => {
+	serialize = async (serialize_parent=true, serialize_children=true, crawl=false) => {
 		const entry = await this.entry()
 		if (serialize_parent){
 			const parent = await this.parent()
 			entry[singular_form[this.parent_model]] = parent
 		}
 		if (serialize_children){
-			const children = (await this.children({limit:0}))[this.child_model]
+			const children = (await this.children({limit:0}, crawl))[this.child_model]
 			entry[this.child_model] = children
 		}
 		return entry
