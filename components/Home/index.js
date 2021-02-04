@@ -354,6 +354,16 @@ class Home extends React.PureComponent {
               />
              : null
             }
+            {this.props.ui_values.nav.SignatureSearch.active ?
+              <Route
+                path={`/Enrichment`}
+                component={(props)=>{
+                  const {type, enrichment_id} = props.match.params
+                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/Overlap`}/>
+                }}
+              />
+             : null
+            }
             {this.props.ui_values.nav.Resources.active ?
               <Route
                 path={`${this.props.ui_values.nav.Resources.endpoint || '/Resources'}`}
