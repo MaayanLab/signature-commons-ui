@@ -4,6 +4,13 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Link from '@material-ui/core/Link';
 import { Divider } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
+const DefaultCustomTab = withStyles(() => ({
+	root: {
+	  textTransform: 'none',
+	},
+  }))((props) => <Tab {...props} />);
 
 export const ResultsTab = ({
 	tabs,
@@ -14,7 +21,7 @@ export const ResultsTab = ({
 	onClick,
 	divider,
 	TabsComponent=Tabs,
-	TabComponent=Tab,
+	TabComponent=DefaultCustomTab,
 }) => {
 	const allTabs = []
 	for (const i in tabs){
