@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography';
 
 import {
-  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label
+  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
 } from 'recharts';
 
 const CustomTooltip = ({ active, payload }) => {
@@ -33,15 +33,20 @@ export const ScatterPlot = (props) => {
 		>
 			<CartesianGrid />
 			<XAxis type="number"
-				dataKey="pval"
+				dataKey="logpval"
 				name="p-value"
-				label={{ value: 'p-value',  position: 'bottom' }}/>
+				label={{ value: '-log(p-value)',  position: 'bottom' }}/>
 			<YAxis type="number"
 				dataKey="oddsratio"
 				name="odds ratio"
 				label={{ value: 'odds ratio', angle: -90, position: 'left' }}/>
 			<Tooltip content={<CustomTooltip/>} />
-			<Scatter name="Enrichment" data={data} fill={color} {...scatterProps}/>
+			<Scatter name="Enrichment" data={data} {...scatterProps}>
+				{data.map((entry, index) => {
+					return <Cell key={`scatter-${index}`} fill={entry.color} />
+				}
+				)}
+			</Scatter>
 		</ScatterChart>
 	);
 }
