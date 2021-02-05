@@ -97,6 +97,8 @@ export default class MetadataSearch extends React.PureComponent {
 				} 
 				entries.push(e)
 			}
+
+			const model_tab_props = this.get_model_tab_props(count)
 			
 			if (!this.state.paginate) this.get_value_count(where, query)
 			this.setState({
@@ -107,6 +109,7 @@ export default class MetadataSearch extends React.PureComponent {
 				query,
 				searching: false,
 				paginate: false,
+				model_tab_props,
 			})	
 		} catch (error) {
 			this.props.resolver.abort_controller()
@@ -264,38 +267,45 @@ export default class MetadataSearch extends React.PureComponent {
 	}
 
 	handleTabChange = (v) => {
-		console.log(v)
 		this.props.history.push({
 			pathname: v.href,
 		})
 	}
 
-	componentDidMount = () => {
-		const vertical_tab_props = []
+	get_model_tab_props = (count=null) => {
+		const model_props = []
 		for (const model of ['resources', 'libraries', 'signatures', 'entities']){
-			if (this.props.preferred_name[model]!==undefined){
+			const preferred_name = this.props.preferred_name[model]
+			if (preferred_name!==undefined && count !== null){
 				const endpoint = this.props.nav.MetadataSearch.endpoint
-				vertical_tab_props.push({
-					label: this.props.preferred_name[model],
+				let label
+				if (this.props.model === model) label = `${preferred_name} (${count})`
+				else label = this.props.preferred_name[model]
+				model_props.push({
+					label,
 					href: `${endpoint}/${this.props.preferred_name[model]}`,
 					value: this.props.preferred_name[model],
 				})
 			}
 		}
+		return model_props
+	}
 
+	componentDidMount = () => {
+		const model_tab_props = this.get_model_tab_props()
 		const search_tabs = []
 		for (const k of ['MetadataSearch', 'SignatureSearch']){
 			const v = this.props.nav[k]
 			search_tabs.push({
 				label: v.navName,
-				href: v.endpoint,
+				href:  v.endpoint,
 				value: v.navName,
 			})
 		}
 
 		this.setState({
 			searching: true,
-			vertical_tab_props,
+			model_tab_props,
 			search_tabs,
 		}, ()=>{
 			this.process_search()
@@ -349,27 +359,12 @@ export default class MetadataSearch extends React.PureComponent {
 						onChangeRowsPerPage: this.handleChangeRowsPerPage,
 					}}
 					ModelTabProps={{
-						tabs: this.state.vertical_tab_props,
+						tabs: this.state.model_tab_props,
 						value: this.props.preferred_name[this.props.model],
+						handleChange: this.handleTabChange,
 						tabsProps:{
-							TabIndicatorProps: {
-								style: {"left": 0}
-							}
-						},
-						handleChange: this.handleTabChange
-					}}
-					TabProps={{
-						tabs: [
-							{
-								label: this.props.preferred_name[this.props.model],
-								value: this.props.preferred_name[this.props.model],
-								count: this.state.count
-							}
-						],
-						value: this.props.preferred_name[this.props.model],
-						tabsProps:{
-							centered: true
-						},
+							centered: true,
+						}
 					}}
 					SearchTabProps={{
 						tabs: this.state.search_tabs,

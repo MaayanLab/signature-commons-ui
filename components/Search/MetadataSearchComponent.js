@@ -44,16 +44,13 @@ export const MetadataSearchComponent = (props) => {
 								}}
 								tabProps={{
 									style:{
-										minWidth: 100
+										minWidth: 180
 									}
 								}}
 								divider
 								{...SearchTabProps}
 							/>
 						}
-						<ResultsTab
-							{...ModelTabProps}
-						/>
 						<ChipInput 
 							input={search_terms}
 							onSubmit={(term)=>{
@@ -84,23 +81,25 @@ export const MetadataSearchComponent = (props) => {
 								<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
 							</Button>
 						}
-						<Typography align={"center"}  style={{marginTop:10}}>
-						{search_examples.map((v,i)=>(
-							<React.Fragment>
-								<Button variant="text" color="primary" style={{fontSize:10}} onClick={()=>{
-									if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
-								}}>
-									{v}
-								</Button>
-								{i === search_examples.length - 1 ? null: "/"}
-							</React.Fragment>
-						))}
+					</Grid>
+					<Grid item xs={12} align="center">
+						<Typography align={"center"} style={{height:30}}>
+							{search_examples.map((v,i)=>(
+								<React.Fragment>
+									<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
+										if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
+									}}>
+										{v}
+									</Button>
+									{i === search_examples.length - 1 ? null: "/"}
+								</React.Fragment>
+							))}
 						</Typography>
+					</Grid>
+					<Grid item xs={12} align="center">
 						<ResultsTab
-							tabsProps={{
-								centered: true,
-							}}
-							{...TabProps}
+							divider
+							{...ModelTabProps}
 						/>
 					</Grid>
 				</Grid>
@@ -164,19 +163,6 @@ MetadataSearchComponent.propTypes = {
 		onChangeRowsPerPage: PropTypes.func,
 	}).isRequired,
 	SearchTabProps: PropTypes.shape({
-		tabs: PropTypes.arrayOf(PropTypes.shape({
-			label: PropTypes.string.isRequired,
-			href: PropTypes.string,
-			count: PropTypes.number,
-			value: PropTypes.string,
-		})),
-		TabComponent: PropTypes.node,
-		TabsComponent: PropTypes.node,
-		value: PropTypes.string.isRequired,
-		handleChange: PropTypes.func,
-		tabsProps: PropTypes.object,
-	}).isRequired,
-	TabProps: PropTypes.shape({
 		tabs: PropTypes.arrayOf(PropTypes.shape({
 			label: PropTypes.string.isRequired,
 			href: PropTypes.string,
