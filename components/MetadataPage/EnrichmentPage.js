@@ -1,5 +1,7 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
+import Collapse from '@material-ui/core/Collapse'
+import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
@@ -47,8 +49,15 @@ export default class EnrichmentPage extends React.PureComponent {
 			paginate: false,
 			visualization: "bar",
 			visualize: false,
+			expanded: false,
 		}
 	}
+
+	handleExpandClick = () => {
+		this.setState(prevState=>({
+			expanded: !prevState.expanded,
+		}));
+	  }
 
 	process_entry = async () => {
 		try {
@@ -117,32 +126,18 @@ export default class EnrichmentPage extends React.PureComponent {
 			this.props.resolver.controller()
 			const {schemas} = this.props
 			const { type, enrichment_id } = this.props.match.params
-			const {
-				lib_name_to_id,
-				lib_id_to_name,
-				resource_name_to_id,
-				resource_to_lib
-			} = this.props.resource_libraries
 			const {entry_object} = this.state
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
-			
-			const resolved_query = resolve_ids({
-				query: query,
-				model: this.state.entry_object.child_model,
-				lib_name_to_id,
-				lib_id_to_name,
-				resource_name_to_id,
-				resource_to_lib
-			})
-			// const where = build_where(resolved_query)
-			const {limit=10, skip=0, order} = query
-			// const skip = limit*page
-			// const q = {
-			// 	limit, skip, order
-			// }
-			// if (where) q["where"] = where
-			const children_object = await this.state.entry_object.children({...resolved_query}, this.state.order_field, this.state.order)
+			const {limit= 10,
+				skip= 0,
+				order= [this.state.order_field, this.state.order],
+				} = query
+			const final_query = {
+				limit, skip, order,
+				search: query.search
+			}
+			const children_object = await this.state.entry_object.children(final_query)
 			const children_count = children_object.count
 			const children_results = children_object[this.state.entry_object.child_model]
 			const children = []
@@ -156,7 +151,6 @@ export default class EnrichmentPage extends React.PureComponent {
 					e = labelGenerator(entry, schemas)
 				}
 				e["RightComponents"] = []
-				e["LeftComponents"] = []
 				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
 					e["RightComponents"].push({
 						component: this.score_popper,
@@ -208,13 +202,13 @@ export default class EnrichmentPage extends React.PureComponent {
 			this.setState({
 				children_count,
 				children,
-				tab: this.props.label || Object.keys(children_count)[0],
 				page: skip/limit,
 				perPage: limit,
 				query,
 				searching: false,
 				paginate: false,
-				visualize: entry_object.child_model === 'signatures'
+				visualize: entry_object.child_model === 'signatures',
+				tab: this.props.label || Object.keys(children_count)[0],
 			})	
 		} catch (error) {
 			console.error(error)
@@ -355,6 +349,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		this.setState(prevProps=>({
 			order_field,
 			order: order_field === 'odds ratio' ? 'DESC': 'ASC',
+			visualize: false,
 			searching: true,
 		}), ()=>{
 			this.process_children()
@@ -421,7 +416,8 @@ export default class EnrichmentPage extends React.PureComponent {
 	onSearch = (search) => {
 		const query = {
 			...this.state.query,
-			search
+			search,
+			skip: 0
 		}
 		this.setState({
 			query,
@@ -488,6 +484,7 @@ export default class EnrichmentPage extends React.PureComponent {
 					<Typography variant="h4">
 						{this.state.entry.info.name.text}
 					</Typography>
+					
 				</React.Fragment>
 			)
 		const endpoint = this.state.parent.info.endpoint 
@@ -497,9 +494,9 @@ export default class EnrichmentPage extends React.PureComponent {
 					{this.state.entry.info.name.text}
 				</Typography>
 				<Typography variant="h5" gutterBottom>
-				<Link href={endpoint}>
-					{this.state.parent.info.name.text}
-				</Link>
+					<Link href={endpoint}>
+						{this.state.parent.info.name.text}
+					</Link>
 				</Typography>
 			</React.Fragment>
 		)
@@ -515,7 +512,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		const entry = this.state.entry
 		return (
 			<ShowMeta
-				value={entry.data.meta}
+				value={{...entry.data.meta, ...entry.data.scores}}
 			/>
 		)
 	}
@@ -532,21 +529,19 @@ export default class EnrichmentPage extends React.PureComponent {
 			order: this.state.order,
 			order_field: this.state.order_field,
 		})
-		const score_fields = Object.keys(this.state.children[0].data.scores)
-
+		const score_fields = Object.keys(this.state.children[0].data.scores).filter(s=>s!=="setsize")
 		return (
 			<React.Fragment>
-				<Typography variant="h6">{this.state.entry.info.name.text} Enrichment Results</Typography>
-				<Typography>Click the bars to sort. Now sorted by {this.state.order_field}.</Typography>
 				<EnrichmentBar data={data} field={this.state.order_field} fontColor={"#FFF"} 
-				barProps={{isAnimationActive:false}}
-				barChartProps={{
-					onClick: () => {
-						const new_index = (score_fields.indexOf(this.state.order_field) + 1)%score_fields.length
-						const new_field = score_fields[new_index]
-						this.sortBy(new_field)
-					}
-				}}/>
+					barProps={{isAnimationActive:false}}
+					barChartProps={{
+						onClick: () => {
+							const new_index = (score_fields.indexOf(this.state.order_field) + 1)%score_fields.length
+							const new_field = score_fields[new_index]
+							this.sortBy(new_field)
+						}
+					}}/>
+				<Typography>Click the bars to sort. Now sorted by {this.state.order_field}.</Typography>
 			</React.Fragment>
 		)
 	}
@@ -554,18 +549,19 @@ export default class EnrichmentPage extends React.PureComponent {
 	scatter_plot = async () => {
 		const {
 			scatterColor="#0063ff",
+			inactiveColor="#713939"
 		} = this.props
 		const {signatures} = await this.state.entry_object.children({limit:0})
 		const data = signatures.map(s=>({
 			name: getName(s, this.props.schemas),
 			id: s.id,
 			oddsratio: s.scores["odds ratio"],
-			pval: s.scores["p-value"]
+			logpval: -Math.log(s.scores["p-value"]),
+			pval: s.scores["p-value"], 
+			color: s.scores["p-value"] < 0.05 ? scatterColor: inactiveColor,
 		}))
 		return (
 			<React.Fragment>
-				<Typography variant="h6">{this.state.entry.info.name.text} Enrichment Results Scatter Plot</Typography>
-				<Typography>Click on a node to explore a {this.props.preferred_name_singular.signatures}.</Typography>
 				<ScatterPlot data={data} color={scatterColor} scatterProps={{onClick: (v) => {
 					const {type, enrichment_id} = this.props.match.params
 					const model = this.props.preferred_name[this.state.entry_object.child_model]
@@ -573,42 +569,27 @@ export default class EnrichmentPage extends React.PureComponent {
 					this.props.history.push({
 						pathname: `/Enrichment/${type}/${enrichment_id}/${model}/${id}`,
 					})
-				}}}/>		
+				}}}/>
+				<Typography>Click on a node to explore a {this.props.preferred_name_singular.signatures}.</Typography>
 			</React.Fragment>
 		)
 	}
 
 
 	visualizations = () => {
+		if (this.state.searching) return <CircularProgress/>
 		if (!this.state.visualize) return null
 		return (
-			<Card>
-				<CardContent>
-					<Grid container spacing={1}>
-						<Grid item xs={12} align="right">
-							<Button
-								color="primary"
-								disabled={this.state.visualization==="bar"}
-								onClick={()=>this.setState({visualization: "bar"})}
-							>
-								Bar Chart
-							</Button>
-							<Button
-								color="primary"
-								disabled={this.state.visualization==="scatter"}
-								onClick={()=>this.setState({visualization: "scatter"})}
-							>
-								Scatter Plot
-							</Button>
-						</Grid>
-						<Grid item xs={12} align="center">
-							{this.state.visualization==="bar" ? this.enrichment_bar(): 
-								<Lazy>{async () => this.scatter_plot()}</Lazy>
-							}
-						</Grid>
-					</Grid>
-				</CardContent>
-			</Card>
+			<Grid container spacing={1}>
+				<Grid item xs={12} align="right">
+					
+				</Grid>
+				<Grid item xs={12} align="center">
+					{this.state.visualization==="bar" ? this.enrichment_bar(): 
+						<Lazy>{async () => this.scatter_plot()}</Lazy>
+					}
+				</Grid>
+			</Grid>
 		) 
 	}
 
@@ -634,12 +615,47 @@ export default class EnrichmentPage extends React.PureComponent {
 									</CardMedia>
 								</Grid>
 								<Grid item md={10} xs={8}>
-									<Grid container spacing={3}>
-										<Grid item xs={12}>
+									<Grid container spacing={1}>
+										<Grid item xs={9}>
 											{ this.pageTitle() }
 										</Grid>
+										<Grid item xs={3} align="right">
+											{this.state.visualize ?
+												<React.Fragment>
+													<Tooltip title={'Bar Chart'}>
+														<Button
+															color="primary"
+															disabled={this.state.visualization==="bar"}
+															onClick={()=>this.setState({visualization: "bar"})}
+														>
+															<span className="mdi mdi-chart-bar mdi-24px"/>
+														</Button>
+													</Tooltip>
+													<Tooltip title={'Scatter Plot'}>
+														<Button
+															color="primary"
+															disabled={this.state.visualization==="scatter"}
+															onClick={()=>this.setState({visualization: "scatter"})}
+														>
+															<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
+														</Button>
+													</Tooltip>	
+												</React.Fragment>: null
+											}
+											<Tooltip title={`${this.state.expanded ? "Collapse": "View"} ${this.props.preferred_name_singular[this.props.model]} information`}>
+												<Button onClick={this.handleExpandClick}>
+													<span className={`mdi mdi-24px mdi-chevron-${this.state.expanded ? "up": "down"}`}/>
+												</Button>
+											</Tooltip>
+										</Grid>
+										<Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+											<Grid item xs={12}>
+												{this.metaTab()}
+											</Grid>
+											
+										</Collapse>
 										<Grid item xs={12}>
-											{this.metaTab()}
+											{this.visualizations()}
 										</Grid>
 									</Grid>
 								</Grid>
@@ -655,7 +671,7 @@ export default class EnrichmentPage extends React.PureComponent {
 					<Grid item xs={12}>
 						{this.props.middleComponents()}
 					</Grid> 
-					: <Grid item xs={12}>{this.visualizations()}</Grid>}
+					: null}
 				<Grid item xs={12}>
 					{this.ChildComponent()}
 				</Grid>
