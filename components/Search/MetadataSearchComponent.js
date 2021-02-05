@@ -65,8 +65,13 @@ export const MetadataSearchComponent = (props) => {
 								divProps: {
 									style: {
 										background: "#f7f7f7",
-										marginTop: 10
+										marginTop: 10,
+										padding: 10,
+										borderRadius: 25,
 									}
+								},
+								inputProps: {
+									placeholder: search_terms.length === 0 ? "Search for any term, i.e. drug, side effects, or a disease": "",
 								}
 							}}
 						/>

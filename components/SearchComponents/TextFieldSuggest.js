@@ -127,7 +127,8 @@ export class TextFieldSuggest extends React.Component {
                             chipRenderer={chipRenderer}
                             onSuggestionClick={onSuggestionClick}
                             colors_and_icon={colors_and_icon}
-							ChipInputProps={{
+                            disableMagnify
+                            ChipInputProps={{
 								inputProps: {
                                     multiline: true,
                                     rows: rows<0? 0: rows,
@@ -135,14 +136,17 @@ export class TextFieldSuggest extends React.Component {
                                         width:"100%",
                                         overflow: 'scroll',
                                         background: "#f7f7f7",
-                                        padding: 10,
+                                        padding: 20,
                                         height: 300,
-                                    }
+										borderRadius: 25,
+                                    },
+                                    placeholder: input.length === 0 ? "Place your drug set here": "",
                                 },
                                 divProps: {
                                     style: {
 										background: "#f7f7f7",
-										marginTop: 10
+                                        marginTop: 10,
+										borderRadius: 25,
 									}
                                 }
                             }}

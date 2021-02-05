@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import { InputBase } from '@material-ui/core';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 const all_chip_props = {
   "or": {
@@ -128,14 +129,18 @@ export class ChipInput extends React.Component {
         onBlur={this.onBlur}
         fullWidth={true}
         startAdornment={
-          <React.Fragment>
+            this.props.input.length === 0 && !this.props.disableMagnify ?
+            <span style={{opacity: 0.5}} 
+              className="mdi mdi-magnify mdi-24px"
+            />:
+            <React.Fragment>
               {this.props.chipRenderer({...this.props})}
             </React.Fragment>
         }
         {...((this.props.ChipInputProps || {}).inputProps || {})}
         style={{
           display: 'flex',
-          flexWrap: 'wrap',
+          flexWrap: this.props.input.length === 0 && !this.props.disableMagnify? 'nowrap': 'wrap',
           minHeight: 40,
           ...(((this.props.ChipInputProps || {}).inputProps || {}).style || {})
         }}
@@ -151,6 +156,7 @@ ChipInput.propTypes = {
   onDelete: PropTypes.func,
   onSubmit: PropTypes.func,
   ChipInputProps: PropTypes.object,
+  disableMagnify: PropTypes.bool,
 }
 
 ChipInput.defaultProps = {
