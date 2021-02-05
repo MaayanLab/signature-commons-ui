@@ -94,10 +94,9 @@ export default class MetadataPage extends React.PureComponent {
 			const children_object = await this.state.entry_object.children({...q})
 			const children_count = children_object.count
 			const children_results = children_object[this.state.entry_object.child_model]
-			
 			const children = []
 			for (const entry of Object.values(children_results)){
-				const e = labelGenerator(await entry,
+				const e = labelGenerator(entry,
 					schemas,
 					"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
 				e.RightComponents = []
