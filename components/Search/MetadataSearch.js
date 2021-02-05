@@ -78,9 +78,11 @@ export default class MetadataSearch extends React.PureComponent {
 									label: `Download ${this.props.preferred_name.signatures}`,
 									onClick: () => {
 										download_signature({
-											entry: c,
+											entry,
 											schemas,
-											filename: `${e.info.name.text}.txt`
+											filename: `${e.info.name.text}.txt`,
+											resolver: this.props.resolver,
+											model: this.props.model,
 										})
 									},
 									icon: "mdi-download"

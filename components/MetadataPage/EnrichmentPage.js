@@ -172,11 +172,6 @@ export default class EnrichmentPage extends React.PureComponent {
 					})
 				}
 				if (entry_object.child_model==='signatures'){
-					const {resolved_entries} = await this.props.resolver.resolve_entries({
-						model: entry_object.child_model,
-						entries: [entry]
-					})
-					const c = resolved_entries[entry.id]
 					e.RightComponents.push({
 						component: this.downloads,
 						props: {
@@ -185,9 +180,11 @@ export default class EnrichmentPage extends React.PureComponent {
 									text: `Download Overlaps`,
 									onClick: () => {
 										download_signature({
-											entry: c,
+											entry,
 											schemas,
-											filename: `${e.info.name.text}.txt`
+											filename: `${e.info.name.text}.txt`,
+											resolver: this.props.resolver,
+											model: entry_object.child_model,
 										})
 									},
 									icon: "mdi-download"

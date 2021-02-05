@@ -101,11 +101,6 @@ export default class MetadataPage extends React.PureComponent {
 					"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
 				e.RightComponents = []
 				if (this.state.entry_object.child_model==='signatures'){
-					const {resolved_entries} = await this.props.resolver.resolve_entries({
-						model: this.state.entry_object.child_model,
-						entries: [entry]
-					})
-					const c = resolved_entries[entry.id]	
 					e.RightComponents.push({
 						component: this.options,
 						props: {
@@ -119,9 +114,11 @@ export default class MetadataPage extends React.PureComponent {
 									label: `Download ${this.props.preferred_name.signatures}`,
 									onClick: () => {
 										download_signature({
-											entry: c,
+											entry,
 											schemas,
-											filename: `${e.info.name.text}.txt`
+											filename: `${e.info.name.text}.txt`,
+											resolver: this.props.resolver,
+											model: this.state.entry_object.child_model,
 										})
 									},
 									icon: "mdi-download"
