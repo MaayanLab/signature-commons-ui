@@ -72,17 +72,6 @@ export const MetadataSearchComponent = (props) => {
 						/>
 					</Grid>
 					<Grid item xs={12} align="center">
-						{searching ? 
-							<Button variant="contained" color="primary" size="small" style={{height: 40}}>
-								<span class="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
-							</Button>
-						:
-							<Button variant="contained" color="primary" size="small" style={{height: 40}}>
-								<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
-							</Button>
-						}
-					</Grid>
-					<Grid item xs={12} align="center">
 						<Typography align={"center"} style={{height:30}}>
 							{search_examples.map((v,i)=>(
 								<React.Fragment>
