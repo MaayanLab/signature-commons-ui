@@ -1,19 +1,26 @@
 import React from 'react'
 import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { labelGenerator } from '../../util/ui/labelGenerator'
-import { get_filter, resolve_ids, get_signature_entities, create_query, reset_input, enrichment } from './utils'
+import { labelGenerator, getName, getPropType } from '../../util/ui/labelGenerator'
+import { get_signature_entities, create_query, reset_input, enrichment, get_filter } from './utils'
 import PropTypes from 'prop-types'
 import {SignatureSearchComponent} from './SignatureSearchComponent'
 import ScorePopper from '../ScorePopper';
 import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-
+import Button from '@material-ui/core/Button';
+import Downloads from '../Downloads'
+import {download_signature} from './utils'
+import {Collapsible} from './SignatureSearchComponent'
+const id_mapper = {
+	resources: "resource_id",
+	libraries: "library_id",
+	signatures: "signature_id",
+}
 export default class SignatureSearch extends React.PureComponent {
 	constructor(props){
 		super(props)
 		this.state = {
-			entries: null,
+			children: null,
 			input: null,
 			model: "resources",
 			searching: false,
@@ -22,63 +29,15 @@ export default class SignatureSearch extends React.PureComponent {
 			error: null,
 			page: 0,
 			perPage: 10,
-		}
-	}
-
-	search_resources = async (searching=null) => {
-		try {
-			this.props.resolver.abort_controller()
-			this.props.resolver.controller()
-			const {schemas} = this.props
-			const {search: filter_string} = this.props.location
-			const query = get_filter(filter_string)
-			const resolved_query = resolve_ids({
-				query,
-				model: this.state.model,
-				...this.props.resource_libraries
-			})
-			const where = build_where(resolved_query)
-			const {limit=10, skip=0, order} = query
-			// const skip = limit*page
-			const filter = {
-				skip, order
-			}
-			if (where) filter["where"] = where
-			const {entries: results, count} = await this.props.resolver.filter_metadata({
-				model: this.state.model,
-				filter,
-			})
-			
-			const entries = []
-			for (const c of Object.values(results)){
-				const entry = await c.entry()
-				const e = labelGenerator(await entry,
-					schemas,
-					"#/" + this.props.preferred_name[this.state.model] +"/")
-				entries.push(e)
-			}
-			
-			this.setState({
-				count,
-				entries,
-				page: skip/limit,
-				perPage: count,
-				query,
-				searching: false,
-				paginate: false,
-			})
-		} catch (error) {
-			this.props.resolver.abort_controller()
-			console.error(error)
-			this.setState(prevState=>{
-				if (prevState.error === null) {
-					return {
-						error: "search_resources error: " + error.message
-					}
-				} else return {
-					error: prevState.error
-				}
-			})
+			order_field: "p-value",
+			order: "ASC",
+			visualize: false,
+			scatter_data: null,
+			resources_tabs: null,
+			libraries: null,
+			fetching_children: false,
+			visualization: "scatter",
+			library_entries: {}
 		}
 	}
 
@@ -227,59 +186,183 @@ export default class SignatureSearch extends React.PureComponent {
 	score_popper = (props) => {
 		return <ScorePopper {...props}/>
 	}
-	
 
-	resolve_enrichment = async (enrichment_id) => {
+	create_tab_values = (entries, endpoint, type, enrichment_id, model_name) => {
+		let entry_id
+		let sig_count = 0
+		const tabs = []
+		for (const entry of entries) {
+			const entry_name = getName(entry, this.props.schemas)
+			tabs.push({
+				label: entry_name,
+				href: `${endpoint}/${type}/${enrichment_id}/${model_name}/${entry.id}`,
+				value: entry.id,
+				count: entry.scores.signature_count,
+				icon: getPropType(entry, this.props.schemas, "img").src
+			})
+			if (sig_count < entry.scores.signature_count){
+				sig_count = entry.scores.signature_count
+				entry_id = entry.id
+			}
+		}
+		return {
+			tabs,
+			entry_id
+		}
+	}
+
+	collapsible_component = (props) => {
+		const {id, href} = props
+		const {library_entries, library_id} = this.state
+		if (id!==library_id) return null
+		return(
+			<Collapsible 
+				open={id===this.state.library_id}
+				data={library_entries[library_id]}
+				active={this.state.visualization}
+				signature_name={this.props.preferred_name.signatures}
+				onButtonClick={(visualization)=>this.setState({visualization})}
+				onNodeClick={this.scatter_node_click}
+				href={href}
+			/>
+		)
+	}
+
+	get_entry_labels = (entries, type, enrichment_id, model) => {
+		const labels = []
+		let entry_id
+		let score
+		for (const entry of entries){
+			let e
+			if (model!=="entities"){
+				e = labelGenerator(entry,
+					this.props.schemas,
+					`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[model]}/`)
+			}else {
+				e = labelGenerator(entry, this.props.schemas)
+			}
+			e["RightComponents"] = []
+			e["BottomComponents"] = [{
+				component: this.collapsible_component,
+				props: {
+					id: entry.id,
+					href: e.info.endpoint
+				}
+			}]
+			e["LeftComponents"] = [{
+				component: props => <Button {...props}><span className={`mdi mdi-24px mdi-chevron-${this.state.library_id === entry.id ? "up": "down"}`}/></Button>,
+				props: {
+					onClick:  () => {
+						if (this.state.library_id === entry.id){
+							this.setState({
+								library_id: undefined
+							})
+						}else {
+							this.setState({
+								library_id: entry.id
+							}, ()=>{
+								this.props.history.push({
+									pathname: `${this.props.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${this.props.preferred_name[model]}/${e.data.id}`
+								})
+							})
+							
+						}
+					}
+				}
+			}]
+			if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
+				if (score === undefined){
+					score = entry.scores.signature_count
+					entry_id=entry.id
+				}else if (score < entry.scores.signature_count){
+					score = entry.scores.signature_count
+					entry_id=entry.id
+				}
+				e["RightComponents"].push({
+					component: this.score_popper,
+					props: {
+						scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
+							...acc,
+							[label]: {
+								label: label.replace(/_/,' '),
+								value, 
+							}
+						}), {}),								
+						GridProps: {
+							style: {
+								textAlign: "right",
+								marginRight: 5
+							}
+						}
+					}
+				})
+			}	
+			labels.push(e)
+		}
+		return {labels, entry_id}
+	}
+
+	resolve_enrichment = async () => {
 		try {
-			const schemas = this.props.schemas
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
-			const { type } = this.props.match.params
+			const model = this.props.model
+			const { type, enrichment_id, id } = this.props.match.params
 			const {lib_to_resource,
 				resource_to_lib } = this.props.resource_libraries
-			const results = await this.props.resolver.resolve_enrichment({
+			const {resources} = await this.props.resolver.resolve_all_enrichment({
 				enrichment_id,
 				lib_to_resource,
 				resource_to_lib
 			})
-			const entries = []
-			for (const c of Object.values(results)){
-				const entry = await c.entry()
-				const e = labelGenerator(await entry,
-					schemas,
-					`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[c.model]}/`)
-				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
-					e["RightComponents"] = [
-						{
-							component: this.score_popper,
-							props: {
-								scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
-									...acc,
-									[label]: {
-										label: label.replace(/_/,' ').replace('-bonferroni',' bonferroni'),
-										value, 
-									}
-								}), {}),								
-								GridProps: {
-									style: {
-										textAlign: "right",
-										marginRight: 5
-									}
-								}
-							}
-						}
-					]
-				}	
-				entries.push(e)
-			}
-			const sorted_entries = entries.sort((a,b)=>b.data.scores.signature_count - a.data.scores.signature_count)
+			const {
+				tabs: resources_tabs, 
+				entry_id: tmp_resource_id
+			} = this.create_tab_values(
+				await Promise.all(Object.values(resources).map(async (i)=> await i.entry())),
+				this.props.nav.SignatureSearch.endpoint,
+				type,
+				enrichment_id,
+				this.props.preferred_name.resources
+			)
+
+			let resource_id = tmp_resource_id
 			
+			let library_id
+			let resource
+			if (model === 'resources' || id === undefined){
+				if (id !== undefined) {
+					resource_id = id
+				}
+				resource = await resources[resource_id].serialize(false, true)
+			} else if (model === 'libraries'){
+				library_id = id
+				resource_id = lib_to_resource[library_id]
+				resource = await resources[resource_id].serialize(false, true)
+			}
+
+			const {labels: libraries, entry_id: tmp_library_id} = this.get_entry_labels(resource.libraries,
+				type,
+				enrichment_id,
+				'libraries')
+			
+			if (library_id === undefined) library_id = tmp_library_id
+			
+			const entry_object = await this.props.resolver.resolve_enrichment({
+				enrichment_id,
+				library_id,
+				lib_to_resource,
+				resource_to_lib,
+			}) 
 			this.setState({
-				entries: sorted_entries,
-				count: entries.length,
+				library_id,
+				resource_id,
+				resources_tabs: resources_tabs.sort((a,b)=>(b.count-a.count)),
+				libraries: libraries.sort((a,b)=>(b.data.scores.signature_count-a.data.scores.signature_count)),
+				entry_object,
 				searching: false,
-				page: 0,
-				perPage: entries.length,
+			}, ()=>{
+				this.process_children()
 			})
 
 		} catch (error) {
@@ -297,6 +380,218 @@ export default class SignatureSearch extends React.PureComponent {
 		}
 	}
 
+	resolve_enrichment_from_resource = async () => {
+		try {
+			const { type, enrichment_id, id: resource_id } = this.props.match.params
+			if (this.state.resources_tabs===null || resource_id ===undefined) {
+				this.resolve_enrichment()
+			} else {
+				this.props.resolver.abort_controller()
+				this.props.resolver.controller()
+				const {lib_to_resource,
+					resource_to_lib } = this.props.resource_libraries
+				const resource = await this.props.resolver.resolve_enrichment({
+					enrichment_id,
+					resource_id,
+					lib_to_resource,
+					resource_to_lib,
+				})
+
+				const r = await resource.serialize(false, true)
+				const {labels: libraries, entry_id: library_id} = this.get_entry_labels(
+					resource.libraries,
+					type,
+					enrichment_id,
+					'libraries'
+				)
+				
+				const endpoint = this.props.nav.SignatureSearch.endpoint
+				const model_name = this.props.preferred_name.libraries
+				this.setState({
+					library_id,
+					resource_id,
+					libraries: libraries.sort((a,b)=>(b.data.scores.signature_count-a.data.scores.signature_count)),
+				}, () =>{
+					this.props.history.push({
+						pathname: `${endpoint}/${type}/${enrichment_id}/${model_name}/${library_id}`,
+						state: {input: this.state.input}
+					})
+				})
+			}
+			
+		} catch (error) {
+			this.props.resolver.abort_controller()
+			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "resolve_enrichment error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
+		}
+	}
+
+	resolve_enrichment_from_library = async () => {
+		try {
+			const { type, enrichment_id, id: library_id } = this.props.match.params
+			if (this.state.resources_tabs===null || library_id ===undefined) {
+				this.resolve_enrichment()
+			} else if(this.state.libraries!==null){
+				const resource_id = lib_to_resource[library_id]
+				const entry_object = await this.props.resolver.resolve_enrichment({
+					enrichment_id,
+					library_id,
+					lib_to_resource,
+					resource_to_lib,
+				}) 
+				this.setState({
+					entry_object,
+					library_id,
+					resource_id,
+					searching: false,
+				}, ()=>{
+					this.process_children()
+				})
+			}else {
+				this.props.resolver.abort_controller()
+				this.props.resolver.controller()
+				const {lib_to_resource,
+					resource_to_lib } = this.props.resource_libraries
+
+				const resource_id = lib_to_resource[library_id]
+				const {resolve_entries} = this.props.resolver.resolve_entries({
+					model:'resources',
+					entries: [resource_id]
+				})
+				const resource = await resolve_entries[resource_id].serialize(false, true)
+				
+				const {
+					label: libraries,
+				} = this.get_entry_labels(
+					resource.libraries,
+					type,
+					enrichment_id,
+					'libraries'
+				)
+
+				const entry_object = await this.props.resolver.resolve_enrichment({
+					enrichment_id,
+					library_id,
+					lib_to_resource,
+					resource_to_lib,
+				}) 
+	
+				this.setState({
+					entry_object,
+					library_id,
+					resource_id,
+					searching: false,
+					libraries: libraries.sort((a,b)=>(b.scores.signature_count-a.scores.signature_count)),
+				}, ()=>{
+					this.process_children()
+				})
+			}
+			
+		} catch (error) {
+			this.props.resolver.abort_controller()
+			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "resolve_enrichment error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
+		}
+	}
+
+	get_children_data = (entries, type, enrichment_id, model, limit=10) => {
+		const {
+			scatterColor="#0063ff",
+			inactiveColor="#713939"
+		} = this.props
+		const labels = []
+		const scatter_data = []
+		for (const entry of entries){
+			if (labels.length < limit){
+				const e = labelGenerator(entry,
+					this.props.schemas,
+					`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[model]}/`)
+				labels.push(e)
+			}
+			scatter_data.push({
+				name: getName(entry, this.props.schemas),
+				id: entry.id,
+				oddsratio: entry.scores["odds ratio"],
+				logpval: -Math.log(entry.scores["p-value"]),
+				pval: entry.scores["p-value"], 
+				color: entry.scores["p-value"] < 0.05 ? scatterColor: inactiveColor,
+			})	
+		}
+		return {labels, scatter_data}
+	}
+
+	process_children = async () => {
+		try {
+			const {library_entries, library_id, entry_object} = this.state
+			if (library_entries[library_id]!==undefined) return
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
+			const {schemas} = this.props
+			const { type, enrichment_id } = this.props.match.params
+			const {search: filter_string} = this.props.location
+			const query = get_filter(filter_string)
+			const {limit=0,
+				skip=0,
+				order= [this.state.order_field, this.state.order],
+				} = query
+			const final_query = {
+				order,
+				search: query.search,
+				limit: 0, 
+			}
+			const children_object = await entry_object.children(final_query)
+			const children_count = children_object.count
+			const children_results = children_object[entry_object.child_model]
+
+			const { labels: children, scatter_data} = this.get_children_data(Object.values(children_results), type, enrichment_id, entry_object.child_model)
+			
+			// if (!this.state.paginate) this.get_value_count(where, query)
+			this.setState({
+				children_count,
+				page: skip/limit,
+				perPage: limit,
+				query,
+				fetching_children: false,
+				paginate: false,
+				visualize: entry_object.child_model === 'signatures',
+				tab: this.props.label || Object.keys(children_count)[0],
+				library_entries: {
+					...library_entries,
+					[entry_object.id]: {
+						scatter_data,
+						entries: children,
+					}
+				}
+			})	
+		} catch (error) {
+			console.error(error)
+		}		
+	}
+
+	scatter_node_click = (v) => {
+		const {type, enrichment_id} = this.props.match.params
+		const model = this.props.preferred_name.signatures
+		const id = v.id
+		this.props.history.push({
+			pathname: `/Enrichment/${type}/${enrichment_id}/${model}/${id}`,
+		})
+	}
 
 	signature_search = async () => {
 		const {input} = this.state
@@ -322,7 +617,6 @@ export default class SignatureSearch extends React.PureComponent {
 			})
 		}
 	}
-	
 	
 	
 	handleError = (error) => {
@@ -362,13 +656,11 @@ export default class SignatureSearch extends React.PureComponent {
 				input,
 				query,
 				error,
-				searching: true
+				searching: this.props.match.params.enrichment_id!==undefined
 			}, () => {
 				if (this.props.match.params.enrichment_id!==undefined){
-					this.resolve_enrichment(this.props.match.params.enrichment_id)
-				} else {
-					this.search_resources()
-				}	
+					this.resolve_enrichment()
+				} 	
 			})
 		} catch (error) {
 			this.props.resolver.abort_controller()
@@ -382,10 +674,33 @@ export default class SignatureSearch extends React.PureComponent {
 	componentDidUpdate = async (prevProps) => {
 		const prevEnrichmentID = prevProps.match.params.enrichment_id
 		const enrichment_id = this.props.match.params.enrichment_id
+		
+		
+		const id = this.props.match.params.id
+		const previd = prevProps.match.params.id
 		if (prevEnrichmentID !== enrichment_id) {
-			this.process_input()
+			this.setState({
+				entries: null,
+				resources_tabs: null,
+				libraries: null,
+				visualize: false,
+				library_entries: {},
+			}, () => this.process_input());
+		} else if(id !==previd){
+			this.setState({
+				visualize: false,
+				fetching_children: true,
+				visualization: "scatter",
+			}, () => {
+				const model = this.props.match.params.model
+				if (model === "libraries") this.resolve_enrichment_from_library()
+				else if (model === "resources") this.resolve_enrichment_from_library()
+				else this.resolve_enrichment()
+			});
+			
 		}
 	}
+
 	componentDidMount = async () => {
 		const { schemas } = this.props
 		const {type, enrichment_id} = this.props.match.params	
@@ -408,14 +723,18 @@ export default class SignatureSearch extends React.PureComponent {
 			search_tabs.push({
 				label: v.navName,
 				href: v.endpoint,
-				value: v.navName,
+				value: k,
 			})
 		}
 		this.setState({
 			titles,
 			synonyms,
 			search_tabs,
-		}, () => this.process_input());
+			entries: null,
+			index: null,
+		}, () => {
+			this.process_input()
+		});
 	}
 
 	handleSnackBarClose = (event, reason) => {
@@ -438,51 +757,38 @@ export default class SignatureSearch extends React.PureComponent {
 						onClose={this.handleSnackBarClose}
 						message={this.state.error}
 						action={
-							<IconButton size="small" aria-label="close" color="inherit" onClick={this.handleSnackBarClose}>
+							<Button size="small" aria-label="close" color="inherit" onClick={this.handleSnackBarClose}>
 								<span className="mdi mdi-close-box mdi-24px"/>
-							</IconButton>
+							</Button>
 						}
 					/>
 					<SignatureSearchComponent 
 						searching={this.state.searching}
 						resolving={this.state.resolving}
-						entries={this.state.entries}
+						entries={this.state.libraries}
 						PaginationProps={{
 							page: this.state.page,
 							rowsPerPage: this.state.perPage,
-							count:  this.state.count,
+							count:  (this.state.libraries || []).length,
 							onChangePage: (event, page) => this.handleChangePage(event, page),
 							onChangeRowsPerPage: this.handleChangeRowsPerPage,
 						}}
-						ModelTabProps={{
-							tabs: this.state.vertical_tab_props,
-							value: this.props.preferred_name[this.props.model],
+						SearchTabProps={{
+							tabs: this.state.search_tabs,
+							value: "SignatureSearch",
 							tabsProps:{
-								orientation: "vertical",
-								TabIndicatorProps: {
-									style: {"left": 0}
-								}
+								centered: true
 							},
 							handleChange: this.handleTabChange
 						}}
-						TabProps={{
-							tabs: [
-								{
-									label: this.props.preferred_name[this.state.model],
-									value: this.props.preferred_name[this.state.model],
-									count: this.state.count
-								}
-							],
-							value: this.props.preferred_name[this.state.model],
+						ResourceTabProps={this.state.resources_tabs===null? undefined: {
+							tabs: this.state.resources_tabs,
+							value: this.state.resource_id,
 							tabsProps:{
-								centered: true
-							},
-						}}
-						SearchTabProps={{
-							tabs: this.state.search_tabs,
-							value:"Signature Search",
-							tabsProps:{
-								centered: true
+								centered: true,
+								variant: "scrollable",
+								scrollButtons: "auto",
+								"aria-label": "scrollable auto tabs example",
 							},
 							handleChange: this.handleTabChange
 						}}
@@ -496,13 +802,23 @@ export default class SignatureSearch extends React.PureComponent {
 							type: this.props.match.params.type,
 							disabled,
 						}}
+						filters={this.state.libraries === null ? []:[
+							{
+								name: this.props.preferred_name.libraries,
+								field: 'libraries',
+								priority: 1,
+								values: this.state.libraries,
+								radio:true,
+								value: this.props.resource_libraries.lib_id_to_name[this.state.library_id],
+								icon: "mdi-library-books"
+							}
+						]}
 					/>
 				</React.Fragment>
 				
 			)
 		}
-	}
-	
+	}	
 }
 
 SignatureSearch.propTypes = {
