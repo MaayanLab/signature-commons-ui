@@ -130,8 +130,13 @@ export const enrichment = async (query, input, resolver, handleError=null) => {
 	}
 }
 
-export const download_signature = async ({entry, schemas, filename}) => {
-	const {entities} = await entry.children({limit: 0})
+export const download_signature = async ({entry, schemas, filename, resolver, model}) => {
+	const {resolved_entries} = await resolver.resolve_entries({
+		model,
+		entries: [entry]
+	})
+	const c = resolved_entries[entry.id]
+	const {entities} = await c.children({limit: 0})
 	const names = []
 	for (const child of entities){
 		const val = getName(child, schemas)
