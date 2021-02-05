@@ -32,14 +32,14 @@ export const ScatterPlot = (props) => {
 			{...scatterChartProps}
 		>
 			<CartesianGrid />
-			<XAxis type="number"
+			<YAxis type="number"
 				dataKey="logpval"
 				name="p-value"
-				label={{ value: '-log(p-value)',  position: 'bottom' }}/>
-			<YAxis type="number"
+				label={{ value: '-log(p-value)', angle: -90, position: 'left'}}/>
+			<XAxis type="number"
 				dataKey="oddsratio"
 				name="odds ratio"
-				label={{ value: 'odds ratio', angle: -90, position: 'left' }}/>
+				label={{ value: 'odds ratio', position: 'bottom' }}/>
 			<Tooltip content={<CustomTooltip/>} />
 			<Scatter name="Enrichment" data={data} {...scatterProps}>
 				{data.map((entry, index) => {
