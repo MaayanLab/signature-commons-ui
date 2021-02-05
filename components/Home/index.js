@@ -206,6 +206,11 @@ class Home extends React.PureComponent {
       names[v] = k
       return names
     }, {})
+    let model = 'resources'
+    if (props.match.params.model){
+      model = reverse_preferred[props.match.params.model]
+      if (['libraries', 'resources'].indexOf(model)<0) return <Redirect to='/not-found'/>
+    }
     return (
       <SignatureSearch schemas={this.props.schemas}
                     resource_libraries={this.props.resource_libraries}
@@ -215,6 +220,8 @@ class Home extends React.PureComponent {
                     nav={this.props.ui_values.nav}
                     examples={this.props.ui_values.examples}
                     resolver={this.state.enrichment_resolver}
+                    filter_props={this.props.search_filters.signatures || []}
+                    model={model}
                     {...props}
       />
     )
@@ -321,6 +328,22 @@ class Home extends React.PureComponent {
             {this.props.ui_values.nav.SignatureSearch.active ?
               <Route
                 path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id`}
+                component={this.signature_search}
+                exact
+              />
+             : null
+            }
+            {this.props.ui_values.nav.SignatureSearch.active ?
+              <Route
+                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model`}
+                component={this.signature_search}
+                exact
+              />
+             : null
+            }
+            {this.props.ui_values.nav.SignatureSearch.active ?
+              <Route
+                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model/:id`}
                 component={this.signature_search}
                 exact
               />
