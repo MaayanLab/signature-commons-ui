@@ -147,6 +147,16 @@ export class Model {
 		return this._parent
 	}
 
+	get_child_object = async (id) => {
+		if (this._preset_children){
+			const child = this._preset_children.filter(c=>c.id === id)
+			return child[0]
+		}else {
+			this.resolve_children({where: {id}})
+			return this._children[0]
+		}
+	}
+
 	children = async (filter={}, crawl=false) => {
 		if (this._preset_children!==null && this._preset_children!==undefined){
 			return this.search_children(filter, crawl)
@@ -254,8 +264,27 @@ export class Model {
 	}
 
 	search_children = async (filter, crawl=false) => {
-		const {search, order=[], limit=10, skip=0} = filter
-		if (search===undefined || search.length===0){
+		const {search, id, order=[], limit=10, skip=0} = filter
+		if (id){
+			const children = []
+			for (const c of this._preset_children){
+				if (c.id === id){
+					let child
+					if (crawl && this.child_model !== "entities"){
+						child = await c.serialize(true, true, crawl)
+					} else {
+						child = await c.serialize(true, false)
+					}
+					children.push(child)
+				}
+			}
+			return {
+				[this.child_model]: children,
+				count: {
+					[this.child_model]: children.length,
+				},
+			}
+		} else if (search===undefined || search.length===0){
 			const children = await this.filter_preset_children(filter, crawl)
 			return {
 				[this.child_model]: children,
