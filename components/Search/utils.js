@@ -152,7 +152,7 @@ export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_
 		const d = {
 			name: c.info.name.text,
 			value,
-			color: c.data.scores['p-value'] < 0.5 ? col.hex(): inactiveColor,
+			color: c.data.scores['p-value'] < 0.05 ? col.hex(): inactiveColor,
 			id: c.data.id,
 		}	
 		data.push(d)		
