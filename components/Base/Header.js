@@ -92,6 +92,12 @@ export function Nav(props) {
         </ListItemLink> : null
       }
       <ListItemLink
+        className={ classes.menuItem}
+        href={'https://appyters.maayanlab.cloud/Drugmonizome_ML/'}
+      >
+        {'Drugmonizome ML'}
+      </ListItemLink>
+      <ListItemLink
         selected={location.pathname === '/API'}
         className={ classes.menuItem}
         href={'#/API'}
@@ -172,12 +178,12 @@ class Header extends React.Component {
             </Hidden>
           </Toolbar>
         </AppBar>
-        {paths.length <= 3 ? null : (
-            <Breadcrumbs separator="›" aria-label="breadcrumb" component={'div'}>
+        {paths.length <= 3 ? <div style={{height:25}}/> : (
+            <Breadcrumbs separator={<span className="mdi mdi-arrow-right-bold-circle-outline"/>} aria-label="breadcrumb" component={'div'} style={{marginTop:5, marginLeft: 10, height: 20}}>
               {paths.slice(1).map((path, i) => {
                 const href = paths.slice(0, i + 2).join('/')
                 return (
-                  <Typography variant="h6" color={'inherit'} key={href}>
+                  <Typography color={'inherit'} key={href}>
                     <Link
                       key={href}
                       to={href}
