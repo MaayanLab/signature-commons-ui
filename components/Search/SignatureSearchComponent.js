@@ -91,8 +91,8 @@ export const Collapsible = (props) => {
 					</Grid>
 					{ active==="scatter" ?
 						<Grid xs={12} style={{padding: 20}}>
-							<Typography style={{marginBottom: 10}} variant="h6">
-								Click on node to view the overlaps. Click <a href={href} style={{textDecoration: "underline"}}>here</a> to view more {`${signature_name}`}.
+							<Typography style={{marginBottom: 10, fontWeight: 'bold'}} variant="body2">
+								Click on a node to view the overlaps. Click <a href={href} style={{textDecoration: "underline"}}>here</a> to view more {`${signature_name}`}.
 							</Typography>
 							<div style={{
 										justifyContent: "center",
@@ -113,8 +113,8 @@ export const Collapsible = (props) => {
 						</Grid>
 						:
 						<Grid xs={12} style={{padding: 20}}>
-							<Typography style={{marginBottom: 10}} variant="h6">
-								Click on  a name to view the overlaps. Click <a href={href} style={{textDecoration: "underline"}}>here</a> to view more {`${signature_name}`}.
+							<Typography style={{marginBottom: 10}} style={{marginBottom: 10, fontWeight: 'bold'}} variant="body2">
+								Click on a name to view the overlaps. Click <a href={href} style={{textDecoration: "underline"}}>here</a> to view more {`${signature_name}`}.
 							</Typography>
 							<TableContainer component={Paper}>
 								<Table aria-label="signature table">
