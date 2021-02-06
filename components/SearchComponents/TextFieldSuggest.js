@@ -131,14 +131,13 @@ export class TextFieldSuggest extends React.Component {
                             ChipInputProps={{
 								inputProps: {
                                     multiline: true,
-                                    rows: rows<0? 0: rows,
+                                    fullWidth: true,
                                     style: {
                                         width:"100%",
-                                        overflow: 'scroll',
                                         background: "#f7f7f7",
                                         padding: 20,
-                                        height: 300,
 										borderRadius: 25,
+                                        overflow: "auto",
                                     },
                                     placeholder: input.length === 0 ? "Place your drug set here": "",
                                 },
@@ -146,7 +145,10 @@ export class TextFieldSuggest extends React.Component {
                                     style: {
 										background: "#f7f7f7",
                                         marginTop: 10,
-										borderRadius: 25,
+                                        borderRadius: 25,
+                                        overflow: "auto",
+                                        height: 350,
+                                        flexFlow: 'column',
 									}
                                 }
                             }}

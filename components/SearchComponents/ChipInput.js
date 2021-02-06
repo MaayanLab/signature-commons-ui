@@ -127,7 +127,6 @@ export class ChipInput extends React.Component {
         onChange={this.onChange}
         onKeyDown={this.onKeyPress}
         onBlur={this.onBlur}
-        fullWidth={true}
         startAdornment={
             this.props.input.length === 0 && !this.props.disableMagnify ?
             <span style={{opacity: 0.5}} 
@@ -137,10 +136,12 @@ export class ChipInput extends React.Component {
               {this.props.chipRenderer({...this.props})}
             </React.Fragment>
         }
+        fullWidth={this.props.input.length === 0}
+        inputProps={this.props.input.length === 0 ? {style: {width: '80%'}}: {style: {width: 'auto'}}}
         {...((this.props.ChipInputProps || {}).inputProps || {})}
         style={{
           display: 'flex',
-          flexWrap: this.props.input.length === 0 && !this.props.disableMagnify? 'nowrap': 'wrap',
+          flexWrap: 'wrap',
           minHeight: 40,
           ...(((this.props.ChipInputProps || {}).inputProps || {}).style || {})
         }}
