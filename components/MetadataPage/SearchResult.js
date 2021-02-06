@@ -41,22 +41,15 @@ export const SearchResult = (props) => {
 					ChipInputProps={{
 						divProps: {
 							style: {
-								background: "#f7f7f7"
+								background: "#f7f7f7", 
+								borderRadius: 25
 							}
+						},
+						inputProps: {
+							placeholder: search_terms.length === 0 ? "Search for any term": "",
 						}
 					}}
 				/>
-				<div style={{textAlign: "center"}}>
-					{searching ? 
-						<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
-							<span className="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
-						</Button>
-					:
-						<Button variant="contained" color="primary" size="small" style={{marginTop:10}}>
-							<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
-						</Button>
-					}
-				</div>
 				{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
 				<Typography align={"center"}  style={{marginTop:10}}>
 				{search_examples.map((v,i)=>(
