@@ -1,6 +1,7 @@
 import React from 'react'
 import { Highlight } from './Highlight'
 import Grid from '@material-ui/core/Grid'
+import {precise} from '../ScorePopper'
 
 export function validURL(str) {
     try {
@@ -18,7 +19,15 @@ export function validURL(str) {
   export function ShowMeta({ value, highlight, hidden }) {
     // if (value.meta!==undefined) value = value.meta
     if (hidden === undefined) hidden = []
-    if (typeof(value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
+    if (typeof value === 'number') {
+      return (
+        <Highlight
+          Component={(props) => <span {...props}>{props.children}</span>}
+          text={precise(value) + ''}
+          highlight={highlight}
+        />
+      )
+    }else if (typeof(value) === 'string' || typeof(value) === 'boolean') {
       if (validURL(value)) {
         if (! validAccession(value)) {
           return (
@@ -62,7 +71,7 @@ export function validURL(str) {
             <Grid container
               spacing={3}
               key={key}>
-              <Grid item xs={6} xl={2} md={3} style={{ 
+              <Grid item xs={6} lg={4} md={5} style={{ 
                 textAlign: 'left',
                 borderRight: 'solid #c9c9c9',
                 borderWidth: '1px', 
@@ -74,7 +83,7 @@ export function validURL(str) {
                   highlight={highlight}
                 />
               </Grid>
-              <Grid item xs={6} xl={10} md={9}>
+              <Grid item xs={6} lg={8} md={7}>
                 <ShowMeta hidden={hidden} value={value[key]} highlight={highlight} />
               </Grid>
             </Grid>
