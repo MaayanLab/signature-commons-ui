@@ -34,7 +34,7 @@ export default function Options(props) {
 					<MenuItem key={option.label} component="a" href={option.href}>
 						<span className={`mdi mdi-24px ${option.icon || 'mdi-apps-box'}`}></span>
 							&nbsp;
-						<Typography style={{ fontSize: 15 }} variant="caption" display="block">
+						<Typography style={{ fontSize: 15, textTransform: "capitalize" }} variant="caption" display="block">
 							{option.label}
 						</Typography>
 					</MenuItem>
@@ -47,7 +47,7 @@ export default function Options(props) {
 					}}>
 						<span className={`mdi mdi-24px ${option.icon || 'mdi-apps-box'}`}></span>
 							&nbsp;
-						<Typography style={{ fontSize: 15 }} variant="caption" display="block">
+						<Typography style={{ fontSize: 15, textTransform: "capitalize" }} variant="caption" display="block">
 							{option.label}
 						</Typography>
 					</MenuItem>
