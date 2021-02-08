@@ -1,7 +1,7 @@
 import isUUID from 'validator/lib/isUUID'
 import FlexSearch from 'flexsearch'
 import { makeTemplate } from '../util/ui/makeTemplate'
-
+import {empty_cleaner} from './build_where'
 
 const validate = require('@dcic/signature-commons-schema').validate.bind({})
 
@@ -367,7 +367,7 @@ export class Model {
 			const children = (await this.children({limit:0}, crawl))[this.child_model]
 			entry[this.child_model] = children
 		}
-		return entry
+		return empty_cleaner(entry)
 	}
 
 	update_entry = async (updated_entry) => {

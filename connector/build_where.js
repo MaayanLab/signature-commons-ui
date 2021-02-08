@@ -55,7 +55,7 @@ export const empty_cleaner = (obj) => {
 			if (new_obj.length>0) return new_obj
 			else return null
 		}
-	}else if(typeof obj === 'object'){
+	}else if(typeof obj === 'object' && obj !== null){
 		if (Object.keys(obj).length === 0) return null
 		else {
 			const new_obj = {}
