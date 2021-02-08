@@ -31,8 +31,8 @@ export const MetadataSearchComponent = (props) => {
 
 	return(
 		<Grid container spacing={1}>
-			<Grid item xs={12} md={2}/>
-			<Grid item xs={12} md={6} lg={7}>
+			<Grid item xs={12} md={1}/>
+			<Grid item xs={12} md={8}>
 				<Grid container spacing={1}>
 					{/* Search Components */}
 					<Grid item xs={12}>
@@ -92,6 +92,10 @@ export const MetadataSearchComponent = (props) => {
 					</Grid>
 					<Grid item xs={12} align="center">
 						<ResultsTab
+							tabsProps={{
+								centered: true,
+								variant: "fullWidth",
+							}}
 							divider
 							{...ModelTabProps}
 						/>
@@ -100,8 +104,8 @@ export const MetadataSearchComponent = (props) => {
 			</Grid>
 			<Grid item xs={12}>
 				<Grid container spacing={1}>
-					<Grid item xs={12} md={2} lg={2}/>
-					<Grid item xs={12} md={6} lg={7}>
+					<Grid item xs={12} md={1}/>
+					<Grid item xs={12} md={8}>
 						{ entries===null ? <CircularProgress/>:
 							<Grid item xs={12}>
 								<DataTable entries={entries} {...DataTableProps}/>
