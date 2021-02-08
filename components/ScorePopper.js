@@ -6,6 +6,16 @@ import Menu from '@material-ui/core/Menu'
 import Icon from '@material-ui/core/Icon'
 import Typography from '@material-ui/core/Typography'
 
+
+export const precise = (value) => {
+  if (Number.isInteger(value)) return value
+  let v = Number.parseFloat(value).toPrecision(4);
+  if (v.length > 5){
+    return Number.parseFloat(value).toExponential(4);
+  } else {
+    return v
+  }
+}
 export default class ScorePopper extends React.Component {
   constructor(props) {
     super(props)
@@ -24,16 +34,6 @@ export default class ScorePopper extends React.Component {
     this.setState({
       anchorEl: null,
     })
-  }
-
-  precise = (value) => {
-    if (Number.isInteger(value)) return value
-    let v = Number.parseFloat(value).toPrecision(4);
-    if (v.length > 5){
-      return Number.parseFloat(value).toExponential(4);
-    } else {
-      return v
-    }
   }
 
   menu = () => {
@@ -56,7 +56,7 @@ export default class ScorePopper extends React.Component {
             <Icon className={`mdi mdi-18px ${scores[key].icon || 'mdi-trophy-award'}`} />
               &nbsp;
             <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-              {`${scores[key].label}: ${this.precise(scores[key].value)}`}
+              {`${scores[key].label}: ${precise(scores[key].value)}`}
             </Typography>
           </MenuItem>
         ))}
@@ -88,7 +88,7 @@ export default class ScorePopper extends React.Component {
             <Typography style={{ fontSize: 10, display: 'block', width: 20, overflow: 'visible' }} variant="caption" display="block">
               {`${scores[sorted].label}:`}
             </Typography>
-            {this.precise(scores[sorted].value)}
+            {precise(scores[sorted].value)}
           </Typography>
         </Button>
         {Object.keys(scores).length > 1? this.menu(): null}
