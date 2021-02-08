@@ -17,7 +17,7 @@ class Resources extends React.PureComponent {
 
     this.state = {
       entries: null,
-      limit: 10,
+      limit: 50,
       skip: 0,
       complete: false
     }
@@ -83,18 +83,18 @@ class Resources extends React.PureComponent {
       return (
         <Grid container spacing={3} style={{marginBottom: 20}}>
           {this.state.entries.map(entry=>(
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid item xs={6} md={4} lg={3}>
               <Button href={entry.info.endpoint || undefined} style={{textTransform: "none"}}>
-              <Card style={{height: 400, padding: 10}}>
+              <Card style={{height: 300, padding: 10}}>
                   {entry.info.icon!==undefined ?
                     <CardMedia
-                      style={{ textAlign: 'center',  margin: 20}}
+                      style={{ textAlign: 'center'}}
                     >
                       
                         <IconComponent {...entry.info.icon}/>
                     </CardMedia>: 
                     <CardMedia
-                      style={{ textAlign: 'center',  margin: 20}}
+                      style={{ textAlign: 'center'}}
                     >
                       <IconComponent icon={"mdi-clipboard-outline"}/>
                     </CardMedia>
@@ -107,7 +107,7 @@ class Resources extends React.PureComponent {
                         </Typography>
                       </Grid>
                       <Grid item xs={12}>
-                        <Typography style={{maxHeight: 150, overflow: "auto"}}>
+                        <Typography variant={"body2"} style={{maxHeight: 150, overflow: "auto"}}>
                           {entry.info.subtitle.text}
                         </Typography>
                       </Grid>
