@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Filter } from '../SearchComponents'
 import { TextFieldSuggest } from '../SearchComponents'
@@ -6,139 +6,25 @@ import Grid from '@material-ui/core/Grid'
 import TablePagination from '@material-ui/core/TablePagination'
 import {ResultsTab} from '../MetadataPage/ResultsTab'
 import {DataTable} from '../DataTable'
-import { Typography, Divider } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
+
 import Collapse from '@material-ui/core/Collapse';
 import Tooltip from '@material-ui/core/Tooltip';
 import {ScatterPlot} from '../MetadataPage/ScatterPlot'
+import {EnrichmentBar} from '../MetadataPage/EnrichmentBar'
+import Link from '@material-ui/core/Link'
+
 import Lazy from '../Lazy'
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 
-const create_data = (table_input) => {
-	const column_names = {}
-	const data = []
-	for (const i of table_input){
-		const d = {
-			name: i.info.name.text,
-			href: i.info.endpoint
-		}
-		column_names["Name"] = "name"
-		for (const f of i.info.tags){
-			d[f.field] = f.text
-			column_names[f.label] = f.field
-		}
-		data.push(d)
-	}
-	return {column_names, data}
-}
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
-const TableCells = ({row, column_names}) => {
-	const cells = []
-	for (const v of Object.values(column_names)){
-		if (v==="name"){
-			cells.push(
-				<TableCell component="th" scope="row">
-					<a href={row.href}>{row[v]}</a>
-				</TableCell>
-			)
-		} else {
-			cells.push(
-				<TableCell align="right">
-					{row[v]}
-				</TableCell>
-			)
-		}
-	}
-	return cells
-}
-
-export const Collapsible = (props) => {
-	const {open, active, signature_name, onButtonClick, onNodeClick, data: lib_data, href} = props
-	if (lib_data === undefined){
-		return <Collapse in={open}><div style={{height: 800, paddingTop: 200, textAlign: "center"}}><CircularProgress/></div></Collapse>
-	}else {
-		const {scatter_data, entries: table_data} = lib_data
-		const {column_names, data} = create_data(table_data)
-		return(
-			<Collapse in={open}>
-				<Grid container style={{height: 800, overflow: "auto"}}>
-					<Grid xs={12} align="right">
-						<Tooltip title={'Scatter Plot'}>
-							<Button
-								color="primary"
-								disabled={active==="scatter"}
-								onClick={()=>onButtonClick("scatter")}
-							>
-								<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
-							</Button>
-						</Tooltip>
-						<Tooltip title={`View Enriched ${signature_name}`}>
-							<Button
-								color="primary"
-								disabled={active==="table"}
-								onClick={()=>onButtonClick("table")}
-							>
-								<span className="mdi mdi-table mdi-24px"/>
-							</Button>
-						</Tooltip>
-					</Grid>
-					{ active==="scatter" ?
-						<Grid xs={12} style={{padding: 20}}>
-							<Typography style={{marginBottom: 10, fontWeight: 'bold'}} variant="body2">
-								Click on a node to view the overlaps. Click <a href={href} style={{textDecoration: "underline"}}>here</a> to view more {`${signature_name}`}.
-							</Typography>
-							<div style={{
-										justifyContent: "center",
-										alignItems: "center"
-									}}>
-								<ScatterPlot
-									data={scatter_data}
-									scatterChartProps={{
-										height:600,
-										width:600,
-										style:{
-											display: "block",
-											margin: "auto"
-										}
-									}}
-									scatterProps={{onClick: onNodeClick }}/>
-							</div>
-						</Grid>
-						:
-						<Grid xs={12} style={{padding: 20}}>
-							<Typography style={{marginBottom: 10}} style={{marginBottom: 10, fontWeight: 'bold'}} variant="body2">
-								Click on a name to view the overlaps. Click <a href={href} style={{textDecoration: "underline"}}>here</a> to view more {`${signature_name}`}.
-							</Typography>
-							<TableContainer component={Paper}>
-								<Table aria-label="signature table">
-									<TableHead>
-										<TableRow>
-											{Object.keys(column_names).map(name=><TableCell align={name==='Name' ? "left": "right"}>{name}</TableCell>)}
-										</TableRow>
-									</TableHead>
-									<TableBody>
-									{data.map((row) => (
-										<TableRow key={row.name}>
-											<TableCells row={row} column_names={column_names}/>	
-										</TableRow>
-									))}
-									</TableBody>
-								</Table>
-							</TableContainer>
-						</Grid>
-					}						
-				</Grid>
-			</Collapse>
-		)	
-	}
-}
 const Examples = (props) => {
 	const {examples, type, onAdd} = props
 	const example_buttons = []
@@ -166,7 +52,8 @@ const SigForm = (props={}) => {
 		searching=false,
 		SearchTabProps,
 		TextFieldSuggestProps,
-		resolving
+		resolving,
+		submitName="Search"
 	} = props
 
 	return(
@@ -200,15 +87,20 @@ const SigForm = (props={}) => {
 				}
 			</Grid>
 			<Grid item xs={12} align="center">
-				{searching || resolving ? 
-					<Button variant="contained" color="primary" size="small" disabled style={{marginTop:10}}>
-						<span className="mdi mdi-loading mdi-spin mdi-24px" /><Typography align={"center"}>Searching...</Typography>
+				<div style={{
+					margin: "auto",
+					position: 'relative',}}>
+					<Button variant="contained" color="primary" size="small" disabled={searching || resolving || TextFieldSuggestProps.disabled} style={{marginTop:10, textTransform: 'capitalize'}} onClick={()=>TextFieldSuggestProps.onSubmit()}>
+						<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>{submitName}</Typography>
 					</Button>
-				:
-					<Button variant="contained" color="primary" size="small" disabled={TextFieldSuggestProps.disabled} style={{marginTop:10}} onClick={()=>TextFieldSuggestProps.onSubmit()}>
-						<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>Search</Typography>
-					</Button>
-				}
+					{(searching || resolving) && <CircularProgress size={24} style={{
+													position: 'absolute',
+													top: '50%',
+													left: '50%',
+													marginTop: -12,
+													marginLeft: -12,
+												}}/>}
+				</div>
 				<Typography align={"center"}  style={{marginTop:10}}>
 					<Examples {...TextFieldSuggestProps} />
 				</Typography>
@@ -217,16 +109,6 @@ const SigForm = (props={}) => {
 	)
 }
 
-const middle_components = (props) => {
-	const {
-		searching,
-		MiddleComponents=[]
-	} = props
-	if (searching) return <CircularProgress/>
-	else {
-		return MiddleComponents.map(c=>c.component(c.props))
-	}
-}
 
 export const Scatter = async (props) => {
 	const {
@@ -245,38 +127,119 @@ export const Scatter = async (props) => {
 	)
 }
 
+const LibraryCardContent = async (props) => {
+	const {entry, process_children, onClick, visualization, order_field} = props
+	const {bar_data, scatter_data} = await process_children(entry.data.id)
+	const viz = visualization[entry.data.id] || "scatter"
+	return (
+		<React.Fragment>
+			{ viz === "bar" ? 
+				<EnrichmentBar data={bar_data} field={order_field} fontColor={"#FFF"} 
+					barProps={{isAnimationActive:false}}
+					barChartProps={{
+						onClick: v=>onClick(v.activePayload[0].payload),
+						height: 300,
+						width: 300
+					}}/>:
+					<ScatterPlot
+						data={scatter_data}
+						scatterChartProps={{
+							height:300,
+							width:300,
+							style:{
+								display: "block",
+								margin: "auto"
+							}
+						}}
+						scatterProps={{ onClick }}/>
+			}
+		</React.Fragment>
+	)
+}
+
 const Results = (props) => {
 	const {
 		entries,
 		searching,
-		PaginationProps,
-		DataTableProps,
-		ResourceTabProps
+		ResourceTabProps,
+		setVisualization,
+		...rest
 	} = props
-
 	if (entries === null) return null
-	else if (searching) return <div style={{textAlign:"center"}}><CircularProgress/></div>
-	else {
+	else if (searching) {
 		return (
-			<React.Fragment>
-				<ResultsTab
-					tabProps={{
-						style:{
-							minWidth: 180,
-							paddingRight: 25,
-							paddingLeft: 25
-						}
-					}}
-					divider
-					{...ResourceTabProps}
-				/>
-				<DataTable entries={entries} {...DataTableProps}/>
-				{/* <TablePagination
-					{...PaginationProps}
-					component="div"
-					align="right"
-				/> */}
-			</React.Fragment>
+			<Grid container spacing={3}>
+				<Grid item xs={12}>
+					<ResultsTab
+						tabProps={{
+							style:{
+								minWidth: 180,
+								paddingRight: 25,
+								paddingLeft: 25
+							}
+						}}
+						divider
+						{...ResourceTabProps}
+					/>
+				</Grid>
+				<Grid item xs={12} align="center">
+					<LinearProgress/>
+				</Grid>
+			</Grid>
+		)
+	}else {
+		return (
+			<Grid container spacing={3}>
+				<Grid item xs={12}>
+					<ResultsTab
+						tabProps={{
+							style:{
+								minWidth: 180,
+								paddingRight: 25,
+								paddingLeft: 25
+							}
+						}}
+						divider
+						{...ResourceTabProps}
+					/>
+					
+				</Grid>
+				<Grid item xs={12}>
+					<Typography variant="h6">
+						Hover over a point to view the p-value and odd ratio of an enriched term. Click on a point to view a list of the overlapping {rest.entity_name}.
+					</Typography>
+				</Grid>
+				{entries.map(entry=>(
+					<Grid item xs={12} sm={6} md={4} key={entry.data.id}>
+						<Card style={{margin: 10, height: 500}}>
+							<CardHeader
+								title={<Link href={entry.info.endpoint}>{entry.info.name.text}</Link>}
+								subheader={`${entry.data.scores.signature_count} Enriched Terms`}
+								action={
+									<ToggleButtonGroup
+										value={rest.visualization[entry.data.id] || "scatter"}
+										exclusive
+										onChange={(e, v)=>{
+											setVisualization(entry.data.id, v)
+										}}
+										aria-label="text alignment"
+									>
+										<ToggleButton value="scatter" aria-label="scatter">
+											<span className="mdi mdi-chart-scatter-plot"/>
+										</ToggleButton>
+										<ToggleButton value="bar" aria-label="bar">
+											<span className="mdi mdi-chart-bar"/>
+										</ToggleButton>
+									</ToggleButtonGroup>
+								  }
+							/>
+							<CardContent>
+								<Lazy reloader={rest.visualization[entry.data.id]}>{async () => LibraryCardContent({entry, ...rest})}</Lazy>
+							</CardContent>
+						</Card>
+					</Grid>
+				))}
+			</Grid>
 		)
 	}
 }
@@ -289,13 +252,15 @@ export const SignatureSearchComponent = (props) => {
 		DataTableProps,
 		PaginationProps,
 		SearchTabProps,
-		ResourcesTabProps,
+		ResourceTabProps,
 		LibrariesTabProps,
 		TextFieldSuggestProps,
 		resolving,
 		MiddleComponents=[],
 		scatter_plot=null,
 		filters,
+		submitName,
+		ResultsProps
 	} = props
 
 	const [expanded, setExpanded] = React.useState(false);
@@ -324,14 +289,14 @@ export const SignatureSearchComponent = (props) => {
 						{...SearchTabProps}
 					/>
 				}
-				{ entries===null ?
+				{ ResourceTabProps===undefined ?
 					<SigForm {...props}/>:						
 					<Collapse in={expanded} timeout="auto" unmountOnExit>
 						<SigForm {...props}/>
 					</Collapse>
 				}
 			</Grid>
-			{ entries!==null ?
+			{ ResourceTabProps!==undefined ?
 				<Grid item xs={12} md={4} lg={3}>
 					<Tooltip title="Click to view input" placement="bottom">
 						
@@ -346,7 +311,7 @@ export const SignatureSearchComponent = (props) => {
 			}
 			{/* <Grid item xs={12} md={2}/> */}
 			<Grid item xs={12}>
-				<Results {...props}/>
+				<Results {...ResultsProps} searching={searching} ResourceTabProps={ResourceTabProps}/>
 			</Grid>
 			{/* <Grid item xs={12} md={4} lg={3} align="center">
 				{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>console.log(e.target.value)}/>)}
@@ -364,6 +329,7 @@ export const SignatureSearchComponent = (props) => {
 
 SignatureSearchComponent.propTypes = {
 	searching: PropTypes.bool,
+	submitName: PropTypes.string,
 	search_terms: PropTypes.arrayOf(PropTypes.string),
 	search_examples: PropTypes.arrayOf(PropTypes.string),
 	chipRenderer: PropTypes.func,
@@ -389,17 +355,12 @@ SignatureSearchComponent.propTypes = {
 		scatterChartProps: PropTypes.object,
 		scatterProps: PropTypes.object,
 	}),
-	DataTableProps: PropTypes.shape({
-		onChipClick: PropTypes.func,
-		InfoCardComponent: PropTypes.node,
-		TopComponents: PropTypes.shape({
-			component: PropTypes.func,
-			props: PropTypes.object
-		}),
-		BottomComponents: PropTypes.shape({
-			component: PropTypes.func,
-			props: PropTypes.object
-		})
+	ResultsProps: PropTypes.shape({
+		entries: PropTypes.array,
+		process_children: PropTypes.func,
+		onClick: PropTypes.func,
+		visualization: PropTypes.objectOf(PropTypes.oneOf['bar', 'scatter', 'table']),
+		setVisualization: PropTypes.func,
 	}),
 	PaginationProps: PropTypes.shape({
 		page: PropTypes.number,
@@ -422,19 +383,6 @@ SignatureSearchComponent.propTypes = {
 		tabsProps: PropTypes.object,
 	}).isRequired,
 	ResourcesTabProps: PropTypes.shape({
-		tabs: PropTypes.arrayOf(PropTypes.shape({
-			label: PropTypes.string.isRequired,
-			href: PropTypes.string,
-			count: PropTypes.number,
-			value: PropTypes.string,
-		})),
-		TabComponent: PropTypes.node,
-		TabsComponent: PropTypes.node,
-		value: PropTypes.string.isRequired,
-		handleChange: PropTypes.func,
-		tabsProps: PropTypes.object,
-	}).isRequired,
-	LibrariesTabProps: PropTypes.shape({
 		tabs: PropTypes.arrayOf(PropTypes.shape({
 			label: PropTypes.string.isRequired,
 			href: PropTypes.string,
