@@ -32,12 +32,12 @@ export const IconComponent = ({
         placement="bottom"
         {...TooltipProps}
     >
-        <Grid container>
-            <Grid item xs={12}>
+        <Grid container style={{height: 50}}>
+            <Grid item xs={12} style={{margin:"auto"}}>
                 { icon === undefined ? 
                     <img style={{
-                            height: 50,
-                            maxWidth: 100
+                            maxHeight: 50,
+                            maxWidth: 100,
                             }}
                             alt={alt}
                             src={src}
