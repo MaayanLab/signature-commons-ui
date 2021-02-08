@@ -50,7 +50,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			query: {skip:0, limit:10},
 			filters: {},
 			paginate: false,
-			visualization: "scatter",
+			visualization: "bar",
 			visualize: false,
 			expanded: false,
 		}
@@ -69,7 +69,7 @@ export default class EnrichmentPage extends React.PureComponent {
 
 			const { type, model_name, enrichment_id, id } = this.props.match.params
 			const { lib_to_resource, resource_to_lib } = this.props.resource_libraries
-			const {model, schemas} = this.props
+			const {model, schemas, nav, preferred_name} = this.props
 			
 			await this.process_enrichment_id()
 			
@@ -90,14 +90,25 @@ export default class EnrichmentPage extends React.PureComponent {
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
 										`#/Enrichment/${type}/${enrichment_id}/${model_name}/id`)
 			const parent = labelGenerator(await entry_object.parent(), schemas, 
-										`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[entry_object.parent_model]}/`)
+										`#/Enrichment/${type}/${enrichment_id}/${preferred_name[entry_object.parent_model]}/`)
 			await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
+			
+			let back_endpoint
+			if (model==='signatures') {
+				back_endpoint = `#${nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${preferred_name.resources}/${entry.data.library.resource.id}`
+			}else if (model==='libraries') {
+				back_endpoint = `#${nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${preferred_name.resources}/${entry.data.resource.id}`
+			}else if (model==='resources') {
+				back_endpoint = `#${nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${preferred_name.resources}/${entry.data.id}`
+			}
+			
 			this.setState({
 				entry_object,
 				entry,
 				parent,
 				order_field,
-				order
+				order,
+				back_endpoint
 			}, ()=> {
 				this.process_children()
 			})	
@@ -603,7 +614,7 @@ export default class EnrichmentPage extends React.PureComponent {
 				<Grid item xs={12}>
 					<Card>
 						<CardContent>
-							<Grid container spacing={3}>
+							<Grid container spacing={1}>
 								<Grid item md={2} xs={4}>
 									<CardMedia style={{ marginTop: -15, paddingLeft: 13 }}>
 										<IconButton
@@ -627,11 +638,11 @@ export default class EnrichmentPage extends React.PureComponent {
 														}}
 														aria-label="text alignment"
 													>
+														<ToggleButton value="bar" aria-label="bar">
+															<span className="mdi mdi-chart-bar mdi-rotate-90 mdi-24px"/>
+														</ToggleButton>
 														<ToggleButton value="scatter" aria-label="scatter">
 															<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
-														</ToggleButton>
-														<ToggleButton value="bar" aria-label="bar">
-															<span className="mdi mdi-chart-bar mdi-24px"/>
 														</ToggleButton>
 													</ToggleButtonGroup>
 												</React.Fragment>: null
@@ -642,16 +653,22 @@ export default class EnrichmentPage extends React.PureComponent {
 												</Button>
 											</Tooltip>
 										</Grid>
-										<Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-											<Grid item xs={12}>
+										<Grid item xs={12}>
+											<Collapse in={this.state.expanded} timeout="auto" unmountOnExit>											
 												{this.metaTab()}
-											</Grid>
-											
-										</Collapse>
+											</Collapse>
+										</Grid>
 									</Grid>
 								</Grid>
 								<Grid item xs={12}>
 									{this.visualizations()}
+								</Grid>
+								<Grid item xs={12} align="right">
+								<Tooltip title={"Go Back to search results"}>
+									<Button href={this.state.back_endpoint}>
+										<span className="mdi mdi-arrow-left-bold mdi-24px"/>
+									</Button>
+								</Tooltip>
 								</Grid>
 							</Grid>
 						</CardContent>
