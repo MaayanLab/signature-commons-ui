@@ -29,6 +29,9 @@ import {EnrichmentBar} from './EnrichmentBar'
 import {ScatterPlot} from './ScatterPlot'
 import Lazy from '../Lazy'
 
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+
 const id_mapper = {
 	resources: "resource_id",
 	libraries: "library_id",
@@ -47,7 +50,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			query: {skip:0, limit:10},
 			filters: {},
 			paginate: false,
-			visualization: "bar",
+			visualization: "scatter",
 			visualize: false,
 			expanded: false,
 		}
@@ -155,13 +158,10 @@ export default class EnrichmentPage extends React.PureComponent {
 					e["RightComponents"].push({
 						component: this.score_popper,
 						props: {
-							scores: Object.entries(entry.scores).reduce((acc,[label,value])=>({
-								...acc,
-								[label]: {
-									label: label.replace(/_/,' '),
-									value, 
-								}
-							}), {}),								
+							scores: {"Enriched Terms": {
+								label: "Enriched Terms",
+								value: entry.scores.signature_count
+							}},								
 							GridProps: {
 								style: {
 									textAlign: "right",
@@ -429,21 +429,24 @@ export default class EnrichmentPage extends React.PureComponent {
 
 	ChildComponent = () => {
 		if (this.state.children_count === undefined) return <CircularProgress />
-		const tabs = Object.entries(this.state.children_count).map(([k,count])=>{
-			const label = this.props.preferred_name[k] || k
-			return {
-				label,
-				href: this.props.location.pathname + `/${label}`,
-				count,
-				value: k
-			}
-		})
+		const entry_name = (this.state.entry.info.name || {}).text || this.props.match.params.id
+		const children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
+		const count = this.state.children_count[this.state.entry_object.child_model]
+		let label
+		if (this.props.model === "signatures"){
+			label = `The input ${this.props.preferred_name_singular.signatures.toLowerCase()} has ${count} overlapping ${children_name} with ${entry_name}`
+		}else if (this.props.model === "libraries") {
+			label = `There are ${count} enriched terms in ${entry_name}`
+		}else if (this.props.model === "resources") {
+			label = `There are ${count} ${children_name} in ${entry_name} with ${this.state.entry.data.scores.signature_count} enriched terms`
+		}
 		return(
 			<React.Fragment>
 				<SearchResult
 					searching={this.state.searching}
 					search_terms={this.state.query.search || []}
 					search_examples={[]}
+					label={label}
 					filters={Object.values(this.state.filters)}
 					onSearch={this.onSearch}
 					onFilter={this.onClickFilter}
@@ -459,14 +462,6 @@ export default class EnrichmentPage extends React.PureComponent {
 						count:  this.state.children_count[this.state.tab],
 						onChangePage: (event, page) => this.handleChangePage(event, page),
 						onChangeRowsPerPage: this.handleChangeRowsPerPage,
-					}}
-					TabProps={{
-						tabs,
-						value:this.state.tab,
-						handleChange:this.handleTabChange,
-						tabsProps:{
-							centered: true
-						},
 					}}
 					schema={this.state.entry.schema}
 				/>
@@ -508,9 +503,14 @@ export default class EnrichmentPage extends React.PureComponent {
 	metaTab = () => {
 		const entry = this.state.entry
 		return (
-			<ShowMeta
-				value={{...entry.data.meta, ...entry.data.scores}}
-			/>
+			<React.Fragment>
+				<ShowMeta
+					value={entry.data.meta}
+				/>
+				<ShowMeta
+					value={entry.data.scores}
+				/>
+			</React.Fragment>
 		)
 	}
 
@@ -567,14 +567,14 @@ export default class EnrichmentPage extends React.PureComponent {
 						pathname: `/Enrichment/${type}/${enrichment_id}/${model}/${id}`,
 					})
 				}}}/>
-				<Typography>Click on a node to explore a {this.props.preferred_name_singular.signatures}.</Typography>
+				<Typography>Hover over a point to view the p-value and odd ratio of an enriched term. Click on a point to view a list of the overlapping {this.props.preferred_name.entities.toLowerCase()}.</Typography>
 			</React.Fragment>
 		)
 	}
 
 
 	visualizations = () => {
-		if (this.state.searching) return <CircularProgress/>
+		if (this.state.searching) return <div style={{height: 400, textAlign: "center"}}><CircularProgress/></div>
 		if (!this.state.visualize) return null
 		return (
 			<Grid container spacing={1}>
@@ -619,24 +619,21 @@ export default class EnrichmentPage extends React.PureComponent {
 										<Grid item xs={3} align="right">
 											{this.state.visualize ?
 												<React.Fragment>
-													<Tooltip title={'Bar Chart'}>
-														<Button
-															color="primary"
-															disabled={this.state.visualization==="bar"}
-															onClick={()=>this.setState({visualization: "bar"})}
-														>
-															<span className="mdi mdi-chart-bar mdi-24px"/>
-														</Button>
-													</Tooltip>
-													<Tooltip title={'Scatter Plot'}>
-														<Button
-															color="primary"
-															disabled={this.state.visualization==="scatter"}
-															onClick={()=>this.setState({visualization: "scatter"})}
-														>
+													<ToggleButtonGroup
+														value={this.state.visualization}
+														exclusive
+														onChange={(e, visualization)=>{
+															this.setState({visualization})
+														}}
+														aria-label="text alignment"
+													>
+														<ToggleButton value="scatter" aria-label="scatter">
 															<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
-														</Button>
-													</Tooltip>	
+														</ToggleButton>
+														<ToggleButton value="bar" aria-label="bar">
+															<span className="mdi mdi-chart-bar mdi-24px"/>
+														</ToggleButton>
+													</ToggleButtonGroup>
 												</React.Fragment>: null
 											}
 											<Tooltip title={`${this.state.expanded ? "Collapse": "View"} ${this.props.preferred_name_singular[this.props.model]} information`}>
@@ -651,15 +648,11 @@ export default class EnrichmentPage extends React.PureComponent {
 											</Grid>
 											
 										</Collapse>
-										<Grid item xs={12}>
-											{this.visualizations()}
-										</Grid>
 									</Grid>
 								</Grid>
-								{/* <Grid item xs={12}>
-									<Divider/>
-									
-								</Grid> */}
+								<Grid item xs={12}>
+									{this.visualizations()}
+								</Grid>
 							</Grid>
 						</CardContent>
 					</Card>

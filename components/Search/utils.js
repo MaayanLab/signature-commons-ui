@@ -153,12 +153,14 @@ export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_
 	for (const c of entries){
 		const v = c.data.scores[order_field]
 		const value = order === 'DESC' ? v: -Math.log(v)
-		const col = color.darken(-((value/firstVal) - 1))
+		const col = color.lighten(-((value/firstVal) - 1))
 		const d = {
 			name: c.info.name.text,
 			value,
 			color: c.data.scores['p-value'] < 0.05 ? col.hex(): inactiveColor,
 			id: c.data.id,
+			pval: c.data.scores['p-value'],
+			oddsratio: c.data.scores['odds ratio']
 		}	
 		data.push(d)		
 	}

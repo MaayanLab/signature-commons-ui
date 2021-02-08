@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import { precise } from '../ScorePopper'
 
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
@@ -9,11 +12,13 @@ import {
 const CustomTooltip = ({ active, payload }) => {
 	if (active) {
 	  return (
-		<div className="custom-tooltip" style={{textAlign: "left", background:"#FFF", outline:"1px solid #000", opacity:"0.8"}}>
-		  <Typography>{payload[0].payload.name}</Typography>
-		  <Typography>{`odds ratio: ${payload[0].payload.oddsratio}`}</Typography>
-		  <Typography>{`p-value: ${payload[0].payload.pval}`}</Typography>
-		</div>
+		<Card style={{opacity:"0.8"}}>
+			<CardContent>
+				<Typography variant="h6">{payload[0].payload.name}</Typography>
+				<Typography>{`odds ratio: ${precise(payload[0].payload.oddsratio)}`}</Typography>
+				<Typography>{`p-value: ${precise(payload[0].payload.pval)}`}</Typography>
+			</CardContent>
+		</Card>
 	  )
 	}
   
