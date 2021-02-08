@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import Breadcrumbs from '@material-ui/lab/Breadcrumbs'
+import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import Hidden from '@material-ui/core/Hidden'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -181,7 +181,7 @@ class Header extends React.Component {
             </Hidden>
           </Toolbar>
         </AppBar>
-        {paths.length <= 3 ? <div style={{height:25}}/> : (
+        {paths.length <= 3 ? <div style={{height:30}}/> : (
             <Breadcrumbs separator={<span className="mdi mdi-arrow-right-bold-circle-outline"/>} aria-label="breadcrumb" component={'div'} style={{marginTop:10, marginLeft: 20, height: 20}}>
               {paths.slice(1).map((path, i) => {
                 const href = paths.slice(0, i + 2).join('/')
