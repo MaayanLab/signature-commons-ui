@@ -38,8 +38,8 @@ const styles = (theme) => ({
   },
   menuItem: {
     color: 'inherit',
-    paddingLeft: 30,
-    paddingRight: 30
+    paddingLeft: 20,
+    paddingRight: 20
   },
   paper: {
     padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
@@ -132,7 +132,7 @@ class Header extends React.Component {
       <header {...this.props.ui_values.header_info.header_props}>
         <AppBar position="static" color="primary" style={{height: 80, paddingTop: 5, paddingBottom: 5}}>
           <Toolbar>
-            <Hidden smDown>
+            <Hidden mdDown>
               <Typography variant="h3" color="inherit" className={classes.grow}>
                 <Link
                   to="/"
@@ -147,21 +147,18 @@ class Header extends React.Component {
                 <Nav classes={classes} {...rest}/>
               </List>
             </Hidden>
-            <Hidden mdUp>
+            <Hidden lgUp>
+              <Typography variant="h3" color="inherit" className={classes.grow}>
+                <Link
+                  to="/"
+                  className={classes.header}
+                >
+                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
+                </Link>
+              </Typography>
               <Button edge="start" className={classes.menuButton} onClick={this.toggleDrawer} color="inherit" aria-label="menu">
                 <MenuIcon />
               </Button>
-              {[this.props.ui_values.nav.MetadataSearch.endpoint, this.props.ui_values.nav.SignatureSearch.endpoint + '/Overlap', this.props.ui_values.nav.SignatureSearch.endpoint + '/Rank'].indexOf(this.props.location.pathname) > -1 ?
-                <div className={classes.grow}/> :
-                <Typography variant="h3" color="inherit" className={classes.grow}>
-                  <Link
-                    to="/"
-                    className={classes.header}
-                  >
-                    {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
-                  </Link>
-                </Typography>
-              }
               <SwipeableDrawer
                 open={this.state.open}
                 onClose={this.toggleDrawer}
@@ -182,7 +179,13 @@ class Header extends React.Component {
           </Toolbar>
         </AppBar>
         {paths.length <= 3 ? <div style={{height:30}}/> : (
-            <Breadcrumbs separator={<span className="mdi mdi-arrow-right-bold-circle-outline"/>} aria-label="breadcrumb" component={'div'} style={{marginTop:10, marginLeft: 20, height: 20}}>
+            <Breadcrumbs separator={<span className="mdi mdi-arrow-right-bold-circle-outline"/>}
+              aria-label="breadcrumb"
+              component={'div'}
+              style={{
+                paddingLeft: 15,
+                height: 30,
+              }}>
               {paths.slice(1).map((path, i) => {
                 const href = paths.slice(0, i + 2).join('/')
                 return (
