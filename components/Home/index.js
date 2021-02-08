@@ -209,7 +209,7 @@ class Home extends React.PureComponent {
     let model = 'resources'
     if (props.match.params.model){
       model = reverse_preferred[props.match.params.model]
-      if (['libraries', 'resources'].indexOf(model)<0) return <Redirect to='/not-found'/>
+      if (model!=='resources') return <Redirect to='/not-found'/>
     }
     return (
       <SignatureSearch schemas={this.props.schemas}
