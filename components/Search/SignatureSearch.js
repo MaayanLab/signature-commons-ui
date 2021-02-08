@@ -646,9 +646,8 @@ export default class SignatureSearch extends React.PureComponent {
 							tabs: this.state.resources_tabs,
 							value: this.state.resource_id,
 							tabsProps:{
-								variant: "scrollable",
-								scrollButtons: "auto",
-								"aria-label": "scrollable auto tabs example",
+								centered: true,
+								indicator: false,
 							},
 							handleChange: this.handleTabChange
 						}}

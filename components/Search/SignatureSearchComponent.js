@@ -25,6 +25,11 @@ import CardContent from '@material-ui/core/CardContent';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import { withStyles } from '@material-ui/core/styles';
+
+
 const Examples = (props) => {
 	const {examples, type, onAdd} = props
 	const example_buttons = []
@@ -109,28 +114,10 @@ const SigForm = (props={}) => {
 	)
 }
 
-
-export const Scatter = async (props) => {
-	const {
-		scatterChartProps,
-		scatterProps,
-		data
-	} = props
-	if (data===undefined || data===null) return null
-	return (
-		<React.Fragment>
-			<ScatterPlot data={Object.keys(data)}
-				{...scatterProps}
-				{...scatterChartProps}
-			/>		
-		</React.Fragment>
-	)
-}
-
 const LibraryCardContent = async (props) => {
 	const {entry, process_children, onClick, visualization, order_field} = props
 	const {bar_data, scatter_data} = await process_children(entry.data.id)
-	const viz = visualization[entry.data.id] || "scatter"
+	const viz = visualization[entry.data.id] || "bar"
 	return (
 		<React.Fragment>
 			{ viz === "bar" ? 
@@ -204,11 +191,6 @@ const Results = (props) => {
 					/>
 					
 				</Grid>
-				<Grid item xs={12}>
-					<Typography variant="h6">
-						Hover over a point to view the p-value and odd ratio of an enriched term. Click on a point to view a list of the overlapping {rest.entity_name}.
-					</Typography>
-				</Grid>
 				{entries.map(entry=>(
 					<Grid item xs={12} sm={6} md={4} key={entry.data.id}>
 						<Card style={{margin: 10, height: 500}}>
@@ -217,18 +199,18 @@ const Results = (props) => {
 								subheader={`${entry.data.scores.signature_count} Enriched Terms`}
 								action={
 									<ToggleButtonGroup
-										value={rest.visualization[entry.data.id] || "scatter"}
+										value={rest.visualization[entry.data.id] || "bar"}
 										exclusive
 										onChange={(e, v)=>{
 											setVisualization(entry.data.id, v)
 										}}
 										aria-label="text alignment"
 									>
+										<ToggleButton value="bar" aria-label="bar">
+											<span className="mdi mdi-chart-bar mdi-rotate-90"/>
+										</ToggleButton>
 										<ToggleButton value="scatter" aria-label="scatter">
 											<span className="mdi mdi-chart-scatter-plot"/>
-										</ToggleButton>
-										<ToggleButton value="bar" aria-label="bar">
-											<span className="mdi mdi-chart-bar"/>
 										</ToggleButton>
 									</ToggleButtonGroup>
 								  }
@@ -243,6 +225,22 @@ const Results = (props) => {
 		)
 	}
 }
+
+export const ResourceCustomTabs = withStyles(() => ({
+	flexContainer: {
+	  flexWrap: 'wrap',
+	},
+	indicator: {
+		opacity: 0
+	}
+  }))((props) => <Tabs {...props} />);
+
+
+  export const ResourceCustomTab = withStyles(() => ({
+	selected: {
+		borderBottom: "2px solid"
+	},
+  }))((props) => <Tab {...props} />);
 
 export const SignatureSearchComponent = (props) => {
 	const {
@@ -311,7 +309,11 @@ export const SignatureSearchComponent = (props) => {
 			}
 			{/* <Grid item xs={12} md={2}/> */}
 			<Grid item xs={12}>
-				<Results {...ResultsProps} searching={searching} ResourceTabProps={ResourceTabProps}/>
+				<Results {...ResultsProps} searching={searching} ResourceTabProps={{
+					...ResourceTabProps,
+					TabComponent: ResourceCustomTab,
+					TabsComponent: ResourceCustomTabs,
+					}}/>
 			</Grid>
 			{/* <Grid item xs={12} md={4} lg={3} align="center">
 				{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>console.log(e.target.value)}/>)}
