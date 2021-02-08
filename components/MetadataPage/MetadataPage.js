@@ -340,15 +340,19 @@ export default class MetadataPage extends React.PureComponent {
 
 	ChildComponent = () => {
 		if (this.state.children_count === undefined) return <CircularProgress />
-		const tabs = Object.entries(this.state.children_count).map(([k,count])=>{
-			const label = this.props.preferred_name[k] || k
-			return {
-				label,
-				href: this.props.location.pathname + `/${label}`,
-				count,
-				value: k
-			}
-		})
+		const entry_name = (this.state.entry.info.name || {}).text || this.props.match.params.id
+		const children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
+		const count = this.state.children_count[this.state.entry_object.child_model]
+		let label
+		if (this.props.model === "signatures"){
+			label = `${entry_name} has ${count} ${children_name} in its ${this.props.preferred_name_singular.signatures.toLowerCase()}.`
+		}else if (this.props.model === "libraries") {
+			label = `There are ${count} ${children_name} in ${entry_name}.`
+		}else if (this.props.model === "resources") {
+			label = `There are ${count} ${children_name} in ${entry_name}.`
+		} else {
+			label = `There are ${count} ${children_name} that contains ${entry_name}.`
+		}
 		return(
 			<React.Fragment>
 				<SearchResult
@@ -359,6 +363,7 @@ export default class MetadataPage extends React.PureComponent {
 					onSearch={this.onSearch}
 					onFilter={this.onClickFilter}
 					entries={this.state.children}
+					label={label}
 					DataTableProps={{
 						onChipClick: v=>{
 							if (v.clickable) this.onClickFilter(v.field, v.text)
@@ -370,14 +375,6 @@ export default class MetadataPage extends React.PureComponent {
 						count:  this.state.children_count[this.state.tab],
 						onChangePage: (event, page) => this.handleChangePage(event, page),
 						onChangeRowsPerPage: this.handleChangeRowsPerPage,
-					}}
-					TabProps={{
-						tabs,
-						value:this.state.tab,
-						handleChange:this.handleTabChange,
-						tabsProps:{
-							centered: true
-						},
 					}}
 					schema={this.state.entry.schema}
 				/>
