@@ -7,6 +7,7 @@ import {ResultsTab} from './ResultsTab'
 import {DataTable, ShowMeta} from '../DataTable'
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 export const SearchResult = (props) => {
 	const {
@@ -21,12 +22,26 @@ export const SearchResult = (props) => {
 		DataTableProps,
 		PaginationProps,
 		TabProps,
+		label
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
 
 	return(
 		<Grid container spacing={1}>
+			<Grid item xs={12} md={8} lg={9}>
+				{searching?<LinearProgress/>:
+					<React.Fragment>
+						<Typography variant={"h6"} style={{marginBottom: 10}}>{label}</Typography>
+						<DataTable entries={entries} {...DataTableProps}/>
+						<TablePagination
+							{...PaginationProps}
+							component="div"
+							align="right"
+						/>
+					</React.Fragment>
+				}
+			</Grid>
 			<Grid item xs={12} md={4} lg={3}>
 				<ChipInput 
 					input={search_terms}
@@ -63,20 +78,6 @@ export const SearchResult = (props) => {
 					</React.Fragment>
 				))}
 				</Typography>
-			</Grid>
-			<Grid item xs={12} md={8} lg={9}>
-				<ResultsTab
-					tabsProps={{
-						centered: true
-					}}
-					{...TabProps}
-				/>
-				<DataTable entries={entries} {...DataTableProps}/>
-				<TablePagination
-					{...PaginationProps}
-					component="div"
-					align="right"
-				/>
 			</Grid>
 		</Grid>
 	)
