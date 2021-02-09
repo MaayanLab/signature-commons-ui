@@ -586,7 +586,7 @@ export default class EnrichmentPage extends React.PureComponent {
 
 	visualizations = () => {
 		if (this.state.searching) return <div style={{height: 400, textAlign: "center"}}><CircularProgress/></div>
-		if (!this.state.visualize) return null
+		if (this.state.children.length === 0) return null
 		return (
 			<Grid container spacing={1}>
 				<Grid item xs={12} align="right">
@@ -628,7 +628,7 @@ export default class EnrichmentPage extends React.PureComponent {
 											{ this.pageTitle() }
 										</Grid>
 										<Grid item xs={3} align="right">
-											{this.state.visualize ?
+											{this.state.visualize && this.state.children.length > 0 ?
 												<React.Fragment>
 													<ToggleButtonGroup
 														value={this.state.visualization}
