@@ -90,17 +90,34 @@ export function Nav(props) {
           </Typography>
         </ListItemLink> : null
       }
-      {ui_values.extraNav.map(nav=>(
-        <ListItemLink
-          className={ classes.menuItem}
-          href={nav.endpoint.startsWith("/") ? `#${nav.endpoint}`: nav.endpoint}
-        >
-            <Typography variant={'button'} style={{fontSize: 20}}>
-              {nav.navName}
-            </Typography>
-        </ListItemLink>
-        
-      ))}
+      {ui_values.extraNav.map(nav=>{
+        if (nav.type === 'external') {
+          return (
+            <ListItemLink
+              className={ classes.menuItem}
+              href={nav.endpoint}
+              target = "_blank" 
+              rel = "noopener noreferrer"
+            >
+                <Typography variant={'button'} style={{fontSize: 20}}>
+                  {nav.navName}
+                </Typography>
+            </ListItemLink>
+          )
+        }else {
+          return (
+            <ListItemLink
+              className={ classes.menuItem}
+              href={`#${nav.endpoint}`}
+            >
+              <Typography variant={'button'} style={{fontSize: 20}}>
+                {nav.navName}
+              </Typography>
+            </ListItemLink>
+          )
+        }
+      }
+      )}
       <ListItemLink
         selected={location.pathname === '/API'}
         className={ classes.menuItem}
