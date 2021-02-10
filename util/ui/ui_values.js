@@ -59,6 +59,35 @@ const default_values = {
         endpoint: '/API',
       },
     },
+    extraNav: [
+      {
+        type: "external",
+        endpoint: "https://appyters.maayanlab.cloud/Drugmonizome_ML/",
+        navName: "Drugmonizome ML",
+
+      },
+      {
+        type: "iframe",
+        endpoint: "/Tutorial",
+        navName: "Tutorial",
+        iframe: {
+          "website-tutorial": {
+            src: "https://nbviewer.jupyter.org/github/MaayanLab/Drugmonizome/blob/master/website-tutorial.ipynb",
+            id: "website-tutorial",
+            frameBorder: 0,
+            height: 5500,
+            name: "Website Tutorial"
+          },
+          "api-tutorial": {
+            src: "https://nbviewer.jupyter.org/github/MaayanLab/Drugmonizome/blob/master/api-tutorial.ipynb",
+            id: "api-tutorial",
+            frameBorder: 0,
+            height: 11000,
+            name: "API Tutorial"
+          }
+        }
+      }
+    ],
     preferred_name_singular: {
       libraries: 'Dataset',
       signatures: 'Signature',

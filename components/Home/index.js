@@ -22,6 +22,8 @@ import MetadataSearch from '../Search/MetadataSearch'
 import SignatureSearch from '../Search/SignatureSearch'
 import MetadataPage from '../MetadataPage'
 
+import {IFramePage} from '../IFramePage'
+
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
 import { closeSnackBar, initializeTheme } from '../../util/redux/actions'
@@ -257,10 +259,24 @@ class Home extends React.PureComponent {
     )
   }
 
+ 
   render = () => {
     if (this.props.theme === null) {
       return <CircularProgress />
     }
+    const extra_nav = []
+    for (const nav of this.props.ui_values.extraNav){
+      if (nav.type !== 'external') {
+        extra_nav.push(
+          <Route
+            path={nav.endpoint}
+            exact
+            component={(props)=><IFramePage {...props} {...nav}/>}
+          />
+        )
+      }
+    }
+    
     return (
       <MuiThemeProvider theme={this.props.theme}>
         <Snackbar
@@ -412,6 +428,7 @@ class Home extends React.PureComponent {
               path={`${this.props.ui_values.nav.API.endpoint || '/API'}`}
               component={this.api}
             />
+            {extra_nav}
             <Route
               path="/not-found"
               component={(props) => {

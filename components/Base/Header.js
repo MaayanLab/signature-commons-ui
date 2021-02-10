@@ -90,14 +90,17 @@ export function Nav(props) {
           </Typography>
         </ListItemLink> : null
       }
-      <ListItemLink
-        className={ classes.menuItem}
-        href={'https://appyters.maayanlab.cloud/Drugmonizome_ML/'}
-      >
-          <Typography variant={'button'} style={{fontSize: 20}}>
-            Drugmonizome ML
-          </Typography>
-      </ListItemLink>
+      {ui_values.extraNav.map(nav=>(
+        <ListItemLink
+          className={ classes.menuItem}
+          href={nav.endpoint.startsWith("/") ? `#${nav.endpoint}`: nav.endpoint}
+        >
+            <Typography variant={'button'} style={{fontSize: 20}}>
+              {nav.navName}
+            </Typography>
+        </ListItemLink>
+        
+      ))}
       <ListItemLink
         selected={location.pathname === '/API'}
         className={ classes.menuItem}
