@@ -585,8 +585,9 @@ export default class EnrichmentPage extends React.PureComponent {
 
 
 	visualizations = () => {
+		if (this.state.model !== 'libraries' ) return null
 		if (this.state.searching) return <div style={{height: 400, textAlign: "center"}}><CircularProgress/></div>
-		if (this.state.children.length === 0) return null
+		if (this.state.children.length === 0 ) return null
 		return (
 			<Grid container spacing={1}>
 				<Grid item xs={12} align="right">
