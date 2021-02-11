@@ -8,6 +8,7 @@ import CardMedia from '@material-ui/core/CardMedia'
 import {ShowMeta} from '../DataTable'
 import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
+
 import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
 import IconButton from '../IconButton'
@@ -31,6 +32,7 @@ import Lazy from '../Lazy'
 
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import { LinearProgress } from '@material-ui/core'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -188,7 +190,7 @@ export default class EnrichmentPage extends React.PureComponent {
 						props: {
 							data: [
 								{
-									text: `Download Overlaps`,
+									text: `Download Overlaps as a text file`,
 									onClick: () => {
 										download_signature({
 											entry,
@@ -198,7 +200,21 @@ export default class EnrichmentPage extends React.PureComponent {
 											model: entry_object.child_model,
 										})
 									},
-									icon: "mdi-download"
+									icon: "mdi-note-text-outline"
+								},
+								{
+									text: `Download Overlaps as JSON`,
+									onClick: () => {
+										download_signature({
+											entry,
+											schemas,
+											filename: `${e.info.name.text}.txt`,
+											resolver: this.props.resolver,
+											model: entry_object.child_model,
+											serialize: true
+										})
+									},
+									icon: "mdi-json"
 								}
 							]
 						}
@@ -369,6 +385,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		const curr_search = decodeURI(this.props.location.search)
 		if (prevProps.match.params.id !== this.props.match.params.id){
 			this.setState({
+				entry_object: null,
 				searching: true,
 				filters: {},
 				visualize: false,
@@ -377,6 +394,7 @@ export default class EnrichmentPage extends React.PureComponent {
 				this.process_entry()
 			})
 		} else if (prev_search !== curr_search){
+			console.log("not here")
 			this.setState({
 				searching: true,
 				paginate: (this.props.location.state || {}).paginate ? true: false
@@ -439,7 +457,7 @@ export default class EnrichmentPage extends React.PureComponent {
 	}
 
 	ChildComponent = () => {
-		if (this.state.children_count === undefined) return <CircularProgress />
+		if (this.state.children_count === undefined || this.state.entry_object === null) return <LinearProgress />
 		const entry_name = (this.state.entry.info.name || {}).text || this.props.match.params.id
 		const children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
 		const count = this.state.children_count[this.state.entry_object.child_model]
@@ -585,9 +603,9 @@ export default class EnrichmentPage extends React.PureComponent {
 
 
 	visualizations = () => {
-		if (this.state.model !== 'libraries' ) return null
+		if (this.state.entry_object === null || this.state.entry_object.model !== 'libraries' ) return null
 		if (this.state.searching) return <div style={{height: 400, textAlign: "center"}}><CircularProgress/></div>
-		if (this.state.children.length === 0 ) return null
+		if (this.state.children.length === 0) return null
 		return (
 			<Grid container spacing={1}>
 				<Grid item xs={12} align="right">
