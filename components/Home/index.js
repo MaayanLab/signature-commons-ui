@@ -38,6 +38,7 @@ const mapStateToProps = (state) => {
     theme: state.theme,
     error_message: state.error_message,
     schemas: state.serverSideProps.schemas,
+    serverSideProps: state.serverSideProps,
     search_filters: state.search_filters,
     resource_libraries: {
       lib_id_to_name: state.lib_id_to_name,
@@ -255,7 +256,7 @@ class Home extends React.PureComponent {
 
   about = (props) => {
     return (
-      <About {...props} ui_values={this.props.ui_values}/>
+      <About {...props} ui_values={this.props.ui_values} stats={this.props.serverSideProps}/>
     )
   }
 
@@ -410,12 +411,10 @@ class Home extends React.PureComponent {
                 component={this.resources}
               /> : null
             }
-            {this.props.ui_values.about !== undefined ?
-              <Route
-                path={'/About'}
-                component={this.about}
-              /> : null
-            }
+            <Route
+              path={'/About'}
+              component={this.about}
+            />
             <Route
               path="/:model/:id"
               component={this.metadata_pages}

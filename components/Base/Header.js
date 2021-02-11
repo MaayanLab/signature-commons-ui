@@ -127,6 +127,15 @@ export function Nav(props) {
             API
           </Typography>
       </ListItemLink>
+      <ListItemLink
+        selected={location.pathname === '/About'}
+        className={ classes.menuItem}
+        href={'#/About'}
+      >
+         <Typography variant={'button'} style={{fontSize: 20}}>
+            About
+          </Typography>
+      </ListItemLink>
     </React.Fragment>
   )
 }
