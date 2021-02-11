@@ -43,6 +43,14 @@ export const value_by_type = {
 	  } else {
 		return { text: val, label }
 	  }
+  }, 
+  'alternative': ({ label, prop, data }) => {
+	  const val = makeTemplate(prop.text, data)
+	  if (val === 'undefined') {
+		return null
+	  } else {
+		return { text: val, label }
+	  }
   },
 	'img': ({ label, prop, data }) => {
 	  const src = makeTemplate(prop.src, data)
@@ -199,6 +207,9 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
         }
         if (prop.type === "subtitle") {
           if (val !== null) info.subtitle = { ...val }
+        }
+        if (prop.type === "alternative") {
+          if (val !== null) info.alternative = { ...val }
         }
         if (prop.type === "display") {
           if (info.display === undefined ) info.display = {}
