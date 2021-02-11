@@ -92,7 +92,7 @@ export default class About extends React.PureComponent {
   render() {
     const { model_counts, meta_counts, count_charts } = this.props.stats
     return (
-      <Grid container spacing={1}>
+      <Grid container spacing={1} style={{marginBottom: 50}}>
           <Grid item xs={12} lg={6}>
             <Typography variant={'h4'} gutterBottom>About</Typography>
             <Typography align="justify">
