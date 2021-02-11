@@ -222,6 +222,7 @@ class Home extends React.PureComponent {
                     label={props.match.params.label}
                     nav={this.props.ui_values.nav}
                     examples={this.props.ui_values.examples}
+                    resource_order={this.props.ui_values.resource_order}
                     resolver={this.state.enrichment_resolver}
                     filter_props={this.props.search_filters.signatures || []}
                     model={model}
