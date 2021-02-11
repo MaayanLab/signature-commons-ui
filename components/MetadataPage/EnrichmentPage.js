@@ -631,7 +631,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			table: this.table_view
 		}
 		return (
-			<Grid container spacing={1}>
+			<Grid container spacing={1} style={{height:400}}>
 				<Grid item xs={12} align="center">
 					{visuals[this.state.visualization]()}
 				</Grid>
@@ -697,7 +697,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		}
 		return (
 			<React.Fragment>
-				 <Table style={{height: 372}} size="small" aria-label="enrichment table">
+				 <Table size="small" aria-label="enrichment table">
 				 	<TableHead>
 						 {head_cells.map(c=>(
 						 <TableCell
