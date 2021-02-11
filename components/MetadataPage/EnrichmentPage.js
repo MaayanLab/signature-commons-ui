@@ -6,7 +6,6 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import {ShowMeta} from '../DataTable'
-import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { labelGenerator, getName } from '../../util/ui/labelGenerator'
@@ -33,6 +32,16 @@ import Lazy from '../Lazy'
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { LinearProgress } from '@material-ui/core'
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import TablePagination from '@material-ui/core/TablePagination'
+
 
 const id_mapper = {
 	resources: "resource_id",
@@ -370,12 +379,22 @@ export default class EnrichmentPage extends React.PureComponent {
 	}
 	
 	sortBy = (order_field) => {
-		this.setState(prevProps=>({
-			order_field,
-			order: order_field === 'odds ratio' ? 'DESC': 'ASC',
-			visualize: false,
-			searching: true,
-		}), ()=>{
+		this.setState(prevState=>{
+			if (prevState.order_field !== order_field) {
+				return{
+					order_field,
+					order: order_field === 'odds ratio' ? 'DESC': 'ASC',
+					visualize: false,
+					searching: true,
+				}
+			} else {
+				return{
+					order: prevState.order === 'ASC' ? 'DESC': 'ASC',
+					visualize: false,
+					searching: true,
+				}
+			}
+		}, ()=>{
 			this.process_children()
 		})
 	}
@@ -606,18 +625,113 @@ export default class EnrichmentPage extends React.PureComponent {
 		if (this.state.entry_object === null || this.state.entry_object.model !== 'libraries' ) return null
 		if (this.state.searching) return <div style={{height: 400, textAlign: "center"}}><CircularProgress/></div>
 		if (this.state.children.length === 0) return null
+		const visuals = {
+			bar:  this.enrichment_bar,
+			scatter: () => <Lazy>{async () => this.scatter_plot()}</Lazy>,
+			table: this.table_view
+		}
 		return (
 			<Grid container spacing={1}>
-				<Grid item xs={12} align="right">
-					
-				</Grid>
 				<Grid item xs={12} align="center">
-					{this.state.visualization==="bar" ? this.enrichment_bar(): 
-						<Lazy>{async () => this.scatter_plot()}</Lazy>
-					}
+					{visuals[this.state.visualization]()}
 				</Grid>
 			</Grid>
 		) 
+	}
+
+	render_table_data = () => {
+		const entries = []
+		const head_cells = [
+			{ id: 'name', numeric: false, disablePadding: true, label: 'Term' },
+		]
+		for (const entry of this.state.children) {
+			const data = {
+				name: entry.info.name.text,
+				endpoint: entry.info.endpoint,
+			}
+			let generate_head_cells = false
+			if (head_cells.length === 1) generate_head_cells = true
+			for (const tag of entry.info.tags){
+				if (tag.field.startsWith("score")) data[tag.field] = parseFloat(tag.text)
+				else data[tag.field] = tag.text
+				if (generate_head_cells){
+					head_cells.push({
+						id: tag.field,
+						numeric: tag.field.startsWith("score"),
+						disablePadding: false,
+						label: tag.label
+					})
+				}
+			}
+			entries.push(data)
+		}
+		return {entries, head_cells}
+	}
+
+	table_row = (row, header) => {
+		const cells = []
+		for (const h of header){
+			if (h.id === "name"){
+				cells.push(
+					<TableCell component="th" scope="row" key={row.name}>
+						<a href={row.endpoint}>{row[h.id]}</a>
+					</TableCell>
+				)
+			} else {
+				cells.push(
+					<TableCell align="right" key={`${row.name}-${row[h.id]}`}>{row[h.id]}</TableCell>
+				)
+			}
+		}
+		return cells
+	}
+
+	table_view = () => {
+		const {entries, head_cells} = this.render_table_data()
+		const PaginationProps = {
+			page: this.state.page,
+			rowsPerPage: this.state.perPage,
+			count:  this.state.children_count[this.state.tab],
+			onChangePage: (event, page) => this.handleChangePage(event, page),
+			onChangeRowsPerPage: this.handleChangeRowsPerPage,
+		}
+		return (
+			<React.Fragment>
+				 <Table aria-label="enrichment table">
+				 	<TableHead>
+						 {head_cells.map(c=>(
+						 <TableCell
+							 align={`${c.id==="name" ? "left": "right"}`}
+							 key={c.id}
+							 onClick={()=>{
+								 console.log(c.id)
+								 if (c.id.startsWith("score")){
+									 this.sortBy(c.id.replace('scores.',''))
+								 }
+							 }}
+							 style={c.id.startsWith("score") ? {
+								cursor: "pointer"
+							}: {}}
+						>
+							 {c.label}
+						 </TableCell>
+						))}
+					 </TableHead>
+					 <TableBody>
+						 {entries.map(row=>(
+							 <TableRow key={row.name}>
+								 {this.table_row(row, head_cells)}
+							 </TableRow>
+						 ))}
+					 </TableBody>
+				 </Table>
+				 <TablePagination
+					{...PaginationProps}
+					component="div"
+					align="right"
+				/>
+			</React.Fragment>
+		)
 	}
 
 	render = () => {
@@ -643,10 +757,10 @@ export default class EnrichmentPage extends React.PureComponent {
 								</Grid>
 								<Grid item md={10} xs={8}>
 									<Grid container spacing={1}>
-										<Grid item xs={9}>
+										<Grid item xs={7} md={9}>
 											{ this.pageTitle() }
 										</Grid>
-										<Grid item xs={3} align="right">
+										<Grid item xs={5} md={3} align="right">
 											{this.state.visualize && this.state.children.length > 0 ?
 												<React.Fragment>
 													<ToggleButtonGroup
@@ -662,6 +776,9 @@ export default class EnrichmentPage extends React.PureComponent {
 														</ToggleButton>
 														<ToggleButton value="scatter" aria-label="scatter">
 															<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
+														</ToggleButton>
+														<ToggleButton value="table" aria-label="table">
+															<span className="mdi mdi-table mdi-24px"/>
 														</ToggleButton>
 													</ToggleButtonGroup>
 												</React.Fragment>: null
