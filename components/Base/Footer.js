@@ -62,9 +62,9 @@ const mapStateToProps = (state) => {
 function Footer(props) {
   const { classes, ui_values, theme, ...rest } = props
   const background = Color(theme.palette.default.main)
-  let powered_src = '${PREFIX}/static/powered.png'
+  let powered_src = './static/powered.png'
   if (background.isDark()) {
-    powered_src = '${PREFIX}/static/powered_light.png'
+    powered_src = './static/powered_light.png'
   }
   return (
     <Paper className={classes.root} elevation={0} square >
