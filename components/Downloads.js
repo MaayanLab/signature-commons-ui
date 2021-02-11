@@ -56,7 +56,7 @@ export default class Downloads extends React.Component {
             onClick={this.handleClick}
             style={{ width: 50, height: 50 }}
           >
-            <Icon className={`mdi mdi-24px ${data[0].icon || 'mdi-download'}`} />
+            <Icon className={`mdi mdi-24px ${data.length>0?'mdi-download': data[0].icon}`} />
           </Button>
           <Menu
             id="simple-menu"
@@ -73,10 +73,8 @@ export default class Downloads extends React.Component {
               }}
               key={text}
               >
-                <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} />
-                              &nbsp;
                 <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-                  {`Download ${text}`}
+                  <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} /> &nbsp; {`Download ${text}`}
                 </Typography>
               </MenuItem>
             ))}
