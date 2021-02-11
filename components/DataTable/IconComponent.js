@@ -4,7 +4,13 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import { withStyles } from '@material-ui/core/styles';
 
+const CapTooltip = withStyles((theme) => ({
+    tooltip: {
+      textTransform: "capitalize"
+    },
+  }))(Tooltip);
 export const IconComponent = ({
     title,
     subtitle,
@@ -30,8 +36,13 @@ export const IconComponent = ({
                     </Typography>
     }
     return (
-    <Tooltip title={tooltip_title}
+    <CapTooltip title={tooltip_title}
         placement="bottom"
+        style={{
+            tooltip: {
+                textTransform: "capitalize"
+            }
+        }}
         {...TooltipProps}
     >
         <Grid container style={{height: 50}}>
@@ -65,7 +76,7 @@ export const IconComponent = ({
                 </Grid>
             }
         </Grid>
-    </Tooltip>
+    </CapTooltip>
     )
 }
 
@@ -95,8 +106,11 @@ export const IconComponentButton = ({
                     </Typography>
     }
     return (
-    <Tooltip title={tooltip_title}
+    <CapTooltip title={tooltip_title}
         placement="bottom"
+        style={{
+            textTransform: "capitalize"
+        }}
         {...TooltipProps}
     >
         <Button href={href}>
@@ -132,7 +146,7 @@ export const IconComponentButton = ({
                 }
             </Grid>
         </Button>
-    </Tooltip>
+    </CapTooltip>
     )
 }
 
