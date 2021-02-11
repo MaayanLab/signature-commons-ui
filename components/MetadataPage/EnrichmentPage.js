@@ -697,7 +697,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		}
 		return (
 			<React.Fragment>
-				 <Table aria-label="enrichment table">
+				 <Table style={{height: 372}} size="small" aria-label="enrichment table">
 				 	<TableHead>
 						 {head_cells.map(c=>(
 						 <TableCell
