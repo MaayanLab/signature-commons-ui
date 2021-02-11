@@ -1,11 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { Filter } from '../SearchComponents'
 import { TextFieldSuggest } from '../SearchComponents'
 import Grid from '@material-ui/core/Grid'
-import TablePagination from '@material-ui/core/TablePagination'
 import {ResultsTab} from '../MetadataPage/ResultsTab'
-import {DataTable} from '../DataTable'
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress'
