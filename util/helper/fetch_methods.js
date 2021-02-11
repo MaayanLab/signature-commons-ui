@@ -62,7 +62,7 @@ export const get_summary_statistics = async () => {
   }
 
   const { resource_signature_count: response, schemas } = serverSideProps
-  if (response.length > 0) {
+  if (response !== undefined && response.length > 0) {
     const resource_signature_count = []
     for (const r of response) {
       const { count, id } = r
