@@ -1,5 +1,4 @@
 import React from 'react'
-import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator, getName, getPropType } from '../../util/ui/labelGenerator'
 import { get_signature_entities, create_query, reset_input, enrichment, get_filter } from './utils'
@@ -8,15 +7,8 @@ import {SignatureSearchComponent} from './SignatureSearchComponent'
 import ScorePopper from '../ScorePopper';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
-import Downloads from '../Downloads'
-import {download_signature} from './utils'
 import Color from 'color'
 
-const id_mapper = {
-	resources: "resource_id",
-	libraries: "library_id",
-	signatures: "signature_id",
-}
 export default class SignatureSearch extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -193,8 +185,6 @@ export default class SignatureSearch extends React.PureComponent {
 	}
 
 	create_tab_values = (entries, endpoint, type, enrichment_id, model_name) => {
-		let entry_id
-		let sig_count = 0
 		const tabs = []
 		for (const entry of entries) {
 			const entry_name = getName(entry, this.props.schemas)
@@ -205,14 +195,9 @@ export default class SignatureSearch extends React.PureComponent {
 				c: entry.scores.signature_count,
 				icon: getPropType(entry, this.props.schemas, "img").src
 			})
-			if (sig_count < entry.scores.signature_count){
-				sig_count = entry.scores.signature_count
-				entry_id = entry.id
-			}
 		}
 		return {
-			tabs,
-			entry_id
+			tabs
 		}
 	}
 
@@ -238,7 +223,7 @@ export default class SignatureSearch extends React.PureComponent {
 		try {
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
-			const model = this.props.model
+			const {model, resource_order} = this.props
 			const { type, enrichment_id, id } = this.props.match.params
 			const {lib_to_resource,
 				resource_to_lib } = this.props.resource_libraries
@@ -249,7 +234,6 @@ export default class SignatureSearch extends React.PureComponent {
 			})
 			const {
 				tabs: resources_tabs, 
-				entry_id: tmp_resource_id
 			} = this.create_tab_values(
 				await Promise.all(Object.values(resources).map(async (i)=> await i.entry())),
 				this.props.nav.SignatureSearch.endpoint,
@@ -257,8 +241,13 @@ export default class SignatureSearch extends React.PureComponent {
 				enrichment_id,
 				this.props.preferred_name.resources
 			)
+			const sorted_tabs = resources_tabs.sort((a,b)=>{
+				if (resource_order[a.value] !== undefined && resource_order[a.value]) {
+					return resource_order[a.value].priority - resource_order[b.value].priority
+				} else return b.c-a.c
+			})
 
-			let resource_id = tmp_resource_id
+			let resource_id = sorted_tabs[0].value
 			
 			let library_id
 			let resource
@@ -279,10 +268,9 @@ export default class SignatureSearch extends React.PureComponent {
 				'libraries')
 			
 			if (library_id === undefined) library_id = tmp_library_id
-			
 			this.setState({
 				resource_id,
-				resources_tabs: resources_tabs.sort((a,b)=>(b.c-a.c)),
+				resources_tabs: sorted_tabs,
 				libraries: libraries.sort((a,b)=>(b.data.scores.signature_count-a.data.scores.signature_count)),
 				searching: false,
 			})
