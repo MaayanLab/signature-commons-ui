@@ -38,8 +38,8 @@ const styles = (theme) => ({
   },
   menuItem: {
     color: 'inherit',
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: 17,
+    paddingRight: 17
   },
   paper: {
     padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
@@ -63,7 +63,7 @@ export function Nav(props) {
           className={classes.menuItem}
           href={`#${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
         >
-          <Typography variant={'button'} style={{fontSize: 20}}>
+          <Typography variant={'button'} style={{fontSize: 17}}>
             {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -74,7 +74,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
         >
-          <Typography variant={'button'} style={{fontSize: 20}}>
+          <Typography variant={'button'} style={{fontSize: 17}}>
             {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -85,7 +85,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav.Resources.endpoint}`}
         >
-          <Typography variant={'button'} style={{fontSize: 20}}>
+          <Typography variant={'button'} style={{fontSize: 17}}>
             {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -99,7 +99,7 @@ export function Nav(props) {
               target = "_blank" 
               rel = "noopener noreferrer"
             >
-                <Typography variant={'button'} style={{fontSize: 20}}>
+                <Typography variant={'button'} style={{fontSize: 17}}>
                   {nav.navName}
                 </Typography>
             </ListItemLink>
@@ -110,7 +110,7 @@ export function Nav(props) {
               className={ classes.menuItem}
               href={`#${nav.endpoint}`}
             >
-              <Typography variant={'button'} style={{fontSize: 20}}>
+              <Typography variant={'button'} style={{fontSize: 17}}>
                 {nav.navName}
               </Typography>
             </ListItemLink>
@@ -123,7 +123,7 @@ export function Nav(props) {
         className={ classes.menuItem}
         href={'#/API'}
       >
-         <Typography variant={'button'} style={{fontSize: 20}}>
+         <Typography variant={'button'} style={{fontSize: 17}}>
             API
           </Typography>
       </ListItemLink>
@@ -132,7 +132,7 @@ export function Nav(props) {
         className={ classes.menuItem}
         href={'#/About'}
       >
-         <Typography variant={'button'} style={{fontSize: 20}}>
+         <Typography variant={'button'} style={{fontSize: 17}}>
             About
           </Typography>
       </ListItemLink>
