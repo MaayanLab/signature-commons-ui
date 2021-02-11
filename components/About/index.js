@@ -7,7 +7,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { withStyles } from '@material-ui/core/styles';
-
+import ReactMarkdown from 'react-markdown'
+import gfm from 'remark-gfm'
 
 export const CustomTabs = withStyles(() => ({
 	indicator: {
@@ -38,12 +39,12 @@ export default class About extends React.PureComponent {
     const { model_counts } = this.props.stats
     const { nav, preferred_name } = this.props.ui_values
     const models = model_counts.map(m=>(
-        <IconComponentButton
-          title={m.count}
-          subtitle={m.name}
-          icon={m.icon}
-          href={`#${nav.MetadataSearch.endpoint}/${preferred_name[m.model]}`}
-          description={`Explore ${preferred_name[m.model]}`}/>
+      <IconComponentButton
+        title={m.count}
+        subtitle={m.name}
+        icon={m.icon}
+        href={`#${nav.MetadataSearch.endpoint}/${preferred_name[m.model]}`}
+        description={`Explore ${preferred_name[m.model]}`}/>
     ))
     return models
   }
@@ -52,10 +53,11 @@ export default class About extends React.PureComponent {
     const { pie } = this.props.stats.count_charts
     const { nav, preferred_name, pie_chart_style } = this.props.ui_values
     const p = pie[this.state.pie]
+    const data = p.stats.sort((a,b)=>(b.count-a.count))
     return(
       <React.Fragment>
         <DonutChart
-          data={p.stats}
+          data={data}
           pie_chart_style={pie_chart_style}
           onClick={(data)=>{
             const search = data.payload.name
@@ -91,13 +93,13 @@ export default class About extends React.PureComponent {
     const { model_counts, meta_counts, count_charts } = this.props.stats
     return (
       <Grid container spacing={1}>
-          <Grid item xs={12} md={4} lg={6}>
+          <Grid item xs={12} lg={6}>
             <Typography variant={'h4'} gutterBottom>About</Typography>
             <Typography align="justify">
-              {this.props.ui_values.about}
+              <ReactMarkdown plugins={[gfm]} children={this.props.ui_values.about}/>
             </Typography>
           </Grid>
-          <Grid item xs={12} md={8} lg={6}>
+          <Grid item xs={12} lg={6}>
             <Grid container spacing={3}>
               <Grid item xs={12} align="center">
                 {this.model_counts()}
