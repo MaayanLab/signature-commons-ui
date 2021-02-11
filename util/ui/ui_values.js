@@ -140,17 +140,17 @@ const default_values = {
     pie_chart_style: {
       ResponsiveContainer: {
         width: '100%',
-        height: 420,
+        height: 500,
       },
       Chart: {
-        width: 420,
-        height: 420,
+        width: 500,
+        height: 500,
       },
       Pie: {
         fill: '#75bef5',
       },
       Text_Label: {
-        fontSize: 10,
+        fontSize: 12,
       },
     },
     counting_validator: '/dcic/signature-commons-schema/v5/meta/schema/counting.json',
@@ -198,6 +198,7 @@ const default_values = {
     up_down_switch: 'Up and Down Gene Sets',
     entity_strategy: 'upper', // lower, none
     synonym_strategy: 'none',
+    about: "Understanding the underlying molecular and structural similarities between seemingly heterogeneous sets of drugs can aid in identifying drug repurposing opportunities and assist in the discovery of novel properties for pre-clinical small molecules. A wealth of information about drug and small molecule structure, targets, indications and side effects, induced gene expression signatures, and other attributes are publicly available at web-based tools, databases, and repositories. By processing, abstracting, and aggregating information from these resources into drug set libraries, knowledge about novel properties of drugs and small molecules can be systematically imputed with machine learning. In addition, drug set libraries can be used as the underlying database for drug set enrichment analysis. Here, we present Drugmonizome, a database with a search engine for querying annotated sets of drugs and small molecules metadata for performing drug set enrichment analysis. Utilizing the data within Drugmonizome we also developed Drugmonizome-ML, an Appyter that allows users to construct custom machine learning pipelines using the drug set libraries from Drugmonizome as feature and target vectors. To demonstrate the utility of Drugmonizome, drug sets from 12 independent in-vitro screens to identify SARS-CoV-2 inhibitors were subjected to consensus enrichment analysis. Despite the low overlap among these 12 independent in vitro studies, we were able to determine common biological processes and pathways critical for viral replication. To demonstrate Drugmonizome-ML, we constructed a machine learning pipeline to predict peripheral neuropathy as a potential side effect for preclinical small molecules. Overall, the Drugmonizome and Drugmonizome-ML resources provide rich diverse knowledge about drugs and small molecules for direct systems pharmacology applications."
   },
 }
 
