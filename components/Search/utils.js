@@ -130,19 +130,24 @@ export const enrichment = async (query, input, resolver, handleError=null) => {
 	}
 }
 
-export const download_signature = async ({entry, schemas, filename, resolver, model}) => {
+export const download_signature = async ({entry, schemas, filename, resolver, model, serialize=false}) => {
 	const {resolved_entries} = await resolver.resolve_entries({
 		model,
 		entries: [entry]
 	})
 	const c = resolved_entries[entry.id]
-	const {entities} = await c.children({limit: 0})
-	const names = []
-	for (const child of entities){
-		const val = getName(child, schemas)
-		if (val!==null) names.push(val)
+	if(serialize) {
+		const e = await c.serialize(true, true, true)
+		fileDownload(JSON.stringify(e, null, 2), filename)
+	} else {
+		const {entities} = await c.children({limit: 0})
+		const names = []
+		for (const child of entities){
+			const val = getName(child, schemas)
+			if (val!==null) names.push(val)
+		}
+		fileDownload(names.join('\n'), filename)
 	}
-	fileDownload(names.join('\n'), filename)
 }
 
 export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_field, order}) => {

@@ -82,12 +82,19 @@ export default class SignatureSearch extends React.PureComponent {
 				const e = labelGenerator(await entry,
 					schemas)
 				const label = e.info.name.text
+				const alternative_label = (e.info.alternative || {}).text
 				for (const field of Object.keys(input)){
 					if (input[field][label]!==undefined){
 						input[field][label] = {
 							label,
 							type: "valid",
 							id: [...(input[field][label].id || []), entry.id]
+						}
+					} else if (input[field][alternative_label]!==undefined){
+						input[field][alternative_label] = {
+							label: alternative_label,
+							type: "valid",
+							id: [...(input[field][alternative_label].id || []), entry.id]
 						}
 					} else {
 						const synonyms = e.info.synonyms
@@ -557,7 +564,7 @@ export default class SignatureSearch extends React.PureComponent {
 		for (const schema of entity_schemas){
 			for (const prop of Object.values(schema.properties)){
 				if (prop.type==="title") titles.push(prop.field)
-				else if (prop.type==="name") titles.push(prop.field)
+				else if (prop.type==="alternative") titles.push(prop.field)
 				else if (prop.synonyms) synonyms.push(prop.field)
 			}
 		}
