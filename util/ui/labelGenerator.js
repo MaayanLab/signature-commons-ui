@@ -202,18 +202,18 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
         if (prop.type === "title") {
           info.name = { text: data.id }
           if (val !== null) {
-            info.name = { ...info.name, ...val }
+            info.name = { ...info.name, ...val, field: prop.field, }
           }
         }
         if (prop.type === "subtitle") {
-          if (val !== null) info.subtitle = { ...val }
+          if (val !== null) info.subtitle = { ...val, field: prop.field, }
         }
         if (prop.type === "alternative") {
-          if (val !== null) info.alternative = { ...val }
+          if (val !== null) info.alternative = { ...val, field: prop.field, }
         }
         if (prop.type === "display") {
           if (info.display === undefined ) info.display = {}
-          if (val !== null) info.display[label] = { ...val }
+          if (val !== null) info.display[label] = { ...val, field: prop.field, }
         }
         if (prop.type === "url") {
           if (info.url === undefined ) info.url = {}
