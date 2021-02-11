@@ -38,11 +38,6 @@ export const IconComponent = ({
     return (
     <CapTooltip title={tooltip_title}
         placement="bottom"
-        style={{
-            tooltip: {
-                textTransform: "capitalize"
-            }
-        }}
         {...TooltipProps}
     >
         <Grid container style={{height: 50}}>
@@ -108,9 +103,6 @@ export const IconComponentButton = ({
     return (
     <CapTooltip title={tooltip_title}
         placement="bottom"
-        style={{
-            textTransform: "capitalize"
-        }}
         {...TooltipProps}
     >
         <Button href={href}>
