@@ -6,12 +6,13 @@ import Menu from '@material-ui/core/Menu'
 import Icon from '@material-ui/core/Icon'
 import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip';
-
+import LinearProgress from '@material-ui/core/LinearProgress';
 export default class Downloads extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       anchorEl: null,
+      downloading: false
     }
   }
 
@@ -28,9 +29,12 @@ export default class Downloads extends React.Component {
   }
 
   render = () => {
-    const { data } = this.props
+    const { data, loading } = this.props
+    console.log(loading)
+    const loading_icon = 'mdi-loading mdi-spin'
     if (data.length === 1) {
       const {url, onClick, text, icon} = data[0]
+      const mdIcon = icon || 'mdi-download'
       return (
         <Tooltip title={text} arrow>
           <Button
@@ -43,7 +47,7 @@ export default class Downloads extends React.Component {
             }}
             style={{ width: 50, height: 50 }}
           >
-            <Icon className={`mdi mdi-24px ${icon || 'mdi-download'}`} />
+            <Icon className={`mdi mdi-24px ${loading ? loading_icon: mdIcon}`} />
           </Button>
         </Tooltip>
       )
@@ -56,7 +60,7 @@ export default class Downloads extends React.Component {
             onClick={this.handleClick}
             style={{ width: 50, height: 50 }}
           >
-            <Icon className={`mdi mdi-24px ${data.length>0?'mdi-download': data[0].icon}`} />
+            <Icon className={`mdi mdi-24px ${loading ? loading_icon: 'mdi-download'}`} />
           </Button>
           <Menu
             id="simple-menu"
@@ -64,19 +68,24 @@ export default class Downloads extends React.Component {
             open={Boolean(this.state.anchorEl)}
             onClose={this.handleClose}
           >
-            {data.map(({url, onClick, text, icon}) => (
-              <MenuItem onClick={() => {
-                this.handleClose()
-                if (url){
-                  window.location = data[0].url
-                }else onClick()
-              }}
-              key={text}
-              >
-                <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-                  <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} /> &nbsp; {`Download ${text}`}
-                </Typography>
-              </MenuItem>
+            {data.map(({url, onClick, text, icon}, i) => (
+              <React.Fragment>
+                {i===0 && loading ? <LinearProgress/>: null}
+                <MenuItem onClick={() => {
+                  this.handleClose()
+                  if (url){
+                    window.location = data[0].url
+                  }else {
+                    onClick()
+                  }
+                }}
+                key={text}
+                >
+                  <Typography style={{ fontSize: 15 }} variant="caption" display="block">
+                    <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} /> &nbsp; {`Download ${text}`}
+                  </Typography>
+                </MenuItem>
+              </React.Fragment>
             ))}
           </Menu>
         </div>

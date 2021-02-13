@@ -1,4 +1,4 @@
-import { labelGenerator, getName } from '../../util/ui/labelGenerator'
+import { labelGenerator, getName, getPropType } from '../../util/ui/labelGenerator'
 import fileDownload from 'js-file-download'
 import Color from 'color'
 
@@ -170,4 +170,40 @@ export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_
 		data.push(d)		
 	}
 	return data
+}
+
+export const download_enrichment_for_library = async (entry, filename, schemas, start, end, format="tsv") => {
+	start()
+	const serialized = await entry.serialize(false, true, true)
+	if (format === "json"){
+		end()
+		fileDownload(JSON.stringify(serialized), filename)
+	}else if (format === "tsv"){
+		const {signatures} = serialized
+		let tsv_header = 'Term'
+		let tsv_body = ""
+		let generate_head_cells = true
+		for (const e of signatures) {
+			const term = `${getName(e, schemas)}`
+			const overlap = e.entities.map(e=>getName(e, schemas)).join(";")
+			const tags = getPropType(e, schemas, 'text').sort((a,b)=>a.priority-b.priority)
+			let tag_values = ""
+			for (const tag of tags){
+				tag_values = tag_values + `\t${tag.text}`
+				if (generate_head_cells){
+					tsv_header = tsv_header + `\t${tag.label}`
+				}
+			}
+			if (generate_head_cells){
+				tsv_header = tsv_header + "\tOverlap"
+				generate_head_cells = false
+			}
+			const row = `${term}${tag_values}\t${overlap}`
+			tsv_body = tsv_body + `\n${row}`
+		}
+		const tsv_text = `${tsv_header}${tsv_body}`
+		end()
+		fileDownload(tsv_text, filename)
+	}
+
 }

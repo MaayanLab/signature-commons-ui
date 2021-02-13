@@ -16,12 +16,12 @@ import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button'
 import { SearchResult } from './SearchResult'
 import { get_filter,
-	resolve_ids,
 	get_signature_entities,
 	create_query,
 	enrichment,
 	download_signature,
-	get_data_for_bar_chart
+	get_data_for_bar_chart,
+	download_enrichment_for_library,
  } from '../Search/utils'
 import ScorePopper from '../ScorePopper'
 import Downloads from '../Downloads'
@@ -64,6 +64,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			visualization: "bar",
 			visualize: false,
 			expanded: false,
+			downloading: false,
 		}
 	}
 
@@ -623,7 +624,7 @@ export default class EnrichmentPage extends React.PureComponent {
 
 	visualizations = () => {
 		if (this.state.entry_object === null || this.state.entry_object.model !== 'libraries' ) return null
-		if (this.state.searching) return <div style={{height: 400, textAlign: "center"}}><CircularProgress/></div>
+		if (this.state.searching) return <div style={{height: 450, textAlign: "center"}}><CircularProgress/></div>
 		if (this.state.children.length === 0) return null
 		const visuals = {
 			bar:  this.enrichment_bar,
@@ -631,7 +632,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			table: this.table_view
 		}
 		return (
-			<Grid container spacing={1} style={{height:400}}>
+			<Grid container spacing={1} style={{height:450}}>
 				<Grid item xs={12} align="center">
 					{visuals[this.state.visualization]()}
 				</Grid>
@@ -686,6 +687,28 @@ export default class EnrichmentPage extends React.PureComponent {
 		return cells
 	}
 
+	start_download = () => {
+		this.setState({
+			downloading: true
+		})
+	}
+
+	finish_download = () => {
+		this.setState({
+			downloading: false
+		})
+	}
+
+	download_library = async (type) => {
+		await download_enrichment_for_library(
+			this.state.entry_object,
+			`${this.state.entry.info.name.text}.json`,
+			this.props.schemas,
+			this.start_download,
+			this.finish_download,
+			type
+		)
+	}
 	table_view = () => {
 		const {entries, head_cells} = this.render_table_data()
 		const PaginationProps = {
@@ -695,8 +718,29 @@ export default class EnrichmentPage extends React.PureComponent {
 			onChangePage: (event, page) => this.handleChangePage(event, page),
 			onChangeRowsPerPage: this.handleChangeRowsPerPage,
 		}
+		const download_props = {
+			data: [
+				{
+					text: `Download as TSV`,
+					onClick: () => {
+						this.download_library('tsv')
+					},
+					icon: "mdi-note-text-outline"
+				},
+				{
+					text: `Download as JSON`,
+					onClick: () => {
+						this.download_library('json')
+					},
+					icon: "mdi-json"
+				}
+			]
+		}
 		return (
 			<React.Fragment>
+				<div style={{textAlign: 'right'}}>
+					<Downloads {...download_props} loading={this.state.downloading}/>
+				</div>
 				 <Table size="small" aria-label="enrichment table">
 				 	<TableHead>
 						 {head_cells.map(c=>(
@@ -767,7 +811,9 @@ export default class EnrichmentPage extends React.PureComponent {
 														value={this.state.visualization}
 														exclusive
 														onChange={(e, visualization)=>{
-															this.setState({visualization})
+															this.setState(prevState=>({
+																visualization: visualization || prevState.visualization
+															}))
 														}}
 														aria-label="text alignment"
 													>
@@ -799,7 +845,7 @@ export default class EnrichmentPage extends React.PureComponent {
 								<Grid item xs={12}>
 									{this.visualizations()}
 								</Grid>
-								<Grid item xs={12} align="right">
+								<Grid item xs={12} align="left">
 								<Tooltip title={"Go Back to search results"}>
 									<Button href={this.state.back_endpoint}>
 										<span className="mdi mdi-arrow-left-bold mdi-24px"/>
