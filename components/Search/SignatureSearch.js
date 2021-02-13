@@ -193,7 +193,7 @@ export default class SignatureSearch extends React.PureComponent {
 				href: `${endpoint}/${type}/${enrichment_id}/${model_name}/${entry.id}`,
 				value: entry.id,
 				c: entry.scores.signature_count,
-				icon: getPropType(entry, this.props.schemas, "img").src
+				icon: (getPropType(entry, this.props.schemas, "img")[0] || {}).src
 			})
 		}
 		return {

@@ -149,15 +149,16 @@ export const props_resolver = (properties, data, info=null) => {
 
 export const getPropType = (data, schemas, type) => {
   const schema = findMatchedSchema(data, schemas)
+  const values = []
   if (schema !== null) {
-    for (const prop of Object.values(schema.properties)) {
+    for (const [label, prop] of Object.entries(schema.properties)) {
       if (prop.visibility && prop.type===type){
-        const val = value_by_type[prop.type]({ label: "title", prop, data })
-        if (val!==null) return val
+        const val = value_by_type[prop.type]({ label, prop, data })
+        if (val!==null) values.push({...val, priority: prop.priority || 1})
       }
     }
   }
-  return null
+  return values
 }
 
 export const getName = (data, schemas) => {
