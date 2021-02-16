@@ -200,6 +200,8 @@ const default_values = {
     synonym_strategy: 'none',
     resource_order: {},
     about: "Signature Commons",
+    terms: "",
+    analytics: "UA-6277639-36"
   },
 }
 

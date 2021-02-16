@@ -301,6 +301,7 @@ class Home extends React.PureComponent {
           footer_type={this.props.ui_values.footer_type}
           github={this.props.ui_values.github}
           github_issues={this.props.ui_values.github_issues}
+          analytics={this.props.ui_values.analytics}
           ui_values={this.props.ui_values}
         >
           <style jsx>{`
