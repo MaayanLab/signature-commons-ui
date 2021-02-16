@@ -732,7 +732,7 @@ export default class EnrichmentPage extends React.PureComponent {
 					onClick: () => {
 						this.download_library('json')
 					},
-					icon: "mdi-json"
+					icon: "mdi-code-json"
 				}
 			]
 		}
