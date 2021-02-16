@@ -16,6 +16,8 @@ import {DataResolver} from '../../connector'
 
 import Base from '../../components/Base'
 import About from '../../components/About'
+import {Terms} from '../../components/About/Terms'
+
 import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../Search/MetadataSearch'
@@ -427,6 +429,10 @@ class Home extends React.PureComponent {
             <Route
               path={`${this.props.ui_values.nav.API.endpoint || '/API'}`}
               component={this.api}
+            />
+            <Route
+              path={"/Terms"}
+              component={(props)=><Terms {...props} terms={this.props.ui_values.terms}/>}
             />
             {extra_nav}
             <Route

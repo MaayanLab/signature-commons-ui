@@ -1,12 +1,13 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
+import Link from '@material-ui/core/Link'
 import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
 import Color from 'color'
 import { connect } from 'react-redux'
 import { makeTemplate } from '../../util/ui/makeTemplate'
-
+import Icon from '@material-ui/core/Icon';
 import { withStyles } from '@material-ui/core/styles'
 
 
@@ -78,8 +79,39 @@ function Footer(props) {
         }}
       >
         <Grid item>
-          <a className="github-button" href={ui_values.github} data-size="large" aria-label="View Source Code on GitHub">View Source Code</a><br />
-          <a className="github-button" href={ui_values.github_issues} data-size="large" aria-label="Submit Bug Report on GitHub">Submit Bugs and Corrections</a>
+          <Grid
+            container
+            direction="column"
+          >
+            <Grid item>
+            <Button href="#/Terms"
+                size="small"
+                style={{textTransform: "none"}}
+                startIcon={<span className={`mdi mdi-book-open ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
+              >
+                <Typography style={{color: background.isDark? "#FFF":"#000"}}>Terms of Service</Typography>
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button href={ui_values.github}
+                size="small"
+                style={{textTransform: "none"}}
+                startIcon={<span className={`mdi mdi-github ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
+              >
+                <Typography style={{color: background.isDark? "#FFF":"#000"}}>View Source Code</Typography>
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button href={ui_values.github_issues}
+                size="small"
+                style={{textTransform: "none"}}
+                startIcon={<span className={`mdi mdi-alert-circle-outline ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
+              >
+                <Typography style={{color: background.isDark? "#FFF":"#000"}}>Submit Bugs and Corrections</Typography>
+              </Button>
+            </Grid>
+          </Grid>
+          
         </Grid>
         {ui_values.footer_links.map((itemProps) => (
           <Grid item key={itemProps.alt}>
