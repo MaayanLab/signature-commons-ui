@@ -82,7 +82,7 @@ export default class Downloads extends React.Component {
                 key={text}
                 >
                   <Typography style={{ fontSize: 15 }} variant="caption" display="block">
-                    <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} /> &nbsp; {`Download ${text}`}
+                    <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} /> &nbsp; {`${text}`}
                   </Typography>
                 </MenuItem>
               </React.Fragment>
