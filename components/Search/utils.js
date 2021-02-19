@@ -100,7 +100,7 @@ export const create_query = (input, enrichment_id=null) => {
 	for (const [field, values] of Object.entries(input)){
 		query[field] = []
 		for (const i of Object.values(values)){
-			query[field] = [...query[field], ...i.id]
+			if (i.type==="valid") query[field] = [...query[field], ...i.id]
 		}
 	}
 	return query
@@ -206,4 +206,17 @@ export const download_enrichment_for_library = async (entry, filename, schemas, 
 		fileDownload(tsv_text, filename)
 	}
 
+}
+
+export const download_input = async (input) => {
+	const {valid, invalid, suggestions, ...rest} = input
+	const for_download = ["Name\tInput Type\tType\tID"]
+	for (const [type, values] of Object.entries(input)) {
+		for (const [k,v] of Object.entries(values)){
+			if (v.type!=="suggestions"){
+				for_download.push(`${v.label}\t${type}\t${v.type}\t${(v.id || [])[0] || "-"}`)
+			}
+		}
+	}
+	fileDownload(for_download.join("\n"), "input.tsv")
 }

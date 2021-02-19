@@ -1,7 +1,11 @@
 import React from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator, getName, getPropType } from '../../util/ui/labelGenerator'
-import { get_signature_entities, create_query, reset_input, enrichment, get_filter } from './utils'
+import { get_signature_entities,
+	create_query,
+	reset_input,
+	enrichment,
+	download_input } from './utils'
 import PropTypes from 'prop-types'
 import {SignatureSearchComponent} from './SignatureSearchComponent'
 import ScorePopper from '../ScorePopper';
@@ -68,7 +72,7 @@ export default class SignatureSearch extends React.PureComponent {
 				model: "entities",
 				filter,
 			})
-			
+			let { valid=0, invalid=0, suggestions=0} = this.state.input
 			for (const c of Object.values(results)){
 				const entry = await c.entry()
 				const e = labelGenerator(await entry,
@@ -83,6 +87,7 @@ export default class SignatureSearch extends React.PureComponent {
 								type: "valid",
 								id: [entry.id]
 							}
+							valid = valid + 1
 						}
 					} else if (input[field][alternative_label]!==undefined){
 						if (input[field][alternative_label].id === undefined){
@@ -91,19 +96,27 @@ export default class SignatureSearch extends React.PureComponent {
 								type: "valid",
 								id: [entry.id]
 							}
+							valid = valid + 1
 						}
 					} else {
 						const synonyms = e.info.synonyms
+						let add_suggestion = true
 						for (const syn of synonyms){
 							if (input[field][syn]!==undefined){
-								input[field][syn] = {
-									label: syn,
-									type: "suggestions",
-									suggestions: [...(input[field][syn].suggestions || []), {
-										id: [e.data.id],
-										label,
-										type: "valid"
-									}]
+								if (input[field][syn].type !== "valid"){
+									input[field][syn] = {
+										label: syn,
+										type: "suggestions",
+										suggestions: [...(input[field][syn].suggestions || []), {
+											id: [e.data.id],
+											label,
+											type: "valid"
+										}]
+									}
+									if (add_suggestion){
+										add_suggestion = false
+										suggestions = suggestions + 1
+									}
 								}
 							}
 						}
@@ -114,12 +127,18 @@ export default class SignatureSearch extends React.PureComponent {
 				for (const [k,v] of Object.entries(entities)){
 					if (v.type==="loading"){
 						input[field][k].type = "invalid"
+						invalid = invalid + 1
 					}
 				}
 			}
 			
 			this.setState({
-				input,
+				input: {
+					...input,
+					valid,
+					invalid,
+					suggestions,
+				},
 				resolving: false,
 			})
 		} catch (error) {
@@ -162,6 +181,7 @@ export default class SignatureSearch extends React.PureComponent {
 					...entities
 				}
 			}
+			if (input[value.type] > 0) input[value.type] = input[value.type] -1
 			return {
 				input, 
 			}
@@ -178,6 +198,7 @@ export default class SignatureSearch extends React.PureComponent {
 				}
 			}
 			input[field][selected.label] = selected
+			input.valid = input.valid + 1
 			return {
 				input, 
 			}
@@ -272,6 +293,8 @@ export default class SignatureSearch extends React.PureComponent {
 				'libraries')
 			
 			if (library_id === undefined) library_id = tmp_library_id
+			console.log(sorted_tabs)
+			console.log(libraries)
 			this.setState({
 				resource_id,
 				resources_tabs: sorted_tabs,
@@ -618,6 +641,7 @@ export default class SignatureSearch extends React.PureComponent {
 					<SignatureSearchComponent 
 						searching={this.state.searching}
 						resolving={this.state.resolving}
+						download_input={()=>download_input(this.state.input)}
 						ResultsProps={{
 							entries: this.state.libraries,
 							process_children: this.process_children,

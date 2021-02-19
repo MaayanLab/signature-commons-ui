@@ -49,6 +49,18 @@ const Examples = (props) => {
 	return example_buttons
 }
 
+const EntityCounts = (input) => {
+	const { valid=0, invalid=0, suggestions=0 } = input
+	if (valid || invalid){
+		return(
+			<div style={{position: "absolute", top: 20, right: 20}}>
+				<Typography color="primary">{`${valid || 0} valid entries`}</Typography>
+				<Typography color="error">{`${invalid || 0} invalid entries`}</Typography>
+			</div>
+		)
+	}else return null
+}
+
 const SigForm = (props={}) => {
 	const {
 		searching=false,
@@ -63,13 +75,17 @@ const SigForm = (props={}) => {
 			{/* Search Components */}
 			<Grid item xs={12}>
 				{TextFieldSuggestProps.input.entities !== undefined ?
-					<TextFieldSuggest {...TextFieldSuggestProps}
+					<React.Fragment>
+						<TextFieldSuggest {...TextFieldSuggestProps}
 							input={Object.values(TextFieldSuggestProps.input.entities)}
 							onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "entities")}
 							onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "entities")}
-					/>:
+							endAdornment={<EntityCounts {...TextFieldSuggestProps.input}/>}
+						/>
+					</React.Fragment>
+					:
 					<React.Fragment>
 						<TextFieldSuggest {...TextFieldSuggestProps}
 							input={Object.values(TextFieldSuggestProps.input.up_entities)}
@@ -193,7 +209,7 @@ const Results = (props) => {
 						<Card style={{margin: 10, height: 500}}>
 							<CardHeader
 								title={<Link href={entry.info.endpoint}>{entry.info.name.text}</Link>}
-								subheader={`${entry.data.scores.signature_count} Enriched Terms`}
+								subheader={`${entry.data.scores.signature_count===100?"Top ": ""}${entry.data.scores.signature_count} Enriched Terms`}
 								action={
 									<ToggleButtonGroup
 										value={rest.visualization[entry.data.id] || "bar"}
@@ -255,7 +271,8 @@ export const SignatureSearchComponent = (props) => {
 		scatter_plot=null,
 		filters,
 		submitName,
-		ResultsProps
+		ResultsProps,
+		download_input,
 	} = props
 
 	const [expanded, setExpanded] = React.useState(false);
@@ -300,6 +317,14 @@ export const SignatureSearchComponent = (props) => {
 							aria-label="show more"
 						>
 							<span className="mdi mdi-note-text-outline mdi-24px"/>
+						</Button>
+					</Tooltip>
+					<Tooltip title="Download Input" placement="bottom">
+						
+						<Button onClick={download_input}
+							aria-label="download"
+						>
+							<span className="mdi mdi-download mdi-24px"/>
 						</Button>
 					</Tooltip>
 				</Grid>: null
@@ -394,9 +419,13 @@ SignatureSearchComponent.propTypes = {
 		handleChange: PropTypes.func,
 		tabsProps: PropTypes.object,
 	}).isRequired,
+	download_input: PropTypes.func,
 	TextFieldSuggestProps: PropTypes.shape({
 		input: PropTypes.shape(PropTypes.oneOf([
 			{
+				valid: PropTypes.number,
+				invalid: PropTypes.number,
+				suggestions: PropTypes.number,
 				entities: PropTypes.arrayOf(PropTypes.shape({
 					label: PropTypes.string.isRequired,
 					type: PropTypes.oneOf(["valid", "suggestions", "invalid", "loading", "disabled"]),
@@ -486,6 +515,6 @@ SignatureSearchComponent.propTypes = {
 		chipProps: PropTypes.object,
 		chipInputProps: PropTypes.object,
 		formProps: PropTypes.object,
-		suggestionsProps: PropTypes.object
+		suggestionsProps: PropTypes.object,
 	})
 }
