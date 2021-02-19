@@ -77,16 +77,20 @@ export default class SignatureSearch extends React.PureComponent {
 				const alternative_label = (e.info.alternative || {}).text
 				for (const field of Object.keys(input)){
 					if (input[field][label]!==undefined){
-						input[field][label] = {
-							label,
-							type: "valid",
-							id: [...(input[field][label].id || []), entry.id]
+						if (input[field][label].id === undefined){
+							input[field][label] = {
+								label,
+								type: "valid",
+								id: [entry.id]
+							}
 						}
 					} else if (input[field][alternative_label]!==undefined){
-						input[field][alternative_label] = {
-							label: alternative_label,
-							type: "valid",
-							id: [...(input[field][alternative_label].id || []), entry.id]
+						if (input[field][alternative_label].id === undefined){
+							input[field][alternative_label] = {
+								label: alternative_label,
+								type: "valid",
+								id: [entry.id]
+							}
 						}
 					} else {
 						const synonyms = e.info.synonyms
