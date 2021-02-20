@@ -4,7 +4,7 @@ import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 import {ChipInput} from './ChipInput'
 import red from '@material-ui/core/colors/red';
-import green from '@material-ui/core/colors/green';
+import blue from '@material-ui/core/colors/blue';
 import amber from '@material-ui/core/colors/amber';
 import grey from '@material-ui/core/colors/grey';
 import Typography from '@material-ui/core/Typography';
@@ -13,7 +13,7 @@ import Link from '@material-ui/core/Link';
 
 export const default_colors_and_icon = {
     "valid": {
-        background: green[200],
+        background: blue[200],
         color: "#000",
         icon: "mdi-check-circle"
     },
@@ -116,6 +116,7 @@ export class TextFieldSuggest extends React.Component {
             chipRenderer=this.defaultChipRenderer,
             colors_and_icon=default_colors_and_icon,
             chipInputProps={},
+            endAdornment,
         } = this.props
         const rows = 15 - input.length
         return (
@@ -139,6 +140,7 @@ export class TextFieldSuggest extends React.Component {
 										borderRadius: 25,
                                         overflow: "auto",
                                     },
+                                    endAdornment,
                                     placeholder: input.length === 0 ? "Place your drug set here": "",
                                 },
                                 divProps: {
@@ -174,6 +176,7 @@ TextFieldSuggest.propTypes = {
                 PropTypes.number
               ]),     
         })),
+        endAdornment: PropTypes.node,
         gridColumnProps: PropTypes.object,
         gridRowProps: PropTypes.object,
         avatarProps: PropTypes.object,
