@@ -28,12 +28,13 @@ import { withStyles } from '@material-ui/core/styles';
 
 
 const Examples = (props) => {
-	const {examples, type, onAdd} = props
+	const {examples, type, onAdd, resetInput} = props
 	const example_buttons = []
 	for (const ex of examples){
 		if (ex.type === type){
 			example_buttons.push(
 				<Button variant="text" color="primary" style={{textTransform: "none"}} key={ex.label} onClick={()=>{
+					resetInput()
 					if (type === "Overlap") {
 						onAdd(ex.entities, "entities")
 					} else {
@@ -501,6 +502,7 @@ SignatureSearchComponent.propTypes = {
 		onDelete: PropTypes.func.isRequired,
 		onClick: PropTypes.func.isRequired,
 		onSuggestionClick: PropTypes.func.isRequired,
+		resetInput: PropTypes.func.isRequired,
 		renderChip: PropTypes.func,
 		colors_and_icon: PropTypes.shape({
 			background: PropTypes.string,

@@ -680,6 +680,10 @@ export default class SignatureSearch extends React.PureComponent {
 							onSubmit: this.signature_search,
 							onDelete: this.onDeleteEntity,
 							onSuggestionClick: this.onSuggestionClickEntity,
+							resetInput: ()=>{
+								const input = reset_input(this.props.match.params.type)
+								this.setState({input})
+							},
 							examples: this.props.examples,
 							type: this.props.match.params.type,
 							disabled,
