@@ -45,6 +45,18 @@ const Examples = (props) => {
 					{ex.label}
 				</Button>
 			)
+			if (ex.link!==undefined){
+				example_buttons.push(
+					<Button 
+						style={{minWidth: 5}}
+						href={ex.link}
+						target = "_blank" 
+						rel = "noopener noreferrer" 
+					>
+						<span className="mdi mdi-open-in-new"/>
+					</Button>
+				)
+			}
 		}
 	}
 	return example_buttons
