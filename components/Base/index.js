@@ -30,14 +30,17 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
     }
     logPageView()
 
-    const M = await import('materialize-css')
-    this.setState({ M }, () => this.state.M.AutoInit())
+    // const M = await import('materialize-css')
+    // this.setState({ M }, () => this.state.M.AutoInit())
   }
 
-  componentDidUpdate() {
-    if (this.state.M !== undefined) {
-      this.state.M.AutoInit()
-      this.state.M.updateTextFields()
+  componentDidUpdate(prevProps) {
+    // if (this.state.M !== undefined) {
+    //   this.state.M.AutoInit()
+    //   this.state.M.updateTextFields()
+    // }
+    if (prevProps.location.pathname !== this.props.location.pathname){
+      logPageView(this.props.location.pathname)
     }
   }
 
