@@ -98,6 +98,7 @@ export function Nav(props) {
               href={nav.endpoint}
               target = "_blank" 
               rel = "noopener noreferrer"
+              key={nav.navName}
             >
                 <Typography variant={'button'} style={{fontSize: 17}}>
                   {nav.navName}
@@ -109,6 +110,7 @@ export function Nav(props) {
             <ListItemLink
               className={ classes.menuItem}
               href={`#${nav.endpoint}`}
+              key={nav.navName}
             >
               <Typography variant={'button'} style={{fontSize: 17}}>
                 {nav.navName}

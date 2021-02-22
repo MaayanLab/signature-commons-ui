@@ -273,6 +273,7 @@ class Home extends React.PureComponent {
       if (nav.type !== 'external') {
         extra_nav.push(
           <Route
+            key={nav.endpoint}
             path={nav.endpoint}
             exact
             component={(props)=><IFramePage {...props} {...nav}/>}
