@@ -13,6 +13,7 @@ export default async function config() {
       NEXT_PUBLIC_DATA_API: process.env.NEXT_PUBLIC_DATA_API !== undefined ? process.env.NEXT_PUBLIC_DATA_API : (window.location.origin + '/enrichmentapi'),
       NEXT_PUBLIC_ENRICHR_URL: process.env.NEXT_PUBLIC_ENRICHR_URL === undefined ? 'https://amp.pharm.mssm.edu/Enrichr' : process.env.NEXT_PUBLIC_ENRICHR_URL,
       NEXT_PUBLIC_EXTERNAL_API: process.env.NEXT_PUBLIC_EXTERNAL_API === undefined ? 'https://amp.pharm.mssm.edu/isitup' : process.env.NEXT_PUBLIC_EXTERNAL_API,
+      NEXT_PUBLIC_GA_TRACKING_ID: process.env.NEXT_PUBLIC_GA_TRACKING_ID === undefined ? 'UA-6277639-36' : process.env.NEXT_PUBLIC_GA_TRACKING_ID,
     }
   }
 }

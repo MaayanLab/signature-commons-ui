@@ -199,8 +199,9 @@ class Home extends React.PureComponent {
                     label={props.match.params.label}
                     filter_props={this.props.search_filters[model] || []}
                     nav={this.props.ui_values.nav}
-                    search_examples={this.props.ui_values.search_examples[model] || []}
+                    search_examples={(this.props.ui_values.search_examples || {})[model] || []}
                     resolver={this.state.metadata_resolver}
+                    metadata_placeholder={this.props.ui_values.placeholder}
                     {...props}
       />
     )
@@ -302,7 +303,6 @@ class Home extends React.PureComponent {
           footer_type={this.props.ui_values.footer_type}
           github={this.props.ui_values.github}
           github_issues={this.props.ui_values.github_issues}
-          analytics={this.props.ui_values.analytics}
           ui_values={this.props.ui_values}
         >
           <style jsx>{`

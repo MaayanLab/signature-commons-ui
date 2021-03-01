@@ -19,16 +19,17 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
     super(props)
 
     this.state = {
-      M: undefined,
+      ga_code: undefined,
     }
   }
 
   async componentDidMount() {
     if (!window.GA_INITIALIZED) {
-      initGA(this.props.analytics)
+      const ga_code = await initGA()
+      if (ga_code) this.setState({ga_code})
       window.GA_INITIALIZED = true
     }
-    logPageView()
+    logPageView(this.props.location.pathname, this.state.ga_code)
 
     // const M = await import('materialize-css')
     // this.setState({ M }, () => this.state.M.AutoInit())
@@ -40,7 +41,7 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
     //   this.state.M.updateTextFields()
     // }
     if (prevProps.location.pathname !== this.props.location.pathname){
-      logPageView(this.props.location.pathname)
+      logPageView(this.props.location.pathname, this.state.ga_code)
     }
   }
 
@@ -59,6 +60,26 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
           <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.9.55/css/materialdesignicons.min.css" rel="stylesheet" />
           <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
           <script async defer src="https://buttons.github.io/buttons.js"></script>
+          {this.state.ga_code===undefined && process.env.NODE_ENV === "development"?null:
+            <React.Fragment>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${this.state.ga_code}`}
+              />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${this.state.ga_code}', {
+                    page_path: window.location.pathname,
+                  });
+              `
+                }}
+              />
+            </React.Fragment>
+          }
         </Head>
         <Header location={this.props.location}/>
         <main style={{ backgroundColor: theme.palette.background.main }} {...this.props.ui_values.background_props}>
