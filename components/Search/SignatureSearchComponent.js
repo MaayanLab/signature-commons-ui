@@ -67,8 +67,9 @@ const EntityCounts = (input) => {
 	if (valid || invalid){
 		return(
 			<div style={{position: "absolute", top: 20, right: 20}}>
-				<Typography color="primary">{`${valid || 0} valid entries`}</Typography>
-				<Typography color="error">{`${invalid || 0} invalid entries`}</Typography>
+				<Typography color="primary">{`${valid} valid ${valid > 1 ? "entries": "entry"}`}</Typography>
+				<Typography color="error">{`${invalid} invalid ${invalid > 1 ? "entries": "entry"}`}</Typography>
+				<Typography>{`${suggestions} ${suggestions > 1 ? "need": "needs"} review`}</Typography>
 			</div>
 		)
 	}else return null

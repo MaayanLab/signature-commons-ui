@@ -82,6 +82,9 @@ export default class SignatureSearch extends React.PureComponent {
 				for (const field of Object.keys(input)){
 					if (input[field][label]!==undefined){
 						if (input[field][label].id === undefined){
+							if (input[field][label].type === "suggestions") {
+								suggestions = suggestions - 1
+							}
 							input[field][label] = {
 								label,
 								type: "valid",
@@ -91,6 +94,9 @@ export default class SignatureSearch extends React.PureComponent {
 						}
 					} else if (input[field][alternative_label]!==undefined){
 						if (input[field][alternative_label].id === undefined){
+							if (input[field][alternative_label].type === "suggestions") {
+								suggestions = suggestions - 1
+							}
 							input[field][alternative_label] = {
 								label: alternative_label,
 								type: "valid",
@@ -199,6 +205,7 @@ export default class SignatureSearch extends React.PureComponent {
 			}
 			input[field][selected.label] = selected
 			input.valid = input.valid + 1
+			input.suggestions = input.suggestions - 1
 			return {
 				input, 
 			}
