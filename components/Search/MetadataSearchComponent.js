@@ -12,7 +12,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 export const MetadataSearchComponent = (props) => {
 	const {
-		searching=false,
 		search_terms=[],
 		search_examples=[],
 		chipRenderer,
@@ -24,7 +23,7 @@ export const MetadataSearchComponent = (props) => {
 		PaginationProps,
 		ModelTabProps,
 		SearchTabProps,
-		TabProps,
+		placeholder,
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
@@ -71,7 +70,7 @@ export const MetadataSearchComponent = (props) => {
 									}
 								},
 								inputProps: {
-									placeholder: search_terms.length === 0 ? "Search for any term, i.e. drug, side effects, or a disease": "",
+									placeholder: search_terms.length === 0 ? placeholder: "",
 								}
 							}}
 						/>
@@ -127,7 +126,7 @@ export const MetadataSearchComponent = (props) => {
 }
 
 MetadataSearchComponent.propTypes = {
-	searching: PropTypes.bool,
+	placeholder: PropTypes.string,
 	search_terms: PropTypes.arrayOf(PropTypes.string),
 	search_examples: PropTypes.arrayOf(PropTypes.string),
 	chipRenderer: PropTypes.func,
