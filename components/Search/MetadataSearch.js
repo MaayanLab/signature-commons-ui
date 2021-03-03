@@ -7,6 +7,7 @@ import { MetadataSearchComponent } from './MetadataSearchComponent'
 import { get_filter, resolve_ids, download_signature } from './utils'
 import Downloads from '../Downloads'
 import Options from './Options'
+import { getSearchFilters } from '../../util/ui/fetch_ui_props'
 export default class MetadataSearch extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -126,7 +127,7 @@ export default class MetadataSearch extends React.PureComponent {
 			const filter_fields = {}
 			const fields = []
 			const {lib_id_to_name, resource_id_to_name} = this.props.resource_libraries
-			for (const prop of this.props.filter_props){
+			for (const prop of this.state.filter_props[this.props.model]){
 				if (prop.type === "filter"){
 					const checked = {}
 					const filters = query.filters || {}
@@ -276,7 +277,7 @@ export default class MetadataSearch extends React.PureComponent {
 
 	get_model_tab_props = (count=null) => {
 		const model_props = []
-		for (const model of ['resources', 'libraries', 'signatures', 'entities']){
+		for (const model of this.props.model_tabs){
 			const preferred_name = this.props.preferred_name[model]
 			if (preferred_name!==undefined && count !== null){
 				const endpoint = this.props.nav.MetadataSearch.endpoint
@@ -293,22 +294,26 @@ export default class MetadataSearch extends React.PureComponent {
 		return model_props
 	}
 
-	componentDidMount = () => {
+	componentDidMount = async () => {
+		const filter_props = await getSearchFilters()
 		const model_tab_props = this.get_model_tab_props()
 		const search_tabs = []
 		for (const k of ['MetadataSearch', 'SignatureSearch']){
 			const v = this.props.nav[k]
-			search_tabs.push({
-				label: v.navName,
-				href:  v.endpoint,
-				value: v.navName,
-			})
+			if (v.active){
+				search_tabs.push({
+					label: v.navName,
+					href:  v.endpoint,
+					value: v.navName,
+				})
+			}
 		}
 
 		this.setState({
 			searching: true,
 			model_tab_props,
 			search_tabs,
+			filter_props,
 		}, ()=>{
 			this.process_search()
 		})	
@@ -336,6 +341,7 @@ export default class MetadataSearch extends React.PureComponent {
 		}
 		return (
 			<MetadataSearchComponent
+					searching={this.state.searching}
 					placeholder={this.props.placeholder}
 					search_terms={this.state.query.search || []}
 					search_examples={this.props.search_examples}
@@ -393,14 +399,8 @@ MetadataSearch.propTypes = {
 		}),
 	}).isRequired,
 	model: PropTypes.string.isRequired,
+	model_tabs: PropTypes.arrayOf(PropTypes.oneOf(["resources", "libraries", "signatures", "entities"])),
 	schemas: PropTypes.array.isRequired,
-	filter_props: PropTypes.arrayOf(PropTypes.shape({
-		type: PropTypes.string,
-		field: PropTypes.string,
-		search_field: PropTypes.string,
-		text: PropTypes.string,
-		icon: PropTypes.string,
-	})),
 	preferred_name: PropTypes.shape({
 		resources: PropTypes.string,
 		libraries: PropTypes.string,

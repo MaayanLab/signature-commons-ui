@@ -41,10 +41,20 @@ export const getResourcesAndLibraries = async (schemas, resolver=null) => {
 		{
 			fields: ["library"]
 		})
+	const res_counts = await resolver.aggregate(
+		`/libraries/value_count`, 
+		{
+			fields: ["resource"]
+		})
 	const library_entries = Object.keys(lib_counts.library)
+	const resource_entries = Object.keys(res_counts.resource)
 	const {resolved_entries} = await resolver.resolve_entries({
 		model: "libraries",
 		entries: library_entries
+	})
+	await resolver.resolve_entries({
+		model: "resources",
+		entries: resource_entries
 	})
 	const lib_id_to_name = {}
 	const lib_name_to_id = {}

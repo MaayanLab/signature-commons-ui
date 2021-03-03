@@ -14,6 +14,7 @@ class App extends React.Component {
     this.state = {
       theme: null,
       ui_values: null,
+      schemas: null,
     }
   }
   static async getInitialProps() {
@@ -21,20 +22,27 @@ class App extends React.Component {
   }
 
   componentDidMount = async () => {
-    const { ui_values, theme_mod } = await get_initial_props()
+    const response = await get_initial_props()
+    console.log(response)
+    this.setState({
+      ...response
+    })
   }
 
   render() {
-    if (!this.state.theme === null) {
+    if (this.state.theme === null) {
       return <div style={{ textAlign: 'center', marginTop: 100 }}>
         <CircularProgress />
       </div>
     }
     return (
-      <MuiThemeProvider theme={this.props.theme}>
+      <MuiThemeProvider theme={this.state.theme}>
         <Router>
           <div className="root">
-            <Route path="/" render={(props) => <Home {...props}/>} />
+            <Route path="/" render={(props) => <Home 
+              {...props}
+              {...this.state}/>} 
+            />
           </div>
         </Router>
       </MuiThemeProvider>
@@ -42,4 +50,4 @@ class App extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App

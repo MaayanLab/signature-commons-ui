@@ -93,7 +93,7 @@ export default class DonutChart extends PureComponent {
             onClick={this.props.onClick}
             fill="linear-gradient(to bottom, rgb(124, 162, 206) 0%, rgb(179, 202, 225) 100%)"
             // onClick={this.handleClick}
-            {...pie_chart_style.Pie}
+            {...((pie_chart_style ||{}).Pie || {})}
           />
         </Chart>
       </ResponsiveContainer>

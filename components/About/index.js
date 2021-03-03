@@ -9,6 +9,8 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { withStyles } from '@material-ui/core/styles';
 import ReactMarkdown from 'react-markdown'
 import gfm from 'remark-gfm'
+import { getSummary } from '../../util/ui/fetch_ui_props'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 export const CustomTabs = withStyles(() => ({
 	indicator: {
@@ -27,16 +29,19 @@ export const CustomTabs = withStyles(() => ({
   }))((props) => <Tab {...props} />);
 
 export default class About extends React.PureComponent {
-  constructor(props){
-    super(props)
-    this.state = {
-      pie: Object.keys(this.props.stats.count_charts.pie)[0],
-      bar: Object.keys(this.props.stats.count_charts.bar)[0],
-      word: Object.keys(this.props.stats.count_charts.word)[0]
-    }
+  
+  componentDidMount = async () => {
+    const stats = await getSummary()
+    this.setState({
+      stats,
+      pie: Object.keys(stats.count_charts.pie)[0],
+      bar: Object.keys(stats.count_charts.bar)[0],
+      word: Object.keys(stats.count_charts.word)[0]
+    })
   }
+
   model_counts = () => {
-    const { model_counts } = this.props.stats
+    const { model_counts } = this.state.stats
     const { nav, preferred_name } = this.props.ui_values
     const models = model_counts.map(m=>(
       <IconComponentButton
@@ -50,7 +55,7 @@ export default class About extends React.PureComponent {
   }
 
   pie_charts = () => {
-    const { pie } = this.props.stats.count_charts
+    const { pie } = this.state.stats.count_charts
     const { nav, preferred_name, pie_chart_style } = this.props.ui_values
     const p = pie[this.state.pie]
     const data = p.stats.sort((a,b)=>(b.count-a.count))
@@ -90,7 +95,8 @@ export default class About extends React.PureComponent {
   }
 
   render() {
-    const { model_counts, meta_counts, count_charts } = this.props.stats
+    if (this.state === null) return <CircularProgress/>
+    const { model_counts, meta_counts, count_charts } = this.state.stats
     return (
       <Grid container spacing={1} style={{marginBottom: 50}}>
           <Grid item xs={12} lg={6}>

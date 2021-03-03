@@ -117,6 +117,7 @@ export class TextFieldSuggest extends React.Component {
             colors_and_icon=default_colors_and_icon,
             chipInputProps={},
             endAdornment,
+            placeholder="",
         } = this.props
         const rows = 15 - input.length
         return (
@@ -141,7 +142,7 @@ export class TextFieldSuggest extends React.Component {
                                         overflow: "auto",
                                     },
                                     endAdornment,
-                                    placeholder: input.length === 0 ? "Place your drug set here": "",
+                                    placeholder: input.length === 0 ? placeholder: "",
                                 },
                                 divProps: {
                                     style: {

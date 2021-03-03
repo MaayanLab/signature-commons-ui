@@ -3,10 +3,7 @@ import PropTypes from 'prop-types'
 import {
 	BarChart, Bar, Cell, XAxis, YAxis, LabelList, Tooltip,
 } from 'recharts';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import { precise } from '../ScorePopper'
+import Lazy from '../Lazy'
 
 const renderCustomizedLabel = (props) => {
 	const {
@@ -24,15 +21,8 @@ const renderCustomizedLabel = (props) => {
 
   const CustomTooltip = ({ active, payload }) => {
 	if (active) {
-	  return (
-		<Card style={{opacity:"0.8", textAlign: "left"}}>
-			<CardContent>
-				<Typography variant="h6">{payload[0].payload.name}</Typography>
-				<Typography>{`odds ratio: ${precise(payload[0].payload.oddsratio)}`}</Typography>
-				<Typography>{`p-value: ${precise(payload[0].payload.pval)}`}</Typography>
-			</CardContent>
-		</Card>
-	  )
+	  const {tooltip_component, ...rest} = payload[0].payload
+	  return <Lazy reloader={rest.id}>{async () => tooltip_component(rest)}</Lazy>
 	}
   
 	return null;

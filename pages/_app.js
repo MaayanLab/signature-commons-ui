@@ -1,15 +1,11 @@
 
 import React from 'react'
-import App, { Container } from 'next/app'
-import { Provider } from 'react-redux'
+import App from 'next/app'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import Router from 'next/router'
 import Error from './_error'
 import serializeError from 'serialize-error'
 import '../styles/index.scss'
-import withRedux from 'next-redux-wrapper'
-import initializeStore from '../util/redux/store'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
 class App_ extends App {
@@ -69,7 +65,7 @@ class App_ extends App {
       )
     }
     return (
-      <Provider store={store}>
+      <div class="root">
         <CssBaseline />
         {loaded ? (
             <Component {...pageProps} />
@@ -78,9 +74,9 @@ class App_ extends App {
             <CircularProgress />
           </div>
         )}
-      </Provider>
+      </div>
     )
   }
 }
 
-export default withRedux(initializeStore)(App_)
+export default App_

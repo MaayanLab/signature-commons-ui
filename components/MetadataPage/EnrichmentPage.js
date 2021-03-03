@@ -36,12 +36,10 @@ import { LinearProgress } from '@material-ui/core'
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 import TablePagination from '@material-ui/core/TablePagination'
-
+import { precise } from '../ScorePopper'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -485,7 +483,8 @@ export default class EnrichmentPage extends React.PureComponent {
 		if (this.props.model === "signatures"){
 			label = `The input ${this.props.preferred_name_singular.signatures.toLowerCase()} has ${count} overlapping ${children_name} with ${entry_name}`
 		}else if (this.props.model === "libraries") {
-			label = `There are ${count} enriched terms in ${entry_name}`
+			if (count === 100) label = `Top ${count} enriched terms in ${entry_name}`
+			else label = `There are ${count} enriched terms in ${entry_name}`
 		}else if (this.props.model === "resources") {
 			label = `There are ${count} ${children_name} in ${entry_name} with ${this.state.entry.data.scores.signature_count} enriched terms`
 		}
@@ -563,6 +562,32 @@ export default class EnrichmentPage extends React.PureComponent {
 		)
 	}
 
+	lazy_tooltip = async (payload) => {
+		const {name, id, oddsratio, pval, setsize} = payload
+		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
+		const entry_object = resolved_entries[id]
+		const children = (await entry_object.children({limit:0})).entities || []
+		const overlap = children.map(e=>getName(e, this.props.schemas))
+		const overlap_text = overlap.join(", ")
+		// if (setsize <= 15) overlap_text = overlap.join(", ")
+		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
+		return(
+			<Card style={{opacity:"0.8", textAlign: "left"}}>
+				<CardContent>
+					<Typography variant="h6">{name}</Typography>
+					<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>
+					<Typography><b>p-value:</b> {precise(pval)}</Typography>
+					{ setsize===0 ? null:
+						<React.Fragment>
+							<Typography><b>overlap size:</b> {setsize}</Typography>
+							<Typography><b>overlaps:</b> {overlap_text}</Typography>
+						</React.Fragment>
+					}
+				</CardContent>
+			</Card>
+		)
+	}
+
 	enrichment_bar = () => {
 		const {
 			barColor="#0063ff",
@@ -574,6 +599,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			inactiveColor,
 			order: this.state.order,
 			order_field: this.state.order_field,
+			tooltip_component: this.lazy_tooltip,
 		})
 		const score_fields = Object.keys(this.state.children[0].data.scores).filter(s=>s!=="setsize")
 		return (
@@ -598,14 +624,17 @@ export default class EnrichmentPage extends React.PureComponent {
 			inactiveColor="#713939"
 		} = this.props
 		const {signatures} = await this.state.entry_object.children({limit:0})
-		const data = signatures.map(s=>({
-			name: getName(s, this.props.schemas),
-			id: s.id,
-			oddsratio: s.scores["odds ratio"],
-			logpval: -Math.log(s.scores["p-value"]),
-			pval: s.scores["p-value"], 
-			color: s.scores["p-value"] < 0.05 ? scatterColor: inactiveColor,
-		}))
+		const data = signatures.map(entry=>(
+			{
+				name: getName(entry, this.props.schemas),
+				id: entry.id,
+				oddsratio: entry.scores["odds ratio"],
+				logpval: -Math.log(entry.scores["p-value"]),
+				pval: entry.scores["p-value"], 
+				setsize: entry.scores["overlap size"],
+				tooltip_component: this.lazy_tooltip,
+				color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? scatterColor: inactiveColor
+			}))
 		return (
 			<React.Fragment>
 				<ScatterPlot data={data} color={scatterColor} scatterProps={{onClick: (v) => {
@@ -632,7 +661,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			table: this.table_view
 		}
 		return (
-			<Grid container spacing={1} style={{height:450}}>
+			<Grid container spacing={1} style={{height:450, overflow: "auto"}}>
 				<Grid item xs={12} align="center">
 					{visuals[this.state.visualization]()}
 				</Grid>
@@ -702,7 +731,7 @@ export default class EnrichmentPage extends React.PureComponent {
 	download_library = async (type) => {
 		await download_enrichment_for_library(
 			this.state.entry_object,
-			`${this.state.entry.info.name.text}.json`,
+			`${this.state.entry.info.name.text}${type==="json"?".json":".tsv"}`,
 			this.props.schemas,
 			this.start_download,
 			this.finish_download,

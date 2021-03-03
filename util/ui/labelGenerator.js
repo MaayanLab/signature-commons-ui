@@ -182,7 +182,7 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
     let tags = []
     let download = []
     const keywords = {}
-    const info = { id: data.id, display: {}, url: {}, components: {}}
+    const info = { id: data.id, display: {}, url: {}, components: {}, name: { text: data.id }}
     if (endpoint){
       info.endpoint = endpoint + data.id
     }
@@ -201,7 +201,6 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
           }
         }
         if (prop.type === "title") {
-          info.name = { text: data.id }
           if (val !== null) {
             info.name = { ...info.name, ...val, field: prop.field, }
           }

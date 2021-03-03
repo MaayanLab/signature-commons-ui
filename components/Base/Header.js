@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
@@ -8,18 +7,11 @@ import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import Hidden from '@material-ui/core/Hidden'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import MenuIcon from '@material-ui/icons/Menu'
 import { makeTemplate } from '../../util/ui/makeTemplate'
-
-const mapStateToProps = (state, ownProps) => {
-  return {
-    ui_values: state.ui_values,
-  }
-}
 
 const styles = (theme) => ({
   grow: {
@@ -239,4 +231,4 @@ class Header extends React.Component {
 }
 
 
-export default connect(mapStateToProps)(withStyles(styles)(Header))
+export default withStyles(styles)(Header)

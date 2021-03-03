@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types'
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import { precise } from '../ScorePopper'
+import Lazy from '../Lazy'
+
 
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell,
@@ -11,15 +9,8 @@ import {
 
 const CustomTooltip = ({ active, payload }) => {
 	if (active) {
-	  return (
-		<Card style={{opacity:"0.8"}}>
-			<CardContent>
-				<Typography variant="h6">{payload[0].payload.name}</Typography>
-				<Typography>{`odds ratio: ${precise(payload[0].payload.oddsratio)}`}</Typography>
-				<Typography>{`p-value: ${precise(payload[0].payload.pval)}`}</Typography>
-			</CardContent>
-		</Card>
-	  )
+		const {tooltip_component, ...rest} = payload[0].payload
+		return <Lazy reloader={rest.id}>{async () => tooltip_component(rest)}</Lazy>
 	}
   
 	return null;
@@ -45,7 +36,7 @@ export const ScatterPlot = (props) => {
 				dataKey="oddsratio"
 				name="odds ratio"
 				label={{ value: 'odds ratio', position: 'bottom' }}/>
-			<Tooltip content={<CustomTooltip/>} />
+			<Tooltip content={<CustomTooltip/>} position={{x:0, y:0}}/>
 			<Scatter name="Enrichment" data={data} {...scatterProps}>
 				{data.map((entry, index) => {
 					return <Cell key={`scatter-${index}`} fill={entry.color} />

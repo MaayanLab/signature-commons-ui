@@ -49,7 +49,7 @@ export class DataResolver {
 		if (this._controller) this._controller.abort()
 	}
 
-	resolve_entries = async ({model, entries, filter={}, parent=undefined}) => {
+	resolve_entries = async ({model, entries=[], filter={}, parent=undefined}) => {
 		const start_time = new Date()
 		const resolved_entries = {}
         const unresolved_entries = {}
@@ -189,7 +189,7 @@ export class DataResolver {
 			},
 			signal: this._controller.signal,
 		  })
-		for (const e of entries){
+		for (const e of entries || []){
 			let entry = this.data_repo[model][e.id]
 			if (entry === undefined){
 				// If you don't have a field option, then you are resolving everything
@@ -250,15 +250,17 @@ export class DataResolver {
 			body,
 			signal: this._controller.signal,
 		  })
-		const signatures = response.results.map(({uuid, overlap, setsize, ...scores})=>({
+		const signatures = response.results.map(({uuid, overlap, setsize, ...scores})=>{
+			return({
 			id: uuid,
 			overlap,
 			setsize,
+			"overlap size": (overlap || []).length,
 			"p-value": scores["p-value"],
 			"q-value (BH)": scores.fdr,
 			"q-value (Bonferroni)": scores["p-value-bonferroni"],
 			"odds ratio": scores.oddsratio,
-		}))
+		})})
 
 		return {
             entries: signatures,

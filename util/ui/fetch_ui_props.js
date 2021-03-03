@@ -12,7 +12,9 @@ export const getSearchFilters = async () => {
 		body: {
 		  filter: {
 			where: {
-			  'meta.$validator': '/dcic/signature-commons-schema/v6/meta/schema/counting.json',
+			  'meta.$validator': {
+				ilike: '%' + 'schema/counting.json' + '%',
+				},
 			  'meta.type': 'filter'
 			},
 		  },
@@ -27,6 +29,14 @@ export const getSearchFilters = async () => {
 	return filters
 }
 
+export const getSummary = async () => {
+	const { response: summary } = await fetch_meta({
+		endpoint: '/summary',
+	  })
+	console.log(summary)
+	return summary
+}
+
 const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 
 export const get_ui_values = async () => {
@@ -35,7 +45,9 @@ export const get_ui_values = async () => {
 	  body: {
 		filter: {
 		  where: {
-			'meta.$validator': '/dcic/signature-commons-schema/v5/meta/schema/landing-ui.json',
+			'meta.$validator': {
+				ilike: '%' + 'schema/landing-ui.json' + '%',
+			},
 			'meta.landing': true,
 		  },
 		},
@@ -77,8 +89,26 @@ export const get_search_models = async () => {
 	return search_models
 }
 
+export const getSchemas = async () => {
+	const { response } = await fetch_meta_post({
+		endpoint: '/schemas/find',
+		body: {
+		  filter: {
+			where: {
+			  	'meta.$validator': {
+					ilike: '%' + 'schema/ui-schema.json' + '%',
+				},
+			},
+		  },
+		},
+	  })
+	const schemas = response.map(r=>r.meta)
+	return schemas
+}
+
 export const get_initial_props = async () => {
 	const {theme_mod, ...ui_values} = await get_ui_values()
 	const theme = await get_theme(theme_mod)
-	return { ui_values, theme_mod }
+	const schemas = await getSchemas()
+	return { ui_values, theme, schemas }
 }

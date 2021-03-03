@@ -5,16 +5,10 @@ import Footer from './Footer'
 import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
-import { connect } from 'react-redux'
 import { makeTemplate } from '../../util/ui/makeTemplate'
+import Container from '@material-ui/core/Container'
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    ui_values: state.ui_values,
-    theme: state.theme,
-  }
-}
-export default connect(mapStateToProps)(withStyles(styles)(class Base extends React.PureComponent {
+export default withStyles(styles)(class Base extends React.PureComponent {
   constructor(props) {
     super(props)
 
@@ -81,14 +75,20 @@ export default connect(mapStateToProps)(withStyles(styles)(class Base extends Re
             </React.Fragment>
           }
         </Head>
-        <Header location={this.props.location}/>
+        <Header 
+          location={this.props.location}
+          ui_values={this.props.ui_values}
+        />
         <main style={{ backgroundColor: theme.palette.background.main }} {...this.props.ui_values.background_props}>
-          <div className={classes.container}>
+          <Container>
             {this.props.children}
-          </div>
+          </Container>
         </main>
-        <Footer/>
+        <Footer 
+          ui_values={this.props.ui_values}  
+          theme={this.props.theme}
+        />
       </div>
     )
   }
-}))
+})

@@ -2,12 +2,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { ChipInput, Filter } from '../SearchComponents'
 import Grid from '@material-ui/core/Grid'
+import Container from '@material-ui/core/Container'
+
 import TablePagination from '@material-ui/core/TablePagination'
 import {ResultsTab} from '../MetadataPage/ResultsTab'
 import {DataTable} from '../DataTable'
 import { Typography, Divider } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 
 export const MetadataSearchComponent = (props) => {
@@ -24,6 +26,7 @@ export const MetadataSearchComponent = (props) => {
 		ModelTabProps,
 		SearchTabProps,
 		placeholder,
+		searching,
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
@@ -105,7 +108,7 @@ export const MetadataSearchComponent = (props) => {
 				<Grid container spacing={1}>
 					<Grid item xs={12} md={1}/>
 					<Grid item xs={12} md={8}>
-						{ entries===null ? <CircularProgress/>:
+						{ entries===null || searching ? <LinearProgress/>:
 							<Grid item xs={12}>
 								<DataTable entries={entries} {...DataTableProps}/>
 								<TablePagination
@@ -126,6 +129,7 @@ export const MetadataSearchComponent = (props) => {
 }
 
 MetadataSearchComponent.propTypes = {
+	searching: PropTypes.bool,
 	placeholder: PropTypes.string,
 	search_terms: PropTypes.arrayOf(PropTypes.string),
 	search_examples: PropTypes.arrayOf(PropTypes.string),

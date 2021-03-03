@@ -1,15 +1,11 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
-import Link from '@material-ui/core/Link'
 import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
 import Color from 'color'
-import { connect } from 'react-redux'
 import { makeTemplate } from '../../util/ui/makeTemplate'
-import Icon from '@material-ui/core/Icon';
 import { withStyles } from '@material-ui/core/styles'
-
 
 const styles = (theme) => ({
   root: {
@@ -53,12 +49,6 @@ const FooterLink = ({ src, alt, href, title, classes, containerProps, imageProps
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    theme: state.theme,
-    ui_values: state.ui_values,
-  }
-}
 
 function Footer(props) {
   const { classes, ui_values, theme, ...rest } = props
@@ -89,16 +79,17 @@ function Footer(props) {
                 style={{textTransform: "none"}}
                 startIcon={<span className={`mdi mdi-book-open ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
               >
-                <Typography style={{color: background.isDark? "#FFF":"#000"}}>Terms of Service</Typography>
+                <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>Terms of Service</Typography>
               </Button>
             </Grid>
             <Grid item>
               <Button href={ui_values.github}
                 size="small"
+                style={{color: background.isDark() ? "#FFF":"#000"}}
                 style={{textTransform: "none"}}
                 startIcon={<span className={`mdi mdi-github ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
               >
-                <Typography style={{color: background.isDark? "#FFF":"#000"}}>View Source Code</Typography>
+                <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>View Source Code</Typography>
               </Button>
             </Grid>
             <Grid item>
@@ -107,7 +98,7 @@ function Footer(props) {
                 style={{textTransform: "none"}}
                 startIcon={<span className={`mdi mdi-alert-circle-outline ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
               >
-                <Typography style={{color: background.isDark? "#FFF":"#000"}}>Submit Bugs and Corrections</Typography>
+                <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>Submit Bugs and Corrections</Typography>
               </Button>
             </Grid>
           </Grid>
@@ -130,4 +121,4 @@ function Footer(props) {
   )
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(Footer))
+export default withStyles(styles)(Footer)

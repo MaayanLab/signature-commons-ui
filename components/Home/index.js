@@ -2,8 +2,6 @@ import React from 'react'
 import { Set } from 'immutable'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import dynamic from 'next/dynamic'
-import { connect } from 'react-redux'
-import { MuiThemeProvider } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import ErrorIcon from '@material-ui/icons/Error'
 import CloseIcon from '@material-ui/icons/Close'
@@ -18,7 +16,6 @@ import Base from '../../components/Base'
 import About from '../../components/About'
 import {Terms} from '../../components/About/Terms'
 
-import Landing from '../Landing'
 import Resources from '../Resources'
 import MetadataSearch from '../Search/MetadataSearch'
 import SignatureSearch from '../Search/SignatureSearch'
@@ -28,41 +25,12 @@ import {IFramePage} from '../IFramePage'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
-import { closeSnackBar, initializeTheme } from '../../util/redux/actions'
 import '../../styles/swagger.scss'
 import Lazy from '../Lazy'
+import { getResourcesAndLibraries } from '../../util/ui/getResourcesAndLibraries'
+
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 
-
-const mapStateToProps = (state) => {
-  return {
-    ui_values: state.ui_values,
-    theme: state.theme,
-    error_message: state.error_message,
-    schemas: state.serverSideProps.schemas,
-    serverSideProps: state.serverSideProps,
-    search_filters: state.search_filters,
-    resource_libraries: {
-      lib_id_to_name: state.lib_id_to_name,
-      lib_name_to_id: state.lib_name_to_id,
-      resource_name_to_id: state.resource_name_to_id,
-      resource_id_to_name: state.resource_id_to_name,
-      lib_to_resource: state.lib_to_resource,
-      resource_to_lib: state.resource_to_lib,
-    },
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    initializeTheme: (theme) => {
-      dispatch(initializeTheme(theme))
-    },
-    closeSnackBar: () => {
-      dispatch(closeSnackBar())
-    },
-  }
-}
 
 const snackStyles = (theme) => ({
   error: {
@@ -115,8 +83,10 @@ class Home extends React.PureComponent {
     this.state = {
       cart: Set(),
       theme: null,
-      enrichment_resolver: new DataResolver(),
-      metadata_resolver: new DataResolver()
+      metadata_resolver: null,
+      enrichment_resolver: null,
+			resource_libraries: {},
+      error_message: null,
     }
   }
 
@@ -132,13 +102,6 @@ class Home extends React.PureComponent {
     />
   )
 
-  // upload = (props) => (
-  //   <Upload
-  //     cart={this.state.cart}
-  //     updateCart={this.updateCart}
-  //     {...props}
-  //   />
-  // )
 
   api = (props) => (
     <Grid container>
@@ -174,13 +137,6 @@ class Home extends React.PureComponent {
   //   />
   // )
 
-  landing = (props) => {
-    return (
-      <Landing
-        {...props}
-      />
-    )
-  }
 
 
   metadata_search = (props) => {
@@ -188,18 +144,21 @@ class Home extends React.PureComponent {
       names[v] = k
       return names
     }, {})
+    const search_props = this.props.ui_values.nav.MetadataSearch.props
     const model = reverse_preferred[props.match.params.model]
-    if (model === undefined) return <Redirect to='/not-found'/>
+    if (search_props.model_tabs.indexOf(model)===-1) return <Redirect to='/not-found'/>
+    
     return (
       <MetadataSearch schemas={this.props.schemas}
-                    resource_libraries={this.props.resource_libraries}
+                    resource_libraries={this.state.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
                     preferred_name_singular={this.props.ui_values.preferred_name_singular}
                     model={model}
+                    model_tabs={search_props.model_tabs}
                     label={props.match.params.label}
-                    filter_props={this.props.search_filters[model] || []}
+                    filter_props={(this.props.search_filters || {})[model] || []}
                     nav={this.props.ui_values.nav}
-                    search_examples={(this.props.ui_values.search_examples || {})[model] || []}
+                    search_examples={(search_props.examples || {})[model] || []}
                     resolver={this.state.metadata_resolver}
                     metadata_placeholder={this.props.ui_values.placeholder}
                     {...props}
@@ -208,7 +167,8 @@ class Home extends React.PureComponent {
   }
 
   signature_search = (props) => {
-    const reverse_preferred = Object.entries(this.props.ui_values.preferred_name).reduce((names,[k,v])=>{
+    const {nav, preferred_name, preferred_name_singular, resource_order} = this.props.ui_values
+    const reverse_preferred = Object.entries(preferred_name).reduce((names,[k,v])=>{
       names[v] = k
       return names
     }, {})
@@ -217,18 +177,34 @@ class Home extends React.PureComponent {
       model = reverse_preferred[props.match.params.model]
       if (model!=='resources') return <Redirect to='/not-found'/>
     }
+    if (["Overlap", "Rank"].indexOf(props.match.params.type)===-1) return <Redirect to='/not-found'/>
+    const search_props = nav.SignatureSearch.props.types[props.match.params.type]
+    const enrichment_tabs = {}
+    for (const [k,v] of Object.entries(nav.SignatureSearch.props.types)){
+      if (v.active){
+        enrichment_tabs[k] = {
+          label: v.switch,
+          href: `#${nav.SignatureSearch.endpoint}/${k}`,
+          type: k,
+          icon: v.icon,
+        }
+        if (v.placeholder) enrichment_tabs[k].placeholder = v.placeholder
+        if (v.up_placeholder) enrichment_tabs[k].up_placeholder = v.up_placeholder
+        if (v.down_placeholder) enrichment_tabs[k].down_placeholder = v.down_placeholder
+      }
+    }
     return (
       <SignatureSearch schemas={this.props.schemas}
-                    resource_libraries={this.props.resource_libraries}
-                    preferred_name={this.props.ui_values.preferred_name}
-                    preferred_name_singular={this.props.ui_values.preferred_name_singular}
+                    resource_libraries={this.state.resource_libraries}
+                    preferred_name={preferred_name}
+                    preferred_name_singular={preferred_name_singular}
                     label={props.match.params.label}
-                    nav={this.props.ui_values.nav}
-                    examples={this.props.ui_values.examples}
-                    resource_order={this.props.ui_values.resource_order}
+                    nav={nav}
+                    examples={search_props.examples}
+                    resource_order={resource_order}
                     resolver={this.state.enrichment_resolver}
-                    filter_props={this.props.search_filters.signatures || []}
                     model={model}
+                    enrichment_tabs={enrichment_tabs}
                     {...props}
       />
     )
@@ -244,7 +220,7 @@ class Home extends React.PureComponent {
     if (model === undefined) return <Redirect to='/not-found'/>
     return (
       <MetadataPage schemas={this.props.schemas}
-                    resource_libraries={this.props.resource_libraries}
+                    resource_libraries={this.state.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
                     preferred_name_singular={this.props.ui_values.preferred_name_singular}
                     id={id}
@@ -252,7 +228,7 @@ class Home extends React.PureComponent {
                     nav={this.props.ui_values.nav}
                     label={props.match.params.label}
                     metadata_resolver={this.state.metadata_resolver}
-                    enrichment_resolver={this.state.enrichment_resolver}
+			              enrichment_resolver={this.state.enrichment_resolver}
                     {...props}
       />
     )
@@ -264,9 +240,33 @@ class Home extends React.PureComponent {
     )
   }
 
- 
+  reportError = (error_message) => {
+    this.setState({
+      error_message
+    })
+  }
+
+  closeError = () => {
+    this.setState({
+      error_message: null
+    })
+  }
+  
+  componentDidMount = async () => {
+		const schemas = this.props.schemas
+		const metadata_resolver = new DataResolver()
+    const enrichment_resolver = new DataResolver()
+    await getResourcesAndLibraries(schemas, enrichment_resolver)
+		const resource_libraries = await getResourcesAndLibraries(schemas, metadata_resolver)
+		this.setState({
+      metadata_resolver,
+      enrichment_resolver,
+			resource_libraries,
+		})
+	}
+
   render = () => {
-    if (this.props.theme === null) {
+    if (this.state.metadata_resolver === null) {
       return <CircularProgress />
     }
     const extra_nav = []
@@ -282,183 +282,177 @@ class Home extends React.PureComponent {
         )
       }
     }
+    const {nav, preferred_name} = this.props.ui_values
     
     return (
-      <MuiThemeProvider theme={this.props.theme}>
+      <Base location={this.props.location}
+        // footer_type={this.props.ui_values.footer_type}
+        // github={this.props.ui_values.github}
+        // github_issues={this.props.ui_values.github_issues}
+        ui_values={this.props.ui_values}
+        theme={this.props.theme}
+      >
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'left',
           }}
-          open={this.props.error_message !== null}
+          open={this.state.error_message !== null}
           autoHideDuration={6000}
-          onClose={this.props.closeSnackBar}
+          onClose={this.closeError}
         >
           <SigcomSnackbar
-            onClose={this.handleClose}
-            message={this.props.error_message}
+            onClose={this.closeError}
+            message={this.state.error_message}
           />
         </Snackbar>
-        <Base location={this.props.location}
-          footer_type={this.props.ui_values.footer_type}
-          github={this.props.ui_values.github}
-          github_issues={this.props.ui_values.github_issues}
-          ui_values={this.props.ui_values}
-        >
-          <style jsx>{`
-          #Home {
-            background-image: url('${process.env.PREFIX}/static/images/arrowbackground.png');
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            background-position: left bottom;
+        <Switch>
+          {nav.MetadataSearch.active ?
+            <Route
+              path={nav.MetadataSearch.endpoint || '/MetadataSearch'}
+              exact
+              component={()=><Redirect to={`${nav.MetadataSearch.endpoint}/${preferred_name[nav.MetadataSearch.props.entry_model]}`} />}
+            />
+            : null
           }
-          `}</style>
-          <Switch>
-            {this.props.ui_values.nav.MetadataSearch.active ?
-              <Route
-                path={this.props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}
-                exact
-                component={()=><Redirect to={`${this.props.ui_values.nav.MetadataSearch.endpoint}/${this.props.ui_values.preferred_name.signatures}`} />}
-              />
-              : null
-            }
-            {this.props.ui_values.nav.MetadataSearch.active ?
-              <Route
-                path={`${this.props.ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}/:model`}
-                component={this.metadata_search}
-              />
-              : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}
-                exact
-                component={(props) => {
-                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}${this.props.ui_values.overlap_search ? '/Overlap' : '/Rank'}`} />
-                }}
-              />
-              : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type`}
-                exact
-                component={this.signature_search}
-              />
-             : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id`}
-                component={this.signature_search}
-                exact
-              />
-             : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model`}
-                component={this.signature_search}
-                exact
-              />
-             : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`${this.props.ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model/:id`}
-                component={this.signature_search}
-                exact
-              />
-             : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`/Enrichment/:type/:enrichment_id/:model/:id`}
-                component={this.metadata_pages}
-                exact
-              />
-             : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`/Enrichment/:type/:enrichment_id`}
-                component={(props)=>{
-                  const {type, enrichment_id} = props.match.params
-                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/${type}/${enrichment_id}`}/>
-                }}
-              />
-             : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`/Enrichment/:type`}
-                component={(props)=>{
-                  const {type, enrichment_id} = props.match.params
-                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/${type}`}/>
-                }}
-              />
-             : null
-            }
-            {this.props.ui_values.nav.SignatureSearch.active ?
-              <Route
-                path={`/Enrichment`}
-                component={(props)=>{
-                  const {type, enrichment_id} = props.match.params
-                  return <Redirect to={`${this.props.ui_values.nav.SignatureSearch.endpoint}/Overlap`}/>
-                }}
-              />
-             : null
-            }
-            {this.props.ui_values.nav.Resources.active ?
-              <Route
-                path={`${this.props.ui_values.nav.Resources.endpoint || '/Resources'}`}
-                exact
-                component={this.resources}
-              /> : null
-            }
+          {nav.MetadataSearch.active ?
             <Route
-              path={'/About'}
-              component={this.about}
+              path={`${nav.MetadataSearch.endpoint || '/MetadataSearch'}/:model`}
+              component={this.metadata_search}
             />
+            : null
+          }
+          {nav.SignatureSearch.active ?
             <Route
-              path="/:model/:id"
-              component={this.metadata_pages}
-            />
-            <Route
-              path="/:model/:id/:label"
-              component={this.metadata_pages}
-            />
-            <Route
-              path={`${this.props.ui_values.nav.API.endpoint || '/API'}`}
-              component={this.api}
-            />
-            <Route
-              path={"/Terms"}
-              component={(props)=><Terms {...props} terms={this.props.ui_values.terms}/>}
-            />
-            {extra_nav}
-            <Route
-              path="/not-found"
+              path={nav.SignatureSearch.endpoint || '/SignatureSearch'}
+              exact
               component={(props) => {
-                return <div>You're not supposed to be here</div>
-              }}// {this.landing}
-            />
-            <Route
-              path="/:otherendpoint"
-              component={(props) => {
-                return <Redirect to='/not-found'/>
+                return <Redirect to={`${nav.SignatureSearch.endpoint || '/SignatureSearch'}${nav.SignatureSearch.props.types.Overlap.active ? '/Overlap' : '/Rank'}`} />
               }}
             />
+            : null
+          }
+          {nav.SignatureSearch.active ?
             <Route
-              path="/"
+              path={`${nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type`}
               exact
-              component={this.landing}// {this.landing}
+              component={this.signature_search}
             />
-          </Switch>
-        </Base>
-      </MuiThemeProvider>
+            : null
+          }
+          {nav.SignatureSearch.active ?
+            <Route
+              path={`${nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id`}
+              component={this.signature_search}
+              exact
+            />
+            : null
+          }
+          {nav.SignatureSearch.active ?
+            <Route
+              path={`${nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model`}
+              component={this.signature_search}
+              exact
+            />
+            : null
+          }
+          {nav.SignatureSearch.active ?
+            <Route
+              path={`${nav.SignatureSearch.endpoint || '/SignatureSearch'}/:type/:enrichment_id/:model/:id`}
+              component={this.signature_search}
+              exact
+            />
+            : null
+          }
+          {nav.SignatureSearch.active ?
+            <Route
+              path={`/Enrichment/:type/:enrichment_id/:model/:id`}
+              component={this.metadata_pages}
+              exact
+            />
+            : null
+          }
+          {nav.SignatureSearch.active ?
+            <Route
+              path={`/Enrichment/:type/:enrichment_id`}
+              component={(props)=>{
+                const {type, enrichment_id} = props.match.params
+                return <Redirect to={`${nav.SignatureSearch.endpoint}/${type}/${enrichment_id}`}/>
+              }}
+            />
+            : null
+          }
+          {nav.SignatureSearch.active ?
+            <Route
+              path={`/Enrichment/:type`}
+              component={(props)=>{
+                const {type, enrichment_id} = props.match.params
+                return <Redirect to={`${nav.SignatureSearch.endpoint}/${type}`}/>
+              }}
+            />
+            : null
+          }
+          {nav.SignatureSearch.active ?
+            <Route
+              path={`/Enrichment`}
+              component={(props)=>{
+                const {type, enrichment_id} = props.match.params
+                return <Redirect to={`${nav.SignatureSearch.endpoint}/Overlap`}/>
+              }}
+            />
+            : null
+          }
+          {nav.Resources.active ?
+            <Route
+              path={`${nav.Resources.endpoint || '/Resources'}`}
+              exact
+              component={this.resources}
+            /> : null
+          }
+          <Route
+            path={'/About'}
+            component={this.about}
+          />
+          <Route
+            path="/:model/:id"
+            component={this.metadata_pages}
+          />
+          <Route
+            path="/:model/:id/:label"
+            component={this.metadata_pages}
+          />
+          <Route
+            path={`${nav.API.endpoint || '/API'}`}
+            component={this.api}
+          />
+          <Route
+            path={"/Terms"}
+            component={(props)=><Terms {...props} terms={this.props.ui_values.terms}/>}
+          />
+          {extra_nav}
+          <Route
+            path="/not-found"
+            component={(props) => {
+              return <div>You're not supposed to be here</div>
+            }}// {this.landing}
+          />
+          <Route
+            path="/:otherendpoint"
+            component={(props) => {
+              return <Redirect to='/not-found'/>
+            }}
+          />
+          <Route
+            path="/"
+            exact
+            component={(props)=>{
+              return <Redirect to={`${nav.MetadataSearch.endpoint}/${preferred_name.signatures}`} />
+            }}
+          />
+        </Switch>
+      </Base>
     )
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default Home

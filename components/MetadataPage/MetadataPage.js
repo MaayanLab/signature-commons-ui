@@ -65,88 +65,94 @@ export default class MetadataPage extends React.PureComponent {
 
 	process_children = async () => {
 		try {
-			this.props.resolver.abort_controller()
-			this.props.resolver.controller()
-			const {schemas} = this.props
-			const {
-				lib_name_to_id,
-				lib_id_to_name,
-				resource_name_to_id,
-				resource_to_lib
-			} = this.props.resource_libraries
-			const {search: filter_string} = this.props.location
-			const query = get_filter(filter_string)
-			const resolved_query = resolve_ids({
-				query,
-				model: this.state.entry_object.child_model,
-				lib_name_to_id,
-				lib_id_to_name,
-				resource_name_to_id,
-				resource_to_lib
-			})
-			const where = build_where(resolved_query)
-			const {limit=10, skip=0, order} = query
-			// const skip = limit*page
-			const q = {
-				limit, skip, order
-			}
-			if (where) q["where"] = where
-			const children_object = await this.state.entry_object.children({...q})
-			const children_count = children_object.count
-			const children_results = children_object[this.state.entry_object.child_model]
-			const children = []
-			for (const entry of Object.values(children_results)){
-				const e = labelGenerator(entry,
-					schemas,
-					"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
-				e.RightComponents = []
-				if (this.state.entry_object.child_model==='signatures'){
-					e.RightComponents.push({
-						component: this.options,
-						props: {
-							options: [
-								{
-									label: `Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`,
-									icon: 'mdi-magnify-scan',
-									href: `#${this.props.nav.SignatureSearch.endpoint}/Overlap/${e.data.id}`
-								},
-								{
-									label: `Download ${this.props.preferred_name.signatures}`,
-									onClick: () => {
-										download_signature({
-											entry,
-											schemas,
-											filename: `${e.info.name.text}.txt`,
-											resolver: this.props.resolver,
-											model: this.state.entry_object.child_model,
-										})
-									},
-									icon: "mdi-download"
-								}
-							]
-						}
-					})
+			if (this.props.model==="signatures" && this.state.entry.data.library.dataset_type==="rank_matrix"){
+				this.setState({
+					children: null
+				})
+			} else {
+				this.props.resolver.abort_controller()
+				this.props.resolver.controller()
+				const {schemas} = this.props
+				const {
+					lib_name_to_id,
+					lib_id_to_name,
+					resource_name_to_id,
+					resource_to_lib
+				} = this.props.resource_libraries
+				const {search: filter_string} = this.props.location
+				const query = get_filter(filter_string)
+				const resolved_query = resolve_ids({
+					query,
+					model: this.state.entry_object.child_model,
+					lib_name_to_id,
+					lib_id_to_name,
+					resource_name_to_id,
+					resource_to_lib
+				})
+				const where = build_where(resolved_query)
+				const {limit=10, skip=0, order} = query
+				// const skip = limit*page
+				const q = {
+					limit, skip, order
 				}
-				if (e.info.download !== undefined) {
-					e.RightComponents.push({
-						component: this.download,
-						props: {...e.info.download.props}
-					})
-				} 
-				children.push(e)
-			}
+				if (where) q["where"] = where
+				const children_object = await this.state.entry_object.children({...q})
+				const children_count = children_object.count
+				const children_results = children_object[this.state.entry_object.child_model]
+				const children = []
+				for (const entry of Object.values(children_results)){
+					const e = labelGenerator(entry,
+						schemas,
+						"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
+					e.RightComponents = []
+					if (this.state.entry_object.child_model==='signatures'){
+						e.RightComponents.push({
+							component: this.options,
+							props: {
+								options: [
+									{
+										label: `Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`,
+										icon: 'mdi-magnify-scan',
+										href: `#${this.props.nav.SignatureSearch.endpoint}/Overlap/${e.data.id}`
+									},
+									{
+										label: `Download ${this.props.preferred_name.signatures}`,
+										onClick: () => {
+											download_signature({
+												entry,
+												schemas,
+												filename: `${e.info.name.text}.txt`,
+												resolver: this.props.resolver,
+												model: this.state.entry_object.child_model,
+											})
+										},
+										icon: "mdi-download"
+									}
+								]
+							}
+						})
+					}
+					if (e.info.download !== undefined) {
+						e.RightComponents.push({
+							component: this.download,
+							props: {...e.info.download.props}
+						})
+					} 
+					children.push(e)
+				}
 
-			if (!this.state.paginate) this.get_value_count(where, query)
-			this.setState({
-				children_count,
-				children,
-				tab: this.props.label || Object.keys(children_count)[0],
-				page: skip/limit,
-				perPage: limit,
-				query,
-				searching: false,
-				paginate: false,
-			})	
+				if (!this.state.paginate) this.get_value_count(where, query)
+				this.setState({
+					children_count,
+					children,
+					tab: this.props.label || Object.keys(children_count)[0],
+					page: skip/limit,
+					perPage: limit,
+					query,
+					searching: false,
+					paginate: false,
+				})	
+			}	
 		} catch (error) {
 			console.error(error)
 		}
@@ -260,7 +266,7 @@ export default class MetadataPage extends React.PureComponent {
 	componentDidMount = () => {
 		this.setState(prevState=>({
 			searching: true,
-			resolver: this.props.resolver !== undefined ? this.props.resolver: new DataResolver(),
+			resolver: this.props.resolver,
 		}), ()=>{
 			this.process_entry()
 		})	
@@ -339,6 +345,7 @@ export default class MetadataPage extends React.PureComponent {
 	}
 
 	ChildComponent = () => {
+		if (this.state.children === null) return null
 		if (this.state.children_count === undefined) return <CircularProgress />
 		const entry_name = (this.state.entry.info.name || {}).text || this.props.match.params.id
 		const children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()

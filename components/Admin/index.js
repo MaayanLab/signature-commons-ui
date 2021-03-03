@@ -534,7 +534,7 @@ class AdminView extends React.PureComponent {
     return (
       <div className="root">
         <Head>
-          <link href="https://cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css" rel="stylesheet" />
+          <link href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" rel="stylesheet" />
         </Head>
         <main>
           <JssProvider generateClassName={generateClassName}>

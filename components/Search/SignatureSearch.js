@@ -12,6 +12,10 @@ import ScorePopper from '../ScorePopper';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
 import Color from 'color'
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import { precise } from '../ScorePopper'
 
 export default class SignatureSearch extends React.PureComponent {
 	constructor(props){
@@ -105,11 +109,11 @@ export default class SignatureSearch extends React.PureComponent {
 							valid = valid + 1
 						}
 					} else {
-						const synonyms = e.info.synonyms
+						const synonyms = e.info.synonyms || []
 						let add_suggestion = true
 						for (const syn of synonyms){
 							if (input[field][syn]!==undefined){
-								if (input[field][syn].type !== "valid"){
+								if (input[field][syn].type === "loading"){
 									input[field][syn] = {
 										label: syn,
 										type: "suggestions",
@@ -166,8 +170,9 @@ export default class SignatureSearch extends React.PureComponent {
 		this.setState(prevState=>{
 			const {input} = prevState
 			for (const v of value.trim().split(/[\t\r\n;]+/)){
-				input[field][v] = {
-					label: v,
+				const val = v.trim()
+				input[field][val] = {
+					label: val,
 					type: "loading"
 				}
 			}
@@ -264,6 +269,9 @@ export default class SignatureSearch extends React.PureComponent {
 				lib_to_resource,
 				resource_to_lib
 			})
+			if (Object.keys(resources).length === 0){
+				throw new Error("No results")
+			}
 			const {
 				tabs: resources_tabs, 
 			} = this.create_tab_values(
@@ -373,11 +381,37 @@ export default class SignatureSearch extends React.PureComponent {
 		}
 	}
 
-	get_children_data = (entries, type, enrichment_id, model, limit=10) => {
+	lazy_tooltip = async (payload) => {
+		const {name, id, oddsratio, pval, setsize} = payload
+		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
+		const entry_object = resolved_entries[id]
+		const children = (await entry_object.children({limit:0})).entities || []
+		const overlap = children.map(e=>getName(e, this.props.schemas))
+		const overlap_text = overlap.join(", ")
+		// if (setsize <= 15) overlap_text = overlap.join(", ")
+		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
+		return(
+			<Card style={{opacity:"0.8", textAlign: "left"}}>
+				<CardContent>
+					<Typography variant="h6">{name}</Typography>
+					<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>
+					<Typography><b>p-value:</b> {precise(pval)}</Typography>
+					{ setsize===0 ? null:
+						<React.Fragment>
+							<Typography><b>overlap size:</b> {setsize}</Typography>
+							<Typography><b>overlaps:</b> {overlap_text}</Typography>
+						</React.Fragment>
+					}
+				</CardContent>
+			</Card>
+		)
+	}
+
+	get_children_data = async (entries, type, enrichment_id, model, limit=10) => {
 		const {
 			barColor="#0063ff",
 			scatterColor="#0063ff",
-			inactiveColor="#713939"
+			inactiveColor="#9e9e9e"
 		} = this.props
 		const {order_field, order} = this.state
 		const color = Color(barColor)
@@ -388,6 +422,7 @@ export default class SignatureSearch extends React.PureComponent {
 		const f = entries[0].scores[order_field]
 		const firstVal = order === 'DESC' ? f: -Math.log(f)
 		for (const entry of entries){
+			// const overlap = (entry.entities || []).map(e=>getName(e, this.props.schemas))
 			if (labels.length < limit){
 				const e = labelGenerator(entry,
 					this.props.schemas,
@@ -400,10 +435,12 @@ export default class SignatureSearch extends React.PureComponent {
 				bar_data.push({
 					name: e.info.name.text,
 					value,
-					color: entry.scores['p-value'] < 0.05 ? col.hex(): inactiveColor,
+					color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? col.hex(): inactiveColor,
 					id: entry.id,
 					oddsratio: entry.scores["odds ratio"],
 					pval: entry.scores["p-value"], 
+					setsize: entry.scores["overlap size"],
+					tooltip_component: this.lazy_tooltip,
 				})		
 			}
 			scatter_data.push({
@@ -412,7 +449,9 @@ export default class SignatureSearch extends React.PureComponent {
 				oddsratio: entry.scores["odds ratio"],
 				logpval: -Math.log(entry.scores["p-value"]),
 				pval: entry.scores["p-value"], 
-				color: entry.scores["p-value"] < 0.05 ? scatterColor: inactiveColor,
+				setsize: entry.scores["overlap size"],
+				tooltip_component: this.lazy_tooltip,
+				color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? scatterColor: inactiveColor
 			})	
 		}
 		return {labels, scatter_data, bar_data}
@@ -436,10 +475,10 @@ export default class SignatureSearch extends React.PureComponent {
 				order: [this.state.order_field, this.state.order],
 				limit: 0, 
 			}
-			const children_object = await entry_object.children(final_query)
+			const children_object = await entry_object.children(final_query, true)
 			const children_results = children_object[entry_object.child_model]
 
-			const { labels: entries, scatter_data, bar_data} = this.get_children_data(Object.values(children_results), type, enrichment_id, entry_object.child_model)
+			const { labels: entries, scatter_data, bar_data} = await this.get_children_data(Object.values(children_results), type, enrichment_id, entry_object.child_model)
 			return {
 				scatter_data,
 				bar_data,
@@ -551,11 +590,13 @@ export default class SignatureSearch extends React.PureComponent {
 	componentDidUpdate = async (prevProps) => {
 		const prevEnrichmentID = prevProps.match.params.enrichment_id
 		const enrichment_id = this.props.match.params.enrichment_id
-		
-		
+		const prevType = prevProps.match.params.type
+		const type = this.props.match.params.type
 		const id = this.props.match.params.id
 		const previd = prevProps.match.params.id
-		if (prevEnrichmentID !== enrichment_id) {
+		if (type !== prevType) {
+			this.process_input()
+		}else if (prevEnrichmentID !== enrichment_id) {
 			this.setState({
 				entries: null,
 				resources_tabs: null,
@@ -570,8 +611,7 @@ export default class SignatureSearch extends React.PureComponent {
 				const model = this.props.match.params.model
 				if (model === "resources") this.resolve_enrichment_from_resource()
 				else this.resolve_enrichment()
-			});
-			
+			});	
 		}
 	}
 
@@ -695,6 +735,7 @@ export default class SignatureSearch extends React.PureComponent {
 							type: this.props.match.params.type,
 							disabled,
 						}}
+						enrichment_tabs={this.props.enrichment_tabs}
 						filters={this.state.libraries === null ? []:[
 							{
 								name: this.props.preferred_name.libraries,
@@ -707,6 +748,7 @@ export default class SignatureSearch extends React.PureComponent {
 							}
 						]}
 						submitName={`Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`}
+						type={this.props.match.params.type}
 					/>
 				</React.Fragment>
 				
@@ -724,6 +766,23 @@ SignatureSearch.propTypes = {
 			endpoint: PropTypes.string
 		}),
 	}).isRequired,
+	enrichment_tabs: PropTypes.objectOf(PropTypes.oneOf([
+		PropTypes.shape({
+			label: PropTypes.string,
+			href: PropTypes.string,
+			type: PropTypes.string,
+			icon: PropTypes.string,
+			placeholder: PropTypes.string,
+		}),
+		PropTypes.shape({
+			label: PropTypes.string,
+			href: PropTypes.string,
+			type: PropTypes.string,
+			icon: PropTypes.string,
+			up_placeholder: PropTypes.string,
+			down_placeholder: PropTypes.string,
+		})
+	])),
 	overlap_search: PropTypes.boolean,
 	rank_search: PropTypes.boolean,
 	schemas: PropTypes.array.isRequired,

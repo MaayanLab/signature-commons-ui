@@ -10,7 +10,7 @@ export default class Pages extends React.PureComponent {
 			enrichment_resolver,
 			...rest
 		} = this.props
-		return <MetadataPage {...rest} {...props} resolver={metadata_resolver}/>
+		return <MetadataPage {...this.props} {...props} resolver={metadata_resolver}/>
 	}
 
 	enrichment_page = (props) => {

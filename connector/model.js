@@ -186,7 +186,7 @@ export class Model {
 		return children
 	}
 
-	set_children = async (entries) => {
+	set_children = async (entries=[]) => {
 		const {resolved_entries} = await this._data_resolver.resolve_entries({
 			model:this.child_model,
 			entries}

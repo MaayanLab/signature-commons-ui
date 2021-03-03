@@ -150,7 +150,7 @@ export const download_signature = async ({entry, schemas, filename, resolver, mo
 	}
 }
 
-export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_field, order}) => {
+export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_field, order, tooltip_component}) => {
 	const color = Color(barColor)
 	const data = []
 	const f = entries[0].data.scores[order_field]
@@ -159,13 +159,16 @@ export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_
 		const v = c.data.scores[order_field]
 		const value = order === 'DESC' ? v: -Math.log(v)
 		const col = color.lighten(-((value/firstVal) - 1))
+		const entry = c.data
 		const d = {
 			name: c.info.name.text,
 			value,
-			color: c.data.scores['p-value'] < 0.05 ? col.hex(): inactiveColor,
-			id: c.data.id,
-			pval: c.data.scores['p-value'],
-			oddsratio: c.data.scores['odds ratio']
+			color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? col.hex(): inactiveColor,
+			id: entry.id,
+			oddsratio: entry.scores["odds ratio"],
+			pval: entry.scores["p-value"], 
+			setsize: entry.scores["overlap size"],
+			tooltip_component,
 		}	
 		data.push(d)		
 	}

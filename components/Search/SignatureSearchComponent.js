@@ -28,18 +28,18 @@ import { withStyles } from '@material-ui/core/styles';
 
 
 const Examples = (props) => {
-	const {examples, type, onAdd, resetInput} = props
+	const {examples=[], type, onAdd, resetInput} = props
 	const example_buttons = []
 	for (const ex of examples){
-		if (ex.type === type){
+		if (ex.input.type === type){
 			example_buttons.push(
 				<Button variant="text" color="primary" style={{textTransform: "none"}} key={ex.label} onClick={()=>{
 					resetInput()
 					if (type === "Overlap") {
-						onAdd(ex.entities, "entities")
+						onAdd(ex.input.entities, "entities")
 					} else {
-						onAdd(ex.up_entities, "up_entities")
-						onAdd(ex.down_entities, "down_entities")
+						onAdd(ex.input.up_entities, "up_entities")
+						onAdd(ex.input.down_entities, "down_entities")
 					}
 				}}>
 					{ex.label}
@@ -78,12 +78,13 @@ const EntityCounts = (input) => {
 const SigForm = (props={}) => {
 	const {
 		searching=false,
-		SearchTabProps,
 		TextFieldSuggestProps,
 		resolving,
-		submitName="Search"
+		submitName="Search",
+		enrichment_tabs,
+		type,
 	} = props
-
+	const opposite_type = type === "Overlap" ? "Rank": "Overlap"
 	return(
 		<Grid container spacing={1}>
 			{/* Search Components */}
@@ -97,25 +98,32 @@ const SigForm = (props={}) => {
 							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "entities")}
 							onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "entities")}
 							endAdornment={<EntityCounts {...TextFieldSuggestProps.input}/>}
+							placeholder={enrichment_tabs.Overlap.placeholder}
 						/>
 					</React.Fragment>
 					:
-					<React.Fragment>
-						<TextFieldSuggest {...TextFieldSuggestProps}
-							input={Object.values(TextFieldSuggestProps.input.up_entities)}
-							onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
-							onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
-							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "up_entities")}
-							onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "up_entities")}
-						/>
-						<TextFieldSuggest {...TextFieldSuggestProps}
-							input={Object.values(TextFieldSuggestProps.input.down_entities)}
-							onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
-							onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
-							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "down_entities")}
-							onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "down_entities")}
-						/>
-					</React.Fragment>
+					<Grid container spacing={2}>
+						<Grid item xs={12} md={6}>
+							<TextFieldSuggest {...TextFieldSuggestProps}
+								input={Object.values(TextFieldSuggestProps.input.up_entities)}
+								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
+								onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
+								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "up_entities")}
+								onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "up_entities")}
+								placeholder={enrichment_tabs.Rank.up_placeholder}
+							/>
+						</Grid>
+						<Grid item xs={12} md={6}>
+							<TextFieldSuggest {...TextFieldSuggestProps}
+								input={Object.values(TextFieldSuggestProps.input.down_entities)}
+								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
+								onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
+								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "down_entities")}
+								onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "down_entities")}
+								placeholder={enrichment_tabs.Rank.down_placeholder}
+							/>
+						</Grid>
+					</Grid>
 				}
 			</Grid>
 			<Grid item xs={12} align="center">
@@ -137,6 +145,11 @@ const SigForm = (props={}) => {
 					<Examples {...TextFieldSuggestProps} />
 				</Typography>
 			</Grid>
+			{ Object.keys(enrichment_tabs).length === 1 ? null:
+				<Grid item xs={12} align="center">
+					<Button href={enrichment_tabs[opposite_type].href}>Switch to {enrichment_tabs[opposite_type].label}</Button>
+				</Grid>
+			}
 		</Grid>
 	)
 }
@@ -220,7 +233,7 @@ const Results = (props) => {
 				</Grid>
 				{entries.map(entry=>(
 					<Grid item xs={12} sm={6} md={4} key={entry.data.id}>
-						<Card style={{margin: 10, height: 500}}>
+						<Card style={{margin: 10, height: 500, overflow: "auto"}}>
 							<CardHeader
 								title={<Link href={entry.info.endpoint}>{entry.info.name.text}</Link>}
 								subheader={`${entry.data.scores.signature_count===100?"Top ": ""}${entry.data.scores.signature_count} Enriched Terms`}
@@ -272,19 +285,9 @@ export const ResourceCustomTabs = withStyles(() => ({
 export const SignatureSearchComponent = (props) => {
 	const {
 		searching=false,
-		chipRenderer,
-		entries,
-		DataTableProps,
-		PaginationProps,
 		SearchTabProps,
 		ResourceTabProps,
-		LibrariesTabProps,
-		TextFieldSuggestProps,
-		resolving,
-		MiddleComponents=[],
-		scatter_plot=null,
 		filters,
-		submitName,
 		ResultsProps,
 		download_input,
 	} = props
@@ -531,5 +534,23 @@ SignatureSearchComponent.propTypes = {
 		chipInputProps: PropTypes.object,
 		formProps: PropTypes.object,
 		suggestionsProps: PropTypes.object,
-	})
+	}),
+	enrichment_tabs: PropTypes.objectOf(PropTypes.oneOf([
+		PropTypes.shape({
+			label: PropTypes.string,
+			href: PropTypes.string,
+			type: PropTypes.string,
+			icon: PropTypes.string,
+			placeholder: PropTypes.string,
+		}),
+		PropTypes.shape({
+			label: PropTypes.string,
+			href: PropTypes.string,
+			type: PropTypes.string,
+			icon: PropTypes.string,
+			up_placeholder: PropTypes.string,
+			down_placeholder: PropTypes.string,
+		})
+	])),
+	type: PropTypes.oneOf("Rank", "Overlap")
 }
