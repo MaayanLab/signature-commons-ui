@@ -30,7 +30,6 @@ export default class Downloads extends React.Component {
 
   render = () => {
     const { data, loading } = this.props
-    console.log(loading)
     const loading_icon = 'mdi-loading mdi-spin'
     if (data.length === 1) {
       const {url, onClick, text, icon} = data[0]

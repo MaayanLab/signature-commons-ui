@@ -233,7 +233,7 @@ const Results = (props) => {
 				</Grid>
 				{entries.map(entry=>(
 					<Grid item xs={12} sm={6} md={4} key={entry.data.id}>
-						<Card style={{margin: 10, height: 500, overflow: "auto"}}>
+						<Card style={{margin: 10, height: 500}}>
 							<CardHeader
 								title={<Link href={entry.info.endpoint}>{entry.info.name.text}</Link>}
 								subheader={`${entry.data.scores.signature_count===100?"Top ": ""}${entry.data.scores.signature_count} Enriched Terms`}

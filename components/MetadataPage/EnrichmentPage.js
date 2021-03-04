@@ -412,7 +412,6 @@ export default class EnrichmentPage extends React.PureComponent {
 				this.process_entry()
 			})
 		} else if (prev_search !== curr_search){
-			console.log("not here")
 			this.setState({
 				searching: true,
 				paginate: (this.props.location.state || {}).paginate ? true: false
@@ -661,7 +660,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			table: this.table_view
 		}
 		return (
-			<Grid container spacing={1} style={{height:450, overflow: "auto"}}>
+			<Grid container spacing={1} style={{height:450}}>
 				<Grid item xs={12} align="center">
 					{visuals[this.state.visualization]()}
 				</Grid>
@@ -777,7 +776,6 @@ export default class EnrichmentPage extends React.PureComponent {
 							 align={`${c.id==="name" ? "left": "right"}`}
 							 key={c.id}
 							 onClick={()=>{
-								 console.log(c.id)
 								 if (c.id.startsWith("score")){
 									 this.sortBy(c.id.replace('scores.',''))
 								 }

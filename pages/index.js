@@ -23,7 +23,6 @@ class App extends React.Component {
 
   componentDidMount = async () => {
     const response = await get_initial_props()
-    console.log(response)
     this.setState({
       ...response
     })

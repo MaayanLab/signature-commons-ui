@@ -308,8 +308,6 @@ export default class SignatureSearch extends React.PureComponent {
 				'libraries')
 			
 			if (library_id === undefined) library_id = tmp_library_id
-			console.log(sorted_tabs)
-			console.log(libraries)
 			this.setState({
 				resource_id,
 				resources_tabs: sorted_tabs,
@@ -387,7 +385,7 @@ export default class SignatureSearch extends React.PureComponent {
 		const entry_object = resolved_entries[id]
 		const children = (await entry_object.children({limit:0})).entities || []
 		const overlap = children.map(e=>getName(e, this.props.schemas))
-		const overlap_text = overlap.join(", ")
+		const overlap_text = overlap.length === 10 ? overlap.join(", "):`${overlap.slice(0,10).join(", ")}... (Click to see more)` 
 		// if (setsize <= 15) overlap_text = overlap.join(", ")
 		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
 		return(

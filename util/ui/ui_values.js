@@ -56,8 +56,6 @@ export const defaultUIValues = {
         endpoint: '/SignatureSearch',
         navName: "Signature Search",
         props: {
-          entity_strategy: 'upper', // lower, none
-          synonym_strategy: 'none',
           types: {
             Overlap: {
               active: true,
