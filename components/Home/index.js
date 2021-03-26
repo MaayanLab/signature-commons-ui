@@ -160,7 +160,8 @@ class Home extends React.PureComponent {
                     nav={this.props.ui_values.nav}
                     search_examples={(search_props.examples || {})[model] || []}
                     resolver={this.state.metadata_resolver}
-                    metadata_placeholder={this.props.ui_values.placeholder}
+                    placeholder={search_props.placeholder}
+                    about={this.props.ui_values.about}
                     {...props}
       />
     )
@@ -205,6 +206,7 @@ class Home extends React.PureComponent {
                     resolver={this.state.enrichment_resolver}
                     model={model}
                     enrichment_tabs={enrichment_tabs}
+                    about={this.props.ui_values.about}
                     {...props}
       />
     )
