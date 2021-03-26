@@ -8,6 +8,8 @@ import { get_filter, resolve_ids, download_signature } from './utils'
 import Downloads from '../Downloads'
 import Options from './Options'
 import { getSearchFilters } from '../../util/ui/fetch_ui_props'
+import Insignia from '../../standalone/fairshake-insignia/src'
+
 export default class MetadataSearch extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -26,6 +28,10 @@ export default class MetadataSearch extends React.PureComponent {
 
 	download = (props) => {
 		return <Downloads {...props}/>
+	}
+
+	insignia = (props) => {
+		return <Insignia {...props}/>
 	}
 
 	options = (props) => {
@@ -66,6 +72,7 @@ export default class MetadataSearch extends React.PureComponent {
 					"#" + this.props.preferred_name[this.props.model] +"/")
 				e.RightComponents = []
 				if (this.props.model==='signatures'){
+					const type = entry.library.dataset_type === "rank_matrix" ? "Rank": "Overlap"
 					e.RightComponents.push({
 						component: this.options,
 						props: {
@@ -73,7 +80,7 @@ export default class MetadataSearch extends React.PureComponent {
 								{
 									label: `Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`,
 									icon: 'mdi-magnify-scan',
-									href: `#${this.props.nav.SignatureSearch.endpoint}/Overlap/${e.data.id}`
+									href: `#${this.props.nav.SignatureSearch.endpoint}/${type}/${e.data.id}`
 								},
 								{
 									label: `Download ${this.props.preferred_name.signatures}`,
@@ -92,12 +99,18 @@ export default class MetadataSearch extends React.PureComponent {
 						}
 					})
 				}
-				if (e.info.download !== undefined) {
+				if (e.info.components.insignia !== undefined) {
 					e.RightComponents.push({
-						component: this.download,
-						props: {...e.info.download.props}
+						component: this.insignia,
+						props: {...e.info.components.insignia.props}
 					})
 				} 
+				if (e.info.components.download !== undefined) {
+					e.RightComponents.push({
+						component: this.download,
+						props: {...e.info.components.download.props}
+					})
+				}
 				entries.push(e)
 			}
 
@@ -314,8 +327,11 @@ export default class MetadataSearch extends React.PureComponent {
 			model_tab_props,
 			search_tabs,
 			filter_props,
+			homepage: this.props.location.search === ""
 		}, ()=>{
-			this.process_search()
+			if (this.props.location.search !== ""){
+				this.process_search()
+			}
 		})	
 	}
 
@@ -328,6 +344,7 @@ export default class MetadataSearch extends React.PureComponent {
 					searching: true,
 					paginate: (this.props.location.state || {}).paginate ? true: false,
 					filters: (this.props.location.state || {}).paginate ? prevState.filters: {},
+					homepage: false,
 				}
 			}, ()=>{
 				this.process_search()
@@ -342,7 +359,9 @@ export default class MetadataSearch extends React.PureComponent {
 		return (
 			<MetadataSearchComponent
 					searching={this.state.searching}
+					homepage={this.state.homepage}
 					placeholder={this.props.placeholder}
+					about={this.props.about}
 					search_terms={this.state.query.search || []}
 					search_examples={this.props.search_examples}
 					filters={Object.values(this.state.filters)}
@@ -417,5 +436,6 @@ MetadataSearch.propTypes = {
 		resource_name_to_id: PropTypes.objectOf(PropTypes.string),
 		lib_to_resource: PropTypes.objectOf(PropTypes.string),
 		resource_to_lib: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
-	})
+	}),
+	about: PropTypes.string,
 }
