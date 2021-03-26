@@ -47,12 +47,11 @@ export const get_ui_values = async () => {
 			'meta.$validator': {
 				ilike: '%' + 'schema/landing-ui.json' + '%',
 			},
-			'meta.landing': true,
 		  },
 		},
 	  },
 	})
-	const values = ui_val.length > 0 ? ui_val[0].meta.content : {}
+	const values = ui_val.length > 0 ? ui_val[0].meta : {}
 	const ui_values = merge(defaultUIValues, values, { arrayMerge: overwriteMerge })
 	if (ui_values.background_props.style && ui_values.background_props.style.backgroundImage) {
 		ui_values.background_props.style.backgroundImage = 'url(' + makeTemplate(ui_values.background_props.style.backgroundImage, {}) + ')'
