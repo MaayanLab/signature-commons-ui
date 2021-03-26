@@ -35,8 +35,8 @@ export const defaultUIValues = {
     nav: {
       MetadataSearch: {
         active: true,
-        endpoint: '/MetadataSearch',
-        navName: "Metadata Search",
+        endpoint: '/TermSearch',
+        navName: "Term Search",
         props: {
           model_tabs: ["resources", "libraries", "signatures", "entities"],
           entry_model: "signatures",
@@ -53,14 +53,14 @@ export const defaultUIValues = {
       },
       SignatureSearch: {
         active: true,
-        endpoint: '/SignatureSearch',
-        navName: "Signature Search",
+        endpoint: '/EnrichmentAnalysis',
+        navName: "Enrichment Analysis",
         props: {
           types: {
             Overlap: {
               active: true,
               placeholder: 'Genes that are regulated in signature or overlap with gene set',
-              switch: 'Gene Sets',
+              switch: 'Gene Set Enrichment',
               icon: 'mdi-set-merge',
               examples: [
                 {
@@ -73,7 +73,7 @@ export const defaultUIValues = {
             },
             Rank: {
               active: true,
-              switch: 'Up and Down Gene Sets',
+              switch: 'Up-Down Enrichment',
               up_placeholder: 'Up-regulated genes',
               down_placeholder: 'Down-regulated genes',
               icon: 'mdi-menu-swap',
@@ -81,8 +81,8 @@ export const defaultUIValues = {
                 {
                   label: 'Example Up and Down Sets',
                   input: {
-                    up_entities: 'UTP14A\nS100A6\nSCAND1\nRRP12\nCIAPIN1\nADH5\nMTERF3\nSPR\nCHMP4A\nUFM1\nVAT1\nHACD3\nRFC5\nCOTL1\nNPRL2\nTRIB3\nPCCB\nTLE1\nCD58\nBACE2\nKDM3A\nTARBP1\nRNH1\nCHAC1\nMBNL2\nVDAC1\nTES\nOXA1L\nNOP56\nHAT1\nCPNE3\nDNMT1\nARHGAP1\nVPS28\nEIF2S2\nBAG3\nCDCA4\nNPDC1\nRPS6KA1\nFIS1\nSYPL1\nSARS\nCDC45\nCANT1\nHERPUD1\nSORBS3\nMRPS2\nTOR1A\nTNIP1\nSLC25A46',
-                    down_entities: 'MAL\nEPCAM\nHDAC6\nCAPN1\nTNRC6B\nPKD1\nRRS1\nHP\nANO10\nCEP170B\nIDE\nDENND2D\nCAMK2B\nZNF358\nRPP38\nMRPL19\nNUCB2\nGNAI1\nLSR\nADGRE2\nPKMYT1\nCDK5R1\nABL1\nPILRB\nAXIN1\nFBXL8\nMCF2L\nDBNDD1\nIGHMBP2\nWIPF2\nWFS1\nOGFOD2\nMAPK1IP1L\nCOL11A1\nREG3A\nSERPINA1\nMYCBP2\nPIGK\nTCAP\nCRADD\nELK1\nDNAJB2\nZBTB16\nDAZAP1\nMAPKAPK2\nEDRF1\nCRIP1\nUCP3\nAGR2\nP4HA2',
+                    up_entities: 'TAAR9\nEBF2\nWDR78\nRRAGA\nSPATA18\nSPINT2\nMRGPRD\nCD9\nRBP1\nCYB5RL\nMXRA8\nPM20D1\nITIH5\nEPAS1\nAHCYL2\nPANK2\nPON2\nLRP5\nSLC5A3\nNSL1\nCLDN2\nLRP8\nAQP1\nCLDN1\nTMEM72\nGNG4\nNHLH2\nS100A13\nLY6G6C\nPOF1B\nWLS\nFZD4\nCOG7\nFZD6\nFOXF1\nFZD7\nERLIN2\nTYSND1\nACADSB\nOR51I2\nPARP12\nPPFIBP2\nATP4A\nALDH7A1\nTCN2\nSLCO5A1\nSFXN4\nPRR15\nMOXD1\nCAPSL',
+                    down_entities: 'GBP7\nOR8H1\nACOT8\nARL14\nGPR37L1\nPPP2R1A\nMED6\nCDC20\nNEIL3\nDDX39B\nLAP3\nKATNAL2\nZSCAN20\nUQCRC2\nRBCK1\nTMCC3\nRNF2\nCMAS\nTESK2\nZFYVE1\nIL27RA\nKIAA1328\nFRAT1\nSNRPD2\nHERC1\nVTI1B\nCHAC2\nNXNL1\nEXOSC2\nSAMD11\nSAMD5\nEPSTI1\nHABP2\nBATF3\nPLK4\nTSPYL1\nXRCC4\nRAB27A\nXRCC2\nBHLHA15\nVPS37C\nTUBG2\nDHFR\nFERMT1\nRNF144B\nBPIFB3\nSMU1\nRIPPLY3\nRNPS1\nSFXN2',
                   }
                 }
               ]
@@ -148,6 +148,7 @@ export const defaultUIValues = {
     github_issues: 'https://github.com/dcic/signature-commons-ui/issues',
     resource_order: {},
     about: "./static/about.md",
+    homepage_text: "Search signatures, genes, or datasets.",
     pie_chart_style: {
       Pie: {
         fill: "#0063ff"
