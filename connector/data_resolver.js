@@ -237,14 +237,12 @@ export class DataResolver {
 		return this.data_repo.enrichment[enrichment_id]
 	}
 
-	enrich_entities = async ({input_type, datatype, ...query}) => {
-		const start_time = new Date()
-		
+	enrich_set_input_to_set = async ({input_type, datatype, ...query}) => {		
 		const body = {
             "limit": 100,
             ...query
 		}
-		const endpoint = enrich_endpoint[datatype][input_type]
+		const endpoint = enrich_endpoint.geneset_library.set
 		const {response, contentRange } = await fetch_data({
 			endpoint,
 			body,
@@ -263,8 +261,130 @@ export class DataResolver {
 		})})
 
 		return {
-            entries: signatures,
-            count: contentRange.count,
+            set: {
+				entries: signatures,
+				count: contentRange.count
+			}
+        }
+
+	}
+
+	enrich_set_input_to_set_rank = async ({input_type, datatype, ...query}) => {
+		
+		const body = {
+            "limit": 100,
+            ...query
+		}
+		const endpoint = enrich_endpoint.rank_matrix.set
+		const {response, contentRange } = await fetch_data({
+			endpoint,
+			body,
+			signal: this._controller.signal,
+		  })
+		const signatures = response.results.map(({uuid, direction, ...scores})=>{
+			return({
+			id: uuid,
+			direction: direction===1?"up": "down",
+			"p-value": scores["p-value"],
+			"q-value (BH)": scores.fdr,
+			"q-value (Bonferroni)": scores["p-value-bonferroni"],
+			"zscore": scores.zscore,
+		})})
+
+		return {
+            set: {
+				entries: signatures,
+				count: (contentRange||{}).count
+			}
+        }
+
+	}
+
+	enrich_two_sided_input_to_rank = async ({input_type, datatype, ...query}) => {
+		const body = {
+            "limit": 100,
+            ...query
+		}
+		const endpoint = enrich_endpoint.rank_matrix.up_down
+		const {response, contentRange } = await fetch_data({
+			endpoint,
+			body,
+			signal: this._controller.signal,
+		  })
+		const signatures = response.results.map(({uuid, ...scores})=>{
+			let direction = "ambiguous"
+			if (scores['direction-up'] === -1 && scores['direction-down'] === 1) direction = "mimicker"
+			if (scores['direction-up'] === 1 && scores['direction-down'] === -1) direction = "reverser"
+			return({
+				id: uuid,
+				direction,
+				"log p (avg)": scores["logp-avg"],
+				"log p (fisher)": scores["logp-fisher"],
+				"p-value": scores["p-value"],
+				"fdr (down)": scores["fdr-down"],
+				"fdr (up)": scores["fdr-up"],
+				"p-value (down)": scores["p-down"],
+				"p-value (up)": scores["p-up"],
+				"z-score (down)": scores["z-down"],
+				"z-score (up)": scores["z-up"],
+				"z-score (down)": scores["p-down-bonferroni"],
+				"z-score (up)": scores["p-up-bonferroni"],
+			})})
+
+		return {
+            rank: {
+				entries: signatures,
+				count: contentRange.count
+			}
+        }
+		
+	}
+
+	enrich_two_sided_input_to_set = async ({
+		up_entities,
+		down_entities,
+		...query}) => {
+		const up_query = {
+			entities: up_entities,
+			...query
+		}
+		const {entries: up_entries, count: up_count } = await this.enrich_set_input_to_set(up_query)
+		
+		const down_query = {
+			entities: down_entities,
+			...query
+		}
+		const {entries: down_entries, count: down_count } = await this.enrich_set_input_to_set(down_query)
+		return {
+			up: {
+				entries: up_entries,
+				count: up_count,
+			},
+			down: {
+				entries: down_entries,
+				count: down_count,
+			}
+        }
+	}
+
+	enrich_entities = async (query) => {
+		const start_time = new Date()
+		const {input_type, datatype} = query
+
+		const enricher = {
+			set: {
+				geneset_library: this.enrich_set_input_to_set,
+				rank_matrix: this.enrich_set_input_to_set_rank,
+			},
+			up_down: {
+				geneset_library: this.enrich_two_sided_input_to_set,
+				rank_matrix: this.enrich_two_sided_input_to_rank,
+			}
+		}
+		const response = await enricher[input_type][datatype](query)
+
+		return {
+            ...response,
             duration: (new Date() - start_time) / 1000,
             database: query.database
         }
@@ -280,11 +400,39 @@ export class DataResolver {
 		for (const {datatype, uuid} of response.repositories){
 			query.database = uuid
 			query.datatype = datatype
-			const {entries, count} = await this.enrich_entities(query)
-			if (entries.length>0){
-				// results[uuid] = { entries, count: entries.length }
-				for (const e of entries){
-					signatures[e.id] = e
+			const {set, up, down, rank} = await this.enrich_entities(query)
+			if (set !== undefined) {
+				const { entries, count } = set
+				if (count>0){
+					for (const e of entries){
+						signatures[e.id] = e
+					}
+				}
+			}if (rank !== undefined) {
+				const { entries, count } = rank
+				if (count>0){
+					for (const e of entries){
+						signatures[e.id] = e
+					}
+				}
+			}else if (up !== undefined && down !== undefined) {
+				const { entries: up_entries, count: up_count } = up
+				if (up_count>0){
+					for (const e of up_entries){
+						signatures[e.id] = {
+							...e,
+							set: "up",
+						}
+					}
+				}
+				const { entries: down_entries, count: down_count } = down
+				if (down_count>0){
+					for (const e of down_entries){
+						signatures[e.id] = {
+							...e,
+							set: "down",
+						}
+					}
 				}
 			}
 		}
@@ -317,14 +465,19 @@ export class DataResolver {
 				entries: [entries[signature_id].id]
 			})
 			const signature = resolved_entries[signature_id]
-			const {id, overlap, ...scores} = entries[signature_id]
+			const {id, overlap, set, ...scores} = entries[signature_id]
 			if (signature === 'undefined') throw new Error('Invalid Signature ID')
-			signature.update_entry({scores})
+			if (set!==undefined) signature.update_entry({scores, set})
+			else signature.update_entry({scores})
 			// and its entities
-			const {resolved_entries: entities} = await this.resolve_entries({
-				model: "entities",
-				entries: overlap
-			})
+			let entities = {}
+			if (overlap!==undefined){
+				const {resolved_entries} = await this.resolve_entries({
+					model: "entities",
+					entries: overlap
+				})
+				entities = resolved_entries
+			}
 			await signature.set_children(Object.values(entities))
 			return signature
 		}else if (library_id !== undefined){
@@ -347,8 +500,9 @@ export class DataResolver {
 				const entry = await sig.serialize(true, false)
 				const libid = entry.library.id
 				if (libid === library_id){
-					const {id, overlap, ...scores} = entries[entry.id]
-					sig.update_entry({scores})
+					const {id, overlap, set, ...scores} = entries[entry.id]
+					if (set!==undefined) sig.update_entry({scores, set})
+					else sig.update_entry({scores})
 					await sig.set_children(overlap)
 					signatures.push(sig)
 				}
@@ -418,7 +572,6 @@ export class DataResolver {
 		// Get enrichment
 		const enrichment = this.data_repo.enrichment[enrichment_id]
 		if (enrichment === undefined) throw new Error("No Enrichment Found")
-
 		const {entries} = enrichment
 
 		// Resolve lib_to_resource
