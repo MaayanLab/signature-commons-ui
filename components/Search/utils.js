@@ -68,18 +68,40 @@ export const get_signature_entities = async (signature_id,
 			return null
 		}
 		else {
-			const children = await signature.children({limit: 0})
-			const input_entities = {}
-			for (const c of children.entities){
-				const entry = labelGenerator(c, schemas)
-				input_entities[entry.info.name.text] = {
-					label: entry.info.name.text,
-					id: [c.id],
-					type: "valid"
+			const {entities:ent, up, down} = await signature.children({limit: 0})
+			const input = {}
+			if (ent.length > 0){
+				const entities = {}
+				for (const c of ent){
+					const entry = labelGenerator(c, schemas)
+					entities[entry.info.name.text] = {
+						label: entry.info.name.text,
+						id: [c.id],
+						type: "valid"
+					}
 				}
-			}
-			const input = {
-				entities: input_entities
+				input.entities = entities
+			}else {
+				const up_entities = {}
+				for (const c of up){
+					const entry = labelGenerator(c, schemas)
+					up_entities[entry.info.name.text] = {
+						label: entry.info.name.text,
+						id: [c.id],
+						type: "valid"
+					}
+				}
+				const down_entities = {}
+				for (const c of down){
+					const entry = labelGenerator(c, schemas)
+					down_entities[entry.info.name.text] = {
+						label: entry.info.name.text,
+						id: [c.id],
+						type: "valid"
+					}
+				}
+				input.up_entities = up_entities
+				input.down_entities = down_entities
 			}			
 			return input			
 		}
