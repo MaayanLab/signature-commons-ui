@@ -65,7 +65,7 @@ class App_ extends App {
       )
     }
     return (
-      <div class="root">
+      <div className="root">
         <CssBaseline />
         {loaded ? (
             <Component {...pageProps} />
