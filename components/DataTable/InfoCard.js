@@ -189,7 +189,7 @@ export const InfoCard = ({
               <Grid container>
                 {RightComponents.map((comp, i)=>{
                     const {component, props} = comp
-                    return <Grid key={i} item xs={12} {...props.GridProps}>{component(props)}</Grid>
+                    return <Grid key={i} item xs={12} align="center" {...props.GridProps}>{component(props)}</Grid>
                   })}
               </Grid>
             </Grid>
