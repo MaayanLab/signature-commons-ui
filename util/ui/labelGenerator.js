@@ -136,7 +136,15 @@ export const value_by_type = {
     if (Object.keys(props).length ===0) return null
     else return props
   },
-  'component': ({label, prop, data}) => (null)
+  'component': ({label, prop, data}) => {
+    const props = {}
+    for (const [k,v] of Object.entries(prop.props)){
+      const val = value_by_type[v.type]({label: k, prop: v, data})
+      if (val!==null) props[k] = val
+    }
+    if (Object.keys(props).length ===0) return null
+    else return {label, props}
+  }
 }
 
 export const props_resolver = (properties, data, info=null) => {
@@ -189,7 +197,9 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
-      if (prop.component === "download") prop.type = "download"
+      // if (prop.component === "download") prop.type = "download"
+      if (prop.component){
+      }
       if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data) && value_by_type[prop.type]!==undefined) {
         const val = value_by_type[prop.type]({ label, prop, data })
         if (prop.synonyms){
@@ -251,9 +261,14 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
             }
           }
         }
-        if (prop.type === "download") {
+        // if (prop.type === "download") {
+        //   if (val !== null) {
+        //     info.download = val
+        //   }
+        // }
+        if (prop.type === "component") {
           if (val !== null) {
-            info.download = val
+            info.components[prop.component] = val
           }
         }
         if (prop.type==="text") {
