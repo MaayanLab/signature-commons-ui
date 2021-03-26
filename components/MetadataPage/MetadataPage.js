@@ -15,6 +15,7 @@ import { SearchResult } from './SearchResult'
 import { get_filter, resolve_ids, download_signature } from '../Search/utils'
 import Downloads from '../Downloads'
 import Options from '../Search/Options'
+import {ResultsTab} from './ResultsTab'
 
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){
@@ -27,7 +28,9 @@ export default class MetadataPage extends React.PureComponent {
 			metaTab: "metadata",
 			query: {skip:0, limit:10},
 			filters: {},
-			paginate: false
+			paginate: false,
+			childTab: null,
+			childTabs: null,
 		}
 	}
 
@@ -63,49 +66,71 @@ export default class MetadataPage extends React.PureComponent {
 		}
 	}
 
-	process_children = async () => {
-		try {
-			if (this.props.model==="signatures" && this.state.entry.data.library.dataset_type==="rank_matrix"){
-				this.setState({
-					children: null
-				})
-			} else {
-				this.props.resolver.abort_controller()
-				this.props.resolver.controller()
-				const {schemas} = this.props
-				const {
-					lib_name_to_id,
-					lib_id_to_name,
-					resource_name_to_id,
-					resource_to_lib
-				} = this.props.resource_libraries
-				const {search: filter_string} = this.props.location
-				const query = get_filter(filter_string)
-				const resolved_query = resolve_ids({
-					query,
-					model: this.state.entry_object.child_model,
-					lib_name_to_id,
-					lib_id_to_name,
-					resource_name_to_id,
-					resource_to_lib
-				})
-				const where = build_where(resolved_query)
-				const {limit=10, skip=0, order} = query
-				// const skip = limit*page
-				const q = {
-					limit, skip, order
+	onChildTabChange = (event, childTab) => {
+		if (childTab){
+			this.setState({
+				childTab
+			},()=>{
+				// const {limit, skip, ...rest } = this.state.query
+				const query = {
+					direction: childTab
 				}
-				if (where) q["where"] = where
-				const children_object = await this.state.entry_object.children({...q})
-				const children_count = children_object.count
-				const children_results = children_object[this.state.entry_object.child_model]
-				const children = []
-				for (const entry of Object.values(children_results)){
+				this.props.history.push({
+					pathname: this.props.location.pathname,
+					search: `?query=${JSON.stringify(query)}`,
+				  })
+			})
+		}
+	}
+
+	process_children = async (direction=null) => {
+		try {
+			this.props.resolver.abort_controller()
+			this.props.resolver.controller()
+			const {schemas} = this.props
+			const {
+				lib_name_to_id,
+				lib_id_to_name,
+				resource_name_to_id,
+				resource_to_lib
+			} = this.props.resource_libraries
+			const {search: filter_string} = this.props.location
+			const query = get_filter(filter_string)
+			const direction = query.direction
+			const resolved_query = resolve_ids({
+				query,
+				model: this.state.entry_object.child_model,
+				lib_name_to_id,
+				lib_id_to_name,
+				resource_name_to_id,
+				resource_to_lib
+			})
+			const where = build_where(resolved_query)
+			const {limit=10, skip=0, order} = query
+			// const skip = limit*page
+			const q = {
+				limit, skip, order
+			}
+			if (where) q["where"] = where
+			if (this.state.childTab) {
+				const dir = this.state.childTab === this.state.entry_object.child_model ? "-": this.state.childTab
+				q.where = {
+					...(q.where || {}),
+					direction: direction || dir
+				}
+			}
+			const {count: children_count, ...children_object} = await this.state.entry_object.children({...q})
+			// const children_results = children_object[this.state.entry_object.child_model]
+			const children = {}
+			for (const[k,v] of Object.entries(children_object)){
+				children[k] = []
+				for (const entry of Object.values(v)){
 					const e = labelGenerator(entry,
 						schemas,
 						"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
 					e.RightComponents = []
 					if (this.state.entry_object.child_model==='signatures'){
+						const type = entry.library.dataset_type === "rank_matrix" ? "Rank": "Overlap"
 						e.RightComponents.push({
 							component: this.options,
 							props: {
@@ -113,7 +138,7 @@ export default class MetadataPage extends React.PureComponent {
 									{
 										label: `Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`,
 										icon: 'mdi-magnify-scan',
-										href: `#${this.props.nav.SignatureSearch.endpoint}/Overlap/${e.data.id}`
+										href: `#${this.props.nav.SignatureSearch.endpoint}/${type}/${e.data.id}`
 									},
 									{
 										label: `Download ${this.props.preferred_name.signatures}`,
@@ -138,21 +163,34 @@ export default class MetadataPage extends React.PureComponent {
 							props: {...e.info.download.props}
 						})
 					} 
-					children.push(e)
+					children[k].push(e)
 				}
+			}
+			
 
-				if (!this.state.paginate) this.get_value_count(where, query)
-				this.setState({
-					children_count,
-					children,
-					tab: this.props.label || Object.keys(children_count)[0],
-					page: skip/limit,
-					perPage: limit,
-					query,
-					searching: false,
-					paginate: false,
-				})	
-			}	
+			if (!this.state.paginate) this.get_value_count(where, query)
+			const childTabs = []
+			for (const [k,v] of Object.entries(children_count)){
+				if (v > 0){
+					childTabs.push({
+						label: k,
+						value: k,
+						handleChage: this.onChildTabChange
+					})
+				}
+			}
+			this.setState({
+				children_count,
+				children,
+				tab: this.props.label || Object.keys(children_count)[0],
+				page: skip/limit,
+				perPage: limit,
+				query,
+				searching: false,
+				paginate: false,
+				childTab: (q.where||{}).direction || (childTabs[0] || {}).label,
+				childTabs
+			})
 		} catch (error) {
 			console.error(error)
 		}
@@ -279,6 +317,7 @@ export default class MetadataPage extends React.PureComponent {
 			this.setState({
 				searching: true,
 				filters: {},
+				childTab: null,
 				paginate: (this.props.location.state || {}).paginate ? true: false
 			}, ()=>{
 				this.process_entry()
@@ -291,12 +330,6 @@ export default class MetadataPage extends React.PureComponent {
 				this.process_children()
 			})
 		}
-	}
-
-	handleTabChange = (event, tab) => {
-		this.setState({
-			tab
-		})
 	}
 
 	paginate = async (limit, skip) => {
@@ -343,25 +376,41 @@ export default class MetadataPage extends React.PureComponent {
 			})
 		})
 	}
-
+	
 	ChildComponent = () => {
 		if (this.state.children === null) return null
 		if (this.state.children_count === undefined) return <CircularProgress />
 		const entry_name = (this.state.entry.info.name || {}).text || this.props.match.params.id
-		const children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
-		const count = this.state.children_count[this.state.entry_object.child_model]
+		let children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
+		const count = this.state.children_count[this.state.childTab] || 0
 		let label
 		if (this.props.model === "signatures"){
-			label = `${entry_name} has ${count} ${children_name} in its ${this.props.preferred_name_singular.signatures.toLowerCase()}.`
+			if (this.state.childTab !== undefined && this.state.childTab !== this.state.entry_object.child_model) children_name = `${this.state.childTab} ${children_name}`
+			label = `${entry_name} has ${count} ${children_name}.`
 		}else if (this.props.model === "libraries") {
 			label = `There are ${count} ${children_name} in ${entry_name}.`
 		}else if (this.props.model === "resources") {
 			label = `There are ${count} ${children_name} in ${entry_name}.`
 		} else {
-			label = `There are ${count} ${children_name} that contains ${entry_name}.`
+			// if (this.state.childTab !== undefined && this.state.childTab !== this.state.entry_object.child_model) children_name = `${this.state.childTab} ${children_name}`
+			label = `There are ${count} ${children_name} that contains ${entry_name}`
+			if (this.state.childTab !== undefined && this.state.childTab !== this.state.entry_object.child_model) {
+				label = label + ` in its ${this.state.childTab} ${this.props.preferred_name[this.state.entry_object.model].toLowerCase()}`
+			}
+			label = label+"."
 		}
 		return(
 			<React.Fragment>
+				{this.state.childTabs.length === 1 ? null:
+					<ResultsTab
+						tabs={this.state.childTabs}
+						value={this.state.childTab}
+						handleChange={this.onChildTabChange}
+						tabsProps={{
+							centered: true,
+						}}
+					/>
+				}
 				<SearchResult
 					searching={this.state.searching}
 					search_terms={this.state.query.search || []}
@@ -369,7 +418,7 @@ export default class MetadataPage extends React.PureComponent {
 					filters={Object.values(this.state.filters)}
 					onSearch={this.onSearch}
 					onFilter={this.onClickFilter}
-					entries={this.state.children}
+					entries={this.state.children[this.state.childTab] || []}
 					label={label}
 					DataTableProps={{
 						onChipClick: v=>{
@@ -379,7 +428,7 @@ export default class MetadataPage extends React.PureComponent {
 					PaginationProps={{
 						page: this.state.page,
 						rowsPerPage: this.state.perPage,
-						count:  this.state.children_count[this.state.tab],
+						count:  this.state.children_count[this.state.childTab],
 						onChangePage: (event, page) => this.handleChangePage(event, page),
 						onChangeRowsPerPage: this.handleChangeRowsPerPage,
 					}}

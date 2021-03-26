@@ -31,6 +31,10 @@ export class Model {
 		if (data_resolver===null){
 			throw new Error(`${model} should be instantiated in a data repository`)
 		}
+		if (entry === undefined){
+			console.log(model)
+			throw new Error(`Undefined entry`)
+		}
 		this._data_resolver = data_resolver
 		this.resolved = resolved
 		if (parent_mapper[model] !== null){
@@ -48,7 +52,7 @@ export class Model {
             this.resolved = false 
 		}else if (!(entry instanceof Array) && typeof entry === "object"){
 			if (entry.id === undefined || !isUUID(entry.id)){
-				throw new Error(`Invalid parent model`)
+				throw new Error(`Invalid entry id`)
 			}
 			this._entry = entry
 			// if (!this.resolved){
@@ -102,9 +106,10 @@ export class Model {
 		}else {
 			if (this._parent === undefined){
 				const parent_model = singular_form[this.parent_model]
-				this._parent = new Model(this.parent_model, this._entry[parent_model], this._data_resolver)
+				if (this._entry[parent_model] === undefined) this._parent = null
+				else this._parent = new Model(this.parent_model, this._entry[parent_model], this._data_resolver)
 			}
-			await this._parent.resolve_entry()
+			if (this._parent !== null) await this._parent.resolve_entry()
 		}
 	}
 
@@ -119,13 +124,49 @@ export class Model {
 			filter = rest
 		}
 		
-		const { entries, count} = await this._data_resolver.filter_through({
-			model: this.model,
-			entry: this,
-			filter: filter,
-		})
-		this._children = entries
-		this.children_count = count
+		if (this.model === "signatures" || this.model === "entities"){
+			if (this._children === undefined) {
+				this._children = {}
+				this.children_count = {}
+			}
+			filter = {
+				...filter,
+				where: {...filter.where || {}}
+			}
+			const direction = filter.where.direction
+			if (direction !== undefined){
+				const { entries, count} = await this._data_resolver.filter_through({
+					model: this.model,
+					entry: this,
+					filter: filter,
+				})
+				const field = direction === "-" ? this.child_model: direction
+				this._children[field] = entries
+				this.children_count[field] = count
+			}else {
+				for (const dir of ['-', 'up', 'down']){
+					filter.where.direction = dir
+					const { entries, count} = await this._data_resolver.filter_through({
+						model: this.model,
+						entry: this,
+						filter: filter,
+					})
+					const field = dir === "-" ? this.child_model: dir
+					this._children[field] = entries
+					this.children_count[field] = count
+				}
+			}
+			
+		} else {
+			const { entries, count} = await this._data_resolver.filter_through({
+				model: this.model,
+				entry: this,
+				filter: filter,
+			})
+			this._children = {[this.child_model]: entries}
+			this.children_count = {[this.child_model]: count}
+			
+		}
 	}
 
 	entry = async () => {
@@ -136,6 +177,7 @@ export class Model {
 	parent = async () => {
 		if (this._parent === null) return null
 		if (this._parent === undefined || !this._parent.resolved) await this.resolve_parent()
+		if (this._parent === null) return null
 		return await this._parent.entry()
 	}
 
@@ -163,22 +205,23 @@ export class Model {
 		}else{
 			// Proper API Call
 			if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
-			let children = []
-			for (const c of Object.values(this._children)){
-				const child = await c.entry()
-				child[singular_form[c.parent_model]] = await c.parent()
-				children.push(child)
+			const children = {}
+			for (const [k,v] of Object.entries(this._children)){
+				children[k] = []
+				for (const c of Object.values(v)){
+					const child = await c.entry()
+					child[singular_form[c.parent_model]] = await c.parent()
+					children[k].push(child)
+				}
 			}
 			return {
-				count: {
-					[this.child_model]: this.children_count,
-				},
-				[this.child_model]: children
+				...children,
+				count: this.children_count
 			}
 		}
 	}
 
-	sort_children_by_score = (children,order_by, ordering) => {
+	sort_children_by_score = (children, order_by, ordering) => {
 		children.sort((a,b)=>{
 			if (ordering === "DESC") return (b.scores[order_by] || -9999)-(a.scores[order_by] || -9999)
 			else return (a.scores[order_by] || 9999)-(b.scores[order_by] || 9999)
@@ -200,12 +243,12 @@ export class Model {
 				children.push(resolved_entry)
 			}
 		}
-		this._preset_children = children
-		this.children_count = this._preset_children.length
+		this._preset_children = {[this.child_model]: children}
+		this.children_count = {[this.child_model]: this._preset_children.length}
 	}
 
-	get_children_ids = async () => {
-		if (this._preset_children!==undefined) return this._preset_children.map(c=>c.id)
+	get_children_ids = async (direction=this.child_model) => {
+		if (this._preset_children!==undefined) return this._preset_children[direction].map(c=>c.id)
 		if (this._children === undefined) await this.children()
 		return Object.keys(this._children)
 		
@@ -215,23 +258,25 @@ export class Model {
 		// If grandchild is true, then it will serialize the grandchild
 		if (this._index !== undefined) return
 		const docs = []
-		for (const child of this._preset_children){
-			const e = await child.serialize(true, grandchild)
-			const entry = {
-				id: e.id,
-				meta: JSON.stringify(e),
-				scores: e.scores || {},
-			}
-			if (schema!==null){
-				for (const prop of Object.values(schema.properties)){
-					if (prop.type === 'filter'){
-						const field = prop.search_field || prop.field
-						const templateString = '${'+field+'}'
-						entry[field] = makeTemplate(templateString, e)
+		for (const v of Object.values(this._preset_children)){
+			for (const child of v){
+				const e = await child.serialize(true, grandchild)
+				const entry = {
+					id: e.id,
+					meta: JSON.stringify(e),
+					scores: e.scores || {},
+				}
+				if (schema!==null){
+					for (const prop of Object.values(schema.properties)){
+						if (prop.type === 'filter'){
+							const field = prop.search_field || prop.field
+							const templateString = '${'+field+'}'
+							entry[field] = makeTemplate(templateString, e)
+						}
 					}
 				}
+				docs.push(entry)
 			}
-			docs.push(entry)
 		}
 		if (docs.length > 0){
 			this._index = new FlexSearch({
@@ -248,53 +293,60 @@ export class Model {
 		const {order=[], limit=10, skip=0} = filter
 		const order_by = order[0]
 		const ordering = order[1]
-		let children = []
-		for (const c of this._preset_children){
-			let child
-			if (crawl && this.child_model !== "entities"){
-				child = await c.serialize(true, true, crawl)
-			} else {
-				child = await c.serialize(true, false)
+		const children = {}
+		const count = {}
+		for (const [k,v] of Object.entries(this._preset_children)){
+			let children_list = []
+			for (const c of v){
+				let child
+				if (crawl && this.child_model !== "entities"){
+					child = await c.serialize(true, true, crawl)
+				} else {
+					child = await c.serialize(true, false)
+				}
+				children_list.push(child)
 			}
-			children.push(child)
+			count[k] = children_list.length
+			if (order_by) children_list = this.sort_children_by_score(children_list, order_by, ordering)
+			children[k] = limit===0 ? children_list: children_list.slice(skip, skip+limit)
 		}
-		if (order_by) children = this.sort_children_by_score(children, order_by, ordering)
-		children = limit===0 ? children: children.slice(skip, skip+limit)
-		return children
+		
+		return { children, count }
 	}
 
 	search_children = async (filter, crawl=false) => {
 		const {search, id, order=[], limit=10, skip=0} = filter
 		if (id){
-			const children = []
-			for (const c of this._preset_children){
-				if (c.id === id){
-					let child
-					if (crawl && this.child_model !== "entities"){
-						child = await c.serialize(true, true, crawl)
-					} else {
-						child = await c.serialize(true, false)
+			const children = {}
+			const count = {}
+			for (const [k,v] of Object.entries(this._preset_children)){
+				children[k] = []
+				for (const c of v){
+					if (c.id === id){
+						let child
+						if (crawl && this.child_model !== "entities"){
+							child = await c.serialize(true, true, crawl)
+						} else {
+							child = await c.serialize(true, false)
+						}
+						children[k].push(child)
 					}
-					children.push(child)
 				}
+				count[k] = children[k].length
 			}
+			
 			return {
-				[this.child_model]: children,
-				count: {
-					[this.child_model]: children.length,
-				},
+				...children,
+				count,
 			}
 		} else if (search===undefined || search.length===0){
-			const children = await this.filter_preset_children(filter, crawl)
+			const {children, count} = await this.filter_preset_children(filter, crawl)
 			return {
-				[this.child_model]: children,
-				count: {
-					[this.child_model]: this._preset_children.length,
-				},
+				...children,
+				count,
 			}
 		} else {
-			const order_by = order[0]
-			const ordering = order[1]
+			const [order_by, ordering] = order
 			let query
 			const options = {}
 			// if (limit > 0) {
@@ -326,7 +378,8 @@ export class Model {
 				model:this.child_model,
 				entries: for_resolving.map(r=>r.id)}
 			)
-			const children = []
+			const children = {}
+			const count = {}
 			for (const r of results){
 				const c = await resolved_entries[r.id]
 				if (c) {
@@ -336,14 +389,16 @@ export class Model {
 					} else {
 						child = await c.serialize(true, false)
 					}
-					children.push(child)
+					let dir = child.direction || this.child_model
+					if (dir === "-") dir = this.child_model
+					children[dir].push(child)
+					if (count[dir] === undefined) count[dir] = 0
+					count[dir] = count[dir] + 1
 				}
 			}
 			return {
-				[this.child_model]: children,
-				count: {
-					[this.child_model]: results.length,
-				},
+				...children,
+				count
 			}
 		}
 	}
