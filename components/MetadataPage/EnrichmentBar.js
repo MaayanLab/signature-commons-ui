@@ -40,7 +40,7 @@ export const EnrichmentBar = (props) => {
 				}
 				)}
 			</Bar>
-			<XAxis type="number" hide/>
+			<XAxis type="number" domain={[dataMin => dataMin-(dataMin/100), 'dataMax']} hide/>
 			<YAxis type="category" hide />
 		</BarChart>
 	)
