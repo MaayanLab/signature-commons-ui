@@ -3,11 +3,10 @@ import PropTypes from 'prop-types'
 import { ChipInput, Filter } from '../SearchComponents'
 import Grid from '@material-ui/core/Grid'
 import TablePagination from '@material-ui/core/TablePagination'
-import {ResultsTab} from './ResultsTab'
-import {DataTable, ShowMeta} from '../DataTable'
+import {DataTable} from '../DataTable'
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export const SearchResult = (props) => {
 	const {
@@ -30,15 +29,17 @@ export const SearchResult = (props) => {
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12} md={8} lg={9}>
-				{searching?<LinearProgress/>:
+				{searching?<CircularProgress/>:
 					<React.Fragment>
 						<Typography variant={"h6"} style={{marginBottom: 10}}>{label}</Typography>
 						<DataTable entries={entries} {...DataTableProps}/>
-						<TablePagination
-							{...PaginationProps}
-							component="div"
-							align="right"
-						/>
+						{entries.length > 0 ?
+							<TablePagination
+								{...PaginationProps}
+								component="div"
+								align="right"
+							/>: null
+						}
 					</React.Fragment>
 				}
 			</Grid>
