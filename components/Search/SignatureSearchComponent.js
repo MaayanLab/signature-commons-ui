@@ -21,42 +21,42 @@ import CardContent from '@material-ui/core/CardContent';
 
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import Switch from '@material-ui/core/Switch';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { withStyles } from '@material-ui/core/styles';
+import MarkdownComponent from '../Markdown/MarkdownComponent'
 
 
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
 	const example_buttons = []
 	for (const ex of examples){
-		if (ex.input.type === type){
+		example_buttons.push(
+			<Button variant="text" color="primary" style={{textTransform: "none"}} key={ex.label} onClick={()=>{
+				resetInput()
+				if (type === "Overlap") {
+					onAdd(ex.input.entities, "entities")
+				} else {
+					onAdd(ex.input.up_entities, "up_entities")
+					onAdd(ex.input.down_entities, "down_entities")
+				}
+			}}>
+				{ex.label}
+			</Button>
+		)
+		if (ex.link!==undefined){
 			example_buttons.push(
-				<Button variant="text" color="primary" style={{textTransform: "none"}} key={ex.label} onClick={()=>{
-					resetInput()
-					if (type === "Overlap") {
-						onAdd(ex.input.entities, "entities")
-					} else {
-						onAdd(ex.input.up_entities, "up_entities")
-						onAdd(ex.input.down_entities, "down_entities")
-					}
-				}}>
-					{ex.label}
+				<Button 
+					style={{minWidth: 5}}
+					href={ex.link}
+					target = "_blank" 
+					rel = "noopener noreferrer" 
+				>
+					<span className="mdi mdi-open-in-new"/>
 				</Button>
 			)
-			if (ex.link!==undefined){
-				example_buttons.push(
-					<Button 
-						style={{minWidth: 5}}
-						href={ex.link}
-						target = "_blank" 
-						rel = "noopener noreferrer" 
-					>
-						<span className="mdi mdi-open-in-new"/>
-					</Button>
-				)
-			}
 		}
 	}
 	return example_buttons
@@ -83,13 +83,36 @@ const SigForm = (props={}) => {
 		submitName="Search",
 		enrichment_tabs,
 		type,
+		about,
+		collapsed
 	} = props
-	const opposite_type = type === "Overlap" ? "Rank": "Overlap"
+
+	// let left_spacer = ""
+	// let right_spacer = ""
+	// if (Object.keys(enrichment_tabs).length === 2){
+	// 	const overlap_label = enrichment_tabs.Overlap.label
+	// 	const rank_label = enrichment_tabs.Rank.label
+	// 	if (overlap_label.length > rank_label.length) right_spacer = String.fromCharCode(160).repeat(overlap_label.length-rank_label.length + 5)
+	// 	if (overlap_label.length < rank_label.length) left_spacer = String.fromCharCode(160).repeat(rank_label.length-overlap_label.length + 5)
+	// }
+	
 	return(
-		<Grid container spacing={1}>
+		<Grid container>
 			{/* Search Components */}
+			{ Object.keys(enrichment_tabs).length === 1 ? null:
+				<Grid item xs={12} align="center" style={{marginTop: 5}}>
+					<Typography>
+						{enrichment_tabs.Overlap.label}
+						<Switch checked={type === "Rank"}
+								onChange={TextFieldSuggestProps.toggleSwitch}
+								name="active"
+								color="default"/>
+						{enrichment_tabs.Rank.label}
+					</Typography>
+				</Grid>
+			}
 			<Grid item xs={12}>
-				{TextFieldSuggestProps.input.entities !== undefined ?
+				{type === 'Overlap' ?
 					<React.Fragment>
 						<TextFieldSuggest {...TextFieldSuggestProps}
 							input={Object.values(TextFieldSuggestProps.input.entities)}
@@ -97,7 +120,7 @@ const SigForm = (props={}) => {
 							onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "entities")}
 							onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "entities")}
-							endAdornment={<EntityCounts {...TextFieldSuggestProps.input}/>}
+							endAdornment={<EntityCounts {...TextFieldSuggestProps.input.set_stats}/>}
 							placeholder={enrichment_tabs.Overlap.placeholder}
 						/>
 					</React.Fragment>
@@ -111,6 +134,7 @@ const SigForm = (props={}) => {
 								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "up_entities")}
 								onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "up_entities")}
 								placeholder={enrichment_tabs.Rank.up_placeholder}
+								endAdornment={<EntityCounts {...TextFieldSuggestProps.input.up_stats}/>}
 							/>
 						</Grid>
 						<Grid item xs={12} md={6}>
@@ -121,6 +145,7 @@ const SigForm = (props={}) => {
 								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "down_entities")}
 								onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "down_entities")}
 								placeholder={enrichment_tabs.Rank.down_placeholder}
+								endAdornment={<EntityCounts {...TextFieldSuggestProps.input.down_stats}/>}
 							/>
 						</Grid>
 					</Grid>
@@ -145,9 +170,14 @@ const SigForm = (props={}) => {
 					<Examples {...TextFieldSuggestProps} />
 				</Typography>
 			</Grid>
-			{ Object.keys(enrichment_tabs).length === 1 ? null:
-				<Grid item xs={12} align="center">
-					<Button href={enrichment_tabs[opposite_type].href}>Switch to {enrichment_tabs[opposite_type].label}</Button>
+			{ collapsed ? null :
+				<Grid xs={12}>
+					<Typography align="center" variant="h5">
+						Abstract
+					</Typography>
+					<Typography align="justify">
+						<MarkdownComponent url={about} />
+					</Typography>
 				</Grid>
 			}
 		</Grid>
@@ -156,32 +186,101 @@ const SigForm = (props={}) => {
 
 const LibraryCardContent = async (props) => {
 	const {entry, process_children, onClick, visualization, order_field} = props
-	const {bar_data, scatter_data} = await process_children(entry.data.id)
+	const {bar_data,
+		scatter_data,
+		up_bar_data,
+		down_bar_data,
+		mimicker_bar_data,
+		reverser_bar_data,
+		unknown_bar_data
+	} = await process_children(entry.data.id)
 	const viz = visualization[entry.data.id] || "bar"
-	return (
-		<React.Fragment>
-			{ viz === "bar" ? 
-				<EnrichmentBar data={bar_data} field={order_field} fontColor={"#FFF"} 
+	if (viz === "bar" && bar_data !== undefined && bar_data.length > 0) {
+		return <EnrichmentBar data={bar_data} field={order_field} fontColor={"#FFF"} 
 					barProps={{isAnimationActive:false}}
 					barChartProps={{
 						onClick: v=>onClick(v.activePayload[0].payload),
 						height: 300,
 						width: 300
-					}}/>:
-					<ScatterPlot
-						data={scatter_data}
-						scatterChartProps={{
-							height:300,
-							width:300,
-							style:{
-								display: "block",
-								margin: "auto"
-							}
-						}}
-						scatterProps={{ onClick }}/>
-			}
-		</React.Fragment>
-	)
+				}}/>
+	}else if (viz === "bar" && up_bar_data !== undefined && up_bar_data.length > 0) {
+		return (
+			<React.Fragment>
+				<EnrichmentBar data={up_bar_data} field={order_field} fontColor={"#FFF"} 
+					barProps={{isAnimationActive:false}}
+					barChartProps={{
+						onClick: v=>onClick(v.activePayload[0].payload),
+						height: 300,
+						width: 300
+				}}/>
+				<Typography align="center">Up</Typography>
+			</React.Fragment>
+		)
+	}else if (viz === "bar" && mimicker_bar_data !== undefined && mimicker_bar_data.length > 0) {
+		return (
+			<React.Fragment>
+				<EnrichmentBar data={mimicker_bar_data} field={order_field} fontColor={"#FFF"} 
+					barProps={{isAnimationActive:false}}
+					barChartProps={{
+						onClick: v=>onClick(v.activePayload[0].payload),
+						height: 300,
+						width: 300
+				}}/>
+				<Typography align="center">Mimickers</Typography>
+			</React.Fragment>
+		)
+	}else if (viz === "down_bar" && down_bar_data !== undefined && down_bar_data.length > 0) {
+		return (
+			<React.Fragment>
+				<EnrichmentBar data={down_bar_data} field={order_field} fontColor={"#FFF"} 
+					barProps={{isAnimationActive:false}}
+					barChartProps={{
+						onClick: v=>onClick(v.activePayload[0].payload),
+						height: 300,
+						width: 300
+				}}/>
+				<Typography align="center">Down</Typography>
+			</React.Fragment>
+		)
+	}else if (viz === "down_bar" && reverser_bar_data !== undefined && reverser_bar_data.length > 0) {
+		return (
+			<React.Fragment>
+				<EnrichmentBar data={reverser_bar_data} field={order_field} fontColor={"#FFF"} 
+					barProps={{isAnimationActive:false}}
+					barChartProps={{
+						onClick: v=>onClick(v.activePayload[0].payload),
+						height: 300,
+						width: 300
+				}}/>
+				<Typography align="center">Reversers</Typography>
+			</React.Fragment>
+		)
+	}else if (viz === "scatter" && scatter_data !== undefined) {
+		return <ScatterPlot
+					data={scatter_data}
+					scatterChartProps={{
+						height:300,
+						width:300,
+						style:{
+							display: "block",
+							margin: "auto"
+						}
+					}}
+					scatterProps={{ onClick }}/>
+	}else if (unknown_bar_data !== undefined && unknown_bar_data.length > 0) {
+		return (
+			<React.Fragment>
+				<EnrichmentBar data={unknown_bar_data} field={order_field} fontColor={"#FFF"} 
+					barProps={{isAnimationActive:false}}
+					barChartProps={{
+						onClick: v=>onClick(v.activePayload[0].payload),
+						height: 300,
+						width: 300
+				}}/>
+				<Typography align="center">Ambiguous</Typography>
+			</React.Fragment>
+		)
+	}
 }
 
 const Results = (props) => {
@@ -190,6 +289,7 @@ const Results = (props) => {
 		searching,
 		ResourceTabProps,
 		setVisualization,
+		type,
 		...rest
 	} = props
 	if (entries === null) return null
@@ -242,16 +342,35 @@ const Results = (props) => {
 										value={rest.visualization[entry.data.id] || "bar"}
 										exclusive
 										onChange={(e, v)=>{
-											setVisualization(entry.data.id, v)
+											setVisualization(entry.data.id, e.currentTarget.value)
 										}}
 										aria-label="text alignment"
 									>
-										<ToggleButton value="bar" aria-label="bar">
-											<span className="mdi mdi-chart-bar mdi-rotate-90"/>
-										</ToggleButton>
-										<ToggleButton value="scatter" aria-label="scatter">
-											<span className="mdi mdi-chart-scatter-plot"/>
-										</ToggleButton>
+										{entry.data.dataset_type === "geneset_library" ?
+											<ToggleButton value="bar" aria-label="bar">
+												<span className="mdi mdi-chart-bar mdi-rotate-90"/>
+											</ToggleButton>	: null
+										}
+										{entry.data.dataset_type === "rank_matrix" ?
+											<ToggleButton value="bar" aria-label="bar">
+												<span className="mdi mdi-archive-arrow-up"/>
+											</ToggleButton>: null
+										}
+										{entry.data.dataset_type === "rank_matrix" ?
+											<ToggleButton value="down_bar" aria-label="bar">
+												<span className="mdi mdi-archive-arrow-down"/>
+											</ToggleButton>: null
+										}
+										{entry.data.dataset_type === "rank_matrix" ?
+											<ToggleButton value="unknown_bar" aria-label="bar">
+												<span className="mdi mdi-archive-arrow-down"/>
+											</ToggleButton>: null
+										}
+										{entry.data.dataset_type === "geneset_library" && type === "Overlap" ?
+											<ToggleButton value="scatter" aria-label="scatter">
+												<span className="mdi mdi-chart-scatter-plot"/>
+											</ToggleButton>: null
+										}
 									</ToggleButtonGroup>
 								  }
 							/>
@@ -290,6 +409,7 @@ export const SignatureSearchComponent = (props) => {
 		filters,
 		ResultsProps,
 		download_input,
+		type,
 	} = props
 
 	const [expanded, setExpanded] = React.useState(false);
@@ -301,8 +421,8 @@ export const SignatureSearchComponent = (props) => {
 
 	return(
 		<Grid container spacing={1}  style={{marginBottom: 20}}>
-			<Grid item xs={12} md={2}/>
-			<Grid item xs={12} md={6} lg={7}>
+			<Grid item xs={12} md={1}/>
+			<Grid item xs={12} md={8}>
 				{ SearchTabProps.tabs.length < 2 ? null:
 					<ResultsTab
 						tabsProps={{
@@ -319,14 +439,14 @@ export const SignatureSearchComponent = (props) => {
 					/>
 				}
 				{ ResourceTabProps===undefined ?
-					<SigForm {...props}/>:						
+					<SigForm {...props} collapsed={ResourceTabProps!==undefined}/>:						
 					<Collapse in={expanded} timeout="auto" unmountOnExit>
-						<SigForm {...props}/>
+						<SigForm {...props} collapsed={ResourceTabProps!==undefined}/>
 					</Collapse>
 				}
 			</Grid>
 			{ ResourceTabProps!==undefined ?
-				<Grid item xs={12} md={4} lg={3}>
+				<Grid item xs={12} md={3}>
 					<Tooltip title="Click to view input" placement="bottom">
 						
 						<Button onClick={handleExpandClick}
@@ -348,7 +468,7 @@ export const SignatureSearchComponent = (props) => {
 			}
 			{/* <Grid item xs={12} md={2}/> */}
 			<Grid item xs={12}>
-				<Results {...ResultsProps} searching={searching} ResourceTabProps={{
+				<Results {...ResultsProps} type={type} searching={searching} ResourceTabProps={{
 					...ResourceTabProps,
 					TabComponent: ResourceCustomTab,
 					TabsComponent: ResourceCustomTabs,
@@ -534,6 +654,7 @@ SignatureSearchComponent.propTypes = {
 		chipInputProps: PropTypes.object,
 		formProps: PropTypes.object,
 		suggestionsProps: PropTypes.object,
+		toggleSwitch: PropTypes.func,
 	}),
 	enrichment_tabs: PropTypes.objectOf(PropTypes.oneOf([
 		PropTypes.shape({
@@ -552,5 +673,6 @@ SignatureSearchComponent.propTypes = {
 			down_placeholder: PropTypes.string,
 		})
 	])),
-	type: PropTypes.oneOf("Rank", "Overlap")
+	type: PropTypes.oneOf("Rank", "Overlap"),
+	about: PropTypes.string
 }

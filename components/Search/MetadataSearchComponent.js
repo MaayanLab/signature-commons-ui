@@ -10,6 +10,7 @@ import {DataTable} from '../DataTable'
 import { Typography, Divider } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress'
+import MarkdownComponent from '../Markdown/MarkdownComponent'
 
 
 export const MetadataSearchComponent = (props) => {
@@ -27,10 +28,12 @@ export const MetadataSearchComponent = (props) => {
 		SearchTabProps,
 		placeholder,
 		searching,
+		homepage,
+		about
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
-
+	console.log(placeholder)
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12} md={1}/>
@@ -104,33 +107,51 @@ export const MetadataSearchComponent = (props) => {
 					</Grid>
 				</Grid>
 			</Grid>
-			<Grid item xs={12}>
-				<Grid container spacing={1}>
-					<Grid item xs={12} md={1}/>
-					<Grid item xs={12} md={8}>
-						{ entries===null || searching ? <LinearProgress/>:
-							<Grid item xs={12}>
-								<DataTable entries={entries} {...DataTableProps}/>
-								<TablePagination
-									{...PaginationProps}
-									component="div"
-									align="right"
-								/>
-							</Grid>
-						}
-					</Grid>
-					<Grid item xs={12} md={4} lg={3} align="center">
-						{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+			{ homepage ?
+				<Grid item xs={12}>
+					<Grid container>
+						<Grid item xs={12} md={1}/>
+						<Grid item xs={12} md={8}>
+							<Typography align="center" variant="h5">
+								Abstract
+							</Typography>
+							<Typography align="justify">
+								<MarkdownComponent url={about} />
+							</Typography>
+						</Grid>
 					</Grid>
 				</Grid>
-			</Grid>
+				:
+				<Grid item xs={12}>
+					<Grid container spacing={1}>
+						<Grid item xs={12} md={1}/>
+						<Grid item xs={12} md={8}>
+							{ entries===null || searching ? <LinearProgress/>:
+								<Grid item xs={12}>
+									<DataTable entries={entries} {...DataTableProps}/>
+									<TablePagination
+										{...PaginationProps}
+										component="div"
+										align="right"
+									/>
+								</Grid>
+							}
+						</Grid>
+						<Grid item xs={12} md={4} lg={3} align="center">
+							{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+						</Grid>
+					</Grid>
+				</Grid>
+			}
 		</Grid>
 	)
 }
 
 MetadataSearchComponent.propTypes = {
 	searching: PropTypes.bool,
+	homepage: PropTypes.bool,
 	placeholder: PropTypes.string,
+	about: PropTypes.string,
 	search_terms: PropTypes.arrayOf(PropTypes.string),
 	search_examples: PropTypes.arrayOf(PropTypes.string),
 	chipRenderer: PropTypes.func,
