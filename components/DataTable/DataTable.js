@@ -25,7 +25,7 @@ export const DataTable = (props) => {
             })}
             <Grid item style={{width:"100%"}}>
                 {typeof entries === 'undefined' || entries.length == 0 ?
-                <Typography variant="h5" >No entries</Typography>:
+                null:
                 entries.map(entry=>(
                     <InfoCardComponent key={entry.data.id} {...entry} onChipClick={onChipClick}/>
                 ))}
