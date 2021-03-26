@@ -17,6 +17,11 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { precise } from '../ScorePopper'
 
+const stat_mapper = {
+	entities: "set_stats",
+	up_entities: "up_stats",
+	down_entities: "down_stats",
+}
 export default class SignatureSearch extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -48,8 +53,8 @@ export default class SignatureSearch extends React.PureComponent {
 	resolve_entities = async () => {
 		try {
 			const {schemas} = this.props
-			const input = {...this.state.input}
-			
+			let { up_stats={}, down_stats={}, set_stats={}, ...input} = this.state.input
+			// const input = {...this.state.input}
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
 			
@@ -76,7 +81,26 @@ export default class SignatureSearch extends React.PureComponent {
 				model: "entities",
 				filter,
 			})
-			let { valid=0, invalid=0, suggestions=0} = this.state.input
+			let stats = {}
+			let name_mapper = {}
+			if (input.entities!==undefined){
+				stats = {
+					entities: set_stats
+				}
+				name_mapper = {
+					entities: "set_stats"
+				}
+			} else {
+				stats = {
+					up_entities: up_stats,
+					down_entities: down_stats
+				}
+				name_mapper = {
+					up_entities: "up_stats",
+					down_entities: "down_stats"
+				}
+			}
+			// let { valid=0, invalid=0, suggestions=0} = this.state.input
 			for (const c of Object.values(results)){
 				const entry = await c.entry()
 				const e = labelGenerator(await entry,
@@ -84,6 +108,7 @@ export default class SignatureSearch extends React.PureComponent {
 				const label = e.info.name.text
 				const alternative_label = (e.info.alternative || {}).text
 				for (const field of Object.keys(input)){
+					let { valid=0, suggestions=0} = stats[field]
 					if (input[field][label]!==undefined){
 						if (input[field][label].id === undefined){
 							if (input[field][label].type === "suggestions") {
@@ -130,39 +155,48 @@ export default class SignatureSearch extends React.PureComponent {
 								}
 							}
 						}
+					}
+					stats[field] = {
+						...stats[field],
+						valid,
+						suggestions
 					}		
 				}
 			}
 			for (const [field, entities] of Object.entries(input)){
+				let { invalid=0 } = stats[field]
 				for (const [k,v] of Object.entries(entities)){
 					if (v.type==="loading"){
 						input[field][k].type = "invalid"
 						invalid = invalid + 1
 					}
 				}
+				stats[field] = {
+					...stats[field],
+					invalid,
+				}
 			}
-			
+			for (const field of Object.keys(input)){ 
+				input[name_mapper[field]] = stats[field]
+			}
 			this.setState({
 				input: {
 					...input,
-					valid,
-					invalid,
-					suggestions,
 				},
 				resolving: false,
 			})
 		} catch (error) {
-			this.props.resolver.abort_controller()
+			// this.props.resolver.abort_controller()
 			console.error(error)
-			this.setState(prevState=>{
-				if (prevState.error === null) {
-					return {
-						error: "resolve_entities error: "+ error.message
-					}
-				} else return {
-					error: prevState.error
-				}
-			})
+			// this.setState(prevState=>{
+			// 	if (prevState.error === null) {
+			// 		return {
+			// 			error: "resolve_entities error: "+ error.message
+			// 		}
+			// 	} else return {
+			// 		error: prevState.error
+			// 	}
+			// })
 		}
 	}
 	
@@ -192,7 +226,7 @@ export default class SignatureSearch extends React.PureComponent {
 					...entities
 				}
 			}
-			if (input[value.type] > 0) input[value.type] = input[value.type] -1
+			if (input[stat_mapper[field]][value.type] > 0) input[stat_mapper[field]][value.type] = input[stat_mapper[field]][value.type] -1
 			return {
 				input, 
 			}
@@ -209,8 +243,8 @@ export default class SignatureSearch extends React.PureComponent {
 				}
 			}
 			input[field][selected.label] = selected
-			input.valid = input.valid + 1
-			input.suggestions = input.suggestions - 1
+			input[stat_mapper[field]].valid = input[stat_mapper[field]].valid + 1
+			input[stat_mapper[field]].suggestions = input[stat_mapper[field]].suggestions - 1
 			return {
 				input, 
 			}
@@ -380,40 +414,62 @@ export default class SignatureSearch extends React.PureComponent {
 	}
 
 	lazy_tooltip = async (payload) => {
-		const {name, id, oddsratio, pval, setsize} = payload
+		const {name, id, oddsratio, pval, setsize, zscore, logpfisher, logpav, direction} = payload
 		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
 		const entry_object = resolved_entries[id]
 		const children = (await entry_object.children({limit:0})).entities || []
 		const overlap = children.map(e=>getName(e, this.props.schemas))
-		const overlap_text = overlap.length === 10 ? overlap.join(", "):`${overlap.slice(0,10).join(", ")}... (Click to see more)` 
+		const overlap_text = overlap.length <= 10 ? overlap.join(", "):`${overlap.slice(0,10).join(", ")}... (Click to see more)` 
 		// if (setsize <= 15) overlap_text = overlap.join(", ")
 		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
 		return(
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
 					<Typography variant="h6">{name}</Typography>
-					<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>
-					<Typography><b>p-value:</b> {precise(pval)}</Typography>
-					{ setsize===0 ? null:
+					{ oddsratio !==undefined ?
+						<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>:
+						null
+					}
+					{ pval !==undefined ?
+						<Typography><b>p-value:</b> {precise(pval)}</Typography>:
+						null
+					}
+					{ logpav !==undefined ?
+						<Typography><b>pval (average):</b> {precise(logpav)}</Typography>:
+						null
+					}
+					{ logpfisher !==undefined ?
+						<Typography><b>pval (fisher):</b> {precise(logpfisher)}</Typography>:
+						null
+					}
+					{ zscore !==undefined ?
+						<Typography><b>z score:</b> {precise(zscore)}</Typography>:
+						null
+					}
+					{ direction !==undefined ?
+						<Typography><b>direction:</b> {direction}</Typography>:
+						null
+					}
+					{ setsize ?
 						<React.Fragment>
 							<Typography><b>overlap size:</b> {setsize}</Typography>
 							<Typography><b>overlaps:</b> {overlap_text}</Typography>
-						</React.Fragment>
+						</React.Fragment>: null
 					}
 				</CardContent>
 			</Card>
 		)
 	}
 
-	get_children_data = async (entries, type, enrichment_id, model, limit=10) => {
+	set_to_set = async (entries, limit=10) => {
 		const {
 			barColor="#0063ff",
 			scatterColor="#0063ff",
 			inactiveColor="#9e9e9e"
-		} = this.props
+		} = this.props.colors || {}
+		const {type, enrichment_id} = this.props.match.params
 		const {order_field, order} = this.state
 		const color = Color(barColor)
-		const labels = []
 		const scatter_data = []
 		const bar_data = []
 		
@@ -421,17 +477,12 @@ export default class SignatureSearch extends React.PureComponent {
 		const firstVal = order === 'DESC' ? f: -Math.log(f)
 		for (const entry of entries){
 			// const overlap = (entry.entities || []).map(e=>getName(e, this.props.schemas))
-			if (labels.length < limit){
-				const e = labelGenerator(entry,
-					this.props.schemas,
-					`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[model]}/`)
-				labels.push(e)
-
+			if (bar_data.length < limit){
 				const v = entry.scores[order_field]
 				const value = order === 'DESC' ? v: -Math.log(v)
 				const col = color.lighten(-((value/firstVal) - 1))
 				bar_data.push({
-					name: e.info.name.text,
+					name: getName(entry, this.props.schemas),
 					value,
 					color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? col.hex(): inactiveColor,
 					id: entry.id,
@@ -452,7 +503,181 @@ export default class SignatureSearch extends React.PureComponent {
 				color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? scatterColor: inactiveColor
 			})	
 		}
-		return {labels, scatter_data, bar_data}
+		return {scatter_data, bar_data}
+	}
+
+	set_to_rank = async (entries, limit=10) => {
+		const {
+			posBarColor="#0063ff",
+			negBarColor="#FF2A43",
+			inactiveColor="#9e9e9e"
+		} = this.props.colors || {}
+		const {order_field, order} = this.state
+		const posColor = Color(posBarColor)
+		const negColor = Color(negBarColor)
+		const up_bar_data = []
+		const down_bar_data = []
+		const count = {up: 0, down: 0, total: 0}
+		let firstValUp
+		let firstValDown
+		for (const entry of entries){
+			const v = entry.scores[order_field]
+			const value = order === 'DESC' ? v: -Math.log(v)
+			const direction = entry.scores["direction"]
+			let col
+			if (direction === "up" && count.up < limit){
+				if (firstValUp === undefined) {
+					firstValUp = value
+					col = posColor
+				}else {
+					col = posColor.lighten(-((value/firstValUp) - 1))
+				}
+				const d = {
+					name: getName(entry, this.props.schemas),
+					value,
+					color: entry.scores["p-value"] < 0.05 ? col.hex(): inactiveColor,
+					id: entry.id,
+					pval: entry.scores["p-value"],
+					zscore: entry.scores["zscore"],  
+					direction,
+					tooltip_component: this.lazy_tooltip,
+				}	
+				up_bar_data.push(d)
+				count.up = count.up + 1
+				count.total = count.total + 1		
+			} else if (direction === "down" && count.down < limit) {
+				if (firstValDown === undefined) {
+					firstValDown = value
+					col = negColor
+				}else {
+					col = negColor.lighten(-((value/firstValDown) - 1))
+				}
+				const d = {
+					name: getName(entry, this.props.schemas),
+					value,
+					color: entry.scores["p-value"] < 0.05 ? col.hex(): inactiveColor,
+					id: entry.id,
+					pval: entry.scores["p-value"], 
+					zscore: entry.scores["zscore"],
+					tooltip_component: this.lazy_tooltip,
+				}	
+				down_bar_data.push(d)
+				count.down = count.down + 1
+				count.total = count.total + 1	
+			}
+			if (count.total === limit*2) break	
+		}
+		return {up_bar_data, down_bar_data}
+	}
+
+	up_down_to_rank = async (entries, limit=10) => {
+		const {
+			posBarColor="#0063ff",
+			negBarColor="#FF2A43",
+			inactiveColor="#9e9e9e"
+		} = this.props.colors || {}
+		const {order_field, order} = this.state
+		const mimickerColor = Color(posBarColor)
+		const reverserColor = Color(negBarColor)
+		const mimicker_bar_data = []
+		const reverser_bar_data = []
+		const unknown_bar_data = []
+		let mimickerFirstVal
+		let reverserFirstVal
+		let unknownFirstVal
+		const count = {mimicker: 0, reverser: 0, unknown: 0, total: 0}
+		for (const entry of entries){
+			const value = entry.scores["log p (fisher)"]
+			const direction = entry.scores["direction"]
+			if (direction == "mimicker" && count.mimicker < 10){
+				const color = mimickerColor 
+				let col
+				if (mimickerFirstVal === undefined) {
+					mimickerFirstVal = value
+					col = color
+				}else {
+					col = color.lighten(-((value/mimickerFirstVal) - 1))
+				}
+				const d = {
+					name: getName(entry, this.props.schemas),
+					value,
+					color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
+					id: entry.id,
+					logpfisher: Math.pow(10, -entry.scores['log p (fisher)']),
+					logpav: Math.pow(10, -entry.scores["log p (avg)"]), 
+					tooltip_component: this.lazy_tooltip,
+					direction,
+				}	
+				mimicker_bar_data.push(d)
+				count.mimicker = count.mimicker + 1
+				count.total = count.total + 1
+			}else if (direction == "reverser" && count.reverser < 10){
+				const color = reverserColor 
+				let col
+				if (reverserFirstVal === undefined) {
+					reverserFirstVal = value
+					col = color
+				}else {
+					col = color.lighten(-((value/reverserFirstVal) - 1))
+				}
+				const d = {
+					name: getName(entry, this.props.schemas),
+					value,
+					color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
+					id: entry.id,
+					logpfisher: Math.pow(10, -entry.scores['log p (fisher)']),
+					logpav: Math.pow(10, -entry.scores["log p (avg)"]), 
+					tooltip_component: this.lazy_tooltip,
+					direction,
+				}	
+				reverser_bar_data.push(d)
+				count.reverser = count.reverser + 1
+				count.total = count.total + 1
+			}else if (direction == "ambiguous" && count.unknown < 10){
+				const color = mimickerColor 
+				let col
+				if (unknownFirstVal === undefined) {
+					unknownFirstVal = value
+					col = color
+				}else {
+					col = color.lighten(-((value/unknownFirstVal) - 1))
+				}
+				const d = {
+					name: getName(entry, this.props.schemas),
+					value,
+					color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
+					id: entry.id,
+					logpfisher: Math.pow(10, -entry.scores['log p (fisher)']),
+					logpav: Math.pow(10, -entry.scores["log p (avg)"]), 
+					tooltip_component: this.lazy_tooltip,
+					direction,
+				}	
+				unknown_bar_data.push(d)
+				count.unknown = count.unknown + 1
+				count.total = count.total + 1
+			}
+			if (count.total === 20) break
+		}
+		
+		return { mimicker_bar_data, reverser_bar_data, unknown_bar_data }
+	}
+
+	get_children_data = async (entries, model, limit=10) => {
+		const dataset_type = entries[0].library.dataset_type
+		const {type} = this.props.match.params
+		if (type === "Overlap") {
+			if (dataset_type === "geneset_library") {
+				return this.set_to_set(entries, limit)
+			}else if (dataset_type === "rank_matrix") {
+				return this.set_to_rank(entries, limit)
+			}
+		}else if (type === "Rank") {
+			if (dataset_type === "geneset_library") {
+				console.log(entries)
+			}else if (dataset_type === "rank_matrix") {
+				return this.up_down_to_rank(entries, limit)
+			}
+		}
 	}
 
 	process_children = async (library_id) => {
@@ -468,20 +693,13 @@ export default class SignatureSearch extends React.PureComponent {
 				lib_to_resource,
 				resource_to_lib,
 			}) 
-			
 			const final_query = {
 				order: [this.state.order_field, this.state.order],
 				limit: 0, 
 			}
 			const children_object = await entry_object.children(final_query, true)
 			const children_results = children_object[entry_object.child_model]
-
-			const { labels: entries, scatter_data, bar_data} = await this.get_children_data(Object.values(children_results), type, enrichment_id, entry_object.child_model)
-			return {
-				scatter_data,
-				bar_data,
-				entries,
-			}
+			return await this.get_children_data(Object.values(children_results), entry_object.child_model)
 			// if (!this.state.paginate) this.get_value_count(where, query)
 			// this.setState( prevState => ({
 			// 	library_entries: {
@@ -593,7 +811,10 @@ export default class SignatureSearch extends React.PureComponent {
 		const id = this.props.match.params.id
 		const previd = prevProps.match.params.id
 		if (type !== prevType) {
-			this.process_input()
+			this.props.resolver.abort_controller()
+			this.setState({
+				resolving: false,
+			}, () => this.process_input());
 		}else if (prevEnrichmentID !== enrichment_id) {
 			this.setState({
 				entries: null,
@@ -650,11 +871,18 @@ export default class SignatureSearch extends React.PureComponent {
 	}
 
 	handleSnackBarClose = (event, reason) => {
+		const input = reset_input(this.props.match.params.type)
 		this.setState({
-			error: null
-		}, ()=>this.props.history.push({
-			pathname: `${this.props.nav.SignatureSearch.endpoint}`
-		}))
+			error: null,
+			input,
+			resolving: false,
+		}, ()=>{
+		if (this.props.match.params.enrichment_id){
+			this.props.history.push({
+				pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}`
+			})	
+		}
+		})
 	}
 
 	setVisualization = (id, viz) => {
@@ -666,15 +894,28 @@ export default class SignatureSearch extends React.PureComponent {
 		}))
 	}
 
+	toggle_input_type = () => {
+		const {type} = this.props.match.params
+		const opposite_type = type === "Overlap" ? "Rank": "Overlap"
+		this.props.history.push({
+			pathname: `${this.props.nav.SignatureSearch.endpoint}/${opposite_type}`,
+		})
+	}
+
 	render = () => {
 		if (this.state.input === null) return <div style={{paddingTop: 100, textAlign: "center"}}><CircularProgress/></div>
 		else {
-			const disabled = Object.keys(this.state.input.entities || {}).length === 0 || (Object.keys(this.state.input.up_entities || {}) === 0 && Object.keys(this.state.input.down_entities || {}).length === 0)
+			let disabled = false
+			if (this.state.input.entities !== undefined){
+				disabled = Object.keys(this.state.input.entities || {}).length === 0
+			}else if (this.state.input.up_entities !== undefined){
+				disabled = (Object.keys(this.state.input.up_entities || {}).length === 0 && Object.keys(this.state.input.down_entities || {}).length === 0)
+			}
 			return (
 				<React.Fragment>
 					<Snackbar open={this.state.error!==null}
 						anchorOrigin={{ vertical:"top", horizontal:"right" }}
-						autoHideDuration={6000}
+						autoHideDuration={3000}
 						onClose={this.handleSnackBarClose}
 						message={this.state.error}
 						action={
@@ -686,6 +927,7 @@ export default class SignatureSearch extends React.PureComponent {
 					<SignatureSearchComponent 
 						searching={this.state.searching}
 						resolving={this.state.resolving}
+						about={this.props.about}
 						download_input={()=>download_input(this.state.input)}
 						ResultsProps={{
 							entries: this.state.libraries,
@@ -731,6 +973,7 @@ export default class SignatureSearch extends React.PureComponent {
 							},
 							examples: this.props.examples,
 							type: this.props.match.params.type,
+							toggleSwitch: this.toggle_input_type,
 							disabled,
 						}}
 						enrichment_tabs={this.props.enrichment_tabs}
@@ -812,5 +1055,6 @@ SignatureSearch.propTypes = {
 				label: PropTypes.string
 			})
 		])
-	)
+	),
+	about: PropTypes.string
 }

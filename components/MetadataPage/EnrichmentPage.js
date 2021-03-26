@@ -40,6 +40,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination'
 import { precise } from '../ScorePopper'
+import Color from 'color'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -480,6 +481,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		const count = this.state.children_count[this.state.entry_object.child_model]
 		let label
 		if (this.props.model === "signatures"){
+			if ((this.state.entry.data.library || {}).dataset_type === "rank_matrix") return null
 			label = `The input ${this.props.preferred_name_singular.signatures.toLowerCase()} has ${count} overlapping ${children_name} with ${entry_name}`
 		}else if (this.props.model === "libraries") {
 			if (count === 100) label = `Top ${count} enriched terms in ${entry_name}`
@@ -562,7 +564,7 @@ export default class EnrichmentPage extends React.PureComponent {
 	}
 
 	lazy_tooltip = async (payload) => {
-		const {name, id, oddsratio, pval, setsize} = payload
+		const {name, id, oddsratio, pval, setsize, zscore} = payload
 		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
 		const entry_object = resolved_entries[id]
 		const children = (await entry_object.children({limit:0})).entities || []
@@ -574,32 +576,57 @@ export default class EnrichmentPage extends React.PureComponent {
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
 					<Typography variant="h6">{name}</Typography>
-					<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>
 					<Typography><b>p-value:</b> {precise(pval)}</Typography>
-					{ setsize===0 ? null:
+					{ oddsratio !==undefined ?
+						<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>:
+						null
+					}
+					{ zscore !==undefined ?
+						<Typography><b>z score:</b> {precise(zscore)}</Typography>:
+						null
+					}
+					{ setsize ?
 						<React.Fragment>
 							<Typography><b>overlap size:</b> {setsize}</Typography>
 							<Typography><b>overlaps:</b> {overlap_text}</Typography>
-						</React.Fragment>
+						</React.Fragment>: null
 					}
 				</CardContent>
 			</Card>
 		)
 	}
 
-	enrichment_bar = () => {
+	bar_data_set_to_set = () => {
 		const {
 			barColor="#0063ff",
 			inactiveColor="#713939"
 		} = this.props
-		const data= get_data_for_bar_chart({
-			entries: this.state.children,
-			barColor,
-			inactiveColor,
-			order: this.state.order,
-			order_field: this.state.order_field,
-			tooltip_component: this.lazy_tooltip,
-		})
+		const {
+			children,
+			order,
+			order_field,
+		} = this.state
+		const color = Color(barColor)
+		const data = []
+		const f = children[0].data.scores[order_field]
+		const firstVal = order === 'DESC' ? f: -Math.log(f)
+		for (const c of children){
+			const v = c.data.scores[order_field]
+			const value = order === 'DESC' ? v: -Math.log(v)
+			const col = color.lighten(-((value/firstVal) - 1))
+			const entry = c.data
+			const d = {
+				name: c.info.name.text,
+				value,
+				color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? col.hex(): inactiveColor,
+				id: entry.id,
+				oddsratio: entry.scores["odds ratio"],
+				pval: entry.scores["p-value"], 
+				setsize: entry.scores["overlap size"],
+				tooltip_component: this.lazy_tooltip,
+			}	
+			data.push(d)		
+		}
 		const score_fields = Object.keys(this.state.children[0].data.scores).filter(s=>s!=="setsize")
 		return (
 			<React.Fragment>
@@ -615,6 +642,104 @@ export default class EnrichmentPage extends React.PureComponent {
 				<Typography>Click the bars to sort. Now sorted by {this.state.order_field}.</Typography>
 			</React.Fragment>
 		)
+	}
+
+	bar_data_set_to_rank = async () => {
+		const {
+			posBarColor="#0063ff",
+			negBarColor="#FF2A43",
+			inactiveColor="#713939"
+		} = this.props
+		const {
+			entry_object,
+			order,
+			order_field,
+		} = this.state
+		const posColor = Color(posBarColor)
+		const negColor = Color(negBarColor)
+
+		const {signatures} = await this.state.entry_object.children({limit:0, order: [order_field, order]})
+		const up_data = []
+		const down_data = []
+		const count = {up: 0, down: 0, total: 0}
+		let firstValUp
+		let firstValDown
+		for (const entry of signatures){
+			const v = entry.scores[order_field]
+			const value = order === 'DESC' ? v: -Math.log(v)
+			const direction = entry.scores["direction"]
+			let col
+			if (direction === "up" && count.up < 10){
+				if (firstValUp === undefined) {
+					firstValUp = value
+					col = posColor
+				}else {
+					col = posColor.lighten(-((value/firstValUp) - 1))
+				}
+				const d = {
+					name: getName(entry, this.props.schemas),
+					value,
+					color: entry.scores["p-value"] < 0.05 ? col.hex(): inactiveColor,
+					id: entry.id,
+					pval: entry.scores["p-value"],
+					zscore: entry.scores["zscore"], 
+					tooltip_component: this.lazy_tooltip,
+				}	
+				up_data.push(d)
+				count.up = count.up + 1
+				count.total = count.total + 1		
+			} else if (direction === "down" && count.down < 10) {
+				if (firstValDown === undefined) {
+					firstValDown = value
+					col = negColor
+				}else {
+					col = negColor.lighten(-((value/firstValDown) - 1))
+				}
+				const d = {
+					name: getName(entry, this.props.schemas),
+					value,
+					color: entry.scores["p-value"] < 0.05 ? col.hex(): inactiveColor,
+					id: entry.id,
+					pval: entry.scores["p-value"],
+					zscore: entry.scores["zscore"],  
+					tooltip_component: this.lazy_tooltip,
+				}	
+				down_data.push(d)
+				count.down = count.down + 1
+				count.total = count.total + 1	
+			}
+			if (count.total === 20) break	
+		}
+		return (
+			<Grid container style={{marginLeft: 20, marginRight: 20}}>
+				<Grid xs={12} md={6}>
+					<EnrichmentBar data={down_data} field={this.state.order_field} fontColor={"#FFF"} 
+						barProps={{isAnimationActive:false}}
+						barChartProps={{
+							width: 500
+						}}
+					/>
+					<Typography>Down</Typography>
+				</Grid>
+				<Grid xs={12} md={6}>
+					<EnrichmentBar data={up_data} field={this.state.order_field} fontColor={"#FFF"} 
+						barProps={{isAnimationActive:false}}
+						barChartProps={{
+							width: 500
+						}}
+					/>
+					<Typography>Up</Typography>
+				</Grid>
+				
+			</Grid>
+		)
+
+	}
+	
+	enrichment_bar = async () => {
+		if (this.state.entry.data.dataset_type === "geneset_library"){
+			return this.bar_data_set_to_set()
+		} else return await this.bar_data_set_to_rank()
 	}
 
 	scatter_plot = async () => {
@@ -655,7 +780,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		if (this.state.searching) return <div style={{height: 450, textAlign: "center"}}><CircularProgress/></div>
 		if (this.state.children.length === 0) return null
 		const visuals = {
-			bar:  this.enrichment_bar,
+			bar:  () => <Lazy>{async () => this.enrichment_bar()}</Lazy>,
 			scatter: () => <Lazy>{async () => this.scatter_plot()}</Lazy>,
 			table: this.table_view
 		}
@@ -681,15 +806,17 @@ export default class EnrichmentPage extends React.PureComponent {
 			let generate_head_cells = false
 			if (head_cells.length === 1) generate_head_cells = true
 			for (const tag of entry.info.tags){
-				if (tag.field.startsWith("score")) data[tag.field] = parseFloat(tag.text)
-				else data[tag.field] = tag.text
-				if (generate_head_cells){
-					head_cells.push({
-						id: tag.field,
-						numeric: tag.field.startsWith("score"),
-						disablePadding: false,
-						label: tag.label
-					})
+				if (tag.field){
+					if (tag.field.startsWith("score")) data[tag.field] = parseFloat(tag.text)
+					else data[tag.field] = tag.text
+					if (generate_head_cells){
+						head_cells.push({
+							id: tag.field,
+							numeric: tag.field.startsWith("score"),
+							disablePadding: false,
+							label: tag.label
+						})
+					}
 				}
 			}
 			entries.push(data)
@@ -847,9 +974,11 @@ export default class EnrichmentPage extends React.PureComponent {
 														<ToggleButton value="bar" aria-label="bar">
 															<span className="mdi mdi-chart-bar mdi-rotate-90 mdi-24px"/>
 														</ToggleButton>
-														<ToggleButton value="scatter" aria-label="scatter">
-															<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
-														</ToggleButton>
+														{this.state.entry.data.dataset_type === "rank_matrix" ? null:
+															<ToggleButton value="scatter" aria-label="scatter">
+																<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
+															</ToggleButton>
+														}
 														<ToggleButton value="table" aria-label="table">
 															<span className="mdi mdi-table mdi-24px"/>
 														</ToggleButton>
