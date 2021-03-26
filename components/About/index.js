@@ -8,9 +8,9 @@ import Tab from '@material-ui/core/Tab';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { withStyles } from '@material-ui/core/styles';
 import ReactMarkdown from 'react-markdown'
-import gfm from 'remark-gfm'
-import { getSummary } from '../../util/ui/fetch_ui_props'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import MarkdownComponent from '../Markdown/MarkdownComponent'
+import {getSummary} from '../../util/ui/fetch_ui_props'
 
 export const CustomTabs = withStyles(() => ({
 	indicator: {
@@ -43,19 +43,27 @@ export default class About extends React.PureComponent {
   model_counts = () => {
     const { model_counts } = this.state.stats
     const { nav, preferred_name } = this.props.ui_values
+    const md = 12/Object.keys(model_counts).length
     const models = model_counts.map(m=>(
-      <IconComponentButton
-        title={m.count}
-        subtitle={m.name}
-        icon={m.icon}
-        href={`#${nav.MetadataSearch.endpoint}/${preferred_name[m.model]}`}
-        description={`Explore ${preferred_name[m.model]}`}/>
+      <Grid item xs={12} md={md} key={m.name}>
+        <IconComponentButton
+          title={m.count}
+          subtitle={m.name}
+          icon={m.icon}
+          href={`#${nav.MetadataSearch.endpoint}/${preferred_name[m.model]}`}
+          description={`Explore ${preferred_name[m.model]}`}/>
+      </Grid>
     ))
-    return models
+    return (
+      <Grid container>
+        {models}
+      </Grid>
+    )
   }
 
   pie_charts = () => {
     const { pie } = this.state.stats.count_charts
+    if (Object.keys(pie).length === 0) return null
     const { nav, preferred_name, pie_chart_style } = this.props.ui_values
     const p = pie[this.state.pie]
     const data = p.stats.sort((a,b)=>(b.count-a.count))
@@ -96,13 +104,12 @@ export default class About extends React.PureComponent {
 
   render() {
     if (this.state === null) return <CircularProgress/>
-    const { model_counts, meta_counts, count_charts } = this.state.stats
     return (
       <Grid container spacing={1} style={{marginBottom: 50}}>
           <Grid item xs={12} lg={6}>
             <Typography variant={'h4'} gutterBottom>About</Typography>
             <Typography align="justify">
-              <ReactMarkdown plugins={[gfm]} children={this.props.ui_values.about}/>
+              <MarkdownComponent url={this.props.ui_values.about} />
             </Typography>
           </Grid>
           <Grid item xs={12} lg={6}>
