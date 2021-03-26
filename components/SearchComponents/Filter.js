@@ -9,6 +9,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@material-ui/core/Grid';
 
 export const Filter = (props) => {
 	const {
@@ -53,14 +54,17 @@ export const Filter = (props) => {
 			/>
 			<Collapse in={expanded} timeout="auto" unmountOnExit>
 				<FormGroup>
+					<Grid container>
 						{sorted_values.map(([label, count])=>
-							<FormControlLabel
-								key={label}
-								control={<Checkbox checked={checked[label] || false} onChange={onClick} name={label} value={label} />}
-								label={<Typography align="left">{`${label} (${count})`}</Typography>}
-								style={{margin:10}}
-							/>
+							<Grid item xs={12} key={label} align="left">
+								<FormControlLabel
+									control={<Checkbox checked={checked[label] || false} onChange={onClick} name={label} value={label} />}
+									label={<Typography align="left">{`${label} (${count})`}</Typography>}
+									style={{margin:10}}
+								/>
+							</Grid>
 						)}
+					</Grid>	
 				</FormGroup>
 			</Collapse>
 		</Card>
