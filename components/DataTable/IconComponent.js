@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles';
+import Badge from '@material-ui/core/Badge';
 
 const CapTooltip = withStyles((theme) => ({
     tooltip: {
@@ -81,6 +82,7 @@ export const IconComponentButton = ({
     alt,
     src,
     icon,
+    count,
     description,
     TooltipTypProps,
     TooltipProps,
@@ -108,30 +110,32 @@ export const IconComponentButton = ({
         <Button href={href}>
             <Grid container>
                 <Grid item xs={12} style={{margin:"auto"}}>
-                    { icon === undefined ? 
-                        <img style={{
-                                maxHeight: 50,
-                                maxWidth: 100,
-                                }}
-                                alt={alt}
-                                src={src}
-                                {...IconProps}
-                        />:
-                        <span className={`mdi mdi-36px ${icon}`}
-                                {...IconProps}
-                        />
-                    }
+                    <Badge badgeContent={count} color="error" max={999}>
+                        { icon === undefined ? 
+                            <img style={{
+                                    maxHeight: 50,
+                                    maxWidth: 100,
+                                    }}
+                                    alt={alt}
+                                    src={src}
+                                    {...IconProps}
+                            />:
+                            <span className={`mdi mdi-36px ${icon}`}
+                                    {...IconProps}
+                            />
+                        }
+                    </Badge>
                 </Grid>
                 { title===undefined ? null:
                     <Grid item xs={12}>
-                        <Typography variant="h6" gutterBottom {...IconTypProps}>
+                        <Typography variant="h6" gutterBottom style={{textTransform: "none"}} {...IconTypProps}>
                             {title}
                         </Typography>
                     </Grid>
                 }
                 { subtitle===undefined ? null:
                     <Grid item xs={12}>
-                        <Typography variant="p" gutterBottom {...IconTypProps}>
+                        <Typography variant="body1" gutterBottom style={{textTransform: "none"}} {...IconTypProps}>
                             {subtitle}
                         </Typography>
                     </Grid>
@@ -148,6 +152,7 @@ IconComponent.propTypes = {
     alt: PropTypes.string,
     src: PropTypes.string,
     icon: PropTypes.string,
+    count: PropTypes.number,
     description: PropTypes.string,
     TooltipTypProps: PropTypes.object,
     TooltipProps: PropTypes.object,
