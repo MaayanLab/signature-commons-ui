@@ -82,9 +82,9 @@ class Resources extends React.PureComponent {
       return (
         <Grid container spacing={3} style={{marginBottom: 20}}>
           {this.state.entries.map(entry=>(
-            <Grid item xs={6} md={4} lg={3} key={entry.info.name.text}>
+            <Grid item xs={6} lg={4} key={entry.info.name.text}>
               <Button href={entry.info.endpoint || undefined} style={{textTransform: "none"}}>
-              <Card style={{height: 300, padding: 10}}>
+              <Card style={{height: 400, padding: 10}}>
                   {entry.info.icon!==undefined ?
                     <CardMedia
                       style={{ textAlign: 'center'}}
@@ -106,7 +106,7 @@ class Resources extends React.PureComponent {
                         </Typography>
                       </Grid>
                       <Grid item xs={12}>
-                        <Typography variant={"body2"} style={{maxHeight: 150, overflow: "auto"}}>
+                        <Typography variant={"body1"} style={{maxHeight: 150, overflow: "auto"}}>
                           {entry.info.subtitle.text}
                         </Typography>
                       </Grid>
@@ -117,7 +117,7 @@ class Resources extends React.PureComponent {
             </Grid> 
           ))}
           { this.state.complete? null:
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid item xs={6} lg={4}>
               <Button onClick={this.get_more_resources} style={{textTransform: "none", width: "100%"}}>
                 <Card style={{height: 400, padding: 10, width: "100%"}}>
                   <CardMedia
