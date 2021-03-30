@@ -465,10 +465,10 @@ export class DataResolver {
 				entries: [entries[signature_id].id]
 			})
 			const signature = resolved_entries[signature_id]
-			const {id, overlap, set, ...scores} = entries[signature_id]
+			const {id, overlap, set, direction, ...scores} = entries[signature_id]
 			if (signature === 'undefined') throw new Error('Invalid Signature ID')
-			if (set!==undefined) signature.update_entry({scores, set})
-			else signature.update_entry({scores})
+			if (set!==undefined) signature.update_entry({scores, direction, set})
+			else signature.update_entry({direction, scores})
 			// and its entities
 			let entities = {}
 			if (overlap!==undefined){
@@ -500,9 +500,9 @@ export class DataResolver {
 				const entry = await sig.serialize(true, false)
 				const libid = entry.library.id
 				if (libid === library_id){
-					const {id, overlap, set, ...scores} = entries[entry.id]
-					if (set!==undefined) sig.update_entry({scores, set})
-					else sig.update_entry({scores})
+					const {id, overlap, set, direction, ...scores} = entries[entry.id]
+					if (set!==undefined) sig.update_entry({scores, direction, set})
+					else sig.update_entry({scores, direction})
 					await sig.set_children(overlap)
 					signatures.push(sig)
 				}
@@ -594,8 +594,8 @@ export class DataResolver {
 			if (res_counts[resid] === undefined) res_counts[resid] = 0
 			lib_counts[libid] = lib_counts[libid] + 1
 			res_counts[resid] = res_counts[resid] + 1
-			const {id, overlap, ...scores} = entries[sig.id]
-			sig.update_entry({scores})
+			const {id, overlap, direction, ...scores} = entries[sig.id]
+			sig.update_entry({direction, scores})
 			sig.set_children(overlap)
 		}
 
