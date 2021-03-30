@@ -4,15 +4,18 @@ import {
 	BarChart, Bar, Cell, XAxis, YAxis, LabelList, Tooltip,
 } from 'recharts';
 import Lazy from '../Lazy'
+import Color from 'color'
 
 const renderCustomizedLabel = (props) => {
 	const {
-	  x, y, width, height, value,
+	  x, y, width, height, value, color
 	} = props;
 	const radius = 10;
+	const background = Color(color)
+	const fontColor = background.isDark() ? "#FFF": "#000"
 	return (
 	  <g>
-		<text x={x+5} y={y+(height/2) + 4} width={width-x-5} fill="#000">
+		<text x={x+5} y={y+(height/2) + 4} width={width-x-5} fill={fontColor}>
 		  {value}
 		</text>
 	  </g>
