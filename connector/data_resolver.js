@@ -313,8 +313,8 @@ export class DataResolver {
 		  })
 		const signatures = response.results.map(({uuid, ...scores})=>{
 			let direction = "ambiguous"
-			if (scores['direction-up'] === -1 && scores['direction-down'] === 1) direction = "mimicker"
-			if (scores['direction-up'] === 1 && scores['direction-down'] === -1) direction = "reverser"
+			if (scores['direction-up'] === -1 && scores['direction-down'] === 1) direction = "mimickers"
+			if (scores['direction-up'] === 1 && scores['direction-down'] === -1) direction = "reversers"
 			return({
 				id: uuid,
 				direction,
