@@ -36,7 +36,7 @@ export const EnrichmentBar = (props) => {
 	return(
 		<BarChart layout="vertical" height={400} width={900} data={data} {...barChartProps}>
 			<Tooltip content={<CustomTooltip/>} />
-			<Bar dataKey="value" fill={color} {...barProps}>
+			<Bar dataKey="value" fill={color} barSize={30} {...barProps}>
 				<LabelList dataKey="name" position="insideLeft" content={renderCustomizedLabel} fill={fontColor}/>
 				{data.map((entry, index) => {
 					return <Cell key={`${field}-${index}`} fill={entry.color} />
