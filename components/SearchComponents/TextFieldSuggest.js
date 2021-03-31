@@ -13,7 +13,7 @@ import Link from '@material-ui/core/Link';
 
 export const default_colors_and_icon = {
     "valid": {
-        background: blue[200],
+        default: grey[300],
         color: "#000",
         icon: "mdi-check-circle"
     },
