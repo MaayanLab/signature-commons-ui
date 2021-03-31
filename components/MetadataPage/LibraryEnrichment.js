@@ -221,13 +221,22 @@ export default class LibraryEnrichment extends React.PureComponent {
 		for (const h of header){
 			if (h.id === "name"){
 				cells.push(
-					<TableCell component="th" scope="row" key={`${h.id}-${row.name}`}>
+					<TableCell
+						component="th"
+						scope="row"
+						key={`${h.id}-${row.name}`}
+					>
 						<a href={row.endpoint}>{row[h.id]}</a>
 					</TableCell>
 				)
 			} else {
 				cells.push(
-					<TableCell align="right" key={`${h.id}-${row.name}`}>{row[h.id]}</TableCell>
+					<TableCell
+						align="right"
+						key={`${h.id}-${row.name}`}
+					>
+						<span>{row[h.id]}</span>
+					</TableCell>
 				)
 			}
 		}
@@ -268,54 +277,48 @@ export default class LibraryEnrichment extends React.PureComponent {
 
 	table_view = () => {
 		const {table_entries, head_cells} = this.state
-		const PaginationProps = {
-			page: this.state.page,
-			rowsPerPage: this.state.perPage,
-			count:  this.state.children_count[this.state.tab],
-			onChangePage: (event, page) => this.handleChangePage(event, page),
-			onChangeRowsPerPage: this.handleChangeRowsPerPage,
-		}
 		const {limit=10, skip=0} = this.state.pagination[this.state.direction] || {}
 		return (
 			<Grid container>
 				<Grid item xs={12}>
-					<Table size="small" aria-label="enrichment table" style={{width:"90%"}}>
-						<TableHead>
-							{head_cells.map(c=>(
-							<TableCell
-								align={`${c.id==="name" ? "left": "right"}`}
-								key={c.id}
-								onClick={()=>{
-									if (c.id.startsWith("score")){
-										this.sortBy(c.id.replace('scores.',''))
-									}
-								}}
-								style={c.id.startsWith("score") ? {
-									cursor: "pointer"
-								}: {}}
-							>
-								{c.label}
-							</TableCell>
-							))}
-						</TableHead>
-						<TableBody>
-							{table_entries.map((row, i)=>(
-								<TableRow key={row.name}>
-									{this.table_row(row, head_cells)}
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-					<TablePagination
-						{...PaginationProps}
-						component="div"
-						align="right"
-						count={this.state.children_count[this.state.direction]}
-						rowsPerPage={limit}
-						page={(skip/limit)}
-						onChangePage={this.handleChangePage}
-						onChangeRowsPerPage={this.handleChangeRowsPerPage}
-					/>
+					<div style={{width:"90%", overflow: "auto"}}>
+						<Table size="small" aria-label="enrichment table">
+							<TableHead>
+								{head_cells.map(c=>(
+								<TableCell
+									align={`${c.id==="name" ? "left": "right"}`}
+									key={c.id}
+									onClick={()=>{
+										if (c.id.startsWith("score")){
+											this.sortBy(c.id.replace('scores.',''))
+										}
+									}}
+									style={c.id.startsWith("score") ? {
+										cursor: "pointer"
+									}: {}}
+								>
+									{c.label}
+								</TableCell>
+								))}
+							</TableHead>
+							<TableBody>
+								{table_entries.map((row, i)=>(
+									<TableRow key={row.name}>
+										{this.table_row(row, head_cells)}
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+						<TablePagination
+							component="div"
+							align="right"
+							count={this.state.children_count[this.state.direction]}
+							rowsPerPage={limit}
+							page={(skip/limit)}
+							onChangePage={this.handleChangePage}
+							onChangeRowsPerPage={this.handleChangeRowsPerPage}
+						/>
+					</div>
 				</Grid>
 			</Grid>
 		)
@@ -432,6 +435,5 @@ export default class LibraryEnrichment extends React.PureComponent {
 
 LibraryEnrichment.propTypes = {
 	id: PropTypes.string.isRequired,
-	enrichment_id: PropTypes.string.isRequired,
 	schemas: PropTypes.array.isRequired,
 }
