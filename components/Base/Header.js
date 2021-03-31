@@ -55,7 +55,7 @@ export function Nav(props) {
           className={classes.menuItem}
           href={`#${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
         >
-          <Typography variant={'button'} style={{fontSize: 17}}>
+          <Typography variant={"h5"}>
             {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -66,7 +66,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
         >
-          <Typography variant={'button'} style={{fontSize: 17}}>
+          <Typography variant={"h5"}>
             {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -77,7 +77,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav.Resources.endpoint}`}
         >
-          <Typography variant={'button'} style={{fontSize: 17}}>
+          <Typography variant={"h5"}>
             {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -92,7 +92,7 @@ export function Nav(props) {
               rel = "noopener noreferrer"
               key={nav.navName}
             >
-                <Typography variant={'button'} style={{fontSize: 17}}>
+                <Typography variant={"h5"}>
                   {nav.navName}
                 </Typography>
             </ListItemLink>
@@ -104,7 +104,7 @@ export function Nav(props) {
               href={`#${nav.endpoint}`}
               key={nav.navName}
             >
-              <Typography variant={'button'} style={{fontSize: 17}}>
+              <Typography variant={"h5"}>
                 {nav.navName}
               </Typography>
             </ListItemLink>
@@ -117,7 +117,7 @@ export function Nav(props) {
         className={ classes.menuItem}
         href={'#/API'}
       >
-         <Typography variant={'button'} style={{fontSize: 17}}>
+         <Typography variant={"h5"}>
             API
           </Typography>
       </ListItemLink>
@@ -126,7 +126,7 @@ export function Nav(props) {
         className={ classes.menuItem}
         href={'#/About'}
       >
-         <Typography variant={'button'} style={{fontSize: 17}}>
+         <Typography variant={"h5"}>
             About
           </Typography>
       </ListItemLink>
@@ -171,7 +171,7 @@ class Header extends React.Component {
               </List>
             </Hidden>
             <Hidden lgUp>
-              <Typography variant="h3" color="inherit" className={classes.grow}>
+              <Typography variant={this.props.ui_values.header_info.variant || 'h3'} color="inherit" className={classes.grow}>
                 <Link
                   to="/"
                   className={classes.header}
