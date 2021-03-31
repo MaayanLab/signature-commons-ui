@@ -265,15 +265,15 @@ export class Model {
 	create_search_index = async (schema=null, grandchild=false) => {
 		// If grandchild is true, then it will serialize the grandchild
 		if (this._index !== undefined) return
-		const docs = []
+		const docs = {}
 		for (const [direction,v] of Object.entries(this._preset_children)){
+			if (docs[direction] === undefined) docs[direction] = []
 			for (const child of v){
 				const e = await child.serialize(true, grandchild)
 				const entry = {
 					id: e.id,
 					meta: JSON.stringify(e),
 					scores: e.scores || {},
-					direction,
 				}
 				if (schema!==null){
 					for (const prop of Object.values(schema.properties)){
@@ -284,47 +284,59 @@ export class Model {
 						}
 					}
 				}
-				docs.push(entry)
+				docs[direction].push(entry)
 			}
 		}
-		if (docs.length > 0){
-			this._index = new FlexSearch({
-				doc: {
-					id: "id",
-					field: Object.keys(docs[0]).filter(i=>i!=="id")
-				}
-			})
-			this._index.add(docs)
+		const index = {}
+		for (const [direction, doc] of Object.entries(docs)) {
+			if (doc.length > 0){
+			
+				index[direction] = new FlexSearch({
+					doc: {
+						id: "id",
+						field: Object.keys(doc[0]).filter(i=>i!=="id")
+					}
+				})
+				index[direction].add(doc)
+			}
 		}
+		this._index = index
 	}
 	
 	filter_preset_children = async (filter, crawl=false) => {
-		const {order=[], limit=10, skip=0} = filter
+		const {order=[], limit=10, skip=0, direction} = filter
 		const order_by = order[0]
 		const ordering = order[1]
 		const children = {}
 		const count = {}
 		for (const [k,v] of Object.entries(this._preset_children)){
-			let children_list = []
-			for (const c of v){
-				let child
-				if (crawl && this.child_model !== "entities"){
-					child = await c.serialize(true, true, crawl)
-				} else {
-					child = await c.serialize(true, false)
+			// handle direction specific pagination
+			if (direction === undefined || direction === k) {
+				let children_list = []
+				for (const c of v){
+					let child
+					if (crawl && this.child_model !== "entities"){
+						child = await c.serialize(true, true, crawl)
+					} else {
+						child = await c.serialize(true, false)
+					}
+					children_list.push(child)
 				}
-				children_list.push(child)
+				count[k] = children_list.length
+				if (order_by) children_list = this.sort_children_by_score(children_list, order_by, ordering)
+				children[k] = limit===0 ? children_list: children_list.slice(skip, skip+limit)
+			} else if (direction!==undefined && direction !== k) {
+				children[k] = this._children[k]
+				count[k] = this.children_count[k]
 			}
-			count[k] = children_list.length
-			if (order_by) children_list = this.sort_children_by_score(children_list, order_by, ordering)
-			children[k] = limit===0 ? children_list: children_list.slice(skip, skip+limit)
+			
 		}
 		
 		return { children, count }
 	}
 
 	search_children = async (filter, crawl=false) => {
-		const {search, id, order=[], limit=10, skip=0} = filter
+		const {search, id, order=[], limit=10, skip=0, direction} = filter
 		if (id){
 			const children = {}
 			const count = {}
@@ -343,13 +355,16 @@ export class Model {
 				}
 				count[k] = children[k].length
 			}
-			
+			this._children = children
+			this.children_count = count
 			return {
 				...children,
 				count,
 			}
 		} else if (search===undefined || search.length===0){
 			const {children, count} = await this.filter_preset_children(filter, crawl)
+			this._children = children
+			this.children_count = count
 			return {
 				...children,
 				count,
@@ -368,43 +383,49 @@ export class Model {
 					options.sort = (a,b) => ((a.scores[order_by] || 9999)-(b.scores[order_by] || 9999))
 				}
 			}
-			const query = []
-			for (const q of filter.search){
-				query.push({
-					query: q,
-					field: "meta",
-					bool: "and"
-				})	
+			let query
+			if (filter.search.length > 1) {
+				for (const q of filter.search){
+					query.push({
+						query: q,
+						field: "meta",
+						bool: "and"
+					})	
+				}
+			}else {
+				query = filter.search[0]
 			}
 			const children = {}
 			const count = {}
-			for (const direction of Object.keys(this._preset_children)){
-				children[direction] = []
-				const results = this._index.search([...query, {
-					query: direction,
-					field: "direction",
-					bool: "and"
-				}], options)
-				const for_resolving = limit===0 ? results: results.slice(skip, skip+limit)
-				const {resolved_entries} = await this._data_resolver.resolve_entries({
-					model:this.child_model,
-					entries: for_resolving.map(r=>r.id)}
-				)
-				count[direction] = results.length
-				for (const r of results){
-					const c = await resolved_entries[r.id]
-					if (c) {
-						let child
-						if (crawl && this.child_model !== "entities"){
-							child = await c.serialize(true, true, crawl)
-						} else {
-							child = await c.serialize(true, false)
+			for (const dir of Object.keys(this._preset_children)){
+				if (direction === undefined || direction === dir){
+					children[dir] = []
+					const results = this._index[dir].search(query, options)
+					const for_resolving = limit===0 ? results: results.slice(skip, skip+limit)
+					const {resolved_entries} = await this._data_resolver.resolve_entries({
+						model:this.child_model,
+						entries: for_resolving.map(r=>r.id)}
+					)
+					count[dir] = results.length
+					for (const r of results){
+						const c = await resolved_entries[r.id]
+						if (c) {
+							let child
+							if (crawl && this.child_model !== "entities"){
+								child = await c.serialize(true, true, crawl)
+							} else {
+								child = await c.serialize(true, false)
+							}
+							children[dir].push(child)
 						}
-						children[direction].push(child)
 					}
+				}else if (direction !== undefined && direction !== dir){
+					children[dir] = this._children[dir]
+					count[dir] = this.children_count[dir]
 				}
 			}
-
+			this._children = children
+			this.children_count = count
 			return {
 				...children,
 				count
