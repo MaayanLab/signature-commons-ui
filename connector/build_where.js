@@ -73,7 +73,7 @@ export const empty_cleaner = (obj) => {
 	}
 }
   
-export function build_where({ search, filters, order, indexed_keys }) {
+export function build_where({ search, filters, order, indexed_keys=[] }) {
 	search = search || []
 	if (search.length === 0 && filters === undefined && order === undefined) return undefined
 	let where = {}
