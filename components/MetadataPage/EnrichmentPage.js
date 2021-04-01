@@ -1,26 +1,20 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
-import Collapse from '@material-ui/core/Collapse'
-import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
-import {ShowMeta} from '../DataTable'
+
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
-import IconButton from '../IconButton'
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button'
-import { SearchResult } from './SearchResult'
+import { EnrichmentResult } from './EnrichmentResult'
 import { get_filter,
 	get_signature_entities,
 	create_query,
 	enrichment,
-	download_signature,
-	get_data_for_bar_chart,
 	download_enrichment_for_library,
  } from '../Search/utils'
 import ScorePopper from '../ScorePopper'
@@ -28,9 +22,6 @@ import Downloads from '../Downloads'
 import {EnrichmentBar} from './EnrichmentBar'
 import {ScatterPlot} from './ScatterPlot'
 import Lazy from '../Lazy'
-
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { LinearProgress } from '@material-ui/core'
 
 import Table from '@material-ui/core/Table';
@@ -41,6 +32,9 @@ import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination'
 import { precise } from '../ScorePopper'
 import Color from 'color'
+import {IconComponent} from '../DataTable'
+
+import LibraryEnrichment from './LibraryEnrichment'
 
 const id_mapper = {
 	resources: "resource_id",
@@ -78,10 +72,10 @@ export default class EnrichmentPage extends React.PureComponent {
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
 
-			const { type, model_name, enrichment_id, id } = this.props.match.params
+			const { type, model_name, enrichment_id, id: match_id } = this.props.match.params
 			const { lib_to_resource, resource_to_lib } = this.props.resource_libraries
 			const {model, schemas, nav, preferred_name} = this.props
-			
+			const id = match_id || this.props.id
 			await this.process_enrichment_id()
 			
 			const entry_object = await this.props.resolver.resolve_enrichment({
@@ -98,11 +92,10 @@ export default class EnrichmentPage extends React.PureComponent {
 				order_field = 'signature_count'
 				order = 'DESC'
 			}
-			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
-										`#/Enrichment/${type}/${enrichment_id}/${model_name}/id`)
+			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas)
 			const parent = labelGenerator(await entry_object.parent(), schemas, 
 										`#/Enrichment/${type}/${enrichment_id}/${preferred_name[entry_object.parent_model]}/`)
-			await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
+			// await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
 			
 			let back_endpoint
 			if (model==='signatures') {
@@ -154,9 +147,9 @@ export default class EnrichmentPage extends React.PureComponent {
 			const {entry_object} = this.state
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
-			const {limit= 10,
-				skip= 0,
-				order= [this.state.order_field, this.state.order],
+			const {limit=0,
+				skip=0,
+				order=[this.state.order_field, this.state.order],
 				} = query
 			const final_query = {
 				limit, skip, order,
@@ -170,8 +163,7 @@ export default class EnrichmentPage extends React.PureComponent {
 				let e
 				if (entry_object.child_model!=="entities"){
 					e = labelGenerator(entry,
-						schemas,
-						`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[entry_object.child_model]}/`)
+						schemas)
 				}else {
 					e = labelGenerator(entry, schemas)
 				}
@@ -193,42 +185,14 @@ export default class EnrichmentPage extends React.PureComponent {
 						}
 					})
 				}
-				if (entry_object.child_model==='signatures'){
-					e.RightComponents.push({
-						component: this.downloads,
-						props: {
-							data: [
-								{
-									text: `Download Overlaps as a text file`,
-									onClick: () => {
-										download_signature({
-											entry,
-											schemas,
-											filename: `${e.info.name.text}.txt`,
-											resolver: this.props.resolver,
-											model: entry_object.child_model,
-										})
-									},
-									icon: "mdi-note-text-outline"
-								},
-								{
-									text: `Download Overlaps as JSON`,
-									onClick: () => {
-										download_signature({
-											entry,
-											schemas,
-											filename: `${e.info.name.text}.txt`,
-											resolver: this.props.resolver,
-											model: entry_object.child_model,
-											serialize: true
-										})
-									},
-									icon: "mdi-json"
-								}
-							]
-						}
-					})
-				}	
+				e.BottomComponents = [{
+					component: (props) => <LibraryEnrichment {...props}/>,
+					props: {
+						...this.props,
+						id: entry.id
+					}
+				}]
+
 				children.push(e)
 			}
 			// if (!this.state.paginate) this.get_value_count(where, query)
@@ -487,34 +451,36 @@ export default class EnrichmentPage extends React.PureComponent {
 			if (count === 100) label = `Top ${count} enriched terms in ${entry_name}`
 			else label = `There are ${count} enriched terms in ${entry_name}`
 		}else if (this.props.model === "resources") {
-			label = `There are ${count} ${children_name} in ${entry_name} with ${this.state.entry.data.scores.signature_count} enriched terms`
+			label = `Top enriched terms from ${count} ${children_name} in ${entry_name}`
 		}
 		return(
-			<React.Fragment>
-				<SearchResult
-					searching={this.state.searching}
-					search_terms={this.state.query.search || []}
-					search_examples={[]}
-					label={label}
-					filters={Object.values(this.state.filters)}
-					onSearch={this.onSearch}
-					onFilter={this.onClickFilter}
-					entries={this.state.children}
-					DataTableProps={{
-						onChipClick: v=>{
-							if (v.field.includes('scores.')) this.sortBy(v.field.replace('scores.',''))
-						}
-					}}
-					PaginationProps={{
-						page: this.state.page,
-						rowsPerPage: this.state.perPage,
-						count:  this.state.children_count[this.state.tab],
-						onChangePage: (event, page) => this.handleChangePage(event, page),
-						onChangeRowsPerPage: this.handleChangeRowsPerPage,
-					}}
-					schema={this.state.entry.schema}
-				/>
-			</React.Fragment>
+			<Grid container>
+				<Grid item xs={12} style={{margin: "10px 20px"}}>
+					<EnrichmentResult
+						searching={this.state.searching}
+						search_terms={this.state.query.search || []}
+						search_examples={[]}
+						label={label}
+						filters={Object.values(this.state.filters)}
+						onSearch={this.onSearch}
+						onFilter={this.onClickFilter}
+						entries={this.state.children}
+						DataTableProps={{
+							onChipClick: v=>{
+								if (v.field.includes('scores.')) this.sortBy(v.field.replace('scores.',''))
+							}
+						}}
+						PaginationProps={{
+							page: this.state.page,
+							rowsPerPage: this.state.perPage,
+							count:  this.state.children_count[this.state.tab],
+							onChangePage: (event, page) => this.handleChangePage(event, page),
+							onChangeRowsPerPage: this.handleChangeRowsPerPage,
+						}}
+						schema={this.state.entry.schema}
+					/>
+				</Grid>
+			</Grid>
 		)
 	}
 
@@ -539,26 +505,6 @@ export default class EnrichmentPage extends React.PureComponent {
 						{this.state.parent.info.name.text}
 					</Link>
 				</Typography>
-			</React.Fragment>
-		)
-	}
-
-	handleMetaTabChange = (event, metaTab) => {
-		this.setState({
-			metaTab
-		})
-	}
-
-	metaTab = () => {
-		const entry = this.state.entry
-		return (
-			<React.Fragment>
-				<ShowMeta
-					value={entry.data.meta}
-				/>
-				<ShowMeta
-					value={entry.data.scores}
-				/>
 			</React.Fragment>
 		)
 	}
@@ -712,7 +658,7 @@ export default class EnrichmentPage extends React.PureComponent {
 		}
 		return (
 			<Grid container style={{marginLeft: 20, marginRight: 20}}>
-				<Grid xs={12} md={6}>
+				<Grid item xs={12} md={6}>
 					<EnrichmentBar data={down_data} field={this.state.order_field} fontColor={"#FFF"} 
 						barProps={{isAnimationActive:false}}
 						barChartProps={{
@@ -721,7 +667,7 @@ export default class EnrichmentPage extends React.PureComponent {
 					/>
 					<Typography>Down</Typography>
 				</Grid>
-				<Grid xs={12} md={6}>
+				<Grid item xs={12} md={6}>
 					<EnrichmentBar data={up_data} field={this.state.order_field} fontColor={"#FFF"} 
 						barProps={{isAnimationActive:false}}
 						barChartProps={{
@@ -937,93 +883,14 @@ export default class EnrichmentPage extends React.PureComponent {
 			return <CircularProgress />
 		}
 		return(
-			<Grid container spacing={3}>
+			<Grid container spacing={3} style={{marginBottom: 10}}>
 				{this.props.topComponents!==undefined ? 
 					<Grid item xs={12}>
 						{this.props.topComponents()}
 					</Grid> : null}
 				<Grid item xs={12}>
-					<Card>
-						<CardContent>
-							<Grid container spacing={1}>
-								<Grid item md={2} xs={4}>
-									<CardMedia style={{ marginTop: -15, paddingLeft: 13 }}>
-										<IconButton
-											{...(this.state.entry.info.icon || {})}
-										/>
-									</CardMedia>
-								</Grid>
-								<Grid item md={10} xs={8}>
-									<Grid container spacing={1}>
-										<Grid item xs={7} md={9}>
-											{ this.pageTitle() }
-										</Grid>
-										<Grid item xs={5} md={3} align="right">
-											{this.state.visualize && this.state.children.length > 0 ?
-												<React.Fragment>
-													<ToggleButtonGroup
-														value={this.state.visualization}
-														exclusive
-														onChange={(e, visualization)=>{
-															this.setState(prevState=>({
-																visualization: visualization || prevState.visualization
-															}))
-														}}
-														aria-label="text alignment"
-													>
-														<ToggleButton value="bar" aria-label="bar">
-															<span className="mdi mdi-chart-bar mdi-rotate-90 mdi-24px"/>
-														</ToggleButton>
-														{this.state.entry.data.dataset_type === "rank_matrix" ? null:
-															<ToggleButton value="scatter" aria-label="scatter">
-																<span className="mdi mdi-chart-scatter-plot mdi-24px"/>
-															</ToggleButton>
-														}
-														<ToggleButton value="table" aria-label="table">
-															<span className="mdi mdi-table mdi-24px"/>
-														</ToggleButton>
-													</ToggleButtonGroup>
-												</React.Fragment>: null
-											}
-											<Tooltip title={`${this.state.expanded ? "Collapse": "View"} ${this.props.preferred_name_singular[this.props.model]} information`}>
-												<Button onClick={this.handleExpandClick}>
-													<span className={`mdi mdi-24px mdi-chevron-${this.state.expanded ? "up": "down"}`}/>
-												</Button>
-											</Tooltip>
-										</Grid>
-										<Grid item xs={12}>
-											<Collapse in={this.state.expanded} timeout="auto" unmountOnExit>											
-												{this.metaTab()}
-											</Collapse>
-										</Grid>
-									</Grid>
-								</Grid>
-								<Grid item xs={12}>
-									{this.visualizations()}
-								</Grid>
-								<Grid item xs={12} align="left">
-								<Tooltip title={"Go Back to search results"}>
-									<Button href={this.state.back_endpoint}>
-										<span className="mdi mdi-arrow-left-bold mdi-24px"/>
-									</Button>
-								</Tooltip>
-								</Grid>
-							</Grid>
-						</CardContent>
-					</Card>
-				</Grid>
-				{this.props.middleComponents!==undefined ? 
-					<Grid item xs={12}>
-						{this.props.middleComponents()}
-					</Grid> 
-					: null}
-				<Grid item xs={12}>
 					{this.ChildComponent()}
 				</Grid>
-				{this.props.bottomComponents!==undefined ? 
-					<Grid item xs={12}>
-						{this.props.bottomComponents()}
-					</Grid> : null}
 			</Grid>
 		)
 	}
