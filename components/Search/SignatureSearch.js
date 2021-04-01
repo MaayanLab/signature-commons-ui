@@ -344,8 +344,6 @@ export default class SignatureSearch extends React.PureComponent {
 					'libraries'
 				)
 				
-				const endpoint = this.props.nav.SignatureSearch.endpoint
-				const model_name = this.props.preferred_name.libraries
 				this.setState({
 					resource_id,
 					searching: false,
@@ -806,13 +804,16 @@ export default class SignatureSearch extends React.PureComponent {
 		}
 		// Process search tabs
 		const search_tabs = []
-		for (const k of ['MetadataSearch', 'SignatureSearch']){
+		const search_tab_list = this.props.nav.MetadataSearch.landing ? ['MetadataSearch', 'SignatureSearch']: ['SignatureSearch', 'MetadataSearch']
+		for (const k of search_tab_list){
 			const v = this.props.nav[k]
-			search_tabs.push({
-				label: v.navName,
-				href: v.endpoint,
-				value: k,
-			})
+			if (v.active){
+				search_tabs.push({
+					label: v.navName,
+					href:  v.endpoint,
+					value: k,
+				})
+			}
 		}
 		this.setState({
 			titles,

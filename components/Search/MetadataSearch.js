@@ -311,13 +311,14 @@ export default class MetadataSearch extends React.PureComponent {
 		const filter_props = await getSearchFilters()
 		const model_tab_props = this.get_model_tab_props()
 		const search_tabs = []
-		for (const k of ['MetadataSearch', 'SignatureSearch']){
+		const search_tab_list = this.props.nav.MetadataSearch.landing ? ['MetadataSearch', 'SignatureSearch']: ['SignatureSearch', 'MetadataSearch']
+		for (const k of search_tab_list){
 			const v = this.props.nav[k]
 			if (v.active){
 				search_tabs.push({
 					label: v.navName,
 					href:  v.endpoint,
-					value: v.navName,
+					value: k,
 				})
 			}
 		}
@@ -395,7 +396,7 @@ export default class MetadataSearch extends React.PureComponent {
 					}}
 					SearchTabProps={{
 						tabs: this.state.search_tabs,
-						value:"Metadata Search",
+						value:"MetadataSearch",
 						tabsProps:{
 							centered: true,
 						},

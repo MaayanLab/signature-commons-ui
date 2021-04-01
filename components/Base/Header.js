@@ -47,27 +47,28 @@ export const ListItemLink = (props) => {
 
 export function Nav(props) {
   const { ui_values, location, classes } = props
+  const search_tab_list = ui_values.nav.MetadataSearch.landing ? ['MetadataSearch', 'SignatureSearch']: ['SignatureSearch', 'MetadataSearch']
   return (
     <React.Fragment>
-      {ui_values.nav.MetadataSearch.active ?
+      {ui_values.nav[search_tab_list[0]].active ?
         <ListItemLink
-          selected={location.pathname === `${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
+          selected={location.pathname === `${ui_values.nav[search_tab_list[0]].endpoint}`}
           className={classes.menuItem}
-          href={`#${ui_values.nav.MetadataSearch.endpoint || '/MetadataSearch'}`}
+          href={`#${ui_values.nav[search_tab_list[0]].endpoint}`}
         >
           <Typography variant={"h5"}>
-            {ui_values.nav.MetadataSearch.navName || ui_values.nav.MetadataSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
+            {ui_values.nav[search_tab_list[0]].navName || ui_values.nav[search_tab_list[0]].endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
       }
-      {ui_values.nav.SignatureSearch.active ?
+      {ui_values.nav[search_tab_list[1]].active ?
         <ListItemLink
-          selected={location.pathname === `${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
+          selected={location.pathname === `${ui_values.nav[search_tab_list[1]].endpoint}`}
           className={ classes.menuItem}
-          href={`#${ui_values.nav.SignatureSearch.endpoint || '/SignatureSearch'}`}
+          href={`#${ui_values.nav[search_tab_list[1]].endpoint}`}
         >
           <Typography variant={"h5"}>
-            {ui_values.nav.SignatureSearch.navName || ui_values.nav.SignatureSearch.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
+            {ui_values.nav[search_tab_list[1]].navName || ui_values.nav[search_tab_list[1]].endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
       }

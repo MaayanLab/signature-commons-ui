@@ -35,6 +35,7 @@ export const defaultUIValues = {
     nav: {
       MetadataSearch: {
         active: true,
+        landing: true,
         endpoint: '/TermSearch',
         navName: "Term Search",
         props: {
@@ -53,6 +54,7 @@ export const defaultUIValues = {
       },
       SignatureSearch: {
         active: true,
+        landing: false,
         endpoint: '/EnrichmentAnalysis',
         navName: "Enrichment Analysis",
         props: {

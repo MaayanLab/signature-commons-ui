@@ -285,7 +285,7 @@ class Home extends React.PureComponent {
       }
     }
     const {nav, preferred_name} = this.props.ui_values
-    
+    const landing_endpoint = nav.MetadataSearch.landing ? nav.MetadataSearch.endpoint : nav.SignatureSearch.endpoint
     return (
       <Base location={this.props.location}
         // footer_type={this.props.ui_values.footer_type}
@@ -448,7 +448,7 @@ class Home extends React.PureComponent {
             path="/"
             exact
             component={(props)=>{
-              return <Redirect to={`${nav.MetadataSearch.endpoint}/${preferred_name.signatures}`} />
+              return <Redirect to={landing_endpoint} />
             }}
           />
         </Switch>
