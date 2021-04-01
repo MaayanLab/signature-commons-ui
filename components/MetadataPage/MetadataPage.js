@@ -112,7 +112,7 @@ export default class MetadataPage extends React.PureComponent {
 				limit, skip, order
 			}
 			if (where) q["where"] = where
-			if (this.state.childTab) {
+			if (["signatures", "entities"].indexOf(this.state.entry_object.model) > -1 && this.state.childTab) {
 				const dir = this.state.childTab === this.state.entry_object.child_model ? "-": this.state.childTab
 				q.where = {
 					...(q.where || {}),
