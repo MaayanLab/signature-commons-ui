@@ -319,15 +319,15 @@ export class DataResolver {
 				id: uuid,
 				direction,
 				"log p (avg)": scores["logp-avg"],
-				"log p (fisher)": scores["logp-fisher"],
-				"p-value": scores["p-value"],
-				"fdr (down)": scores["fdr-down"],
-				"fdr (up)": scores["fdr-up"],
+				"log p (Fisher)": scores["logp-fisher"],
+				"FDR (down)": scores["fdr-down"],
+				"FDR (up)": scores["fdr-up"],
 				"p-value (down)": scores["p-down"],
 				"p-value (up)": scores["p-up"],
 				"z-score (down)": scores["z-down"],
 				"z-score (up)": scores["z-up"],
-				"p-down-bonferroni": scores["p-down-bonferroni"],
+				"p-value Bonferroni (up)": scores["p-up-bonferroni"],
+				"p-value Bonferroni (down)": scores["p-down-bonferroni"],
 			})})
 
 		return {
