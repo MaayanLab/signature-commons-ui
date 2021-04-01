@@ -6,27 +6,18 @@ import {ResultsTab} from '../MetadataPage/ResultsTab'
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress'
-import LinearProgress from '@material-ui/core/LinearProgress'
 
-import Collapse from '@material-ui/core/Collapse';
 import Tooltip from '@material-ui/core/Tooltip';
 import {ScatterPlot} from '../MetadataPage/ScatterPlot'
 import {EnrichmentBar} from '../MetadataPage/EnrichmentBar'
-import Link from '@material-ui/core/Link'
 
-import Lazy from '../Lazy'
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Switch from '@material-ui/core/Switch';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { withStyles } from '@material-ui/core/styles';
-import MarkdownComponent from '../Markdown/MarkdownComponent'
+import {IconComponentButton} from '../DataTable'
+import EnrichmentPage from '../MetadataPage/EnrichmentPage'
 
 
 const Examples = (props) => {
@@ -83,7 +74,6 @@ const SigForm = (props={}) => {
 		submitName="Search",
 		enrichment_tabs,
 		type,
-		about,
 		collapsed
 	} = props
 
@@ -170,218 +160,55 @@ const SigForm = (props={}) => {
 					<Examples {...TextFieldSuggestProps} />
 				</Typography>
 			</Grid>
-			{ collapsed ? null :
-				<Grid xs={12}>
-					<Typography align="center" variant="h5">
-						Abstract
-					</Typography>
-					<Typography align="justify">
-						<MarkdownComponent url={about} />
-					</Typography>
-				</Grid>
-			}
 		</Grid>
 	)
 }
 
-const LibraryCardContent = async (props) => {
-	const {entry, process_children, onClick, visualization, order_field} = props
-	const {bar_data,
-		scatter_data,
-		up_bar_data,
-		down_bar_data,
-		mimicker_bar_data,
-		reverser_bar_data,
-		unknown_bar_data
-	} = await process_children(entry.data.id)
-	const viz = visualization[entry.data.id] || "bar"
-	if (viz === "bar" && bar_data !== undefined && bar_data.length > 0) {
-		return <EnrichmentBar data={bar_data} field={order_field} fontColor={"#FFF"} 
-					barProps={{isAnimationActive:false}}
-					barChartProps={{
-						onClick: v=>onClick(v.activePayload[0].payload),
-						height: 300,
-						width: 300
-				}}/>
-	}else if (viz === "bar" && up_bar_data !== undefined && up_bar_data.length > 0) {
-		return (
-			<React.Fragment>
-				<EnrichmentBar data={up_bar_data} field={order_field} fontColor={"#FFF"} 
-					barProps={{isAnimationActive:false}}
-					barChartProps={{
-						onClick: v=>onClick(v.activePayload[0].payload),
-						height: 300,
-						width: 300
-				}}/>
-				<Typography align="center">Up</Typography>
-			</React.Fragment>
-		)
-	}else if (viz === "bar" && mimicker_bar_data !== undefined && mimicker_bar_data.length > 0) {
-		return (
-			<React.Fragment>
-				<EnrichmentBar data={mimicker_bar_data} field={order_field} fontColor={"#FFF"} 
-					barProps={{isAnimationActive:false}}
-					barChartProps={{
-						onClick: v=>onClick(v.activePayload[0].payload),
-						height: 300,
-						width: 300
-				}}/>
-				<Typography align="center">Mimickers</Typography>
-			</React.Fragment>
-		)
-	}else if (viz === "down_bar" && down_bar_data !== undefined && down_bar_data.length > 0) {
-		return (
-			<React.Fragment>
-				<EnrichmentBar data={down_bar_data} field={order_field} fontColor={"#FFF"} 
-					barProps={{isAnimationActive:false}}
-					barChartProps={{
-						onClick: v=>onClick(v.activePayload[0].payload),
-						height: 300,
-						width: 300
-				}}/>
-				<Typography align="center">Down</Typography>
-			</React.Fragment>
-		)
-	}else if (viz === "down_bar" && reverser_bar_data !== undefined && reverser_bar_data.length > 0) {
-		return (
-			<React.Fragment>
-				<EnrichmentBar data={reverser_bar_data} field={order_field} fontColor={"#FFF"} 
-					barProps={{isAnimationActive:false}}
-					barChartProps={{
-						onClick: v=>onClick(v.activePayload[0].payload),
-						height: 300,
-						width: 300
-				}}/>
-				<Typography align="center">Reversers</Typography>
-			</React.Fragment>
-		)
-	}else if (viz === "scatter" && scatter_data !== undefined) {
-		return <ScatterPlot
-					data={scatter_data}
-					scatterChartProps={{
-						height:300,
-						width:300,
-						style:{
-							display: "block",
-							margin: "auto"
-						}
-					}}
-					scatterProps={{ onClick }}/>
-	}else if (unknown_bar_data !== undefined && unknown_bar_data.length > 0) {
-		return (
-			<React.Fragment>
-				<EnrichmentBar data={unknown_bar_data} field={order_field} fontColor={"#FFF"} 
-					barProps={{isAnimationActive:false}}
-					barChartProps={{
-						onClick: v=>onClick(v.activePayload[0].payload),
-						height: 300,
-						width: 300
-				}}/>
-				<Typography align="center">Ambiguous</Typography>
-			</React.Fragment>
-		)
-	}
-}
 
 const Results = (props) => {
 	const {
 		entries,
 		searching,
-		ResourceTabProps,
-		setVisualization,
 		type,
-		...rest
+		EnrichmentPageProps,
 	} = props
-	if (entries === null) return null
+	if (entries === null && !searching) return null
 	else if (searching) {
 		return (
 			<Grid container spacing={3}>
-				<Grid item xs={12}>
-					<ResultsTab
-						tabProps={{
-							style:{
-								minWidth: 180,
-								paddingRight: 25,
-								paddingLeft: 25
-							}
-						}}
-						divider
-						{...ResourceTabProps}
-					/>
-				</Grid>
 				<Grid item xs={12} align="center">
-					<LinearProgress/>
+					<CircularProgress/>
 				</Grid>
 			</Grid>
 		)
 	}else {
-		return (
-			<Grid container spacing={3}>
-				<Grid item xs={12}>
-					<ResultsTab
-						tabProps={{
-							style:{
-								minWidth: 180,
-								paddingRight: 25,
-								paddingLeft: 25
-							}
-						}}
-						divider
-						{...ResourceTabProps}
-					/>
-					
-				</Grid>
-				{entries.map(entry=>(
-					<Grid item xs={12} sm={6} md={4} key={entry.data.id}>
-						<Card style={{margin: 10, height: 500}}>
-							<CardHeader
-								title={<Link href={entry.info.endpoint}>{entry.info.name.text}</Link>}
-								subheader={`${entry.data.scores.signature_count===100?"Top ": ""}${entry.data.scores.signature_count} Enriched Terms`}
-								action={
-									<ToggleButtonGroup
-										value={rest.visualization[entry.data.id] || "bar"}
-										exclusive
-										onChange={(e, v)=>{
-											setVisualization(entry.data.id, e.currentTarget.value)
-										}}
-										aria-label="text alignment"
-									>
-										{entry.data.dataset_type === "geneset_library" ?
-											<ToggleButton value="bar" aria-label="bar">
-												<span className="mdi mdi-chart-bar mdi-rotate-90"/>
-											</ToggleButton>	: null
-										}
-										{entry.data.dataset_type === "rank_matrix" ?
-											<ToggleButton value="bar" aria-label="bar">
-												<span className="mdi mdi-archive-arrow-up"/>
-											</ToggleButton>: null
-										}
-										{entry.data.dataset_type === "rank_matrix" ?
-											<ToggleButton value="down_bar" aria-label="bar">
-												<span className="mdi mdi-archive-arrow-down"/>
-											</ToggleButton>: null
-										}
-										{entry.data.dataset_type === "rank_matrix" ?
-											<ToggleButton value="unknown_bar" aria-label="bar">
-												<span className="mdi mdi-archive-arrow-down"/>
-											</ToggleButton>: null
-										}
-										{entry.data.dataset_type === "geneset_library" && type === "Overlap" ?
-											<ToggleButton value="scatter" aria-label="scatter">
-												<span className="mdi mdi-chart-scatter-plot"/>
-											</ToggleButton>: null
-										}
-									</ToggleButtonGroup>
-								  }
-							/>
-							<CardContent>
-								<Lazy reloader={rest.visualization[entry.data.id]}>{async () => LibraryCardContent({entry, ...rest})}</Lazy>
-							</CardContent>
-						</Card>
+		const md = entries.length >4 ? 3: (12/entries.length)
+		if (entries.length === 1) {
+			return (
+				<Grid container spacing={3}>
+					<Grid item xs={12}>
+						<EnrichmentPage {...EnrichmentPageProps} id={entries[0].data.id}/>
 					</Grid>
-				))}
-			</Grid>
-		)
+				</Grid>
+			)
+		}else {
+			return (
+				<Grid container spacing={3}>
+					{entries.map(entry=>(
+						<Grid item xs={12} sm={6} md={md} key={entry.data.id} align="center">
+							<IconComponentButton 
+								subtitle={entry.info.name.text}
+								description={entry.info.subtitle.text || entry.data.id}
+								href={entry.info.endpoint}
+								src={entry.info.icon.src}
+								alt={entry.info.icon.alt}
+								count={entry.data.scores.signature_count}
+							/>
+						</Grid>
+					))}
+				</Grid>
+			)
+		}
 	}
 }
 
@@ -410,6 +237,7 @@ export const SignatureSearchComponent = (props) => {
 		ResultsProps,
 		download_input,
 		type,
+		entries,
 	} = props
 
 	const [expanded, setExpanded] = React.useState(false);
@@ -438,14 +266,9 @@ export const SignatureSearchComponent = (props) => {
 						{...SearchTabProps}
 					/>
 				}
-				{ ResourceTabProps===undefined ?
-					<SigForm {...props} collapsed={ResourceTabProps!==undefined}/>:						
-					<Collapse in={expanded} timeout="auto" unmountOnExit>
-						<SigForm {...props} collapsed={ResourceTabProps!==undefined}/>
-					</Collapse>
-				}
+				<SigForm {...props}/>
 			</Grid>
-			{ ResourceTabProps!==undefined ?
+			{ entries!==null ?
 				<Grid item xs={12} md={3}>
 					<Tooltip title="Click to view input" placement="bottom">
 						
@@ -466,13 +289,9 @@ export const SignatureSearchComponent = (props) => {
 					</Tooltip>
 				</Grid>: null
 			}
-			{/* <Grid item xs={12} md={2}/> */}
-			<Grid item xs={12}>
-				<Results {...ResultsProps} type={type} searching={searching} ResourceTabProps={{
-					...ResourceTabProps,
-					TabComponent: ResourceCustomTab,
-					TabsComponent: ResourceCustomTabs,
-					}}/>
+			<Grid item xs={12} md={1}/>
+			<Grid item xs={12} md={(entries || []).length === 1 ? 12: 8} style={{paddingTop: 50}}>
+				<Results {...ResultsProps} type={type} searching={searching} entries={entries}/>
 			</Grid>
 			{/* <Grid item xs={12} md={4} lg={3} align="center">
 				{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>console.log(e.target.value)}/>)}
@@ -496,13 +315,6 @@ SignatureSearchComponent.propTypes = {
 	chipRenderer: PropTypes.func,
 	onSearch: PropTypes.func,
 	onFilter: PropTypes.func,
-	filters: PropTypes.arrayOf(PropTypes.shape({
-		name: PropTypes.string,
-		field: PropTypes.string,
-		priority: PropTypes.number,
-		values: PropTypes.objectOf(PropTypes.number),
-		value: PropTypes.string,
-	})),
 	entries: PropTypes.arrayOf(PropTypes.object).isRequired,
 	scatter_plot: PropTypes.shape({
 		data: PropTypes.arrayOf(PropTypes.shape({
@@ -531,19 +343,6 @@ SignatureSearchComponent.propTypes = {
 		onChangeRowsPerPage: PropTypes.func,
 	}).isRequired,
 	SearchTabProps: PropTypes.shape({
-		tabs: PropTypes.arrayOf(PropTypes.shape({
-			label: PropTypes.string.isRequired,
-			href: PropTypes.string,
-			count: PropTypes.number,
-			value: PropTypes.string,
-		})),
-		TabComponent: PropTypes.node,
-		TabsComponent: PropTypes.node,
-		value: PropTypes.string.isRequired,
-		handleChange: PropTypes.func,
-		tabsProps: PropTypes.object,
-	}).isRequired,
-	ResourcesTabProps: PropTypes.shape({
 		tabs: PropTypes.arrayOf(PropTypes.shape({
 			label: PropTypes.string.isRequired,
 			href: PropTypes.string,
@@ -674,5 +473,4 @@ SignatureSearchComponent.propTypes = {
 		})
 	])),
 	type: PropTypes.oneOf("Rank", "Overlap"),
-	about: PropTypes.string
 }

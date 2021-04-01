@@ -38,7 +38,7 @@ export default class SignatureSearch extends React.PureComponent {
 			order_field: "p-value",
 			order: "ASC",
 			scatter_data: null,
-			resources_tabs: null,
+			resources: null,
 			libraries: null,
 			visualization: {},
 		}
@@ -251,101 +251,56 @@ export default class SignatureSearch extends React.PureComponent {
 		})
 	}
 
-	score_popper = (props) => {
-		return <ScorePopper {...props}/>
-	}
-
-	create_tab_values = (entries, endpoint, type, enrichment_id, model_name) => {
-		const tabs = []
-		for (const entry of entries) {
-			const entry_name = getName(entry, this.props.schemas)
-			tabs.push({
-				label: entry_name,
-				href: `${endpoint}/${type}/${enrichment_id}/${model_name}/${entry.id}`,
-				value: entry.id,
-				c: entry.scores.signature_count,
-				icon: (getPropType(entry, this.props.schemas, "img")[0] || {}).src
-			})
-		}
-		return {
-			tabs
-		}
-	}
-
-	get_libraries_labels = (entries, type, enrichment_id, model) => {
-		const labels = []
-		let entry_id
-		let score
-		for (const entry of entries){
-			let e
-			if (model!=="entities"){
-				e = labelGenerator(entry,
-					this.props.schemas,
-					`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name[model]}/`)
-			}else {
-				e = labelGenerator(entry, this.props.schemas)
-			}		
-			labels.push(e)
-		}
-		return {labels, entry_id}
-	}
-
 	resolve_enrichment = async () => {
 		try {
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
 			const {model, resource_order} = this.props
-			const { type, enrichment_id, id } = this.props.match.params
+			const { type, enrichment_id} = this.props.match.params
 			const {lib_to_resource,
 				resource_to_lib } = this.props.resource_libraries
-			const {resources} = await this.props.resolver.resolve_all_enrichment({
+			const {resources: resources_entries} = await this.props.resolver.resolve_all_enrichment({
 				enrichment_id,
 				lib_to_resource,
 				resource_to_lib
 			})
-			if (Object.keys(resources).length === 0){
+			if (Object.keys(resources_entries).length === 0){
 				throw new Error("No results")
 			}
-			const {
-				tabs: resources_tabs, 
-			} = this.create_tab_values(
-				await Promise.all(Object.values(resources).map(async (i)=> await i.entry())),
-				this.props.nav.SignatureSearch.endpoint,
-				type,
-				enrichment_id,
-				this.props.preferred_name.resources
-			)
-			const sorted_tabs = resources_tabs.sort((a,b)=>{
-				if (resource_order[a.value] !== undefined && resource_order[a.value]) {
-					return resource_order[a.value].priority - resource_order[b.value].priority
-				} else return b.c-a.c
+			const entries = await Promise.all(Object.values(resources_entries).map(async (i)=> await i.entry()))
+			const resources = entries.map(e=>labelGenerator(e, this.props.schemas,
+				`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name.resources}/`
+				))
+			console.log(resources)
+			const sorted_resources = resources.sort((a,b)=>{
+				if (resource_order[a.data.id] !== undefined && resource_order[a.data.id]) {
+					return resource_order[a.data.id].priority - resource_order[b.data.id].priority
+				} else return b.data.scores.signature_countc-a.data.scores.signature_count
 			})
 
-			let resource_id = sorted_tabs[0].value
+			// let resource_id = sorted_tabs[0].value
 			
-			let library_id
-			let resource
-			if (model === 'resources' || id === undefined){
-				if (id !== undefined) {
-					resource_id = id
-				}
-				resource = await resources[resource_id].serialize(false, true)
-			} else if (model === 'libraries'){
-				library_id = id
-				resource_id = lib_to_resource[library_id]
-				resource = await resources[resource_id].serialize(false, true)
-			}
+			// let library_id
+			// let resource
+			// if (model === 'resources' || id === undefined){
+			// 	if (id !== undefined) {
+			// 		resource_id = id
+			// 	}
+			// 	resource = await resources[resource_id].serialize(false, true)
+			// } else if (model === 'libraries'){
+			// 	library_id = id
+			// 	resource_id = lib_to_resource[library_id]
+			// 	resource = await resources[resource_id].serialize(false, true)
+			// }
 
-			const {labels: libraries, entry_id: tmp_library_id} = this.get_libraries_labels(resource.libraries,
-				type,
-				enrichment_id,
-				'libraries')
+			// const {labels: libraries, entry_id: tmp_library_id} = this.get_libraries_labels(resource.libraries,
+			// 	type,
+			// 	enrichment_id,
+			// 	'libraries')
 			
-			if (library_id === undefined) library_id = tmp_library_id
+			// if (library_id === undefined) library_id = tmp_library_id
 			this.setState({
-				resource_id,
-				resources_tabs: sorted_tabs,
-				libraries: libraries.sort((a,b)=>(b.data.scores.signature_count-a.data.scores.signature_count)),
+				resources: sorted_resources,
 				searching: false,
 			})
 
@@ -818,20 +773,20 @@ export default class SignatureSearch extends React.PureComponent {
 		}else if (prevEnrichmentID !== enrichment_id) {
 			this.setState({
 				entries: null,
-				resources_tabs: null,
+				resources: null,
 				libraries: null,
 				searching: true,
 			}, () => this.process_input());
-		} else if(id !==previd){
-			this.setState({
-				visualization: {},
-				searching: true,
-			}, () => {
-				const model = this.props.match.params.model
-				if (model === "resources") this.resolve_enrichment_from_resource()
-				else this.resolve_enrichment()
-			});	
-		}
+		} //else if(id !==previd){
+		// 	this.setState({
+		// 		visualization: {},
+		// 		searching: true,
+		// 	}, () => {
+		// 		const model = this.props.match.params.model
+		// 		if (model === "resources") this.resolve_enrichment_from_resource()
+		// 		else this.resolve_enrichment()
+		// 	});	
+		// }
 	}
 
 	componentDidMount = async () => {
@@ -927,15 +882,16 @@ export default class SignatureSearch extends React.PureComponent {
 					<SignatureSearchComponent 
 						searching={this.state.searching}
 						resolving={this.state.resolving}
-						about={this.props.about}
 						download_input={()=>download_input(this.state.input)}
+						entries={this.state.resources}
 						ResultsProps={{
 							entries: this.state.libraries,
 							process_children: this.process_children,
 							onClick: this.node_click,
 							visualization: this.state.visualization,
 							setVisualization: this.setVisualization,
-							entity_name: this.props.preferred_name.entities.toLowerCase()
+							entity_name: this.props.preferred_name.entities.toLowerCase(),
+							EnrichmentPageProps: this.props,
 						}}
 						PaginationProps={{
 							page: this.state.page,
@@ -949,15 +905,6 @@ export default class SignatureSearch extends React.PureComponent {
 							value: "SignatureSearch",
 							tabsProps:{
 								centered: true
-							},
-							handleChange: this.handleTabChange
-						}}
-						ResourceTabProps={this.state.resources_tabs===null? undefined: {
-							tabs: this.state.resources_tabs,
-							value: this.state.resource_id,
-							tabsProps:{
-								centered: true,
-								indicator: false,
 							},
 							handleChange: this.handleTabChange
 						}}
