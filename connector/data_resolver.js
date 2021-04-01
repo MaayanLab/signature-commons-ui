@@ -327,8 +327,7 @@ export class DataResolver {
 				"p-value (up)": scores["p-up"],
 				"z-score (down)": scores["z-down"],
 				"z-score (up)": scores["z-up"],
-				"z-score (down)": scores["p-down-bonferroni"],
-				"z-score (up)": scores["p-up-bonferroni"],
+				"p-down-bonferroni": scores["p-down-bonferroni"],
 			})})
 
 		return {
