@@ -156,7 +156,7 @@ class Header extends React.Component {
         <AppBar position="static" color="primary" style={{height: 80, paddingTop: 5, paddingBottom: 5}}>
           <Toolbar>
             <Hidden mdDown>
-              <Typography variant="h3" color="inherit" className={classes.grow}>
+              <Typography variant="h4" color="inherit" className={classes.grow}>
                 <Link
                   to="/"
                   className={classes.header}
@@ -171,7 +171,7 @@ class Header extends React.Component {
               </List>
             </Hidden>
             <Hidden lgUp>
-              <Typography variant={this.props.ui_values.header_info.variant || 'h3'} color="inherit" className={classes.grow}>
+              <Typography variant={this.props.ui_values.header_info.variant || 'h4'} color="inherit" className={classes.grow}>
                 <Link
                   to="/"
                   className={classes.header}
