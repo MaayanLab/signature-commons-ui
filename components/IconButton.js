@@ -27,7 +27,7 @@ const styles = (theme) => ({
 
 
 const InformativeButton = (props) => {
-  const { classes, counter, title, alt, src, icon } = props
+  const { classes, counter, title, alt, src, icon, onClick, buttonProps, imgProps } = props
   let tooltip_title = ""
   const description = props.text || props.alt
   if (description !== undefined || description !== '') {
@@ -39,14 +39,16 @@ const InformativeButton = (props) => {
     <Tooltip title={tooltip_title}
       placement="bottom">
       <Button className={classes.button} onClick={() => {
-        if (props.onClick !== undefined) props.onClick(props.value)
-      }}>
+        if (onClick !== undefined) onClick(props.value)
+      }}
+      {...buttonProps}
+      >
         <Badge className={classes.margin} max={9999} badgeContent={counter === undefined ? 0 : counter} color="error">
           <Grid container>
             <Grid item xs={12}>
               { icon === undefined ?
-                <img className={classes.image} alt={alt} src={src}/> :
-                <span className={`mdi mdi-36px ${icon}`}/>
+                <img className={classes.image} alt={alt} src={src} {...imgProps}/> :
+                <span className={`mdi ${icon}`}/>
               }
             </Grid>
             <Grid item xs={12}>
