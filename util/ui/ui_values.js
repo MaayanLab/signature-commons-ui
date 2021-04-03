@@ -3,7 +3,6 @@ import red from '@material-ui/core/colors/red'
 import amber from '@material-ui/core/colors/amber'
 import grey from '@material-ui/core/colors/grey'
 import green from '@material-ui/core/colors/green'
-import yellow from '@material-ui/core/colors/yellow'
 
 export const defaultUIValues = {
     font_families: [
@@ -151,11 +150,6 @@ export const defaultUIValues = {
     resource_order: {},
     about: "./static/about.md",
     homepage_text: "Search signatures, genes, or datasets.",
-    pie_chart_style: {
-      Pie: {
-        fill: "#0063ff"
-      }
-    }
 }
 
 export const defaultTheme = {
@@ -165,7 +159,7 @@ export const defaultTheme = {
       contrastText: '#FFF',
     },
     secondary: {
-      main: yellow[900],
+      main: "#f50057",
     },
     error: {
       main: red[500],
@@ -182,13 +176,24 @@ export const defaultTheme = {
       main: blue[500],
     },
     defaultChip: {
-      main: grey[500],
+      main: grey[300],
+      contrastText: "#000"
+    },
+    errorChip: {
+      main: red[200],
+      contrastText: "#000"
+    },
+    warningChip: {
+      main: amber[200],
+      contrastText: "#000"
+    },
+    primaryVisualization: {
+      main: blue[500],
       contrastText: "#FFF"
     },
-    defaultChipLight: {
-      main: grey[300],
+    secondaryVisualization: {
+      main: "#f50057",
     },
-
   },
   card: {
     bottomCard: {
