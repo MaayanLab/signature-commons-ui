@@ -188,7 +188,6 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
     const { properties } = schema
     const scores = {}
     let tags = []
-    let download = []
     const keywords = {}
     const info = { id: data.id, display: {}, url: {}, components: {}, name: { text: data.id }}
     if (endpoint){
@@ -200,7 +199,7 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
       // if (prop.component === "download") prop.type = "download"
       if (prop.component){
       }
-      if (prop.visibility && prop.visibility > 0 && objectMatch(prop.condition, data) && value_by_type[prop.type]!==undefined) {
+      if (objectMatch(prop.condition, data) && value_by_type[prop.type]!==undefined) {
         const val = value_by_type[prop.type]({ label, prop, data })
         if (prop.synonyms){
           if (info.synonyms===undefined) info.synonyms = []
@@ -241,6 +240,8 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
               value: val.text,
               field: prop.field,
               icon: prop.icon || 'mdi-star',
+              priority: prop.priority,
+              visibility: prop.visibility,
             }
             sort_tags[prop.field] = {
               label,
@@ -277,6 +278,7 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
               ...val,
               icon: prop.icon || 'mdi-arrow-top-right-thick',
               priority: prop.priority,
+              visibility: prop.visibility,
               clickable: prop.clickable || true,
               field: prop.search_field || prop.field,
             }]
