@@ -2,7 +2,6 @@ import React from 'react'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -32,9 +31,10 @@ import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination'
 import { precise } from '../ScorePopper'
 import Color from 'color'
-import {IconComponent} from '../DataTable'
 
 import LibraryEnrichment from './LibraryEnrichment'
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const id_mapper = {
 	resources: "resource_id",
@@ -56,15 +56,21 @@ export default class EnrichmentPage extends React.PureComponent {
 			paginate: false,
 			visualization: "bar",
 			visualize: false,
-			expanded: false,
+			expanded: null,
 			downloading: false,
 		}
 	}
 
-	handleExpandClick = () => {
-		this.setState(prevState=>({
-			expanded: !prevState.expanded,
-		}));
+	handleExpandClick = (expanded) => {
+		if (expanded === this.state.expanded) expanded = null
+		setTimeout(function () {
+			window.scrollTo({top: 0, behavior: 'smooth'})
+		},1)
+		const entries = this.state.children
+		const children = this.process_children_values(entries, this.state.entry_object.child_model, expanded)
+		this.setState({
+			expanded,
+			children});
 	  }
 
 	process_entry = async () => {
@@ -138,6 +144,47 @@ export default class EnrichmentPage extends React.PureComponent {
 		}
 	}
 
+	process_children_values = (entries, child_model, expanded) => {
+		const children = []
+		for (const entry of entries){
+			let e
+			if (entry.data){
+				e = entry
+			}else if (child_model!=="entities"){
+				e = labelGenerator(entry,
+					this.props.schemas)
+			}else {
+				e = labelGenerator(entry, this.props.schemas)
+			}
+			e["RightComponents"] = [{
+				component: (props)=>(
+					<Tooltip title={props.text}>
+						<IconButton aria-label="table" size="small" onClick={props.onClick}>
+							<span className={`mdi ${props.icon}`}
+							/>
+						</IconButton>
+					</Tooltip>
+				),
+				props: {
+					icon: expanded === e.data.id ? "mdi-24px mdi-table-eye-off": "mdi-24px mdi-table-eye",
+					text: expanded === e.data.id ? "Hide Table": "Show Table",
+					onClick: () => this.handleExpandClick(e.data.id),
+				}
+			}]
+			e.BottomComponents = [{
+				component: (props) => <LibraryEnrichment {...props}/>,
+				props: {
+					...this.props,
+					id: e.data.id,
+					expanded: expanded === e.data.id
+				}
+			}]
+
+			children.push(e)
+		}
+		return children
+	}
+
 	process_children = async () => {
 		try {
 			this.props.resolver.abort_controller()
@@ -158,43 +205,8 @@ export default class EnrichmentPage extends React.PureComponent {
 			const children_object = await this.state.entry_object.children(final_query)
 			const children_count = children_object.count
 			const children_results = children_object[this.state.entry_object.child_model]
-			const children = []
-			for (const entry of Object.values(children_results)){
-				let e
-				if (entry_object.child_model!=="entities"){
-					e = labelGenerator(entry,
-						schemas)
-				}else {
-					e = labelGenerator(entry, schemas)
-				}
-				e["RightComponents"] = []
-				if (entry.scores !== undefined && entry.scores.signature_count !== undefined){
-					e["RightComponents"].push({
-						component: this.score_popper,
-						props: {
-							scores: {"Enriched Terms": {
-								label: "Enriched Terms",
-								value: entry.scores.signature_count
-							}},								
-							GridProps: {
-								style: {
-									textAlign: "right",
-									marginRight: 5
-								}
-							}
-						}
-					})
-				}
-				e.BottomComponents = [{
-					component: (props) => <LibraryEnrichment {...props}/>,
-					props: {
-						...this.props,
-						id: entry.id
-					}
-				}]
-
-				children.push(e)
-			}
+			const children = this.process_children_values(Object.values(children_results), this.state.expanded)
+			
 			// if (!this.state.paginate) this.get_value_count(where, query)
 			this.setState({
 				children_count,
@@ -384,6 +396,13 @@ export default class EnrichmentPage extends React.PureComponent {
 				this.process_children()
 			})
 		}
+		// if (prevState.expanded !== this.state.expanded){
+		// 	window.scrollTo({
+		// 		top: 0,
+		// 		left: 0,
+		// 		behavior: 'smooth'
+		// 	  })
+		// }
 	}
 
 	handleTabChange = (event, tab) => {
@@ -468,7 +487,8 @@ export default class EnrichmentPage extends React.PureComponent {
 						DataTableProps={{
 							onChipClick: v=>{
 								if (v.field.includes('scores.')) this.sortBy(v.field.replace('scores.',''))
-							}
+							},
+							expanded: this.state.expanded
 						}}
 						PaginationProps={{
 							page: this.state.page,
@@ -800,15 +820,16 @@ export default class EnrichmentPage extends React.PureComponent {
 		})
 	}
 
-	download_library = async (type) => {
-		await download_enrichment_for_library(
-			this.state.entry_object,
-			`${this.state.entry.info.name.text}${type==="json"?".json":".tsv"}`,
-			this.props.schemas,
-			this.start_download,
-			this.finish_download,
-			type
-		)
+	download_library = async (format) => {
+		await download_enrichment_for_library({
+			entry: this.state.entry_object,
+			filename: `${this.state.entry.info.name.text}${type==="json"?".json":".tsv"}`,
+			schemas: this.props.schemas,
+			start: this.start_download,
+			end: this.finish_download,
+			type: this.props.match.params.type,
+			format
+		})
 	}
 	table_view = () => {
 		const {entries, head_cells} = this.render_table_data()

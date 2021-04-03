@@ -1,40 +1,85 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { ChipInput } from '../SearchComponents'
 import Grid from '@material-ui/core/Grid'
-import TablePagination from '@material-ui/core/TablePagination'
 import {DataTable} from '../DataTable'
 import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardHeader from '@material-ui/core/CardHeader';
+import {IconComponent} from '../DataTable/IconComponent'
+
+const UnexpandedCards = (props) => {
+	const entry = props.entry
+	const comprops = props.md === 4 ? {
+		bar_props:{width:300, barSize:24, maxHeight:350},
+		scatter_props:{width:350, height:350},
+		expanded: false
+	} : {
+		bar_props:{width:400, barSize:27, maxHeight:350},
+		scatter_props:{width:450, height:450},
+		expanded: false
+	}
+	return(
+		<Grid item xs={12} sm={6} md={props.md}>
+			<Card style={{minHeight: 1350}}>
+				<CardHeader
+					avatar={
+						<IconComponent {...entry.info.icon}/>
+					}
+					title={<Typography variant="h6">{entry.info.name.text}</Typography>}
+					action={
+						entry.RightComponents.map((comp, i)=>{
+							const {component, props} = comp
+							return <div key={entry.data.id}>
+										{component(props)}
+								   </div>
+						})
+					}
+				/>
+				<CardContent>
+					{entry.BottomComponents.map((comp, i)=>{
+						const {component, props} = comp
+						return <div key={entry.data.id}>
+									{component({...props,
+											...comprops,
+										})}
+							   </div>
+					})}
+				</CardContent>
+			</Card>
+		</Grid>
+	)
+}
 
 export const EnrichmentResult = (props) => {
 	const {
 		searching=false,
-		search_terms=[],
-		search_examples=[],
-		chipRenderer,
-		filters,
-		onSearch,
-		onFilter,
 		entries,
 		DataTableProps,
-		PaginationProps,
-		TabProps,
 		label
 	} = props
-
+	const expanded_id = DataTableProps.expanded || ''
+	const expanded_entry = []
+	const unexpanded_entries = []
+	for (const entry of entries){
+		if (expanded_id === entry.data.id) expanded_entry.push(entry)
+		else unexpanded_entries.push(entry)
+	}
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
 				{searching?<CircularProgress/>:
 					<Grid container spacing={1}>
 						<Grid item xs={12}>
-							<Typography variant={"h6"} style={{marginBottom: 10}}>{label}</Typography>
+							<Typography variant={"h4"} style={{marginBottom: 10}}>{label}</Typography>
 						</Grid>
 						<Grid item xs={12}>
-							<DataTable entries={entries} {...DataTableProps}/>
+							<DataTable entries={expanded_entry} {...DataTableProps}/>
 						</Grid>
+						{unexpanded_entries.map(entry=>(
+							<UnexpandedCards entry={entry} md={unexpanded_entries.length<3 ? 6:4} />
+						))}
 					</Grid>
 				}
 			</Grid>

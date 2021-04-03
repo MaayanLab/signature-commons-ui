@@ -8,8 +8,6 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import Tooltip from '@material-ui/core/Tooltip';
-import {ScatterPlot} from '../MetadataPage/ScatterPlot'
-import {EnrichmentBar} from '../MetadataPage/EnrichmentBar'
 
 import Switch from '@material-ui/core/Switch';
 
@@ -18,7 +16,7 @@ import Tab from '@material-ui/core/Tab';
 import { withStyles } from '@material-ui/core/styles';
 import {IconComponentButton} from '../DataTable'
 import EnrichmentPage from '../MetadataPage/EnrichmentPage'
-
+import Collapse from '@material-ui/core/Collapse';
 
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
@@ -266,7 +264,9 @@ export const SignatureSearchComponent = (props) => {
 						{...SearchTabProps}
 					/>
 				}
-				<SigForm {...props}/>
+				{ entries!==null ?  <Collapse in={expanded} timeout="auto" unmountOnExit><SigForm {...props}/></Collapse>:
+					<SigForm {...props}/>
+				}
 			</Grid>
 			{ entries!==null ?
 				<Grid item xs={12} md={3}>
@@ -332,7 +332,7 @@ SignatureSearchComponent.propTypes = {
 		entries: PropTypes.array,
 		process_children: PropTypes.func,
 		onClick: PropTypes.func,
-		visualization: PropTypes.objectOf(PropTypes.oneOf['bar', 'scatter', 'table']),
+		visualization: PropTypes.objectOf(PropTypes.oneOf(['bar', 'scatter', 'table'])),
 		setVisualization: PropTypes.func,
 	}),
 	PaginationProps: PropTypes.shape({
