@@ -271,7 +271,6 @@ export default class SignatureSearch extends React.PureComponent {
 			const resources = entries.map(e=>labelGenerator(e, this.props.schemas,
 				`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name.resources}/`
 				))
-			console.log(resources)
 			const sorted_resources = resources.sort((a,b)=>{
 				if (resource_order[a.data.id] !== undefined && resource_order[a.data.id]) {
 					return resource_order[a.data.id].priority - resource_order[b.data.id].priority
@@ -871,7 +870,7 @@ export default class SignatureSearch extends React.PureComponent {
 				<React.Fragment>
 					<Snackbar open={this.state.error!==null}
 						anchorOrigin={{ vertical:"top", horizontal:"right" }}
-						autoHideDuration={3000}
+						autoHideDuration={1000}
 						onClose={this.handleSnackBarClose}
 						message={this.state.error}
 						action={
