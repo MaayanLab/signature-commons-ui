@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import MarkdownComponent from '../Markdown/MarkdownComponent'
 import {getSummary} from '../../util/ui/fetch_ui_props'
+import { withTheme } from '@material-ui/core/styles';
 
 export const CustomTabs = withStyles(() => ({
 	indicator: {
@@ -28,7 +29,7 @@ export const CustomTabs = withStyles(() => ({
 	},
   }))((props) => <Tab {...props} />);
 
-export default class About extends React.PureComponent {
+class About extends React.PureComponent {
   
   componentDidMount = async () => {
     const stats = await getSummary()
@@ -64,14 +65,14 @@ export default class About extends React.PureComponent {
   pie_charts = () => {
     const { pie } = this.state.stats.count_charts
     if (Object.keys(pie).length === 0) return null
-    const { nav, preferred_name, pie_chart_style } = this.props.ui_values
+    const { nav, preferred_name } = this.props.ui_values
     const p = pie[this.state.pie]
     const data = p.stats.sort((a,b)=>(b.count-a.count))
     return(
       <React.Fragment>
         <DonutChart
           data={data}
-          pie_chart_style={pie_chart_style}
+          pie_chart_style={{Pie: {fill: this.props.theme.palette.primaryVisualization.main}}}
           onClick={(data)=>{
             const search = data.payload.name
             this.props.history.push({
@@ -126,3 +127,5 @@ export default class About extends React.PureComponent {
     )
   }
 }
+
+export default withTheme(About)
