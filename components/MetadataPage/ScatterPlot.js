@@ -17,11 +17,19 @@ const CustomTooltip = ({ active, payload }) => {
   };
 
 export const ScatterPlot = (props) => {
-	const { data, color, scatterProps, scatterChartProps} = props
+	const { data,
+		scatterProps,
+		scatterChartProps,
+		yAxisName,
+		xAxisName,
+		yAxisLabel,
+		xAxisLabel,
+		height=350,
+		width=350} = props
 	return (
 		<ScatterChart
-			width={400}
-			height={400}
+			width={width}
+			height={height}
 			margin={{
 			top: 20, right: 20, bottom: 20, left: 20,
 			}}
@@ -29,13 +37,13 @@ export const ScatterPlot = (props) => {
 		>
 			<CartesianGrid />
 			<YAxis type="number"
-				dataKey="logpval"
-				name="p-value"
-				label={{ value: '-log(p-value)', angle: -90, position: 'left'}}/>
+				dataKey="yAxis"
+				name={yAxisName}
+				label={{ value: yAxisLabel || yAxisName, angle: -90, position: 'left'}}/>
 			<XAxis type="number"
-				dataKey="oddsratio"
-				name="odds ratio"
-				label={{ value: 'odds ratio', position: 'bottom' }}/>
+				dataKey="xAxis"
+				name={xAxisName}
+				label={{ value: xAxisLabel || xAxisName, position: 'bottom' }}/>
 			<Tooltip content={<CustomTooltip/>} position={{x:0, y:0}}/>
 			<Scatter name="Enrichment" data={data} {...scatterProps}>
 				{data.map((entry, index) => {
@@ -50,11 +58,13 @@ export const ScatterPlot = (props) => {
 ScatterPlot.propTypes = {
 	data: PropTypes.arrayOf(PropTypes.shape({
 		name: PropTypes.string.isRequired,
-		pval: PropTypes.number.isRequired,
-		oddsratio: PropTypes.number.isRequired,
 	})).isRequired,
 	color: PropTypes.string.isRequired,
 	scatterProps: PropTypes.object,
 	scatterChartProps: PropTypes.object,
+	yAxisName: PropTypes.string,
+	xAxisName: PropTypes.string,
+	yAxisLabel: PropTypes.string,
+	xAxisLabel: PropTypes.string,
 }
   
