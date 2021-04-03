@@ -197,21 +197,34 @@ export const get_data_for_bar_chart = ({entries, barColor, inactiveColor, order_
 	return data
 }
 
-export const download_enrichment_for_library = async (entry, filename, schemas, start, end, format="tsv") => {
+export const download_enrichment_for_library = async ({entry,
+	filename,
+	schemas,
+	start,
+	end,
+	type="Overlap",
+	format="tsv",
+	direction,
+}) => {
 	start()
 	const serialized = await entry.serialize(false, true, true)
 	if (format === "json"){
 		end()
 		fileDownload(JSON.stringify(serialized), filename)
 	}else if (format === "tsv"){
-		const {signatures} = serialized
+		console.log(direction)
+		console.log(serialized)
+		const signatures = serialized[direction]
 		let tsv_header = 'Term'
 		let tsv_body = ""
 		let generate_head_cells = true
 		for (const e of signatures) {
-			const term = `${getName(e, schemas)}`
-			const overlap = e.entities.map(e=>getName(e, schemas)).join(";")
-			const tags = getPropType(e, schemas, 'text').sort((a,b)=>a.priority-b.priority)
+			const {info} = labelGenerator(e, schemas)
+			const term = `${info.name.text}`
+			let overlap
+			if (type === "Overlap") overlap = e.entities.map(e=>getName(e, schemas)).join(";")
+			const tags = info.tags.sort((a,b)=>a.priority-b.priority)
+			const scores = Object.values(info.scores).sort((a,b)=>a.priority-b.priority)
 			let tag_values = ""
 			for (const tag of tags){
 				tag_values = tag_values + `\t${tag.text}`
@@ -219,11 +232,21 @@ export const download_enrichment_for_library = async (entry, filename, schemas, 
 					tsv_header = tsv_header + `\t${tag.label}`
 				}
 			}
-			if (generate_head_cells){
+			for (const tag of scores){
+				tag_values = tag_values + `\t${tag.value}`
+				if (generate_head_cells){
+					tsv_header = tsv_header + `\t${tag.label}`
+				}
+			}
+			if (generate_head_cells && type === "Overlap"){
 				tsv_header = tsv_header + "\tOverlap"
 				generate_head_cells = false
+			}else {
+				generate_head_cells = false
 			}
-			const row = `${term}${tag_values}\t${overlap}`
+
+			let row = `${term}${tag_values}`
+			if (type === "Overlap") row = row + `\t${overlap}`
 			tsv_body = tsv_body + `\n${row}`
 		}
 		const tsv_text = `${tsv_header}${tsv_body}`
