@@ -449,8 +449,8 @@ export class Model {
 			entry[singular_form[this.parent_model]] = parent
 		}
 		if (serialize_children){
-			const children = (await this.children({limit:0}, crawl))[this.child_model]
-			entry[this.child_model] = children
+			const {count, ...children} = (await this.children({limit:0}, crawl))
+			for (const [k,v] of Object.entries(children)) entry[k] = v
 		}
 		return empty_cleaner(entry)
 	}
