@@ -110,7 +110,7 @@ class About extends React.PureComponent {
           <Grid item xs={12} lg={6}>
             <Typography variant={'h4'} gutterBottom>About</Typography>
             <Typography align="justify">
-              <MarkdownComponent url={this.props.ui_values.about} />
+              <MarkdownComponent url={this.props.ui_values.about_md || this.props.ui_values.about} />
             </Typography>
           </Grid>
           <Grid item xs={12} lg={6}>
