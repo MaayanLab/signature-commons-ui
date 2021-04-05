@@ -12,17 +12,17 @@ import {IconComponent} from '../DataTable/IconComponent'
 const UnexpandedCards = (props) => {
 	const entry = props.entry
 	const comprops = props.md === 4 ? {
-		bar_props:{width:300, barSize:24, maxHeight:350},
+		bar_props:{width:300, barSize:24, maxHeight:300},
 		scatter_props:{width:350, height:350},
 		expanded: false
 	} : {
-		bar_props:{width:400, barSize:27, maxHeight:350},
+		bar_props:{width:400, barSize:27, maxHeight:300},
 		scatter_props:{width:450, height:450},
 		expanded: false
 	}
 	return(
 		<Grid item xs={12} sm={6} md={props.md}>
-			<Card style={{minHeight: 1350}}>
+			<Card style={{minHeight: 800}}>
 				<CardHeader
 					avatar={
 						<IconComponent {...entry.info.icon}/>

@@ -13,9 +13,11 @@ const renderCustomizedLabel = (props) => {
 	// const radius = 10;
 	const background = Color(color)
 	const fontColor = background.isDark() ? "#FFF": "#000"
+	const transfomedX = width < 0 ? x-5: x+5
+	const textAnchor = width < 0 ? "end": "start"
 	return (
 	  <g>
-		<text x={x+5} y={y+(height/2) + 4} width={width-x-5} fill={fontColor}>
+		<text x={transfomedX} y={y+(height/2) + 4} width={width} fill={fontColor} textAnchor={textAnchor}>
 		  {value}
 		</text>
 	  </g>
@@ -40,20 +42,35 @@ export const EnrichmentBar = (props) => {
 		   fontColor="#FFF",
 		   maxHeight=300,
 		   barSize=23,
-		   width=350,
+		   width=500,
 		} = props
 	const height = data.length === 10 ? maxHeight: maxHeight/10 * data.length
 	return(
 		<BarChart layout="vertical" height={height} width={width} data={data} {...barChartProps}>
 			<Tooltip content={<CustomTooltip/>} />
 			<Bar dataKey="value" fill={color} barSize={barSize} {...barProps}>
-				<LabelList dataKey="name" position="insideLeft" content={renderCustomizedLabel} fill={fontColor}/>
+				<LabelList dataKey="name" position="left" content={renderCustomizedLabel} fill={fontColor}/>
 				{data.map((entry, index) => {
 					return <Cell key={`${field}-${index}`} fill={entry.color} />
 				}
 				)}
 			</Bar>
-			<XAxis type="number" domain={[dataMin => dataMin-(dataMin/100), 'dataMax']} hide/>
+			<XAxis type="number" domain={[
+				dataMin => {
+					if (dataMin < 0) {
+						return dataMin
+					} else {
+						return dataMin-(dataMin/100)
+					}
+				},
+				dataMax => {
+					if (dataMax > 0) {
+						return dataMax
+					} else {
+						return dataMax-(dataMax/100)
+					}
+				},
+			]} hide/>
 			<YAxis type="category" hide/>
 		</BarChart>
 	)

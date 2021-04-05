@@ -99,13 +99,13 @@ class LibraryEnrichment extends React.PureComponent {
 		const inactiveColor="#9e9e9e"
 		let barColor
 		if (entries[0].direction === undefined || ["up", "reversers"].indexOf(entries[0].direction) > -1) {
-			const {dark, main} = this.props.theme.palette.primaryVisualization
+			const {main, light, dark} = this.props.theme.palette.primaryVisualization
 			const col = Color(main)
-			barColor = col.isLight() ? dark: main
+			barColor = col.isLight() ? dark: light
 		} else {
-			const {dark, main} = this.props.theme.palette.secondaryVisualization
+			const {main, light, dark} = this.props.theme.palette.secondaryVisualization
 			const col = Color(main)
-			barColor = col.isLight() ? dark: main
+			barColor = col.isLight() ? dark: light
 		}
 		const color = Color(barColor)
 		const bar_data = []
@@ -162,7 +162,7 @@ class LibraryEnrichment extends React.PureComponent {
 			}
 			const d = {
 				name: getName(entry, this.props.schemas),
-				value,
+				value: entry.direction === "reversers" && this.props.expanded ? -value: value,
 				color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
 				id: entry.id,
 				direction: entry.direction,
@@ -218,7 +218,7 @@ class LibraryEnrichment extends React.PureComponent {
 				direction,
 				children_data,
 			},()=>{
-				this.generate_scatter_data(final_query)
+				// this.generate_scatter_data(final_query)
 			})	
 		} catch (error) {
 			console.error(error)
@@ -294,7 +294,7 @@ class LibraryEnrichment extends React.PureComponent {
 				<Grid item xs={12}>
 					<div style={{width:"90%"}}>
 						<TableContainer style={{minHeight: 350}}>
-							<Table size="medium" aria-label="enrichment table">
+							<Table size="small" aria-label="enrichment table">
 								<TableHead>
 									{head_cells.map(c=>(
 									<TableCell
@@ -338,7 +338,7 @@ class LibraryEnrichment extends React.PureComponent {
 	}
 
 	lazy_tooltip = async (payload) => {
-		const {name, id, setsize, value, color, direction, ...scores} = payload
+		const {name, id, setsize, value, color, direction} = payload
 		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
 		const entry_object = resolved_entries[id]
 		const children = (await entry_object.children({limit:0})).entities || []
@@ -350,12 +350,7 @@ class LibraryEnrichment extends React.PureComponent {
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
 					<Typography variant="h6">{name}</Typography>
-					{ direction ?
-						<Typography><b>direction:</b> {direction}</Typography>: null
-					}
-					{Object.entries(scores).map(([k,v])=>(
-						<Typography><b>{k}</b> {precise(v)}</Typography>
-					))}
+					<Typography><b>{this.state.order_field}</b> {precise(value)}</Typography>
 					{ setsize ?
 						<React.Fragment>
 							<Typography><b>overlap size:</b> {setsize}</Typography>
@@ -398,18 +393,11 @@ class LibraryEnrichment extends React.PureComponent {
 		}
 		const scatter_props = this.props.scatter_props || {}
 		const search_terms = this.state.search_terms
-		const sm = Object.keys(this.state.children_data).length === 2 ? 4: 6
+		const sm = Object.keys(this.state.children_data).length === 1 ? 12: 6 
+		const aligner = ["right" , "left"]
 		return( 
-			<React.Fragment>
-				{/* <Grid item xs={12} align="left">
-					<Button onClick={()=>{						
-							this.toggleExpand()
-						}} 
-						style={{marginLeft: 20}}>
-						{expanded ? 'Hide Table': 'Show Table'}
-					</Button>
-				</Grid> */}
-				{this.state.scatter_data === undefined ? <CircularProgress/> :
+			<Grid container>
+				{/* {this.state.scatter_data === undefined ? <CircularProgress/> :
 					<Grid item xs={12} sm={expanded ? sm: 12} align="center">
 						<ScatterPlot
 							data={this.state.scatter_data}
@@ -417,13 +405,21 @@ class LibraryEnrichment extends React.PureComponent {
 							{...scatter_props}
 						/>
 					</Grid>
-				}
-				{Object.values(this.state.children_data).map(data=>(
-					<Grid item xs={12} sm={expanded ? sm: 12} align="center" key={data.direction}>
-						<Typography variant="body1" align="center" style={{textTransform: "capitalize"}}>
+				} */}
+				{Object.values(this.state.children_data).map((data, i)=>(
+					<Grid item xs={12} sm={expanded ? sm: 12}
+						align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
+						key={data.direction}>
+						<Typography variant="body1"
+									align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
+									style={{
+										textTransform: "capitalize",
+										marginLeft: 10,
+										marginRight: 10
+									}}>
 							{data.direction}
 						</Typography>
-						<div style={{minHeight: 350}}>
+						<div style={{minHeight: 300}}>
 							<EnrichmentBar data={data.bar_data} field={this.state.order_field} fontColor={"#FFF"} 
 								barProps={{isAnimationActive:false}}
 								{...bar_props}
@@ -468,22 +464,24 @@ class LibraryEnrichment extends React.PureComponent {
 									</Typography>	
 								</Grid>
 								<Grid item xs={1}>
-									<Downloads data={[
-										{
-											text: `Download ${data.direction} as TSV`,
-											onClick: () => {
-												this.download_library('tsv', data.direction)
-											},
-											icon: "mdi-download"
-										}
-									]} 
-									loading={this.state.downloading}/>
+									<div style={{marginTop:-10}}>
+										<Downloads data={[
+											{
+												text: `Download ${data.direction} as TSV`,
+												onClick: () => {
+													this.download_library('tsv', data.direction)
+												},
+												icon: "mdi-download"
+											}
+										]} 
+										loading={this.state.downloading}/>
+									</div>
 								</Grid>
 							</Grid>
 							{this.table_view(data.direction)}
 						</Grid>
 				)): null}
-			</React.Fragment>
+			</Grid>
 		)
 	}
 
@@ -572,14 +570,7 @@ class LibraryEnrichment extends React.PureComponent {
 
 	render = () => {
 		if (this.state.children_data === undefined) return <CircularProgress/>
-		return(
-			<Grid container spacing={3}>
-				{this.data_viz()}
-				{/* <Grid item xs={12} align="center">
-					{this.table_view()}
-				</Grid> */}
-			</Grid>
-		)
+		return this.data_viz()
 	}
 }
 

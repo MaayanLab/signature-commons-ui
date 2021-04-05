@@ -742,8 +742,7 @@ export default class EnrichmentPage extends React.PureComponent {
 
 
 	visualizations = () => {
-		if (this.state.entry_object === null || this.state.entry_object.model !== 'libraries' ) return null
-		if (this.state.searching) return <div style={{height: 450, textAlign: "center"}}><CircularProgress/></div>
+		if (this.state.entry_object === null || this.state.entry_object.model !== 'libraries' || this.state.searching) return null
 		if (this.state.children.length === 0) return null
 		const visuals = {
 			bar:  () => <Lazy>{async () => this.enrichment_bar()}</Lazy>,
