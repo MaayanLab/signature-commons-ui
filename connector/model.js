@@ -143,7 +143,7 @@ export class Model {
 				this._children[field] = entries
 				this.children_count[field] = count
 			}else {
-				for (const dir of ['-', 'up', 'down']){
+				for (const dir of ['up', 'down']){
 					filter.where.direction = dir
 					const { entries, count} = await this._data_resolver.filter_through({
 						model: this.model,
