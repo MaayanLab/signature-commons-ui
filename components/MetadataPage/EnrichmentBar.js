@@ -42,7 +42,7 @@ export const EnrichmentBar = (props) => {
 		   fontColor="#FFF",
 		   maxHeight=300,
 		   barSize=23,
-		   width=500,
+		   width=450,
 		} = props
 	const height = data.length === 10 ? maxHeight: maxHeight/10 * data.length
 	return(
