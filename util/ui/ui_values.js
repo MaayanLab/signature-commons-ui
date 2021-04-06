@@ -151,17 +151,13 @@ export const defaultUIValues = {
     about: "./static/about.md",
     homepage_text: "Search signatures, genes, or datasets.",
     carousel: {
-      Overlap: [
+      Rank: [
         {
-          src: "./static/drugmonizome/input.png",
+          src: "./static/lincs/lincs-input.png",
           alt: "input form"
         },
         {
-          src: "./static/drugmonizome/results.png",
-          alt: "input form"
-        },
-        {
-          src: "./static/drugmonizome/resource_result.png",
+          src: "./static/lincs/lincs-results.png",
           alt: "input form"
         }
       ]
