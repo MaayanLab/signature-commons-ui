@@ -27,8 +27,8 @@ import {
  import TablePagination from '@material-ui/core/TablePagination'
 import { ChipInput } from '../SearchComponents'
 import { withTheme } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Downloads from '../Downloads'
+import {ResultsTab} from './ResultsTab'
 
 class LibraryEnrichment extends React.PureComponent {
 	constructor(props){
@@ -39,7 +39,8 @@ class LibraryEnrichment extends React.PureComponent {
 			search_terms: [],
 			direction: null,
 			pagination: {},
-			expanded: false
+			expanded: false,
+			visualization: "bar",
 		}
 	}
 
@@ -79,8 +80,8 @@ class LibraryEnrichment extends React.PureComponent {
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas)
 			// const parent = labelGenerator(await entry_object.parent(), schemas)
 			await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
-			const order_field = entry.data.dataset_type === "geneset library" ? 'p-value': 'log p (Fisher)'
-			const order = entry.data.dataset_type === "geneset library" ? 'ASC': 'DESC'
+			const order_field = entry.data.dataset_type === "geneset_library" ? 'p-value': 'log p (Fisher)'
+			const order = entry.data.dataset_type === "geneset_library" ? 'ASC': 'DESC'
 			
 			this.setState({
 				entry_object,
@@ -98,19 +99,25 @@ class LibraryEnrichment extends React.PureComponent {
 	process_children_data = ({entries}) => {
 		const inactiveColor="#9e9e9e"
 		let barColor
-		if (entries[0].direction === undefined || ["up", "reversers"].indexOf(entries[0].direction) > -1) {
-			const {main, light, dark} = this.props.theme.palette.primaryVisualization
+		if (entries[0].direction === undefined || ["up", "reversers", "-"].indexOf(entries[0].direction) > -1) {
+			const {main, dark} = this.props.theme.palette.primaryVisualization
 			const col = Color(main)
-			barColor = col.isLight() ? dark: light
+			barColor =dark
 		} else {
-			const {main, light, dark} = this.props.theme.palette.secondaryVisualization
+			const {main, dark} = this.props.theme.palette.secondaryVisualization
 			const col = Color(main)
-			barColor = col.isLight() ? dark: light
+			barColor = col.isLight() ? dark: main
 		}
 		const color = Color(barColor)
 		const bar_data = []
-		const firstVal = entries[0].scores[this.state.order_field]
-		const lastVal = entries[entries.length - 1].scores[this.state.order_field]
+		const firstVal = this.state.order_field === 'p-value' ? 
+			-Math.log(entries[0].scores[this.state.order_field]) : 
+			entries[0].scores[this.state.order_field]
+		
+		const lastVal = this.state.order_field === 'p-value' ? 
+			-Math.log(entries[entries.length - 1].scores[this.state.order_field]) : 
+			entries[entries.length - 1].scores[this.state.order_field]
+		
 		const diff = firstVal - lastVal
 		let col
 		const table_entries = []
@@ -124,6 +131,14 @@ class LibraryEnrichment extends React.PureComponent {
 			}
 			let generate_head_cells = false
 			if (head_cells.length === 0) generate_head_cells = true
+			if (generate_head_cells && e.info.name.priority > 0){
+				head_cells.push({
+					id: 'name',
+					numeric: false,
+					disablePadding: false,
+					label: e.info.name.label
+				})
+			}
 			for (const tag of e.info.tags.sort((a,b)=>a.priority - b.priority)){
 				if (tag.visibility > 0){
 					data[tag.label] = tag.text
@@ -137,7 +152,7 @@ class LibraryEnrichment extends React.PureComponent {
 					}
 				}
 			}
-			for (const tag of Object.values(e.info.scores).sort((a,b)=>a.priority - b.priority)){
+			for (const tag of Object.values(e.info.scores || {}).sort((a,b)=>a.priority - b.priority)){
 				if (tag.visibility > 0){
 					const v = Number(tag.value)
 					data[tag.label] = precise(v)
@@ -154,7 +169,9 @@ class LibraryEnrichment extends React.PureComponent {
 			table_entries.push(data)
 
 			// bar
-			const value = entry.scores[this.state.order_field]
+			const value = this.state.order_field === 'p-value' ? 
+				-Math.log(entry.scores[this.state.order_field]) : 
+				entry.scores[this.state.order_field]
 			if (col === undefined) {
 				col = color
 			}else {
@@ -164,6 +181,7 @@ class LibraryEnrichment extends React.PureComponent {
 				name: getName(entry, this.props.schemas),
 				value: entry.direction === "reversers" && this.props.expanded ? -value: value,
 				color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
+				actual_value: entry.scores[this.state.order_field],
 				id: entry.id,
 				direction: entry.direction,
 				...entry.scores,
@@ -218,7 +236,9 @@ class LibraryEnrichment extends React.PureComponent {
 				direction,
 				children_data,
 			},()=>{
-				// this.generate_scatter_data(final_query)
+				if (this.state.entry.data.dataset_type === "geneset_library"){
+					this.generate_scatter_data(final_query)
+				}
 			})	
 		} catch (error) {
 			console.error(error)
@@ -287,6 +307,7 @@ class LibraryEnrichment extends React.PureComponent {
 	}
 
 	table_view = (direction) => {
+		console.log(this.state.children_data)
 		const {table_entries, head_cells} = this.state.children_data[direction]
 		const {limit=10, skip=0} = this.state.pagination[direction] || {}
 		return (
@@ -338,22 +359,26 @@ class LibraryEnrichment extends React.PureComponent {
 	}
 
 	lazy_tooltip = async (payload) => {
-		const {name, id, setsize, value, color, direction} = payload
+		const {name, id, ["overlap size"]: overlap_size, actual_value, ["odds ratio"]: oddsratio} = payload
 		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
 		const entry_object = resolved_entries[id]
 		const children = (await entry_object.children({limit:0})).entities || []
-		const overlap = children.map(e=>getName(e, this.props.schemas))
-		const overlap_text = overlap.join(", ")
+		const overlap = children.map(e=>getName(e, this.props.schemas)).slice(0,20)
+		const overlap_text = `${overlap.join(", ")}${children.length>20? "..." : null}`
 		// if (setsize <= 15) overlap_text = overlap.join(", ")
 		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
 		return(
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
 					<Typography variant="h6">{name}</Typography>
-					<Typography><b>{this.state.order_field}</b> {precise(value)}</Typography>
-					{ setsize ?
+					<Typography><b>{this.state.order_field}</b> {precise(actual_value)}</Typography>
+					{ oddsratio ?
+						<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>
+						: null
+					}
+					{ overlap_size ?
 						<React.Fragment>
-							<Typography><b>overlap size:</b> {setsize}</Typography>
+							<Typography><b>overlap size:</b> {overlap_size}</Typography>
 							<Typography><b>overlaps:</b> {overlap_text}</Typography>
 						</React.Fragment>: null
 					}
@@ -380,9 +405,8 @@ class LibraryEnrichment extends React.PureComponent {
 		})
 	} 
 
-	data_viz = () => {
+	scatter_viz = () => {
 		const expanded = this.props.expanded
-		const bar_props = this.props.bar_props || {}
 		const nameProps = this.state.entry.data.dataset_type === "geneset_library" ? {
 			yAxisName: "-log(pval)",
 			xAxisName: "odds ratio",
@@ -391,25 +415,33 @@ class LibraryEnrichment extends React.PureComponent {
 			yAxisName: "zscore (up)",
 			xAxisName: "zscore (down)",
 		}
-		const scatter_props = this.props.scatter_props || {}
-		const search_terms = this.state.search_terms
-		const sm = Object.keys(this.state.children_data).length === 1 ? 12: 6 
-		const aligner = ["right" , "left"]
-		return( 
-			<Grid container>
-				{/* {this.state.scatter_data === undefined ? <CircularProgress/> :
-					<Grid item xs={12} sm={expanded ? sm: 12} align="center">
+		if (this.state.entry.data.dataset_type === "geneset_library") {
+			if (this.state.scatter_data === undefined) return <CircularProgress />
+			else {
+				const scatter_props = this.props.scatter_props || {}
+				return (
+					<Grid item xs={12} sm={expanded ? 6: 12} align="center">
 						<ScatterPlot
 							data={this.state.scatter_data}
 							{...nameProps}
 							{...scatter_props}
 						/>
 					</Grid>
-				} */}
-				{Object.values(this.state.children_data).map((data, i)=>(
-					<Grid item xs={12} sm={expanded ? sm: 12}
-						align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
-						key={data.direction}>
+				)
+			}
+		}
+		return null
+	}
+
+	bar_viz = () => {
+		const expanded = this.props.expanded
+		const bar_props = this.props.bar_props || {}
+		const aligner = ["right" , "left"]
+		return Object.values(this.state.children_data).map((data, i)=>(
+				<Grid item xs={12} sm={expanded ? 6: 12}
+					align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
+					key={data.direction}>
+					{ this.state.entry.data.dataset_type === "geneset_library" ? null:
 						<Typography variant="body1"
 									align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
 									style={{
@@ -419,70 +451,139 @@ class LibraryEnrichment extends React.PureComponent {
 									}}>
 							{data.direction}
 						</Typography>
-						<div style={{minHeight: 300}}>
-							<EnrichmentBar data={data.bar_data} field={this.state.order_field} fontColor={"#FFF"} 
-								barProps={{isAnimationActive:false}}
-								{...bar_props}
-							/>
-						</div>
+					}
+					<div style={{minHeight: 300}}>
+						<EnrichmentBar data={data.bar_data} field={this.state.order_field} fontColor={"#FFF"} 
+							barProps={{isAnimationActive:false}}
+							{...bar_props}
+						/>
+					</div>
+				</Grid>
+			))
+	}
+
+	all_table = () => {
+		const search_terms = this.state.search_terms
+		return (
+			<React.Fragment>
+				<Grid item xs={1}>
+					{ this.state.entry.data.dataset_type === "geneset_library" ?
+						<div style={{marginTop:-10, marginLeft: 10}}>
+							<Downloads data={[
+								{
+									text: `Download as TSV`,
+									onClick: () => {
+										this.download_library('tsv', 'signatures')
+									},
+									icon: "mdi-download"
+								}
+							]} 
+							loading={this.state.downloading}/>
+						</div>: null
+					}
+				</Grid>
+				<Grid item xs={11} align="right">
+					<ChipInput 
+						input={search_terms}
+						onSubmit={(term)=>{
+							if (search_terms.indexOf(term)<0) this.onSearch([...search_terms, term])
+						}}
+						onDelete={ (term)=>{
+								this.onSearch(search_terms.filter(t=>t!==term))
+							}
+						}
+						ChipInputProps={{
+							divProps: {
+								style: {
+									background: "#f7f7f7", 
+									borderRadius: 25,
+									width: 500,
+									marginRight: 25
+								}
+							},
+							inputProps: {
+								placeholder: search_terms.length === 0 ? "Search for any term": "",
+							}
+						}}
+					/>
+				</Grid>
+				{ Object.values(this.state.children_data).map(data=>(
+					<Grid item xs={12} align="center" key={data.direction}>
+						<Grid container>
+							{ this.state.entry.data.dataset_type === "geneset_library" ? null:
+								<React.Fragment>
+									<Grid item xs={1}>
+										<div style={{marginTop:-10}}>
+											<Downloads data={[
+												{
+													text: `Download ${data.direction} as TSV`,
+													onClick: () => {
+														this.download_library('tsv', data.direction)
+													},
+													icon: "mdi-download"
+												}
+											]} 
+											loading={this.state.downloading}/>
+										</div>
+									</Grid>
+									<Grid item xs={11}>	
+										<Typography variant="h6" align="center" style={{textTransform: "capitalize", marginLeft: 40}}>
+											{data.direction}
+										</Typography>	
+									</Grid>
+								</React.Fragment>
+							}
+						</Grid>
+						{this.table_view(data.direction)}
 					</Grid>
 				))}
-				{expanded ?
-					<Grid item xs={12} align="right">
-						<ChipInput 
-							input={search_terms}
-							onSubmit={(term)=>{
-								if (search_terms.indexOf(term)<0) this.onSearch([...search_terms, term])
-							}}
-							onDelete={ (term)=>{
-									this.onSearch(search_terms.filter(t=>t!==term))
-								}
-							}
-							ChipInputProps={{
-								divProps: {
-									style: {
-										background: "#f7f7f7", 
-										borderRadius: 25,
-										width: 500,
-										marginRight: 25
-									}
-								},
-								inputProps: {
-									placeholder: search_terms.length === 0 ? "Search for any term": "",
-								}
-							}}
-						/>
-					</Grid>: null
-				}
-				{expanded ? 
-					Object.values(this.state.children_data).map(data=>(
-						<Grid item xs={12} align="center" key={data.direction}>
-							<Grid container>
-								<Grid item xs={11}>
-									<Typography variant="h6" align="center" style={{textTransform: "capitalize", marginLeft: 40}}>
-										{data.direction}
-									</Typography>	
-								</Grid>
-								<Grid item xs={1}>
-									<div style={{marginTop:-10}}>
-										<Downloads data={[
-											{
-												text: `Download ${data.direction} as TSV`,
-												onClick: () => {
-													this.download_library('tsv', data.direction)
-												},
-												icon: "mdi-download"
-											}
-										]} 
-										loading={this.state.downloading}/>
-									</div>
-								</Grid>
-							</Grid>
-							{this.table_view(data.direction)}
-						</Grid>
-				)): null}
-			</Grid>
+			</React.Fragment>
 		)
+	}
+
+	data_viz = () => {
+		const expanded = this.props.expanded
+		if (expanded) {
+			return( 
+				<Grid container>
+					{this.scatter_viz()}
+					{this.bar_viz()}
+					{this.all_table()}
+				</Grid>
+			)
+		} else {
+			if (this.state.entry.data.dataset_type === "geneset_library") {
+				return (
+					<Grid container>
+						<Grid item xs={12} align="center">
+							<ResultsTab
+								tabs={[
+									{
+										label: "Bar Chart",
+										value: "bar"
+									},
+									{
+										label: "Scatter Plot",
+										value: "scatter"
+									}
+								]}
+								tab={this.state.visualization}
+								handleChange={(t)=>this.setState({visualization: t.value})}
+								tabsProps={{centered: true}}
+							/>
+						</Grid>
+						{this.state.visualization === "bar" ? this.bar_viz() : this.scatter_viz()}
+					</Grid>
+				)
+			} else {
+				return (
+					<Grid container>
+						{this.bar_viz()}				
+					</Grid>
+				)
+			}
+		}
+		
 	}
 
 	generate_scatter_data = async (final_query=null) => {
@@ -507,7 +608,7 @@ class LibraryEnrichment extends React.PureComponent {
 				// scatter
 				let color = inactiveColor
 				if (colorize === null || colorize.indexOf(entry.id)>-1){
-					if (direction === undefined || ["up", "reversers"].indexOf(direction) > -1) {
+					if (direction === undefined || ["up", "reversers"].indexOf(direction) > -1 || direction === "signatures") {
 						color = scatterColor1
 					}else if (direction !== "ambiguous"){
 						color = scatterColor2
@@ -518,7 +619,8 @@ class LibraryEnrichment extends React.PureComponent {
 						name: getName(entry, this.props.schemas),
 						yAxis: entry.scores["odds ratio"],
 						xAxis: -Math.log(entry.scores["p-value"]),
-						color: entry.scores["p-value"] > 0.05 ? color.hex(): inactiveColor,
+						value: entry.scores["p-value"],
+						color: entry.scores["p-value"] < 0.05 ? color: inactiveColor,
 						id: entry.id,
 						direction,
 						...entry.scores,

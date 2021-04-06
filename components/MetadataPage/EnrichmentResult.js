@@ -13,7 +13,7 @@ const UnexpandedCards = (props) => {
 	const entry = props.entry
 	const comprops = props.md === 4 ? {
 		bar_props:{width:300, barSize:24, maxHeight:300},
-		scatter_props:{width:350, height:350},
+		scatter_props:{width:300, height:300},
 		expanded: false
 	} : {
 		bar_props:{width:400, barSize:27, maxHeight:300},
@@ -22,7 +22,7 @@ const UnexpandedCards = (props) => {
 	}
 	return(
 		<Grid item xs={12} sm={6} md={props.md}>
-			<Card style={{minHeight: 800}}>
+			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 800}}>
 				<CardHeader
 					avatar={
 						<IconComponent {...entry.info.icon}/>
@@ -36,8 +36,9 @@ const UnexpandedCards = (props) => {
 								   </div>
 						})
 					}
+					style={{paddingBottom: 0}}
 				/>
-				<CardContent>
+				<CardContent style={{paddingTop: 0}}>
 					{entry.BottomComponents.map((comp, i)=>{
 						const {component, props} = comp
 						return <div key={entry.data.id}>
@@ -66,6 +67,7 @@ export const EnrichmentResult = (props) => {
 		if (expanded_id === entry.data.id) expanded_entry.push(entry)
 		else unexpanded_entries.push(entry)
 	}
+	const md = expanded_entry.length !== 0 && unexpanded_entries.length<3 ? 6:4
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
@@ -78,7 +80,7 @@ export const EnrichmentResult = (props) => {
 							<DataTable entries={expanded_entry} {...DataTableProps}/>
 						</Grid>
 						{unexpanded_entries.map(entry=>(
-							<UnexpandedCards entry={entry} md={unexpanded_entries.length<3 ? 6:4} />
+							<UnexpandedCards entry={entry} md={md} />
 						))}
 					</Grid>
 				}
