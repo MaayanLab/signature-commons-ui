@@ -150,6 +150,22 @@ export const defaultUIValues = {
     resource_order: {},
     about: "./static/about.md",
     homepage_text: "Search signatures, genes, or datasets.",
+    carousel: {
+      Overlap: [
+        {
+          src: "./static/drugmonizome/input.png",
+          alt: "input form"
+        },
+        {
+          src: "./static/drugmonizome/results.png",
+          alt: "input form"
+        },
+        {
+          src: "./static/drugmonizome/resource_result.png",
+          alt: "input form"
+        }
+      ]
+    }
 }
 
 export const defaultTheme = {

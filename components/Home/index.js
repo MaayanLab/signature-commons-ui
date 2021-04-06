@@ -168,7 +168,7 @@ class Home extends React.PureComponent {
   }
 
   signature_search = (props) => {
-    const {nav, preferred_name, preferred_name_singular, resource_order} = this.props.ui_values
+    const {nav, preferred_name, preferred_name_singular, resource_order, carousel} = this.props.ui_values
     const reverse_preferred = Object.entries(preferred_name).reduce((names,[k,v])=>{
       names[v] = k
       return names
@@ -206,6 +206,7 @@ class Home extends React.PureComponent {
                     resolver={this.state.enrichment_resolver}
                     model={model}
                     enrichment_tabs={enrichment_tabs}
+                    carousel={carousel}
                     {...props}
       />
     )
