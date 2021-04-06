@@ -35,6 +35,8 @@ import Color from 'color'
 import LibraryEnrichment from './LibraryEnrichment'
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import Snackbar from '@material-ui/core/Snackbar';
+import Button from '@material-ui/core/Button';
 
 const id_mapper = {
 	resources: "resource_id",
@@ -58,6 +60,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			visualize: false,
 			expanded: null,
 			downloading: false,
+			error: null,
 		}
 	}
 
@@ -83,7 +86,6 @@ export default class EnrichmentPage extends React.PureComponent {
 			const {model, schemas, nav, preferred_name} = this.props
 			const id = match_id || this.props.id
 			await this.process_enrichment_id()
-			
 			const entry_object = await this.props.resolver.resolve_enrichment({
 				enrichment_id,
 				[id_mapper[model]]: id,
@@ -102,7 +104,6 @@ export default class EnrichmentPage extends React.PureComponent {
 			const parent = labelGenerator(await entry_object.parent(), schemas, 
 										`#/Enrichment/${type}/${enrichment_id}/${preferred_name[entry_object.parent_model]}/`)
 			// await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
-			
 			let back_endpoint
 			if (model==='signatures') {
 				back_endpoint = `#${nav.SignatureSearch.endpoint}/${type}/${enrichment_id}/${preferred_name.resources}/${entry.data.library.resource.id}`
@@ -124,6 +125,15 @@ export default class EnrichmentPage extends React.PureComponent {
 			})	
 		} catch (error) {
 			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "process_entry error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
 		}
 	}
 
@@ -135,12 +145,23 @@ export default class EnrichmentPage extends React.PureComponent {
 				// try if it is a signature
 				const input = await get_signature_entities(enrichment_id, this.props.resolver, this.props.schemas, this.handleError)
 				if (input === null) throw new Error("Invalid Enrichment ID")
-				const query = create_query(input, enrichment_id)
-				// TODO: Enrichment should only be done on the library it belongs to
-				await enrichment(query, input, this.props.resolver, this.handleError)
+				else {
+					const query = create_query(input, enrichment_id)
+					// TODO: Enrichment should only be done on the library it belongs to
+					await enrichment(query, input, this.props.resolver, this.handleError)
+				}
 			}
 		} catch (error) {
 			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "process_enrichment_id error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
 		}
 	}
 
@@ -189,8 +210,6 @@ export default class EnrichmentPage extends React.PureComponent {
 		try {
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
-			const {schemas} = this.props
-			const { type, enrichment_id } = this.props.match.params
 			const {entry_object} = this.state
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
@@ -221,6 +240,15 @@ export default class EnrichmentPage extends React.PureComponent {
 			})	
 		} catch (error) {
 			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "process_children error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
 		}
 			
 	}
@@ -313,6 +341,15 @@ export default class EnrichmentPage extends React.PureComponent {
 			}
 		} catch (error) {
 			console.error(error)
+			this.setState(prevState=>{
+				if (prevState.error === null) {
+					return {
+						error: "get_value_count error: " + error.message
+					}
+				} else return {
+					error: prevState.error
+				}
+			})
 		}
 	}
 
@@ -898,12 +935,49 @@ export default class EnrichmentPage extends React.PureComponent {
 		)
 	}
 
+	handleSnackBarClose = (event, reason) => {
+		this.setState({
+			error: null,
+		}, ()=>{
+			console.log(`${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}`)
+			this.props.history.push({
+				pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}`
+			})	
+		})
+	}
+
 	render = () => {
 		if (this.state.entry==null){
-			return <CircularProgress />
+			return (
+				<React.Fragment>
+					<Snackbar open={this.state.error!==null}
+						anchorOrigin={{ vertical:"top", horizontal:"right" }}
+						autoHideDuration={1000}
+						onClose={this.handleSnackBarClose}
+						message={this.state.error}
+						action={
+							<Button size="small" aria-label="close" color="inherit" onClick={this.handleSnackBarClose}>
+								<span className="mdi mdi-close-box mdi-24px"/>
+							</Button>
+						}
+					/>
+					<CircularProgress />
+				</React.Fragment>
+			)
 		}
 		return(
 			<Grid container spacing={3} style={{marginBottom: 10}}>
+				<Snackbar open={this.state.error!==null}
+					anchorOrigin={{ vertical:"top", horizontal:"right" }}
+					autoHideDuration={1000}
+					onClose={this.handleSnackBarClose}
+					message={this.state.error}
+					action={
+						<Button size="small" aria-label="close" color="inherit" onClick={this.handleSnackBarClose}>
+							<span className="mdi mdi-close-box mdi-24px"/>
+						</Button>
+					}
+				/>
 				{this.props.topComponents!==undefined ? 
 					<Grid item xs={12}>
 						{this.props.topComponents()}
