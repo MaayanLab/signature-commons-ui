@@ -224,7 +224,7 @@ export const download_enrichment_for_library = async ({entry,
 			let overlap
 			if (type === "Overlap") overlap = e.entities.map(e=>getName(e, schemas)).join(";")
 			const tags = info.tags.sort((a,b)=>a.priority-b.priority)
-			const scores = Object.values(info.scores).sort((a,b)=>a.priority-b.priority)
+			const scores = Object.values(info.scores || {}).sort((a,b)=>a.priority-b.priority)
 			let tag_values = ""
 			for (const tag of tags){
 				tag_values = tag_values + `\t${tag.text}`
