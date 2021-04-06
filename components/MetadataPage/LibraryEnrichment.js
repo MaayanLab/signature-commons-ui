@@ -131,7 +131,7 @@ class LibraryEnrichment extends React.PureComponent {
 			}
 			let generate_head_cells = false
 			if (head_cells.length === 0) generate_head_cells = true
-			if (generate_head_cells && e.info.name.priority > 0){
+			if (generate_head_cells && e.info.name.visibility > 0){
 				head_cells.push({
 					id: 'name',
 					numeric: false,
@@ -178,7 +178,7 @@ class LibraryEnrichment extends React.PureComponent {
 				col = color.lighten((((firstVal - value)/(diff||1))))
 			}
 			const d = {
-				name: getName(entry, this.props.schemas),
+				name: e.info.name.text,
 				value: entry.direction === "reversers" && this.props.expanded ? -value: value,
 				color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
 				actual_value: entry.scores[this.state.order_field],
@@ -208,8 +208,6 @@ class LibraryEnrichment extends React.PureComponent {
 				limit: 10, skip: 0, order: [order_field, order],
 				search: search_terms
 			}
-			let limit
-			let skip
 			if (direction){
 				final_query.direction = direction
 				final_query.limit = pagination[direction].limit || 10
@@ -307,7 +305,6 @@ class LibraryEnrichment extends React.PureComponent {
 	}
 
 	table_view = (direction) => {
-		console.log(this.state.children_data)
 		const {table_entries, head_cells} = this.state.children_data[direction]
 		const {limit=10, skip=0} = this.state.pagination[direction] || {}
 		return (
@@ -440,7 +437,8 @@ class LibraryEnrichment extends React.PureComponent {
 		return Object.values(this.state.children_data).map((data, i)=>(
 				<Grid item xs={12} sm={expanded ? 6: 12}
 					align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
-					key={data.direction}>
+					key={data.direction}
+				>
 					{ this.state.entry.data.dataset_type === "geneset_library" ? null:
 						<Typography variant="body1"
 									align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
@@ -527,7 +525,7 @@ class LibraryEnrichment extends React.PureComponent {
 										</div>
 									</Grid>
 									<Grid item xs={11}>	
-										<Typography variant="h6" align="center" style={{textTransform: "capitalize", marginLeft: 40}}>
+										<Typography variant="h6" align="center" style={{textTransform: "capitalize", marginRight: 40}}>
 											{data.direction}
 										</Typography>	
 									</Grid>
