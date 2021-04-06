@@ -197,8 +197,6 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
     for (const label of Object.keys(properties)) {
       const prop = properties[label]
       // if (prop.component === "download") prop.type = "download"
-      if (prop.component){
-      }
       if (objectMatch(prop.condition, data) && value_by_type[prop.type]!==undefined) {
         const val = value_by_type[prop.type]({ label, prop, data })
         if (prop.synonyms){
