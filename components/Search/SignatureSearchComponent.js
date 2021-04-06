@@ -17,13 +17,14 @@ import { withStyles } from '@material-ui/core/styles';
 import {IconComponentButton} from '../DataTable'
 import EnrichmentPage from '../MetadataPage/EnrichmentPage'
 import Collapse from '@material-ui/core/Collapse';
+import Carousel from 'react-material-ui-carousel';
 
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
 	const example_buttons = []
 	for (const ex of examples){
-		example_buttons.push(
-			<Button variant="text" color="primary" style={{textTransform: "none"}} key={ex.label} onClick={()=>{
+		let component = (
+			<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
 				resetInput()
 				if (type === "Overlap") {
 					onAdd(ex.input.entities, "entities")
@@ -36,17 +37,21 @@ const Examples = (props) => {
 			</Button>
 		)
 		if (ex.link!==undefined){
-			example_buttons.push(
-				<Button 
-					style={{minWidth: 5}}
-					href={ex.link}
-					target = "_blank" 
-					rel = "noopener noreferrer" 
-				>
-					<span className="mdi mdi-open-in-new"/>
-				</Button>
+			component = (
+				<React.Fragment>
+					{component}
+					<Button 
+						style={{minWidth: 5}}
+						href={ex.link}
+						target = "_blank" 
+						rel = "noopener noreferrer" 
+					>
+						<span className="mdi mdi-open-in-new"/>
+					</Button>
+				</React.Fragment>
 			)
 		}
+		example_buttons.push(<div key={ex.label} >{component}</div>)
 	}
 	return example_buttons
 }
@@ -172,13 +177,7 @@ const Results = (props) => {
 	} = props
 	if (entries === null && !searching) return null
 	else if (searching) {
-		return (
-			<Grid container spacing={3}>
-				<Grid item xs={12} align="center">
-					<CircularProgress/>
-				</Grid>
-			</Grid>
-		)
+		return null
 	}else {
 		const md = entries.length >4 ? 3: (12/entries.length)
 		if (entries.length === 1) {
@@ -226,12 +225,27 @@ export const ResourceCustomTabs = withStyles(() => ({
 	},
   }))((props) => <Tab {...props} />);
 
+
+const CarouselItem = (props) => {
+	return(
+		<Grid
+			container
+			direction="column"
+			justify="center"
+			alignItems="center"
+		>
+			<Grid item style={{height:350, width: 500}} align="center">
+				<img style={{maxHeight:350, maxWidth: 500}} {...props}></img>
+			</Grid>
+		</Grid>
+	)
+}
+
 export const SignatureSearchComponent = (props) => {
 	const {
 		searching=false,
 		SearchTabProps,
-		ResourceTabProps,
-		filters,
+		carousel,
 		ResultsProps,
 		download_input,
 		type,
@@ -243,33 +257,33 @@ export const SignatureSearchComponent = (props) => {
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
-	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
 
 	return(
 		<Grid container spacing={1}  style={{marginBottom: 20}}>
 			<Grid item xs={12} md={1}/>
-			<Grid item xs={12} md={8}>
-				{ SearchTabProps.tabs.length < 2 ? null:
-					<ResultsTab
-						tabsProps={{
-							centered: true,
-							variant: "fullWidth",
-						}}
-						tabProps={{
-							style:{
-								minWidth: 180
-							}
-						}}
-						divider
-						{...SearchTabProps}
-					/>
-				}
-				{ entries!==null ?  <Collapse in={expanded} timeout="auto" unmountOnExit><SigForm {...props}/></Collapse>:
-					<SigForm {...props}/>
-				}
+			<Grid item xs={8}>
+				<Grid container>
+					{ SearchTabProps.tabs.length < 2 ? null:
+						<Grid item xs={12}>
+							<ResultsTab
+								tabsProps={{
+									centered: true,
+									variant: "fullWidth",
+								}}
+								tabProps={{
+									style:{
+										minWidth: 180
+									}
+								}}
+								divider
+								{...SearchTabProps}
+							/>
+						</Grid>
+					}
+				</Grid>
 			</Grid>
 			{ entries!==null ?
-				<Grid item xs={12} md={3}>
+				<Grid item xs={3}>
 					<Tooltip title="Click to view input" placement="bottom">
 						
 						<Button onClick={handleExpandClick}
@@ -290,19 +304,30 @@ export const SignatureSearchComponent = (props) => {
 				</Grid>: null
 			}
 			<Grid item xs={12} md={1}/>
-			<Grid item xs={12} md={(entries || []).length === 1 ? 12: 8} style={{paddingTop: 50}}>
+			{ entries!==null ?  
+				<React.Fragment>
+					<Grid item md={1}/>
+					<Grid item xs={12} md={6}>
+						<Collapse in={expanded} timeout="auto" unmountOnExit><SigForm {...props}/></Collapse>
+					</Grid>
+				</React.Fragment>:
+				<React.Fragment>
+					<Grid item xs={12} md={6}>
+						<SigForm {...props}/>
+					</Grid>
+					<Grid item xs={12} md={5}>
+						<Carousel>
+							{
+								carousel.map(props => <CarouselItem key={props.alt} {...props} /> )
+							}
+						</Carousel>
+					</Grid>
+				</React.Fragment>
+			}
+			<Grid item xs={12} md={1}/>
+			<Grid item xs={12} md={10} style={{paddingTop: 50}}>
 				<Results {...ResultsProps} type={type} searching={searching} entries={entries}/>
 			</Grid>
-			{/* <Grid item xs={12} md={4} lg={3} align="center">
-				{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>console.log(e.target.value)}/>)}
-			</Grid> */}
-			{/* <Grid item xs={12} md={6} lg={7} align="center">
-				{ scatter_plot!==null?
-					<Lazy>{async () => Scatter(scatter_plot)}</Lazy>:
-					null
-				}
-				{middle_components(props)}
-			</Grid> */}
 		</Grid>
 	)
 }

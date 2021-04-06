@@ -12,6 +12,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import MarkdownComponent from '../Markdown/MarkdownComponent'
 import {getSummary} from '../../util/ui/fetch_ui_props'
 import { withTheme } from '@material-ui/core/styles';
+import Carousel from 'react-material-ui-carousel';
 
 export const CustomTabs = withStyles(() => ({
 	indicator: {
@@ -66,8 +67,31 @@ class About extends React.PureComponent {
     const { pie } = this.state.stats.count_charts
     if (Object.keys(pie).length === 0) return null
     const { nav, preferred_name } = this.props.ui_values
-    const p = pie[this.state.pie]
-    const data = p.stats.sort((a,b)=>(b.count-a.count))
+    return (
+      <Carousel>
+            {
+                Object.keys(pie).map(k => {
+                  const p = pie[k]
+                  const data = p.stats.sort((a,b)=>(b.count-a.count))
+                  return (
+                    <React.Fragment key={k}>
+                      <DonutChart
+                        data={data}
+                        pie_chart_style={{Pie: {fill: this.props.theme.palette.primaryVisualization.main}}}
+                        onClick={(data)=>{
+                          const search = data.payload.name
+                          this.props.history.push({
+                            pathname: `${nav.MetadataSearch.endpoint}/${preferred_name[p.model]}`,
+                            search: `?query={"filters":{"${p.field}":["${search}"]}}`,
+                          })
+                        }}
+                      />
+                      <Typography variant={'button'} align="center">{p.name}</Typography>
+                    </React.Fragment>
+                )})
+            }
+        </Carousel>
+    )
     return(
       <React.Fragment>
         <DonutChart
