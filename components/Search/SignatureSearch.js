@@ -870,7 +870,7 @@ export default class SignatureSearch extends React.PureComponent {
 				<React.Fragment>
 					<Snackbar open={this.state.error!==null}
 						anchorOrigin={{ vertical:"top", horizontal:"right" }}
-						autoHideDuration={1000}
+						autoHideDuration={500}
 						onClose={this.handleSnackBarClose}
 						message={this.state.error}
 						action={
@@ -882,6 +882,7 @@ export default class SignatureSearch extends React.PureComponent {
 					<SignatureSearchComponent 
 						searching={this.state.searching}
 						resolving={this.state.resolving}
+						carousel={this.props.carousel[this.props.match.params.type]}
 						download_input={()=>download_input(this.state.input)}
 						entries={this.state.resources}
 						ResultsProps={{
