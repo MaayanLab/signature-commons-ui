@@ -143,7 +143,7 @@ export class Model {
 				this._children[field] = entries
 				this.children_count[field] = count
 			}else {
-				for (const dir of ['up', 'down']){
+				for (const dir of ['-', 'up', 'down']){
 					filter.where.direction = dir
 					const { entries, count} = await this._data_resolver.filter_through({
 						model: this.model,
@@ -233,10 +233,12 @@ export class Model {
 			model:this.child_model,
 			entries}
 		)
+		
 		const children = {}
 		const children_count = {}
-		for (const e of entries){
-			const entry = await e.entry()
+		for (let entry of entries){
+			if (entry instanceof Model) entry = await entry.entry()
+			// const entry = await e.entry()
 			let direction = entry.direction || this.child_model
 			if (direction === "-") direction = this.child_model
 			if (children[direction]===undefined){
@@ -245,8 +247,8 @@ export class Model {
 			}
 			const entry_id = typeof entry === 'object' ? entry.id: entry
 			const resolved_entry = resolved_entries[entry_id]
-			if (resolved_entry){
-				if (typeof entry === 'object') resolved_entry.update_entry(entry)
+			if (resolved_entry){		
+				if (typeof entry === 'object') resolved_entry.update_entry(entry)		
 				children[direction].push(resolved_entry)
 				children_count[direction] = children_count[direction] + 1
 			}
@@ -331,7 +333,6 @@ export class Model {
 			}
 			
 		}
-		
 		return { children, count }
 	}
 
