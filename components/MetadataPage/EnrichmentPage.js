@@ -188,7 +188,7 @@ export default class EnrichmentPage extends React.PureComponent {
 				),
 				props: {
 					icon: expanded === e.data.id ? "mdi-24px mdi-arrow-collapse-all": "mdi-24px mdi-arrow-expand-all",
-					text: expanded === e.data.id ? "Expand": "Collapse",
+					text: expanded === e.data.id ? "Collapse": "Expand",
 					onClick: () => this.handleExpandClick(e.data.id),
 				}
 			}]
