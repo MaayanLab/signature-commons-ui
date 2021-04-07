@@ -210,19 +210,15 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
         if (prop.type === "title") {
           if (val !== null) {
             info.name = { ...info.name,
+              ...prop,
               ...val,
-              field: prop.field,
-              priority: prop.priority,
-              visibility: prop.visibility,
             }
           }
         }
         if (prop.type === "subtitle") {
           if (val !== null) info.subtitle = { 
+            ...prop,
             ...val,
-            field: prop.field, 
-            priority: prop.priority,
-            visibility: prop.visibility,
           }
         }
         if (prop.type === "alternative") {
@@ -244,12 +240,10 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
         if (prop.type === "score") {
           if (val !== null) {
             scores[prop.field] = {
+              ...prop,
               label,
               value: val.text,
-              field: prop.field,
               icon: prop.icon || 'mdi-star',
-              priority: prop.priority,
-              visibility: prop.visibility,
             }
             sort_tags[prop.field] = {
               label,
@@ -283,11 +277,9 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
         if (prop.type==="text") {
           if (val !== null) {
             tags = [...tags, {
+              ...prop,
               ...val,
               icon: prop.icon || 'mdi-arrow-top-right-thick',
-              priority: prop.priority,
-              visibility: prop.visibility,
-              clickable: prop.clickable || true,
               field: prop.search_field || prop.field,
             }]
           }
