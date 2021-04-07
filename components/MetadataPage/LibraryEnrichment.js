@@ -327,7 +327,7 @@ class LibraryEnrichment extends React.PureComponent {
 								<TableHead>
 									{head_cells.map(c=>(
 									<TableCell
-										align={"right"}
+										align={c.id === "name" ? "left":"right"}
 										key={c.id}
 										onClick={()=>{
 											if (c.id.startsWith("score")){
@@ -372,10 +372,11 @@ class LibraryEnrichment extends React.PureComponent {
 		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
 		const entry_object = resolved_entries[id]
 		const children = (await entry_object.children({limit:0})).entities || []
-		const overlap = children.map(e=>getName(e, this.props.schemas)).slice(0,20)
-		const overlap_text = `${overlap.join(", ")}${children.length>20? "..." : null}`
+		const overlap = children.map(e=>getName(e, this.props.schemas)).slice(0,10)
+		const overlap_text = `${overlap.join(", ")}${children.length>10? "..." : null}`
 		// if (setsize <= 15) overlap_text = overlap.join(", ")
 		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
+		console.log(payload)
 		return(
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
@@ -429,7 +430,7 @@ class LibraryEnrichment extends React.PureComponent {
 			else {
 				const scatter_props = this.props.scatter_props || {}
 				return (
-					<Grid item xs={12} sm={expanded ? 6: 12} align="center">
+					<Grid item xs={12} sm={expanded ? 6: 12} align={expanded? "right":"center"}>
 						<ScatterPlot
 							data={this.state.scatter_data}
 							{...nameProps}
@@ -445,15 +446,15 @@ class LibraryEnrichment extends React.PureComponent {
 	bar_viz = () => {
 		const expanded = this.props.expanded
 		const bar_props = this.props.bar_props || {}
-		const aligner = ["right" , "left"]
+		const aligner =  Object.keys(this.state.children_data).length === 1 ? ["left"]:["right" , "left"]
 		return Object.values(this.state.children_data).map((data, i)=>(
 				<Grid item xs={12} sm={expanded ? 6: 12}
-					align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
+					align={expanded? aligner[i]:"center"}
 					key={data.direction}
 				>
 					{ this.state.entry.data.dataset_type === "geneset_library" ? null:
 						<Typography variant="body1"
-									align={expanded && Object.keys(this.state.children_data).length === 2? aligner[i]:"center"}
+									align={expanded ? aligner[i]:"center"}
 									style={{
 										textTransform: "capitalize",
 										marginLeft: 10,
@@ -630,6 +631,7 @@ class LibraryEnrichment extends React.PureComponent {
 						yAxis: entry.scores["odds ratio"],
 						xAxis: -Math.log(entry.scores["p-value"]),
 						value: entry.scores["p-value"],
+						actual_value: entry.scores[this.state.order_field],
 						color: entry.scores["p-value"] < 0.05 ? color: inactiveColor,
 						id: entry.id,
 						direction,

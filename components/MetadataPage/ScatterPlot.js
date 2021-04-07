@@ -25,7 +25,7 @@ export const ScatterPlot = (props) => {
 		yAxisLabel,
 		xAxisLabel,
 		height=350,
-		width=350} = props
+		width=450} = props
 	return (
 		<ScatterChart
 			width={width}

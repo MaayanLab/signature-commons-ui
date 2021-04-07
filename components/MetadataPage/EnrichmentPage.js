@@ -500,10 +500,12 @@ export default class EnrichmentPage extends React.PureComponent {
 	ChildComponent = () => {
 		if (this.state.children_count === undefined || this.state.entry_object === null) return <LinearProgress />
 		const entry_name = (this.state.entry.info.name || {}).text || this.props.match.params.id
-		const children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
 		const count = this.state.children_count[this.state.entry_object.child_model]
+		const children_name = count === 1 ? this.props.preferred_name_singular[this.state.entry_object.child_model].toLowerCase():
+											this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
+		
 		let label = this.props.results_title
-		if (label === undefined){
+		if (label === undefined || label === null){
 			if (this.props.model === "signatures"){
 				if ((this.state.entry.data.library || {}).dataset_type === "rank_matrix") return null
 				label = `The input ${this.props.preferred_name_singular.signatures.toLowerCase()} has ${count} overlapping ${children_name} with ${entry_name}`
