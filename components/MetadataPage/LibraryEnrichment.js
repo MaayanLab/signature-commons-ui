@@ -136,7 +136,10 @@ class LibraryEnrichment extends React.PureComponent {
 					id: 'name',
 					numeric: false,
 					disablePadding: false,
-					label: e.info.name.label
+					label: e.info.name.label,
+					style: {
+						padding: "2px 0px 2px 10px"
+					}
 				})
 			}
 			for (const tag of e.info.tags.sort((a,b)=>a.priority - b.priority)){
@@ -147,7 +150,10 @@ class LibraryEnrichment extends React.PureComponent {
 							id: tag.label,
 							numeric: false,
 							disablePadding: false,
-							label: tag.label
+							label: tag.label,
+							style: {
+								padding: "2px 0px 2px 10px"
+							}
 						})
 					}
 				}
@@ -161,7 +167,10 @@ class LibraryEnrichment extends React.PureComponent {
 							id: tag.label,
 							numeric: true,
 							disablePadding: false,
-							label: tag.label
+							label: tag.label,
+							style: {
+								padding: "2px 0px 2px 10px"
+							}
 						})
 					}
 				}
@@ -254,6 +263,7 @@ class LibraryEnrichment extends React.PureComponent {
 						component="th"
 						scope="row"
 						key={`${h.id}-${row.name}`}
+						style={h.style}
 					>
 						<a href={row.endpoint}>{row[h.id]}</a>
 					</TableCell>
@@ -263,6 +273,7 @@ class LibraryEnrichment extends React.PureComponent {
 					<TableCell
 						align="right"
 						key={`${h.id}-${row.name}`}
+						style={h.style}
 					>
 						<span>{row[h.id]}</span>
 					</TableCell>
@@ -316,7 +327,7 @@ class LibraryEnrichment extends React.PureComponent {
 								<TableHead>
 									{head_cells.map(c=>(
 									<TableCell
-										align={`${c.id==="name" ? "left": "right"}`}
+										align={"right"}
 										key={c.id}
 										onClick={()=>{
 											if (c.id.startsWith("score")){
@@ -326,8 +337,9 @@ class LibraryEnrichment extends React.PureComponent {
 										style={c.id.startsWith("score") ? {
 											cursor: "pointer"
 										}: {}}
+										style={c.style}
 									>
-										{c.label}
+										<b>{c.label}</b>
 									</TableCell>
 									))}
 								</TableHead>
