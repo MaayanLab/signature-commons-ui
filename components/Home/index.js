@@ -168,7 +168,13 @@ class Home extends React.PureComponent {
   }
 
   signature_search = (props) => {
-    const {nav, preferred_name, preferred_name_singular, resource_order, carousel} = this.props.ui_values
+    const {nav,
+      preferred_name,
+      preferred_name_singular,
+      resource_order,
+      carousel,
+      library_priority,
+      results_title} = this.props.ui_values
     const reverse_preferred = Object.entries(preferred_name).reduce((names,[k,v])=>{
       names[v] = k
       return names
@@ -207,6 +213,8 @@ class Home extends React.PureComponent {
                     model={model}
                     enrichment_tabs={enrichment_tabs}
                     carousel={carousel}
+                    library_priority={library_priority}
+                    results_title={results_title}
                     {...props}
       />
     )
@@ -230,7 +238,9 @@ class Home extends React.PureComponent {
                     nav={this.props.ui_values.nav}
                     label={props.match.params.label}
                     metadata_resolver={this.state.metadata_resolver}
-			              enrichment_resolver={this.state.enrichment_resolver}
+                    enrichment_resolver={this.state.enrichment_resolver}
+                    library_priority={this.props.ui_values.library_priority}
+                    results_title={this.props.ui_values.results_title}
                     {...props}
       />
     )

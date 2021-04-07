@@ -161,7 +161,9 @@ export const defaultUIValues = {
           alt: "input form"
         }
       ]
-    }
+    },
+    library_priority: {},
+    results_title: null,
 }
 
 export const defaultTheme = {
