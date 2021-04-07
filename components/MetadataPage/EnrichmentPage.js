@@ -187,8 +187,8 @@ export default class EnrichmentPage extends React.PureComponent {
 					</Tooltip>
 				),
 				props: {
-					icon: expanded === e.data.id ? "mdi-24px mdi-table-eye-off": "mdi-24px mdi-table-eye",
-					text: expanded === e.data.id ? "Hide Table": "Show Table",
+					icon: expanded === e.data.id ? "mdi-24px mdi-arrow-collapse-all": "mdi-24px mdi-arrow-expand-all",
+					text: expanded === e.data.id ? "Expand": "Collapse",
 					onClick: () => this.handleExpandClick(e.data.id),
 				}
 			}]
@@ -211,6 +211,7 @@ export default class EnrichmentPage extends React.PureComponent {
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
 			const {entry_object} = this.state
+			const library_priority = this.props.library_priority
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
 			const {limit=0,
@@ -224,8 +225,10 @@ export default class EnrichmentPage extends React.PureComponent {
 			const children_object = await this.state.entry_object.children(final_query)
 			const children_count = children_object.count
 			const children_results = children_object[this.state.entry_object.child_model]
-			const children = this.process_children_values(Object.values(children_results), this.state.expanded)
-			
+			let children = this.process_children_values(Object.values(children_results), this.state.expanded)
+			if (Object.keys(library_priority).length > 0) {
+				children = children.sort((a,b)=>((library_priority[a.data.id] || children.length) - (library_priority[b.data.id] || children.length)))
+			}
 			// if (!this.state.paginate) this.get_value_count(where, query)
 			this.setState({
 				children_count,
@@ -499,15 +502,17 @@ export default class EnrichmentPage extends React.PureComponent {
 		const entry_name = (this.state.entry.info.name || {}).text || this.props.match.params.id
 		const children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
 		const count = this.state.children_count[this.state.entry_object.child_model]
-		let label
-		if (this.props.model === "signatures"){
-			if ((this.state.entry.data.library || {}).dataset_type === "rank_matrix") return null
-			label = `The input ${this.props.preferred_name_singular.signatures.toLowerCase()} has ${count} overlapping ${children_name} with ${entry_name}`
-		}else if (this.props.model === "libraries") {
-			if (count === 100) label = `Top ${count} enriched terms in ${entry_name}`
-			else label = `There are ${count} enriched terms in ${entry_name}`
-		}else if (this.props.model === "resources") {
-			label = `Top enriched terms from ${count} ${children_name} in ${entry_name}`
+		let label = this.props.results_title
+		if (label === undefined){
+			if (this.props.model === "signatures"){
+				if ((this.state.entry.data.library || {}).dataset_type === "rank_matrix") return null
+				label = `The input ${this.props.preferred_name_singular.signatures.toLowerCase()} has ${count} overlapping ${children_name} with ${entry_name}`
+			}else if (this.props.model === "libraries") {
+				if (count === 100) label = `Top ${count} enriched terms in ${entry_name}`
+				else label = `There are ${count} enriched terms in ${entry_name}`
+			}else if (this.props.model === "resources") {
+				label = `Top enriched terms from ${count} ${children_name} in ${entry_name}`
+			}
 		}
 		return(
 			<Grid container>
