@@ -9,6 +9,7 @@ export const DataTable = (props) => {
         BottomComponents=[],
         InfoCardComponent=InfoCard,
         onChipClick,
+        activeIcon=true,
         entries} = props
     return(
         <Grid container>
@@ -27,7 +28,10 @@ export const DataTable = (props) => {
                 {typeof entries === 'undefined' || entries.length == 0 ?
                 null:
                 entries.map(entry=>(
-                    <InfoCardComponent key={entry.data.id} {...entry} onChipClick={onChipClick}/>
+                    <InfoCardComponent key={entry.data.id}
+                        activeIcon={activeIcon}
+                        {...entry}
+                        onChipClick={onChipClick}/>
                 ))}
             </Grid>
             {BottomComponents.map(comp=>{

@@ -27,6 +27,7 @@ export const InfoCard = ({
     LeftComponents=[],
     RightComponents=[],
     BottomComponents=[],
+    activeIcon=true,
     ...props }) => {
     const default_tag_icon = 'mdi-tag-text'
     return (
@@ -39,16 +40,18 @@ export const InfoCard = ({
           <Grid container>
             <Grid item md={11} sm={10} xs={9}>
               <Grid container>
-                <Grid item md={2} xs={4} style={{ textAlign: 'center' }}>
-                  <CardMedia {...info.icon}>
-                    <IconButton {...info.icon}/>
-                  </CardMedia>
-                  {LeftComponents.map((comp, i)=>{
-                    const {component, props} = comp
-                    return <div key={i}>{component(props)}</div>
-                  })}
-                </Grid>
-                <Grid item md={10} xs={8}>
+                { activeIcon ?
+                  <Grid item md={2} xs={4} style={{ textAlign: 'center' }}>
+                    <CardMedia {...info.icon}>
+                      <IconButton {...info.icon}/>
+                    </CardMedia>
+                    {LeftComponents.map((comp, i)=>{
+                      const {component, props} = comp
+                      return <div key={i}>{component(props)}</div>
+                    })}
+                  </Grid>: null
+                }
+                <Grid item md={activeIcon ? 10: 12} xs={activeIcon ? 8: 12}>
                   <Grid container>
                     <Grid item xs={12}>
                       <Highlight
