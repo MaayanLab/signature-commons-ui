@@ -22,11 +22,11 @@ const UnexpandedCards = (props) => {
 	}
 	return(
 		<Grid item xs={12} sm={6} md={props.md}>
-			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 800}}>
+			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 700}}>
 				<CardHeader
-					avatar={
-						<IconComponent {...entry.info.icon}/>
-					}
+					// avatar={
+					// 	<IconComponent {...entry.info.icon}/>
+					// }
 					title={<Typography variant="h6">{entry.info.name.text}</Typography>}
 					action={
 						entry.RightComponents.map((comp, i)=>{
@@ -77,7 +77,7 @@ export const EnrichmentResult = (props) => {
 							<Typography variant={"h4"} style={{marginBottom: 10}}>{label}</Typography>
 						</Grid>
 						<Grid item xs={12}>
-							<DataTable entries={expanded_entry} {...DataTableProps}/>
+							<DataTable entries={expanded_entry} {...DataTableProps} activeIcon={false}/>
 						</Grid>
 						{unexpanded_entries.map(entry=>(
 							<UnexpandedCards entry={entry} md={md} />
