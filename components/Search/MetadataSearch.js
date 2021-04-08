@@ -362,7 +362,8 @@ export default class MetadataSearch extends React.PureComponent {
 					searching={this.state.searching}
 					homepage={this.state.homepage}
 					placeholder={this.props.placeholder}
-					about={this.props.about}
+					landing_tutorial={this.props.landing_tutorial}
+					PaperProps={{style:{width: "100%", padding: 20}}}
 					search_terms={this.state.query.search || []}
 					search_examples={this.props.search_examples}
 					filters={Object.values(this.state.filters)}
@@ -438,5 +439,5 @@ MetadataSearch.propTypes = {
 		lib_to_resource: PropTypes.objectOf(PropTypes.string),
 		resource_to_lib: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
 	}),
-	about: PropTypes.string,
+	landing_md: PropTypes.string,
 }

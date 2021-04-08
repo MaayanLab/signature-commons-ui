@@ -18,6 +18,7 @@ import {IconComponentButton} from '../DataTable'
 import EnrichmentPage from '../MetadataPage/EnrichmentPage'
 import Collapse from '@material-ui/core/Collapse';
 import Carousel from 'react-material-ui-carousel';
+import Paper from '@material-ui/core/Paper';
 
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
@@ -172,8 +173,8 @@ const Results = (props) => {
 	const {
 		entries,
 		searching,
-		type,
 		EnrichmentPageProps,
+		header="",
 	} = props
 	if (entries === null && !searching) return null
 	else if (searching) {
@@ -191,8 +192,18 @@ const Results = (props) => {
 		}else {
 			return (
 				<Grid container spacing={3}>
+					{ header === "" ? null :
+						<React.Fragment>
+							<Grid item xs={1}/>
+							<Grid item xs={11}>
+								<Typography variant={'h6'} style={{marginBottom: 20}}>
+									{header}
+								</Typography>
+							</Grid>
+						</React.Fragment>
+					}
 					{entries.map(entry=>(
-						<Grid item xs={12} sm={6} md={md} key={entry.data.id} align="center">
+						<Grid item xs={6} md={md} key={entry.data.id} align="center">
 							<IconComponentButton 
 								subtitle={entry.info.name.text}
 								description={entry.info.subtitle.text || entry.data.id}
@@ -227,17 +238,44 @@ export const ResourceCustomTabs = withStyles(() => ({
 
 
 const CarouselItem = (props) => {
+	const {ContainerProps, ItemProps, ImageProps, CaptionProps, src, alt} = props
 	return(
 		<Grid
 			container
-			direction="column"
 			justify="center"
 			alignItems="center"
+			style={{height: 400}}
+			{...ContainerProps}
 		>
-			<Grid item style={{height:350, width: 500}} align="center">
-				<img style={{maxHeight:350, maxWidth: 500}} {...props}></img>
+			<Grid item xs={12} style={{height:350}} align="center" {...ItemProps}>
+				<img style={{maxHeight:350, maxWidth: 500}} src={src} alt={alt} {...ImageProps}></img>
 			</Grid>
+			{props.caption === undefined ? null:
+				<Grid item xs={12}>
+					<Typography variant="body1" align="center" {...CaptionProps}><b>{props.caption}</b></Typography>
+				</Grid>
+			}
 		</Grid>
+	)
+}
+
+export const CarouselComponent = (props) => {
+	const {header, content, PaperProps} = props
+	if (content.length === 0 ) return null
+	return(
+		<React.Fragment>
+			<Typography variant={'h6'} style={{textTransform: "capitalize"}}>{header}</Typography>
+			<Paper style={{padding: 20, width: 500}} {...PaperProps}>
+				{ content.length === 1 ?
+					<CarouselItem key={content[0].alt} {...content[0]} />:
+					<Carousel interval={8000}>
+						{
+							content.map(props => <CarouselItem key={props.alt} {...props} /> )
+						}
+					</Carousel>
+				}
+			</Paper>
+		</React.Fragment>
 	)
 }
 
@@ -245,13 +283,12 @@ export const SignatureSearchComponent = (props) => {
 	const {
 		searching=false,
 		SearchTabProps,
-		carousel,
+		landing_tutorial,
 		ResultsProps,
 		download_input,
 		type,
 		entries,
 	} = props
-
 	const [expanded, setExpanded] = React.useState(false);
 
 	const handleExpandClick = () => {
@@ -316,16 +353,12 @@ export const SignatureSearchComponent = (props) => {
 						<SigForm {...props}/>
 					</Grid>
 					<Grid item xs={12} md={5}>
-						<Carousel>
-							{
-								carousel.map(props => <CarouselItem key={props.alt} {...props} /> )
-							}
-						</Carousel>
+						<CarouselComponent {...landing_tutorial}/>
 					</Grid>
 				</React.Fragment>
 			}
 			<Grid item xs={12} md={1}/>
-			<Grid item xs={12} md={10} style={{paddingTop: 50}}>
+			<Grid item xs={12} md={10}>
 				<Results {...ResultsProps} type={type} searching={searching} entries={entries}/>
 			</Grid>
 		</Grid>

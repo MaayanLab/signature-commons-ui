@@ -11,7 +11,7 @@ import { Typography, Divider } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress'
 import MarkdownComponent from '../Markdown/MarkdownComponent'
-
+import { CarouselComponent } from './SignatureSearchComponent'
 
 export const MetadataSearchComponent = (props) => {
 	const {
@@ -29,11 +29,11 @@ export const MetadataSearchComponent = (props) => {
 		placeholder,
 		searching,
 		homepage,
-		about
+		PaperProps,
+		landing_tutorial,
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
-	console.log(placeholder)
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12} md={1}/>
@@ -86,7 +86,7 @@ export const MetadataSearchComponent = (props) => {
 							{search_examples.map((v,i)=>(
 								<React.Fragment>
 									<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
-										if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
+										if (search_terms.indexOf(v)<0) onSearch([v])
 									}}>
 										{v}
 									</Button>
@@ -95,29 +95,26 @@ export const MetadataSearchComponent = (props) => {
 							))}
 						</Typography>
 					</Grid>
-					<Grid item xs={12} align="center">
-						<ResultsTab
-							tabsProps={{
-								centered: true,
-								variant: "fullWidth",
-							}}
-							divider
-							{...ModelTabProps}
-						/>
-					</Grid>
+					{ ModelTabProps.tabs.length === 0 ? null:
+						<Grid item xs={12} align="center">
+							<ResultsTab
+								tabsProps={{
+									centered: true,
+									variant: "fullWidth",
+								}}
+								divider
+								{...ModelTabProps}
+							/>
+						</Grid>
+					}
 				</Grid>
 			</Grid>
 			{ homepage ?
-				<Grid item xs={12}>
+				<Grid item xs={12} style={{marginTop: 25, marginBottom: 25}}>
 					<Grid container>
 						<Grid item xs={12} md={1}/>
-						<Grid item xs={12} md={8}>
-							<Typography align="center" variant="h5">
-								Abstract
-							</Typography>
-							<Typography align="justify">
-								<MarkdownComponent url={about} />
-							</Typography>
+						<Grid item xs={12} md={8} align="center">
+							<CarouselComponent {...landing_tutorial} PaperProps={PaperProps}/>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -151,7 +148,7 @@ MetadataSearchComponent.propTypes = {
 	searching: PropTypes.bool,
 	homepage: PropTypes.bool,
 	placeholder: PropTypes.string,
-	about: PropTypes.string,
+	landing_md: PropTypes.string,
 	search_terms: PropTypes.arrayOf(PropTypes.string),
 	search_examples: PropTypes.arrayOf(PropTypes.string),
 	chipRenderer: PropTypes.func,

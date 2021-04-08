@@ -883,7 +883,7 @@ export default class SignatureSearch extends React.PureComponent {
 						searching={this.state.searching}
 						resolving={this.state.resolving}
 						library_priority={this.props.library_priority}
-						carousel={this.props.carousel[this.props.match.params.type] || []}
+						landing_tutorial={this.props.landing_tutorial[this.props.match.params.type] || []}
 						download_input={()=>download_input(this.state.input)}
 						entries={this.state.resources}
 						ResultsProps={{
@@ -894,6 +894,7 @@ export default class SignatureSearch extends React.PureComponent {
 							setVisualization: this.setVisualization,
 							entity_name: this.props.preferred_name.entities.toLowerCase(),
 							EnrichmentPageProps: this.props,
+							header: `Significant terms identified for ${this.props.preferred_name.resources}`
 						}}
 						PaginationProps={{
 							page: this.state.page,
