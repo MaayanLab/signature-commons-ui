@@ -92,38 +92,6 @@ class About extends React.PureComponent {
             }
         </Carousel>
     )
-    return(
-      <React.Fragment>
-        <DonutChart
-          data={data}
-          pie_chart_style={{Pie: {fill: this.props.theme.palette.primaryVisualization.main}}}
-          onClick={(data)=>{
-            const search = data.payload.name
-            this.props.history.push({
-              pathname: `${nav.MetadataSearch.endpoint}/${preferred_name[p.model]}`,
-              search: `?query={"filters":{"${p.field}":["${search}"]}}`,
-            })
-          }}
-        />
-        <Typography variant={'button'} align="center">{p.name}</Typography>
-        <CustomTabs
-          value={this.state.pie}
-          onChange={(event, pie)=>this.setState({pie})}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="icon tabs example"
-          centered
-        >
-          {Object.keys(pie).map(p=>(
-            <CustomTab value={p}
-              key={p}
-              icon={<FiberManualRecordIcon fontSize="small"/>}
-            />
-          ))}
-        </CustomTabs>
-      </React.Fragment>
-    ) 
-    
 
   }
 
@@ -132,7 +100,6 @@ class About extends React.PureComponent {
     return (
       <Grid container spacing={1} style={{marginBottom: 50}}>
           <Grid item xs={12} lg={6}>
-            <Typography variant={'h4'} gutterBottom>About</Typography>
             <Typography align="justify">
               <MarkdownComponent url={this.props.ui_values.about_md || this.props.ui_values.about} />
             </Typography>
