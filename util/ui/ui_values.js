@@ -150,7 +150,7 @@ export const defaultUIValues = {
     resource_order: {},
     about: "./static/about.md",
     homepage_text: "Search signatures, genes, or datasets.",
-    carousel: {
+    landing_tutorial: {
       Rank: [
         {
           src: "./static/lincs/lincs-input.png",
