@@ -56,7 +56,7 @@ export function Nav(props) {
           className={classes.menuItem}
           href={`#${ui_values.nav[search_tab_list[0]].endpoint}`}
         >
-          <Typography variant={"h5"}>
+          <Typography variant={"h6"}>
             {ui_values.nav[search_tab_list[0]].navName || ui_values.nav[search_tab_list[0]].endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -67,7 +67,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav[search_tab_list[1]].endpoint}`}
         >
-          <Typography variant={"h5"}>
+          <Typography variant={"h6"}>
             {ui_values.nav[search_tab_list[1]].navName || ui_values.nav[search_tab_list[1]].endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -78,7 +78,7 @@ export function Nav(props) {
           className={ classes.menuItem}
           href={`#${ui_values.nav.Resources.endpoint}`}
         >
-          <Typography variant={"h5"}>
+          <Typography variant={"h6"}>
             {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </ListItemLink> : null
@@ -93,7 +93,7 @@ export function Nav(props) {
               rel = "noopener noreferrer"
               key={nav.navName}
             >
-                <Typography variant={"h5"}>
+                <Typography variant={"h6"}>
                   {nav.navName}
                 </Typography>
             </ListItemLink>
@@ -105,7 +105,7 @@ export function Nav(props) {
               href={`#${nav.endpoint}`}
               key={nav.navName}
             >
-              <Typography variant={"h5"}>
+              <Typography variant={"h6"}>
                 {nav.navName}
               </Typography>
             </ListItemLink>
@@ -118,7 +118,7 @@ export function Nav(props) {
         className={ classes.menuItem}
         href={'#/API'}
       >
-         <Typography variant={"h5"}>
+         <Typography variant={"h6"}>
             API
           </Typography>
       </ListItemLink>
@@ -127,7 +127,7 @@ export function Nav(props) {
         className={ classes.menuItem}
         href={'#/About'}
       >
-         <Typography variant={"h5"}>
+         <Typography variant={"h6"}>
             About
           </Typography>
       </ListItemLink>
