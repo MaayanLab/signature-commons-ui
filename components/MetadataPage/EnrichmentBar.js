@@ -5,6 +5,10 @@ import {
 } from 'recharts';
 import Lazy from '../Lazy'
 import Color from 'color'
+import { useRechartToPng } from "recharts-to-png";
+import FileSaver from "file-saver";
+import Downloads from '../Downloads'
+import Grid from '@material-ui/core/Grid'
 
 const renderCustomizedLabel = (props) => {
 	const {
@@ -43,36 +47,67 @@ export const EnrichmentBar = (props) => {
 		   maxHeight=300,
 		   barSize=23,
 		   width=450,
+		   filename="bar",
+		   download=false,
 		} = props
-	const height = data.length === 10 ? maxHeight: maxHeight/10 * data.length
+	// const [png, ref] = useRechartToPng();
+	// const handleDownload = React.useCallback(async () => {
+	// 	// Use FileSaver to download the PNG
+	// 	FileSaver.saveAs(png, `${filename}.png`);
+	//   }, [png]);
+	  const height = data.length === 10 ? maxHeight: maxHeight/10 * data.length
 	return(
-		<BarChart layout="vertical" height={height} width={width} data={data} {...barChartProps}>
-			<Tooltip content={<CustomTooltip/>} />
-			<Bar dataKey="value" fill={color} barSize={barSize} {...barProps}>
-				<LabelList dataKey="name" position="left" content={renderCustomizedLabel} fill={fontColor}/>
-				{data.map((entry, index) => {
-					return <Cell key={`${field}-${index}`} fill={entry.color} />
-				}
-				)}
-			</Bar>
-			<XAxis type="number" domain={[
-				dataMin => {
-					if (dataMin < 0) {
-						return dataMin
-					} else {
-						return dataMin-(dataMin/100)
-					}
-				},
-				dataMax => {
-					if (dataMax > 0) {
-						return dataMax
-					} else {
-						return dataMax-(dataMax/100)
-					}
-				},
-			]} hide/>
-			<YAxis type="category" hide/>
-		</BarChart>
+		<Grid container>
+			{/* { download ?
+				<Grid item xs={12} align="right" style={{marginRight: 10}}>
+					<Downloads 
+						data={[
+							{
+								text: `Download Bar Chart`,									
+								onClick: handleDownload,
+								icon: "mdi-download"
+							}
+						]} 
+					/>
+				</Grid>: null
+			} */}
+			<Grid item xs={12}>
+				<BarChart
+					layout="vertical"
+					height={height}
+					width={width}
+					data={data}
+					{...barChartProps}
+					// ref={ref} // Save the ref of the chart
+				>
+					<Tooltip content={<CustomTooltip/>} />
+					<Bar dataKey="value" fill={color} barSize={barSize} {...barProps}>
+						<LabelList dataKey="name" position="left" content={renderCustomizedLabel} fill={fontColor}/>
+						{data.map((entry, index) => {
+							return <Cell key={`${field}-${index}`} fill={entry.color} />
+						}
+						)}
+					</Bar>
+					<XAxis type="number" domain={[
+						dataMin => {
+							if (dataMin < 0) {
+								return dataMin
+							} else {
+								return dataMin-(dataMin/100)
+							}
+						},
+						dataMax => {
+							if (dataMax > 0) {
+								return dataMax
+							} else {
+								return dataMax-(dataMax/100)
+							}
+						},
+					]} hide/>
+					<YAxis type="category" hide/>
+				</BarChart>
+			</Grid>
+		</Grid>
 	)
 }
 
