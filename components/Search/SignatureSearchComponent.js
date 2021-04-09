@@ -105,7 +105,7 @@ const SigForm = (props={}) => {
 					</Typography>
 				</Grid>
 			}
-			<Grid item xs={12}>
+			<Grid item xs={12} align="left">
 				{type === 'Overlap' ?
 					<React.Fragment>
 						<TextFieldSuggest {...TextFieldSuggestProps}
@@ -298,71 +298,57 @@ export const SignatureSearchComponent = (props) => {
 
 	return(
 		<Grid container spacing={1}  style={{marginBottom: 20}}>
-			<Grid item xs={12} md={1}/>
-			<Grid item xs={8}>
-				<Grid container>
-					{ SearchTabProps.tabs.length < 2 ? null:
-						<Grid item xs={12}>
-							<ResultsTab
-								tabsProps={{
-									centered: true,
-									variant: "fullWidth",
-								}}
-								tabProps={{
-									style:{
-										minWidth: 180
-									}
-								}}
-								divider
-								{...SearchTabProps}
-							/>
-						</Grid>
-					}			
-					<Grid item xs={12} align="center" style={{marginTop: 10}}>
-						<Typography variant="h6">{description}</Typography>
-					</Grid>		
-				</Grid>
+			<Grid item xs={12} align="center">
+				{ SearchTabProps.tabs.length < 2 ? null:
+					<ResultsTab
+						tabsProps={{
+							centered: true
+						}}
+						tabProps={{
+							style:{
+								minWidth: 180
+							}
+						}}
+						divider
+						{...SearchTabProps}
+					/>
+				}
 			</Grid>
 			{ entries!==null ?
-				<Grid item xs={3}>
-					<Tooltip title="Click to view input" placement="bottom">
-						
-						<Button onClick={handleExpandClick}
-							aria-expanded={expanded}
-							aria-label="show more"
-						>
-							<span className="mdi mdi-note-text-outline mdi-24px"/>
-						</Button>
-					</Tooltip>
-					<Tooltip title="Download Input" placement="bottom">
-						
-						<Button onClick={download_input}
-							aria-label="download"
-						>
-							<span className="mdi mdi-download mdi-24px"/>
-						</Button>
-					</Tooltip>
-				</Grid>: null
-			}
-			<Grid item xs={12} md={1}/>
-			{ entries!==null ?  
-				<React.Fragment>
-					<Grid item md={1}/>
-					<Grid item xs={12} md={6}>
-						<Collapse in={expanded} timeout="auto" unmountOnExit><SigForm {...props}/></Collapse>
+					<Grid item xs={2} align="left">
+						<Tooltip title="Click to view input" placement="bottom">
+							<Button onClick={handleExpandClick}
+								aria-expanded={expanded}
+								aria-label="show more"
+							>
+								<span className="mdi mdi-note-text-outline mdi-24px"/>
+							</Button>
+						</Tooltip>
+						<Tooltip title="Download Input" placement="bottom">
+							
+							<Button onClick={download_input}
+								aria-label="download"
+							>
+								<span className="mdi mdi-download mdi-24px"/>
+							</Button>
+						</Tooltip>
+					</Grid>: null
+				}			
+			<Grid item xs={ entries===null ? 12: 10} align="center" >
+				<Collapse in={expanded || entries === null} timeout="auto" unmountOnExit>
+					<Grid container spacing={1}>
+						<Grid item xs={12} md={entries===null ? 7: 9} align={"right"}>
+							<SigForm {...props}/>
+						</Grid>
+						{entries!==null ? null:
+							<Grid item xs={12} md={5} align={"left"}>
+								<CarouselComponent {...tutorial}/>
+							</Grid>
+						}
 					</Grid>
-				</React.Fragment>:
-				<React.Fragment>
-					<Grid item xs={12} md={6}>
-						<SigForm {...props}/>
-					</Grid>
-					<Grid item xs={12} md={5}>
-						<CarouselComponent {...tutorial}/>
-					</Grid>
-				</React.Fragment>
-			}
-			<Grid item xs={12} md={1}/>
-			<Grid item xs={12} md={10}>
+				</Collapse>
+			</Grid>
+			<Grid item xs={12}>
 				<Results {...ResultsProps} type={type} searching={searching} entries={entries}/>
 			</Grid>
 		</Grid>
