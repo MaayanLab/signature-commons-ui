@@ -261,7 +261,7 @@ const CarouselItem = (props) => {
 
 export const CarouselComponent = (props) => {
 	const {header, content, PaperProps} = props
-	if (content.length === 0 ) return null
+	if (content === undefined || content.length === 0 ) return null
 	return(
 		<React.Fragment>
 			<Typography variant={'h6'} style={{textTransform: "capitalize"}}>{header}</Typography>
@@ -283,7 +283,8 @@ export const SignatureSearchComponent = (props) => {
 	const {
 		searching=false,
 		SearchTabProps,
-		landing_tutorial,
+		tutorial,
+		description,
 		ResultsProps,
 		download_input,
 		type,
@@ -353,7 +354,10 @@ export const SignatureSearchComponent = (props) => {
 						<SigForm {...props}/>
 					</Grid>
 					<Grid item xs={12} md={5}>
-						<CarouselComponent {...landing_tutorial}/>
+						<CarouselComponent {...tutorial}/>
+					</Grid>
+					<Grid item xs={12} align="center">
+						<Typography variant="h6">{description}</Typography>
 					</Grid>
 				</React.Fragment>
 			}

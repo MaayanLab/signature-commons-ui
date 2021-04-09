@@ -362,7 +362,8 @@ export default class MetadataSearch extends React.PureComponent {
 					searching={this.state.searching}
 					homepage={this.state.homepage}
 					placeholder={this.props.placeholder}
-					landing_tutorial={this.props.landing_tutorial}
+					tutorial={this.props.nav.MetadataSearch.props.tutorial}
+					description={this.props.nav.MetadataSearch.props.description}
 					PaperProps={{style:{width: "100%", padding: 20}}}
 					search_terms={this.state.query.search || []}
 					search_examples={this.props.search_examples}

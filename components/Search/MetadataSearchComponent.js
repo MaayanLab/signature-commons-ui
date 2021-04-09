@@ -30,7 +30,8 @@ export const MetadataSearchComponent = (props) => {
 		searching,
 		homepage,
 		PaperProps,
-		landing_tutorial,
+		tutorial,
+		description
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
@@ -114,7 +115,9 @@ export const MetadataSearchComponent = (props) => {
 					<Grid container>
 						<Grid item xs={12} md={1}/>
 						<Grid item xs={12} md={8} align="center">
-							<CarouselComponent {...landing_tutorial} PaperProps={PaperProps}/>
+							<Typography variant="h6">{description}</Typography>
+							<CarouselComponent {...tutorial}
+							description PaperProps={PaperProps}/>
 						</Grid>
 					</Grid>
 				</Grid>
