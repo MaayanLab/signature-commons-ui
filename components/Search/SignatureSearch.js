@@ -884,7 +884,7 @@ export default class SignatureSearch extends React.PureComponent {
 						resolving={this.state.resolving}
 						library_priority={this.props.library_priority}
 						tutorial={this.props.nav.SignatureSearch.props.types[this.props.match.params.type].tutorial}
-						description={this.props.nav.MetadataSearch.props.description}
+						description={this.props.nav.SignatureSearch.props.types[this.props.match.params.type].description}
 						download_input={()=>download_input(this.state.input)}
 						entries={this.state.resources}
 						ResultsProps={{
