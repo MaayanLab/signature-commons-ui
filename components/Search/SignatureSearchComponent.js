@@ -337,6 +337,11 @@ export const SignatureSearchComponent = (props) => {
 			<Grid item xs={ entries===null ? 12: 10} align="center" >
 				<Collapse in={expanded || entries === null} timeout="auto" unmountOnExit>
 					<Grid container spacing={1}>
+						{entries!==null ? null:
+							<Grid item xs={12} align="center">
+								<Typography variant="h6" style={{marginTop: 10}}>{description}</Typography>
+							</Grid>
+						}
 						<Grid item xs={12} md={entries===null ? 7: 9} align={"right"}>
 							<SigForm {...props}/>
 						</Grid>
