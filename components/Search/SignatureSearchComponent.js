@@ -317,7 +317,10 @@ export const SignatureSearchComponent = (props) => {
 								{...SearchTabProps}
 							/>
 						</Grid>
-					}
+					}			
+					<Grid item xs={12} align="center" style={{marginTop: 10}}>
+						<Typography variant="h6">{description}</Typography>
+					</Grid>		
 				</Grid>
 			</Grid>
 			{ entries!==null ?
@@ -355,9 +358,6 @@ export const SignatureSearchComponent = (props) => {
 					</Grid>
 					<Grid item xs={12} md={5}>
 						<CarouselComponent {...tutorial}/>
-					</Grid>
-					<Grid item xs={12} align="center">
-						<Typography variant="h6">{description}</Typography>
 					</Grid>
 				</React.Fragment>
 			}

@@ -41,7 +41,7 @@ export const MetadataSearchComponent = (props) => {
 			<Grid item xs={12} md={8}>
 				<Grid container spacing={1}>
 					{/* Search Components */}
-					<Grid item xs={12}>
+					<Grid item xs={12} align="center">
 						{ SearchTabProps.tabs.length < 2 ? null:
 							<ResultsTab
 								tabsProps={{
@@ -57,6 +57,7 @@ export const MetadataSearchComponent = (props) => {
 								{...SearchTabProps}
 							/>
 						}
+						<Typography variant="h6" style={{marginTop: 10}}>{description}</Typography>
 						<ChipInput 
 							input={search_terms}
 							onSubmit={(term)=>{
@@ -115,7 +116,6 @@ export const MetadataSearchComponent = (props) => {
 					<Grid container>
 						<Grid item xs={12} md={1}/>
 						<Grid item xs={12} md={8} align="center">
-							<Typography variant="h6">{description}</Typography>
 							<CarouselComponent {...tutorial}
 							description PaperProps={PaperProps}/>
 						</Grid>
