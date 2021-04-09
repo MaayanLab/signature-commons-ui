@@ -161,7 +161,6 @@ class Home extends React.PureComponent {
                     search_examples={(search_props.examples || {})[model] || []}
                     resolver={this.state.metadata_resolver}
                     placeholder={search_props.placeholder}
-                    landing_tutorial={this.props.ui_values.landing_tutorial.MetadataSearch}
                     {...props}
       />
     )
@@ -172,7 +171,6 @@ class Home extends React.PureComponent {
       preferred_name,
       preferred_name_singular,
       resource_order,
-      landing_tutorial,
       library_priority,
       results_title} = this.props.ui_values
     const reverse_preferred = Object.entries(preferred_name).reduce((names,[k,v])=>{
@@ -212,7 +210,6 @@ class Home extends React.PureComponent {
                     resolver={this.state.enrichment_resolver}
                     model={model}
                     enrichment_tabs={enrichment_tabs}
-                    landing_tutorial={landing_tutorial}
                     library_priority={library_priority}
                     results_title={results_title}
                     {...props}
