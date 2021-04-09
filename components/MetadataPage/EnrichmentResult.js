@@ -16,7 +16,7 @@ const UnexpandedCards = (entry) => {
 	}
 	return(
 		<Grid item xs={12} sm={6} md={4}>
-			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 700}}>
+			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 750}}>
 				<CardHeader
 					// avatar={
 					// 	<IconComponent {...entry.info.icon}/>
