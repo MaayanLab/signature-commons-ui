@@ -586,7 +586,7 @@ class LibraryEnrichment extends React.PureComponent {
 										value: "scatter"
 									}
 								]}
-								tab={this.state.visualization}
+								value={this.state.visualization}
 								handleChange={(t)=>this.setState({visualization: t.value})}
 								tabsProps={{centered: true}}
 							/>

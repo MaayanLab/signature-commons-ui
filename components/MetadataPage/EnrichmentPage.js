@@ -65,11 +65,6 @@ export default class EnrichmentPage extends React.PureComponent {
 
 	handleExpandClick = (expanded) => {
 		if (expanded === this.state.expanded) expanded = null
-		// setTimeout(function () {
-		// 	window.scrollTo({top: 0, behavior: 'smooth'})
-		// },1)
-		// const entries = this.state.children
-		// const children = this.process_children_values(entries, this.state.entry_object.child_model)
 		this.setState({
 			expanded
 		});
