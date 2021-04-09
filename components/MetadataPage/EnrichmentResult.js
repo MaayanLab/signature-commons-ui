@@ -16,7 +16,7 @@ const UnexpandedCards = (entry) => {
 	}
 	return(
 		<Grid item xs={12} sm={6} md={4}>
-			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 500: 700}}>
+			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 700}}>
 				<CardHeader
 					// avatar={
 					// 	<IconComponent {...entry.info.icon}/>
@@ -34,7 +34,7 @@ const UnexpandedCards = (entry) => {
 								   </div>
 						})
 					}
-					style={{paddingBottom: 0}}
+					style={{paddingBottom: 0, height: 50}}
 				/>
 				<CardContent style={{paddingTop: 0}}>
 					{entry.BottomComponents.map((comp, i)=>{
