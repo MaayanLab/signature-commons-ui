@@ -29,7 +29,7 @@ import { ChipInput } from '../SearchComponents'
 import { withTheme } from '@material-ui/core/styles';
 import Downloads from '../Downloads'
 import {ResultsTab} from './ResultsTab'
-
+import Collapse from '@material-ui/core/Collapse';
 class LibraryEnrichment extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -691,9 +691,15 @@ class LibraryEnrichment extends React.PureComponent {
 	}
 
 	render = () => {
-		if (this.props.expanded_id !== null && this.props.expanded_id !== this.props.id) return null
-		if (this.state.children_data === undefined) return <CircularProgress/>
-		return this.data_viz()
+		const expanded = this.props.expanded_id === null || this.props.expanded_id === this.props.id
+		return (
+			<Collapse in={expanded} timeout="auto" unmountOnExit>
+				{ this.state.children_data === undefined ? 
+					<CircularProgress/>:
+					this.data_viz()
+				}
+			</Collapse>
+		)
 	}
 }
 
