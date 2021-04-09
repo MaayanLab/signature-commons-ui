@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
-import {DataTable} from '../DataTable'
+import {InfoCard} from '../DataTable'
 import { Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '@material-ui/core/Card'
@@ -9,20 +9,14 @@ import CardContent from '@material-ui/core/CardContent'
 import CardHeader from '@material-ui/core/CardHeader';
 import {IconComponent} from '../DataTable/IconComponent'
 
-const UnexpandedCards = (props) => {
-	const entry = props.entry
-	const comprops = props.md === 4 ? {
+const UnexpandedCards = (entry) => {
+	const comprops = {
 		bar_props:{width:300, barSize:24, maxHeight:300},
 		scatter_props:{width:300, height:300},
-		expanded: false
-	} : {
-		bar_props:{width:400, barSize:27, maxHeight:300},
-		scatter_props:{width:450, height:450},
-		expanded: false
 	}
 	return(
-		<Grid item xs={12} sm={6} md={props.md}>
-			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 700}}>
+		<Grid item xs={12} sm={6} md={4}>
+			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 500: 700}}>
 				<CardHeader
 					// avatar={
 					// 	<IconComponent {...entry.info.icon}/>
@@ -32,7 +26,11 @@ const UnexpandedCards = (props) => {
 						entry.RightComponents.map((comp, i)=>{
 							const {component, props} = comp
 							return <div key={entry.data.id}>
-										{component(props)}
+										{component({
+											...props,
+											icon: "mdi-24px mdi-arrow-expand-all",
+											text: "Expand",
+										})}
 								   </div>
 						})
 					}
@@ -53,6 +51,12 @@ const UnexpandedCards = (props) => {
 	)
 }
 
+const ExpandedCards = (entry) => (
+	<Grid item xs={12}>
+		<InfoCard {...entry}/>
+	</Grid>
+)
+
 export const EnrichmentResult = (props) => {
 	const {
 		searching=false,
@@ -60,14 +64,31 @@ export const EnrichmentResult = (props) => {
 		DataTableProps,
 		label
 	} = props
-	const expanded_id = DataTableProps.expanded || ''
-	const expanded_entry = []
-	const unexpanded_entries = []
+	const {expanded: expanded_id, RightComponent, BottomComponent} = DataTableProps
+	const Component = expanded_id === null ? UnexpandedCards: ExpandedCards
+	const children = []
 	for (const entry of entries){
-		if (expanded_id === entry.data.id) expanded_entry.push(entry)
-		else unexpanded_entries.push(entry)
+		const child = {
+			...entry,
+			BottomComponents: [{
+				component: BottomComponent,
+				props: {
+					id: entry.data.id,
+					expanded: entry.data.id === expanded_id,
+					expanded_id
+				}
+			}],
+			RightComponents: [{
+				component: RightComponent,
+				props: {
+					id: entry.data.id,
+					icon: entry.data.id === expanded_id ? "mdi-24px mdi-arrow-collapse-all": "mdi-24px mdi-arrow-expand-all",
+					text: entry.data.id === expanded_id ? "Collapse": "Expand"
+				}
+			}]
+		}
+		children.push(<Component key={entry.data.id} {...child}/>)
 	}
-	const md = expanded_entry.length !== 0 && unexpanded_entries.length<3 ? 6:4
 	return(
 		<Grid container spacing={1}>
 			<Grid item xs={12}>
@@ -77,11 +98,10 @@ export const EnrichmentResult = (props) => {
 							<Typography variant={"h4"} style={{marginBottom: 10}}>{label}</Typography>
 						</Grid>
 						<Grid item xs={12}>
-							<DataTable entries={expanded_entry} {...DataTableProps} activeIcon={false}/>
+							<Grid container spacing={1}>
+								{children}
+							</Grid>
 						</Grid>
-						{unexpanded_entries.map(entry=>(
-							<UnexpandedCards entry={entry} md={md} />
-						))}
 					</Grid>
 				}
 			</Grid>

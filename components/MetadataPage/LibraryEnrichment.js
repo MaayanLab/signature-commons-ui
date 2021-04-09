@@ -376,7 +376,6 @@ class LibraryEnrichment extends React.PureComponent {
 		const overlap_text = `${overlap.join(", ")}${children.length>10? "..." : null}`
 		// if (setsize <= 15) overlap_text = overlap.join(", ")
 		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
-		console.log(payload)
 		return(
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
@@ -397,6 +396,12 @@ class LibraryEnrichment extends React.PureComponent {
 		)
 	}
 
+
+	// componentDidUpdate = (prevProps) => {
+	// 	if (prevProps.expanded_id !== this.props.id && this.props.expanded_id === this.props.id){
+	// 		this.process_entry()
+	// 	}
+	// }
 
 	componentDidMount = () => {
 		this.process_entry()
@@ -435,6 +440,7 @@ class LibraryEnrichment extends React.PureComponent {
 							data={this.state.scatter_data}
 							{...nameProps}
 							{...scatter_props}
+							download={this.props.expanded}
 						/>
 					</Grid>
 				)
@@ -467,6 +473,7 @@ class LibraryEnrichment extends React.PureComponent {
 						<EnrichmentBar data={data.bar_data} field={this.state.order_field} fontColor={"#FFF"} 
 							barProps={{isAnimationActive:false}}
 							{...bar_props}
+							download={this.props.expanded}
 						/>
 					</div>
 				</Grid>
@@ -482,11 +489,12 @@ class LibraryEnrichment extends React.PureComponent {
 						<div style={{marginTop:-10, marginLeft: 10}}>
 							<Downloads data={[
 								{
-									text: `Download as TSV`,
+									text: `Download as TSV`,									
 									onClick: () => {
 										this.download_library('tsv', 'signatures')
 									},
-									icon: "mdi-download"
+									icon: "mdi-download",
+									caption: `Download as TSV`
 								}
 							]} 
 							loading={this.state.downloading}/>
@@ -683,6 +691,7 @@ class LibraryEnrichment extends React.PureComponent {
 	}
 
 	render = () => {
+		if (this.props.expanded_id !== null && this.props.expanded_id !== this.props.id) return null
 		if (this.state.children_data === undefined) return <CircularProgress/>
 		return this.data_viz()
 	}
