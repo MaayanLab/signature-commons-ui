@@ -175,6 +175,9 @@ const Results = (props) => {
 		searching,
 		EnrichmentPageProps,
 		header="",
+		download_input,
+		handleExpandClick,
+		expanded
 	} = props
 	if (entries === null && !searching) return null
 	else if (searching) {
@@ -195,10 +198,27 @@ const Results = (props) => {
 					{ header === "" ? null :
 						<React.Fragment>
 							<Grid item xs={1}/>
-							<Grid item xs={11}>
+							<Grid item xs={9}>
 								<Typography variant={'h6'} style={{marginBottom: 20}}>
 									{header}
 								</Typography>
+							</Grid>
+							<Grid item xs={2}>
+								<Tooltip title="Click to view input" placement="bottom">
+									<Button onClick={handleExpandClick}
+										aria-expanded={expanded}
+										aria-label="show more"
+									>
+										<span className="mdi mdi-note-text-outline mdi-24px"/>
+									</Button>
+								</Tooltip>
+								<Tooltip title="Download Input" placement="bottom">							
+									<Button onClick={download_input}
+										aria-label="download"
+									>
+										<span className="mdi mdi-download mdi-24px"/>
+									</Button>
+								</Tooltip>
 							</Grid>
 						</React.Fragment>
 					}
@@ -315,24 +335,7 @@ export const SignatureSearchComponent = (props) => {
 				}
 			</Grid>
 			{ entries!==null ?
-					<Grid item xs={2} align="left">
-						<Tooltip title="Click to view input" placement="bottom">
-							<Button onClick={handleExpandClick}
-								aria-expanded={expanded}
-								aria-label="show more"
-							>
-								<span className="mdi mdi-note-text-outline mdi-24px"/>
-							</Button>
-						</Tooltip>
-						<Tooltip title="Download Input" placement="bottom">
-							
-							<Button onClick={download_input}
-								aria-label="download"
-							>
-								<span className="mdi mdi-download mdi-24px"/>
-							</Button>
-						</Tooltip>
-					</Grid>: null
+					<Grid item xs={2} align="left"/>: null
 				}			
 			<Grid item xs={ entries===null ? 12: 10} align="center" >
 				<Collapse in={expanded || entries === null} timeout="auto" unmountOnExit>
@@ -354,7 +357,14 @@ export const SignatureSearchComponent = (props) => {
 				</Collapse>
 			</Grid>
 			<Grid item xs={12}>
-				<Results {...ResultsProps} type={type} searching={searching} entries={entries}/>
+				<Results {...ResultsProps}
+					type={type}
+					searching={searching}
+					entries={entries}
+					download_input={download_input}
+					handleExpandClick={handleExpandClick}
+					expanded={expanded}
+				/>
 			</Grid>
 		</Grid>
 	)
