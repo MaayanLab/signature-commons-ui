@@ -198,27 +198,10 @@ const Results = (props) => {
 					{ header === "" ? null :
 						<React.Fragment>
 							<Grid item xs={1}/>
-							<Grid item xs={9}>
+							<Grid item xs={11}>
 								<Typography variant={'h6'} style={{marginBottom: 20}}>
 									{header}
 								</Typography>
-							</Grid>
-							<Grid item xs={2}>
-								<Tooltip title="Click to view input" placement="bottom">
-									<Button onClick={handleExpandClick}
-										aria-expanded={expanded}
-										aria-label="show more"
-									>
-										<span className="mdi mdi-note-text-outline mdi-24px"/>
-									</Button>
-								</Tooltip>
-								<Tooltip title="Download Input" placement="bottom">							
-									<Button onClick={download_input}
-										aria-label="download"
-									>
-										<span className="mdi mdi-download mdi-24px"/>
-									</Button>
-								</Tooltip>
 							</Grid>
 						</React.Fragment>
 					}
