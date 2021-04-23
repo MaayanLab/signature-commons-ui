@@ -147,6 +147,14 @@ export const value_by_type = {
   }
 }
 
+export const props_resolver = (properties, data, info=null) => {
+  if (info===null) info={}
+  for (const [label, props] of Object.entries(properties)) {
+
+  }
+  
+}
+
 export const getPropType = (data, schemas, type) => {
   const schema = findMatchedSchema(data, schemas)
   const values = []
