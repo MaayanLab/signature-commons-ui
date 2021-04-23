@@ -187,7 +187,7 @@ const Results = (props) => {
 		if (entries.length === 1) {
 			return (
 				<Grid container spacing={3}>
-					<Grid item xs={12}>
+					<Grid item xs={11}>
 						<EnrichmentPage {...EnrichmentPageProps} id={entries[0].data.id}/>
 					</Grid>
 				</Grid>
@@ -318,7 +318,8 @@ export const SignatureSearchComponent = (props) => {
 
 	return(
 		<Grid container spacing={1}  style={{marginBottom: 20}}>
-			<Grid item xs={12} align="center">
+			<Grid item xs={2}/>
+			<Grid item xs={8} align="center">
 				{ SearchTabProps.tabs.length < 2 ? null:
 					<ResultsTab
 						tabsProps={{
@@ -335,17 +336,34 @@ export const SignatureSearchComponent = (props) => {
 				}
 			</Grid>
 			{ entries!==null ?
-					<Grid item xs={2} align="left"/>: null
-				}			
+				<Grid item xs={2} align="left">						
+					<Tooltip title="Click to view input" placement="bottom">
+						<Button onClick={handleExpandClick}
+							aria-expanded={expanded}
+							aria-label="show more"
+						>
+							<span className={`mdi ${expanded ? 'mdi-chevron-up': 'mdi-chevron-down'} mdi-24px`}/>
+						</Button>
+					</Tooltip>
+					<Tooltip title="Download Input" placement="bottom">							
+						<Button onClick={download_input}
+							aria-label="download"
+						>
+							<span className="mdi mdi-download mdi-24px"/>
+						</Button>
+					</Tooltip>
+				</Grid>
+				: null
+			}			
 			<Grid item xs={ entries===null ? 12: 10} align="center" >
 				<Collapse in={expanded || entries === null} timeout="auto" unmountOnExit>
 					<Grid container spacing={1}>
-						{entries!==null ? null:
+						{entries!==null ? <Grid item xs={2}/>:
 							<Grid item xs={12} align="center">
 								<Typography variant="h6" style={{marginTop: 10}}>{description}</Typography>
 							</Grid>
 						}
-						<Grid item xs={12} md={entries===null ? 7: 9} align={"right"}>
+						<Grid item xs={12} md={entries===null ? 7: 10} align={entries===null ? "right": "center"}>
 							<SigForm {...props}/>
 						</Grid>
 						{entries!==null ? null:
