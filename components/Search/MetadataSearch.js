@@ -44,7 +44,7 @@ export default class MetadataSearch extends React.PureComponent {
 		try {
 			this.props.resolver.abort_controller()
 			this.props.resolver.controller()
-			const {schemas} = this.props
+			const schemas = this.props.schemas
 			const {search: filter_string} = this.props.location
 			const query = get_filter(filter_string)
 			const resolved_query = resolve_ids({
@@ -128,15 +128,12 @@ export default class MetadataSearch extends React.PureComponent {
 				model_tab_props,
 			})	
 		} catch (error) {
-			this.props.resolver.abort_controller()
 			console.error(error)
 		}
 	}
 
 	get_value_count = async (where, query) =>{
 		try {
-			this.props.resolver.abort_controller()
-			this.props.resolver.controller()
 			const filter_fields = {}
 			const fields = []
 			const {lib_id_to_name, resource_id_to_name} = this.props.resource_libraries
@@ -218,7 +215,6 @@ export default class MetadataSearch extends React.PureComponent {
 				})
 			}
 		} catch (error) {
-			this.props.resolver.abort_controller()
 			console.error(error)
 		}
 	}
