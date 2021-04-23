@@ -725,7 +725,7 @@ export default class SignatureSearch extends React.PureComponent {
 						this.props.resolver,
 						this.props.schemas,
 						this.handleError)
-					if (input!==null){
+					if (input!==null && input!==undefined){
 						query = create_query(input, enrichment_id)
 						const eid = await enrichment(query, input, this.props.resolver, this.handleError)
 					} else{
