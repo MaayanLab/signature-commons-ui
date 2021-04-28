@@ -316,8 +316,9 @@ export class DataResolver {
 		  })
 		const signatures = response.results.map(({uuid, ...scores})=>{
 			let direction = "ambiguous"
-			if (scores['direction-up'] === -1 && scores['direction-down'] === 1) direction = "reversers"
-			if (scores['direction-up'] === 1 && scores['direction-down'] === -1) direction = "mimickers"
+			scores['direction-down'] = -scores['direction-down']
+			if (scores['direction-up'] === -1 && scores['direction-down'] === -1) direction = "reversers"
+			if (scores['direction-up'] === 1 && scores['direction-down'] === 1) direction = "mimickers"
 			return({
 				id: uuid,
 				direction,
@@ -327,7 +328,7 @@ export class DataResolver {
 				"FDR (up)": scores["fdr-up"],
 				"p-value (down)": scores["p-down"],
 				"p-value (up)": scores["p-up"],
-				"z-score (down)": scores["z-down"],
+				"z-score (down)": -scores["z-down"],
 				"z-score (up)": scores["z-up"],
 				"p-value Bonferroni (up)": scores["p-up-bonferroni"],
 				"p-value Bonferroni (down)": scores["p-down-bonferroni"],
