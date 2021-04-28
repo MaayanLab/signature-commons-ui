@@ -173,6 +173,10 @@ export class Model {
 		return this._entry
 	}
 
+	get_raw_entry = () => {
+		return this._entry
+	}
+
 	parent = async () => {
 		if (this._parent === null) return null
 		if (this._parent === undefined || !this._parent.resolved) await this.resolve_parent()
