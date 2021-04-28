@@ -1,6 +1,6 @@
 {
   "name": "signature-commons-ui",
-  "version": "1.1.18",
+  "version": "1.2.0",
   "private": true,
   "homepage": "https://amp.pharm.mssm.edu/sigcom/",
   "dependencies": {
