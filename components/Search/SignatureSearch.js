@@ -894,7 +894,7 @@ export default class SignatureSearch extends React.PureComponent {
 							visualization: this.state.visualization,
 							setVisualization: this.setVisualization,
 							entity_name: this.props.preferred_name.entities.toLowerCase(),
-							EnrichmentPageProps: this.props,
+							EnrichmentPageProps: {...this.props, input: this.state.input},
 							header: `Significant terms identified for ${this.props.preferred_name.resources}`
 						}}
 						PaginationProps={{
