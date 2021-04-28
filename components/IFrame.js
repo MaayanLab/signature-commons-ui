@@ -1,3 +1,4 @@
+import React from 'react'
 import { iframeResize } from 'iframe-resizer'
 
 export default class IFrame extends React.Component {
