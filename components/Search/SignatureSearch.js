@@ -796,9 +796,9 @@ export default class SignatureSearch extends React.PureComponent {
 		const synonyms = []
 		for (const schema of entity_schemas){
 			for (const prop of Object.values(schema.properties)){
-				if (prop.type==="title") titles.push(prop.field)
-				else if (prop.type==="alternative") titles.push(prop.field)
-				else if (prop.synonyms) synonyms.push(prop.field)
+				if (prop.type==="title" && titles.indexOf(prop.field) === -1) titles.push(prop.field)
+				else if (prop.type==="alternative" && titles.indexOf(prop.field) === -1) titles.push(prop.field)
+				else if (prop.synonyms && synonyms.indexOf(prop.field) === -1) synonyms.push(prop.field)
 			}
 		}
 		// Process search tabs
