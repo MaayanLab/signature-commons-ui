@@ -5,11 +5,13 @@ import CardContent from '@material-ui/core/CardContent'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import {EnrichmentBar} from './EnrichmentBar'
 import {ScatterPlot} from './ScatterPlot'
+import ScatterComponent from '../Scatter'
 
 import Color from 'color'
 import Typography from '@material-ui/core/Typography';
 import { precise } from '../ScorePopper'
 
+import { findMatchedSchema } from '../../util/ui/objectMatch'
 import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
 import {
@@ -30,6 +32,8 @@ import { withTheme } from '@material-ui/core/styles';
 import Downloads from '../Downloads'
 import {ResultsTab} from './ResultsTab'
 import Collapse from '@material-ui/core/Collapse';
+import {process_data} from '../Scatter/process_data'
+import {Model} from '../../connector/model'
 class LibraryEnrichment extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -41,6 +45,12 @@ class LibraryEnrichment extends React.PureComponent {
 			pagination: {},
 			expanded: false,
 			visualization: "bar",
+			scatter_data: null,
+			input_term: '',
+			term: '',
+			scatter_value_count: null,
+			primary_field: null,
+			secondary_fields: null,
 		}
 	}
 
@@ -235,6 +245,8 @@ class LibraryEnrichment extends React.PureComponent {
 					children_data[dir] = {...processed, direction: dir}
 				}
 			}
+			const child = Object.values(children)[0][0]
+			const { primary_field, secondary_fields } = this.scatter_fields(child)
 			this.setState({
 				children_count,
 				children,
@@ -242,9 +254,13 @@ class LibraryEnrichment extends React.PureComponent {
 				paginate: false,
 				direction,
 				children_data,
-			},()=>{
-				if (this.state.entry.data.dataset_type === "geneset_library"){
-					this.generate_scatter_data(final_query)
+				primary_field,
+				secondary_fields
+			}, async ()=>{
+				if (this.state.scatter_data === null){					
+					const {count, ...rest} = await this.state.entry_object.children({limit: 0})	
+					const entries = Object.values(rest).reduce((acc, c)=>([...acc, ...c]), [])
+					this.generate_scatter_data(entries)
 				}
 			})	
 		} catch (error) {
@@ -420,6 +436,240 @@ class LibraryEnrichment extends React.PureComponent {
 		})
 	} 
 
+	get_top_value_count = async () => {
+		try {
+			const input_term = this.state.input_term
+			const resolver = this.props.resolver
+			const library = this.state.entry.data
+			const field = this.state.primary_field.field
+			resolver.abort_controller()
+			resolver.controller()
+			if (input_term === '') {
+				const endpoint =  `/libraries/${library.id}/signatures/value_count`
+				const filter = {
+					limit: 10,
+					fields: [field],
+				}
+				const value_count = await resolver.aggregate( endpoint, filter)
+				this.setState({
+					scatter_value_count: value_count[field]
+				})
+			} else {
+				const endpoint =  `/signatures/value_count`
+				const filter = {
+					where: {
+						library: library.id,
+						[field]: {
+							ilike: `%${input_term}%`
+						}
+					},
+					limit: 10,
+					fields: [field]
+				}
+				const value_count = await resolver.aggregate( endpoint, filter)
+				this.setState({
+					scatter_value_count: value_count[field]
+				})
+			}	
+		} catch (error) {
+			console.error(error)
+		}
+	
+	}
+
+	filter_metadata = async (term) => {
+		try {
+			const resolver = this.props.resolver
+			const library = this.state.entry.data
+			const primary_field = this.state.primary_field
+
+			resolver.abort_controller()
+			resolver.controller()
+			console.log(term)
+			if (term === '' || term === null) return {}
+			else {
+				const field = primary_field.search_field || primary_field.field
+				const filter = {
+					where: {
+						library: library.id,
+					}
+				}
+				if (term !== "") filter.where[field] = term
+				// if (ids.length > 0) filter.where.id = {inq: ids}
+				const {entries} = await resolver.filter_metadata({
+					model: "signatures",
+					filter,
+					parent: library
+				})
+				return entries
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	get_results = async (entries) => {
+		try {
+			const resolver = this.props.resolver
+			const library = this.state.entry.data
+			const datatype = library.dataset_type
+			const database = library.dataset
+
+			resolver.abort_controller()
+			resolver.controller()
+
+			const input = create_query(this.props.input)
+
+			const query = {
+				...input,
+				datatype,
+				database,
+				input_type: input.entities !== undefined ? 'set': 'up_down',
+				signatures: Object.keys(entries)
+			}
+
+			if (query.signatures.length === 0) query.limit = 100
+			else query.limit = query.signatures.length
+			const {set, up, down, rank} = await resolver.enrich_entities(query)
+			
+			if (set !== undefined) {
+				const { entries: results, count } = set
+	
+				if (count>0){
+					const {resolved_entries} = await resolver.resolve_entries({
+						model: "signatures",
+						entries: results.map(({id, direction, ...scores})=>({
+							id,
+							direction,
+							scores
+						}))
+					})
+					return resolved_entries
+				}
+			}if (rank !== undefined) {
+				const { entries: results, count } = rank
+	
+				if (count>0){
+					const {resolved_entries} = await resolver.resolve_entries({
+						model: "signatures",
+						entries: results.map(({id, direction, ...scores})=>({
+							id,
+							direction,
+							scores
+						}))
+					})
+					return resolved_entries
+				}
+			}else if (up !== undefined && down !== undefined) {
+				const signatures = {}
+				const { entries: up_entries, up_count } = up
+	
+				if (up_count>0){
+					const {resolved_entries} = await resolver.resolve_entries({
+						model: "signatures",
+						entries: up_entries.map(({id, direction, ...scores})=>({
+							id,
+							direction,
+							scores
+						}))
+					})
+					for (const sig of Object.values(resolved_entries)){
+						sig.update_entry({set: "up"})
+						signatures[sig.id] = sig
+					}
+				}
+				const { entries: down_entries, down_count } = down
+	
+				if (down_count>0){
+					const {resolved_entries} = await resolver.resolve_entries({
+						model: "signatures",
+						entries: down_entries.map(({id, direction, ...scores})=>({
+							id,
+							direction,
+							scores
+						}))
+					})
+					for (const sig of Object.values(resolved_entries)){
+						sig.update_entry({set: "down"})
+						signatures[sig.id] = sig
+					}
+				}
+				return signatures
+			}
+	
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	process_results = async () => {
+		const term = this.state.term
+		const entries = await this.filter_metadata(term)
+		const signatures = await this.get_results(entries)
+		await this.generate_scatter_data(Object.values(signatures))
+	}
+
+	scatter_fields = (child) => {
+		const schemas = this.props.schemas
+		const schema = findMatchedSchema(child, schemas)
+		let primary_field
+		let secondary_fields = []
+		for (const [label, prop] of Object.entries(schema.properties)){
+			if (prop.primary) {
+				primary_field = {
+					...prop,
+					label
+				}
+			}
+			if (prop.secondary) {
+				secondary_fields.push({
+					...prop,
+					label
+				})
+			}
+		}
+		// this.setState({
+		// 	primary_field,
+		// 	secondary_fields
+		// })
+		return { primary_field, secondary_fields }
+	}
+
+	scatter_component = () => {
+		if (this.state.scatter_value_count === null) this.get_top_value_count()
+
+		const { primary_field, secondary_fields, scatter_data } = this.state
+		const cat = scatter_data.colorize.direction !== undefined ? 'direction': 'significance'
+		const name_props = this.state.entry.data.dataset_type === "geneset_library" ? {
+			yAxisName: "-log(pval)",
+			xAxisName: "odds ratio",
+		}:
+		{
+			yAxisName: "zscore (up)",
+			xAxisName: "zscore (down)",
+		}
+		return (
+			<Grid item xs={12}>
+				<ScatterComponent
+					name_props={name_props}
+					primary_field={primary_field}
+					secondary_fields={secondary_fields}
+					primary_color={this.props.theme.palette.primaryVisualization.light}
+					secondary_color={this.props.theme.palette.secondaryVisualization.light}
+					results={this.state.scatter_data}
+					set_input_term={input_term=>{
+						this.setState({input_term},()=>this.get_top_value_count())}}
+					input_term={this.state.input_term}
+					scatter_value_count={this.state.scatter_value_count}
+					category={this.state.category || cat}
+					set_category={category=>this.setState({category})}
+					term={this.state.term}
+					set_term={term=>this.setState({term}, ()=>this.process_results())}
+				/>
+			</Grid>
+		)
+	}
+
 	scatter_viz = () => {
 		const expanded = this.props.expanded
 		const nameProps = this.state.entry.data.dataset_type === "geneset_library" ? {
@@ -431,7 +681,7 @@ class LibraryEnrichment extends React.PureComponent {
 			xAxisName: "zscore (down)",
 		}
 		if (this.state.entry.data.dataset_type === "geneset_library") {
-			if (this.state.scatter_data === undefined) return <CircularProgress />
+			if (this.state.scatter_data === undefined || this.state.scatter_data === null) return <CircularProgress />
 			else {
 				const scatter_props = this.props.scatter_props || {}
 				return (
@@ -563,13 +813,44 @@ class LibraryEnrichment extends React.PureComponent {
 	data_viz = () => {
 		const expanded = this.props.expanded
 		if (expanded) {
-			return( 
-				<Grid container>
-					{this.scatter_viz()}
-					{this.bar_viz()}
-					{this.all_table()}
-				</Grid>
-			)
+			if (this.state.entry.data.dataset_type === "geneset_library") {
+				return (
+					<Grid container>
+						{this.scatter_viz()}
+						{this.bar_viz()}
+						{this.all_table()}
+					</Grid>
+				)
+			} else {
+				return(
+					<Grid container>
+						<Grid item xs={12} align="center">
+							<ResultsTab
+								tabs={[
+									{
+										label: "Bar Chart",
+										value: "bar"
+									},
+									{
+										label: "Scatter Plot",
+										value: "scatter"
+									}
+								]}
+								value={this.state.visualization}
+								handleChange={(t)=>this.setState({visualization: t.value})}
+								tabsProps={{centered: true}}
+							/>
+						</Grid>
+						{this.state.visualization === "scatter" ?
+							this.scatter_component():
+							<React.Fragment>
+								{this.bar_viz()}
+								{this.all_table()}
+							</React.Fragment>
+						}
+					</Grid>
+				)
+			}
 		} else {
 			if (this.state.entry.data.dataset_type === "geneset_library") {
 				return (
@@ -605,61 +886,20 @@ class LibraryEnrichment extends React.PureComponent {
 		
 	}
 
-	generate_scatter_data = async (final_query=null) => {
-		// if (this.state.scatter_data !== undefined) return
-		const {count, ...children} = await this.state.entry_object.children({limit: 0})
-		let colorize = null
-		if (final_query.search.length > 0) {
-			colorize = []
-			const {count: cnt, ...colored} = await this.state.entry_object.children({...final_query, limit: 0})
-			for (const entries of Object.values(colored)){
-				for (const entry of entries){
-					colorize.push(entry.id)
-				}
-			}
-		}
-		const inactiveColor="#c9c9c9"
-		const scatterColor1 = this.props.theme.palette.primaryVisualization.light
-		const scatterColor2  = this.props.theme.palette.secondaryVisualization.light
-		const scatter_data = []
-		for (const [direction, entries] of Object.entries(children)){
-			for (const entry of entries){
-				// scatter
-				let color = inactiveColor
-				if (colorize === null || colorize.indexOf(entry.id)>-1){
-					if (direction === undefined || ["up", "reversers"].indexOf(direction) > -1 || direction === "signatures") {
-						color = scatterColor1
-					}else if (direction !== "ambiguous"){
-						color = scatterColor2
-					}
-				}
-				if (this.state.entry.data.dataset_type === "geneset_library"){ 
-					scatter_data.push({
-						name: getName(entry, this.props.schemas),
-						yAxis: entry.scores["odds ratio"],
-						xAxis: -Math.log(entry.scores["p-value"]),
-						value: entry.scores["p-value"],
-						actual_value: entry.scores[this.state.order_field],
-						color: entry.scores["p-value"] < 0.05 ? color: inactiveColor,
-						id: entry.id,
-						direction,
-						...entry.scores,
-						tooltip_component: this.lazy_tooltip
-					})
-				}else if (this.state.entry.data.dataset_type === "rank_matrix"){ 
-					scatter_data.push({
-						name: getName(entry, this.props.schemas),
-						yAxis: entry.scores["z-score (up)"],
-						xAxis: entry.scores["z-score (down)"],
-						color,
-						id: entry.id,
-						direction,
-						...entry.scores,
-						tooltip_component: this.lazy_tooltip
-					})
-				}	
-			}
-		}
+	generate_scatter_data = async (entries) => {
+		// const {count, ...rest} = await this.state.entry_object.children({limit: 0})
+		// let entries = Object.values(rest).reduce((acc, c)=>([...acc, ...c]), [])
+		const child = entries[0]
+		const secondary_fields = this.state.secondary_fields
+		const scatter_data = await process_data({
+			entries,
+			library: this.state.entry.data,
+			primary_color: this.props.theme.palette.primaryVisualization.light,
+			secondary_color: this.props.theme.palette.secondaryVisualization.light,
+			schemas: this.props.schemas,
+			secondary_field: secondary_fields,
+			serialized: !(child instanceof Model)
+		})
 		this.setState({
 			scatter_data
 		})
