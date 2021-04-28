@@ -173,7 +173,7 @@ export const getName = (data, schemas) => {
   const schema = findMatchedSchema(data, schemas)
   if (schema !== null) {
     for (const prop of Object.values(schema.properties)) {
-      if (prop.visibility && prop.type==="title"){
+      if (prop.type==="title"){
         const val = value_by_type[prop.type]({ label: "title", prop, data })
         if (val!==null) return val.text
       }
