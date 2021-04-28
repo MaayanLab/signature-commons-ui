@@ -61,8 +61,7 @@ export class DataResolver {
 					if (typeof resolved_entry !== "undefined"){
 						resolved_entries[entry] = resolved_entry
 					}else {
-						const entry_object = new Model(model, entry, this)
-						unresolved_entries[entry] = entry_object
+						unresolved_entries[entry] = {id: entry}
 					}
 				}else {
 					invalid_entries.push(entry)
@@ -74,7 +73,7 @@ export class DataResolver {
 				} else {
 					await entry.validate_entry()
 					if (!entry.resolved){
-						unresolved_entries[entry.id] = entry
+						unresolved_entries[entry.id] = entry.get_raw_entry()
 					}else {
 						resolved_entries[entry.id] = entry
 						this.data_repo[model][entry.id] = entry
@@ -92,7 +91,7 @@ export class DataResolver {
 						if (await entry_object.validate_entry()){
 							resolved_entries[entry.id] = entry_object
 						}else {
-							unresolved_entries[entry.id] = entry_object
+							unresolved_entries[entry.id] = entry_object.get_raw_entry()
 						}
 					}
 				}else {
@@ -127,6 +126,8 @@ export class DataResolver {
 				if (entry === undefined){
 					// If you don't have a field option, then you are resolving everything
 					entry = new Model(model, e, this, filter.fields===undefined, parent)
+					const unresolved = unresolved_entries[e.id]
+					entry.update_entry(unresolved)
 					// resolved_entries[entry.id] = entry
 				} else {
 					entry.update_entry(e)
