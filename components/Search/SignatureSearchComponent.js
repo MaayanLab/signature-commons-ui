@@ -70,6 +70,19 @@ const EntityCounts = (input) => {
 	}else return null
 }
 
+const reorder_entities = (entities) => {
+	const by_type = {
+		suggestions: [],
+		invalid: [],
+		valid: [],
+		loading: [],
+	}
+	for (const e of Object.values(entities)) {
+		by_type[e.type].push(e)
+	}
+	return [...by_type.suggestions, ...by_type.valid, ...by_type.invalid, ...by_type.loading]
+}
+
 const SigForm = (props={}) => {
 	const {
 		searching=false,
@@ -109,7 +122,7 @@ const SigForm = (props={}) => {
 				{type === 'Overlap' ?
 					<React.Fragment>
 						<TextFieldSuggest {...TextFieldSuggestProps}
-							input={Object.values(TextFieldSuggestProps.input.entities)}
+							input={reorder_entities(TextFieldSuggestProps.input.entities)}
 							onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "entities")}
@@ -122,7 +135,7 @@ const SigForm = (props={}) => {
 					<Grid container spacing={2}>
 						<Grid item xs={12} md={6}>
 							<TextFieldSuggest {...TextFieldSuggestProps}
-								input={Object.values(TextFieldSuggestProps.input.up_entities)}
+								input={reorder_entities(TextFieldSuggestProps.input.up_entities)}
 								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
 								onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
 								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "up_entities")}
@@ -133,7 +146,7 @@ const SigForm = (props={}) => {
 						</Grid>
 						<Grid item xs={12} md={6}>
 							<TextFieldSuggest {...TextFieldSuggestProps}
-								input={Object.values(TextFieldSuggestProps.input.down_entities)}
+								input={reorder_entities(TextFieldSuggestProps.input.down_entities)}
 								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
 								onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
 								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "down_entities")}
@@ -175,9 +188,6 @@ const Results = (props) => {
 		searching,
 		EnrichmentPageProps,
 		header="",
-		download_input,
-		handleExpandClick,
-		expanded
 	} = props
 	if (entries === null && !searching) return null
 	else if (searching) {
