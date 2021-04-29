@@ -1,36 +1,18 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
 import { EnrichmentResult } from './EnrichmentResult'
 import { get_filter,
 	get_signature_entities,
 	create_query,
 	enrichment,
-	download_enrichment_for_library,
  } from '../Search/utils'
-import ScorePopper from '../ScorePopper'
-import Downloads from '../Downloads'
-import {EnrichmentBar} from './EnrichmentBar'
-import {ScatterPlot} from './ScatterPlot'
-import Lazy from '../Lazy'
 import { LinearProgress } from '@material-ui/core'
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination'
-import { precise } from '../ScorePopper'
-import Color from 'color'
 
 import LibraryEnrichment from './LibraryEnrichment'
 import IconButton from '@material-ui/core/IconButton';
