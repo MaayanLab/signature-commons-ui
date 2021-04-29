@@ -169,6 +169,11 @@ export const getPropType = (data, schemas, type) => {
   return values
 }
 
+export const getPropValue = (data, prop, label='') => {
+  return value_by_type[prop.type]({ label, prop, data })
+  
+}
+
 export const getName = (data, schemas) => {
   const schema = findMatchedSchema(data, schemas)
   if (schema !== null) {

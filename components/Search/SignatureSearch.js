@@ -1,6 +1,7 @@
 import React from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { labelGenerator, getName, getPropType } from '../../util/ui/labelGenerator'
+import { labelGenerator, getName, getPropValue } from '../../util/ui/labelGenerator'
+import { makeTemplate } from '../../util/ui/makeTemplate'
 import { get_signature_entities,
 	create_query,
 	reset_input,
@@ -8,14 +9,8 @@ import { get_signature_entities,
 	download_input } from './utils'
 import PropTypes from 'prop-types'
 import {SignatureSearchComponent} from './SignatureSearchComponent'
-import ScorePopper from '../ScorePopper';
-import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
-import Color from 'color'
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import { precise } from '../ScorePopper'
+import Snackbar from '@material-ui/core/Snackbar';
 
 const stat_mapper = {
 	entities: "set_stats",
@@ -50,6 +45,41 @@ export default class SignatureSearch extends React.PureComponent {
 		})
 	}
 
+	convert_text = (text, prop) => {
+		if (prop.strategy === "upper") text = text.toUpperCase();
+		else if (prop.strategy === "lower") text = text.toLowerCase();
+		return text
+	}
+
+	fetch_names = async (name_fields, entities_labels) => {
+		const or = []
+		if (name_fields.length === 0) return {}
+		for (const prop of name_fields){
+			const entities = []
+			for (const label of entities_labels){
+				const l = this.convert_text(label, prop)
+				entities.push(l)
+			}
+			if (prop.type === 'array'){		
+				or.push({[prop.field]:{
+					any: entities
+				}})
+			}else {
+				or.push({[prop.field]:{
+					inq: entities
+				}})
+			}
+		}
+		const filter = {
+			where: {or}
+		}
+		const {entries: results} = await this.props.resolver.filter_metadata({
+			model: "entities",
+			filter,
+		})
+		return results
+	}
+
 	resolve_entities = async () => {
 		try {
 			const {schemas} = this.props
@@ -66,21 +96,6 @@ export default class SignatureSearch extends React.PureComponent {
 					}
 				}
 			}
-			const or = []
-			for (const label of entities_labels){
-				for (const t of [...this.state.titles, ...this.state.synonyms]){
-					or.push({[t]: label})
-				}
-			}
-			const filter = {
-				where: {
-					or
-				}
-			}
-			const {entries: results} = await this.props.resolver.filter_metadata({
-				model: "entities",
-				filter,
-			})
 			let stats = {}
 			let name_mapper = {}
 			if (input.entities!==undefined){
@@ -100,80 +115,78 @@ export default class SignatureSearch extends React.PureComponent {
 					down_entities: "down_stats"
 				}
 			}
-			// let { valid=0, invalid=0, suggestions=0} = this.state.input
-			for (const c of Object.values(results)){
-				const entry = await c.entry()
-				const e = labelGenerator(await entry,
-					schemas)
-				const label = e.info.name.text
-				const alternative_label = (e.info.alternative || {}).text
-				for (const field of Object.keys(input)){
-					let { valid=0, suggestions=0} = stats[field]
-					if (input[field][label]!==undefined){
-						if (input[field][label].id === undefined){
-							if (input[field][label].type === "suggestions") {
-								suggestions = suggestions - 1
-							}
+			// Resolve titles first
+			const name_results = await this.fetch_names(this.state.titles, entities_labels)
+			const resolved_labels = []
+			for (const prop of this.state.titles){
+				const label_mapper = {}
+				for (const l of entities_labels) {
+					if (resolved_labels.indexOf(l) === -1) label_mapper[this.convert_text(l , prop)] = l
+				}
+				for (const e of Object.values(name_results)){
+					// makeTemplate result is already converted is already converted to upper, lower, etc
+					const entry = await e.entry()
+					const label = label_mapper[makeTemplate(prop.text, entry)]
+					for (const field of Object.keys(input)){
+						if (input[field][label] !== undefined){
 							input[field][label] = {
 								label,
 								type: "valid",
 								id: [entry.id]
 							}
-							valid = valid + 1
+							stats[field].valid = (stats[field].valid || 0) + 1
+							resolved_labels.push(label)
 						}
-					} else if (input[field][alternative_label]!==undefined){
-						if (input[field][alternative_label].id === undefined){
-							if (input[field][alternative_label].type === "suggestions") {
-								suggestions = suggestions - 1
-							}
-							input[field][alternative_label] = {
-								label: alternative_label,
-								type: "valid",
-								id: [entry.id]
-							}
-							valid = valid + 1
-						}
-					} else {
-						const synonyms = e.info.synonyms || []
-						let add_suggestion = true
-						for (const syn of synonyms){
-							if (input[field][syn]!==undefined){
-								if (input[field][syn].type === "loading"){
-									input[field][syn] = {
-										label: syn,
+					}
+				}
+			}
+
+			// Resolve synonyms
+			const unresolved_labels = entities_labels.filter(l=>resolved_labels.indexOf(l)===-1)
+			if (unresolved_labels.length > 0 && this.state.synonyms.length > 0){
+				const synonym_results = await this.fetch_names(this.state.synonyms, unresolved_labels)
+				for (const prop of this.state.synonyms){
+					const label_mapper = {}
+					for (const l of unresolved_labels) {
+						if (resolved_labels.indexOf(l) === -1) label_mapper[this.convert_text(l , prop)] = l
+					}
+					for (const e of Object.values(synonym_results)){
+						const entry = await e.entry()
+						const prop_values = getPropValue(entry, prop)
+						const synonyms = prop_values.object || [prop_values.text]
+						// makeTemplate result is already converted is already converted to upper, lower, etc
+						let resolved = false
+						for (const label of synonyms) {
+							for (const field of Object.keys(input)){
+								if (input[field][label] !== undefined){
+									input[field][label] = {
+										label,
 										type: "suggestions",
-										suggestions: [...(input[field][syn].suggestions || []), {
-											id: [e.data.id],
-											label,
+										suggestions: [...(input[field][label].suggestions || []), {
+											id: [entry.id],
+											label: getName(entry, schemas),
 											type: "valid"
 										}]
 									}
-									if (add_suggestion){
-										add_suggestion = false
-										suggestions = suggestions + 1
-									}
+									stats[field].suggestions = (stats[field].suggestions || 0) + 1
+									resolved_labels.push(label)
+									resolved = true
+									break
 								}
 							}
+							if (resolved) break
 						}
 					}
-					stats[field] = {
-						...stats[field],
-						valid,
-						suggestions
-					}		
 				}
 			}
+
 			for (const [field, entities] of Object.entries(input)){
-				let { invalid=0 } = stats[field]
 				for (const [k,v] of Object.entries(entities)){
 					if (v.type==="loading"){
+						
 						input[field][k].type = "invalid"
-						invalid = invalid + 1
+						stats[field].invalid = (stats[field].invalid || 0) + 1
 					}
-				}
-				stats[field] = {
-					...stats[field],
-					invalid,
 				}
 			}
 			for (const field of Object.keys(input)){ 
@@ -186,17 +199,7 @@ export default class SignatureSearch extends React.PureComponent {
 				resolving: false,
 			})
 		} catch (error) {
-			// this.props.resolver.abort_controller()
 			console.error(error)
-			// this.setState(prevState=>{
-			// 	if (prevState.error === null) {
-			// 		return {
-			// 			error: "resolve_entities error: "+ error.message
-			// 		}
-			// 	} else return {
-			// 		error: prevState.error
-			// 	}
-			// })
 		}
 	}
 	
@@ -318,356 +321,6 @@ export default class SignatureSearch extends React.PureComponent {
 		}
 	}
 
-	resolve_enrichment_from_resource = async () => {
-		try {
-			const { type, enrichment_id, id: resource_id } = this.props.match.params
-			if (this.state.resources_tabs===null || resource_id ===undefined) {
-				this.resolve_enrichment()
-			} else {
-				this.props.resolver.abort_controller()
-				this.props.resolver.controller()
-				const {lib_to_resource,
-					resource_to_lib } = this.props.resource_libraries
-				const resource = await this.props.resolver.resolve_enrichment({
-					enrichment_id,
-					resource_id,
-					lib_to_resource,
-					resource_to_lib,
-				})
-
-				const r = await resource.serialize(false, true)
-				const {labels: libraries, entry_id: library_id} = this.get_libraries_labels(
-					resource.libraries,
-					type,
-					enrichment_id,
-					'libraries'
-				)
-				
-				this.setState({
-					resource_id,
-					searching: false,
-					libraries: libraries.sort((a,b)=>(b.data.scores.signature_count-a.data.scores.signature_count)),
-				})
-			}
-			
-		} catch (error) {
-			this.props.resolver.abort_controller()
-			console.error(error)
-			this.setState(prevState=>{
-				if (prevState.error === null) {
-					return {
-						error: "resolve_enrichment error: " + error.message
-					}
-				} else return {
-					error: prevState.error
-				}
-			})
-		}
-	}
-
-	lazy_tooltip = async (payload) => {
-		const {name, id, oddsratio, pval, setsize, zscore, logpfisher, logpav, direction} = payload
-		const {resolved_entries} = await this.props.resolver.resolve_entries({model: "signatures", entries: [id]})
-		const entry_object = resolved_entries[id]
-		const children = (await entry_object.children({limit:0})).entities || []
-		const overlap = children.map(e=>getName(e, this.props.schemas))
-		const overlap_text = overlap.length <= 10 ? overlap.join(", "):`${overlap.slice(0,10).join(", ")}... (Click to see more)` 
-		// if (setsize <= 15) overlap_text = overlap.join(", ")
-		// else overlap_text = overlap.slice(0,15).join(", ") + "..."
-		return(
-			<Card style={{opacity:"0.8", textAlign: "left"}}>
-				<CardContent>
-					<Typography variant="h6">{name}</Typography>
-					{ oddsratio !==undefined ?
-						<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>:
-						null
-					}
-					{ pval !==undefined ?
-						<Typography><b>p-value:</b> {precise(pval)}</Typography>:
-						null
-					}
-					{ logpav !==undefined ?
-						<Typography><b>pval (average):</b> {precise(logpav)}</Typography>:
-						null
-					}
-					{ logpfisher !==undefined ?
-						<Typography><b>pval (fisher):</b> {precise(logpfisher)}</Typography>:
-						null
-					}
-					{ zscore !==undefined ?
-						<Typography><b>z score:</b> {precise(zscore)}</Typography>:
-						null
-					}
-					{ direction !==undefined ?
-						<Typography><b>direction:</b> {direction}</Typography>:
-						null
-					}
-					{ setsize ?
-						<React.Fragment>
-							<Typography><b>overlap size:</b> {setsize}</Typography>
-							<Typography><b>overlaps:</b> {overlap_text}</Typography>
-						</React.Fragment>: null
-					}
-				</CardContent>
-			</Card>
-		)
-	}
-
-	set_to_set = async (entries, limit=10) => {
-		const {
-			barColor="#0063ff",
-			scatterColor="#0063ff",
-			inactiveColor="#9e9e9e"
-		} = this.props.colors || {}
-		const {type, enrichment_id} = this.props.match.params
-		const {order_field, order} = this.state
-		const color = Color(barColor)
-		const scatter_data = []
-		const bar_data = []
-		
-		const f = entries[0].scores[order_field]
-		const firstVal = order === 'DESC' ? f: -Math.log(f)
-		for (const entry of entries){
-			// const overlap = (entry.entities || []).map(e=>getName(e, this.props.schemas))
-			if (bar_data.length < limit){
-				const v = entry.scores[order_field]
-				const value = order === 'DESC' ? v: -Math.log(v)
-				const col = color.lighten(-((value/firstVal) - 1))
-				bar_data.push({
-					name: getName(entry, this.props.schemas),
-					value,
-					color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? col.hex(): inactiveColor,
-					id: entry.id,
-					oddsratio: entry.scores["odds ratio"],
-					pval: entry.scores["p-value"], 
-					setsize: entry.scores["overlap size"],
-					tooltip_component: this.lazy_tooltip,
-				})		
-			}
-			scatter_data.push({
-				name: getName(entry, this.props.schemas),
-				id: entry.id,
-				oddsratio: entry.scores["odds ratio"],
-				logpval: -Math.log(entry.scores["p-value"]),
-				pval: entry.scores["p-value"], 
-				setsize: entry.scores["overlap size"],
-				tooltip_component: this.lazy_tooltip,
-				color: (entry.scores["p-value"] < 0.05 && entry.scores["overlap size"] > 1) ? scatterColor: inactiveColor
-			})	
-		}
-		return {scatter_data, bar_data}
-	}
-
-	set_to_rank = async (entries, limit=10) => {
-		const {
-			posBarColor="#0063ff",
-			negBarColor="#FF2A43",
-			inactiveColor="#9e9e9e"
-		} = this.props.colors || {}
-		const {order_field, order} = this.state
-		const posColor = Color(posBarColor)
-		const negColor = Color(negBarColor)
-		const up_bar_data = []
-		const down_bar_data = []
-		const count = {up: 0, down: 0, total: 0}
-		let firstValUp
-		let firstValDown
-		for (const entry of entries){
-			const v = entry.scores[order_field]
-			const value = order === 'DESC' ? v: -Math.log(v)
-			const direction = entry.scores["direction"]
-			let col
-			if (direction === "up" && count.up < limit){
-				if (firstValUp === undefined) {
-					firstValUp = value
-					col = posColor
-				}else {
-					col = posColor.lighten(-((value/firstValUp) - 1))
-				}
-				const d = {
-					name: getName(entry, this.props.schemas),
-					value,
-					color: entry.scores["p-value"] < 0.05 ? col.hex(): inactiveColor,
-					id: entry.id,
-					pval: entry.scores["p-value"],
-					zscore: entry.scores["zscore"],  
-					direction,
-					tooltip_component: this.lazy_tooltip,
-				}	
-				up_bar_data.push(d)
-				count.up = count.up + 1
-				count.total = count.total + 1		
-			} else if (direction === "down" && count.down < limit) {
-				if (firstValDown === undefined) {
-					firstValDown = value
-					col = negColor
-				}else {
-					col = negColor.lighten(-((value/firstValDown) - 1))
-				}
-				const d = {
-					name: getName(entry, this.props.schemas),
-					value,
-					color: entry.scores["p-value"] < 0.05 ? col.hex(): inactiveColor,
-					id: entry.id,
-					pval: entry.scores["p-value"], 
-					zscore: entry.scores["zscore"],
-					tooltip_component: this.lazy_tooltip,
-				}	
-				down_bar_data.push(d)
-				count.down = count.down + 1
-				count.total = count.total + 1	
-			}
-			if (count.total === limit*2) break	
-		}
-		return {up_bar_data, down_bar_data}
-	}
-
-	up_down_to_rank = async (entries, limit=10) => {
-		const {
-			posBarColor="#0063ff",
-			negBarColor="#FF2A43",
-			inactiveColor="#9e9e9e"
-		} = this.props.colors || {}
-		const {order_field, order} = this.state
-		const mimickerColor = Color(posBarColor)
-		const reverserColor = Color(negBarColor)
-		const mimicker_bar_data = []
-		const reverser_bar_data = []
-		const unknown_bar_data = []
-		let mimickerFirstVal
-		let reverserFirstVal
-		let unknownFirstVal
-		const count = {mimicker: 0, reverser: 0, unknown: 0, total: 0}
-		for (const entry of entries){
-			const value = entry.scores["log p (fisher)"]
-			const direction = entry.scores["direction"]
-			if (direction == "mimicker" && count.mimicker < 10){
-				const color = mimickerColor 
-				let col
-				if (mimickerFirstVal === undefined) {
-					mimickerFirstVal = value
-					col = color
-				}else {
-					col = color.lighten(-((value/mimickerFirstVal) - 1))
-				}
-				const d = {
-					name: getName(entry, this.props.schemas),
-					value,
-					color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
-					id: entry.id,
-					logpfisher: Math.pow(10, -entry.scores['log p (fisher)']),
-					logpav: Math.pow(10, -entry.scores["log p (avg)"]), 
-					tooltip_component: this.lazy_tooltip,
-					direction,
-				}	
-				mimicker_bar_data.push(d)
-				count.mimicker = count.mimicker + 1
-				count.total = count.total + 1
-			}else if (direction == "reverser" && count.reverser < 10){
-				const color = reverserColor 
-				let col
-				if (reverserFirstVal === undefined) {
-					reverserFirstVal = value
-					col = color
-				}else {
-					col = color.lighten(-((value/reverserFirstVal) - 1))
-				}
-				const d = {
-					name: getName(entry, this.props.schemas),
-					value,
-					color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
-					id: entry.id,
-					logpfisher: Math.pow(10, -entry.scores['log p (fisher)']),
-					logpav: Math.pow(10, -entry.scores["log p (avg)"]), 
-					tooltip_component: this.lazy_tooltip,
-					direction,
-				}	
-				reverser_bar_data.push(d)
-				count.reverser = count.reverser + 1
-				count.total = count.total + 1
-			}else if (direction == "ambiguous" && count.unknown < 10){
-				const color = mimickerColor 
-				let col
-				if (unknownFirstVal === undefined) {
-					unknownFirstVal = value
-					col = color
-				}else {
-					col = color.lighten(-((value/unknownFirstVal) - 1))
-				}
-				const d = {
-					name: getName(entry, this.props.schemas),
-					value,
-					color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
-					id: entry.id,
-					logpfisher: Math.pow(10, -entry.scores['log p (fisher)']),
-					logpav: Math.pow(10, -entry.scores["log p (avg)"]), 
-					tooltip_component: this.lazy_tooltip,
-					direction,
-				}	
-				unknown_bar_data.push(d)
-				count.unknown = count.unknown + 1
-				count.total = count.total + 1
-			}
-			if (count.total === 20) break
-		}
-		
-		return { mimicker_bar_data, reverser_bar_data, unknown_bar_data }
-	}
-
-	get_children_data = async (entries, model, limit=10) => {
-		const dataset_type = entries[0].library.dataset_type
-		const {type} = this.props.match.params
-		if (type === "Overlap") {
-			if (dataset_type === "geneset_library") {
-				return this.set_to_set(entries, limit)
-			}else if (dataset_type === "rank_matrix") {
-				return this.set_to_rank(entries, limit)
-			}
-		}else if (type === "Rank") {
-			if (dataset_type === "geneset_library") {
-				console.log(entries)
-			}else if (dataset_type === "rank_matrix") {
-				return this.up_down_to_rank(entries, limit)
-			}
-		}
-	}
-
-	process_children = async (library_id) => {
-		try {
-			const { type, enrichment_id } = this.props.match.params
-			
-			const {lib_to_resource,
-				resource_to_lib } = this.props.resource_libraries
-			
-			const entry_object = await this.props.resolver.resolve_enrichment({
-				enrichment_id,
-				library_id,
-				lib_to_resource,
-				resource_to_lib,
-			}) 
-			const final_query = {
-				order: [this.state.order_field, this.state.order],
-				limit: 0, 
-			}
-			const children_object = await entry_object.children(final_query, true)
-			const children_results = children_object[entry_object.child_model]
-			return await this.get_children_data(Object.values(children_results), entry_object.child_model)
-			// if (!this.state.paginate) this.get_value_count(where, query)
-			// this.setState( prevState => ({
-			// 	library_entries: {
-			// 		...prevState.library_entries,
-			// 		[entry_object.id]: {
-			// 			scatter_data,
-			// 			bar_data,
-			// 			entries,
-			// 		}
-			// 	}
-			// }))	
-		} catch (error) {
-			console.error(error)
-		}		
-	}
-
 	node_click = (v) => {
 		const {type, enrichment_id} = this.props.match.params
 		const model = this.props.preferred_name.signatures
@@ -774,16 +427,7 @@ export default class SignatureSearch extends React.PureComponent {
 				libraries: null,
 				searching: true,
 			}, () => this.process_input());
-		} //else if(id !==previd){
-		// 	this.setState({
-		// 		visualization: {},
-		// 		searching: true,
-		// 	}, () => {
-		// 		const model = this.props.match.params.model
-		// 		if (model === "resources") this.resolve_enrichment_from_resource()
-		// 		else this.resolve_enrichment()
-		// 	});	
-		// }
+		}
 	}
 
 	componentDidMount = async () => {
@@ -794,11 +438,12 @@ export default class SignatureSearch extends React.PureComponent {
 		const entity_schemas = schemas.filter(s=>s.type==="entity")
 		const titles = []
 		const synonyms = []
+		// const fields = []
 		for (const schema of entity_schemas){
 			for (const prop of Object.values(schema.properties)){
-				if (prop.type==="title" && titles.indexOf(prop.field) === -1) titles.push(prop.field)
-				else if (prop.type==="alternative" && titles.indexOf(prop.field) === -1) titles.push(prop.field)
-				else if (prop.synonyms && synonyms.indexOf(prop.field) === -1) synonyms.push(prop.field)
+				if (prop.type==="title" && titles.indexOf(prop.field) === -1) titles.push(prop)
+				else if (prop.type==="alternative" && titles.indexOf(prop.field) === -1) titles.push(prop)
+				else if (prop.synonyms && synonyms.indexOf(prop.field) === -1) synonyms.push(prop)
 			}
 		}
 		// Process search tabs
@@ -889,7 +534,6 @@ export default class SignatureSearch extends React.PureComponent {
 						entries={this.state.resources}
 						ResultsProps={{
 							entries: this.state.libraries,
-							process_children: this.process_children,
 							onClick: this.node_click,
 							visualization: this.state.visualization,
 							setVisualization: this.setVisualization,
