@@ -466,9 +466,9 @@ class LibraryEnrichment extends React.PureComponent {
 					limit: 10,
 					fields: [field]
 				}
-				const value_count = await resolver.aggregate( endpoint, filter)
+				const scatter_value_count = (await resolver.aggregate( endpoint, filter))[field]
 				this.setState({
-					scatter_value_count: value_count[field]
+					scatter_value_count,
 				})
 			}	
 		} catch (error) {
@@ -485,7 +485,6 @@ class LibraryEnrichment extends React.PureComponent {
 
 			resolver.abort_controller()
 			resolver.controller()
-			console.log(term)
 			if (term === '' || term === null) return {}
 			else {
 				const field = primary_field.search_field || primary_field.field
@@ -658,7 +657,8 @@ class LibraryEnrichment extends React.PureComponent {
 					secondary_color={this.props.theme.palette.secondaryVisualization.light}
 					results={this.state.scatter_data}
 					set_input_term={input_term=>{
-						this.setState({input_term},()=>this.get_top_value_count())}}
+						this.setState({input_term},
+						()=>this.get_top_value_count())}}
 					input_term={this.state.input_term}
 					scatter_value_count={this.state.scatter_value_count}
 					category={this.state.category || cat}
