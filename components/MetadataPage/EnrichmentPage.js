@@ -364,7 +364,6 @@ export default class EnrichmentPage extends React.PureComponent {
 		this.setState({
 			error: null,
 		}, ()=>{
-			console.log(`${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}`)
 			this.props.history.push({
 				pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}`
 			})	

@@ -212,8 +212,6 @@ export const download_enrichment_for_library = async ({entry,
 		end()
 		fileDownload(JSON.stringify(serialized), filename)
 	}else if (format === "tsv"){
-		console.log(direction)
-		console.log(serialized)
 		const signatures = serialized[direction]
 		let tsv_header = 'Term'
 		let tsv_body = ""
