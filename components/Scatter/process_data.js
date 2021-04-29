@@ -1,4 +1,4 @@
-import {getName} from '../../util/ui/labelGenerator'
+import {getName, getPropValue} from '../../util/ui/labelGenerator'
 import {makeTemplate} from '../../util/ui/makeTemplate'
 import colormap from 'colormap'
 
@@ -8,13 +8,9 @@ export const process_data = async ({entries,
 		library,
 		primary_color,
 		secondary_color,
-		secondary_field=[
-			{
-				label: "Cell Line",
-				text: "${meta.cellline}",
-				field: "meta.cellline"
-			}
-		]}) => {
+		primary_field,
+		secondary_fields,
+}) => {
 	const inactive_color="#c9c9c9"
 	const direction_color = {
 		up: primary_color,
@@ -35,6 +31,7 @@ export const process_data = async ({entries,
 			e.library = library
 		}
 		// scatter
+		const prop_val = getPropValue(e, primary_field, primary_field.label)
 		const direction = e.direction
 		// let color = inactive_color
 		// if (direction === undefined || ["up", "reversers"].indexOf(direction) > -1 || direction === "signatures") {
@@ -44,7 +41,7 @@ export const process_data = async ({entries,
 		// }
 		const name = getName(e, schemas)
 		const category = {}
-		for (const f of secondary_field){
+		for (const f of secondary_fields){
 			if (colorize[f.label] === undefined) colorize[f.label] = {}
 			const text = makeTemplate(f.text, e)
 			category[f.label] = text
@@ -64,6 +61,8 @@ export const process_data = async ({entries,
 				xName: "-lop p",
 				value: e.scores["p-value"],
 				actual_value: e.scores[this.state.order_field],
+				primary_label: prop_val.label,
+				primary_value: prop_val.text,
 				// color: e.scores["p-value"] < 0.05 ? color: inactive_color,
 				category,
 				id: e.id,
@@ -80,6 +79,8 @@ export const process_data = async ({entries,
 				xAxis: e.scores["z-score (down)"],
 				yName: 'z-score (up)',
 				xName: 'z-score (down)',
+				primary_label: prop_val.label,
+				primary_value: prop_val.text,
 				// color,
 				category,
 				id: e.id,

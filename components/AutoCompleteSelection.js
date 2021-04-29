@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 export const AutoCompleteSelection = ({label, selection, value, setValue, inputValue, setInputValue}) => {
 	const [open, setOpen] = useState(false);
-	const options =  Object.keys(selection||{})
-	const loading = open && options.length === 0 && selection !== undefined && selection !== null;
 
 	return (
 		<Autocomplete
@@ -26,24 +23,26 @@ export const AutoCompleteSelection = ({label, selection, value, setValue, inputV
 				setInputValue(newInputValue);
 			}}
 			id="sig-selector"
-			options={options}
-			loading={loading}
+			options={selection}
 			style={{ width: 300 }}
 			renderInput={(params) => (
 				<TextField
 					{...params}
 					label={label}
 					variant="outlined"
+					placeholder={`Search for ${label.toLowerCase()}`}
+					InputLabelProps={{
+						shrink: true,
+					}}
 					InputProps={{
 						...params.InputProps,
 						endAdornment: (
 						<React.Fragment>
-							{loading ? <CircularProgress color="inherit" size={20} /> : null}
 							{params.InputProps.endAdornment}
 						</React.Fragment>
 						),
 					}}
-					/>
+				/>
 			)}
 		/>
 	)

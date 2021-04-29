@@ -51,6 +51,7 @@ class LibraryEnrichment extends React.PureComponent {
 			scatter_value_count: null,
 			primary_field: null,
 			secondary_fields: null,
+			scatter_selection: [],
 		}
 	}
 
@@ -247,6 +248,7 @@ class LibraryEnrichment extends React.PureComponent {
 			}
 			const child = Object.values(children)[0][0]
 			const { primary_field, secondary_fields } = this.scatter_fields(child)
+			
 			this.setState({
 				children_count,
 				children,
@@ -255,18 +257,29 @@ class LibraryEnrichment extends React.PureComponent {
 				direction,
 				children_data,
 				primary_field,
-				secondary_fields
-			}, async ()=>{
-				if (this.state.scatter_data === null){					
-					const {count, ...rest} = await this.state.entry_object.children({limit: 0})	
-					const entries = Object.values(rest).reduce((acc, c)=>([...acc, ...c]), [])
-					this.generate_scatter_data(entries)
-				}
+				secondary_fields,
 			})	
 		} catch (error) {
 			console.error(error)
 		}
 			
+	}
+
+	initialize_scatter_value_count = async () => {
+		if (this.state.scatter_value_count === null){
+			const scatter_value_count = await this.get_top_value_count('', this.state.primary_field.field)
+			this.setState({
+				scatter_value_count
+			})
+		}
+	}
+
+	initialize_scatter_data = async () => {
+		if (this.state.scatter_data === null){					
+			const {count, ...rest} = await this.state.entry_object.children({limit: 0})	
+			const entries = Object.values(rest).reduce((acc, c)=>([...acc, ...c]), [])
+			this.generate_scatter_data(entries)
+		}
 	}
 
 	
@@ -435,25 +448,29 @@ class LibraryEnrichment extends React.PureComponent {
 			this.process_children()
 		})
 	} 
+	
+	onScatterNodeClick = (data) => {
+		const term = data.primary_value
+		this.setState({term}, ()=>{
+			this.process_results(term)
+		})
+	}
 
-	get_top_value_count = async () => {
+	get_top_value_count = async (input_term, primary_field) => {
 		try {
-			const input_term = this.state.input_term
 			const resolver = this.props.resolver
 			const library = this.state.entry.data
-			const field = this.state.primary_field.field
+			const field = primary_field || this.state.primary_field.field
 			resolver.abort_controller()
 			resolver.controller()
 			if (input_term === '') {
 				const endpoint =  `/libraries/${library.id}/signatures/value_count`
 				const filter = {
-					limit: 10,
+					limit: 5,
 					fields: [field],
 				}
-				const value_count = await resolver.aggregate( endpoint, filter)
-				this.setState({
-					scatter_value_count: value_count[field]
-				})
+				const scatter_value_count = (await resolver.aggregate( endpoint, filter))[field]
+				return scatter_value_count
 			} else {
 				const endpoint =  `/signatures/value_count`
 				const filter = {
@@ -467,9 +484,7 @@ class LibraryEnrichment extends React.PureComponent {
 					fields: [field]
 				}
 				const scatter_value_count = (await resolver.aggregate( endpoint, filter))[field]
-				this.setState({
-					scatter_value_count,
-				})
+				return scatter_value_count
 			}	
 		} catch (error) {
 			console.error(error)
@@ -601,8 +616,7 @@ class LibraryEnrichment extends React.PureComponent {
 		}
 	}
 
-	process_results = async () => {
-		const term = this.state.term
+	process_results = async (term) => {
 		const entries = await this.filter_metadata(term)
 		const signatures = await this.get_results(entries)
 		await this.generate_scatter_data(Object.values(signatures))
@@ -634,12 +648,42 @@ class LibraryEnrichment extends React.PureComponent {
 		return { primary_field, secondary_fields }
 	}
 
-	scatter_component = () => {
-		if (this.state.scatter_value_count === null) this.get_top_value_count()
+	reset_scatter_plot = async () => {
+		const scatter_selection = await this.get_top_value_count('')
+		this.setState({
+			scatter_selection,
+			scatter_data: {},
+			category: this.state.entry.data.dataset_type === "rank_matrix" ? "direction": "significance",
+			term: '',
+			input_term: '',
+			scatter_selection: [],
+		}, async ()=>{
+			const {count, ...rest} = await this.state.entry_object.children({limit: 0})	
+			const entries = Object.values(rest).reduce((acc, c)=>([...acc, ...c]), [])
+			this.generate_scatter_data(entries)
+		})
+	}
 
-		const { primary_field, secondary_fields, scatter_data } = this.state
-		const cat = scatter_data.colorize.direction !== undefined ? 'direction': 'significance'
-		const name_props = this.state.entry.data.dataset_type === "geneset_library" ? {
+	set_input_term = async (input_term) => {
+		this.setState({input_term},()=>this.get_scatter_selection(input_term))
+		
+	}
+
+	get_scatter_selection = async (input_term) => {
+		if (this.state.term !==input_term){
+			const results = await this.get_top_value_count(input_term)
+			const scatter_selection = Object.keys(results || {})
+			this.setState({scatter_selection})
+		}
+	}
+
+	scatter_component = () => {
+		// if (this.state.scatter_value_count === null) this.get_top_value_count()
+		this.initialize_scatter_value_count()
+		this.initialize_scatter_data()
+		const { primary_field, secondary_fields, entry } = this.state
+		const cat = entry.data.dataset_type === 'rank_matrix' ? 'direction': 'significance'
+		const name_props = entry.data.dataset_type === "geneset_library" ? {
 			yAxisName: "-log(pval)",
 			xAxisName: "odds ratio",
 		}:
@@ -656,15 +700,18 @@ class LibraryEnrichment extends React.PureComponent {
 					primary_color={this.props.theme.palette.primaryVisualization.light}
 					secondary_color={this.props.theme.palette.secondaryVisualization.light}
 					results={this.state.scatter_data}
-					set_input_term={input_term=>{
-						this.setState({input_term},
-						()=>this.get_top_value_count())}}
+					set_input_term={this.set_input_term}
 					input_term={this.state.input_term}
 					scatter_value_count={this.state.scatter_value_count}
+					scatter_selection={this.state.scatter_selection}
 					category={this.state.category || cat}
 					set_category={category=>this.setState({category})}
 					term={this.state.term}
-					set_term={term=>this.setState({term}, ()=>this.process_results())}
+					set_term={term=>this.setState({term}, ()=>this.process_results(term))}
+					reset={this.reset_scatter_plot}
+					scatterProps={{
+						onClick: this.onScatterNodeClick
+					}}
 				/>
 			</Grid>
 		)
@@ -837,7 +884,9 @@ class LibraryEnrichment extends React.PureComponent {
 									}
 								]}
 								value={this.state.visualization}
-								handleChange={(t)=>this.setState({visualization: t.value})}
+								handleChange={(t)=>this.setState({visualization: t.value},()=>{
+									if (t.value === 'bar') this.reset_scatter_plot()
+								})}
 								tabsProps={{centered: true}}
 							/>
 						</Grid>
@@ -890,14 +939,14 @@ class LibraryEnrichment extends React.PureComponent {
 		// const {count, ...rest} = await this.state.entry_object.children({limit: 0})
 		// let entries = Object.values(rest).reduce((acc, c)=>([...acc, ...c]), [])
 		const child = entries[0]
-		const secondary_fields = this.state.secondary_fields
 		const scatter_data = await process_data({
 			entries,
 			library: this.state.entry.data,
 			primary_color: this.props.theme.palette.primaryVisualization.light,
 			secondary_color: this.props.theme.palette.secondaryVisualization.light,
 			schemas: this.props.schemas,
-			secondary_field: secondary_fields,
+			primary_field: this.state.primary_field,
+			secondary_fields: this.state.secondary_fields,
 			serialized: !(child instanceof Model)
 		})
 		this.setState({

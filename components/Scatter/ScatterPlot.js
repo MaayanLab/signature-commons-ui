@@ -20,14 +20,27 @@ import {
 
 const CustomTooltip = ({ active, payload }) => {
 	if (active) {
-		const {name, id, xName, yName, zName, xAxis, yAxis, zValue, category} = payload[0].payload
+		const {
+				name,
+				id,
+				xName,
+				yName,
+				zName,
+				xAxis,
+				yAxis,
+				zValue,
+				category,
+				primary_label,
+				primary_value,
+			} = payload[0].payload
 		return (
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
-				<Typography variant="h6">{name}</Typography>
-				<Typography><b>{xName}:</b> {precise(xAxis)}</Typography>
-				<Typography><b>{yName}:</b> {precise(yAxis)}</Typography>
-				{Object.entries(category).map(([k,v])=><Typography key={k}><b style={{textTransform: "lowercase"}}>{k}:</b> {v}</Typography>)}
+					<Typography variant="h6">{name}</Typography>
+					<Typography><b style={{textTransform: "lowercase"}}>{primary_label}:</b> {primary_value}</Typography>
+					{Object.entries(category).map(([k,v])=><Typography key={k}><b style={{textTransform: "lowercase"}}>{k}:</b> {v}</Typography>)}
+					<Typography><b>{xName}:</b> {precise(xAxis)}</Typography>
+					<Typography><b>{yName}:</b> {precise(yAxis)}</Typography>	
 				</CardContent>
 			</Card>
 		)
@@ -59,7 +72,7 @@ export const ScatterPlot = (props) => {
 	// 	// Use FileSaver to download the PNG
 	// 	FileSaver.saveAs(png, `${filename}.png`);
 	//   }, [png]);
-	const {scatter_data, colorize} = data
+	const {scatter_data=[], colorize={}} = data
 	return (
 		<ResponsiveContainer 
 			width={width}
@@ -92,7 +105,7 @@ export const ScatterPlot = (props) => {
 						layout="vertical"
 						iconSize={10}
 						width={100}
-						payload={Object.entries(colorize[category]).slice(0,30).map(([value, color])=>({value, color, type: "circle"}))}
+						payload={Object.entries(colorize[category]||{}).slice(0,30).map(([value, color])=>({value, color, type: "circle"}))}
 				/>
 				<Scatter name="Enrichment" data={scatter_data} {...scatterProps}>
 					{scatter_data.map((entry, index) => {
