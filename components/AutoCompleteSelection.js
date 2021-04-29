@@ -5,14 +5,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 export const AutoCompleteSelection = ({label, selection, value, setValue, inputValue, setInputValue}) => {
 	const [open, setOpen] = useState(false);
-	const [options, setOptions] = useState([]);
+	const options =  Object.keys(selection||{})
 	const loading = open && options.length === 0 && selection !== undefined && selection !== null;
-
-	useEffect(async () => {
-		const o = Object.keys(selection||{})
-		setOptions(o)
-	  }, [selection]);
-	
 
 	return (
 		<Autocomplete
