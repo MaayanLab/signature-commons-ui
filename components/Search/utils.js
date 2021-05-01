@@ -1,6 +1,7 @@
 import { labelGenerator, getName, getPropType } from '../../util/ui/labelGenerator'
 import fileDownload from 'js-file-download'
 import Color from 'color'
+import isUUID from 'validator/lib/isUUID'
 
 export const resolve_ids = ({
 	query,
@@ -152,23 +153,41 @@ export const enrichment = async (query, input, resolver, handleError=null) => {
 	}
 }
 
-export const download_signature = async ({entry, schemas, filename, resolver, model, serialize=false}) => {
+export const download_signature = async ({entry, schemas, model, resolver, serialize=false}) => {
 	const {resolved_entries} = await resolver.resolve_entries({
 		model,
 		entries: [entry]
 	})
-	const c = resolved_entries[entry.id]
+	const sigid = isUUID(entry) ? entry: entry.id
+	const c = resolved_entries[sigid]
+	const e = await c.serialize(true, true, true)
+	const filename =  getName(e, schemas)
 	if(serialize) {
-		const e = await c.serialize(true, true, true)
-		fileDownload(JSON.stringify(e, null, 2), filename)
+		fileDownload(JSON.stringify(e, null, 2), filename + ".json")
 	} else {
-		const {entities} = await c.children({limit: 0})
-		const names = []
-		for (const child of entities){
-			const val = getName(child, schemas)
-			if (val!==null) names.push(val)
+		const {entities, up=[], down=[]} = e
+		if (entities !== undefined) {
+			const names = []
+			for (const child of entities){
+				const val = getName(child, schemas)
+				if (val!==null) names.push(val)
+			}
+			fileDownload(names.join('\n'), filename + ".txt")
+		} else {
+			const up_names = []
+			for (const child of up){
+				const val = getName(child, schemas)
+				if (val!==null) up_names.push(val)
+			}
+
+			const down_names = []
+			for (const child of down){
+				const val = getName(child, schemas)
+				if (val!==null) down_names.push(val)
+			}
+			const file_text = `${filename}_up\t\t${up_names.join('\t')}\n${filename}_down\t\t${down_names.join('\t')}`
+			fileDownload(file_text, filename + ".gmt")
 		}
-		fileDownload(names.join('\n'), filename)
 	}
 }
 

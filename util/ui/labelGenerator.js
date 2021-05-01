@@ -1,5 +1,10 @@
 import { makeTemplate } from './makeTemplate'
 import { findMatchedSchema, objectMatch } from './objectMatch'
+import { download_signature } from '../../components/Search/utils'
+
+const internal_function = {
+  download_signature: download_signature
+}
 
 export const value_by_type = {
 	'text': ({ label, prop, data }) => {
@@ -105,11 +110,11 @@ export const value_by_type = {
     if (Object.keys(props).length ===0) return null
     else return {label, props}
   },
-  'prop-array': ({label, prop, data}) => {
+  'prop-array': ({label, prop, data, ...rest}) => {
     
     const props = []
     for (const i of prop.items){
-      const val = value_by_type[i.type]({label, prop: i, data})
+      const val = value_by_type[i.type]({label, prop: i, data, ...rest})
       if (val!==null){
         if (i.type === 'text') {
           props.push(val.text)
@@ -121,10 +126,10 @@ export const value_by_type = {
     if (props.length ===0) return null
     else return props
   },
-  'prop-object': ({label, prop, data}) => {
+  'prop-object': ({label, prop, data, ...rest}) => {
     const props = {}
     for (const [k,v] of Object.entries(prop.properties)){
-      const val = value_by_type[v.type]({label:k, prop: v, data})
+      const val = value_by_type[v.type]({label:k, prop: v, data, ...rest})
       if (val!==null){
         if (v.type==='text'){
           props[k] = val.text
@@ -136,14 +141,28 @@ export const value_by_type = {
     if (Object.keys(props).length ===0) return null
     else return props
   },
-  'component': ({label, prop, data}) => {
+  'component': ({label, prop, data, ...rest}) => {
     const props = {}
     for (const [k,v] of Object.entries(prop.props)){
-      const val = value_by_type[v.type]({label: k, prop: v, data})
+      const val = value_by_type[v.type]({label: k, prop: v, data, ...rest})
       if (val!==null) props[k] = val
     }
     if (Object.keys(props).length ===0) return null
     else return {label, props}
+  },
+  'schemas': ({schemas}) => {
+    return schemas
+  },
+  'resolver': ({resolver}) => {
+    return resolver
+  },
+  'internal-function': ({label, prop, data, ...rest}) => {
+    const props = value_by_type[prop.props.type]({label, prop: prop.props, data, ...rest})
+    if (prop.function === undefined) return null
+    else {
+      const func = () => internal_function[prop.function]({...props})
+      return func
+    }
   }
 }
 
@@ -187,7 +206,10 @@ export const getName = (data, schemas) => {
   return null
 }
 
-export const labelGenerator = (data, schemas, endpoint=undefined, highlight=undefined) => {
+export const labelGenerator = (data,
+    schemas,
+    endpoint=undefined,
+    resolver=undefined) => {
   const schema = findMatchedSchema(data, schemas)
   if (schema !== null) {
     const { properties } = schema
@@ -203,7 +225,7 @@ export const labelGenerator = (data, schemas, endpoint=undefined, highlight=unde
       const prop = properties[label]
       // if (prop.component === "download") prop.type = "download"
       if (objectMatch(prop.condition, data) && value_by_type[prop.type]!==undefined) {
-        const val = value_by_type[prop.type]({ label, prop, data })
+        const val = value_by_type[prop.type]({ label, prop, data, schemas, resolver })
         if (prop.synonyms){
           if (info.synonyms===undefined) info.synonyms = []
           if (prop.type === "array"){

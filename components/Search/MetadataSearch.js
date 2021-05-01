@@ -68,37 +68,18 @@ export default class MetadataSearch extends React.PureComponent {
 			for (const c of Object.values(results)){
 				const entry = await c.serialize(true,false)
 				const e = labelGenerator(await entry,
-					schemas,
-					"#" + this.props.preferred_name[this.props.model] +"/")
+						schemas,
+						"#" + this.props.preferred_name[this.props.model] +"/",
+						this.props.resolver
+					)
+				
 				e.RightComponents = []
-				if (this.props.model==='signatures'){
-					const type = entry.library.dataset_type === "rank_matrix" ? "Rank": "Overlap"
+				if (e.info.components.options !== undefined) {
 					e.RightComponents.push({
 						component: this.options,
-						props: {
-							options: [
-								{
-									label: `Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`,
-									icon: 'mdi-magnify-scan',
-									href: `#${this.props.nav.SignatureSearch.endpoint}/${type}/${e.data.id}`
-								},
-								{
-									label: `Download ${this.props.preferred_name.signatures}`,
-									onClick: () => {
-										download_signature({
-											entry,
-											schemas,
-											filename: `${e.info.name.text}.txt`,
-											resolver: this.props.resolver,
-											model: this.props.model,
-										})
-									},
-									icon: "mdi-download"
-								}
-							]
-						}
+						props: {...e.info.components.options.props}
 					})
-				}
+				} 
 				if (e.info.components.insignia !== undefined) {
 					e.RightComponents.push({
 						component: this.insignia,
