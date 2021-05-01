@@ -57,7 +57,7 @@ export const InfoCard = ({
                       <Highlight
                         Component={(props) => {
                           return (
-                            <Typography variant="h6" {...props}>
+                            <Typography variant="body1" {...props}>
                               <a href={info.endpoint}>{props.children}</a>
                             </Typography>
                           )
