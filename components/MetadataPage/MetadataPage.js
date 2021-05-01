@@ -129,34 +129,12 @@ export default class MetadataPage extends React.PureComponent {
 						schemas,
 						"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
 					e.RightComponents = []
-					if (this.state.entry_object.child_model==='signatures'){
-						const type = entry.library.dataset_type === "rank_matrix" ? "Rank": "Overlap"
+					if (e.info.components.options !== undefined) {
 						e.RightComponents.push({
 							component: this.options,
-							props: {
-								options: [
-									{
-										label: `Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`,
-										icon: 'mdi-magnify-scan',
-										href: `#${this.props.nav.SignatureSearch.endpoint}/${type}/${e.data.id}`
-									},
-									{
-										label: `Download ${this.props.preferred_name.signatures}`,
-										onClick: () => {
-											download_signature({
-												entry,
-												schemas,
-												filename: `${e.info.name.text}.txt`,
-												resolver: this.props.resolver,
-												model: this.state.entry_object.child_model,
-											})
-										},
-										icon: "mdi-download"
-									}
-								]
-							}
+							props: {...e.info.components.options.props}
 						})
-					}
+					} 
 					if (e.info.download !== undefined) {
 						e.RightComponents.push({
 							component: this.download,
