@@ -141,7 +141,7 @@ export const defaultUIValues = {
             },
             {
               label: "Download Rank Matrices",
-              description: "Download the rank matrices for the various perturbation types. Each column is a gene and each row is a signature. Each element of a matrix represents the ranking of a gene on a signature.",
+              description: "Download the rank matrices for the various perturbation types. Each column is a gene and each row is a signature. Each element of the matrix represents the ranking of a gene on a signature.",
               links: [
                 {
                   label: "LINCS chemical perturbagen signatures",
