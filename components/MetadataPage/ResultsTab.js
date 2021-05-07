@@ -72,3 +72,5 @@ ResultsTab.propTypes = {
 	TabComponent: PropTypes.node,
 	divider: PropTypes.boolean,
 }
+
+export default ResultsTab

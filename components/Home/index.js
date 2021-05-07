@@ -30,6 +30,7 @@ import Lazy from '../Lazy'
 import { getResourcesAndLibraries } from '../../util/ui/getResourcesAndLibraries'
 
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
+const DownloadsPage = dynamic(() => import('../DownloadsPage'))
 
 
 const snackStyles = (theme) => ({
@@ -249,6 +250,20 @@ class Home extends React.PureComponent {
     )
   }
 
+  downloads_page = (props) => {
+    const download_nav = this.props.ui_values.nav.Downloads
+    if (download_nav.active) return ( 
+      <DownloadsPage 
+        {...props}
+        resolver={this.state.metadata_resolver}
+        preferred_name={this.props.ui_values.preferred_name}
+        schemas={this.props.schemas}
+        {...download_nav.props|| {}}
+      />
+    )
+    else return null
+  }
+
   reportError = (error_message) => {
     this.setState({
       error_message
@@ -417,6 +432,13 @@ class Home extends React.PureComponent {
               exact
               component={this.resources}
             /> : null
+          }
+          {nav.Downloads.active ? 
+            <Route
+              path={`${nav.Downloads.endpoint || '/Downloads'}`}
+              exact
+              component={this.downloads_page}
+            /> : null  
           }
           <Route
             path={'/About'}

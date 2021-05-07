@@ -113,6 +113,17 @@ export function Nav(props) {
         }
       }
       )}
+      {ui_values.nav.Downloads.active ?
+        <ListItemLink
+          selected={location.pathname === `${ui_values.nav.Downloads.endpoint || '/Downloads'}`}
+          className={ classes.menuItem}
+          href={`#${ui_values.nav.Downloads.endpoint}`}
+        >
+          <Typography variant={"h6"}>
+            {ui_values.nav.Downloads.navName || ui_values.nav.Downloads.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
+          </Typography>
+        </ListItemLink> : null
+      }
       <ListItemLink
         selected={location.pathname === '/API'}
         className={ classes.menuItem}
