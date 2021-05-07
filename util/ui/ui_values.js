@@ -99,6 +99,77 @@ export const defaultUIValues = {
         active: true,
         endpoint: '/API',
       },
+      Downloads: {
+        active: true,
+        endpoint: '/Downloads',
+        navName: 'Downloads',
+        props : {
+          download_links: [
+            {
+              label: "Download Metadata Files",
+              description: "Download the LINCS Datasets and Signatures metadata files.",
+              links: [
+                {
+                  label: "Data and Signature Generation Center",
+                  date: "2021-05-04",
+                  size: "5 KB",
+                  href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/lincs-resources.json",
+                  icon: "mdi-certificate"
+                },
+                {
+                  label: "Dataset",
+                  date: "2021-05-04",
+                  size: "316 KB",
+                  href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/lincs-libraries.json",
+                  icon: "mdi-bookshelf"
+                },
+                {
+                  label: "LINCS Signatures",
+                  date: "2021-05-04",
+                  size: "452 MB",
+                  href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/lincs-signatures.json",
+                  icon: "mdi-fingerprint"
+                },
+                {
+                  label: "Genes",
+                  date: "2021-05-04",
+                  size: "129 MB",
+                  href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/lincs-entities.json",
+                  icon: "mdi-dna"
+                }
+              ]
+            },
+            {
+              label: "Download Rank Matrices",
+              description: "Download the rank matrices for the various perturbation types. Each column is a gene and each row is a signature. Each element of a matrix represents the ranking of a gene on a signature.",
+              links: [
+                {
+                  label: "LINCS chemical perturbagen signatures",
+                  date: "2021-05-04",
+                  href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/LINCS_chemical_perturbagen_signatures_rank_matrix.tsv",
+                  size: "510.2 MB",
+                  icon: "mdi-pill"
+                },
+                {
+                  label: "LINCS consensus gene (CGS) knockdown signatures",
+                  date: "2021-05-04",
+                  size: "132.3 MB",
+                  href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/LINCS_consensus_gene_CGS_knockdown_signatures_rank_matrix.tsv",
+                  icon: "mdi-dna"
+                },
+                {
+                  label: "LINCS gene overexpression signatures",
+                  date: "2021-05-04",
+                  size: "33.1 MB",
+                  href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/LINCS_gene_overexpression_signatures_rank_matrix.tsv",
+                  icon: "mdi-dna"
+                }
+              ]
+            }
+          ],
+          download_tables: ["libraries"],
+        }
+      }
     },
     extraNav: [],
     // extraNav: [
