@@ -27,7 +27,7 @@ const DownloadsPage = ({
 		{download_tables.length > 1 ?
 			<Grid item xs={12} md={10} align="center">
 				<ResultsTab 
-					tabs={download_tables.map(value=>({value, label: preferred_name[value]}))}
+					tabs={download_tables.map(value=>({value, label: preferred_name[value.model]}))}
 					value={tab}
 					handleChange={changeTab}
 					tabsProps={{centered: true}}
@@ -36,12 +36,12 @@ const DownloadsPage = ({
 		}
 		<Grid item xs={12} md={10}>
 			<Typography variant={"h5"}>
-				Download {preferred_name[tab]}
+				{tab.label}
 			</Typography>
 		</Grid>
 		<Grid item xs={12} md={10}>
 
-			<DownloadList resolver={resolver} schemas={schemas} model={tab}/>
+			<DownloadList resolver={resolver} schemas={schemas} model={tab.model}/>
 		</Grid>
 	</Grid>
   )

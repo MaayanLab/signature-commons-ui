@@ -106,8 +106,7 @@ export const defaultUIValues = {
         props : {
           download_links: [
             {
-              label: "Download Metadata Files",
-              description: "Download the LINCS Datasets and Signatures metadata files.",
+              label: "Metadata Files",
               links: [
                 {
                   label: "Data and Signature Generation Center",
@@ -140,25 +139,25 @@ export const defaultUIValues = {
               ]
             },
             {
-              label: "Download Rank Matrices",
-              description: "Download the rank matrices for the various perturbation types. Each column is a gene and each row is a signature. Each element of the matrix represents the ranking of a gene on a signature.",
+              label: "Rank Matrices",
+              description: "Each element within the matrix represents the ranking of a gene in a signature.",
               links: [
                 {
-                  label: "LINCS chemical perturbagen signatures",
+                  label: "L1000 chemical perturbagen signatures",
                   date: "2021-05-04",
                   href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/LINCS_chemical_perturbagen_signatures_rank_matrix.tsv",
                   size: "510.2 MB",
                   icon: "mdi-pill"
                 },
                 {
-                  label: "LINCS consensus gene (CGS) knockdown signatures",
+                  label: "L1000 consensus gene (CGS) knockdown signatures",
                   date: "2021-05-04",
                   size: "132.3 MB",
                   href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/LINCS_consensus_gene_CGS_knockdown_signatures_rank_matrix.tsv",
                   icon: "mdi-dna"
                 },
                 {
-                  label: "LINCS gene overexpression signatures",
+                  label: "L1000 gene overexpression signatures",
                   date: "2021-05-04",
                   size: "33.1 MB",
                   href: "https://lincs-dcic.s3.amazonaws.com/sigcom-lincs-metadata/LINCS_gene_overexpression_signatures_rank_matrix.tsv",
@@ -167,7 +166,13 @@ export const defaultUIValues = {
               ]
             }
           ],
-          download_tables: ["libraries"],
+          download_tables: [
+            {
+              model: "libraries",
+              label: "Other Data Packages"
+            }
+          ],
+
         }
       }
     },
