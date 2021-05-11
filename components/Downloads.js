@@ -69,7 +69,7 @@ export default class Downloads extends React.Component {
             onClose={this.handleClose}
           >
             {data.map(({url, onClick, text, icon}, i) => (
-              <React.Fragment>
+              <div>
                 {i===0 && loading ? <LinearProgress/>: null}
                 <MenuItem onClick={() => {
                   this.handleClose()
@@ -85,7 +85,7 @@ export default class Downloads extends React.Component {
                     <Icon className={`mdi mdi-18px ${icon || 'mdi-download'}`} /> &nbsp; {`${text}`}
                   </Typography>
                 </MenuItem>
-              </React.Fragment>
+              </div>
             ))}
           </Menu>
         </div>
