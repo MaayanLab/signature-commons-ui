@@ -2,10 +2,43 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Tooltip from '@material-ui/core/Tooltip'
 import Grid from '@material-ui/core/Grid'
+import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles';
 import Badge from '@material-ui/core/Badge';
+
+const ImageBox = ({src, alt, icon, IconProps}) => {
+    if (icon === undefined) {
+        if (src === "undefined") return ( 
+            <Avatar
+                style={{
+                    margin: "auto",
+                    height: 50,
+                    width: 50
+                }}
+                {...IconProps}> 
+                {alt[0]} 
+            </Avatar>
+        )
+        else return (
+            <img style={{
+                maxHeight: 50,
+                maxWidth: 100,
+                }}
+                alt={alt}
+                src={src}
+                {...IconProps}
+        />
+        )
+    } else {
+        return(
+            <span className={`mdi mdi-36px ${icon}`}
+                {...IconProps}
+            />
+        )
+    }
+}
 
 const CapTooltip = withStyles((theme) => ({
     tooltip: {
@@ -43,19 +76,7 @@ export const IconComponent = ({
     >
         <Grid container style={{height: 50}}>
             <Grid item xs={12} style={{margin:"auto"}}>
-                { icon === undefined ? 
-                    <img style={{
-                            maxHeight: 50,
-                            maxWidth: 100,
-                            }}
-                            alt={alt}
-                            src={src}
-                            {...IconProps}
-                    />:
-                    <span className={`mdi mdi-36px ${icon}`}
-                            {...IconProps}
-                    />
-                }
+                <ImageBox alt={alt} icon={icon} src={src} IconProps={IconProps}/>
             </Grid>
             { title===undefined ? null:
                 <Grid item xs={12}>
@@ -111,19 +132,7 @@ export const IconComponentButton = ({
             <Grid container>
                 <Grid item xs={12} style={{margin:"auto"}}>
                     <Badge badgeContent={count} color="error" max={999}>
-                        { icon === undefined ? 
-                            <img style={{
-                                    maxHeight: 50,
-                                    maxWidth: 100,
-                                    }}
-                                    alt={alt}
-                                    src={src}
-                                    {...IconProps}
-                            />:
-                            <span className={`mdi mdi-36px ${icon}`}
-                                    {...IconProps}
-                            />
-                        }
+                        <ImageBox alt={alt} icon={icon} src={src} IconProps={IconProps}/>
                     </Badge>
                 </Grid>
                 { title===undefined ? null:
