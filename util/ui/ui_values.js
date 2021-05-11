@@ -166,10 +166,36 @@ export const defaultUIValues = {
               ]
             }
           ],
-          download_tables: [
+          download_list: [
             {
               model: "libraries",
-              label: "Other Data Packages"
+              label: "Other Data Packages",
+              sort: [
+                {
+                  label: "Assay",
+                  field: "meta.assay",
+                  icon: "mdi-test-tube",
+                  order: "ASC"
+                },
+                {
+                  label: "Center",
+                  field: "meta.center",
+                  icon: "mdi-certificate",
+                  order: "ASC"
+                },
+                {
+                  label: "Date",
+                  field: "meta.date",
+                  icon: "mdi-calendar",
+                  order: "DESC"
+                },
+                {
+                  label: "File Size",
+                  field: "meta.total_size",
+                  icon: "mdi-database",
+                  order: "DESC"
+                }
+              ]
             }
           ],
 

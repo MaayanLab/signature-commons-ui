@@ -5,6 +5,7 @@ import { build_where } from '../../connector/build_where'
 const Grid = dynamic(()=> import('@material-ui/core/Grid'));
 const CircularProgress = dynamic(()=> import('@material-ui/core/CircularProgress'));
 const Button = dynamic(()=> import('@material-ui/core/Button'));
+const Typography = dynamic(()=> import('@material-ui/core/Typography'));
 const Avatar = dynamic(()=> import('@material-ui/core/Avatar'));
 const List = dynamic(()=> import('@material-ui/core/List'));
 const ListItem = dynamic(()=> import('@material-ui/core/ListItem'));
@@ -14,9 +15,23 @@ const ListItemSecondaryAction = dynamic(()=> import('@material-ui/core/ListItemS
 const Downloads = dynamic(()=> import('../Downloads'));
 const {IconComponent} = dynamic(()=> import('../DataTable/IconComponent'));
 
-const get_entries = async ({resolver, search, limit=25, skip, model, schemas}) => {
+const get_entries = async ({resolver, search, limit=25, skip, model, schemas, sorted}) => {
 	const where = build_where({search})
-	const filter = {where, limit, skip}
+	let filter = {
+		where,
+		limit,
+		skip
+	}
+	if (sorted !== null) {
+		filter = {
+			...filter,
+			where: {
+				...(filter.where || {}),
+				[sorted.field]: {neq: null}
+			},
+			order: [`${sorted.field} ${sorted.order}`]
+		}
+	}
 	const { entries: resolved_entries } = await resolver.filter_metadata({model, filter})
 	const entries = []
 	let count = 0
@@ -30,16 +45,23 @@ const get_entries = async ({resolver, search, limit=25, skip, model, schemas}) =
 	return {entries, count}
 }
 
+const sort_icons = {
+	"ASC": <span className={"mdi mdi-arrow-up"}/>,
+	"DESC": <span className={"mdi mdi-arrow-down"}/>
+}
+
 const DownloadList = ({
 	resolver,
 	schemas,
-	model
+	tab
 }) => {
+	const {model, sort} = tab
 	const [limit, setLimit] = useState(25)
 	const [skip, setSkip] = useState(0)
 	const [search, setSearch] = useState([])
 	const [entries, setEntries] = useState(null)
 	const [more, setMore] = useState(true)
+	const [sorted, setSorted] = useState(null)
 
 	useEffect( () => {
 		const r = async () => {
@@ -49,20 +71,67 @@ const DownloadList = ({
 				search,
 				limit,
 				skip,
-				schemas
+				schemas,
+				sorted
 			})
 			setEntries([...(entries || []), ...results])
 			if (count < limit) setMore(false)
 		}
 		r()
 	}, [search, limit, skip]);
+	useEffect( () => {
+		const r = async () => {
+			const {entries: results , count} = await get_entries({
+				resolver,
+				model, 
+				search,
+				limit,
+				skip: 0,
+				schemas,
+				sorted
+			})
+			setEntries(results)
+			if (count < limit) setMore(false)
+		}
+		r()
+	}, [sorted]);
 	if (entries === null) return <CircularProgress/>
 	return (
 		<Grid container spacing={2}>
+			<Grid item xs={12} align="right" style={{marginRight: 20}}>
+				{sort === undefined || sort.length === 0 ? null:
+					sort.map(s=>(
+						<Button 
+							key={s.label}
+							variant="contained"
+							color={`${s.label === (sorted || {}).label ? "secondary" : "default"}`}
+							startIcon={<span className={`mdi ${s.icon || 'mdi-sort'}`}/>}
+							style={{
+								margin: 2,
+								borderRadius: 50
+							}}
+							endIcon={s.label === (sorted || {}).label ? sort_icons[(sorted || {}).order] : null}
+							onClick={()=>{
+								if (sorted === null || sorted.label !== s.label){
+									setSorted(s)
+								} else {
+									setSorted({
+										...s,
+										order: sorted.order === "ASC" ? "DESC": "ASC"
+									})
+								}
+							}}
+						>
+							{s.label}
+						</Button>
+					))
+				}
+			</Grid>
 			<Grid item xs={12}>
 				<List>
 					{entries.map(entry=>(
-						<ListItem key={entry.data.id}>
+						<ListItem key={`${entry.data.id}-${(sorted || {}).label}-${(sorted || {}).order}`}
+								alignItems="flex-start">
 							<ListItemIcon>
 								<Avatar {...entry.info.icon}/>
 							</ListItemIcon>
@@ -71,10 +140,17 @@ const DownloadList = ({
 								primaryTypographyProps={{
 									style: {width: "90%"}
 								}}
-								secondary={entry.info.subtitle.text} 
-								secondaryTypographyProps={{
-									style: {width: "90%"}
-								}}
+								secondary={<div>
+									<Typography variant="body1" style={{width:"90%"}}>
+										{entry.info.subtitle.text}
+									</Typography>
+									{entry.info.tags.map(t=>(
+										<Typography key={t.label} variant="body2" style={{width:"90%"}}>
+											<b>{t.label}:</b> {t.text}
+										</Typography>
+									))}
+								</div>
+								}
 								style={{width: 400}}
 							/>
 							<ListItemSecondaryAction>
