@@ -148,7 +148,7 @@ export class DataResolver {
 	filter_metadata = async ({model, filter={}, parent}) => {
 		const start_time = new Date()		
 		const resolved_entries = {}
-		filter = empty_cleaner(filter) || {}
+		// filter = empty_cleaner(filter) || {}
 		const { response: entries, contentRange, duration } = await fetch_meta_post({
 			endpoint: `/${model}/find`,
 			body: {
