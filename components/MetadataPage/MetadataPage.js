@@ -8,11 +8,11 @@ import {build_where} from '../../connector'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { labelGenerator } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
-import IconButton from '../IconButton'
+import {IconComponent} from '../DataTable/IconComponent'
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import { SearchResult } from './SearchResult'
-import { get_filter, resolve_ids, download_signature } from '../Search/utils'
+import { get_filter, resolve_ids } from '../Search/utils'
 import Downloads from '../Downloads'
 import Options from '../Search/Options'
 import {ResultsTab} from './ResultsTab'
@@ -469,9 +469,9 @@ export default class MetadataPage extends React.PureComponent {
 					<Card>
 						<CardContent>
 							<Grid container spacing={3}>
-								<Grid item md={2} xs={4}>
-									<CardMedia style={{ marginTop: -15, paddingLeft: 13 }}>
-										<IconButton
+								<Grid item md={2} xs={4} align="center">
+									<CardMedia >
+										<IconComponent
 											{...(this.state.entry.info.icon || {})}
 										/>
 									</CardMedia>

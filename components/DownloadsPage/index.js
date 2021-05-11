@@ -8,12 +8,12 @@ const ResultsTab = dynamic(()=> import('../MetadataPage/ResultsTab'));
 
 const DownloadsPage = ({
 	resolver,
-	download_tables,
+	download_list,
 	download_links,
 	preferred_name,
 	schemas,
 } ) => {
-	const [tab, changeTab] = useState(download_tables[0])
+	const [tab, changeTab] = useState(download_list[0])
 	return (
 	<Grid container spacing={2} style={{margin: 10}}>
 		<Grid item xs={12}>
@@ -24,10 +24,10 @@ const DownloadsPage = ({
 		<Grid item xs={12} md={10}>
 			<DownloadLinks download_links={download_links}/>
 		</Grid>
-		{download_tables.length > 1 ?
+		{download_list.length > 1 ?
 			<Grid item xs={12} md={10} align="center">
 				<ResultsTab 
-					tabs={download_tables.map(value=>({value, label: preferred_name[value.model]}))}
+					tabs={download_list.map(value=>({value, label: preferred_name[value.model]}))}
 					value={tab}
 					handleChange={changeTab}
 					tabsProps={{centered: true}}
@@ -40,8 +40,7 @@ const DownloadsPage = ({
 			</Typography>
 		</Grid>
 		<Grid item xs={12} md={10}>
-
-			<DownloadList resolver={resolver} schemas={schemas} model={tab.model}/>
+			<DownloadList resolver={resolver} schemas={schemas} tab={tab} />
 		</Grid>
 	</Grid>
   )
