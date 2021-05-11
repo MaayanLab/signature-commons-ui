@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import { InputBase } from '@material-ui/core';
-import InputAdornment from '@material-ui/core/InputAdornment';
 
 const all_chip_props = {
   "or": {

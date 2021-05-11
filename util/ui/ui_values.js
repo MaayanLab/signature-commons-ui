@@ -101,12 +101,12 @@ export const defaultUIValues = {
       },
       Downloads: {
         active: true,
-        endpoint: '/Downloads',
-        navName: 'Downloads',
+        endpoint: '/Download',
+        navName: 'Download',
         props : {
           download_links: [
             {
-              label: "Metadata Files",
+              label: "Metadata",
               links: [
                 {
                   label: "Data and Signature Generation Center",

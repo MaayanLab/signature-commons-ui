@@ -16,11 +16,6 @@ const DownloadsPage = ({
 	const [tab, changeTab] = useState(download_list[0])
 	return (
 	<Grid container spacing={2} style={{margin: 10}}>
-		<Grid item xs={12}>
-		<Typography variant={"h4"}>
-			Downloads
-		</Typography>
-		</Grid>
 		<Grid item xs={12} md={10}>
 			<DownloadLinks download_links={download_links}/>
 		</Grid>

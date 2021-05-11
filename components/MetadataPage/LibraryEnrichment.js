@@ -247,7 +247,7 @@ class LibraryEnrichment extends React.PureComponent {
 				}
 			}
 			const child = Object.values(children)[0][0]
-			const { primary_field, secondary_fields } = this.scatter_fields(child)
+			if (this.state.primary_field === null) this.scatter_fields(child)
 			
 			this.setState({
 				children_count,
@@ -256,8 +256,6 @@ class LibraryEnrichment extends React.PureComponent {
 				paginate: false,
 				direction,
 				children_data,
-				primary_field,
-				secondary_fields,
 			})	
 		} catch (error) {
 			console.error(error)
@@ -624,6 +622,7 @@ class LibraryEnrichment extends React.PureComponent {
 
 	scatter_fields = (child) => {
 		const schemas = this.props.schemas
+		console.log(schemas, child)
 		const schema = findMatchedSchema(child, schemas)
 		let primary_field
 		let secondary_fields = []
@@ -641,10 +640,10 @@ class LibraryEnrichment extends React.PureComponent {
 				})
 			}
 		}
-		// this.setState({
-		// 	primary_field,
-		// 	secondary_fields
-		// })
+		this.setState({
+			primary_field,
+			secondary_fields
+		})
 		return { primary_field, secondary_fields }
 	}
 

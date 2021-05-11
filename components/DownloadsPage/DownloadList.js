@@ -13,7 +13,7 @@ const ListItemIcon = dynamic(()=> import('@material-ui/core/ListItemIcon'));
 const ListItemText = dynamic(()=> import('@material-ui/core/ListItemText'));
 const ListItemSecondaryAction = dynamic(()=> import('@material-ui/core/ListItemSecondaryAction'));
 const Downloads = dynamic(()=> import('../Downloads'));
-const {IconComponent} = dynamic(()=> import('../DataTable/IconComponent'));
+const ChipInput = dynamic(async () => (await import('../SearchComponents/ChipInput')).ChipInput);
 
 const get_entries = async ({resolver, search, limit=25, skip, model, schemas, sorted}) => {
 	const where = build_where({search})
@@ -74,34 +74,57 @@ const DownloadList = ({
 				schemas,
 				sorted
 			})
-			setEntries([...(entries || []), ...results])
+			if (skip > 0) setEntries([...(entries || []), ...results])
+			else setEntries(results)
 			if (count < limit) setMore(false)
 		}
 		r()
-	}, [search, limit, skip]);
-	useEffect( () => {
-		const r = async () => {
-			const {entries: results , count} = await get_entries({
-				resolver,
-				model, 
-				search,
-				limit,
-				skip: 0,
-				schemas,
-				sorted
-			})
-			setEntries(results)
-			if (count < limit) setMore(false)
-		}
-		r()
-	}, [sorted]);
+	}, [search, limit, skip, sorted]);
+	// useEffect( () => {
+	// 	const r = async () => {
+	// 		const {entries: results , count} = await get_entries({
+	// 			resolver,
+	// 			model, 
+	// 			search,
+	// 			limit,
+	// 			skip: 0,
+	// 			schemas,
+	// 			sorted
+	// 		})
+	// 		setEntries(results)
+	// 		if (count < limit) setMore(false)
+	// 	}
+	// 	r()
+	// }, [sorted]);
 	if (entries === null) return <CircularProgress/>
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={12} align="right" style={{marginRight: 20}}>
+			<Grid item xs={12} md={6}>
+				<ChipInput
+					input={search}
+					onSubmit={(term)=>{
+						if (search.indexOf(term)<0) setSearch([...search, term])
+					}}
+					onDelete={ (term)=>{
+							setSearch(search.filter(t=>t!==term))
+						}
+					}
+					ChipInputProps={{
+						divProps: {
+							style: {
+								background: "#f7f7f7",
+								padding: 5,
+								borderRadius: 25,
+							}
+						}
+					}}
+				/>
+			</Grid>
+			<Grid item xs={12} md={6} align="right">
 				{sort === undefined || sort.length === 0 ? null:
 					sort.map(s=>(
 						<Button 
+							size="small"
 							key={s.label}
 							variant="contained"
 							color={`${s.label === (sorted || {}).label ? "secondary" : "default"}`}
@@ -114,11 +137,13 @@ const DownloadList = ({
 							onClick={()=>{
 								if (sorted === null || sorted.label !== s.label){
 									setSorted(s)
+									setSkip(0)
 								} else {
 									setSorted({
 										...s,
 										order: sorted.order === "ASC" ? "DESC": "ASC"
 									})
+									setSkip(0)
 								}
 							}}
 						>
