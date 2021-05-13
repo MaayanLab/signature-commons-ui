@@ -1,8 +1,11 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
-import { InputBase } from '@material-ui/core';
+import Switch from '@material-ui/core/Switch';
+import InputBase from '@material-ui/core/InputBase';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { Set } from 'immutable'
 
 const all_chip_props = {
   "or": {
@@ -67,82 +70,81 @@ export const defaultChipRenderer = ({input, onDelete}) => {
   return chips
 }
 
-export class ChipInput extends React.Component {
-  constructor(props) {
-    super(props)
+export const ChipInput = (props) => {
+  const {
+    input,
+    onSubmit,
+    onDelete,
+    propsValue,
+    setPropsValue,
+    ChipInputProps,
+    disableMagnify,
+    chipRenderer,
+    endAdornment,
+  } = props
+  const [inputValue, setInputValue] = useState("")
+  const value = propsValue || inputValue
+  const setValue = setPropsValue || setInputValue
 
-    this.state = {
-      value: "",
-    }
-  }
-
-  onKeyPress = (e) => {
+  const onKeyPress = (e) => {
     if(e.keyCode == 13){
-      if (this.state.value.trim()){
-        const value = this.state.value
-        this.props.onSubmit(value)
+      if (value.trim()){
+        onSubmit(value)
+        setInputValue("")
       }
-      this.setState((prevState) =>({
-        value: "",
-      }))
-    }else if(e.keyCode == 8 && this.state.value === ""){
-      if (this.props.input.length>0){
-        const value = this.props.input[this.props.input.length-1]
-        this.props.onDelete(value)
+    }else if(e.keyCode == 8 && value === ""){
+      if (input.length>0){
+        if (value == "") {
+          const v = input[input.length-1]
+          onDelete(v)
+        }
       }
     }
   }
 
-  onBlur = (e) => {
-    if (this.state.value.trim()){
-      const value = this.state.value
-      this.props.onSubmit(value)
-      this.setState({
-        value: "",
-      })
-    } else {
-      this.setState({
-        value: "",
-      })
+  const onBlur = (e) => {
+    if (value.trim()){
+      onSubmit(value)
     }
+    setInputValue("")
   }
 
-  onChange = (e) => {
-    this.setState({
-      value: e.target.value,
-    })
+  const onChange = (e) => {
+    setValue(e.target.value)
   }
 
-  render = () => (
+  return (
     <div style={{
             display: 'flex',
             flexFlow: 'row wrap',
-            ...(((this.props.ChipInputProps || {}).divProps || {}).style || {})
+            overflow: "visible",
+            ...(((ChipInputProps || {}).divProps || {}).style || {})
           }}
     >
       <InputBase
         id="input-with-icon-textfield"
-        value={this.state.value}
-        onChange={this.onChange}
-        onKeyDown={this.onKeyPress}
-        onBlur={this.onBlur}
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyPress}
+        onBlur={onBlur}
+        // onFocus={onFocus}
         startAdornment={
-            this.props.input.length === 0 && !this.props.disableMagnify ?
+            input.length === 0 && !disableMagnify ?
             <span style={{opacity: 0.5}} 
               className="mdi mdi-magnify mdi-24px"
             />:
-            <React.Fragment>
-              {this.props.chipRenderer({...this.props})}
-            </React.Fragment>
+            chipRenderer({...props})
         }
-        fullWidth={this.props.input.length === 0}
-        inputProps={this.props.input.length === 0 ? {style: {width: '80%'}}: {style: {width: 'auto'}}}
-        {...((this.props.ChipInputProps || {}).inputProps || {})}
+        endAdornment={endAdornment}
+        fullWidth={input.length === 0}
+        inputProps={input.length === 0 ? {style: {width: '80%'}}: {style: {width: 'auto'}}}
+        {...((ChipInputProps || {}).inputProps || {})}
         style={{
           display: 'flex',
           flexWrap: 'wrap',
+          overflow: "auto",
           minHeight: 40,
-          ...(((this.props.ChipInputProps || {}).inputProps || {}).style || {})
+          ...(((ChipInputProps || {}).inputProps || {}).style || {})
         }}
       />
     </div>
@@ -157,9 +159,10 @@ ChipInput.propTypes = {
   onSubmit: PropTypes.func,
   ChipInputProps: PropTypes.object,
   disableMagnify: PropTypes.bool,
+  value: PropTypes.string,
 }
 
 ChipInput.defaultProps = {
-  chipRenderer: defaultChipRenderer
+  chipRenderer: defaultChipRenderer,
 }
 

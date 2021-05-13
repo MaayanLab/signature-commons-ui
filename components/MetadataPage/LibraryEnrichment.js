@@ -622,7 +622,6 @@ class LibraryEnrichment extends React.PureComponent {
 
 	scatter_fields = (child) => {
 		const schemas = this.props.schemas
-		console.log(schemas, child)
 		const schema = findMatchedSchema(child, schemas)
 		let primary_field
 		let secondary_fields = []

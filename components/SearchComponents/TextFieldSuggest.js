@@ -1,15 +1,17 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types';
 import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 import {ChipInput} from './ChipInput'
 import red from '@material-ui/core/colors/red';
-import blue from '@material-ui/core/colors/blue';
 import amber from '@material-ui/core/colors/amber';
 import grey from '@material-ui/core/colors/grey';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { Set } from 'immutable'
 
 export const default_colors_and_icon = {
     "valid": {
@@ -39,126 +41,188 @@ export const default_colors_and_icon = {
     }
 }
 
-export class TextFieldSuggest extends React.Component {
-
-    defaultChipRenderer = (props) => {
-        const {
-            onSubmit,
-            onAdd,
-            onDelete,
-            onClick,
-            onSuggestionClick,
-            colors_and_icon,
-            input,
-            field,
-        } = props
-        const children = input.map(value=>{
-            const {background, color, icon} = colors_and_icon[value.type || "loading"]
-            return(                
-                <Grid item key={value.label}>
-                    <Chip
-                        avatar={<Avatar 
-                                    style={{
-                                        background,
-                                    }}>
-                                        <span className={`mdi ${icon} mdi-24px`} />
-                                </Avatar>}
-                        label={<span>{value.label}</span>}
-                        style={{
-                            background,
-                            color,
-                            maxWidth: 300,
-                        }}
-                        onDelete={()=>onDelete(value)}
-                        onClick={onClick}
-                        />
-                    { value.type!=="suggestions" ? null:
-                        <div style={{textAlign:"left"}}>
-                            <Typography variant="overline">
-                                Did you mean:
-                            </Typography>
-                            { value.suggestions.map(s=>(
-                                    <Link
-                                        component="button"
-                                        variant="body2"
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            onSuggestionClick(value, s)}
-                                        }
-                                        key={s.label}
-                                        style={{display: 'block'}}
-                                    >
-                                        {s.label}
-                                    </Link>
-                            ))}
-                        </div>
-                    }
-                </Grid>
-            )
-        })
-        return(
-            <Grid
-                container
-                direction="column"
-            >
-                {children}
+const chipRenderer = ({
+    onDelete,
+    onClick,
+    onSuggestionClick,
+    colors_and_icon,
+    objectInput: input,
+    toggleValidate,
+    validate,
+}) => {
+    const children = input.map(value=>{
+        const {background, color, icon} = colors_and_icon[value.type || "loading"]
+        return(                
+            <Grid item key={value.label}>
+                <Chip
+                    avatar={<Avatar 
+                                style={{
+                                    background,
+                                }}>
+                                    <span className={`mdi ${icon} mdi-24px`} />
+                            </Avatar>}
+                    label={<span>{value.label}</span>}
+                    style={{
+                        background,
+                        color,
+                        maxWidth: 300,
+                    }}
+                    onDelete={()=>onDelete(value.label)}
+                    onClick={onClick}
+                    />
+                { value.type!=="suggestions" ? null:
+                    <div style={{textAlign:"left"}}>
+                        <Typography variant="overline">
+                            Did you mean:
+                        </Typography>
+                        { value.suggestions.map(s=>(
+                                <Link
+                                    component="button"
+                                    variant="body2"
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        onSuggestionClick(value, s)}
+                                    }
+                                    key={s.label}
+                                    style={{display: 'block'}}
+                                >
+                                    {s.label}
+                                </Link>
+                        ))}
+                    </div>
+                }
             </Grid>
-        ) 
-    }
+        )
+    })
+    return(
+        <Grid
+            container
+            direction="column"
+        >
+            { input.length > 0 ?
+                <Grid item xs={12}>
+                    <FormControlLabel 
+                        style={{marginTop: -10}}
+                        control={<Switch checked={validate} onChange={toggleValidate} name="validate" color="primary"/>}
+                        label="Validate"
+                    />
+                </Grid>
+                : null}
+            {validate ? children: null}
+        </Grid>
+    ) 
+}
 
-    render = () => {
-        const {
-            input,
-            onSubmit,
-            onAdd,
-            onDelete,
-            onSuggestionClick,
-            chipRenderer=this.defaultChipRenderer,
-            colors_and_icon=default_colors_and_icon,
-            chipInputProps={},
-            endAdornment,
-            placeholder="",
-        } = this.props
-        const rows = 15 - input.length
-        return (
-                <ChipInput 
-							input={input}
-							onSubmit={onSubmit}
-                            onAdd={onAdd}
-                            onDelete={onDelete}
-                            chipRenderer={chipRenderer}
-                            onSuggestionClick={onSuggestionClick}
-                            colors_and_icon={colors_and_icon}
-                            disableMagnify
-                            ChipInputProps={{
-								inputProps: {
-                                    multiline: true,
-                                    fullWidth: true,
-                                    style: {
-                                        width:"100%",
-                                        background: "#f7f7f7",
-                                        padding: 20,
-										borderRadius: 25,
-                                        overflow: "auto",
-                                    },
-                                    endAdornment,
-                                    placeholder: input.length === 0 ? placeholder: "",
-                                },
-                                divProps: {
-                                    style: {
-										background: "#f7f7f7",
-                                        marginTop: 10,
-                                        borderRadius: 25,
-                                        overflow: "auto",
-                                        height: 350,
-                                        flexFlow: 'column',
-									}
-                                }
-                            }}
-                            {...chipInputProps}
-						/>
-          )
+const TextFieldSuggest = (props) => {
+    const {
+        input,
+        onSubmit,
+        onAdd,
+        onDelete,
+        onSuggestionClick,
+        colors_and_icon=default_colors_and_icon,
+        chipInputProps={},
+        endAdornment,
+        placeholder="",
+    } = props
+    const [validate, setValidate] = useState(true)
+    const [value, setValue] = useState("")
+
+    useEffect(()=>{
+        if (validate) {
+            setValue("")
+        } else {
+            setValue(input.map(i=>i.label).join("\n"))
+        }
+    },[validate])
+
+    useEffect(()=>{
+        if (!validate) {
+            const val = Set(value.trim().split(/[\t\r\n;]+/))
+            const input_val = Set(input.map(i=>i.label))
+            
+            if (val.intersect(input_val).size !== val.size) {
+                setValue(input.map(i=>i.label).join("\n"))
+            }
+        }
+    },[input])
+
+    useEffect(()=>{
+        if (!validate){
+            const new_val = Set(value.trim().split(/[\t\r\n;]+/))
+            const old_val = Set(input.map(i=>i.label))
+            // For deletion
+            if (!validate){
+                const sub_values = old_val.subtract(new_val).toArray().join("\n")
+                if (sub_values.trim() !== "") {
+                    onDelete(sub_values)
+                }
+            }
+            
+            // for addition
+            const add_values = new_val.subtract(old_val).toArray().join("\n")
+            if (add_values.trim() !== "") {
+            onSubmit(add_values)
+            }
+        }
+    }, [value])
+
+    // const values = input.map(i=>i.label)
+
+    const textFieldSubmit = (val) => {
+        if (validate) {
+            onSubmit(val)
+            setValue("")
+        } else {
+            setValue(val)
+        }
     }
+    const toggleValidate = () => {
+        setValidate(!validate)
+    }
+    
+    // input.map(i=>i.label).join("\n")
+    return (
+        <ChipInput 
+            input={input.map(i=>i.label)}
+            propsValue={value}
+            setPropsValue={setValue}
+            onSubmit={textFieldSubmit}
+            onAdd={onAdd}
+            onDelete={onDelete}
+            chipRenderer={(props)=>chipRenderer({...props, objectInput: input, validate, toggleValidate})}
+            onSuggestionClick={onSuggestionClick}
+            colors_and_icon={colors_and_icon}
+            unChipOnFocus={true}
+            disableMagnify
+            endAdornment={endAdornment}
+            ChipInputProps={{
+                inputProps: {
+                    multiline: true,
+                    fullWidth: true,
+                    style: {
+                        width:"100%",
+                        background: "#f7f7f7",
+                        padding: 20,
+                        borderRadius: 25,
+                        overflow: "visible",
+                    },
+                    placeholder: input.length === 0 ? placeholder: "",
+                },
+                divProps: {
+                    style: {
+                        background: "#f7f7f7",
+                        marginTop: 10,
+                        borderRadius: 25,
+                        overflow: "auto",
+                        height: 350,
+                        flexFlow: 'column',
+                    }
+                }
+            }}
+            {...chipInputProps}
+        />
+  )
 }
 
 TextFieldSuggest.propTypes = {

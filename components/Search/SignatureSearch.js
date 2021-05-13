@@ -159,6 +159,9 @@ export default class SignatureSearch extends React.PureComponent {
 						for (const label of synonyms) {
 							for (const field of Object.keys(input)){
 								if (input[field][label] !== undefined){
+									if ((input[field][label].suggestions || []).length === 0) {
+										stats[field].suggestions = (stats[field].suggestions || 0) + 1
+									}
 									input[field][label] = {
 										label,
 										type: "suggestions",
@@ -168,7 +171,6 @@ export default class SignatureSearch extends React.PureComponent {
 											type: "valid"
 										}]
 									}
-									stats[field].suggestions = (stats[field].suggestions || 0) + 1
 									resolved_labels.push(label)
 									resolved = true
 									break
@@ -205,15 +207,21 @@ export default class SignatureSearch extends React.PureComponent {
 	
 	onAddEntity = (value, field) => {
 		this.setState(prevState=>{
-			const {input} = prevState
+			const field_input = {...prevState.input[field]}
 			for (const v of value.trim().split(/[\t\r\n;]+/)){
 				const val = v.trim()
-				input[field][val] = {
-					label: val,
-					type: "loading"
+				if (v!==""){
+					field_input[val] = {
+						label: val,
+						type: "loading"
+					}
 				}
 			}
 			return({
+				input: {
+					...prevState.input,
+					[field]: field_input,
+				},
 				field,
 				resolving: true
 			})
@@ -222,14 +230,19 @@ export default class SignatureSearch extends React.PureComponent {
 
 	onDeleteEntity = (value, field) => {
 		this.setState(prevState=>{
-			const {[value.label]:popped, ...entities} = prevState.input[field]
-			const input = {
-				...prevState.input,
-				[field]: {
-					...entities
+			let input = {...prevState.input}
+			for (const v of value.trim().split(/[\t\r\n;]+/)){
+				const {[v]:popped, ...entities} = input[field]
+				if (popped!==undefined){
+					input = {
+						...input,
+						[field]: {
+							...entities
+						}
+					}
+					if (input[stat_mapper[field]][popped.type] > 0) input[stat_mapper[field]][popped.type] = input[stat_mapper[field]][popped.type] -1
 				}
 			}
-			if (input[stat_mapper[field]][value.type] > 0) input[stat_mapper[field]][value.type] = input[stat_mapper[field]][value.type] -1
 			return {
 				input, 
 			}
@@ -246,7 +259,7 @@ export default class SignatureSearch extends React.PureComponent {
 				}
 			}
 			input[field][selected.label] = selected
-			input[stat_mapper[field]].valid = input[stat_mapper[field]].valid + 1
+			input[stat_mapper[field]].valid = (input[stat_mapper[field]].valid || 0) + 1
 			input[stat_mapper[field]].suggestions = input[stat_mapper[field]].suggestions - 1
 			return {
 				input, 

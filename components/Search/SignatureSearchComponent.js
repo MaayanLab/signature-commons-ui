@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { TextFieldSuggest } from '../SearchComponents'
+import TextFieldSuggest from '../SearchComponents/TextFieldSuggest'
 import Grid from '@material-ui/core/Grid'
 import {ResultsTab} from '../MetadataPage/ResultsTab'
 import { Typography } from '@material-ui/core';
@@ -57,9 +57,9 @@ const Examples = (props) => {
 	return example_buttons
 }
 
-const EntityCounts = (input) => {
-	const { valid=0, invalid=0, suggestions=0 } = input
-	if (valid || invalid){
+const EntityCounts = (props) => {
+	const { valid=0, invalid=0, suggestions=0 } = props
+	if (valid || invalid || suggestions){
 		return(
 			<div style={{position: "absolute", top: 20, right: 20}}>
 				<Typography color="primary">{`${valid} valid ${valid > 1 ? "entries": "entry"}`}</Typography>
@@ -102,7 +102,6 @@ const SigForm = (props={}) => {
 	// 	if (overlap_label.length > rank_label.length) right_spacer = String.fromCharCode(160).repeat(overlap_label.length-rank_label.length + 5)
 	// 	if (overlap_label.length < rank_label.length) left_spacer = String.fromCharCode(160).repeat(rank_label.length-overlap_label.length + 5)
 	// }
-	
 	return(
 		<Grid container>
 			{/* Search Components */}
@@ -127,7 +126,7 @@ const SigForm = (props={}) => {
 							onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "entities")}
 							onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "entities")}
-							endAdornment={<EntityCounts {...TextFieldSuggestProps.input.set_stats}/>}
+							endAdornment={<EntityCounts {...props} {...TextFieldSuggestProps.input.set_stats}/>}
 							placeholder={enrichment_tabs.Overlap.placeholder}
 						/>
 					</React.Fragment>
@@ -152,7 +151,7 @@ const SigForm = (props={}) => {
 								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "down_entities")}
 								onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "down_entities")}
 								placeholder={enrichment_tabs.Rank.down_placeholder}
-								endAdornment={<EntityCounts {...TextFieldSuggestProps.input.down_stats}/>}
+								endAdornment={<EntityCounts {...props} {...TextFieldSuggestProps.input.down_stats}/>}
 							/>
 						</Grid>
 					</Grid>
