@@ -1,11 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import Avatar from '@material-ui/core/Avatar';
-import Chip from '@material-ui/core/Chip';
-import Switch from '@material-ui/core/Switch';
-import InputBase from '@material-ui/core/InputBase';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { Set } from 'immutable'
+import dynamic from 'next/dynamic'
+const Avatar = dynamic(()=>import('@material-ui/core/Avatar'));
+const Chip = dynamic(()=>import('@material-ui/core/Chip'));
+const InputBase = dynamic(()=>import('@material-ui/core/InputBase'));
 
 const all_chip_props = {
   "or": {
@@ -165,4 +163,4 @@ ChipInput.propTypes = {
 ChipInput.defaultProps = {
   chipRenderer: defaultChipRenderer,
 }
-
+export default ChipInput

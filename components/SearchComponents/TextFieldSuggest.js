@@ -1,17 +1,19 @@
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types';
-import Chip from '@material-ui/core/Chip';
-import Avatar from '@material-ui/core/Avatar';
-import {ChipInput} from './ChipInput'
-import red from '@material-ui/core/colors/red';
-import amber from '@material-ui/core/colors/amber';
-import grey from '@material-ui/core/colors/grey';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Set } from 'immutable'
+import dynamic from 'next/dynamic'
+const Chip = dynamic(()=>import('@material-ui/core/Chip'));
+const Avatar = dynamic(()=>import('@material-ui/core/Avatar'));
+const red = dynamic(()=>import('@material-ui/core/colors/red'));
+const amber = dynamic(()=>import('@material-ui/core/colors/amber'));
+const grey = dynamic(()=>import('@material-ui/core/colors/grey'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const Link = dynamic(()=>import('@material-ui/core/Link'));
+const Switch = dynamic(()=>import('@material-ui/core/Switch'));
+const FormControlLabel = dynamic(()=>import('@material-ui/core/FormControlLabel'));
+const ChipInput = dynamic(()=>import('./ChipInput'));
+
 
 export const default_colors_and_icon = {
     "valid": {
