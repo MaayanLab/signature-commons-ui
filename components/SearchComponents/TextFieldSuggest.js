@@ -4,9 +4,6 @@ import { Set } from 'immutable'
 import dynamic from 'next/dynamic'
 const Chip = dynamic(()=>import('@material-ui/core/Chip'));
 const Avatar = dynamic(()=>import('@material-ui/core/Avatar'));
-const red = dynamic(()=>import('@material-ui/core/colors/red'));
-const amber = dynamic(()=>import('@material-ui/core/colors/amber'));
-const grey = dynamic(()=>import('@material-ui/core/colors/grey'));
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));
 const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 const Link = dynamic(()=>import('@material-ui/core/Link'));
@@ -17,28 +14,28 @@ const ChipInput = dynamic(()=>import('./ChipInput'));
 
 export const default_colors_and_icon = {
     "valid": {
-        default: grey[300],
+        default: "#e0e0e0",
         color: "#000",
         icon: "mdi-check-circle"
     },
     "suggestions": {
-        background: amber[200],
+        background: "#ffe082",
         color: "#000",
         icon: "mdi-alert-decagram"
     },
     "invalid": {
-        background: red[200],
+        background: "#ef9a9a",
         color: "#000",
         icon: "mdi-close-box"
     },
     "loading": {
-        default: grey[300],
+        default: "#e0e0e0",
         color: "#000",
         icon: "mdi-loading mdi-spin"
     },
     "disabled": {
-        default: grey[100],
-        color: grey[600],
+        default: "#f5f5f5",
+        color: "#757575",
         icon: "mdi-label-off"
     }
 }
@@ -47,13 +44,13 @@ const chipRenderer = ({
     onDelete,
     onClick,
     onSuggestionClick,
-    colors_and_icon,
     objectInput: input,
     toggleValidate,
     validate,
 }) => {
     const children = input.map(value=>{
-        const {background, color, icon} = colors_and_icon[value.type || "loading"]
+        const {background, color, icon} = default_colors_and_icon[value.type || "loading"]
+        console.log(default_colors_and_icon[value.type || "loading"], value.type)
         return(                
             <Grid item key={value.label}>
                 <Chip
@@ -127,7 +124,7 @@ const TextFieldSuggest = (props) => {
         endAdornment,
         placeholder="",
     } = props
-    const [validate, setValidate] = useState(true)
+    const [validate, setValidate] = useState(false)
     const [value, setValue] = useState("")
 
     useEffect(()=>{
