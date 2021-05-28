@@ -273,10 +273,10 @@ export default class MetadataSearch extends React.PureComponent {
 		const model_props = []
 		for (const model of this.props.model_tabs){
 			const preferred_name = this.props.preferred_name[model]
-			if (preferred_name!==undefined && count !== null){
+			if (preferred_name!==undefined){
 				const endpoint = this.props.nav.MetadataSearch.endpoint
 				let label
-				if (this.props.model === model) label = `${preferred_name} (${count})`
+				if (this.props.model === model && count !== null) label = `${preferred_name} (${count})`
 				else label = this.props.preferred_name[model]
 				model_props.push({
 					label,
@@ -325,11 +325,19 @@ export default class MetadataSearch extends React.PureComponent {
 			// 	filters = {...prevProps.filters}
 			// }
 			this.setState(prevState=>{
+				let query = prevState.query
+				let model_tab_props = prevState.model_tab_props
+				if (this.props.location.search === "") {
+					query = {skip:0, limit:10}
+					model_tab_props = this.get_model_tab_props()
+				}
 				return {
 					searching: true,
 					paginate: (this.props.location.state || {}).paginate ? true: false,
 					filters: (this.props.location.state || {}).paginate ? prevState.filters: {},
 					homepage: this.props.location.search === "",
+					query,
+					model_tab_props,
 				}
 			}, ()=>{
 				if (this.props.location.search !== ""){
