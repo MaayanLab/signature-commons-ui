@@ -1,12 +1,15 @@
 import React from 'react'
 import Head from 'next/head'
-import Header from './Header'
-import Footer from './Footer'
 import { withStyles } from '@material-ui/core/styles'
 import { initGA, logPageView } from '../../util/analytics'
 import { styles } from '../../styles/jss/theme.js'
 import { makeTemplate } from '../../util/ui/makeTemplate'
-import Container from '@material-ui/core/Container'
+
+import dynamic from 'next/dynamic'
+
+const Header = dynamic(()=>import('./Header'));
+const Footer = dynamic(()=>import('./Footer'));
+const Container = dynamic(()=>import('@material-ui/core/Container'));
 
 export default withStyles(styles)(class Base extends React.PureComponent {
   constructor(props) {

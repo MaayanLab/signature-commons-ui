@@ -1,15 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { ChipInput, Filter } from '../SearchComponents'
-import Grid from '@material-ui/core/Grid'
+import dynamic from 'next/dynamic'
 
-import TablePagination from '@material-ui/core/TablePagination'
-import {ResultsTab} from '../MetadataPage/ResultsTab'
-import {DataTable} from '../DataTable'
-import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { CarouselComponent } from './SignatureSearchComponent'
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const TablePagination = dynamic(()=>import('@material-ui/core/TablePagination'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Button = dynamic(()=>import('@material-ui/core/Button'));
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const ChipInput = dynamic(async () => (await import('../SearchComponents/ChipInput')).ChipInput);
+const Filter = dynamic(async () => (await import('../SearchComponents/Filter')).Filter);
+const ResultsTab = dynamic(async () => (await import('../SearchComponents/ResultsTab')).ResultsTab);
+const DataTable = dynamic(async () => (await import('../DataTable')).DataTable);
+const CarouselComponent = dynamic(async () => (await import('../SearchComponents/CarouselComponent')).CarouselComponent);
 
 export const MetadataSearchComponent = (props) => {
 	const {

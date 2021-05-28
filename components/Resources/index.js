@@ -1,14 +1,18 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
-import { labelGenerator } from '../../util/ui/labelGenerator'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import PropTypes from 'prop-types'
-import { IconComponent } from '../DataTable/IconComponent'
-import { Typography } from '@material-ui/core'
+
+import { labelGenerator } from '../../util/ui/labelGenerator'
+
+import dynamic from 'next/dynamic'
+const Grid = dynamic(() => import('@material-ui/core/Grid'))
+
+const Card = dynamic(() => import('@material-ui/core/Card'))
+const CardContent = dynamic(() => import('@material-ui/core/CardContent'))
+const CardMedia = dynamic(() => import('@material-ui/core/CardMedia'))
+const CircularProgress = dynamic(() => import('@material-ui/core/CircularProgress'))
+const Typography = dynamic(() => import('@material-ui/core/Typography'))
+const IconComponent = dynamic(async () => (await import('../DataTable/IconComponent')).IconComponent);
+const Button = dynamic(() => import('@material-ui/core/Button'))
 
 
 class Resources extends React.PureComponent {

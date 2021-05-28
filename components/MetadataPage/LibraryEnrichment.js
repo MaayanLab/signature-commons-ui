@@ -30,7 +30,7 @@ import {
 import { ChipInput } from '../SearchComponents'
 import { withTheme } from '@material-ui/core/styles';
 import Downloads from '../Downloads'
-import {ResultsTab} from './ResultsTab'
+import {ResultsTab} from '../SearchComponents/ResultsTab'
 import Collapse from '@material-ui/core/Collapse';
 import {process_data} from '../Scatter/process_data'
 import {Model} from '../../connector/model'

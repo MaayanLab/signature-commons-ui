@@ -2,26 +2,9 @@ import React from 'react'
 import { Set } from 'immutable'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import dynamic from 'next/dynamic'
-import Grid from '@material-ui/core/Grid'
-import ErrorIcon from '@material-ui/icons/Error'
-import CloseIcon from '@material-ui/icons/Close'
-import IconButton from '@material-ui/core/IconButton'
-import Snackbar from '@material-ui/core/Snackbar'
-import SnackbarContent from '@material-ui/core/SnackbarContent'
 import { withStyles } from '@material-ui/core/styles'
-import CircularProgress from '@material-ui/core/CircularProgress'
+
 import {DataResolver} from '../../connector'
-
-import Base from '../../components/Base'
-import About from '../../components/About'
-import {Terms} from '../../components/About/Terms'
-
-import Resources from '../Resources'
-import MetadataSearch from '../Search/MetadataSearch'
-import SignatureSearch from '../Search/SignatureSearch'
-import MetadataPage from '../MetadataPage'
-
-import {IFramePage} from '../IFramePage'
 
 import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
@@ -29,8 +12,25 @@ import '../../styles/swagger.scss'
 import Lazy from '../Lazy'
 import { getResourcesAndLibraries } from '../../util/ui/getResourcesAndLibraries'
 
+const Grid = dynamic(()=>import('@material-ui/core/Grid'))
+const ErrorIcon = dynamic(()=>import('@material-ui/icons/Error'))
+const CloseIcon = dynamic(()=>import('@material-ui/icons/Close'))
+const IconButton = dynamic(()=>import('@material-ui/core/IconButton'))
+const Snackbar = dynamic(()=>import('@material-ui/core/Snackbar'))
+const SnackbarContent = dynamic(()=>import('@material-ui/core/SnackbarContent'))
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'))
+
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false })
 const DownloadsPage = dynamic(() => import('../DownloadsPage'))
+const MetadataSearch = dynamic(()=>import('../Search/MetadataSearch'));
+const SignatureSearch = dynamic(()=>import('../Search/SignatureSearch'));
+const Resources = dynamic(()=>import('../Resources'));
+
+const IFramePage = dynamic(()=>import('../IFramePage'));
+const Base = dynamic(()=>import('../Base'));
+const MetadataPage = dynamic(()=>import('../MetadataPage'));
+const About = dynamic(()=>import('../About'));
+const Terms = dynamic(() => import('../About/Terms'));
 
 
 const snackStyles = (theme) => ({
@@ -159,7 +159,7 @@ class Home extends React.PureComponent {
                     label={props.match.params.label}
                     filter_props={(this.props.search_filters || {})[model] || []}
                     nav={this.props.ui_values.nav}
-                    search_examples={(search_props.examples || {})[model] || []}
+                    search_examples={((search_props.types || {})[model] || {}).examples || []}
                     resolver={this.state.metadata_resolver}
                     placeholder={search_props.placeholder}
                     {...props}
@@ -293,21 +293,23 @@ class Home extends React.PureComponent {
     if (this.state.metadata_resolver === null) {
       return <CircularProgress />
     }
+    const {nav, preferred_name} = this.props.ui_values
+    
+    const {MetadataSearch, SignatureSearch, Resources, Downloads, About, API, ...rest} = nav
     const extra_nav = []
-    for (const nav of this.props.ui_values.extraNav){
-      if (nav.type !== 'external') {
+    for (const n of Object.values(rest)){
+      if (n.type !== 'external') {
         extra_nav.push(
           <Route
-            key={nav.endpoint}
-            path={nav.endpoint}
+            key={n.endpoint}
+            path={n.endpoint}
             exact
-            component={(props)=><IFramePage {...props} {...nav}/>}
+            component={(props)=><IFramePage {...props} {...n.props}/>}
           />
         )
       }
     }
-    const {nav, preferred_name} = this.props.ui_values
-    const landing_endpoint = nav.MetadataSearch.landing ? nav.MetadataSearch.endpoint : nav.SignatureSearch.endpoint
+    const landing_endpoint = MetadataSearch.landing ? MetadataSearch.endpoint : SignatureSearch.endpoint
     return (
       <Base location={this.props.location}
         // footer_type={this.props.ui_values.footer_type}

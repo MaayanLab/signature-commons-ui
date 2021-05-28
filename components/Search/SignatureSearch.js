@@ -1,5 +1,5 @@
 import React from 'react'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import PropTypes from 'prop-types'
 import { labelGenerator, getName, getPropValue } from '../../util/ui/labelGenerator'
 import { makeTemplate } from '../../util/ui/makeTemplate'
 import { get_signature_entities,
@@ -7,10 +7,12 @@ import { get_signature_entities,
 	reset_input,
 	enrichment,
 	download_input } from './utils'
-import PropTypes from 'prop-types'
-import {SignatureSearchComponent} from './SignatureSearchComponent'
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
+
+import dynamic from 'next/dynamic'
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const Snackbar = dynamic(()=>import('@material-ui/core/Snackbar'));
+const SignatureSearchComponent = dynamic(async () => (await import('./SignatureSearchComponent')).SignatureSearchComponent);
 
 const stat_mapper = {
 	entities: "set_stats",
@@ -36,6 +38,7 @@ export default class SignatureSearch extends React.PureComponent {
 			resources: null,
 			libraries: null,
 			visualization: {},
+			sig_input: false
 		}
 	}
 
@@ -229,24 +232,26 @@ export default class SignatureSearch extends React.PureComponent {
 	  }
 
 	onDeleteEntity = (value, field) => {
-		this.setState(prevState=>{
-			let input = {...prevState.input}
-			for (const v of value.trim().split(/[\t\r\n;]+/)){
-				const {[v]:popped, ...entities} = input[field]
-				if (popped!==undefined){
-					input = {
-						...input,
-						[field]: {
-							...entities
+		if (!this.state.sig_input){
+			this.setState(prevState=>{
+				let input = {...prevState.input}
+				for (const v of value.trim().split(/[\t\r\n;]+/)){
+					const {[v]:popped, ...entities} = input[field]
+					if (popped!==undefined){
+						input = {
+							...input,
+							[field]: {
+								...entities
+							}
 						}
+						if (input[stat_mapper[field]][popped.type] > 0) input[stat_mapper[field]][popped.type] = input[stat_mapper[field]][popped.type] -1
 					}
-					if (input[stat_mapper[field]][popped.type] > 0) input[stat_mapper[field]][popped.type] = input[stat_mapper[field]][popped.type] -1
 				}
-			}
-			return {
-				input, 
-			}
-		})
+				return {
+					input, 
+				}
+			})
+		}
 	  }
 
 	onSuggestionClickEntity = (value, selected, field) => {
@@ -381,6 +386,7 @@ export default class SignatureSearch extends React.PureComponent {
 			let input
 			let query = {}
 			let error = null
+			let sig_input = false
 			if (enrichment_id === undefined){
 				input = reset_input(this.props.match.params.type)
 			} else {
@@ -392,6 +398,7 @@ export default class SignatureSearch extends React.PureComponent {
 						this.props.schemas,
 						this.handleError)
 					if (input!==null && input!==undefined){
+						sig_input = true
 						query = create_query(input, enrichment_id)
 						const eid = await enrichment(query, input, this.props.resolver, this.handleError)
 					} else{
@@ -406,6 +413,7 @@ export default class SignatureSearch extends React.PureComponent {
 				input,
 				query,
 				error,
+				sig_input,
 				searching: this.props.match.params.enrichment_id!==undefined
 			}, () => {
 				if (this.props.match.params.enrichment_id!==undefined){

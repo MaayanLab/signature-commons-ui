@@ -1,11 +1,14 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
-import Button from '@material-ui/core/Button'
-import Color from 'color'
 import { makeTemplate } from '../../util/ui/makeTemplate'
 import { withStyles } from '@material-ui/core/styles'
+import Color from 'color'
+
+import dynamic from 'next/dynamic'
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Paper = dynamic(()=>import('@material-ui/core/Paper'));
+const Button = dynamic(()=>import('@material-ui/core/Button'));
 
 const styles = (theme) => ({
   root: {

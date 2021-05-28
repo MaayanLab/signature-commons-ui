@@ -1,24 +1,24 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TextFieldSuggest from '../SearchComponents/TextFieldSuggest'
-import Grid from '@material-ui/core/Grid'
-import {ResultsTab} from '../MetadataPage/ResultsTab'
-import { Typography } from '@material-ui/core';
+
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress'
-
 import Tooltip from '@material-ui/core/Tooltip';
-
-import Switch from '@material-ui/core/Switch';
-
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import { withStyles } from '@material-ui/core/styles';
-import {IconComponentButton} from '../DataTable'
-import EnrichmentPage from '../MetadataPage/EnrichmentPage'
-import Collapse from '@material-ui/core/Collapse';
-import Carousel from 'react-material-ui-carousel';
-import Paper from '@material-ui/core/Paper';
+
+import dynamic from 'next/dynamic'
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const Switch = dynamic(()=>import('@material-ui/core/Switch'));
+const Tabs = dynamic(()=>import('@material-ui/core/Tabs'));
+const Tab = dynamic(()=>import('@material-ui/core/Tab'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Collapse = dynamic(()=>import('@material-ui/core/Collapse'));
+const TextFieldSuggest = dynamic(()=>import('../SearchComponents/TextFieldSuggest'));
+const EnrichmentPage = dynamic(()=>import('../MetadataPage/EnrichmentPage'));
+const IconComponentButton = dynamic(async () => (await import('../DataTable')).IconComponentButton);
+const ResultsTab = dynamic(async () => (await import('../SearchComponents/ResultsTab')).ResultsTab);
+const CarouselComponent = dynamic(async () => (await import('../SearchComponents/CarouselComponent')).CarouselComponent);
 
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
@@ -247,49 +247,6 @@ export const ResourceCustomTabs = withStyles(() => ({
 		borderBottom: "2px solid"
 	},
   }))((props) => <Tab {...props} />);
-
-
-const CarouselItem = (props) => {
-	const {ContainerProps, ItemProps, ImageProps, CaptionProps, src, alt} = props
-	return(
-		<Grid
-			container
-			justify="center"
-			alignItems="center"
-			style={{height: 400}}
-			{...ContainerProps}
-		>
-			<Grid item xs={12} style={{height:350}} align="center" {...ItemProps}>
-				<img style={{maxHeight:350, maxWidth: 500}} src={src} alt={alt} {...ImageProps}></img>
-			</Grid>
-			{props.caption === undefined ? null:
-				<Grid item xs={12}>
-					<Typography variant="body1" align="center" {...CaptionProps}><b>{props.caption}</b></Typography>
-				</Grid>
-			}
-		</Grid>
-	)
-}
-
-export const CarouselComponent = (props) => {
-	const {header, content, PaperProps} = props
-	if (content === undefined || content.length === 0 ) return null
-	return(
-		<React.Fragment>
-			<Typography variant={'h6'} style={{textTransform: "capitalize"}}>{header}</Typography>
-			<Paper style={{padding: 20, width: 500}} {...PaperProps}>
-				{ content.length === 1 ?
-					<CarouselItem key={content[0].alt} {...content[0]} />:
-					<Carousel interval={8000}>
-						{
-							content.map(props => <CarouselItem key={props.alt} {...props} /> )
-						}
-					</Carousel>
-				}
-			</Paper>
-		</React.Fragment>
-	)
-}
 
 export const SignatureSearchComponent = (props) => {
 	const {

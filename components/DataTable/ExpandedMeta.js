@@ -1,9 +1,11 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import ShowMeta from './ShowMeta'
-import Collapse from '@material-ui/core/Collapse'
-import CardContent from '@material-ui/core/Collapse'
 import PropTypes from 'prop-types'
+import dynamic from 'next/dynamic'
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const ShowMeta = dynamic(()=>import('./ShowMeta'));
+const Collapse = dynamic(()=>import('@material-ui/core/Collapse'));
+const CardContent = dynamic(()=>import('@material-ui/core/CardContent'));
 
 export const ExpandedMeta = ({expanded, data, highlight, props}) => {
     return (

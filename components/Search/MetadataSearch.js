@@ -1,14 +1,17 @@
 import React from 'react'
 import {build_where} from '../../connector'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { labelGenerator, getName } from '../../util/ui/labelGenerator'
 import PropTypes from 'prop-types'
-import { MetadataSearchComponent } from './MetadataSearchComponent'
-import { get_filter, resolve_ids, download_signature } from './utils'
-import Downloads from '../Downloads'
-import Options from './Options'
+import { labelGenerator } from '../../util/ui/labelGenerator'
+import { get_filter, resolve_ids } from './utils'
 import { getSearchFilters } from '../../util/ui/fetch_ui_props'
-import Insignia from '../../standalone/fairshake-insignia/src'
+
+import dynamic from 'next/dynamic'
+
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const Downloads = dynamic(()=>import('../Downloads'));
+const Options = dynamic(()=>import('./Options'));
+const Insignia = dynamic(()=>import('../../standalone/fairshake-insignia/src'));
+const MetadataSearchComponent = dynamic(async () => (await import('./MetadataSearchComponent')).MetadataSearchComponent);
 
 export default class MetadataSearch extends React.PureComponent {
 	constructor(props){
@@ -299,7 +302,7 @@ export default class MetadataSearch extends React.PureComponent {
 				})
 			}
 		}
-
+		console.log(filter_props)
 		this.setState({
 			searching: true,
 			model_tab_props,

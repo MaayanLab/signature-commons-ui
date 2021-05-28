@@ -74,9 +74,9 @@ export const get_signature_entities = async (signature_id,
 			if (ent.length > 0){
 				const entities = {}
 				for (const c of ent){
-					const entry = labelGenerator(c, schemas)
-					entities[entry.info.name.text] = {
-						label: entry.info.name.text,
+					const name = getName(c, schemas)
+					entities[name] = {
+						label: name,
 						id: [c.id],
 						type: "valid"
 					}
@@ -85,18 +85,18 @@ export const get_signature_entities = async (signature_id,
 			}else {
 				const up_entities = {}
 				for (const c of up){
-					const entry = labelGenerator(c, schemas)
-					up_entities[entry.info.name.text] = {
-						label: entry.info.name.text,
+					const name = getName(c, schemas)
+					up_entities[name] = {
+						label: name,
 						id: [c.id],
 						type: "valid"
 					}
 				}
 				const down_entities = {}
 				for (const c of down){
-					const entry = labelGenerator(c, schemas)
-					down_entities[entry.info.name.text] = {
-						label: entry.info.name.text,
+					const name = getName(c, schemas)
+					down_entities[name] = {
+						label: name,
 						id: [c.id],
 						type: "valid"
 					}

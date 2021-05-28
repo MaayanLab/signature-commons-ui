@@ -17,3 +17,5 @@ export const Terms = (props) => (
 		</Grid>
 	</Grid>
 )
+
+export default Terms

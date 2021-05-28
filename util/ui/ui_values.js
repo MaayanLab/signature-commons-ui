@@ -37,6 +37,7 @@ export const defaultUIValues = {
         landing: true,
         endpoint: '/TermSearch',
         navName: "Term Search",
+        priority: 1,
         props: {
           model_tabs: ["resources", "libraries", "signatures", "entities"],
           entry_model: "signatures",
@@ -56,6 +57,7 @@ export const defaultUIValues = {
         landing: false,
         endpoint: '/EnrichmentAnalysis',
         navName: "Enrichment Analysis",
+        priority: 2,
         props: {
           types: {
             Overlap: {
@@ -94,15 +96,27 @@ export const defaultUIValues = {
       Resources: {
         active: true,
         endpoint: '/Resources',
+        priority: 3
       },
       API: {
         active: true,
         endpoint: '/API',
+        priority: 6,
+      },
+      About: {
+        active: true,
+        endpoint: '/About',
+        navName: 'About',
+        priority: 5,
+        props : {
+          about: "./static/about.md",
+        }
       },
       Downloads: {
         active: true,
         endpoint: '/Download',
         navName: 'Download',
+        priority: 4,
         props : {
           download_links: [
             {
@@ -200,7 +214,7 @@ export const defaultUIValues = {
           ],
 
         }
-      }
+      },
     },
     extraNav: [],
     // extraNav: [
@@ -250,7 +264,6 @@ export const defaultUIValues = {
     github: 'https://github.com/dcic/signature-commons-ui',
     github_issues: 'https://github.com/dcic/signature-commons-ui/issues',
     resource_order: {},
-    about: "./static/about.md",
     homepage_text: "Search signatures, genes, or datasets.",
     landing_tutorial: {
       Rank: [

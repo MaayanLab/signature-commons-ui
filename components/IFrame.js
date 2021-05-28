@@ -18,7 +18,7 @@ export default class IFrame extends React.Component {
           minWidth: "100%"
         }}
         key={`${this.props.src}`}
-        class={this.props.id}
+        className={this.props.id}
         {...this.props} />
     )
   }

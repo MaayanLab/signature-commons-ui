@@ -15,7 +15,7 @@ import { SearchResult } from './SearchResult'
 import { get_filter, resolve_ids } from '../Search/utils'
 import Downloads from '../Downloads'
 import Options from '../Search/Options'
-import {ResultsTab} from './ResultsTab'
+import {ResultsTab} from '../SearchComponents/ResultsTab'
 
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){

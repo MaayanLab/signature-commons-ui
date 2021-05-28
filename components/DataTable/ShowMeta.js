@@ -1,7 +1,10 @@
 import React from 'react'
-import { Highlight } from './Highlight'
-import Grid from '@material-ui/core/Grid'
 import {precise} from '../ScorePopper'
+
+import dynamic from 'next/dynamic'
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const Highlight = dynamic(async () => (await import('./Highlight')).Highlight);
 
 export function validURL(str) {
     try {

@@ -1,15 +1,17 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Chip from '@material-ui/core/Chip'
-import Card from '@material-ui/core/Card'
-import CardMedia from '@material-ui/core/CardMedia'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
-import Tooltip from '@material-ui/core/Tooltip'
-import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
-import { Highlight } from './Highlight'
-import { IconComponent } from './IconComponent'
+import dynamic from 'next/dynamic'
+import Tooltip from '@material-ui/core/Tooltip'
+import Chip from '@material-ui/core/Chip'
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Card = dynamic(()=>import('@material-ui/core/Card'));
+const CardMedia = dynamic(()=>import('@material-ui/core/CardMedia'));
+const CardContent = dynamic(()=>import('@material-ui/core/CardContent'));
+const Icon = dynamic(()=>import('@material-ui/core/Icon'));
+const Highlight = dynamic(async () => (await import('./Highlight')).Highlight);
+const IconComponent = dynamic(async () => (await import('./IconComponent')).IconComponent);
 
 
 export const InfoCard = ({

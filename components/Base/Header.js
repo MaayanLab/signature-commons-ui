@@ -1,17 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import Hidden from '@material-ui/core/Hidden'
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
-import MenuIcon from '@material-ui/icons/Menu'
 import { makeTemplate } from '../../util/ui/makeTemplate'
+
+import dynamic from 'next/dynamic'
+import { types } from 'react-markdown'
+const AppBar = dynamic(()=>import('@material-ui/core/AppBar'));
+const Toolbar = dynamic(()=>import('@material-ui/core/Toolbar'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Button = dynamic(()=>import('@material-ui/core/Button'));
+const List = dynamic(()=>import('@material-ui/core/List'));
+const ListItem = dynamic(()=>import('@material-ui/core/ListItem'));
+const Breadcrumbs = dynamic(()=>import('@material-ui/core/Breadcrumbs'));
+const Hidden = dynamic(()=>import('@material-ui/core/Hidden'));
+const SwipeableDrawer = dynamic(()=>import('@material-ui/core/SwipeableDrawer'));
+const MenuIcon = dynamic(()=>import('@material-ui/icons/Menu'));
+const Menu = dynamic(()=>import('@material-ui/core/Menu'));
+const Collapse = dynamic(()=>import('@material-ui/core/Collapse'));
 
 const styles = (theme) => ({
   grow: {
@@ -41,107 +46,159 @@ const styles = (theme) => ({
   },
 })
 
-export const ListItemLink = (props) => {
-  return <ListItem button component="a" {...props} />
+export const CustomListItem = (props) => {
+  const { type, menus=[], open, ...rest} = props
+
+  if (menus.length > 1) {
+    return(
+      <React.Fragment>
+        <Hidden mdDown>
+          <ListItem button 
+            {...rest}
+          />
+        </Hidden>
+        <Hidden lgUp>
+          <ListItem button 
+            {...rest}
+          />
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <List component="div" style={{paddingLeft: 20}}>
+              {menus}
+            </List>
+          </Collapse>
+        </Hidden>
+      </React.Fragment>
+    )
+  }else {
+    return <ListItem button component="a" {...rest} />
+  }
 }
 
+const StyledMenu = withStyles({
+  paper: {
+    border: '1px solid #d3d4d5',
+  },
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'center',
+    }}
+    {...props}
+  />
+));
+
 export function Nav(props) {
-  const { ui_values, location, classes } = props
-  const search_tab_list = ui_values.nav.MetadataSearch.landing ? ['MetadataSearch', 'SignatureSearch']: ['SignatureSearch', 'MetadataSearch']
-  return (
-    <React.Fragment>
-      {ui_values.nav[search_tab_list[0]].active ?
-        <ListItemLink
-          selected={location.pathname === `${ui_values.nav[search_tab_list[0]].endpoint}`}
-          className={classes.menuItem}
-          href={`#${ui_values.nav[search_tab_list[0]].endpoint}`}
-        >
-          <Typography variant={"h6"}>
-            {ui_values.nav[search_tab_list[0]].navName || ui_values.nav[search_tab_list[0]].endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
-          </Typography>
-        </ListItemLink> : null
-      }
-      {ui_values.nav[search_tab_list[1]].active ?
-        <ListItemLink
-          selected={location.pathname === `${ui_values.nav[search_tab_list[1]].endpoint}`}
-          className={ classes.menuItem}
-          href={`#${ui_values.nav[search_tab_list[1]].endpoint}`}
-        >
-          <Typography variant={"h6"}>
-            {ui_values.nav[search_tab_list[1]].navName || ui_values.nav[search_tab_list[1]].endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
-          </Typography>
-        </ListItemLink> : null
-      }
-      {ui_values.nav.Resources.active ?
-        <ListItemLink
-          selected={location.pathname === `${ui_values.nav.Resources.endpoint || '/Resources'}`}
-          className={ classes.menuItem}
-          href={`#${ui_values.nav.Resources.endpoint}`}
-        >
-          <Typography variant={"h6"}>
-            {ui_values.nav.Resources.navName || ui_values.nav.Resources.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
-          </Typography>
-        </ListItemLink> : null
-      }
-      {ui_values.extraNav.map(nav=>{
-        if (nav.type === 'external') {
-          return (
-            <ListItemLink
-              className={ classes.menuItem}
-              href={nav.endpoint}
-              target = "_blank" 
-              rel = "noopener noreferrer"
-              key={nav.navName}
-            >
+  const { ui_values, location, classes, onClose } = props
+  const {nav, preferred_name} = ui_values
+  const search_tab_list = Object.values(ui_values.nav).sort((a,b)=>(a.priority-b.priority))
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [open, setOpen] = useState(null)
+  const [menus, setMenus] = useState([])
+
+  const handleClick = (event, endpoint, menus) => {
+    if (menus.length > 1){
+      setOpen(endpoint)
+      setMenus(menus)
+      setAnchorEl(event.currentTarget)
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(null)
+    setMenus([])
+    setAnchorEl(null);
+    if (onClose!==undefined) onClose()
+  };
+
+  const active_tabs = []
+  for (const p of search_tab_list){
+    if (p.active) {
+      const menus = []
+      if (p.props!==undefined && p.props.types !== undefined){
+        for (const [k,v] of Object.entries(p.props.types).sort((a,b)=>(a[1].priority ||0)-(b[1].priority || 0))) {
+          if (v.active){
+            const label = preferred_name[k] || k
+            menus.push(
+              <CustomListItem
+                key={label}
+                // selected={location.pathname.includes(`${m.endpoint}`)}
+                className={classes.menuItem}
+                href={`#${p.endpoint}/${label}`}
+                onClick={handleClose}
+              >
                 <Typography variant={"h6"}>
-                  {nav.navName}
+                  {label}
                 </Typography>
-            </ListItemLink>
-          )
-        }else {
-          return (
-            <ListItemLink
-              className={ classes.menuItem}
-              href={`#${nav.endpoint}`}
-              key={nav.navName}
+              </CustomListItem>
+            )
+          }
+        }
+      }else if (p.props!==undefined && p.props.iframe !== undefined && Object.keys(p.props.iframe).length > 1){
+        for (const [k,v] of Object.entries(p.props.types).sort((a,b)=>(a[1].priority ||0)-(b[1].priority || 0))) {
+          const label = preferred_name[k] || k
+          menus.push(
+            <CustomListItem
+              key={label}
+              // selected={location.pathname.includes(`${m.endpoint}`)}
+              className={classes.menuItem}
+              href={`#${p.endpoint}/${label}`}
+              onClick={handleClose}
             >
               <Typography variant={"h6"}>
-                {nav.navName}
+                {label}
               </Typography>
-            </ListItemLink>
+            </CustomListItem>
           )
-        }
+        } 
       }
-      )}
-      {ui_values.nav.Downloads.active ?
-        <ListItemLink
-          selected={location.pathname === `${ui_values.nav.Downloads.endpoint || '/Downloads'}`}
-          className={ classes.menuItem}
-          href={`#${ui_values.nav.Downloads.endpoint}`}
+      active_tabs.push(
+        <CustomListItem
+          key={p.endpoint}
+          selected={location.pathname.startsWith(`${p.endpoint}`)}
+          className={classes.menuItem}
+          open={open === p.endpoint}
+          href={`#${p.endpoint}`}
+          onClick={(event)=>{
+            handleClick(event, p.endpoint, menus)
+            if (onClose!==undefined && menus.length <= 1) onClose()
+          }}
+          menus={menus}
         >
           <Typography variant={"h6"}>
-            {ui_values.nav.Downloads.navName || ui_values.nav.Downloads.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
+            {p.navName || p.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
-        </ListItemLink> : null
-      }
-      <ListItemLink
-        selected={location.pathname === '/API'}
-        className={ classes.menuItem}
-        href={'#/API'}
-      >
-         <Typography variant={"h6"}>
-            API
-          </Typography>
-      </ListItemLink>
-      <ListItemLink
-        selected={location.pathname === '/About'}
-        className={ classes.menuItem}
-        href={'#/About'}
-      >
-         <Typography variant={"h6"}>
-            About
-          </Typography>
-      </ListItemLink>
+        </CustomListItem>
+      )
+    }
+  }
+
+  return (
+    <React.Fragment>
+      {active_tabs}
+      <Hidden mdDown>
+        <StyledMenu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          {...props}
+        >
+          {menus}
+        </StyledMenu>
+      </Hidden>
+      {/* <Hidden lgUp>
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {menus}
+          </List>
+        </Collapse>
+      </Hidden> */}
     </React.Fragment>
   )
 }
@@ -202,11 +259,11 @@ class Header extends React.Component {
                 <div
                   tabIndex={0}
                   role="button"
-                  onClick={this.toggleDrawer}
+                  // onClick={this.toggleDrawer}
                   onKeyDown={this.toggleDrawer}
                 >
                   <List disablePadding>
-                    <Nav classes={classes} {...rest}/>
+                    <Nav classes={classes} {...rest} onClose={this.toggleDrawer}/>
                   </List>
                 </div>
               </SwipeableDrawer>

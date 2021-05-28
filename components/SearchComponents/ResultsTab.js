@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Link from '@material-ui/core/Link';
-import { Divider } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import dynamic from 'next/dynamic'
+import { withStyles } from '@material-ui/core/styles'
+
+const Tabs = dynamic(()=>import('@material-ui/core/Tabs'));
+const Tab = dynamic(()=>import('@material-ui/core/Tab'));
+const Divider = dynamic(()=>import('@material-ui/core/Divider'));
 
 const DefaultCustomTab = withStyles(() => ({
 	root: {

@@ -1,15 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Typography from '@material-ui/core/Typography'
-import Card from '@material-ui/core/Card'
-import CardHeader from '@material-ui/core/CardHeader'
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
+
+import dynamic from 'next/dynamic'
+
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Card = dynamic(()=>import('@material-ui/core/Card'));
+const CardHeader = dynamic(()=>import('@material-ui/core/CardHeader'));
+const Collapse = dynamic(()=>import('@material-ui/core/Collapse'));
+const IconButton = dynamic(()=>import('@material-ui/core/IconButton'));
+const FormGroup = dynamic(()=>import('@material-ui/core/FormGroup'));
+const FormControlLabel = dynamic(()=>import('@material-ui/core/FormControlLabel'));
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const Checkbox = dynamic(()=>import('@material-ui/core/Checkbox'));
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 
 export const Filter = (props) => {
 	const {
@@ -79,3 +82,5 @@ Filter.propTypes = {
 	onClick: PropTypes.func,
 	loading: PropTypes.bool,
 }
+
+export default Filter
