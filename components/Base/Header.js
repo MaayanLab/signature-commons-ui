@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles'
 import { makeTemplate } from '../../util/ui/makeTemplate'
 
 import dynamic from 'next/dynamic'
-import { types } from 'react-markdown'
 const AppBar = dynamic(()=>import('@material-ui/core/AppBar'));
 const Toolbar = dynamic(()=>import('@material-ui/core/Toolbar'));
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));
