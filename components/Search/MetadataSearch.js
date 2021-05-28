@@ -265,6 +265,7 @@ export default class MetadataSearch extends React.PureComponent {
 	handleTabChange = (v) => {
 		this.props.history.push({
 			pathname: v.href,
+			search: this.props.location.search,
 		})
 	}
 
@@ -302,7 +303,6 @@ export default class MetadataSearch extends React.PureComponent {
 				})
 			}
 		}
-		console.log(filter_props)
 		this.setState({
 			searching: true,
 			model_tab_props,
@@ -320,15 +320,21 @@ export default class MetadataSearch extends React.PureComponent {
 		const prev_search = decodeURI(prevProps.location.search)
 		const curr_search = decodeURI(this.props.location.search)
 		if (prevProps.model !== this.props.model || prev_search !== curr_search){
+			// let filters = {}
+			// if ((this.props.location.state || {}).paginate || prevProps.model !== this.props.model) {
+			// 	filters = {...prevProps.filters}
+			// }
 			this.setState(prevState=>{
 				return {
 					searching: true,
 					paginate: (this.props.location.state || {}).paginate ? true: false,
 					filters: (this.props.location.state || {}).paginate ? prevState.filters: {},
-					homepage: false,
+					homepage: this.props.location.search === "",
 				}
 			}, ()=>{
-				this.process_search()
+				if (this.props.location.search !== ""){
+					this.process_search()
+				}
 			})
 		}
 	}
