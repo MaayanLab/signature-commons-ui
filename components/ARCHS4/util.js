@@ -1,9 +1,19 @@
 
 import { fetch_external_post } from '../../util/fetch/fetch_external'
-import { fetch_meta_post } from '../../util/fetch/meta'
+import fetch from 'isomorphic-unfetch'
 import { getName } from '../../util/ui/labelGenerator'
 
 const base_url = "https://maayanlab.cloud/matrixapi"
+
+export const get_gene_names = async () => {
+	const url = "https://maayanlab.cloud/archs4/data/gene_human_tsne.csv"
+	const file = await (await fetch(url)).text()
+	const genes = []
+	for (const row of file.split("\n").slice(1)){
+		genes.push(row.split(",").slice(-1)[0])
+	}
+	return genes
+}
 
 const get_coexpressed_genes = async ({gene, type}) => {
 	let up_entities
