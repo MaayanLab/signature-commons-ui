@@ -50,7 +50,6 @@ const chipRenderer = ({
 }) => {
     const children = input.map(value=>{
         const {background, color, icon} = default_colors_and_icon[value.type || "loading"]
-        console.log(default_colors_and_icon[value.type || "loading"], value.type)
         return(                
             <Grid item key={value.label}>
                 <Chip

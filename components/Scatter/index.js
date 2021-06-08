@@ -1,3 +1,4 @@
+import {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {ScatterPlot} from './ScatterPlot'
 import {AutoCompleteSelection} from '../AutoCompleteSelection'
@@ -17,7 +18,6 @@ const SignatureScatterPlot = (props) => {
 		primary_field,
 		set_input_term,
 		input_term,
-		scatter_value_count,
 		set_category,
 		category,
 		set_term,
@@ -26,6 +26,13 @@ const SignatureScatterPlot = (props) => {
 		scatterProps,
 		scatter_selection,
 	} = props
+	const [topTerms, setTopTerms] = useState(null)
+	useEffect(() => { 
+		if (topTerms === null && results !== null) {
+			const terms = results.scatter_data.slice(0,5).map(i=>i.primary_value)
+			setTopTerms(terms)
+		}
+	})
 	return(
 		<Grid container style={{margin: 10, minHeight:650}}>
 			<Grid item xs={12} md={8} align="center">
@@ -62,7 +69,7 @@ const SignatureScatterPlot = (props) => {
 					<Grid item xs={12} style={{marginRight: 10}}>
 						<Typography variant="h6">Top {primary_field.primary_label || primary_field.label}</Typography>
 						<List>
-							{Object.entries(scatter_value_count || {}).map(([term, count])=>(
+							{(topTerms || []).map((term)=>(
 								<ListItem button onClick={()=>set_term(term)}>
 									<ListItemAvatar>
 										<Avatar>
@@ -70,7 +77,7 @@ const SignatureScatterPlot = (props) => {
 										</Avatar>
 									</ListItemAvatar>
 									<ListItemText
-									primary={`${term} (${count})`}
+									primary={`${term}`}
 									/>
 								</ListItem>
 							))}

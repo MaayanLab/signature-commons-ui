@@ -677,7 +677,7 @@ class LibraryEnrichment extends React.PureComponent {
 
 	scatter_component = () => {
 		// if (this.state.scatter_value_count === null) this.get_top_value_count()
-		this.initialize_scatter_value_count()
+		//this.initialize_scatter_value_count()
 		this.initialize_scatter_data()
 		const { primary_field, secondary_fields, entry } = this.state
 		const cat = entry.data.dataset_type === 'rank_matrix' ? 'direction': 'significance'
@@ -700,7 +700,6 @@ class LibraryEnrichment extends React.PureComponent {
 					results={this.state.scatter_data}
 					set_input_term={this.set_input_term}
 					input_term={this.state.input_term}
-					scatter_value_count={this.state.scatter_value_count}
 					scatter_selection={this.state.scatter_selection}
 					category={this.state.category || cat}
 					set_category={category=>this.setState({category})}
