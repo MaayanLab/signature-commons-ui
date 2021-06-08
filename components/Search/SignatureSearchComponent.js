@@ -20,6 +20,8 @@ const IconComponentButton = dynamic(async () => (await import('../DataTable')).I
 const ResultsTab = dynamic(async () => (await import('../SearchComponents/ResultsTab')).ResultsTab);
 const CarouselComponent = dynamic(async () => (await import('../SearchComponents/CarouselComponent')).CarouselComponent);
 
+const ARCHS4 = dynamic(()=>import('../ARCHS4'));
+
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
 	const example_buttons = []
@@ -258,6 +260,8 @@ export const SignatureSearchComponent = (props) => {
 		download_input,
 		type,
 		entries,
+		resolver,
+		schemas,
 	} = props
 	const [expanded, setExpanded] = React.useState(false);
 
@@ -318,6 +322,11 @@ export const SignatureSearchComponent = (props) => {
 						{entries!==null ? null:
 							<Grid item xs={12} md={5} align={"left"}>
 								<CarouselComponent {...tutorial}/>
+							</Grid>
+						}
+						{entries!==null ? null:
+							<Grid item xs={12} md={entries===null ? 7: 10} align={entries===null ? "right": "center"} style={{marginTop: 10}}>
+								<ARCHS4 resolver={resolver} schemas={schemas}/>
 							</Grid>
 						}
 					</Grid>

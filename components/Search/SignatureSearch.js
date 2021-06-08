@@ -407,6 +407,7 @@ export default class SignatureSearch extends React.PureComponent {
 					}
 				} else {
 					input = match.input
+					sig_input = true
 				}
 			}
 			this.setState({
@@ -546,6 +547,8 @@ export default class SignatureSearch extends React.PureComponent {
 						}
 					/>
 					<SignatureSearchComponent 
+						resolver={this.props.resolver}
+						schemas={this.props.schemas}
 						searching={this.state.searching}
 						resolving={this.state.resolving}
 						library_priority={this.props.library_priority}
