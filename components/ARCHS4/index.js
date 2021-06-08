@@ -34,6 +34,13 @@ export const GeneSearch = (props) => {
 		}
 	}, [gene])
 
+	const keyPress = (e) => {
+		if(e.keyCode == 13){
+			setGene(e.target.value);
+		   // put the login here
+		}
+	 }
+
 	return (
 		<Grid container align="left" spacing={2}>
 			<Grid item xs={12}>
@@ -45,7 +52,11 @@ export const GeneSearch = (props) => {
 				</Typography>
 			</Grid>
 			<Grid item xs={12}>
-				<TextField label="Enter gene symbol" variant="outlined" value={input_gene} onChange={e=>setInputGene(e.target.value)}/>
+				<TextField label="Enter gene symbol"
+					variant="outlined"
+					value={input_gene}
+					onKeyDown={keyPress}
+					onChange={e=>setInputGene(e.target.value)}/>
 				<Button variant="contained"
 						size="large"
 						color="primary"
