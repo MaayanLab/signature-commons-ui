@@ -150,17 +150,22 @@ export const GeneSearch = (props) => {
 			</Grid>
 			<Grid item xs={12}>
 				<Autocomplete
+					open={input_gene !== "" && gene === null}
 					options={options}
 					ListboxComponent={ListboxComponent}
+					inputValue={input_gene}
+					onInputChange={(event, newInputValue) => {
+						setInputGene(newInputValue);
+					}}
+					value={gene}
+					onChange={(event, newValue)=>setGene(newValue)}
 					renderInput={(params) => (
 						<React.Fragment>
 							<TextField 
 								{...params}
 								label="Enter gene symbol"
 								variant="outlined"
-								value={input_gene}
 								onKeyDown={keyPress}
-								onChange={e=>setInputGene(e.target.value)}
 								style={{ width: 300 }}
 							/>
 							<Button variant="contained"
