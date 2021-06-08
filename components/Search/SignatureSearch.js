@@ -233,7 +233,7 @@ export default class SignatureSearch extends React.PureComponent {
 
 	onDeleteEntity = (value, field) => {
 		if (!this.state.sig_input){
-			this.setState(prevState=>{
+			this.setState((prevState, prevProps)=>{
 				let input = {...prevState.input}
 				for (const v of value.trim().split(/[\t\r\n;]+/)){
 					const {[v]:popped, ...entities} = input[field]
@@ -386,9 +386,10 @@ export default class SignatureSearch extends React.PureComponent {
 			let input
 			let query = {}
 			let error = null
-			let sig_input = false
+			let sig_input = true
 			if (enrichment_id === undefined){
 				input = reset_input(this.props.match.params.type)
+				// sig_input = true
 			} else {
 				// there's an enrichment_id
 				const match = this.props.resolver.get_enrichment(enrichment_id)
@@ -398,16 +399,17 @@ export default class SignatureSearch extends React.PureComponent {
 						this.props.schemas,
 						this.handleError)
 					if (input!==null && input!==undefined){
-						sig_input = true
+						// sig_input = true
 						query = create_query(input, enrichment_id)
 						const eid = await enrichment(query, input, this.props.resolver, this.handleError)
 					} else{
 						input = reset_input(this.props.match.params.type)
 						error = "Invalid signature"
+						sig_input = false
 					}
 				} else {
 					input = match.input
-					sig_input = true
+					// sig_input = true
 				}
 			}
 			this.setState({
@@ -448,6 +450,7 @@ export default class SignatureSearch extends React.PureComponent {
 				resources: null,
 				libraries: null,
 				searching: true,
+				input: reset_input(this.props.match.params.type)
 			}, () => this.process_input());
 		}
 	}
