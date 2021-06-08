@@ -1,14 +1,8 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import {EnrichmentBar} from './EnrichmentBar'
-import {ScatterPlot} from './ScatterPlot'
-import ScatterComponent from '../Scatter'
+import dynamic from 'next/dynamic'
+import { withRouter } from "react-router";
 
 import Color from 'color'
-import Typography from '@material-ui/core/Typography';
 import { precise } from '../ScorePopper'
 
 import { findMatchedSchema } from '../../util/ui/objectMatch'
@@ -20,20 +14,38 @@ import {
 	enrichment,
 	download_enrichment_for_library,
  } from '../Search/utils'
- import TableContainer from '@material-ui/core/TableContainer';
- import Table from '@material-ui/core/Table';
- import TableBody from '@material-ui/core/TableBody';
- import TableCell from '@material-ui/core/TableCell';
- import TableHead from '@material-ui/core/TableHead';
- import TableRow from '@material-ui/core/TableRow';
- import TablePagination from '@material-ui/core/TablePagination'
-import { ChipInput } from '../SearchComponents'
 import { withTheme } from '@material-ui/core/styles';
-import Downloads from '../Downloads'
-import {ResultsTab} from '../SearchComponents/ResultsTab'
-import Collapse from '@material-ui/core/Collapse';
+
 import {process_data} from '../Scatter/process_data'
 import {Model} from '../../connector/model'
+
+const Snackbar = dynamic(()=>import('@material-ui/core/Snackbar'));
+const Button = dynamic(()=>import('@material-ui/core/Button'));
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const Card = dynamic(()=>import('@material-ui/core/Card'));
+const CardContent = dynamic(()=>import('@material-ui/core/CardContent'));
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const TableContainer = dynamic(()=>import('@material-ui/core/TableContainer'));
+const Table = dynamic(()=>import('@material-ui/core/Table'));
+const TableBody = dynamic(()=>import('@material-ui/core/TableBody'));
+const TableCell = dynamic(()=>import('@material-ui/core/TableCell'));
+const TableHead = dynamic(()=>import('@material-ui/core/TableHead'));
+const TableRow = dynamic(()=>import('@material-ui/core/TableRow'));
+const TablePagination = dynamic(()=>import('@material-ui/core/TablePagination'));
+const Collapse = dynamic(()=>import('@material-ui/core/Collapse'));
+const Downloads = dynamic(()=>import('../Downloads'))
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const ScatterComponent = dynamic(()=>import('../Scatter'));
+const EnrichmentBar = dynamic(async () => (await import('./EnrichmentBar')).EnrichmentBar);
+const ScatterPlot = dynamic(async () => (await import('./ScatterPlot')).ScatterPlot);
+const ChipInput = dynamic(async () => (await import('../SearchComponents')).ChipInput);
+const ResultsTab = dynamic(()=>import('../SearchComponents/ResultsTab'));
+const MuiAlert = dynamic(()=>import('@material-ui/lab/Alert'));
+
+const Alert = (props) => {
+	return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
 class LibraryEnrichment extends React.PureComponent {
 	constructor(props){
 		super(props)
@@ -52,6 +64,7 @@ class LibraryEnrichment extends React.PureComponent {
 			primary_field: null,
 			secondary_fields: null,
 			scatter_selection: [],
+			error: null
 		}
 	}
 
@@ -134,6 +147,10 @@ class LibraryEnrichment extends React.PureComponent {
 		const table_entries = []
 		const head_cells = []
 		for (const entry of entries){
+			const s = entry.scores[this.state.order_field]
+			if (isNaN(s) || s === null) {
+				throw 'Error: Parameter is not a number!';
+			}
 			// table
 			const e = labelGenerator(entry, this.props.schemas)
 			const data = {
@@ -259,6 +276,11 @@ class LibraryEnrichment extends React.PureComponent {
 			})	
 		} catch (error) {
 			console.error(error)
+			if (typeof error === "string"){
+				this.setState({
+					error: error
+				})
+			}
 		}
 			
 	}
@@ -976,15 +998,43 @@ class LibraryEnrichment extends React.PureComponent {
 		})
 	}
 
+	onClose = () => {
+		this.setState({error: null},
+		()=>{
+			this.props.history.push({
+				pathname: `${this.props.nav.SignatureSearch.endpoint}/${this.props.match.params.type}`,
+			})
+		}	
+		)
+	}
+
 	render = () => {
 		const expanded = this.props.expanded_id === null || this.props.expanded_id === this.props.id
 		return (
-			<Collapse in={expanded} timeout="auto" unmountOnExit>
-				{ this.state.children_data === undefined ? 
-					<CircularProgress/>:
-					this.data_viz()
-				}
-			</Collapse>
+			<React.Fragment>
+				<Snackbar open={this.state.error!==null}
+					anchorOrigin={{ vertical:"top", horizontal:"right" }}
+					autoHideDuration={3000}
+					onClose={()=>this.onClose()}
+					message={this.state.error}
+					ContentProps={{
+						style: {
+							backgroundColor: "#f44336",
+						}
+					  }}
+					action={
+						<Button size="small" aria-label="close" color="inherit" onClick={()=>this.onClose()}>
+							<span className="mdi mdi-close-box mdi-24px"/>
+						</Button>
+					}
+				/>
+				<Collapse in={expanded} timeout="auto" unmountOnExit>
+					{ this.state.children_data === undefined ? 
+						<CircularProgress/>:
+						this.data_viz()
+					}
+				</Collapse>
+			</React.Fragment>
 		)
 	}
 }
@@ -995,4 +1045,4 @@ LibraryEnrichment.propTypes = {
 	schemas: PropTypes.array.isRequired,
 }
 
-export default withTheme(LibraryEnrichment)
+export default withRouter(withTheme(LibraryEnrichment))
