@@ -4,10 +4,10 @@ import { withRouter } from "react-router";
 import {enrich_gene_coexpression, get_gene_names} from './util'
 import dynamic from 'next/dynamic'
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import { useTheme, makeStyles } from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
 
+const ListSubheader = dynamic(()=>import('@material-ui/core/ListSubheader'))
 const Grid = dynamic(()=>import('@material-ui/core/Grid'))
 const Typography = dynamic(()=>import('@material-ui/core/Typography'))
 const TextField = dynamic(()=>import('@material-ui/core/TextField'))
