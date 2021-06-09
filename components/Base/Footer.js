@@ -16,6 +16,7 @@ const styles = (theme) => ({
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
     background: theme.palette.default.main,
+    backgroundColor: theme.palette.default.main,
   },
   footer_links: {
     color: theme.palette.default.contrastText,
