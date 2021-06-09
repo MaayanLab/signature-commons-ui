@@ -1,8 +1,7 @@
 import React from 'react'
 import { makeTemplate } from '../../util/ui/makeTemplate'
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles, useTheme } from '@material-ui/core/styles'
 import Color from 'color'
-
 import dynamic from 'next/dynamic'
 
 const Grid = dynamic(()=>import('@material-ui/core/Grid'));
@@ -55,14 +54,15 @@ const FooterLink = ({ src, alt, href, title, classes, containerProps, imageProps
 
 
 function Footer(props) {
-  const { classes, ui_values, theme, ...rest } = props
+  const { classes, ui_values, ...rest } = props
+  const theme = useTheme();
   const background = Color(theme.palette.default.main)
   let powered_src = './static/powered.png'
   if (background.isDark()) {
     powered_src = './static/powered_light.png'
   }
   return (
-    <Paper className={classes.root} elevation={0} square >
+    <Paper className={classes.root} elevation={0} square style={{backgroundColor: theme.palette.default.main}} >
       <Grid
         container
         direction="row"
