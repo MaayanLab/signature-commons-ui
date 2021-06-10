@@ -51,7 +51,7 @@ export const MetadataSearchComponent = (props) => {
 					divider
 					{...SearchTabProps}
 				/>
-				<Typography variant="h6" style={{marginTop: 10}}>{description}</Typography>
+				<Typography variant="body1" style={{marginTop: 10}}>{description}</Typography>
 			</Grid>
 			<Grid item xs={2}/>
 			<Grid item xs={8} align="center">
@@ -85,7 +85,7 @@ export const MetadataSearchComponent = (props) => {
 							<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
 								if (search_terms.indexOf(v)<0) onSearch([v])
 							}}>
-								{v}
+								<Typography variant="caption">{v}</Typography>
 							</Button>
 							{i === search_examples.length - 1 ? null: "/"}
 						</React.Fragment>
@@ -93,7 +93,7 @@ export const MetadataSearchComponent = (props) => {
 				</Typography>
 			</Grid>
 			{ ModelTabProps.tabs.length === 0 ? null:
-				<Grid item xs={11} align="center">
+				<Grid item xs={12} align="center">
 					<ResultsTab
 						tabsProps={{
 							centered: true,
@@ -105,7 +105,7 @@ export const MetadataSearchComponent = (props) => {
 				</Grid>
 			}
 			{ homepage ?
-				<Grid item xs={12} style={{marginTop: 25, marginBottom: 25}} align="Center">
+				<Grid item xs={12} style={{marginTop: 10, marginBottom: 25}} align="Center">
 					<CarouselComponent {...tutorial} PaperProps={PaperProps}/>
 				</Grid>
 				:

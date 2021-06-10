@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
@@ -30,6 +30,7 @@ export const AutoCompleteSelection = ({label, selection, value, setValue, inputV
 					{...params}
 					label={label}
 					variant="outlined"
+					size="small"
 					placeholder={`Search for ${label.toLowerCase()}`}
 					InputLabelProps={{
 						shrink: true,

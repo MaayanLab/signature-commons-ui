@@ -110,7 +110,7 @@ class Resources extends React.PureComponent {
                         </Typography>
                       </Grid>
                       <Grid item xs={12}>
-                        <Typography variant={"body1"} style={{maxHeight: 150, overflow: "auto"}}>
+                        <Typography variant={"body2"} style={{maxHeight: 150, overflow: "auto"}}>
                           {entry.info.subtitle.text}
                         </Typography>
                       </Grid>

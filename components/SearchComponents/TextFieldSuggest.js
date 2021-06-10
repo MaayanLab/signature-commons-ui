@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types';
 import { Set } from 'immutable'
 import dynamic from 'next/dynamic'
+import { makeStyles } from '@material-ui/core/styles';
+
 const Chip = dynamic(()=>import('@material-ui/core/Chip'));
 const Avatar = dynamic(()=>import('@material-ui/core/Avatar'));
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));
@@ -10,6 +12,19 @@ const Link = dynamic(()=>import('@material-ui/core/Link'));
 const Switch = dynamic(()=>import('@material-ui/core/Switch'));
 const FormControlLabel = dynamic(()=>import('@material-ui/core/FormControlLabel'));
 const ChipInput = dynamic(()=>import('./ChipInput'));
+
+const useStyles = makeStyles((theme) => ({
+    div: {
+        background: "#f7f7f7",
+        marginTop: 10,
+        borderRadius: 25,
+        overflow: "auto",
+        // height: 350,
+        flexFlow: 'column',
+        height: 250,
+    },
+}));
+  
 
 
 export const default_colors_and_icon = {
@@ -57,13 +72,14 @@ const chipRenderer = ({
                                 style={{
                                     background,
                                 }}>
-                                    <span className={`mdi ${icon} mdi-24px`} />
+                                    <span className={`mdi ${icon} mdi-18px`} />
                             </Avatar>}
-                    label={<span>{value.label}</span>}
+                    label={<span style={{fontSize: "0.75rem"}}>{value.label}</span>}
                     style={{
                         background,
                         color,
                         maxWidth: 300,
+                        fontSize: 12,
                     }}
                     onDelete={()=>onDelete(value.label)}
                     onClick={onClick}
@@ -101,8 +117,8 @@ const chipRenderer = ({
                 <Grid item xs={12}>
                     <FormControlLabel 
                         style={{marginTop: -10}}
-                        control={<Switch checked={validate} onChange={toggleValidate} name="validate" color="primary"/>}
-                        label="Validate"
+                        control={<Switch checked={validate} onChange={toggleValidate} name="validate" color="primary" size="small"/>}
+                        label={<Typography variant="subtitle2">Validate</Typography>}
                     />
                 </Grid>
                 : null}
@@ -125,6 +141,8 @@ const TextFieldSuggest = (props) => {
     } = props
     const [validate, setValidate] = useState(false)
     const [value, setValue] = useState("")
+
+    const classes = useStyles()
 
     useEffect(()=>{
         if (validate) {
@@ -208,12 +226,8 @@ const TextFieldSuggest = (props) => {
                     placeholder: input.length === 0 ? placeholder: "",
                 },
                 divProps: {
+                    className: classes.div,
                     style: {
-                        background: "#f7f7f7",
-                        marginTop: 10,
-                        borderRadius: 25,
-                        overflow: "auto",
-                        height: 350,
                         flexFlow: 'column',
                     }
                 }

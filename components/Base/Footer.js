@@ -8,6 +8,7 @@ const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));
 const Paper = dynamic(()=>import('@material-ui/core/Paper'));
 const Button = dynamic(()=>import('@material-ui/core/Button'));
+const Container = dynamic(()=>import('@material-ui/core/Container'));
 
 const styles = (theme) => ({
   root: {
@@ -63,64 +64,67 @@ function Footer(props) {
   }
   return (
     <Paper className={classes.root} elevation={0} square style={{backgroundColor: theme.palette.default.main}} >
-      <Grid
-        container
-        direction="row"
-        justify="space-around"
-        alignItems="center"
-        style={{
-          marginBottom: 20,
-        }}
-      >
-        <Grid item>
-          <Grid
-            container
-            direction="column"
-          >
-            <Grid item>
-            <Button href="#/Terms"
-                size="small"
-                style={{textTransform: "none"}}
-                startIcon={<span className={`mdi mdi-book-open ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
-              >
-                <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>Terms of Service</Typography>
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button href={ui_values.github}
-                size="small"
-                style={{color: background.isDark() ? "#FFF":"#000"}}
-                style={{textTransform: "none"}}
-                startIcon={<span className={`mdi mdi-github ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
-              >
-                <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>View Source Code</Typography>
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button href={ui_values.github_issues}
-                size="small"
-                style={{textTransform: "none"}}
-                startIcon={<span className={`mdi mdi-alert-circle-outline ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
-              >
-                <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>Submit Bugs and Corrections</Typography>
-              </Button>
-            </Grid>
-          </Grid>
-          
-        </Grid>
-        {ui_values.footer_links.map((itemProps) => (
-          <Grid item key={itemProps.alt}>
-            <FooterLink classes={classes} {...itemProps} />
-          </Grid>
-        ))}
-        {ui_values.powered ?
+      <Container>
+        <Grid
+          container
+          direction="row"
+          justify="space-evenly"
+          alignItems="center"
+          spacing={3}
+          style={{
+            marginBottom: 20,
+          }}
+        >
           <Grid item>
-            <FooterLink classes={classes}
-              src={powered_src}
-              alt="sigcom" />
-          </Grid> : null
-        }
-      </Grid>
+            <Grid
+              container
+              direction="column"
+            >
+              <Grid item>
+              <Button href="#/Terms"
+                  size="small"
+                  style={{textTransform: "none"}}
+                  startIcon={<span className={`mdi mdi-book-open ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
+                >
+                  <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>Terms of Service</Typography>
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button href={ui_values.github}
+                  size="small"
+                  style={{color: background.isDark() ? "#FFF":"#000"}}
+                  style={{textTransform: "none"}}
+                  startIcon={<span className={`mdi mdi-github ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
+                >
+                  <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>View Source Code</Typography>
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button href={ui_values.github_issues}
+                  size="small"
+                  style={{textTransform: "none"}}
+                  startIcon={<span className={`mdi mdi-alert-circle-outline ${background.isDark()? 'mdi-light': 'mdi-dark'}`}/>}
+                >
+                  <Typography style={{color: background.isDark() ? "#FFF":"#000"}}>Submit Bugs and Corrections</Typography>
+                </Button>
+              </Grid>
+            </Grid>
+            
+          </Grid>
+          {ui_values.footer_links.map((itemProps) => (
+            <Grid item key={itemProps.alt}>
+              <FooterLink classes={classes} {...itemProps} />
+            </Grid>
+          ))}
+          {ui_values.powered ?
+            <Grid item>
+              <FooterLink classes={classes}
+                src={powered_src}
+                alt="sigcom" />
+            </Grid> : null
+          }
+        </Grid>
+      </Container>
     </Paper>
   )
 }

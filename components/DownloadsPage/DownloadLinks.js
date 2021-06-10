@@ -11,7 +11,7 @@ const Typography = dynamic(()=> import('@material-ui/core/Typography'));
 const DownloadCards = ({links}) => {
 	const cards = links.map(({label, icon, href, size, date})=>(
 		<Grid item xs={6} md={3} key={label}>
-		  <Card style={{width: 250, minHeight: 150}}>
+		  <Card style={{width: "auto", minHeight: 230}}>
 			<CardHeader
 			  avatar={
 				<Avatar aria-label={label}>
@@ -48,7 +48,7 @@ export default function Download( {download_links} ) {
 				</Grid>
 				{description === undefined ? null:
 					<Grid item xs={12}>
-						<Typography variant={"body1"}>{description}</Typography>
+						<Typography variant={"body2"}>{description}</Typography>
 					</Grid>
 				}
 				<DownloadCards links={links}/>

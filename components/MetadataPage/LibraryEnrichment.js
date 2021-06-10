@@ -775,7 +775,7 @@ class LibraryEnrichment extends React.PureComponent {
 					key={data.direction}
 				>
 					{ this.state.entry.data.dataset_type === "geneset_library" ? null:
-						<Typography variant="body1"
+						<Typography variant="caption"
 									align={expanded ? aligner[i]:"center"}
 									style={{
 										textTransform: "capitalize",

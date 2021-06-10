@@ -34,7 +34,7 @@ const SignatureScatterPlot = (props) => {
 		}
 	})
 	return(
-		<Grid container style={{margin: 10, minHeight:650}}>
+		<Grid container style={{margin: 10, maxHeight:500}}>
 			<Grid item xs={12} md={8} align="center">
 				<ScatterPlot
 					data={results || {}}
@@ -57,7 +57,7 @@ const SignatureScatterPlot = (props) => {
 					</Grid>
 					<Grid item xs={12}>
 						<RadioButtons
-							label="Color by"
+							label={<Typography variant="body1">Color by</Typography>}
 							value={category}
 							values={(results || {}).colorize || {}}
 							handleChange={e=>set_category(e.target.value)}
@@ -67,17 +67,19 @@ const SignatureScatterPlot = (props) => {
 						<Button onClick={reset} variant="contained">Reset Plot</Button>
 					</Grid>
 					<Grid item xs={12} style={{marginRight: 10}}>
-						<Typography variant="h6">Top {primary_field.primary_label || primary_field.label}</Typography>
+						<Typography variant="body1">Top {primary_field.primary_label || primary_field.label}</Typography>
 						<List>
 							{(topTerms || []).map((term)=>(
 								<ListItem button onClick={()=>set_term(term)}>
 									<ListItemAvatar>
-										<Avatar>
-											<span className={`mdi mdi-24px ${primary_field.icon}`}/>
+										<Avatar
+											style={{width: 27, height:27}}
+										>
+											<span className={`mdi mdi-18px ${primary_field.icon}`}/>
 										</Avatar>
 									</ListItemAvatar>
 									<ListItemText
-									primary={`${term}`}
+									primary={<Typography variant="subtitle2">{term}</Typography>}
 									/>
 								</ListItem>
 							))}

@@ -166,7 +166,7 @@ const DownloadList = ({
 									style: {width: "90%"}
 								}}
 								secondary={<div>
-									<Typography variant="body1" style={{width:"90%"}}>
+									<Typography variant="body2" style={{width:"90%"}}>
 										{entry.info.subtitle.text}
 									</Typography>
 									{entry.info.tags.map(t=>(

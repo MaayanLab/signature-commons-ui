@@ -59,7 +59,7 @@ export const InfoCard = ({
                       <Highlight
                         Component={(props) => {
                           return (
-                            <Typography variant="body1" {...props}>
+                            <Typography variant="body2" {...props}>
                               <a href={info.endpoint}>{props.children}</a>
                             </Typography>
                           )
@@ -75,13 +75,13 @@ export const InfoCard = ({
                           Component={(props) => {
                             if (info.subtitle.url !== undefined) {
                               return (
-                                <Typography variant="subtitle2" {...props}>
+                                <Typography variant="caption" {...props}>
                                   <i><a href={info.subtitle.url} target="_blank" rel="noopener noreferrer" >{props.children}</a></i>
                                 </Typography>
                               )
                             } else {
                               return (
-                                <Typography variant="subtitle2" {...props}>
+                                <Typography variant="caption" {...props}>
                                   {props.children}
                                 </Typography>
                               )

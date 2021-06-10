@@ -21,7 +21,7 @@ const renderCustomizedLabel = (props) => {
 	const textAnchor = width < 0 ? "end": "start"
 	return (
 	  <g>
-		<text x={transfomedX} y={y+(height/2) + 4} width={width} fill={fontColor} textAnchor={textAnchor}>
+		<text x={transfomedX} y={y+(height/2) + 4} width={width} fill={fontColor} textAnchor={textAnchor} fontSize={11}>
 		  {value}
 		</text>
 	  </g>

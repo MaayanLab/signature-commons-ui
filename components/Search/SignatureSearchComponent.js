@@ -5,6 +5,8 @@ import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
 
+import { useWidth } from '../../util/ui/useWidth'
+
 import dynamic from 'next/dynamic'
 
 const Grid = dynamic(()=>import('@material-ui/core/Grid'));
@@ -36,7 +38,7 @@ const Examples = (props) => {
 					onAdd(ex.input.down_entities, "down_entities")
 				}
 			}}>
-				{ex.label}
+				<Typography variant="caption">{ex.label}</Typography>
 			</Button>
 		)
 		if (ex.link!==undefined){
@@ -63,10 +65,25 @@ const EntityCounts = (props) => {
 	const { valid=0, invalid=0, suggestions=0 } = props
 	if (valid || invalid || suggestions){
 		return(
-			<div style={{position: "absolute", top: 20, right: 20}}>
-				<Typography color="primary">{`${valid} valid ${valid > 1 ? "entries": "entry"}`}</Typography>
-				<Typography color="error">{`${invalid} invalid ${invalid > 1 ? "entries": "entry"}`}</Typography>
-				<Typography>{`${suggestions} ${suggestions > 1 ? "need": "needs"} review`}</Typography>
+			<div style={{position: "absolute", top: 20, right: 10}}>
+				{valid ?
+					<Typography variant="subtitle2" color="primary">
+						{`${valid} valid ${valid > 1 ? "entries": "entry"}`}
+					</Typography>:
+					null
+				}
+				{invalid ?
+					<Typography variant="subtitle2" color="error">
+						{`${invalid} invalid ${invalid > 1 ? "entries": "entry"}`}
+					</Typography>:
+					null
+				}
+				{suggestions ?
+					<Typography variant="subtitle2" >
+						{`${suggestions} ${suggestions > 1 ? "need": "needs"} review`}
+					</Typography>:
+					null
+				}
 			</div>
 		)
 	}else return null
@@ -163,7 +180,7 @@ const SigForm = (props={}) => {
 				<div style={{
 					margin: "auto",
 					position: 'relative',}}>
-					<Button variant="contained" color="primary" size="small" disabled={searching || resolving || TextFieldSuggestProps.disabled} style={{marginTop:10, textTransform: 'capitalize'}} onClick={()=>TextFieldSuggestProps.onSubmit()}>
+					<Button variant="contained" color="primary" size="small" disabled={searching || resolving || TextFieldSuggestProps.disabled} style={{marginTop:10, textTransform: 'none'}} onClick={()=>TextFieldSuggestProps.onSubmit()}>
 						<span className="mdi mdi-magnify mdi-24px" /><Typography align={"center"}>{submitName}</Typography>
 					</Button>
 					{(searching || resolving) && <CircularProgress size={24} style={{
@@ -210,7 +227,7 @@ const Results = (props) => {
 						<React.Fragment>
 							<Grid item xs={1}/>
 							<Grid item xs={11}>
-								<Typography variant={'h6'} style={{marginBottom: 20}}>
+								<Typography variant={'body1'} style={{marginBottom: 20}}>
 									{header}
 								</Typography>
 							</Grid>
@@ -264,6 +281,8 @@ export const SignatureSearchComponent = (props) => {
 		schemas,
 	} = props
 	const [expanded, setExpanded] = React.useState(false);
+	const width = useWidth()
+	const breakpoint_md = 6
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -313,20 +332,24 @@ export const SignatureSearchComponent = (props) => {
 					<Grid container spacing={1}>
 						{entries!==null ? <Grid item xs={2}/>:
 							<Grid item xs={12} align="center">
-								<Typography variant="h6" style={{marginTop: 10}}>{description}</Typography>
+								<Typography variant="body1" style={{marginTop: 10}}>{description}</Typography>
 							</Grid>
 						}
-						<Grid item xs={12} md={entries===null ? 7: 10} align={entries===null ? "right": "center"}>
-							<SigForm {...props}/>
+						<Grid item xs={12} md={entries===null ? breakpoint_md: 10} align={entries===null ? "right": "center"}>
+							<Grid container direction="column">
+								<Grid itex xs={12}>
+									<SigForm {...props}/>
+								</Grid>
+							</Grid>
+							{entries!==null ? null:
+								<Grid item xs={12}>
+									<ARCHS4 resolver={resolver} schemas={schemas}/>
+								</Grid>
+							}
 						</Grid>
 						{entries!==null ? null:
-							<Grid item xs={12} md={5} align={"left"}>
+							<Grid item xs={12} md={12-breakpoint_md} align={"left"}>
 								<CarouselComponent {...tutorial}/>
-							</Grid>
-						}
-						{entries!==null ? null:
-							<Grid item xs={12} md={entries===null ? 7: 10} align={entries===null ? "right": "center"} style={{marginTop: 10}}>
-								<ARCHS4 resolver={resolver} schemas={schemas}/>
 							</Grid>
 						}
 					</Grid>

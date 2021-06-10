@@ -36,7 +36,7 @@ const OuterElementType = React.forwardRef((props, ref) => {
 
 function useResetCache(data) {
   const ref = React.useRef(null);
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current != null) {
       ref.current.resetAfterIndex(0, true);
     }
@@ -141,10 +141,10 @@ export const GeneSearch = (props) => {
 	return (
 		<Grid container align="left" spacing={2}>
 			<Grid item xs={12}>
-				<Typography variant="h5">
+				<Typography variant="body1">
 					ARCHS4 Coexpression
 				</Typography>
-				<Typography variant="body1">
+				<Typography variant="caption">
 					Perform signature search on a gene using it's top correlated and anti-correlated genes.
 				</Typography>
 			</Grid>
@@ -167,13 +167,14 @@ export const GeneSearch = (props) => {
 								variant="outlined"
 								onKeyDown={keyPress}
 								style={{ width: 300 }}
+								size="small"
 							/>
 							<Button variant="contained"
 								size="large"
 								color="primary"
 								disabled={input_gene === "" || gene !== null}
 								onClick={()=>setGene(input_gene)}
-								style={{height: 55, marginLeft: 5}}
+								style={{height: 40, marginLeft: 5}}
 							>
 								{gene === null ? 'Search': 'Searching...'}
 							</Button>

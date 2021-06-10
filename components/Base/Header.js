@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles'
 import { makeTemplate } from '../../util/ui/makeTemplate'
+import { useWidth } from '../../util/ui/useWidth'
 
 import dynamic from 'next/dynamic'
 const AppBar = dynamic(()=>import('@material-ui/core/AppBar'));
@@ -16,6 +17,7 @@ const SwipeableDrawer = dynamic(()=>import('@material-ui/core/SwipeableDrawer'))
 const MenuIcon = dynamic(()=>import('@material-ui/icons/Menu'));
 const Menu = dynamic(()=>import('@material-ui/core/Menu'));
 const Collapse = dynamic(()=>import('@material-ui/core/Collapse'));
+const Container = dynamic(()=>import('@material-ui/core/Container'));
 
 const styles = (theme) => ({
   grow: {
@@ -95,7 +97,7 @@ const StyledMenu = withStyles({
 
 export function Nav(props) {
   const { ui_values, location, classes, onClose } = props
-  const {nav, preferred_name} = ui_values
+  const {preferred_name} = ui_values
   const search_tab_list = Object.values(ui_values.nav).sort((a,b)=>(a.priority-b.priority))
   const [anchorEl, setAnchorEl] = useState(null)
   const [open, setOpen] = useState(null)
@@ -132,7 +134,7 @@ export function Nav(props) {
                 href={`#${p.endpoint}/${label}`}
                 onClick={handleClose}
               >
-                <Typography variant={"h6"}>
+                <Typography variant={"body2"}>
                   {label}
                 </Typography>
               </CustomListItem>
@@ -150,7 +152,7 @@ export function Nav(props) {
               href={`#${p.endpoint}/${label}`}
               onClick={handleClose}
             >
-              <Typography variant={"h6"}>
+              <Typography variant={"body2"}>
                 {label}
               </Typography>
             </CustomListItem>
@@ -170,7 +172,7 @@ export function Nav(props) {
           }}
           menus={menus}
         >
-          <Typography variant={"h6"}>
+          <Typography variant={"body2"}>
             {p.navName || p.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </CustomListItem>
@@ -202,101 +204,95 @@ export function Nav(props) {
   )
 }
 
-class Header extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      open: false,
-    }
+
+const Header = (props) => {
+  const [open, setOpen] = useState(false)
+  const paths = props.location.pathname.split('/')
+  const { staticContext, classes, ...rest } = props
+  const toggleDrawer = () => {
+    setOpen(!open)
   }
-
-  toggleDrawer = () => {
-    this.setState((prevState) => ({
-      open: !prevState.open,
-    }))
-  };
-
-  render = () => {
-    const paths = this.props.location.pathname.split('/')
-    const { staticContext, classes, ...rest } = this.props
-    return (
-      <header {...this.props.ui_values.header_info.header_props}>
-        <AppBar position="static" color="primary" style={{height: 80, paddingTop: 5, paddingBottom: 5}}>
+  const width = useWidth()
+  return (
+    <header {...props.ui_values.header_info.header_props}>
+      <AppBar position="static" color="primary" style={{minHeight: 50}}>
+        <Container maxWidth={width==="xl" ? "lg":"xl"}>
           <Toolbar>
             <Hidden mdDown>
-              <Typography variant="h4" color="inherit" className={classes.grow}>
+              <Typography variant="h5" color="inherit" className={classes.grow}>
                 <Link
                   to="/"
                   className={classes.header}
                 >
-                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
+                  {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
                 </Link>
               </Typography>
               <List
-                {...this.props.ui_values.header_info.menu_props}
+                {...props.ui_values.header_info.menu_props}
               >
                 <Nav classes={classes} {...rest}/>
               </List>
             </Hidden>
             <Hidden lgUp>
-              <Typography variant={this.props.ui_values.header_info.variant || 'h4'} color="inherit" className={classes.grow}>
+              <Typography variant={props.ui_values.header_info.variant || 'h5'} color="inherit" className={classes.grow}>
                 <Link
                   to="/"
                   className={classes.header}
                 >
-                  {this.props.ui_values.header_info.header_left}<img {...this.props.ui_values.header_info.icon} src={makeTemplate(this.props.ui_values.header_info.icon.src, {})} />{this.props.ui_values.header_info.header_right}
+                  {props.ui_values.header_info.header_left}<img {...props.ui_values.header_info.icon} src={makeTemplate(props.ui_values.header_info.icon.src, {})} />{props.ui_values.header_info.header_right}
                 </Link>
               </Typography>
-              <Button edge="start" className={classes.menuButton} onClick={this.toggleDrawer} color="inherit" aria-label="menu">
+              <Button edge="start" className={classes.menuButton} onClick={toggleDrawer} color="inherit" aria-label="menu">
                 <MenuIcon />
               </Button>
               <SwipeableDrawer
-                open={this.state.open}
-                onClose={this.toggleDrawer}
-                onOpen={this.toggleDrawer}
+                open={open}
+                onClose={toggleDrawer}
+                onOpen={toggleDrawer}
               >
                 <div
                   tabIndex={0}
                   role="button"
-                  // onClick={this.toggleDrawer}
-                  onKeyDown={this.toggleDrawer}
+                  // onClick={toggleDrawer}
+                  onKeyDown={toggleDrawer}
                 >
                   <List disablePadding>
-                    <Nav classes={classes} {...rest} onClose={this.toggleDrawer}/>
+                    <Nav classes={classes} {...rest} onClose={toggleDrawer}/>
                   </List>
                 </div>
               </SwipeableDrawer>
             </Hidden>
           </Toolbar>
-        </AppBar>
-        {paths.length <= 3 ? <div style={{height:30}}/> : (
-            <Breadcrumbs separator={<span className="mdi mdi-arrow-right-bold-circle-outline"/>}
-              aria-label="breadcrumb"
-              component={'div'}
-              style={{
-                paddingLeft: 15,
-                height: 30,
-              }}>
-              {paths.slice(1).map((path, i) => {
-                const href = paths.slice(0, i + 2).join('/')
-                return (
-                  <Typography color={'inherit'} key={href} variant={"caption"}>
-                    <Link
-                      key={href}
-                      to={href}
-                      className={classes.breadcrumb}
-                    >
-                      {path.replace(/_/g, ' ')}
-                    </Link>
-                  </Typography>
-                )
-              })}
-            </Breadcrumbs>
-        )}
-      </header>
-    )
-  }
+        </Container>
+      </AppBar>
+      {paths.length <= 3 ? <div style={{height:20}}/> : (
+          <Breadcrumbs separator={<span className="mdi mdi-arrow-right-bold-circle-outline"/>}
+            aria-label="breadcrumb"
+            component={'div'}
+            style={{
+              paddingLeft: 15,
+              height: 20,
+            }}>
+            {paths.slice(1).map((path, i) => {
+              const href = paths.slice(0, i + 2).join('/')
+              return (
+                <Typography color={'inherit'} key={href} variant={"caption"}>
+                  <Link
+                    key={href}
+                    to={href}
+                    className={classes.breadcrumb}
+                  >
+                    {path.replace(/_/g, ' ')}
+                  </Link>
+                </Typography>
+              )
+            })}
+          </Breadcrumbs>
+      )}
+    </header>
+  )
 }
+
 
 
 export default withStyles(styles)(Header)

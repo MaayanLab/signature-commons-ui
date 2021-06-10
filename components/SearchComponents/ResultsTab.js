@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import dynamic from 'next/dynamic'
 import { withStyles } from '@material-ui/core/styles'
 
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
 const Tabs = dynamic(()=>import('@material-ui/core/Tabs'));
 const Tab = dynamic(()=>import('@material-ui/core/Tab'));
 const Divider = dynamic(()=>import('@material-ui/core/Divider'));
@@ -19,7 +20,6 @@ export const ResultsTab = ({
 	handleChange,
 	tabsProps,
 	tabProps,
-	onClick,
 	divider,
 	TabsComponent=Tabs,
 	TabComponent=DefaultCustomTab,
@@ -32,7 +32,7 @@ export const ResultsTab = ({
 			allTabs.push(
 				<TabComponent 
 					key={label}
-					label={label.replace(/_/g, " ")} 
+					label={<Typography variant="subtitle2">{label.replace(/_/g, " ")}</Typography>}
 					value={t.value||t.label}
 					onClick={() => {
 						if (handleChange) handleChange(t)

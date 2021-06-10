@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState } from 'react'
 import PropTypes from 'prop-types'
 import dynamic from 'next/dynamic'
+import { Typography } from '@material-ui/core';
 const Avatar = dynamic(()=>import('@material-ui/core/Avatar'));
 const Chip = dynamic(()=>import('@material-ui/core/Chip'));
 const InputBase = dynamic(()=>import('@material-ui/core/InputBase'));
@@ -54,11 +55,13 @@ export const defaultChipRenderer = ({input, onDelete}) => {
                                 }}>
                   <span className={`mdi mdi-18px ${chip_props.icon}`}/>
                 </Avatar>}
-        label={search_term}
+        label={<Typography variant={"caption"}>{search_term}</Typography>}
         key={i}
         style={{background: chip_props.background,
-                margin: 2,
+                marginRight: 2,
+                marginLeft: 2,
                 maxWidth: 300,
+                fontSize: 12,
               }}
         onDelete={()=>onDelete(i)}
       />
@@ -118,6 +121,7 @@ export const ChipInput = (props) => {
             overflow: "visible",
             ...(((ChipInputProps || {}).divProps || {}).style || {})
           }}
+          {...(ChipInputProps || {}).divProps}
     >
       <InputBase
         id="input-with-icon-textfield"
@@ -142,6 +146,7 @@ export const ChipInput = (props) => {
           flexWrap: 'wrap',
           overflow: "auto",
           minHeight: 40,
+          fontSize: 12,
           ...(((ChipInputProps || {}).inputProps || {}).style || {})
         }}
       />

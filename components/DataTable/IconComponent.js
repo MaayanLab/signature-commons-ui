@@ -145,7 +145,7 @@ export const IconComponentButton = ({
                 }
                 { subtitle===undefined ? null:
                     <Grid item xs={12}>
-                        <Typography variant="body1" gutterBottom style={{textTransform: "none"}} {...IconTypProps}>
+                        <Typography variant="body2" gutterBottom style={{textTransform: "none"}} {...IconTypProps}>
                             {subtitle}
                         </Typography>
                     </Grid>

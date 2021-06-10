@@ -7,28 +7,27 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardHeader from '@material-ui/core/CardHeader';
-import {IconComponent} from '../DataTable/IconComponent'
 
 const UnexpandedCards = (entry) => {
 	const comprops = {
-		bar_props:{width:300, barSize:24, maxHeight:300},
+		bar_props:{width:280, barSize:20, maxHeight:270},
 		scatter_props:{width:300, height:300},
 	}
 	return(
 		<Grid item xs={12} sm={6} md={4}>
-			<Card style={{minHeight: entry.data.dataset_type === "geneset_library" ? 400: 750}}>
+			<Card style={{maxHeight: entry.data.dataset_type === "geneset_library" ? 400: 670}}>
 				<CardHeader
 					// avatar={
 					// 	<IconComponent {...entry.info.icon}/>
 					// }
-					title={<Typography variant="h6">{entry.info.name.text}</Typography>}
+					title={<Typography variant="body2">{entry.info.name.text}</Typography>}
 					action={
 						entry.RightComponents.map((comp, i)=>{
 							const {component, props} = comp
-							return <div key={entry.data.id}>
+							return <div key={entry.data.id} style={{marginTop: 10}}>
 										{component({
 											...props,
-											icon: "mdi-24px mdi-arrow-expand-all",
+											icon: "mdi-18px mdi-arrow-expand-all",
 											text: "Expand",
 										})}
 								   </div>
@@ -82,7 +81,7 @@ export const EnrichmentResult = (props) => {
 				component: RightComponent,
 				props: {
 					id: entry.data.id,
-					icon: entry.data.id === expanded_id ? "mdi-24px mdi-arrow-collapse-all": "mdi-24px mdi-arrow-expand-all",
+					icon: entry.data.id === expanded_id ? "mdi-18px mdi-arrow-collapse-all": "mdi-18px mdi-arrow-expand-all",
 					text: entry.data.id === expanded_id ? "Collapse": "Expand"
 				}
 			}]
@@ -95,10 +94,10 @@ export const EnrichmentResult = (props) => {
 				{searching?<CircularProgress/>:
 					<Grid container spacing={1}>
 						<Grid item xs={12}>
-							<Typography variant={"h4"} style={{marginBottom: 10}}>{label}</Typography>
+							<Typography variant={"body1"} style={{marginBottom: 10}}>{label}</Typography>
 						</Grid>
 						<Grid item xs={12}>
-							<Grid container spacing={1}>
+							<Grid container spacing={2}>
 								{children}
 							</Grid>
 						</Grid>

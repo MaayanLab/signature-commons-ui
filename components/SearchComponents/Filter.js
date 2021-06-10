@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import dynamic from 'next/dynamic'
-
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));
 const Card = dynamic(()=>import('@material-ui/core/Card'));
 const CardHeader = dynamic(()=>import('@material-ui/core/CardHeader'));
@@ -14,6 +13,7 @@ const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'
 const Checkbox = dynamic(()=>import('@material-ui/core/Checkbox'));
 const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 
+
 export const Filter = (props) => {
 	const {
 		name,
@@ -23,7 +23,6 @@ export const Filter = (props) => {
 		onClick,
 		loading,
 	} = props
-
 	const [expanded, setExpanded] = React.useState(Object.keys(checked).length>0);
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -43,17 +42,17 @@ export const Filter = (props) => {
 	return (
 		<Card>
 			<CardHeader
-				avatar={<span className={`mdi ${icon} mdi-36px`}></span>}
+				avatar={<span className={`mdi ${icon} mdi-24px`}></span>}
 				action={
 					<IconButton
 						onClick={handleExpandClick}
 						aria-expanded={expanded}
 						aria-label="show more"
 					>
-						<span className={`mdi ${expanded ? "mdi-chevron-up": "mdi-chevron-down"} mdi-36px`}></span>
+						<span className={`mdi ${expanded ? "mdi-chevron-up": "mdi-chevron-down"} mdi-24px`}></span>
 					</IconButton>
 				}
-				title={name}
+				title={<Typography variant="body2" align="left">{name}</Typography>}
 			/>
 			<Collapse in={expanded} timeout="auto" unmountOnExit>
 				<FormGroup>
@@ -61,8 +60,14 @@ export const Filter = (props) => {
 						{sorted_values.map(([label, count])=>
 							<Grid item xs={12} key={label} align="left">
 								<FormControlLabel
-									control={<Checkbox checked={checked[label] || false} onChange={onClick} name={label} value={label} />}
-									label={<Typography align="left">{`${label} (${count})`}</Typography>}
+									control={<Checkbox
+												checked={checked[label] || false}
+												onChange={onClick}
+												name={label}
+												value={label}
+												size="small"
+											/>}
+									label={<Typography variant="caption" align="left">{`${label} (${count})`}</Typography>}
 									style={{margin:10}}
 								/>
 							</Grid>
