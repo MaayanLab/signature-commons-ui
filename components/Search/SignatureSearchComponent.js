@@ -67,20 +67,20 @@ const EntityCounts = (props) => {
 		return(
 			<div style={{position: "absolute", top: 20, right: 10}}>
 				{valid ?
-					<Typography variant="subtitle2" color="primary">
-						{`${valid} valid ${valid > 1 ? "entries": "entry"}`}
+					<Typography variant="caption" color="primary">
+						{`${valid} valid ${valid > 1 ? "entries": "entry"}`}<br/>
 					</Typography>:
 					null
 				}
 				{invalid ?
-					<Typography variant="subtitle2" color="error">
-						{`${invalid} invalid ${invalid > 1 ? "entries": "entry"}`}
+					<Typography variant="caption" color="error">
+						{`${invalid} invalid ${invalid > 1 ? "entries": "entry"}`}<br/>
 					</Typography>:
 					null
 				}
 				{suggestions ?
-					<Typography variant="subtitle2" >
-						{`${suggestions} ${suggestions > 1 ? "need": "needs"} review`}
+					<Typography variant="caption" >
+						{`${suggestions} ${suggestions > 1 ? "need": "needs"} review`}<br/>
 					</Typography>:
 					null
 				}
@@ -151,7 +151,7 @@ const SigForm = (props={}) => {
 					</React.Fragment>
 					:
 					<Grid container spacing={2}>
-						<Grid item xs={12} md={6}>
+						<Grid item xs={6}>
 							<TextFieldSuggest {...TextFieldSuggestProps}
 								input={reorder_entities(TextFieldSuggestProps.input.up_entities)}
 								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
@@ -162,7 +162,7 @@ const SigForm = (props={}) => {
 								endAdornment={<EntityCounts {...TextFieldSuggestProps.input.up_stats}/>}
 							/>
 						</Grid>
-						<Grid item xs={12} md={6}>
+						<Grid item xs={6} md={6}>
 							<TextFieldSuggest {...TextFieldSuggestProps}
 								input={reorder_entities(TextFieldSuggestProps.input.down_entities)}
 								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
@@ -348,7 +348,7 @@ export const SignatureSearchComponent = (props) => {
 							}
 						</Grid>
 						{entries!==null ? null:
-							<Grid item xs={12} md={12-breakpoint_md} align={"left"}>
+							<Grid item xs={12} md={12-breakpoint_md} align={"center"}>
 								<CarouselComponent {...tutorial}/>
 							</Grid>
 						}

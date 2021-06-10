@@ -63,7 +63,7 @@ export const ScatterPlot = (props) => {
 		xAxisName,
 		yAxisLabel,
 		xAxisLabel,
-		height=500,
+		height=400,
 		width="100%",
 		category,
 	} = props

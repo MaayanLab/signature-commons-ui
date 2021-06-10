@@ -93,7 +93,6 @@ class Resources extends React.PureComponent {
                     <CardMedia
                       style={{ textAlign: 'center'}}
                     >
-                      
                         <IconComponent {...entry.info.icon}/>
                     </CardMedia>: 
                     <CardMedia
@@ -103,14 +102,14 @@ class Resources extends React.PureComponent {
                     </CardMedia>
                   }
                   <CardContent>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={1}>
                       <Grid item xs={12}>
-                        <Typography variant={"h6"} style={{textAlign: "center"}}>
+                        <Typography variant={"body1"} style={{textAlign: "center"}}>
                           {entry.info.name.text}
                         </Typography>
                       </Grid>
                       <Grid item xs={12}>
-                        <Typography variant={"body2"} style={{maxHeight: 150, overflow: "auto"}}>
+                        <Typography variant={"subtitle2"} style={{maxHeight: 180, overflow: "auto"}}>
                           {entry.info.subtitle.text}
                         </Typography>
                       </Grid>

@@ -233,6 +233,7 @@ export default class SignatureSearch extends React.PureComponent {
 
 	onDeleteEntity = (value, field) => {
 		if (!this.state.sig_input){
+			console.log("HERE")
 			this.setState((prevState, prevProps)=>{
 				let input = {...prevState.input}
 				for (const v of value.trim().split(/[\t\r\n;]+/)){
@@ -389,7 +390,7 @@ export default class SignatureSearch extends React.PureComponent {
 			let sig_input = true
 			if (enrichment_id === undefined){
 				input = reset_input(this.props.match.params.type)
-				// sig_input = true
+				sig_input = false
 			} else {
 				// there's an enrichment_id
 				const match = this.props.resolver.get_enrichment(enrichment_id)

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import dynamic from 'next/dynamic'
-
+import { useWidth } from '../../util/ui/useWidth'
 const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 const TablePagination = dynamic(()=>import('@material-ui/core/TablePagination'));
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));
@@ -106,7 +106,15 @@ export const MetadataSearchComponent = (props) => {
 			}
 			{ homepage ?
 				<Grid item xs={12} style={{marginTop: 10, marginBottom: 25}} align="Center">
-					<CarouselComponent {...tutorial} PaperProps={PaperProps}/>
+					<CarouselComponent {...tutorial}
+						PaperProps={PaperProps}
+						ContainerProps={{
+							style:{
+								height: useWidth() === 'xl' ? 350: 200,
+								width: "100%"
+							}
+						}}
+					/>
 				</Grid>
 				:
 				<React.Fragment>

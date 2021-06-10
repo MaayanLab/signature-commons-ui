@@ -1,16 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Grid from '@material-ui/core/Grid'
-import {InfoCard} from '../DataTable'
-import { Typography } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardHeader from '@material-ui/core/CardHeader';
+import { useWidth } from '../../util/ui/useWidth'
+import dynamic from 'next/dynamic'
+const InfoCard = dynamic(async () => (await import('../DataTable')).InfoCard);
+const Grid = dynamic(()=>import('@material-ui/core/Grid'))
+const Typography = dynamic(()=>import('@material-ui/core/Typography'))
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'))
+const Card = dynamic(()=>import('@material-ui/core/Card'))
+const CardContent = dynamic(()=>import('@material-ui/core/CardContent'))
+const CardHeader = dynamic(()=>import('@material-ui/core/CardHeader'))
 
 const UnexpandedCards = (entry) => {
 	const comprops = {
-		bar_props:{width:280, barSize:20, maxHeight:270},
+		bar_props:{width: useWidth() === 'xl' ? 300: 230, barSize:20, maxHeight:270},
 		scatter_props:{width:300, height:300},
 	}
 	return(

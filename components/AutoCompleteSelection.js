@@ -24,7 +24,7 @@ export const AutoCompleteSelection = ({label, selection, value, setValue, inputV
 			}}
 			id="sig-selector"
 			options={selection}
-			style={{ width: 300 }}
+			style={{ width: 250 }}
 			renderInput={(params) => (
 				<TextField
 					{...params}

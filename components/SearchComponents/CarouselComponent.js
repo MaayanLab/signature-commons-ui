@@ -10,10 +10,13 @@ const Carousel = dynamic(()=>import('react-material-ui-carousel'));
 const useStyles = makeStyles((theme) => ({
     paper: {
 		padding: 20,
-		width: "90%",
+		width: "80%",
     },
 	item: {
-		height: 350,
+		height: 300,
+        [theme.breakpoints.only('xl')]: {
+            height: 350,
+        }
 	},
 	image: {
         height: "100%",
@@ -45,7 +48,7 @@ const CarouselItem = (props) => {
 }
 
 export const CarouselComponent = (props) => {
-	const {header, content, PaperProps} = props
+	const {header, content, PaperProps, ContainerProps} = props
 	const classes = useStyles()
 	if (content === undefined || content.length === 0 ) return null
 	return(
@@ -56,7 +59,7 @@ export const CarouselComponent = (props) => {
 					<CarouselItem key={content[0].alt} {...content[0]} />:
 					<Carousel interval={5000}>
 						{
-							content.map(props => <CarouselItem key={props.alt} {...props} /> )
+							content.map(props => <CarouselItem key={props.alt} ContainerProps={ContainerProps} {...props} /> )
 						}
 					</Carousel>
 				}

@@ -44,7 +44,7 @@ const SignatureScatterPlot = (props) => {
 				/>
 			</Grid> 
 			<Grid item xs={12} md={4} align="left">
-				<Grid container spacing={3}>
+				<Grid container spacing={1}>
 					<Grid item xs={12}>
 						<AutoCompleteSelection
 							label={primary_field.primary_label || primary_field.label}
@@ -63,12 +63,9 @@ const SignatureScatterPlot = (props) => {
 							handleChange={e=>set_category(e.target.value)}
 						/>
 					</Grid>
-					<Grid item xs={12}>
-						<Button onClick={reset} variant="contained">Reset Plot</Button>
-					</Grid>
 					<Grid item xs={12} style={{marginRight: 10}}>
 						<Typography variant="body1">Top {primary_field.primary_label || primary_field.label}</Typography>
-						<List>
+						<List dense style={{marginLeft: -25}}>
 							{(topTerms || []).map((term)=>(
 								<ListItem button onClick={()=>set_term(term)}>
 									<ListItemAvatar>
@@ -79,11 +76,15 @@ const SignatureScatterPlot = (props) => {
 										</Avatar>
 									</ListItemAvatar>
 									<ListItemText
-									primary={<Typography variant="subtitle2">{term}</Typography>}
+										style={{marginLeft: -18}}
+										primary={<Typography variant="subtitle2">{term}</Typography>}
 									/>
 								</ListItem>
 							))}
 						</List>
+					</Grid>
+					<Grid item xs={12}>
+						<Button onClick={reset} variant="contained">Reset Plot</Button>
 					</Grid>
 				</Grid>
 			</Grid>

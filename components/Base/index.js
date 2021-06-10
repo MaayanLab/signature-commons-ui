@@ -94,7 +94,7 @@ const Base = (props) => {
         ui_values={ui_values}
       />
       <main style={{ backgroundColor: theme.palette.background.main }} {...ui_values.background_props}>
-        <Container className={classes.container}>
+        <Container className={classes.container} maxWidth={width==="xl" ? "lg": "md"}>
           {children}
         </Container>
       </main>

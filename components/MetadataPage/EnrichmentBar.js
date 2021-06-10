@@ -46,7 +46,7 @@ export const EnrichmentBar = (props) => {
 		   fontColor="#FFF",
 		   maxHeight=300,
 		   barSize=23,
-		   width=450,
+		   width=380,
 		   filename="bar",
 		   download=false,
 		} = props

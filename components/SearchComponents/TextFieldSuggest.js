@@ -21,7 +21,10 @@ const useStyles = makeStyles((theme) => ({
         overflow: "auto",
         // height: 350,
         flexFlow: 'column',
-        height: 250,
+        height: 210,
+        [theme.breakpoints.only('xl')]: {
+            height: 250,
+        }
     },
 }));
   
@@ -68,18 +71,19 @@ const chipRenderer = ({
         return(                
             <Grid item key={value.label}>
                 <Chip
+                    size="small"
                     avatar={<Avatar 
                                 style={{
                                     background,
                                 }}>
                                     <span className={`mdi ${icon} mdi-18px`} />
                             </Avatar>}
-                    label={<span style={{fontSize: "0.75rem"}}>{value.label}</span>}
+                    label={<span style={{fontSize: 10}}>{value.label}</span>}
                     style={{
                         background,
                         color,
                         maxWidth: 300,
-                        fontSize: 12,
+                        marginTop: 2,
                     }}
                     onDelete={()=>onDelete(value.label)}
                     onClick={onClick}

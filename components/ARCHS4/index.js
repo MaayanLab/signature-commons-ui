@@ -14,6 +14,7 @@ const TextField = dynamic(()=>import('@material-ui/core/TextField'))
 const Button = dynamic(()=>import('@material-ui/core/Button'))
 const Autocomplete = dynamic(()=>import('@material-ui/lab/Autocomplete'))
 
+
 // From Material UI
 const LISTBOX_PADDING = 8; // px
 
@@ -159,6 +160,7 @@ export const GeneSearch = (props) => {
 					}}
 					value={gene}
 					onChange={(event, newValue)=>setGene(newValue)}
+					size="small"
 					renderInput={(params) => (
 						<React.Fragment>
 							<TextField 
@@ -166,7 +168,7 @@ export const GeneSearch = (props) => {
 								label="Enter gene symbol"
 								variant="outlined"
 								onKeyDown={keyPress}
-								style={{ width: 300 }}
+								style={{ width: 300}}
 								size="small"
 							/>
 							<Button variant="contained"
@@ -174,7 +176,7 @@ export const GeneSearch = (props) => {
 								color="primary"
 								disabled={input_gene === "" || gene !== null}
 								onClick={()=>setGene(input_gene)}
-								style={{height: 40, marginLeft: 5}}
+								style={{height: 40, marginLeft: 5, textTransform: "none"}}
 							>
 								{gene === null ? 'Search': 'Searching...'}
 							</Button>

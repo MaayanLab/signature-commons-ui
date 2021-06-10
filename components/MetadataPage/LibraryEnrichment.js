@@ -324,7 +324,7 @@ class LibraryEnrichment extends React.PureComponent {
 						key={`${h.id}-${row.name}`}
 						style={h.style}
 					>
-						<span>{row[h.id]}</span>
+						<Typography variant="caption">{row[h.id]}</Typography>
 					</TableCell>
 				)
 			}
@@ -388,7 +388,7 @@ class LibraryEnrichment extends React.PureComponent {
 										}: {}}
 										style={c.style}
 									>
-										<b>{c.label}</b>
+										<Typography variant="caption"><b>{c.label}</b></Typography>
 									</TableCell>
 									))}
 								</TableHead>
@@ -428,16 +428,16 @@ class LibraryEnrichment extends React.PureComponent {
 		return(
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
-					<Typography variant="h6">{name}</Typography>
-					<Typography><b>{this.state.order_field}</b> {precise(actual_value)}</Typography>
+					<Typography variant="subtitle2"><b>{name.replaceAll('_', ' ')}</b></Typography>
+					<Typography variant="subtitle2"><b>{this.state.order_field}</b> {precise(actual_value)}</Typography>
 					{ oddsratio ?
-						<Typography><b>odds ratio:</b> {precise(oddsratio)}</Typography>
+						<Typography variant="subtitle2"><b>odds ratio:</b> {precise(oddsratio)}</Typography>
 						: null
 					}
 					{ overlap_size ?
 						<React.Fragment>
-							<Typography><b>overlap size:</b> {overlap_size}</Typography>
-							<Typography><b>overlaps:</b> {overlap_text}</Typography>
+							<Typography variant="subtitle2"><b>overlap size:</b> {overlap_size}</Typography>
+							<Typography variant="subtitle2"><b>overlaps:</b> {overlap_text}</Typography>
 						</React.Fragment>: null
 					}
 				</CardContent>
