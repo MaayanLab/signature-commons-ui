@@ -184,6 +184,7 @@ export const GeneSearch = (props) => {
 					onChange={(event, newValue)=>setGene(newValue)}
 					size="small"
 					popupIcon={null}
+					noOptionsText={<Typography variant="caption">No results</Typography>}
 					renderInput={(params) => (
 						<div
 							style={{

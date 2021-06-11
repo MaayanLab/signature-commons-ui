@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic'
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 
 const TextField = dynamic(()=>import('@material-ui/core/TextField'))
 const Autocomplete = dynamic(()=>import('@material-ui/lab/Autocomplete'))
@@ -45,6 +46,7 @@ export const AutoCompleteSelection = ({label, selection, value, setValue, inputV
 			ListboxProps={{
 				style: {fontSize: 12}
 			}}
+			noOptionsText={<Typography variant="caption">No results</Typography>}
 			renderInput={(params) => (
 				<TextField
 					{...params}
