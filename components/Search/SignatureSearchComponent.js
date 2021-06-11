@@ -38,7 +38,7 @@ const Examples = (props) => {
 					onAdd(ex.input.down_entities, "down_entities")
 				}
 			}}>
-				<Typography variant="caption">{ex.label}</Typography>
+				<Typography variant="subtitle2">{ex.label}</Typography>
 			</Button>
 		)
 		if (ex.link!==undefined){

@@ -85,7 +85,7 @@ export const MetadataSearchComponent = (props) => {
 							<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
 								if (search_terms.indexOf(v)<0) onSearch([v])
 							}}>
-								<Typography variant="caption">{v}</Typography>
+								<Typography variant="subtitle2">{v}</Typography>
 							</Button>
 							{i === search_examples.length - 1 ? null: "/"}
 						</React.Fragment>

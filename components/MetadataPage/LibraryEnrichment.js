@@ -903,6 +903,7 @@ class LibraryEnrichment extends React.PureComponent {
 									}
 								]}
 								value={this.state.visualization}
+								textVariant="caption"
 								handleChange={(t)=>this.setState({visualization: t.value},()=>{
 									if (t.value === 'bar') this.reset_scatter_plot()
 								})}
