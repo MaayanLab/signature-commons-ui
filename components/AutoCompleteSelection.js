@@ -60,9 +60,20 @@ export const AutoCompleteSelection = ({label, selection, value, setValue, inputV
 						disableUnderline: true,
 						classes: {
 							input: classes.input,
+							style: {
+								fontSize: 12,
+								height: 40,
+								width: 230,
+								marginLeft: 10,
+							}
 							// notchedOutline: textFieldStyles.notchedOutline
 						},
 						endAdornment: null,
+					}}
+					style={{
+						width: 230,
+						background: "#f7f7f7",
+						borderRadius: 15,
 					}}
 				/>
 			)}

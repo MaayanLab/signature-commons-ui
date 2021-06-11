@@ -204,7 +204,18 @@ export const GeneSearch = (props) => {
 										input: classes.input,
 										// notchedOutline: textFieldStyles.notchedOutline
 									},
-									endAdornment: null
+									endAdornment: null,
+									style: {
+										fontSize: 12,
+										height: 50,
+										width: 300,
+										marginLeft: 10,
+									}
+								}}
+								style={{
+									width: 300,
+									background: "#f7f7f7",
+									borderRadius: 15,
 								}}
 							/>
 							<Button variant="contained"
