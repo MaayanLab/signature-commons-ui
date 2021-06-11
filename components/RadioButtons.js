@@ -21,7 +21,7 @@ export const RadioButtons = (props) => {
 				{Object.keys(values).map(v=>(
 					<FormControlLabel key={v} value={v} control={<Radio size="small"/>}
 						label={<Typography variant="subtitle2">{v}</Typography>}
-						style={{textTransform: "none"}} />
+						style={{textTransform: "capitalize"}} />
 				))}
 			</RadioGroup>
 		</FormControl>

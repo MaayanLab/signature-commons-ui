@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const CarouselItem = (props) => {
-	const {ContainerProps, ItemProps, ImageProps, CaptionProps, src, alt} = props
+	const {ContainerProps={}, ItemProps, ImageProps, CaptionProps, src, alt} = props
 	const classes = useStyles()
 	return(
 		<Grid
