@@ -342,7 +342,7 @@ export const SignatureSearchComponent = (props) => {
 								</Grid>
 							</Grid>
 							{entries!==null ? null:
-								<Grid item xs={12}>
+								<Grid item xs={12} style={{marginTop: 30}}>
 									<ARCHS4 resolver={resolver} schemas={schemas}/>
 								</Grid>
 							}

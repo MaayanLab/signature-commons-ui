@@ -1,16 +1,20 @@
 import {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import {ScatterPlot} from './ScatterPlot'
-import {AutoCompleteSelection} from '../AutoCompleteSelection'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import { RadioButtons } from '../RadioButtons'
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
+import dynamic from 'next/dynamic'
+
+const ScatterPlot = dynamic(async () => (await import('./ScatterPlot')).ScatterPlot);
+const AutoCompleteSelection = dynamic(async () => (await import('../AutoCompleteSelection')).AutoCompleteSelection);
+const RadioButtons = dynamic(async () => (await import('../RadioButtons')).RadioButtons);
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'))
+const Typography = dynamic(()=>import('@material-ui/core/Typography'))
+const Button = dynamic(()=>import('@material-ui/core/Button'))
+const List = dynamic(()=>import('@material-ui/core/List'))
+const ListItem = dynamic(()=>import('@material-ui/core/ListItem'))
+const ListItemText = dynamic(()=>import('@material-ui/core/ListItemText'))
+const ListItemAvatar = dynamic(()=>import('@material-ui/core/ListItemAvatar'))
+const Avatar = dynamic(()=>import('@material-ui/core/Avatar'))
+
 
 const SignatureScatterPlot = (props) => {
 	const { results,
@@ -84,7 +88,13 @@ const SignatureScatterPlot = (props) => {
 						</List>
 					</Grid>
 					<Grid item xs={12}>
-						<Button onClick={reset} variant="contained">Reset Plot</Button>
+						<Button onClick={reset}
+							variant="contained"
+							style={{textTransform: "none", marginLeft: 25, height: 50}}
+							color="default"
+						>
+							Reset Plot
+						</Button>
 					</Grid>
 				</Grid>
 			</Grid>

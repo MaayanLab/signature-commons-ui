@@ -4,7 +4,7 @@ import { withRouter } from "react-router";
 import {enrich_gene_coexpression, get_gene_names} from './util'
 import dynamic from 'next/dynamic'
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
 
 const ListSubheader = dynamic(()=>import('@material-ui/core/ListSubheader'))
@@ -12,8 +12,29 @@ const Grid = dynamic(()=>import('@material-ui/core/Grid'))
 const Typography = dynamic(()=>import('@material-ui/core/Typography'))
 const TextField = dynamic(()=>import('@material-ui/core/TextField'))
 const Button = dynamic(()=>import('@material-ui/core/Button'))
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'))
 const Autocomplete = dynamic(()=>import('@material-ui/lab/Autocomplete'))
 
+const useStyles = makeStyles((theme) => ({
+	input: {
+		fontSize: 12,
+		height: 40,
+		width: 300,
+		marginLeft: 10,
+	},
+	textfield: {
+		width: 300,
+		background: "#f7f7f7",
+		borderRadius: 15,
+	},
+	buttonProgress: {
+	  position: 'absolute',
+	  top: '50%',
+	  left: '80%',
+	  marginTop: -12,
+	  marginLeft: -12,
+	}
+  }));
 
 // From Material UI
 const LISTBOX_PADDING = 8; // px
@@ -24,6 +45,7 @@ function renderRow(props) {
     style: {
       ...style,
       top: style.top + LISTBOX_PADDING,
+	  fontSize: 12
     },
   });
 }
@@ -109,7 +131,7 @@ export const GeneSearch = (props) => {
 	const [gene, setGene] = useState(null)
 	const [input_gene, setInputGene] = useState("")
 	const [options, setOptions] = useState([])
-
+	const classes = useStyles()
 	useEffect(()=>{
 		const get_options = async () => {
 			if (options.length===0){
@@ -142,11 +164,11 @@ export const GeneSearch = (props) => {
 	return (
 		<Grid container align="left" spacing={2}>
 			<Grid item xs={12}>
-				<Typography variant="body1">
-					ARCHS4 Coexpression
+				<Typography variant="body2">
+					Gene Co-Expression Signature Search
 				</Typography>
 				<Typography variant="caption">
-					Perform signature search on a gene using it's top correlated and anti-correlated genes.
+					Convert a single gene to an input signature based on co-expression correlations.
 				</Typography>
 			</Grid>
 			<Grid item xs={12}>
@@ -161,26 +183,41 @@ export const GeneSearch = (props) => {
 					value={gene}
 					onChange={(event, newValue)=>setGene(newValue)}
 					size="small"
+					popupIcon={null}
 					renderInput={(params) => (
-						<React.Fragment>
+						<div
+							style={{
+								margin: "auto",
+								position: 'relative',
+							}}
+						>
 							<TextField 
 								{...params}
-								label="Enter gene symbol"
-								variant="outlined"
+								placeholder="Enter gene symbol"
 								onKeyDown={keyPress}
-								style={{ width: 300}}
+								className={classes.textfield}
 								size="small"
+								InputProps={{
+									...params.InputProps,
+									disableUnderline: true,
+									classes: {
+										input: classes.input,
+										// notchedOutline: textFieldStyles.notchedOutline
+									},
+									endAdornment: null
+								}}
 							/>
 							<Button variant="contained"
 								size="large"
 								color="primary"
 								disabled={input_gene === "" || gene !== null}
 								onClick={()=>setGene(input_gene)}
-								style={{height: 40, marginLeft: 5, textTransform: "none"}}
+								style={{height: 50, marginLeft: 5, textTransform: "none"}}
 							>
 								{gene === null ? 'Search': 'Searching...'}
 							</Button>
-						</React.Fragment>
+							{gene !== null && <CircularProgress size={24} className={classes.buttonProgress} />}
+						</div>
 					)}
 				/>			
 			</Grid>

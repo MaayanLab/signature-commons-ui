@@ -86,7 +86,7 @@ class About extends React.PureComponent {
                           })
                         }}
                       />
-                      <Typography variant={'button'} align="center">{p.name}</Typography>
+                      <Typography variant={'subtitle2'} align="center">{p.name}</Typography>
                     </React.Fragment>
                 )})
             }

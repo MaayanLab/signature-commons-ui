@@ -23,6 +23,7 @@ export const ResultsTab = ({
 	divider,
 	TabsComponent=Tabs,
 	TabComponent=DefaultCustomTab,
+	textVariant="body2"
 }) => {
 	const allTabs = []
 	for (const i in tabs){
@@ -32,7 +33,7 @@ export const ResultsTab = ({
 			allTabs.push(
 				<TabComponent 
 					key={label}
-					label={<Typography variant="caption" style={{textTransform: "none"}}>{label.replace(/_/g, " ")}</Typography>}
+					label={<Typography variant={textVariant} style={{textTransform: "none"}}>{label.replace(/_/g, " ")}</Typography>}
 					value={t.value||t.label}
 					onClick={() => {
 						if (handleChange) handleChange(t)
