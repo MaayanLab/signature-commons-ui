@@ -36,11 +36,11 @@ const CustomTooltip = ({ active, payload }) => {
 		return (
 			<Card style={{opacity:"0.8", textAlign: "left"}}>
 				<CardContent>
-					<Typography variant="h6">{name}</Typography>
-					<Typography><b style={{textTransform: "lowercase"}}>{primary_label}:</b> {primary_value}</Typography>
-					{Object.entries(category).map(([k,v])=><Typography key={k}><b style={{textTransform: "lowercase"}}>{k}:</b> {v}</Typography>)}
-					<Typography><b>{xName}:</b> {precise(xAxis)}</Typography>
-					<Typography><b>{yName}:</b> {precise(yAxis)}</Typography>	
+					<Typography variant="subtitle2"><b>{name.replaceAll('_', ' ')}</b></Typography>
+					<Typography variant="subtitle2"><b style={{textTransform: "lowercase"}}>{primary_label}:</b> {primary_value}</Typography>
+					{Object.entries(category).map(([k,v])=><Typography variant="subtitle2" key={k}><b style={{textTransform: "lowercase"}}>{k}:</b> {v}</Typography>)}
+					<Typography variant="subtitle2"><b>{xName}:</b> {precise(xAxis)}</Typography>
+					<Typography variant="subtitle2"><b>{yName}:</b> {precise(yAxis)}</Typography>	
 				</CardContent>
 			</Card>
 		)
