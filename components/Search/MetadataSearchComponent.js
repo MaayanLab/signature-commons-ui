@@ -49,6 +49,7 @@ export const MetadataSearchComponent = (props) => {
 						}
 					}}
 					divider
+					bold={true}
 					{...SearchTabProps}
 				/>
 				<Typography variant="body1" style={{marginTop: 10}}>{description}</Typography>

@@ -303,6 +303,7 @@ export const SignatureSearchComponent = (props) => {
 							}
 						}}
 						divider
+						bold={true}
 						{...SearchTabProps}
 					/>
 				}
