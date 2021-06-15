@@ -560,6 +560,7 @@ export default class SignatureSearch extends React.PureComponent {
 						description={this.props.nav.SignatureSearch.props.types[this.props.match.params.type].description}
 						download_input={()=>download_input(this.state.input)}
 						entries={this.state.resources}
+						ui_values={{nav: this.props.nav, preferred_name: this.props.preferred_name}}
 						ResultsProps={{
 							entries: this.state.libraries,
 							onClick: this.node_click,

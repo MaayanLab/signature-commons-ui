@@ -22,7 +22,7 @@ const IconComponentButton = dynamic(async () => (await import('../DataTable')).I
 const ResultsTab = dynamic(async () => (await import('../SearchComponents/ResultsTab')).ResultsTab);
 const CarouselComponent = dynamic(async () => (await import('../SearchComponents/CarouselComponent')).CarouselComponent);
 
-const ARCHS4 = dynamic(()=>import('../ARCHS4'));
+const GeneSearch = dynamic(()=>import('../GeneSearch'));
 
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
@@ -271,7 +271,7 @@ export const SignatureSearchComponent = (props) => {
 	const {
 		searching=false,
 		SearchTabProps,
-		tutorial,
+		ui_values,
 		description,
 		ResultsProps,
 		download_input,
@@ -329,27 +329,18 @@ export const SignatureSearchComponent = (props) => {
 			}			
 			<Grid item xs={ entries===null ? 12: 10} align="center" >
 				<Collapse in={expanded || entries === null} timeout="auto" unmountOnExit>
-					<Grid container spacing={1}>
+					<Grid container spacing={3}>
 						{entries!==null ? <Grid item xs={2}/>:
 							<Grid item xs={12} align="center">
 								<Typography variant="body1" style={{marginTop: 10}}>{description}</Typography>
 							</Grid>
 						}
 						<Grid item xs={12} md={entries===null ? breakpoint_md: 10} align={entries===null ? "right": "center"}>
-							<Grid container direction="column">
-								<Grid itex xs={12}>
-									<SigForm {...props}/>
-								</Grid>
-							</Grid>
-							{entries!==null ? null:
-								<Grid item xs={12} style={{marginTop: 30}}>
-									<ARCHS4 resolver={resolver} schemas={schemas}/>
-								</Grid>
-							}
+							<SigForm {...props}/>
 						</Grid>
 						{entries!==null ? null:
 							<Grid item xs={12} md={12-breakpoint_md} align={"center"}>
-								<CarouselComponent {...tutorial}/>
+								<GeneSearch resolver={resolver} schemas={schemas} ui_values={ui_values}/>
 							</Grid>
 						}
 					</Grid>

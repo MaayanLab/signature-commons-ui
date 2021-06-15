@@ -100,6 +100,7 @@ export const MetadataSearchComponent = (props) => {
 							variant: "fullWidth",
 						}}
 						divider
+						textVariant="body2"
 						{...ModelTabProps}
 					/>
 				</Grid>
