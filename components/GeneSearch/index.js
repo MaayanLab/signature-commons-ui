@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types'
 import { withRouter } from "react-router";
-import {enrich_gene_coexpression, get_gene_names} from './util'
+import {enrich_gene_coexpression, get_gene_names, get_gene_id} from './util'
 import dynamic from 'next/dynamic'
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
@@ -14,26 +14,27 @@ const TextField = dynamic(()=>import('@material-ui/core/TextField'))
 const Button = dynamic(()=>import('@material-ui/core/Button'))
 const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'))
 const Autocomplete = dynamic(()=>import('@material-ui/lab/Autocomplete'))
+const RadioButtons = dynamic(async () => (await import('../RadioButtons')).RadioButtons);
 
 const useStyles = makeStyles((theme) => ({
 	input: {
 		fontSize: 12,
 		height: 40,
-		width: 300,
+		width: 320,
 		marginLeft: 10,
 	},
 	textfield: {
-		width: 300,
+		width: 320,
 		background: "#f7f7f7",
 		borderRadius: 15,
 	},
 	buttonProgress: {
 	  position: 'absolute',
 	  top: '50%',
-	  left: '80%',
+	  left: '85%',
 	  marginTop: -12,
 	  marginLeft: -12,
-	}
+	},
   }));
 
 // From Material UI
@@ -125,10 +126,31 @@ export const GeneSearch = (props) => {
 		resolver,
 		schemas,
 		history,
-		location
+		location,
+		ui_values,
 	} = props
 
+	const examples = ["STAT3", "MAPK1", "ZNF830"]
+	const radio_values = [
+		{
+			label: "Gene Co-Expression Signature Search",
+			sublabel: "Convert a single gene to an input signature based on co-expression correlations.",
+			value: "coexpression"
+		},
+		{
+			label: "Metadata Search",
+			sublabel: "Find signatures where a single gene was perturbed",
+			value: "metadata"
+		},
+		{
+			label: "Up or Down-Regulate My Gene",
+			sublabel: "Find L1000 Signatures that maximally up or down-regulate the queried gene",
+			value: "regulate"
+		},
+	]
+
 	const [gene, setGene] = useState(null)
+	const [radio, setRadio] = useState("coexpression")
 	const [input_gene, setInputGene] = useState("")
 	const [options, setOptions] = useState([])
 	const classes = useStyles()
@@ -143,14 +165,33 @@ export const GeneSearch = (props) => {
 	})
 	
 	useEffect(()=>{
-		const enrichment = async () => {
+		const coexpression = async () => {
 			const enrichment_id = await enrich_gene_coexpression({resolver, schemas, gene})
 			history.push({
 				pathname: `${location.pathname}/${enrichment_id}`
 			})
 		}
+		const metadata_search = () => {
+			const {nav, preferred_name} = ui_values
+			const metadata_url = `${nav.MetadataSearch.endpoint}/${preferred_name.signatures}`
+			history.push({
+				pathname: metadata_url,
+				search: `?query=${JSON.stringify({search: [gene]})}`,
+			  })
+		}
+		const gene_page = async () => {
+			const {nav, preferred_name} = ui_values
+			const uid = await get_gene_id({gene, resolver, schemas})
+			const metapage = `/${preferred_name.entities}/${uid}`
+			console.log(metapage)
+			history.push({
+				pathname: metapage,
+			  })
+		}
 		if (gene!==null){
-			enrichment()
+			if (radio === "coexpression") coexpression()
+			else if (radio === "metadata") metadata_search()
+			else gene_page()
 		}
 	}, [gene])
 
@@ -163,15 +204,7 @@ export const GeneSearch = (props) => {
 
 	return (
 		<Grid container align="left" spacing={2}>
-			<Grid item xs={12}>
-				<Typography variant="body2">
-					Gene Co-Expression Signature Search
-				</Typography>
-				<Typography variant="caption">
-					Convert a single gene to an input signature based on co-expression correlations.
-				</Typography>
-			</Grid>
-			<Grid item xs={12}>
+			<Grid item xs={12} style={{marginTop: 10}}>
 				<Autocomplete
 					open={input_gene !== "" && gene === null}
 					options={options}
@@ -209,12 +242,12 @@ export const GeneSearch = (props) => {
 									style: {
 										fontSize: 12,
 										height: 50,
-										width: 300,
+										width: 320,
 										marginLeft: 10,
 									}
 								}}
 								style={{
-									width: 300,
+									width: 320,
 									background: "#f7f7f7",
 									borderRadius: 15,
 								}}
@@ -231,7 +264,31 @@ export const GeneSearch = (props) => {
 							{gene !== null && <CircularProgress size={24} className={classes.buttonProgress} />}
 						</div>
 					)}
-				/>			
+				/>
+				<Typography align={"center"} style={{height:30}}>
+					{examples.map((v,i)=>(
+						<React.Fragment>
+							<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
+								setGene(v)
+							}}>
+								<Typography variant="subtitle2">{v}</Typography>
+							</Button>
+							{i === examples.length - 1 ? null: "/"}
+						</React.Fragment>
+					))}
+				</Typography>			
+			</Grid>
+			<Grid item xs={12} style={{marginTop: 10}}>
+				<RadioButtons
+					value={radio}
+					values={radio_values}
+					handleChange={e=>setRadio(e.target.value)}
+					FormProps={{
+						style: {
+							marginBottom: 15,
+						}
+					}}
+				/>
 			</Grid>
 		</Grid>
 	)

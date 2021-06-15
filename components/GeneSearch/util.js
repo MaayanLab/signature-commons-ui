@@ -138,6 +138,11 @@ const resolve_genes = async ({coexpressed_genes, schemas, resolver}) => {
 	return {input, query}
 }
 
+export const get_gene_id = async ({gene, schemas, resolver}) => {
+	const { ids } = await fetch_names({schemas, entities: [gene], resolver})
+	return (ids || [])[0]
+}
+
 const enrichment = async ({resolver, input, query}) => {
 	try {
 		resolver.abort_controller()
