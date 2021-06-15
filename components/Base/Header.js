@@ -134,7 +134,7 @@ export function Nav(props) {
                 href={`#${p.endpoint}/${label}`}
                 onClick={handleClose}
               >
-                <Typography variant={"body2"}>
+                <Typography variant={"body1"}>
                   {label}
                 </Typography>
               </CustomListItem>
@@ -152,7 +152,7 @@ export function Nav(props) {
               href={`#${p.endpoint}/${label}`}
               onClick={handleClose}
             >
-              <Typography variant={"body2"}>
+              <Typography variant={"body1"}>
                 {label}
               </Typography>
             </CustomListItem>
@@ -172,7 +172,7 @@ export function Nav(props) {
           }}
           menus={menus}
         >
-          <Typography variant={"body2"}>
+          <Typography variant={"body1"}>
             {p.navName || p.endpoint.substring(1).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ')}
           </Typography>
         </CustomListItem>
