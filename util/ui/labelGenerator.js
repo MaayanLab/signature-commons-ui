@@ -322,16 +322,19 @@ export const labelGenerator = (data,
             if (prop.location === "left") {
               LeftComponents.push({
                 component: components[prop.component],
+                priority: prop.priority,
                 props: val.props
               })
             } else if (prop.location === "bottom") {
               BottomComponents.push({
                 component: components[prop.component],
+                priority: prop.priority,
                 props: val.props
               })
             } else if (prop.location === "right") {
               RightComponents.push({
                 component: components[prop.component],
+                priority: prop.priority,
                 props: val.props
               })
             }
@@ -354,7 +357,10 @@ export const labelGenerator = (data,
     info.tags = tags || []
     // info.download = download || []
     info.keywords = keywords
-    return { data, info, schema, sort_tags, LeftComponents, RightComponents, BottomComponents }
+    return { data, info, schema, sort_tags,
+              LeftComponents: LeftComponents.sort((a,b)=>a.priority-b.priority),
+              RightComponents: RightComponents.sort((a,b)=>a.priority-b.priority),
+              BottomComponents: BottomComponents.sort((a,b)=>a.priority-b.priority) }
   }
 }
 
