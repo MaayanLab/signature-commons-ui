@@ -248,9 +248,11 @@ export default class MetadataSearch extends React.PureComponent {
 	}
 
 	handleTabChange = (v) => {
+		const {search} = this.state.query
+		const query = {search}
 		this.props.history.push({
 			pathname: v.href,
-			search: this.props.location.search,
+			search: `?query=${JSON.stringify(query)}`,
 		})
 	}
 
