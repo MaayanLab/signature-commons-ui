@@ -15,8 +15,14 @@ const ListItemSecondaryAction = dynamic(()=> import('@material-ui/core/ListItemS
 const Downloads = dynamic(()=> import('../Downloads'));
 const ChipInput = dynamic(async () => (await import('../SearchComponents/ChipInput')).ChipInput);
 
-const get_entries = async ({resolver, search, limit=25, skip, model, schemas, sorted}) => {
-	const where = build_where({search})
+const get_entries = async ({resolver, search, limit=25, skip, model, schemas, sorted, fields}) => {
+	let where = build_where({search})
+	if (fields.length > 0 ){
+		where = {
+			...where,
+			or: [...fields]
+		}
+	}
 	let filter = {
 		where,
 		limit,
@@ -36,8 +42,9 @@ const get_entries = async ({resolver, search, limit=25, skip, model, schemas, so
 	const entries = []
 	let count = 0
 	for (const e of Object.values(resolved_entries)) {
+		const ent = model === "signatures" ? await e.serialize(true, false): await e.entry()
 		count = count + 1
-		const entry = labelGenerator(await e.entry(), schemas)
+		const entry = labelGenerator(ent, schemas)
 		if (entry.info.components.download) {
 			entries.push(entry)
 		}
@@ -50,18 +57,38 @@ const sort_icons = {
 	"DESC": <span className={"mdi mdi-arrow-down"}/>
 }
 
+const field_filter = (fields=[]) => {
+	const or = []
+	for (const field of fields){
+		or.push({
+			[field]: {neq: null}
+		})
+	}
+	return or
+}
+
 const DownloadList = ({
 	resolver,
 	schemas,
 	tab
 }) => {
-	const {model, sort} = tab
+	const {model, sort, fields} = tab
+	const nonnull_field = field_filter(fields)
 	const [limit, setLimit] = useState(25)
 	const [skip, setSkip] = useState(0)
 	const [search, setSearch] = useState([])
 	const [entries, setEntries] = useState(null)
 	const [more, setMore] = useState(true)
 	const [sorted, setSorted] = useState(null)
+
+	useEffect( ()=>{
+		setLimit(25),
+		setSkip(0)
+		setSearch([])
+		setEntries(null)
+		setMore(true)
+		setSorted(null)
+	}, [tab])
 
 	useEffect( () => {
 		const r = async () => {
@@ -72,7 +99,8 @@ const DownloadList = ({
 				limit,
 				skip,
 				schemas,
-				sorted
+				sorted, 
+				fields: nonnull_field
 			})
 			if (skip > 0) setEntries([...(entries || []), ...results])
 			else setEntries(results)
@@ -99,7 +127,7 @@ const DownloadList = ({
 	if (entries === null) return <CircularProgress/>
 	return (
 		<Grid container spacing={2}>
-			<Grid item xs={12} md={6}>
+			<Grid item xs={12} md={5}>
 				<ChipInput
 					input={search}
 					onSubmit={(term)=>{
@@ -120,7 +148,7 @@ const DownloadList = ({
 					}}
 				/>
 			</Grid>
-			<Grid item xs={12} md={6} align="right">
+			<Grid item xs={12} md={7} align="right">
 				{sort === undefined || sort.length === 0 ? null:
 					sort.map(s=>(
 						<Button 
