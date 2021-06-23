@@ -16,13 +16,7 @@ const Downloads = dynamic(()=> import('../Downloads'));
 const ChipInput = dynamic(async () => (await import('../SearchComponents/ChipInput')).ChipInput);
 
 const get_entries = async ({resolver, search, limit=25, skip, model, schemas, sorted, fields}) => {
-	let where = build_where({search})
-	if (fields.length > 0 ){
-		where = {
-			...where,
-			or: [...fields]
-		}
-	}
+	const where = build_where({search})
 	let filter = {
 		where,
 		limit,
@@ -36,6 +30,14 @@ const get_entries = async ({resolver, search, limit=25, skip, model, schemas, so
 				[sorted.field]: {neq: null}
 			},
 			order: [`${sorted.field} ${sorted.order}`]
+		}
+	}
+	if (fields.length > 0 ){
+		filter.where = {
+			and: [
+				{...filter.where},
+				{or: [...fields]}
+			]
 		}
 	}
 	const { entries: resolved_entries } = await resolver.filter_metadata({model, filter})
