@@ -1,21 +1,23 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
-import {ShowMeta} from '../DataTable'
-import {build_where} from '../../connector'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { labelGenerator } from '../../util/ui/labelGenerator'
+import dynamic from 'next/dynamic'
 import PropTypes from 'prop-types'
-import {IconComponent} from '../DataTable/IconComponent'
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
-import { SearchResult } from './SearchResult'
+
+import {build_where} from '../../connector'
+import { labelGenerator } from '../../util/ui/labelGenerator'
 import { get_filter, resolve_ids } from '../Search/utils'
-import Downloads from '../Downloads'
-import Options from '../Search/Options'
-import {ResultsTab} from '../SearchComponents/ResultsTab'
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'))
+const Card = dynamic(()=>import('@material-ui/core/Card'))
+const CardContent = dynamic(()=>import('@material-ui/core/CardContent'))
+const CardMedia = dynamic(()=>import('@material-ui/core/CardMedia'))
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'))
+const Typography = dynamic(()=>import('@material-ui/core/Typography'))
+const Link = dynamic(()=>import('@material-ui/core/Link'))
+const ShowMeta = dynamic(async () => (await import('../DataTable')).ShowMeta);
+const IconComponent = dynamic(async () => (await import('../DataTable/IconComponent')).IconComponent);
+const SearchResult = dynamic(async () => (await import('./SearchResult')).SearchResult);
+const ResultsTab = dynamic(async () => (await import('../SearchComponents/ResultsTab')).ResultsTab);
+
 
 export default class MetadataPage extends React.PureComponent {
 	constructor(props){
@@ -32,14 +34,6 @@ export default class MetadataPage extends React.PureComponent {
 			childTab: null,
 			childTabs: null,
 		}
-	}
-
-	download = (props) => {
-		return <Downloads {...props}/>
-	}
-
-	options = (props) => {
-		return <Options {...props}/>
 	}
 
 	process_entry = async () => {
@@ -127,20 +121,7 @@ export default class MetadataPage extends React.PureComponent {
 				for (const entry of Object.values(v)){
 					const e = labelGenerator(entry,
 						schemas,
-						"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/")
-					e.RightComponents = []
-					if (e.info.components.options !== undefined) {
-						e.RightComponents.push({
-							component: this.options,
-							props: {...e.info.components.options.props}
-						})
-					} 
-					if (e.info.download !== undefined) {
-						e.RightComponents.push({
-							component: this.download,
-							props: {...e.info.download.props}
-						})
-					} 
+						"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/") 
 					children[k].push(e)
 				}
 			}
@@ -378,41 +359,45 @@ export default class MetadataPage extends React.PureComponent {
 			label = label+"."
 		}
 		return(
-			<React.Fragment>
+			<Grid container spacing={1}>
 				{this.state.childTabs.length === 1 ? null:
-					<ResultsTab
-						tabs={this.state.childTabs}
-						value={this.state.childTab}
-						handleChange={this.onChildTabChange}
-						tabsProps={{
-							centered: true,
-						}}
-					/>
+					<Grid item xs={12} md={8} lg={9}>
+						<ResultsTab
+							tabs={this.state.childTabs}
+							value={this.state.childTab}
+							handleChange={this.onChildTabChange}
+							tabsProps={{
+								centered: true,
+							}}
+						/>
+					</Grid>
 				}
-				<SearchResult
-					searching={this.state.searching}
-					search_terms={this.state.query.search || []}
-					search_examples={[]}
-					filters={Object.values(this.state.filters)}
-					onSearch={this.onSearch}
-					onFilter={this.onClickFilter}
-					entries={this.state.children[this.state.childTab] || []}
-					label={label}
-					DataTableProps={{
-						onChipClick: v=>{
-							if (v.clickable) this.onClickFilter(v.field, v.text)
-						}
-					}}
-					PaginationProps={{
-						page: this.state.page,
-						rowsPerPage: this.state.perPage,
-						count:  this.state.children_count[this.state.childTab],
-						onChangePage: (event, page) => this.handleChangePage(event, page),
-						onChangeRowsPerPage: this.handleChangeRowsPerPage,
-					}}
-					schema={this.state.entry.schema}
-				/>
-			</React.Fragment>
+				<Grid item xs={12}>
+					<SearchResult
+						searching={this.state.searching}
+						search_terms={this.state.query.search || []}
+						search_examples={[]}
+						filters={Object.values(this.state.filters)}
+						onSearch={this.onSearch}
+						onFilter={this.onClickFilter}
+						entries={this.state.children[this.state.childTab] || []}
+						label={label}
+						DataTableProps={{
+							onChipClick: v=>{
+								if (v.clickable) this.onClickFilter(v.field, v.text)
+							}
+						}}
+						PaginationProps={{
+							page: this.state.page,
+							rowsPerPage: this.state.perPage,
+							count:  this.state.children_count[this.state.childTab],
+							onChangePage: (event, page) => this.handleChangePage(event, page),
+							onChangeRowsPerPage: this.handleChangeRowsPerPage,
+						}}
+						schema={this.state.entry.schema}
+					/>
+				</Grid>
+			</Grid>
 		)
 	}
 
@@ -448,6 +433,7 @@ export default class MetadataPage extends React.PureComponent {
 
 	metaTab = () => {
 		const entry = this.state.entry
+		if (this.props.model === "entities") return null
 		return (
 			<ShowMeta
 				value={entry.data.meta}
@@ -465,34 +451,20 @@ export default class MetadataPage extends React.PureComponent {
 					<Grid item xs={12}>
 						{this.props.topComponents()}
 					</Grid> : null}
-				<Grid item xs={12}>
-					<Card>
-						<CardContent>
-							<Grid container spacing={3}>
-								<Grid item md={2} xs={4} align="center">
-									<CardMedia >
-										<IconComponent
-											{...(this.state.entry.info.icon || {})}
-										/>
-									</CardMedia>
-								</Grid>
-								<Grid item md={10} xs={8}>
-									<Grid container spacing={3}>
-										<Grid item xs={12}>
-											{ this.pageTitle() }
-										</Grid>
-										<Grid item xs={12}>
-											{this.metaTab()}
-										</Grid>
-									</Grid>
-								</Grid>
-								{/* <Grid item xs={12}>
-									<Divider/>
-									
-								</Grid> */}
-							</Grid>
-						</CardContent>
-					</Card>
+				<Grid item md={1} xs={4} align="center">						
+					<IconComponent
+						{...(this.state.entry.info.icon || {})}
+					/>
+				</Grid>
+				<Grid item md={11} xs={8}>
+					<Grid container spacing={3}>
+						<Grid item xs={12}>
+							{ this.pageTitle() }
+						</Grid>
+						<Grid item xs={12}>
+							{this.metaTab()}
+						</Grid>
+					</Grid>
 				</Grid>
 				{this.props.middleComponents!==undefined ? 
 					<Grid item xs={12}>

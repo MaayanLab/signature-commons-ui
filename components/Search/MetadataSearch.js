@@ -8,9 +8,6 @@ import { getSearchFilters } from '../../util/ui/fetch_ui_props'
 import dynamic from 'next/dynamic'
 
 const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
-const Downloads = dynamic(()=>import('../Downloads'));
-const Options = dynamic(()=>import('./Options'));
-const Insignia = dynamic(()=>import('../../standalone/fairshake-insignia/src'));
 const MetadataSearchComponent = dynamic(async () => (await import('./MetadataSearchComponent')).MetadataSearchComponent);
 
 export default class MetadataSearch extends React.PureComponent {
@@ -27,18 +24,6 @@ export default class MetadataSearch extends React.PureComponent {
 			searching: false,
 			processing: false
 		}
-	}
-
-	download = (props) => {
-		return <Downloads {...props}/>
-	}
-
-	insignia = (props) => {
-		return <Insignia {...props}/>
-	}
-
-	options = (props) => {
-		return <Options {...props}/>
 	}
 
 	
@@ -76,25 +61,25 @@ export default class MetadataSearch extends React.PureComponent {
 						this.props.resolver
 					)
 				
-				e.RightComponents = []
-				if (e.info.components.options !== undefined) {
-					e.RightComponents.push({
-						component: this.options,
-						props: {...e.info.components.options.props}
-					})
-				} 
-				if (e.info.components.insignia !== undefined) {
-					e.RightComponents.push({
-						component: this.insignia,
-						props: {...e.info.components.insignia.props}
-					})
-				} 
-				if (e.info.components.download !== undefined) {
-					e.RightComponents.push({
-						component: this.download,
-						props: {...e.info.components.download.props}
-					})
-				}
+				// e.RightComponents = []
+				// if (e.info.components.options !== undefined) {
+				// 	e.RightComponents.push({
+				// 		component: this.options,
+				// 		props: {...e.info.components.options.props}
+				// 	})
+				// } 
+				// if (e.info.components.insignia !== undefined) {
+				// 	e.RightComponents.push({
+				// 		component: this.insignia,
+				// 		props: {...e.info.components.insignia.props}
+				// 	})
+				// } 
+				// if (e.info.components.download !== undefined) {
+				// 	e.RightComponents.push({
+				// 		component: this.download,
+				// 		props: {...e.info.components.download.props}
+				// 	})
+				// }
 				entries.push(e)
 			}
 
