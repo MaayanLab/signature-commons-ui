@@ -1,6 +1,23 @@
+import dynamic from 'next/dynamic'
 import { makeTemplate } from './makeTemplate'
 import { findMatchedSchema, objectMatch } from './objectMatch'
 import { download_signature } from '../../components/Search/utils'
+
+const Downloads = dynamic(()=>import('../../components/Downloads'));
+const Options = dynamic(()=>import('../../components/Options'));
+const Insignia = dynamic(()=>import('../../standalone/fairshake-insignia/src'));
+
+const components = {
+  download: (props) => {
+    return <Downloads {...props}/>
+  },
+  insignia: (props) => {
+    return <Insignia {...props}/>
+  },
+  options: (props) => {
+    return <Options {...props}/>
+  }
+}
 
 const internal_function = {
   download_signature: download_signature
@@ -216,6 +233,9 @@ export const labelGenerator = (data,
     const scores = {}
     let tags = []
     const keywords = {}
+    const RightComponents = []
+    const LeftComponents = []
+    const BottomComponents = []
     const info = { id: data.id, display: {}, url: {}, components: {}, name: { text: data.id }}
     if (endpoint){
       info.endpoint = endpoint + data.id
@@ -299,6 +319,22 @@ export const labelGenerator = (data,
         if (prop.type === "component") {
           if (val !== null) {
             info.components[prop.component] = val
+            if (prop.location === "left") {
+              LeftComponents.push({
+                component: components[prop.component],
+                props: val.props
+              })
+            } else if (prop.location === "bottom") {
+              BottomComponents.push({
+                component: components[prop.component],
+                props: val.props
+              })
+            } else if (prop.location === "right") {
+              RightComponents.push({
+                component: components[prop.component],
+                props: val.props
+              })
+            }
           }
         }
         if (prop.type==="text") {
@@ -318,7 +354,7 @@ export const labelGenerator = (data,
     info.tags = tags || []
     // info.download = download || []
     info.keywords = keywords
-    return { data, info, schema, sort_tags }
+    return { data, info, schema, sort_tags, LeftComponents, RightComponents, BottomComponents }
   }
 }
 
