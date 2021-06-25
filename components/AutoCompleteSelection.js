@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic'
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
 const TextField = dynamic(()=>import('@material-ui/core/TextField'))
 const Autocomplete = dynamic(()=>import('@material-ui/lab/Autocomplete'))
 

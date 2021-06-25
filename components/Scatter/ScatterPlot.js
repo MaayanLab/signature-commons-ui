@@ -1,10 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
 import { precise } from '../ScorePopper'
+
+import dynamic from 'next/dynamic'
+
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Card = dynamic(()=>import('@material-ui/core/Card'));
+const CardContent = dynamic(()=>import('@material-ui/core/CardContent'));
+
 
 import {
   ScatterChart,
