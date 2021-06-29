@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import dynamic from 'next/dynamic'
-import { useWidth } from '../../util/ui/useWidth'
+// import About from '../About'
 const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 const TablePagination = dynamic(()=>import('@material-ui/core/TablePagination'));
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));

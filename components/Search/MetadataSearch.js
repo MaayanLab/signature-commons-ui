@@ -7,6 +7,7 @@ import { getSearchFilters } from '../../util/ui/fetch_ui_props'
 
 import dynamic from 'next/dynamic'
 
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
 const MetadataSearchComponent = dynamic(async () => (await import('./MetadataSearchComponent')).MetadataSearchComponent);
 
@@ -128,13 +129,18 @@ export default class MetadataSearch extends React.PureComponent {
 				}
 			}
 			if (fields.length > 0){
-				const value_count = await this.props.resolver.aggregate(
+				const field_promise = fields.map(async (f)=> this.props.resolver.aggregate(
 					`/${this.props.model}/value_count`, 
 					{
 						where,
-						fields,
-						limit: 20,
-					})
+						fields: [f],
+						limit: f.startsWith("meta.") ? 30: undefined,
+					}))
+				const fulfilled = await Promise.all(field_promise)
+				const value_count = fulfilled.reduce((acc, c)=>({
+					...acc,
+					...c
+				}), {})
 				const filters = {}
 				for (const [field, values] of Object.entries(value_count)){
 					if (field === "library"){
@@ -336,7 +342,11 @@ export default class MetadataSearch extends React.PureComponent {
 
 	render = () => {
 		if (this.state.search_tabs==undefined){
-			return <CircularProgress />
+			return <Grid container align="center">
+					<Grid item xs={12}>
+						<CircularProgress />
+					</Grid>
+				</Grid>
 		}
 		return (
 			<MetadataSearchComponent
