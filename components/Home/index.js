@@ -278,8 +278,8 @@ class Home extends React.PureComponent {
   
   componentDidMount = async () => {
 		const schemas = this.props.schemas
-		const metadata_resolver = new DataResolver()
-    const enrichment_resolver = new DataResolver()
+		const metadata_resolver = new DataResolver(this.props.ui_values.nav.MetadataSearch.props.ignore)
+    const enrichment_resolver = new DataResolver(this.props.ui_values.nav.SignatureSearch.props.ignore)
     await getResourcesAndLibraries(schemas, enrichment_resolver)
 		const resource_libraries = await getResourcesAndLibraries(schemas, metadata_resolver)
 		this.setState({
