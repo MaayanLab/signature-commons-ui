@@ -614,6 +614,7 @@ export default class SignatureSearch extends React.PureComponent {
 						]}
 						submitName={`Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`}
 						type={this.props.match.params.type}
+						enrichment_id={this.props.match.params.enrichment_id}
 					/>
 				</React.Fragment>
 				

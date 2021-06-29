@@ -206,8 +206,18 @@ const Results = (props) => {
 		searching,
 		EnrichmentPageProps,
 		header="",
+		loading,
 	} = props
-	if (entries === null && !searching) return null
+	if (loading){
+		return(
+			<Grid container spacing={3}>
+				<Grid item xs={12} align="center">
+					<CircularProgress/>
+				</Grid>
+			</Grid>
+		)
+	} 
+	else if (entries === null && !searching) return null
 	else if (searching) {
 		return null
 	}else {
@@ -279,6 +289,7 @@ export const SignatureSearchComponent = (props) => {
 		entries,
 		resolver,
 		schemas,
+		enrichment_id,
 	} = props
 	const [expanded, setExpanded] = React.useState(false);
 	const width = useWidth()
@@ -308,7 +319,7 @@ export const SignatureSearchComponent = (props) => {
 					/>
 				}
 			</Grid>
-			{ entries!==null ?
+			{ enrichment_id!==undefined ?
 				<Grid item xs={2} align="left">						
 					<Tooltip title="Click to view input" placement="bottom">
 						<Button onClick={handleExpandClick}
@@ -328,18 +339,18 @@ export const SignatureSearchComponent = (props) => {
 				</Grid>
 				: null
 			}			
-			<Grid item xs={ entries===null ? 12: 10} align="center" >
-				<Collapse in={expanded || entries === null} timeout="auto" unmountOnExit>
+			<Grid item xs={ enrichment_id===undefined ? 12: 10} align="center" >
+				<Collapse in={expanded || enrichment_id===undefined} timeout={0} unmountOnExit>
 					<Grid container spacing={3}>
-						{entries!==null ? <Grid item xs={2}/>:
+						{enrichment_id!==undefined ? <Grid item xs={2}/>:
 							<Grid item xs={12} align="center">
 								<Typography variant="body1" style={{marginTop: 10}}>{description}</Typography>
 							</Grid>
 						}
-						<Grid item xs={12} md={entries===null ? breakpoint_md: 10} align={entries===null ? "right": "center"}>
+						<Grid item xs={12} md={enrichment_id===undefined ? breakpoint_md: 10} align={enrichment_id===undefined ? "right": "center"}>
 							<SigForm {...props}/>
 						</Grid>
-						{entries!==null ? null:
+						{enrichment_id!==undefined ? null:
 							<Grid item xs={12} md={12-breakpoint_md} align={"center"}>
 								<GeneSearch resolver={resolver} schemas={schemas} ui_values={ui_values}/>
 							</Grid>
@@ -350,6 +361,7 @@ export const SignatureSearchComponent = (props) => {
 			<Grid item xs={12}>
 				<Results {...ResultsProps}
 					type={type}
+					loading={enrichment_id!==undefined && entries === null}
 					searching={searching}
 					entries={entries}
 					download_input={download_input}

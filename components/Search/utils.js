@@ -67,11 +67,10 @@ export const get_signature_entities = async (signature_id,
 		const signature = resolved_entries[signature_id]
 		if (signature === undefined){
 			return null
-		}
-		else {
+		}else {
 			const {entities:ent, up, down} = await signature.children({limit: 0})
 			const input = {}
-			if (ent.length > 0){
+			if ((ent || []).length > 0){
 				const entities = {}
 				for (const c of ent){
 					const name = getName(c, schemas)
@@ -103,7 +102,7 @@ export const get_signature_entities = async (signature_id,
 				}
 				input.up_entities = up_entities
 				input.down_entities = down_entities
-			}			
+			}
 			return input			
 		}
 	} catch (error) {
