@@ -11,7 +11,7 @@ const Typography = dynamic(()=> import('@material-ui/core/Typography'));
 const DownloadCards = ({links}) => {
 	const cards = links.map(({label, icon, href, size, date})=>(
 		<Grid item xs={6} md={4} xl={3} key={label}>
-		  <Card style={{minHeight: 220}}>
+		  <Card style={{minHeight: 150}}>
 			<CardHeader
 			  avatar={
 				<Avatar aria-label={label}>
@@ -25,13 +25,13 @@ const DownloadCards = ({links}) => {
 				  <Typography variant="subtitle2">{`Date: ${date}`}</Typography>
 			  </React.Fragment>
 			  }
-			  style={{textAlign: "left", minHeight: 150}}
+			  style={{textAlign: "left", minHeight: 150, alignItems: "flex-start"}}
+			  action={
+				<Button aria-label="add to favorites" target="_blank" rel="noopener noreferrer" href={href} style={{fontSize: 12}}>
+					<span className="mdi mdi-24px mdi-download"/> 
+				</Button>
+			  }
 			/>
-			<CardActions disableSpacing>
-			  <Button aria-label="add to favorites" target="_blank" rel="noopener noreferrer" href={href} style={{fontSize: 12}}>
-				<span className="mdi mdi-24px mdi-download"/> Download 
-			  </Button>
-			</CardActions>
 		  </Card>
 		</Grid>
 	  ))
