@@ -29,7 +29,7 @@ const enrich_endpoint = {
 }
 
 export class DataResolver {
-	constructor(){
+	constructor(ignore=[]){
 		this.data_repo = {
 			resources: {},
 			libraries: {},
@@ -38,6 +38,7 @@ export class DataResolver {
 			enrichment: {},
 		}
 		this._controller = null
+		this._ignore = ignore
 	}
 
 	controller = () => {
@@ -401,39 +402,41 @@ export class DataResolver {
 		  })
 		let signatures = {}
 		for (const {datatype, uuid} of response.repositories){
-			query.database = uuid
-			query.datatype = datatype
-			const {set, up, down, rank} = await this.enrich_entities(query)
-			if (set !== undefined) {
-				const { entries, count } = set
-				if (count>0){
-					for (const e of entries){
-						signatures[e.id] = e
-					}
-				}
-			}if (rank !== undefined) {
-				const { entries, count } = rank
-				if (count>0){
-					for (const e of entries){
-						signatures[e.id] = e
-					}
-				}
-			}else if (up !== undefined && down !== undefined) {
-				const { entries: up_entries, count: up_count } = up
-				if (up_count>0){
-					for (const e of up_entries){
-						signatures[e.id] = {
-							...e,
-							set: "up",
+			if (this._ignore.indexOf(uuid) === -1){
+				query.database = uuid
+				query.datatype = datatype
+				const {set, up, down, rank} = await this.enrich_entities(query)
+				if (set !== undefined) {
+					const { entries, count } = set
+					if (count>0){
+						for (const e of entries){
+							signatures[e.id] = e
 						}
 					}
-				}
-				const { entries: down_entries, count: down_count } = down
-				if (down_count>0){
-					for (const e of down_entries){
-						signatures[e.id] = {
-							...e,
-							set: "down",
+				}if (rank !== undefined) {
+					const { entries, count } = rank
+					if (count>0){
+						for (const e of entries){
+							signatures[e.id] = e
+						}
+					}
+				}else if (up !== undefined && down !== undefined) {
+					const { entries: up_entries, count: up_count } = up
+					if (up_count>0){
+						for (const e of up_entries){
+							signatures[e.id] = {
+								...e,
+								set: "up",
+							}
+						}
+					}
+					const { entries: down_entries, count: down_count } = down
+					if (down_count>0){
+						for (const e of down_entries){
+							signatures[e.id] = {
+								...e,
+								set: "down",
+							}
 						}
 					}
 				}

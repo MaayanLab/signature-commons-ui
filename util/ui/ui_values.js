@@ -39,6 +39,7 @@ export const defaultUIValues = {
         navName: "Term Search",
         priority: 1,
         props: {
+          ignore: [],
           model_tabs: ["resources", "libraries", "signatures", "entities"],
           entry_model: "signatures",
           placeholder: 'Search for any term, i.e. drug, side effects, or a disease',
@@ -59,6 +60,7 @@ export const defaultUIValues = {
         navName: "Enrichment Analysis",
         priority: 2,
         props: {
+          ignore: [],
           types: {
             Overlap: {
               active: true,
