@@ -12,6 +12,7 @@ const Filter = dynamic(async () => (await import('../SearchComponents/Filter')).
 const ResultsTab = dynamic(async () => (await import('../SearchComponents/ResultsTab')).ResultsTab);
 const DataTable = dynamic(async () => (await import('../DataTable')).DataTable);
 const CarouselComponent = dynamic(async () => (await import('../SearchComponents/CarouselComponent')).CarouselComponent);
+const About = dynamic(()=>import('../About'));
 
 export const MetadataSearchComponent = (props) => {
 	const {
@@ -29,9 +30,9 @@ export const MetadataSearchComponent = (props) => {
 		placeholder,
 		searching,
 		homepage,
-		PaperProps,
-		tutorial,
-		description
+		description,
+		ui_values,
+		serverSideProps,
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
@@ -108,7 +109,7 @@ export const MetadataSearchComponent = (props) => {
 			}
 			{ homepage ?
 				<Grid item xs={12} style={{marginTop: 10, marginBottom: 25}} align="Center">
-					<CarouselComponent {...tutorial}
+					{/* <CarouselComponent {...tutorial}
 						PaperProps={PaperProps}
 						ContainerProps={{
 							style:{
@@ -116,13 +117,20 @@ export const MetadataSearchComponent = (props) => {
 								width: "100%"
 							}
 						}}
-					/>
+					/> */}
+					<About ui_values={ui_values} stats={serverSideProps}/>
 				</Grid>
 				:
 				<React.Fragment>
 					<Grid item xs={12} md={2}/>
 					<Grid item xs={12} md={7}>
-						{ entries===null || searching ? <CircularProgress/>:
+						{ entries===null || searching ? 
+							<Grid container align="center">
+								<Grid item xs={12}>
+									<CircularProgress />
+								</Grid>
+							</Grid>
+						:
 							<React.Fragment>
 								<DataTable entries={entries} {...DataTableProps}/>
 								<TablePagination

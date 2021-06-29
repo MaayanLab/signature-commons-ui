@@ -34,18 +34,25 @@ const get_entries = async ({resolver, search, limit=10, skip, model, schemas, so
 		}
 	}
 	if (fields.length > 0 ){
-		filter.where = {
-			and: [
-				{...filter.where},
-				{or: [...fields]}
-			]
+		if (Object.keys(filter.where || {}).length>0){
+			filter.where = {
+				and: [
+					{...filter.where},
+					{or: [...fields]}
+				]
+			}
+		} else {
+			filter.where = {
+				or: [...fields]
+			}
 		}
+		
 	}
 	const { entries: resolved_entries, count } = await resolver.filter_metadata({model, filter})
 	const entries = []
 	for (const e of Object.values(resolved_entries)) {
 		const ent = model === "signatures" ? await e.serialize(true, false): await e.entry()
-		const entry = labelGenerator(ent, schemas)
+		const entry = labelGenerator(ent, schemas, undefined, resolver)
 		if (entry.info.components.download) {
 			entries.push(entry)
 		}

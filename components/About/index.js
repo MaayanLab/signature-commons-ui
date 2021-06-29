@@ -1,18 +1,20 @@
 import React from 'react'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import {IconComponentButton} from '../DataTable'
-import DonutChart from  './PieChart'
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import dynamic from 'next/dynamic'
 import { withStyles } from '@material-ui/core/styles';
-import ReactMarkdown from 'react-markdown'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import MarkdownComponent from '../Markdown/MarkdownComponent'
 import {getSummary} from '../../util/ui/fetch_ui_props'
 import { withTheme } from '@material-ui/core/styles';
-import Carousel from 'react-material-ui-carousel';
+
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Tabs = dynamic(()=>import('@material-ui/core/Tabs'));
+const Tab = dynamic(()=>import('@material-ui/core/Tab'));
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const Carousel = dynamic(()=>import('react-material-ui-carousel'));
+
+const DonutChart = dynamic(()=>import('./PieChart'));
+const MarkdownComponent = dynamic(()=>import('../Markdown/MarkdownComponent'));
+const IconComponentButton = dynamic(async () => (await import('../DataTable')).IconComponentButton);
+
 
 export const CustomTabs = withStyles(() => ({
 	indicator: {
@@ -96,12 +98,13 @@ class About extends React.PureComponent {
   }
 
   render() {
+    console.log(this.props.ui_values)
     if (this.state === null) return <CircularProgress/>
     return (
       <Grid container spacing={1} style={{marginBottom: 50}}>
           <Grid item xs={12} lg={6}>
             <Typography align="justify">
-              <MarkdownComponent url={this.props.ui_values.about_md || this.props.ui_values.about} />
+              <MarkdownComponent url={this.props.ui_values.nav.About.props.about} />
             </Typography>
           </Grid>
           <Grid item xs={12} lg={6}>

@@ -162,6 +162,7 @@ class Home extends React.PureComponent {
                     search_examples={((search_props.types || {})[model] || {}).examples || []}
                     resolver={this.state.metadata_resolver}
                     placeholder={search_props.placeholder}
+                    serverSideProps={this.props.serverSideProps}
                     {...props}
       />
     )
@@ -213,6 +214,7 @@ class Home extends React.PureComponent {
                     enrichment_tabs={enrichment_tabs}
                     library_priority={library_priority}
                     results_title={results_title}
+                    serverSideProps={this.props.serverSideProps}
                     {...props}
       />
     )

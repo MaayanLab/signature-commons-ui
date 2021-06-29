@@ -352,6 +352,8 @@ export default class MetadataSearch extends React.PureComponent {
 					onSearch={this.onSearch}
 					onFilter={this.onClickFilter}
 					entries={this.state.entries}
+					ui_values={{nav: this.props.nav, preferred_name: this.props.preferred_name}}
+					serverSideProps={this.props.serverSideProps}	
 					DataTableProps={{
 						onChipClick: v=>{
 							if (v.clickable) this.onClickFilter(v.field, v.text)
