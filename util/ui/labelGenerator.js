@@ -319,19 +319,19 @@ export const labelGenerator = (data,
         if (prop.type === "component") {
           if (val !== null) {
             info.components[prop.component] = val
-            if (prop.location === "left") {
+            if (prop.visibility > 0 && prop.location === "left") {
               LeftComponents.push({
                 component: components[prop.component],
                 priority: prop.priority,
                 props: val.props
               })
-            } else if (prop.location === "bottom") {
+            } else if (prop.visibility > 0 && prop.location === "bottom") {
               BottomComponents.push({
                 component: components[prop.component],
                 priority: prop.priority,
                 props: val.props
               })
-            } else if (prop.location === "right") {
+            } else if (prop.visibility > 0 && prop.location === "right") {
               RightComponents.push({
                 component: components[prop.component],
                 priority: prop.priority,
