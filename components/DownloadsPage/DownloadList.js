@@ -11,11 +11,12 @@ const List = dynamic(()=> import('@material-ui/core/List'));
 const ListItem = dynamic(()=> import('@material-ui/core/ListItem'));
 const ListItemIcon = dynamic(()=> import('@material-ui/core/ListItemIcon'));
 const ListItemText = dynamic(()=> import('@material-ui/core/ListItemText'));
-const ListItemSecondaryAction = dynamic(()=> import('@material-ui/core/ListItemSecondaryAction'));
 const Downloads = dynamic(()=> import('../Downloads'));
 const ChipInput = dynamic(async () => (await import('../SearchComponents/ChipInput')).ChipInput);
+const TablePagination = dynamic(()=>import('@material-ui/core/TablePagination'));
+const ResultsTab = dynamic(()=> import('../SearchComponents/ResultsTab'));
 
-const get_entries = async ({resolver, search, limit=25, skip, model, schemas, sorted, fields}) => {
+const get_entries = async ({resolver, search, limit=10, skip, model, schemas, sorted, fields}) => {
 	const where = build_where({search})
 	let filter = {
 		where,
@@ -40,12 +41,10 @@ const get_entries = async ({resolver, search, limit=25, skip, model, schemas, so
 			]
 		}
 	}
-	const { entries: resolved_entries } = await resolver.filter_metadata({model, filter})
+	const { entries: resolved_entries, count } = await resolver.filter_metadata({model, filter})
 	const entries = []
-	let count = 0
 	for (const e of Object.values(resolved_entries)) {
 		const ent = model === "signatures" ? await e.serialize(true, false): await e.entry()
-		count = count + 1
 		const entry = labelGenerator(ent, schemas)
 		if (entry.info.components.download) {
 			entries.push(entry)
@@ -72,26 +71,39 @@ const field_filter = (fields=[]) => {
 const DownloadList = ({
 	resolver,
 	schemas,
-	tab
+	download_list,
+	preferred_name
 }) => {
+	const [tab, changeTab] = useState({...download_list[0]})
 	const {model, sort, fields} = tab
 	const nonnull_field = field_filter(fields)
-	const [limit, setLimit] = useState(25)
+	const [count, setCount] = useState(null)
+	const [limit, setLimit] = useState(10)
 	const [skip, setSkip] = useState(0)
 	const [search, setSearch] = useState([])
 	const [entries, setEntries] = useState(null)
-	const [more, setMore] = useState(true)
 	const [sorted, setSorted] = useState(null)
 
+	const change_tab = (tab) => {
+		setCount(null)
+		changeTab(tab)
+	}
+
 	useEffect( ()=>{
-		setLimit(25),
+		setLimit(10),
 		setSkip(0)
 		setSearch([])
 		setEntries(null)
-		setMore(true)
 		setSorted(null)
+		setCount(null)
 	}, [tab])
 
+	useEffect( ()=>{
+		setLimit(10),
+		setSkip(0)
+		setSorted(null)
+	}, [search])
+	
 	useEffect( () => {
 		const r = async () => {
 			const {entries: results , count} = await get_entries({
@@ -104,9 +116,8 @@ const DownloadList = ({
 				sorted, 
 				fields: nonnull_field
 			})
-			if (skip > 0) setEntries([...(entries || []), ...results])
-			else setEntries(results)
-			if (count < limit) setMore(false)
+			setCount(count)
+			setEntries(results)
 		}
 		r()
 	}, [search, limit, skip, sorted]);
@@ -126,9 +137,63 @@ const DownloadList = ({
 	// 	}
 	// 	r()
 	// }, [sorted]);
-	if (entries === null) return <CircularProgress/>
+
+	if (entries === null){
+		return(
+			<Grid container spacing={2}>
+				<Grid item xs={12} align="center">
+					{download_list.length > 1 ?
+						<ResultsTab 
+							tabs={download_list.map(value=>({...value, 
+								value: value.model,
+								label: `${preferred_name[value.model]}${value.model===tab.model && count !== null ?'('+count+')': ''}`}))}
+							value={tab.model}
+							handleChange={change_tab}
+							tabsProps={{centered: true}}
+						/>: null
+					}
+				</Grid>
+				<Grid item xs={12} md={5}>
+					<ChipInput
+						input={search}
+						onSubmit={(term)=>{
+							if (search.indexOf(term)<0) setSearch([...search, term])
+						}}
+						onDelete={ (term)=>{
+								setSearch(search.filter(t=>t!==term))
+							}
+						}
+						ChipInputProps={{
+							divProps: {
+								style: {
+									background: "#f7f7f7",
+									padding: 5,
+									borderRadius: 25,
+								}
+							}
+						}}
+					/>
+				</Grid>
+				<Grid item xs={12} align="center" style={{marginTop: 10}}>
+					<CircularProgress/>
+				</Grid>
+			</Grid>
+		)
+	} 
 	return (
 		<Grid container spacing={2}>
+			{download_list.length > 1 ?
+				<Grid item xs={12} align="center">
+					<ResultsTab 
+						tabs={download_list.map(value=>({...value, 
+							value: value.model,
+							label: `${preferred_name[value.model]}${value.model===tab.model && count !== null?' ('+count+')': ''}`}))}
+						value={tab.model}
+						handleChange={change_tab}
+						tabsProps={{centered: true}}
+					/>
+				</Grid>:null
+			}
 			<Grid item xs={12} md={5}>
 				<ChipInput
 					input={search}
@@ -151,7 +216,7 @@ const DownloadList = ({
 				/>
 			</Grid>
 			<Grid item xs={12} md={7} align="right">
-				{sort === undefined || sort.length === 0 ? null:
+				{sort === null || sort.length === 0 ? null:
 					sort.map(s=>(
 						<Button 
 							size="small"
@@ -208,28 +273,22 @@ const DownloadList = ({
 								}
 								style={{width: 400}}
 							/>
-							<ListItemSecondaryAction>
-								<Downloads {...entry.info.components.download.props} />
-							</ListItemSecondaryAction>
+							<Downloads {...entry.info.components.download.props} />
 						</ListItem>
 					))}
 				</List>
 			</Grid>
-			{ more ?
-				<Grid item xs={12} align="right">
-					<Button onClick={()=>setSkip(skip+limit)} style={{marginRight: -15}}>
-						<Grid container>
-							<Grid item xs={12}>
-								<span className="mdi mdi-dots-horizontal mdi-36px"/>
-							</Grid>
-							<Grid item xs={12}>
-								<span>See More</span>
-							</Grid>
-						</Grid>
-					</Button>
-				</Grid>
-				: null
-			}
+			<Grid item xs={12} align="right">
+				<TablePagination
+					component="div"
+					align="right"
+					count={count}
+					rowsPerPage={limit}
+					page={(skip/limit)}
+					onChangePage={(event, newPage)=>setSkip(limit*newPage)}
+					onChangeRowsPerPage={(event)=>setLimit(parseInt(event.target.value, 10))}
+				/>
+			</Grid>
 		</Grid>
 	)
 }

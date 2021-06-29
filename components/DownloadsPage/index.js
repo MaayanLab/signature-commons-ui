@@ -13,7 +13,7 @@ const DownloadsPage = ({
 	preferred_name,
 	schemas,
 } ) => {
-	const [tab, changeTab] = useState({...download_list[0]})
+	
 	return (
 	<Grid container spacing={2} style={{margin: 10}}>
 		<Grid item xs={11}>
@@ -26,21 +26,13 @@ const DownloadsPage = ({
 				</Typography>
 			</Grid>: null
 		}
-		
-		{download_list.length > 1 ?
-			<Grid item xs={12} align="center">
-				<ResultsTab 
-					tabs={download_list.map(value=>({...value, label: preferred_name[value.model]}))}
-					value={tab.label}
-					handleChange={changeTab}
-					tabsProps={{centered: true}}
-				/>
-			</Grid>:null
-		}
 
 		{download_list.length > 0 ?
 			<Grid item xs={12}>
-				<DownloadList resolver={resolver} schemas={schemas} tab={tab} />
+				<DownloadList resolver={resolver}
+					schemas={schemas}
+					download_list={download_list}
+					preferred_name={preferred_name} />
 			</Grid>: null
 		}
 	</Grid>
