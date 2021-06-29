@@ -104,7 +104,7 @@ class LibraryEnrichment extends React.PureComponent {
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas)
 			// const parent = labelGenerator(await entry_object.parent(), schemas)
 			await entry_object.create_search_index(entry.schema, entry_object.child_model==='signatures')
-			const order_field = entry.data.dataset_type === "geneset_library" ? 'p-value': 'log p (Fisher)'
+			const order_field = entry.data.dataset_type === "geneset_library" ? 'p-value': 'z-score (product)'
 			const order = entry.data.dataset_type === "geneset_library" ? 'ASC': 'DESC'
 			
 			this.setState({
