@@ -20,9 +20,10 @@ const TextFieldSuggest = dynamic(()=>import('../SearchComponents/TextFieldSugges
 const EnrichmentPage = dynamic(()=>import('../MetadataPage/EnrichmentPage'));
 const IconComponentButton = dynamic(async () => (await import('../DataTable')).IconComponentButton);
 const ResultsTab = dynamic(async () => (await import('../SearchComponents/ResultsTab')).ResultsTab);
-const CarouselComponent = dynamic(async () => (await import('../SearchComponents/CarouselComponent')).CarouselComponent);
-
 const GeneSearch = dynamic(()=>import('../GeneSearch'));
+const About = dynamic(()=>import('../About'));
+
+
 
 const Examples = (props) => {
 	const {examples=[], type, onAdd, resetInput} = props
@@ -290,6 +291,7 @@ export const SignatureSearchComponent = (props) => {
 		resolver,
 		schemas,
 		enrichment_id,
+		serverSideProps,
 	} = props
 	const [expanded, setExpanded] = React.useState(false);
 	const width = useWidth()
@@ -368,6 +370,9 @@ export const SignatureSearchComponent = (props) => {
 					handleExpandClick={handleExpandClick}
 					expanded={expanded}
 				/>
+			</Grid>
+			<Grid item xs={12}>
+				{ enrichment_id===undefined && <About ui_values={ui_values} stats={serverSideProps}/>}
 			</Grid>
 		</Grid>
 	)
