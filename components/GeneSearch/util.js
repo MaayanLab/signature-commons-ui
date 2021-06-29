@@ -15,7 +15,7 @@ export const get_gene_names = async () => {
 	return genes
 }
 
-const get_coexpressed_genes = async ({gene, type}) => {
+export const get_coexpressed_genes = async ({gene, type}) => {
 	let up_entities
 	let down_entities
 	const col_promises = []
@@ -126,7 +126,7 @@ const fetch_names = async ({schemas, entities, resolver}) => {
 	}
 }
 
-const resolve_genes = async ({coexpressed_genes, schemas, resolver}) => {
+export const resolve_genes = async ({coexpressed_genes, schemas, resolver}) => {
 	const input = {}
 	const query = {input_type: "up_down"}
 	const promises = []
@@ -143,7 +143,7 @@ export const get_gene_id = async ({gene, schemas, resolver}) => {
 	return (ids || [])[0]
 }
 
-const enrichment = async ({resolver, input, query}) => {
+export const enrichment = async ({resolver, input, query}) => {
 	try {
 		resolver.abort_controller()
 		resolver.controller()

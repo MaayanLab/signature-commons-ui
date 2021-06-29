@@ -1,13 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types'
 import { withRouter } from "react-router";
-import {enrich_gene_coexpression, get_gene_names, get_gene_id} from './util'
+import {get_coexpressed_genes,
+	resolve_genes,
+	enrichment,
+	get_gene_names,
+	get_gene_id} from './util'
 import dynamic from 'next/dynamic'
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
+import { useWidth } from '../../util/ui/useWidth'
 
 const ListSubheader = dynamic(()=>import('@material-ui/core/ListSubheader'))
+const Box = dynamic(()=>import('@material-ui/core/Box'))
 const Grid = dynamic(()=>import('@material-ui/core/Grid'))
 const Typography = dynamic(()=>import('@material-ui/core/Typography'))
 const TextField = dynamic(()=>import('@material-ui/core/TextField'))
@@ -27,14 +33,7 @@ const useStyles = makeStyles((theme) => ({
 		width: 320,
 		background: "#f7f7f7",
 		borderRadius: 15,
-	},
-	buttonProgress: {
-	  position: 'absolute',
-	  top: '50%',
-	  left: '85%',
-	  marginTop: -12,
-	  marginLeft: -12,
-	},
+	}
   }));
 
 // From Material UI
@@ -150,6 +149,7 @@ export const GeneSearch = (props) => {
 	]
 
 	const [gene, setGene] = useState(null)
+	const [message, setMessage] = useState(null)
 	const [radio, setRadio] = useState("coexpression")
 	const [input_gene, setInputGene] = useState("")
 	const [options, setOptions] = useState([])
@@ -166,7 +166,12 @@ export const GeneSearch = (props) => {
 	
 	useEffect(()=>{
 		const coexpression = async () => {
-			const enrichment_id = await enrich_gene_coexpression({resolver, schemas, gene})
+			setMessage("Fetching coexpressed genes...")
+			const coexpressed_genes = await get_coexpressed_genes({gene})
+			setMessage("Resolving gene names...")
+			const {input, query} = await resolve_genes({coexpressed_genes, schemas, resolver})
+			setMessage("Performing Enrichment Analysis...")
+			const enrichment_id = await enrichment({resolver, input, query})
 			history.push({
 				pathname: `${location.pathname}/${enrichment_id}`
 			})
@@ -201,10 +206,10 @@ export const GeneSearch = (props) => {
 		   // put the login here
 		}
 	 }
-
+	const width = useWidth()
 	return (
-		<Grid container align="left" spacing={2}>
-			<Grid item xs={12} style={{marginTop: 10}}>
+		<Grid container spacing={2}>
+			<Grid item xs={12} style={{marginTop: 10}} align="center">
 				<Autocomplete
 					open={input_gene !== "" && gene === null}
 					options={options}
@@ -219,12 +224,7 @@ export const GeneSearch = (props) => {
 					popupIcon={null}
 					noOptionsText={<Typography variant="caption">No results</Typography>}
 					renderInput={(params) => (
-						<div
-							style={{
-								margin: "auto",
-								position: 'relative',
-							}}
-						>
+						<Box align={width==="xl" ? "left": "center"}>
 							<TextField 
 								{...params}
 								placeholder="Enter gene symbol"
@@ -242,8 +242,7 @@ export const GeneSearch = (props) => {
 									style: {
 										fontSize: 12,
 										height: 50,
-										width: 320,
-										marginLeft: 10,
+										width: 350,
 									}
 								}}
 								style={{
@@ -261,24 +260,26 @@ export const GeneSearch = (props) => {
 							>
 								{gene === null ? 'Search': 'Searching...'}
 							</Button>
-							{gene !== null && <CircularProgress size={24} className={classes.buttonProgress} />}
-						</div>
+							<Typography align="center" style={{height:30, width: 320}}>
+								{examples.map((v,i)=>(
+									<React.Fragment>
+										<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
+											setGene(v)
+										}}>
+											<Typography variant="subtitle2">{v}</Typography>
+										</Button>
+										{i === examples.length - 1 ? null: "/"}
+									</React.Fragment>
+								))}
+							</Typography>
+						</Box>
 					)}
-				/>
-				<Typography align={"center"} style={{height:30}}>
-					{examples.map((v,i)=>(
-						<React.Fragment>
-							<Button variant="text" color="primary" style={{textTransform: "none"}} onClick={()=>{
-								setGene(v)
-							}}>
-								<Typography variant="subtitle2">{v}</Typography>
-							</Button>
-							{i === examples.length - 1 ? null: "/"}
-						</React.Fragment>
-					))}
-				</Typography>			
+				/>			
 			</Grid>
-			<Grid item xs={12} style={{marginTop: 10}}>
+			<Grid item xs={12} style={{height: 25}} align="left">
+			{gene !== null && <Typography variant="subtitles2"><CircularProgress size={16}/> {message}</Typography>}
+			</Grid>
+			<Grid item xs={12} align="left">
 				<RadioButtons
 					value={radio}
 					values={radio_values}
