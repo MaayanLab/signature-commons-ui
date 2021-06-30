@@ -331,7 +331,7 @@ export class DataResolver {
 				"p-value (up)": scores["p-up"],
 				"z-score (down)": -scores["z-down"],
 				"z-score (up)": scores["z-up"],
-				"z-score (product)": scores["z-up"]*(-scores["z-down"]),
+				"z-score (product)": Math.abs(scores["z-up"]*(-scores["z-down"])),
 				"p-value Bonferroni (up)": scores["p-up-bonferroni"],
 				"p-value Bonferroni (down)": scores["p-down-bonferroni"],
 			})})
