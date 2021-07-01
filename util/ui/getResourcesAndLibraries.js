@@ -53,7 +53,7 @@ export const getResourcesAndLibraries = async (schemas, resolver=null) => {
 			model: "libraries",
 			entries: library_entries
 		})
-		await resolver.resolve_entries({
+		const {resolved_entries: resolved_resources} = await resolver.resolve_entries({
 			model: "resources",
 			entries: resource_entries
 		})
@@ -64,6 +64,18 @@ export const getResourcesAndLibraries = async (schemas, resolver=null) => {
 		const resource_name_to_id = {}
 		const resource_to_lib = {}
 		const lib_to_resource = {}
+
+		for (const [id, res] of Object.entries(resolved_resources)){
+			const entry = await res.entry()
+			const resourceschema = findMatchedSchema(entry, schemas)
+			for (const prop of Object.values(resourceschema.properties)){
+				if (prop.type === "title") {
+					const name = makeTemplate(prop.text, entry)
+					resource_id_to_name[entry.id] = name
+					resource_name_to_id[name] = entry.id
+				}
+			}
+		}
 
 		for (const [id, lib] of Object.entries(resolved_entries)){
 			const entry = await lib.serialize(true, false)
@@ -80,14 +92,6 @@ export const getResourcesAndLibraries = async (schemas, resolver=null) => {
 					const name = makeTemplate(prop.text, entry)
 					lib_id_to_name[entry.id] = name
 					lib_name_to_id[name] = entry.id
-				}
-			}
-			const resourceschema = findMatchedSchema(parent, schemas)
-			for (const prop of Object.values(resourceschema.properties)){
-				if (prop.type === "title") {
-					const name = makeTemplate(prop.text, parent)
-					resource_id_to_name[parent.id] = name
-					resource_name_to_id[name] = parent.id
 				}
 			}
 		}

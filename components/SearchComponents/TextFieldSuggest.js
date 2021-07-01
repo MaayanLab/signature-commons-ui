@@ -143,11 +143,14 @@ const TextFieldSuggest = (props) => {
         endAdornment,
         placeholder="",
     } = props
+    
     const [validate, setValidate] = useState(false)
+    const [inputValue, setInputValue] = useState("")
     const [value, setValue] = useState("")
 
     const classes = useStyles()
 
+    
     useEffect(()=>{
         if (validate) {
             setValue("")
@@ -158,27 +161,25 @@ const TextFieldSuggest = (props) => {
 
     useEffect(()=>{
         if (!validate) {
-            const val = Set(value.trim().split(/[\t\r\n;]+/))
+            const val = Set(value === "" ? [] : value.trim().split(/[\t\r\n;]+/))
             const input_val = Set(input.map(i=>i.label))
-            
-            if (val.intersect(input_val).size !== val.size) {
-                setValue(input.map(i=>i.label).join("\n"))
+            if ((val.size !== input_val.size ) || val.intersect(input_val).size !== val.size) {
+                const v = input.map(i=>i.label).join("\n")
+                setValue(v)
+                setInputValue(v)
             }
         }
     },[input])
 
     useEffect(()=>{
-        if (!validate){
-            const new_val = Set(value.trim().split(/[\t\r\n;]+/))
+        if (!validate && value !== inputValue){
+            const new_val = Set(value === "" ? [] :value.trim().split(/[\t\r\n;]+/))
             const old_val = Set(input.map(i=>i.label))
             // For deletion
-            if (!validate){
-                const sub_values = old_val.subtract(new_val).toArray().join("\n")
-                if (sub_values.trim() !== "") {
-                    onDelete(sub_values)
-                }
+            const sub_values = old_val.subtract(new_val).toArray().join("\n")
+            if (sub_values.trim() !== "") {
+                onDelete(sub_values)
             }
-            
             // for addition
             const add_values = new_val.subtract(old_val).toArray().join("\n")
             if (add_values.trim() !== "") {

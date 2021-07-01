@@ -10,6 +10,7 @@ import { get_signature_entities,
 import Button from '@material-ui/core/Button';
 
 import dynamic from 'next/dynamic'
+import { thresholdScott } from 'd3-array'
 const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
 const Snackbar = dynamic(()=>import('@material-ui/core/Snackbar'));
 const SignatureSearchComponent = dynamic(async () => (await import('./SignatureSearchComponent')).SignatureSearchComponent);
@@ -38,7 +39,6 @@ export default class SignatureSearch extends React.PureComponent {
 			resources: null,
 			libraries: null,
 			visualization: {},
-			sig_input: false
 		}
 	}
 
@@ -209,7 +209,7 @@ export default class SignatureSearch extends React.PureComponent {
 	}
 	
 	onAddEntity = (value, field) => {
-		this.setState(prevState=>{
+		this.setState((prevState, prevProps)=>{
 			const field_input = {...prevState.input[field]}
 			for (const v of value.trim().split(/[\t\r\n;]+/)){
 				const val = v.trim()
@@ -232,9 +232,8 @@ export default class SignatureSearch extends React.PureComponent {
 	  }
 
 	onDeleteEntity = (value, field) => {
-		if (!this.state.sig_input){
-			console.log("HERE")
-			this.setState((prevState, prevProps)=>{
+		if (this.state.input[stat_mapper[field]]!==undefined){
+			this.setState((prevState)=>{
 				let input = {...prevState.input}
 				for (const v of value.trim().split(/[\t\r\n;]+/)){
 					const {[v]:popped, ...entities} = input[field]
@@ -387,10 +386,8 @@ export default class SignatureSearch extends React.PureComponent {
 			let input
 			let query = {}
 			let error = null
-			let sig_input = true
 			if (enrichment_id === undefined){
 				input = reset_input(this.props.match.params.type)
-				sig_input = false
 			} else {
 				// there's an enrichment_id
 				const match = this.props.resolver.get_enrichment(enrichment_id)
@@ -400,24 +397,20 @@ export default class SignatureSearch extends React.PureComponent {
 						this.props.schemas,
 						this.handleError)
 					if (input!==null && input!==undefined){
-						// sig_input = true
 						query = create_query(input, enrichment_id)
 						const eid = await enrichment(query, input, this.props.resolver, this.handleError)
 					} else{
 						input = reset_input(this.props.match.params.type)
 						error = "Invalid signature"
-						sig_input = false
 					}
 				} else {
 					input = match.input
-					// sig_input = true
 				}
 			}
 			this.setState({
 				input,
 				query,
 				error,
-				sig_input,
 				searching: this.props.match.params.enrichment_id!==undefined
 			}, () => {
 				if (this.props.match.params.enrichment_id!==undefined){
@@ -446,13 +439,13 @@ export default class SignatureSearch extends React.PureComponent {
 				resolving: false,
 			}, () => this.process_input());
 		}else if (prevEnrichmentID !== enrichment_id) {
-			this.setState({
+			this.setState(prevState=>({
 				entries: null,
 				resources: null,
 				libraries: null,
 				searching: true,
-				input: reset_input(this.props.match.params.type)
-			}, () => this.process_input());
+				input: enrichment_id === undefined? reset_input(this.props.match.params.type): prevState.input,
+			}), () => this.process_input());
 		}
 	}
 
@@ -595,7 +588,9 @@ export default class SignatureSearch extends React.PureComponent {
 							resetInput: ()=>{
 								const input = reset_input(this.props.match.params.type)
 								this.setState({input})
+								return input
 							},
+							reset: this.props.match.params.enrichment_id === undefined,
 							examples: this.props.examples,
 							type: this.props.match.params.type,
 							toggleSwitch: this.toggle_input_type,

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 
 import Button from '@material-ui/core/Button';
@@ -111,17 +111,21 @@ const SigForm = (props={}) => {
 		submitName="Search",
 		enrichment_tabs,
 		type,
-		collapsed
+		submit
 	} = props
-
-	// let left_spacer = ""
-	// let right_spacer = ""
-	// if (Object.keys(enrichment_tabs).length === 2){
-	// 	const overlap_label = enrichment_tabs.Overlap.label
-	// 	const rank_label = enrichment_tabs.Rank.label
-	// 	if (overlap_label.length > rank_label.length) right_spacer = String.fromCharCode(160).repeat(overlap_label.length-rank_label.length + 5)
-	// 	if (overlap_label.length < rank_label.length) left_spacer = String.fromCharCode(160).repeat(rank_label.length-overlap_label.length + 5)
-	// }
+	let input = TextFieldSuggestProps.input
+	// useEffect(()=>{
+	// 	console.log(reset)
+    //     if (reset) {
+	// 		const i = resetInput()
+	// 		const input_length = Object.values(input).reduce((acc,i)=>acc+Object.keys(i).length, 0)
+	// 		if (input_length > 0){
+	// 			input = i
+	// 		}
+    //     }
+	// 	// setResetter(false)
+    // },[reset])
+	// console.log(input)
 	return(
 		<Grid container>
 			{/* Search Components */}
@@ -141,12 +145,12 @@ const SigForm = (props={}) => {
 				{type === 'Overlap' ?
 					<React.Fragment>
 						<TextFieldSuggest {...TextFieldSuggestProps}
-							input={reorder_entities(TextFieldSuggestProps.input.entities)}
+							input={reorder_entities(input.entities)}
 							onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "entities")}
 							onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "entities")}
 							onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "entities")}
-							endAdornment={<EntityCounts {...props} {...TextFieldSuggestProps.input.set_stats}/>}
+							endAdornment={<EntityCounts {...props} {...input.set_stats}/>}
 							placeholder={enrichment_tabs.Overlap.placeholder}
 						/>
 					</React.Fragment>
@@ -154,29 +158,30 @@ const SigForm = (props={}) => {
 					<Grid container spacing={2}>
 						<Grid item xs={6}>
 							<TextFieldSuggest {...TextFieldSuggestProps}
-								input={reorder_entities(TextFieldSuggestProps.input.up_entities)}
+								input={reorder_entities(input.up_entities)}
 								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
 								onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "up_entities")}
 								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "up_entities")}
 								onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "up_entities")}
 								placeholder={enrichment_tabs.Rank.up_placeholder}
-								endAdornment={<EntityCounts {...TextFieldSuggestProps.input.up_stats}/>}
+								endAdornment={<EntityCounts {...input.up_stats}/>}
 							/>
 						</Grid>
 						<Grid item xs={6} md={6}>
 							<TextFieldSuggest {...TextFieldSuggestProps}
-								input={reorder_entities(TextFieldSuggestProps.input.down_entities)}
+								input={reorder_entities(input.down_entities)}
 								onAdd={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
 								onSubmit={(value)=>TextFieldSuggestProps.onAdd(value, "down_entities")}
 								onDelete={(value)=>TextFieldSuggestProps.onDelete(value, "down_entities")}
 								onSuggestionClick={(value, selected)=>TextFieldSuggestProps.onSuggestionClick(value, selected, "down_entities")}
 								placeholder={enrichment_tabs.Rank.down_placeholder}
-								endAdornment={<EntityCounts {...props} {...TextFieldSuggestProps.input.down_stats}/>}
+								endAdornment={<EntityCounts {...props} {...input.down_stats}/>}
 							/>
 						</Grid>
 					</Grid>
 				}
 			</Grid>
+			{submit &&
 			<Grid item xs={12} align="center">
 				<div style={{
 					margin: "auto",
@@ -196,6 +201,7 @@ const SigForm = (props={}) => {
 					<Examples {...TextFieldSuggestProps} />
 				</Typography>
 			</Grid>
+			}
 		</Grid>
 	)
 }
@@ -293,9 +299,13 @@ export const SignatureSearchComponent = (props) => {
 		enrichment_id,
 		serverSideProps,
 	} = props
-	const [expanded, setExpanded] = React.useState(false);
+	const [expanded, setExpanded] = useState(false);
 	const width = useWidth()
 	const breakpoint_md = 6
+
+	useEffect(()=>{
+        setExpanded(false)
+    },[enrichment_id])
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -350,7 +360,7 @@ export const SignatureSearchComponent = (props) => {
 							</Grid>
 						}
 						<Grid item xs={12} md={enrichment_id===undefined ? breakpoint_md: 10} align={enrichment_id===undefined ? "right": "center"}>
-							<SigForm {...props}/>
+							<SigForm {...props} submit={enrichment_id===undefined}/>
 						</Grid>
 						{enrichment_id!==undefined ? null:
 							<Grid item xs={12} md={12-breakpoint_md} align={"center"}>

@@ -203,8 +203,8 @@ export class Model {
 		}
 	}
 
-	children = async (filter={}, crawl=false) => {
-		if (this._preset_children!==null && this._preset_children!==undefined){
+	children = async (filter={}, crawl=false, preset=true) => {
+		if (this._preset_children!==null && this._preset_children!==undefined && preset){
 			return this.search_children(filter, crawl)
 		}else{
 			// Proper API Call

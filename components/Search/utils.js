@@ -68,7 +68,7 @@ export const get_signature_entities = async (signature_id,
 		if (signature === undefined){
 			return null
 		}else {
-			const {entities:ent, up, down} = await signature.children({limit: 0})
+			const {entities:ent, up, down} = await signature.children({limit: 0}, false, false)
 			const input = {}
 			if ((ent || []).length > 0){
 				const entities = {}
