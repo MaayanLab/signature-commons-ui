@@ -49,7 +49,7 @@ export const InfoCard = ({
                     </CardMedia>
                     {LeftComponents.map((comp, i)=>{
                       const {component, props} = comp
-                      return <div key={i}>{component(props)}</div>
+                      return <div style={{marginTop: 5}} key={i}>{component(props)}</div>
                     })}
                   </Grid>: null
                 }
