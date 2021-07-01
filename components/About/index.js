@@ -59,7 +59,7 @@ class About extends React.PureComponent {
       </Grid>
     ))
     return (
-      <Grid container>
+      <Grid container direction="column" align="center"> 
         {models}
       </Grid>
     )
@@ -98,24 +98,19 @@ class About extends React.PureComponent {
   }
 
   render() {
-    console.log(this.props.ui_values)
     if (this.state === null) return <CircularProgress/>
     return (
       <Grid container spacing={1} style={{marginBottom: 50}}>
-          <Grid item xs={12} lg={6}>
+          {/* <Grid item xs={12} lg={6}>
             <Typography align="justify">
               <MarkdownComponent url={this.props.ui_values.nav.About.props.about} />
             </Typography>
+          </Grid> */}
+          <Grid item xs={4}>
+            {this.model_counts()}
           </Grid>
-          <Grid item xs={12} lg={6}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} align="center">
-                {this.model_counts()}
-              </Grid>
-              <Grid item xs={12} align="center">
-                {this.pie_charts()}
-              </Grid>
-            </Grid>
+          <Grid item xs={8} align="center">
+            {this.pie_charts()}
           </Grid>
       </Grid>
     )
