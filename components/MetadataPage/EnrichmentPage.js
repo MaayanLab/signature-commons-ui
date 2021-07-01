@@ -68,6 +68,11 @@ export default class EnrichmentPage extends React.PureComponent {
 				lib_to_resource,
 				resource_to_lib,
 			})
+			if (entry_object === undefined) {
+				this.props.history.push({
+					pathname: '/not-found',
+				  })
+			}
 			let order_field, order
 			if (entry_object.child_model === "signatures"){
 				order_field = 'p-value'

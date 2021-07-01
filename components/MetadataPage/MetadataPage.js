@@ -44,7 +44,11 @@ export default class MetadataPage extends React.PureComponent {
 			// const skip = limit*page
 			const {resolved_entries} = await this.props.resolver.resolve_entries({model, entries: [id]})
 			const entry_object = resolved_entries[id]
-			
+			if (entry_object === undefined) {
+				this.props.history.push({
+					pathname: '/not-found',
+				  })
+			} 
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
 										"#/" + this.props.preferred_name[entry_object.model] +"/")
 			const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
