@@ -144,12 +144,15 @@ export default class MetadataSearch extends React.PureComponent {
 				const filters = {}
 				for (const [field, values] of Object.entries(value_count)){
 					if (field === "library"){
+						const acc = {}
+						for (const[id, count] of Object.entries(values)){
+							if (id !== "null"){
+								acc[lib_id_to_name[id]] = count
+							}
+						}
 						filters[field] = {
 							...filter_fields[field],
-							values: Object.entries(values).reduce((acc, [id, count])=> {
-								acc[lib_id_to_name[id]] = count
-								return acc
-							},{})
+							values: acc
 						}
 						if (filter_fields.resource !== undefined){
 							// resolve resources
@@ -170,12 +173,19 @@ export default class MetadataSearch extends React.PureComponent {
 							}
 						}
 					} else if(field === "resource"){
+						const acc = {}
+						for (const[id, count] of Object.entries(values)){
+							if (id !== "null"){
+								console.log(id, count)
+								console.log(resource_id_to_name[id])
+								console.log(resource_id_to_name)
+								acc[resource_id_to_name[id]] = count
+							}
+						}
+						console.log(acc, values)
 						filters[field] = {
 							...filter_fields[field],
-							values: Object.entries(values).reduce((acc, [id, count])=> {
-								acc[resource_id_to_name[id]] = count
-								return acc
-							},{})
+							values: acc
 						}
 					}else {
 						filters[field] = {
