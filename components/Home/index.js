@@ -13,6 +13,8 @@ import Lazy from '../Lazy'
 import { getResourcesAndLibraries } from '../../util/ui/getResourcesAndLibraries'
 
 const Grid = dynamic(()=>import('@material-ui/core/Grid'))
+const Typography = dynamic(()=>import('@material-ui/core/Typography'))
+
 const ErrorIcon = dynamic(()=>import('@material-ui/icons/Error'))
 const CloseIcon = dynamic(()=>import('@material-ui/icons/Close'))
 const IconButton = dynamic(()=>import('@material-ui/core/IconButton'))
@@ -468,7 +470,12 @@ class Home extends React.PureComponent {
           <Route
             path="/not-found"
             component={(props) => {
-              return <div>You're not supposed to be here</div>
+              return <Grid container align="center">
+                        <Grid item xs={12}>
+                          <Typography variant={'h1'}>Ooops...</Typography>
+                          <Typography variant={'h3'}>Not found</Typography>
+                        </Grid>
+                      </Grid>
             }}// {this.landing}
           />
           <Route
