@@ -353,6 +353,14 @@ export const defaultTheme = {
         fontSize: 13,
       },
     },
+    MuiTableCell: {
+      root: {
+        whiteSpace: 'nowrap',
+      },
+      sizeSmall: {
+        padding: 0
+      }
+    },
     MuiChip: {
       root: {
         margin: '5px 10px 5px 0',

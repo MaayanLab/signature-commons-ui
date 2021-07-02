@@ -10,35 +10,35 @@ const Typography = dynamic(()=> import('@material-ui/core/Typography'));
 const Table = dynamic(()=>import('@material-ui/core/Table'));
 const TableBody = dynamic(()=>import('@material-ui/core/TableBody'));
 const TableCell = dynamic(()=>import('@material-ui/core/TableCell'));
-const TableContainer = dynamic(()=>import('@material-ui/core/TableContainer'));
 const TableHead = dynamic(()=>import('@material-ui/core/TableHead'));
 const TableRow = dynamic(()=>import('@material-ui/core/TableRow'));
-const Paper = dynamic(()=>import('@material-ui/core/Paper'));
 
 
-const DownloadTable = ({links}) => {
-	const values = links.map(({label, icon, href, ...rest})=>({
-		icon: () => (
-			<Avatar aria-label={label}>
-				<span className={`mdi mdi-18px ${icon}`}/>
-			</Avatar>
-		),
-		label,
-		...rest,
-		download: () => (
-			<Button aria-label="add to favorites" target="_blank" rel="noopener noreferrer" href={href} style={{fontSize: 12}}>
-				<span className="mdi mdi-24px mdi-download"/> 
-			</Button>
-		)
-	}))
-	const headers = Object.keys(values[0])
+export const DownloadTable = ({links, values}) => {
+	if (values === undefined){
+		values = links.map(({label, icon, href, ...rest})=>({
+			icon: () => (
+				<Avatar aria-label={label}>
+					<span className={`mdi mdi-18px ${icon}`}/>
+				</Avatar>
+			),
+			label,
+			...rest,
+			download: () => (
+				<Button aria-label="add to favorites" target="_blank" rel="noopener noreferrer" href={href} style={{fontSize: 12}}>
+					<span className="mdi mdi-24px mdi-download"/> 
+				</Button>
+			)
+		}))
+	}
+	const headers = Object.keys(values[0] || {})
 
 	return (
-		<Table aria-label="download table" size="small">
+		<Table aria-label="download table" size="small" style={{width: '100'}}>
 			<TableHead>
 				<TableRow>
-					{headers.map(h=>(
-					<TableCell><b>{h === "icon" ? "": h}</b></TableCell>	  
+					{headers.map((h,i)=>(
+					<TableCell align={h === "download"? "right": "left"}><b>{h === "icon" ? "": h}</b></TableCell>	  
 					))}
 				</TableRow>
 			</TableHead>
@@ -46,7 +46,7 @@ const DownloadTable = ({links}) => {
 				{values.map((row) => (
 				<TableRow key={row.label}>
 					{headers.map(h=>(
-					<TableCell>{h === "icon" || h === "download" ? row[h]() :row[h]}</TableCell>	  
+					<TableCell align={h === "download"? "right": "left"}>{h === "icon" || h === "download" ? row[h]() :row[h]}</TableCell>	  
 					))}
 				</TableRow>
 				))}
@@ -100,7 +100,9 @@ export default function Download( {download_links} ) {
 						<Typography variant={"body2"}>{description}</Typography>
 					</Grid>
 				}
-				<DownloadTable links={links}/>
+				<Grid item xs={12}>
+					<DownloadTable links={links}/>
+				</Grid>
 			</React.Fragment>
 		))}
 	  </Grid>
