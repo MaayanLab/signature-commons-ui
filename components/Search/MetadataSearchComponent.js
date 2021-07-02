@@ -109,15 +109,6 @@ export const MetadataSearchComponent = (props) => {
 			}
 			{ homepage ?
 				<Grid item xs={12} style={{marginTop: 10, marginBottom: 25}} align="Center">
-					{/* <CarouselComponent {...tutorial}
-						PaperProps={PaperProps}
-						ContainerProps={{
-							style:{
-								height: useWidth() === 'xl' ? 350: 200,
-								width: "100%"
-							}
-						}}
-					/> */}
 					<About ui_values={ui_values} stats={serverSideProps}/>
 				</Grid>
 				:

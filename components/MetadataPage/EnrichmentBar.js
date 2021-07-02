@@ -5,9 +5,6 @@ import {
 } from 'recharts';
 import Lazy from '../Lazy'
 import Color from 'color'
-import { useRechartToPng } from "recharts-to-png";
-import FileSaver from "file-saver";
-import Downloads from '../Downloads'
 import Grid from '@material-ui/core/Grid'
 
 const renderCustomizedLabel = (props) => {
