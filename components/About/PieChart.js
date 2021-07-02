@@ -4,8 +4,6 @@ import React, { PureComponent } from 'react'
 import { PieChart as Chart, Pie, Sector, Text, ResponsiveContainer } from 'recharts'
 import PropTypes from 'prop-types'
 
-import dynamic from 'next/dynamic'
-
 const ActiveShape = (props) => {
   const RADIAN = Math.PI / 180
   const {
@@ -78,8 +76,8 @@ export default class DonutChart extends PureComponent {
             activeShape={this.activeShape}
             data={this.props.data}
             onMouseEnter={this.onPieEnter}
-            innerRadius={110}
-            outerRadius={130}
+            innerRadius={170}
+            outerRadius={190}
             onClick={this.props.onClick}
             isAnimationActive={false}
             fill="linear-gradient(to bottom, rgb(124, 162, 206) 0%, rgb(179, 202, 225) 100%)"

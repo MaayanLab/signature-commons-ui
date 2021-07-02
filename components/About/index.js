@@ -3,7 +3,9 @@ import dynamic from 'next/dynamic'
 import { withStyles } from '@material-ui/core/styles';
 import {getSummary} from '../../util/ui/fetch_ui_props'
 import { withTheme } from '@material-ui/core/styles';
+import { withRouter } from "react-router";
 
+const Box = dynamic(()=>import('@material-ui/core/Box'));
 const Grid = dynamic(()=>import('@material-ui/core/Grid'));
 const Typography = dynamic(()=>import('@material-ui/core/Typography'));
 const Tabs = dynamic(()=>import('@material-ui/core/Tabs'));
@@ -12,7 +14,8 @@ const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'
 const Carousel = dynamic(()=>import('react-material-ui-carousel'));
 
 const DonutChart = dynamic(()=>import('./PieChart'));
-const MarkdownComponent = dynamic(()=>import('../Markdown/MarkdownComponent'));
+const HorizontalBarChart = dynamic(()=>import('./BarChart'));
+// const MarkdownComponent = dynamic(()=>import('../Markdown/MarkdownComponent'));
 const IconComponentButton = dynamic(async () => (await import('../DataTable')).IconComponentButton);
 
 
@@ -49,7 +52,7 @@ class About extends React.PureComponent {
     const { nav, preferred_name } = this.props.ui_values
     const md = 12/Object.keys(model_counts).length
     const models = model_counts.map(m=>(
-      <Grid item xs={12} md={md} key={m.name}>
+      <Grid item xs={12} key={m.name}>
         <IconComponentButton
           title={m.count}
           subtitle={m.name}
@@ -65,35 +68,51 @@ class About extends React.PureComponent {
     )
   }
 
-  pie_charts = () => {
-    const { pie } = this.state.stats.count_charts
-    if (Object.keys(pie).length === 0) return null
+  charts = () => {
+    const { pie, bar } = this.state.stats.count_charts
+    const {scores = {}} = this.state.stats
+    const charts = [...Object.values(pie), ...Object.values(bar), ...Object.values(scores)].sort((a,b)=>a.priority-b.priority)
     const { nav, preferred_name } = this.props.ui_values
-    return (
-      <Carousel>
-            {
-                Object.keys(pie).map(k => {
-                  const p = pie[k]
-                  const data = p.stats.sort((a,b)=>(b.count-a.count))
-                  return (
-                    <React.Fragment key={k}>
-                      <DonutChart
-                        data={data}
-                        pie_chart_style={{Pie: {fill: this.props.theme.palette.primaryVisualization.main}}}
-                        onClick={(data)=>{
-                          const search = data.payload.name
-                          this.props.history.push({
-                            pathname: `${nav.MetadataSearch.endpoint}/${preferred_name[p.model]}`,
-                            search: `?query={"filters":{"${p.field}":["${search}"]}}`,
-                          })
-                        }}
-                      />
-                      <Typography variant={'subtitle2'} align="center">{p.name}</Typography>
-                    </React.Fragment>
-                )})
-            }
-        </Carousel>
-    )
+    return charts.map(k => {
+      const type = k.type || 'bar'
+      const data = k.stats.filter(a=>a.count>0).sort((a,b)=>(b.count-a.count))
+      if (type === 'pie'){
+        return(
+          <Box key={k.name}>
+            <DonutChart
+              data={data}
+              pie_chart_style={{Pie: {fill: this.props.theme.palette.primaryVisualization.main}}}
+              onClick={(data)=>{
+                const search = data.payload.name
+                this.props.history.push({
+                  pathname: `${nav.MetadataSearch.endpoint}/${preferred_name[k.model]}`,
+                  search: `?query={"filters":{"${k.field}":["${search}"]}}`,
+                })
+              }}
+            />
+            <Typography variant={'subtitle2'} align="center">{k.name}</Typography>
+          </Box>
+        )
+      }else{
+        return(
+          <Box key={k.name}>
+            <HorizontalBarChart
+              data={data}
+              pie_chart_style={{Pie: {fill: this.props.theme.palette.primaryVisualization.main}}}
+              color={this.props.theme.palette.primaryVisualization.main}
+              onClick={(data)=>{
+                const search = data.payload.name
+                this.props.history.push({
+                  pathname: `${nav.MetadataSearch.endpoint}/${preferred_name[k.model]}`,
+                  search: `?query={"filters":{"${k.field}":["${search}"]}}`,
+                })
+              }}
+            />
+            <Typography variant={'subtitle2'} align="center">{k.name}</Typography>
+          </Box>
+        )
+      }
+    })
 
   }
 
@@ -106,15 +125,18 @@ class About extends React.PureComponent {
               <MarkdownComponent url={this.props.ui_values.nav.About.props.about} />
             </Typography>
           </Grid> */}
-          <Grid item xs={4}>
+
+          <Grid item xs={2} align="right">
             {this.model_counts()}
           </Grid>
-          <Grid item xs={8} align="center">
-            {this.pie_charts()}
+          <Grid item xs={10} align="center">
+            <Carousel>
+              {this.charts()}
+            </Carousel>
           </Grid>
       </Grid>
     )
   }
 }
 
-export default withTheme(About)
+export default withRouter(withTheme(About))
