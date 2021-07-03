@@ -21,6 +21,9 @@ module.exports = withNextEnv(withCSS(withSass({
   env: {
     PREFIX,
   },
+  devIndicators: {
+    autoPrerender: false,
+  },
   onDemandEntries: {
     // period (in ms) where the server will keep pages in the buffer
     maxInactiveAge: 1200 * 1000,
