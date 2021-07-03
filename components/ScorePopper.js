@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography'
 export const precise = (value) => {
   if (Number.isInteger(value)) return value
   let v = Number.parseFloat(value).toPrecision(4);
-  if (v.length > 5){
+  if (Math.abs(v).toString().length > 5){
     return Number.parseFloat(value).toExponential(4);
   } else {
     return v
