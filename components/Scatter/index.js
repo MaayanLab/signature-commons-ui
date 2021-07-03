@@ -40,7 +40,7 @@ const SignatureScatterPlot = (props) => {
 
 	const values = Object.keys((results || {}).colorize || {}).map(label=>({label, value: label}))
 	return(
-		<Grid container style={{margin: 10, maxHeight:500}}>
+		<Grid container style={{margin: 10, minHeight:550}}>
 			<Grid item xs={12} md={8} align="center">
 				<ScatterPlot
 					data={results || {}}
