@@ -446,11 +446,11 @@ class LibraryEnrichment extends React.PureComponent {
 	}
 
 
-	// componentDidUpdate = (prevProps) => {
-	// 	if (prevProps.expanded_id !== this.props.id && this.props.expanded_id === this.props.id){
-	// 		this.process_entry()
-	// 	}
-	// }
+	componentDidUpdate = (prevProps) => {
+		if (prevProps.expanded_id !== this.props.id && this.props.expanded_id === this.props.id){
+			this.process_entry()
+		}
+	}
 
 	componentDidMount = () => {
 		this.process_entry()
