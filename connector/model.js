@@ -143,18 +143,42 @@ export class Model {
 				this._children[field] = entries
 				this.children_count[field] = count
 			}else {
-				// for (const dir of ['-', 'up', 'down']){
-				for (const dir of ['up', 'down']){
-					filter.where.direction = dir
-					const { entries, count} = await this._data_resolver.filter_through({
+				const child_promise = ['-', 'up', 'down'].map(direction=>{
+					const f = {
+						...filter,
+						where: {
+							...filter.where,
+							direction
+						}
+					}
+					return this._data_resolver.filter_through({
 						model: this.model,
 						entry: this,
-						filter: filter,
+						filter: f,
 					})
-					const field = dir === "-" ? this.child_model: dir
-					this._children[field] = entries
-					this.children_count[field] = count
+				})
+				const resolved = await Promise.all(child_promise)
+				for (const r of resolved) {
+					const {entries, count} = r
+					if (count > 0){
+						const dir = (await Object.values(entries)[0].entry())["direction"]
+						const field = dir === "-" ? this.child_model: dir
+						this._children[field] = entries
+						this.children_count[field] = count
+					}
 				}
+				// for (const dir of ['-', 'up', 'down']){
+				// for (const dir of ['up', 'down']){
+				// 	filter.where.direction = dir
+				// 	const { entries, count} = await this._data_resolver.filter_through({
+				// 		model: this.model,
+				// 		entry: this,
+				// 		filter: filter,
+				// 	})
+				// 	const field = dir === "-" ? this.child_model: dir
+				// 	this._children[field] = entries
+				// 	this.children_count[field] = count
+				// }
 			}
 			
 		} else {
