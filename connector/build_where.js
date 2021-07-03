@@ -113,7 +113,7 @@ export function build_where({ search, filters, order, indexed_keys=[] }) {
 		if (indexed_keys.indexOf(`meta.${key.trim()}`) !== -1) {
 		  // it is indexed
 		  const search_query = {
-			[`meta.${key.trim()}`]: context === 'not' ? { nilike: '%' + value.join(':') + '%' } : { ilike: '%' + value.join(':') + '%' },
+			[`meta.${key.trim()}`]: context === 'not' ? { nilike: value.join(':') } : { ilike: value.join(':') },
 		  }
 		  search_clauses[context].push(search_query)
 		} else {
@@ -168,7 +168,7 @@ export function build_where({ search, filters, order, indexed_keys=[] }) {
 			  })
 			}else {
 			  and.push({
-				[filter]: {ilike: `%${v}%`},
+				[filter]: {ilike: `${v}`},
 			  })
 			}
 		  }
