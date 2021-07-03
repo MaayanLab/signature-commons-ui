@@ -38,7 +38,7 @@ export const RadioButtons = (props) => {
 			<FormLabel component="legend">{label}</FormLabel>
 			<RadioGroup aria-label={label} name={label} value={value} onChange={handleChange}>
 				{values.map(v=>(
-					<FormControlLabel key={v.value} value={v.value} control={<Radio size="small"/>}
+					<FormControlLabel key={v.value} value={v.value} control={<Radio color="default" size="small"/>}
 						label={<LabelNode {...v}/>}
 						{...FormProps}
 					/>

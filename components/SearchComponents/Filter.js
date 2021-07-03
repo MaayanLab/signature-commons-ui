@@ -19,7 +19,7 @@ export const Filter = (props) => {
 		name,
 		icon="mdi-filter",
 		values,
-		checked,
+		checked={},
 		onClick,
 		loading,
 	} = props
@@ -65,6 +65,7 @@ export const Filter = (props) => {
 												onChange={onClick}
 												name={label}
 												value={label}
+												color="default"
 												size="small"
 											/>}
 									label={<Typography variant="caption" align="left">{`${label} (${count})`}</Typography>}
