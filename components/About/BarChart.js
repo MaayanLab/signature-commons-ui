@@ -61,7 +61,12 @@ export const HorizontalBarChart = (props) => {
 				{...barChartProps}
 				// ref={ref} // Save the ref of the chart
 			>
-			<Bar dataKey="count" fill={color} barSize={barSize} onClick={onClick} {...barProps}/>
+			<Bar dataKey="count"
+				fill={color}
+				barSize={barSize}
+				onClick={onClick} 
+				isAnimationActive={false}
+				{...barProps}/>
 				<XAxis type="number"
 					domain={[0, 'dataMax']}
 					hide/>
