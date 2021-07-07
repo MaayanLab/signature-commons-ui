@@ -1,10 +1,8 @@
-import {useState} from 'react'
 import dynamic from 'next/dynamic'
 const Grid = dynamic(()=> import('@material-ui/core/Grid'));
 const Typography = dynamic(()=> import('@material-ui/core/Typography'));
 const DownloadLinks = dynamic(()=> import('./DownloadLinks'));
 const DownloadList = dynamic(()=> import('./DownloadList'));
-const ResultsTab = dynamic(()=> import('../SearchComponents/ResultsTab'));
 
 const DownloadsPage = ({
 	resolver,

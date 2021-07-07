@@ -18,7 +18,7 @@ export const DownloadTable = ({links, values}) => {
 	if (values === undefined){
 		values = links.map(({label, icon, href, ...rest})=>({
 			icon: () => (
-				<Avatar aria-label={label}>
+				<Avatar aria-label={label} style={{marginRight: 20}}>
 					<span className={`mdi mdi-18px ${icon}`}/>
 				</Avatar>
 			),
