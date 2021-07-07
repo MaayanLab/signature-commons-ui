@@ -69,6 +69,7 @@ export default class MetadataPage extends React.PureComponent {
 			},()=>{
 				// const {limit, skip, ...rest } = this.state.query
 				const query = {
+					...this.state.query,
 					direction: childTab
 				}
 				this.props.history.push({
