@@ -1,7 +1,10 @@
-import { labelGenerator, getName, getPropType } from '../../util/ui/labelGenerator'
+import { labelGenerator, getName } from '../../util/ui/labelGenerator'
+import { fetch_external_post } from '../../util/fetch/fetch_external'
 import fileDownload from 'js-file-download'
 import Color from 'color'
 import isUUID from 'validator/lib/isUUID'
+import FormData from 'form-data'
+import fetch from 'isomorphic-unfetch'
 
 export const resolve_ids = ({
 	query,
@@ -152,7 +155,7 @@ export const enrichment = async (query, input, resolver, handleError=null) => {
 	}
 }
 
-export const download_signature = async ({entry, schemas, model, resolver, serialize=false}) => {
+export const serialize_signature = async ({resolver, model, entry}) => {
 	const {resolved_entries} = await resolver.resolve_entries({
 		model,
 		entries: [entry]
@@ -160,6 +163,36 @@ export const download_signature = async ({entry, schemas, model, resolver, seria
 	const sigid = isUUID(entry) ? entry: entry.id
 	const c = resolved_entries[sigid]
 	const e = await c.serialize(true, true, true)
+	return e
+}
+
+export const send_to_enrichr = async ({resolver, model, entry, direction, schemas}) => {
+	const ENRICHR_URL = "https://maayanlab.cloud/Enrichr"
+	const serialized_entry = await serialize_signature({resolver, model, entry})
+	const entities = serialized_entry[direction]
+	const genelist = []
+	for (const child of entities){
+		const val = getName(child, schemas)
+		if (val!==null) genelist.push(val)
+	}
+	const description = getName(serialized_entry, schemas) + ` (${direction})`
+	const gene_str = genelist.join("\n")
+
+	const formData = new FormData()
+	formData.append('list', gene_str)
+	formData.append('description', description)
+	const {shortId} = await (await fetch(`${ENRICHR_URL}/addList`, {
+	method: 'POST',
+	body: formData,
+	})).json()
+	
+	const url = `${ENRICHR_URL}/enrich?dataset=${shortId}`
+	window.open(url,'_blank');
+}
+
+export const download_signature = async ({entry, schemas, model, resolver, serialize=false}) => {
+
+	const e = await serialize_signature({resolver, model, entry})
 	const filename =  getName(e, schemas)
 	if(serialize) {
 		fileDownload(JSON.stringify(e, null, 2), filename + ".json")
