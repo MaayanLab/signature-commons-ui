@@ -45,7 +45,7 @@ class Resources extends React.PureComponent {
 				const entry = await c.serialize(true,false)
 				const e = labelGenerator(await entry,
 					schemas,
-					"#" + preferred_name[model] +"/")
+					"#" + preferred_name[model] +"/${id}")
 				entries.push(e)
       }
       this.setState(prevState=>{

@@ -56,9 +56,13 @@ export default class MetadataSearch extends React.PureComponent {
 			const entries = []
 			for (const c of Object.values(results)){
 				const entry = await c.serialize(true,false)
+				const link = "#" + this.props.preferred_name[this.props.model] +"/${id}"
+				if (this.props.model === "entities" && (this.props.nav.MetadataSearch.props.metadata_page.entities || {}).query !== undefined) {
+					link = link + this.props.nav.MetadataSearch.props.metadata_page.entities.query
+				}
 				const e = labelGenerator(await entry,
 						schemas,
-						"#" + this.props.preferred_name[this.props.model] +"/",
+						link,
 						this.props.resolver
 					)
 				

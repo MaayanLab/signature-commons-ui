@@ -290,7 +290,7 @@ export default class SignatureSearch extends React.PureComponent {
 			}
 			const entries = await Promise.all(Object.values(resources_entries).map(async (i)=> await i.entry()))
 			const resources = entries.map(e=>labelGenerator(e, this.props.schemas,
-				`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name.resources}/`
+				`#/Enrichment/${type}/${enrichment_id}/${this.props.preferred_name.resources}/`+'${id}'
 				))
 			const sorted_resources = resources.sort((a,b)=>{
 				if (resource_order[a.data.id] !== undefined && resource_order[a.data.id]) {
