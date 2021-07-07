@@ -355,7 +355,14 @@ export default class MetadataPage extends React.PureComponent {
 		let children_name = this.props.preferred_name[this.state.entry_object.child_model].toLowerCase()
 		const count = this.state.children_count[this.state.childTab] || 0
 		let label
-		if (this.props.model === "signatures"){
+		if ((this.props.nav.MetadataSearch.props.metadata_page[this.props.model] || {}).child_text !== undefined){
+			const child_text = this.props.nav.MetadataSearch.props.metadata_page[this.props.model].child_text
+			const values = {
+				name: entry_name,
+				count
+			}
+			label = makeTemplate(child_text, values)
+		}else if (this.props.model === "signatures"){
 			if (this.state.childTab !== undefined && this.state.childTab !== this.state.entry_object.child_model) children_name = `${this.state.childTab} ${children_name}`
 			label = `${entry_name} has ${count} ${children_name}.`
 		}else if (this.props.model === "libraries") {
