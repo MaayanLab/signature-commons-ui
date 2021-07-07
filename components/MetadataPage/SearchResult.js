@@ -1,12 +1,17 @@
 import React from 'react'
+import dynamic from 'next/dynamic'
 import PropTypes from 'prop-types'
-import { ChipInput, Filter } from '../SearchComponents'
-import Grid from '@material-ui/core/Grid'
-import TablePagination from '@material-ui/core/TablePagination'
-import {DataTable} from '../DataTable'
-import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+const ChipInput = dynamic(async () => (await import('../SearchComponents')).ChipInput);
+const Filter = dynamic(async () => (await import('../SearchComponents')).Filter);
+const DataTable = dynamic(async () => (await import('../DataTable')).DataTable);
+
+const Box = dynamic(()=>import('@material-ui/core/Box'));
+const Grid = dynamic(()=>import('@material-ui/core/Grid'));
+const TablePagination = dynamic(()=>import('@material-ui/core/TablePagination'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Button = dynamic(()=>import('@material-ui/core/Button'));
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+const Hidden = dynamic(()=>import('@material-ui/core/Hidden'));
 
 export const SearchResult = (props) => {
 	const {
@@ -28,58 +33,119 @@ export const SearchResult = (props) => {
 
 	return(
 		<Grid container spacing={1}>
-			<Grid item xs={12} md={8} lg={9}>
-				{searching?<CircularProgress/>:
-					<React.Fragment>
-						<Typography variant={"h6"} style={{marginBottom: 10}}>{label}</Typography>
-						<DataTable entries={entries} {...DataTableProps}/>
-						{entries.length > 0 ?
-							<TablePagination
-								{...PaginationProps}
-								component="div"
-								align="right"
-							/>: null
-						}
-					</React.Fragment>
-				}
-			</Grid>
-			<Grid item xs={12} md={4} lg={3}>
-				<ChipInput 
-					input={search_terms}
-					onSubmit={(term)=>{
-						if (search_terms.indexOf(term)<0) onSearch([...search_terms, term])
-					}}
-					onDelete={ (term)=>{
-							onSearch(search_terms.filter(t=>t!==term))
-						}
+			<Hidden smDown>
+				<Grid item md={8} lg={9}>
+					{searching &&
+						<Box align="center">
+							<CircularProgress/>
+						</Box>
 					}
-					chipRenderer={chipRenderer}
-					ChipInputProps={{
-						divProps: {
-							style: {
-								background: "#f7f7f7", 
-								borderRadius: 25
+					{!searching &&
+						<React.Fragment>
+							<Typography variant={"h6"} style={{marginBottom: 10}}>{label}</Typography>
+							<DataTable entries={entries} {...DataTableProps}/>
+							{entries.length > 0 &&
+								<TablePagination
+									{...PaginationProps}
+									component="div"
+									align="right"
+								/>
 							}
-						},
-						inputProps: {
-							placeholder: search_terms.length === 0 ? "Search for any term": "",
+						</React.Fragment>
+					}
+				</Grid>
+				<Grid item md={4} lg={3}>
+					<ChipInput 
+						input={search_terms}
+						onSubmit={(term)=>{
+							if (search_terms.indexOf(term)<0) onSearch([...search_terms, term])
+						}}
+						onDelete={ (term)=>{
+								onSearch(search_terms.filter(t=>t!==term))
+							}
 						}
-					}}
-				/>
-				{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
-				<Typography align={"center"}  style={{marginTop:10}}>
-				{search_examples.map((v,i)=>(
-					<React.Fragment>
-						<Button variant="text" color="primary" onClick={()=>{
-							if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
-						}}>
-							{v}
-						</Button>
-						{i === search_examples.length - 1 ? null: " / "}
-					</React.Fragment>
-				))}
-				</Typography>
-			</Grid>
+						chipRenderer={chipRenderer}
+						ChipInputProps={{
+							divProps: {
+								style: {
+									background: "#f7f7f7", 
+									borderRadius: 25
+								}
+							},
+							inputProps: {
+								placeholder: search_terms.length === 0 ? "Search for any term": "",
+							}
+						}}
+					/>
+					{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+					<Typography align={"center"}  style={{marginTop:10}}>
+					{search_examples.map((v,i)=>(
+						<React.Fragment>
+							<Button variant="text" color="primary" onClick={()=>{
+								if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
+							}}>
+								{v}
+							</Button>
+							{i === search_examples.length - 1 ? null: " / "}
+						</React.Fragment>
+					))}
+					</Typography>
+				</Grid>
+			</Hidden>
+			<Hidden mdUp>
+			<Grid item xs={12}>
+					<ChipInput 
+						input={search_terms}
+						onSubmit={(term)=>{
+							if (search_terms.indexOf(term)<0) onSearch([...search_terms, term])
+						}}
+						onDelete={ (term)=>{
+								onSearch(search_terms.filter(t=>t!==term))
+							}
+						}
+						chipRenderer={chipRenderer}
+						ChipInputProps={{
+							divProps: {
+								style: {
+									background: "#f7f7f7", 
+									borderRadius: 25
+								}
+							},
+							inputProps: {
+								placeholder: search_terms.length === 0 ? "Search for any term": "",
+							}
+						}}
+					/>
+					{sorted_filters.map(filter=><Filter key={filter.field} {...filter} onClick={(e)=>onFilter(filter.field, e.target.value)}/>)}
+					<Typography align={"center"}  style={{marginTop:10}}>
+					{search_examples.map((v,i)=>(
+						<React.Fragment>
+							<Button variant="text" color="primary" onClick={()=>{
+								if (search_terms.indexOf(v)<0) onSearch([...search_terms, v])
+							}}>
+								{v}
+							</Button>
+							{i === search_examples.length - 1 ? null: " / "}
+						</React.Fragment>
+					))}
+					</Typography>
+				</Grid>
+				<Grid item xs={12}>
+					{!searching &&
+						<React.Fragment>
+							<Typography variant={"h6"} style={{marginBottom: 10}}>{label}</Typography>
+							<DataTable entries={entries} {...DataTableProps}/>
+							{entries.length > 0 &&
+								<TablePagination
+									{...PaginationProps}
+									component="div"
+									align="right"
+								/>
+							}
+						</React.Fragment>
+					}
+				</Grid>
+			</Hidden>
 		</Grid>
 	)
 }
