@@ -8,7 +8,7 @@ const ActiveShape = (props) => {
   const RADIAN = Math.PI / 180
   const {
     cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
-    fill, payload, count,
+    fill, payload, count, unscaled_count,
   } = props
   const sin = Math.sin(-RADIAN * midAngle)
   const cos = Math.cos(-RADIAN * midAngle)
@@ -22,7 +22,7 @@ const ActiveShape = (props) => {
         fill={fill}
         width={100}
         fontSize={16}
-      >{`${payload.name} (${count})`}</Text>
+      >{`${payload.name} (${unscaled_count || count})`}</Text>
       <Sector
         cx={cx}
         cy={cy}

@@ -50,6 +50,7 @@ export const HorizontalBarChart = (props) => {
 		   data,
 		   color="#0063ff",
 		   barSize=23,
+		   scale
 		} = props
 	return(
 		<ResponsiveContainer height={400} width={700}>
@@ -61,17 +62,18 @@ export const HorizontalBarChart = (props) => {
 				{...barChartProps}
 				// ref={ref} // Save the ref of the chart
 			>
+			<Tooltip content={<CustomTooltip/>} />
 			<Bar dataKey="count"
 				fill={color}
 				barSize={barSize}
 				onClick={onClick} 
 				isAnimationActive={false}
 				{...barProps}/>
-				<XAxis type="number"
-					domain={[0, 'dataMax']}
-					hide/>
-				<YAxis type="category" dataKey="name" interval={0} axisLine={false} width={125}/>
-				<Tooltip content={<CustomTooltip/>} />
+			<XAxis type="number"
+				domain={[0.01, 'dataMax']}
+				scale={scale}
+				hide/>
+			<YAxis type="category" dataKey="name" interval={0} axisLine={false} width={125}/>
 			</BarChart>
 		</ResponsiveContainer>
 	)
