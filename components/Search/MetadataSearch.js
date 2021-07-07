@@ -180,13 +180,9 @@ export default class MetadataSearch extends React.PureComponent {
 						const acc = {}
 						for (const[id, count] of Object.entries(values)){
 							if (id !== "null"){
-								console.log(id, count)
-								console.log(resource_id_to_name[id])
-								console.log(resource_id_to_name)
 								acc[resource_id_to_name[id]] = count
 							}
 						}
-						console.log(acc, values)
 						filters[field] = {
 							...filter_fields[field],
 							values: acc

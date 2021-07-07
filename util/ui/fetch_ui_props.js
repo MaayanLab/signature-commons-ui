@@ -33,7 +33,6 @@ export const getSummary = async () => {
 	const { response: summary } = await fetch_meta({
 		endpoint: '/summary',
 	  })
-	console.log(summary)
 	return summary
 }
 

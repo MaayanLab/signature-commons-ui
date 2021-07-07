@@ -56,7 +56,6 @@ export const DownloadTable = ({links, values}) => {
 }
 
 const DownloadCards = ({links}) => {
-	console.log(links)
 	const cards = links.map(({label, icon, href, ...rest})=>(
 		<Grid item xs={6} md={4} xl={3} key={label}>
 		  <Card style={{minHeight: 300}}>

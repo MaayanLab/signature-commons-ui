@@ -17,7 +17,6 @@ export default class App extends React.Component {
   }
 
   handleClick = (id) => {
-    console.log(id)
     this.setState({
       expanded: this.state.expanded === id ? null: id
     })
