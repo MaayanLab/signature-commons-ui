@@ -1,26 +1,70 @@
 import dynamic from 'next/dynamic'
 import { makeTemplate } from './makeTemplate'
 import { findMatchedSchema, objectMatch } from './objectMatch'
-import { download_signature } from '../../components/Search/utils'
+import { download_signature, serialize_signature, send_to_enrichr } from '../../components/Search/utils'
 
 const Downloads = dynamic(()=>import('../../components/Downloads'));
 const Options = dynamic(()=>import('../../components/Options'));
 const Insignia = dynamic(()=>import('../../standalone/fairshake-insignia/src'));
 
-const components = {
-  download: (props) => {
-    return <Downloads {...props}/>
+const cache = {
+  component: {},
+  function: {}
+}
+
+const standalone = {
+  component: {
+    download: (props) => {
+      return <Downloads {...props}/>
+    },
+    insignia: (props) => {
+      return <Insignia {...props}/>
+    },
+    options: (props) => {
+      return <Options {...props}/>
+    }
   },
-  insignia: (props) => {
-    return <Insignia {...props}/>
-  },
-  options: (props) => {
-    return <Options {...props}/>
+  function: {
+    download_signature,
+    serialize_signature,
+    send_to_enrichr,
   }
 }
 
-const internal_function = {
-  download_signature: download_signature
+
+const dynamic_import = (importable, type) => {
+  if (standalone[type] === undefined) return null
+  else if (standalone[type][importable] === undefined){
+    if (cache[type][importable] === undefined) {
+      if (type === "component") {
+        const Component = dynamic(async () => {
+          try {
+            return await new Promise((resolve, reject) => {
+              window.define('react', React)
+              return window.requirejs([importable], resolve, reject)
+            })
+          } catch (e) {
+            return () => { throw e }
+          }
+        })
+        cache[type][importable] = (props)=><Component {...props}/>
+      } else {
+        const func = dynamic(async () => {
+          try {
+            return await new Promise((resolve, reject) => {
+              return window.requirejs([importable], resolve, reject)
+            })
+          } catch (e) {
+            return () => { throw e }
+          }
+        })
+        cache[type][importable] = (props)=>func({...props})
+      }
+    }
+    return cache[type][importable]
+  }
+  return standalone[type][importable]
+
 }
 
 export const value_by_type = {
@@ -146,12 +190,14 @@ export const value_by_type = {
   'prop-object': ({label, prop, data, ...rest}) => {
     const props = {}
     for (const [k,v] of Object.entries(prop.properties)){
-      const val = value_by_type[v.type]({label:k, prop: v, data, ...rest})
-      if (val!==null){
-        if (v.type==='text'){
-          props[k] = val.text
-        } else {
-          props[k] = val
+      if (value_by_type[v.type] !== undefined){
+        const val = value_by_type[v.type]({label:k, prop: v, data, ...rest})
+        if (val!==null){
+          if (v.type==='text'){
+            props[k] = val.text
+          } else {
+            props[k] = val
+          }
         }
       }
     }
@@ -161,8 +207,10 @@ export const value_by_type = {
   'component': ({label, prop, data, ...rest}) => {
     const props = {}
     for (const [k,v] of Object.entries(prop.props)){
-      const val = value_by_type[v.type]({label: k, prop: v, data, ...rest})
-      if (val!==null) props[k] = val
+      if (value_by_type[v.type] !== undefined){
+        const val = value_by_type[v.type]({label: k, prop: v, data, ...rest})
+        if (val!==null) props[k] = val
+      }
     }
     if (Object.keys(props).length ===0) return null
     else return {label, props}
@@ -173,12 +221,14 @@ export const value_by_type = {
   'resolver': ({resolver}) => {
     return resolver
   },
-  'internal-function': ({label, prop, data, ...rest}) => {
+  'function': ({label, prop, data, ...rest}) => {
+    if (value_by_type[prop.props.type] === undefined) return null
     const props = value_by_type[prop.props.type]({label, prop: prop.props, data, ...rest})
     if (prop.function === undefined) return null
     else {
-      const func = () => internal_function[prop.function]({...props})
-      return func
+      const func = dynamic_import(prop.function, "function")
+      if (func === null) return null
+      return () => func({...props})
     }
   }
 }
@@ -197,8 +247,10 @@ export const getPropType = (data, schemas, type) => {
   if (schema !== null) {
     for (const [label, prop] of Object.entries(schema.properties)) {
       if (prop.visibility && prop.type===type){
-        const val = value_by_type[prop.type]({ label, prop, data })
-        if (val!==null) values.push({...val, priority: prop.priority || 1})
+        if (value_by_type[prop.type]!==undefined) {
+          const val = value_by_type[prop.type]({ label, prop, data })
+          if (val!==null) values.push({...val, priority: prop.priority || 1})
+        }
       }
     }
   }
@@ -206,7 +258,8 @@ export const getPropType = (data, schemas, type) => {
 }
 
 export const getPropValue = (data, prop, label='') => {
-  return value_by_type[prop.type]({ label, prop, data })
+  if (value_by_type[prop.type] === undefined) return null
+  else return value_by_type[prop.type]({ label, prop, data })
   
 }
 
@@ -238,7 +291,7 @@ export const labelGenerator = (data,
     const BottomComponents = []
     const info = { id: data.id, display: {}, url: {}, components: {}, name: { text: data.id }}
     if (endpoint){
-      info.endpoint = endpoint + data.id
+      info.endpoint = makeTemplate(endpoint, data)
     }
     const sort_tags = {}
     for (const label of Object.keys(properties)) {
@@ -321,19 +374,19 @@ export const labelGenerator = (data,
             info.components[prop.component] = val
             if (prop.visibility > 0 && prop.location === "left") {
               LeftComponents.push({
-                component: components[prop.component],
+                component: dynamic_import(prop.component, "component"),
                 priority: prop.priority,
                 props: val.props
               })
             } else if (prop.visibility > 0 && prop.location === "bottom") {
               BottomComponents.push({
-                component: components[prop.component],
+                component: dynamic_import(prop.component, "component"),
                 priority: prop.priority,
                 props: val.props
               })
             } else if (prop.visibility > 0 && prop.location === "right") {
               RightComponents.push({
-                component: components[prop.component],
+                component: dynamic_import(prop.component, "component"),
                 priority: prop.priority,
                 props: val.props
               })
