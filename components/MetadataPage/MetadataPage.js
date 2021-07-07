@@ -4,12 +4,10 @@ import PropTypes from 'prop-types'
 
 import {build_where} from '../../connector'
 import { labelGenerator } from '../../util/ui/labelGenerator'
+import {makeTemplate} from '../../util/ui/makeTemplate'
 import { get_filter, resolve_ids } from '../Search/utils'
 
 const Grid = dynamic(()=>import('@material-ui/core/Grid'))
-const Card = dynamic(()=>import('@material-ui/core/Card'))
-const CardContent = dynamic(()=>import('@material-ui/core/CardContent'))
-const CardMedia = dynamic(()=>import('@material-ui/core/CardMedia'))
 const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'))
 const Typography = dynamic(()=>import('@material-ui/core/Typography'))
 const Link = dynamic(()=>import('@material-ui/core/Link'))
@@ -50,8 +48,8 @@ export default class MetadataPage extends React.PureComponent {
 				  })
 			} 
 			const entry = labelGenerator(await entry_object.serialize(entry_object.model==='signatures', false), schemas,
-										"#/" + this.props.preferred_name[entry_object.model] +"/")
-			const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/")
+										"#/" + this.props.preferred_name[entry_object.model] +"/${id}")
+			const parent = labelGenerator(await entry_object.parent(), schemas, "#/" + this.props.preferred_name[entry_object.parent_model] +"/${id}")
 			this.setState({
 				entry_object,
 				entry,
@@ -122,10 +120,15 @@ export default class MetadataPage extends React.PureComponent {
 			const children = {}
 			for (const[k,v] of Object.entries(children_object)){
 				children[k] = []
+				const link = "#" + this.props.preferred_name[this.state.entry_object.child_model] +"/${id}"
+				if (this.state.entry_object.model === "signatures" && (this.props.nav.MetadataSearch.props.metadata_page.entities || {}).query !== undefined) {
+					link = link + this.props.nav.MetadataSearch.props.metadata_page.entities.query
+				}
+
 				for (const entry of Object.values(v)){
 					const e = labelGenerator(entry,
 						schemas,
-						"#" + this.props.preferred_name[this.state.entry_object.child_model] +"/") 
+						link)
 					children[k].push(e)
 				}
 			}
