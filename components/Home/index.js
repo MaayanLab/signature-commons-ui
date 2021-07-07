@@ -12,6 +12,7 @@ import '../../styles/swagger.scss'
 import Lazy from '../Lazy'
 import { getResourcesAndLibraries } from '../../util/ui/getResourcesAndLibraries'
 
+const Box = dynamic(()=>import('@material-ui/core/Box'))
 const Grid = dynamic(()=>import('@material-ui/core/Grid'))
 const Typography = dynamic(()=>import('@material-ui/core/Typography'))
 
@@ -80,6 +81,7 @@ const SigcomSnackbar = withStyles(snackStyles)((props) => {
   )
 })
 
+
 class Home extends React.PureComponent {
   constructor(props) {
     super(props)
@@ -88,7 +90,6 @@ class Home extends React.PureComponent {
       theme: null,
       metadata_resolver: null,
       enrichment_resolver: null,
-			resource_libraries: {},
       error_message: null,
     }
   }
@@ -150,10 +151,9 @@ class Home extends React.PureComponent {
     const search_props = this.props.ui_values.nav.MetadataSearch.props
     const model = reverse_preferred[props.match.params.model]
     if (search_props.model_tabs.indexOf(model)===-1) return <Redirect to='/not-found'/>
-    
     return (
       <MetadataSearch schemas={this.props.schemas}
-                    resource_libraries={this.state.resource_libraries}
+                    resource_libraries={this.props.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
                     preferred_name_singular={this.props.ui_values.preferred_name_singular}
                     model={model}
@@ -161,6 +161,7 @@ class Home extends React.PureComponent {
                     label={props.match.params.label}
                     filter_props={(this.props.search_filters || {})[model] || []}
                     nav={this.props.ui_values.nav}
+                    stats={this.props.stats}
                     search_examples={((search_props.types || {})[model] || {}).examples || []}
                     resolver={this.state.metadata_resolver}
                     placeholder={search_props.placeholder}
@@ -204,11 +205,12 @@ class Home extends React.PureComponent {
     }
     return (
       <SignatureSearch schemas={this.props.schemas}
-                    resource_libraries={this.state.resource_libraries}
+                    resource_libraries={this.props.resource_libraries}
                     preferred_name={preferred_name}
                     preferred_name_singular={preferred_name_singular}
                     label={props.match.params.label}
                     nav={nav}
+                    stats={this.props.stats}
                     examples={search_props.examples}
                     resource_order={resource_order}
                     resolver={this.state.enrichment_resolver}
@@ -232,7 +234,7 @@ class Home extends React.PureComponent {
     if (model === undefined) return <Redirect to='/not-found'/>
     return (
       <MetadataPage schemas={this.props.schemas}
-                    resource_libraries={this.state.resource_libraries}
+                    resource_libraries={this.props.resource_libraries}
                     preferred_name={this.props.ui_values.preferred_name}
                     preferred_name_singular={this.props.ui_values.preferred_name_singular}
                     id={id}
@@ -250,7 +252,10 @@ class Home extends React.PureComponent {
 
   about = (props) => {
     return (
-      <About {...props} ui_values={this.props.ui_values} stats={this.props.serverSideProps}/>
+      <About {...props}
+            ui_values={this.props.ui_values}
+            stats={this.props.stats}
+      />
     )
   }
 
@@ -279,23 +284,39 @@ class Home extends React.PureComponent {
       error_message: null
     })
   }
+
+  resolve_libraries_and_resources = async () => {
+    const schemas = this.props.schemas
+    const {metadata_resolver, enrichment_resolver} = this.state
+    const unresolved_promises = [
+      getResourcesAndLibraries(schemas, metadata_resolver),
+      getResourcesAndLibraries(schemas, enrichment_resolver)
+    ]
+    await Promise.all(unresolved_promises)
+
+  }
   
   componentDidMount = async () => {
-		const schemas = this.props.schemas
 		const metadata_resolver = new DataResolver(this.props.ui_values.nav.MetadataSearch.props.ignore)
     const enrichment_resolver = new DataResolver(this.props.ui_values.nav.SignatureSearch.props.ignore)
-    await getResourcesAndLibraries(schemas, enrichment_resolver)
-		const resource_libraries = await getResourcesAndLibraries(schemas, metadata_resolver)
+    
 		this.setState({
       metadata_resolver,
       enrichment_resolver,
-			resource_libraries,
-		})
+		},()=>{
+      this.resolve_libraries_and_resources()
+    })
 	}
 
   render = () => {
     if (this.state.metadata_resolver === null) {
-      return <CircularProgress />
+      return(
+        <Box align="center" style={{marginTop: "auto", marginBottom: "auto", height: "100%"}}>
+          <CircularProgress />
+          <Typography variant="subtitle2">LDP3 is loading...</Typography>
+          <Typography variant="subtitle2">Please wait</Typography>
+        </Box>
+      )
     }
     const {nav, preferred_name} = this.props.ui_values
     

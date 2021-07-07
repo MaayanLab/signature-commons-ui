@@ -32,7 +32,7 @@ export const MetadataSearchComponent = (props) => {
 		homepage,
 		description,
 		ui_values,
-		serverSideProps,
+		stats,
 	} = props
 
 	const sorted_filters = filters.sort((a,b)=>((a.priority || a.field) - (b.priority || b.field)))
@@ -109,7 +109,7 @@ export const MetadataSearchComponent = (props) => {
 			}
 			{ homepage ?
 				<Grid item xs={12} style={{marginTop: 10, marginBottom: 25}} align="Center">
-					<About ui_values={ui_values} stats={serverSideProps}/>
+					<About ui_values={ui_values} stats={stats}/>
 				</Grid>
 				:
 				<React.Fragment>

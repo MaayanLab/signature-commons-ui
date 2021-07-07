@@ -278,8 +278,8 @@ export default class SignatureSearch extends React.PureComponent {
 			this.props.resolver.controller()
 			const {model, resource_order} = this.props
 			const { type, enrichment_id} = this.props.match.params
-			const {lib_to_resource,
-				resource_to_lib } = this.props.resource_libraries
+			const {lib_to_resource={},
+				resource_to_lib={} } = this.props.resource_libraries
 			const {resources: resources_entries} = await this.props.resolver.resolve_all_enrichment({
 				enrichment_id,
 				lib_to_resource,
@@ -451,7 +451,6 @@ export default class SignatureSearch extends React.PureComponent {
 
 	componentDidMount = async () => {
 		const { schemas } = this.props
-		const {type, enrichment_id} = this.props.match.params	
 
 		// Get title and synonyms
 		const entity_schemas = schemas.filter(s=>s.type==="entity")
@@ -554,7 +553,7 @@ export default class SignatureSearch extends React.PureComponent {
 						download_input={()=>download_input(this.state.input)}
 						entries={this.state.resources}
 						ui_values={{nav: this.props.nav, preferred_name: this.props.preferred_name}}
-						serverSideProps={this.props.serverSideProps}
+						stats={this.props.stats}
 						ResultsProps={{
 							entries: this.state.libraries,
 							onClick: this.node_click,
@@ -597,17 +596,6 @@ export default class SignatureSearch extends React.PureComponent {
 							disabled,
 						}}
 						enrichment_tabs={this.props.enrichment_tabs}
-						filters={this.state.libraries === null ? []:[
-							{
-								name: this.props.preferred_name.libraries,
-								field: 'libraries',
-								priority: 1,
-								values: this.state.libraries,
-								radio:true,
-								value: this.props.resource_libraries.lib_id_to_name[this.state.library_id],
-								icon: "mdi-library-books"
-							}
-						]}
 						submitName={`Perform ${this.props.preferred_name_singular.signatures} Enrichment Analysis`}
 						type={this.props.match.params.type}
 						enrichment_id={this.props.match.params.enrichment_id}

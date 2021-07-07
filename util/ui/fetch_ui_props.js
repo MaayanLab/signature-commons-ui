@@ -33,6 +33,7 @@ export const getSummary = async () => {
 	const { response: summary } = await fetch_meta({
 		endpoint: '/summary',
 	  })
+	console.log(summary)
 	return summary
 }
 
@@ -106,7 +107,7 @@ export const getSchemas = async () => {
 
 export const get_initial_props = async () => {
 	const {theme_mod, ...ui_values} = await get_ui_values()
-	const theme = await get_theme(theme_mod)
+	// const theme = get_theme(theme_mod)
 	const schemas = await getSchemas()
-	return { ui_values, theme, schemas }
+	return { ui_values, theme_mod, schemas }
 }

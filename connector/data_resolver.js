@@ -29,7 +29,7 @@ const enrich_endpoint = {
 }
 
 export class DataResolver {
-	constructor(ignore=[]){
+	constructor(ignore=[], ssr=false){
 		this.data_repo = {
 			resources: {},
 			libraries: {},
@@ -39,15 +39,17 @@ export class DataResolver {
 		}
 		this._controller = null
 		this._ignore = ignore
+		this._ssr = ssr
 	}
 
 	controller = () => {
-		this._controller = new AbortController()
+		if (this._ssr) this._controller = {}
+		else this._controller = new AbortController()
 		return this._controller
 	}
 
 	abort_controller = () => {
-		if (this._controller) this._controller.abort()
+		if (this._controller && !this._ssr) this._controller.abort()
 	}
 
 	resolve_entries = async ({model, entries=[], filter={}, parent=undefined}) => {

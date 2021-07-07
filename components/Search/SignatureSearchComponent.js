@@ -297,7 +297,7 @@ export const SignatureSearchComponent = (props) => {
 		resolver,
 		schemas,
 		enrichment_id,
-		serverSideProps,
+		stats,
 	} = props
 	const [expanded, setExpanded] = useState(false);
 	const width = useWidth()
@@ -382,7 +382,7 @@ export const SignatureSearchComponent = (props) => {
 				/>
 			</Grid>
 			<Grid item xs={12}>
-				{ enrichment_id===undefined && <About ui_values={ui_values} stats={serverSideProps}/>}
+				{ enrichment_id===undefined && <About ui_values={ui_values} stats={stats}/>}
 			</Grid>
 		</Grid>
 	)

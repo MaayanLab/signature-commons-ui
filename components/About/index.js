@@ -36,19 +36,17 @@ export const CustomTabs = withStyles(() => ({
   }))((props) => <Tab {...props} />);
 
 class About extends React.PureComponent {
-  
-  componentDidMount = async () => {
-    const stats = await getSummary()
-    this.setState({
-      stats,
-      pie: Object.keys(stats.count_charts.pie)[0],
-      bar: Object.keys(stats.count_charts.bar)[0],
-      word: Object.keys(stats.count_charts.word)[0]
-    })
+  constructor(props) {
+    super(props)
+    this.state = {
+      pie: Object.keys(props.stats.count_charts.pie)[0],
+      bar: Object.keys(props.stats.count_charts.bar)[0],
+      word: Object.keys(props.stats.count_charts.word)[0]
+    }
   }
 
   model_counts = () => {
-    const { model_counts } = this.state.stats
+    const { model_counts } = this.props.stats
     const { nav, preferred_name } = this.props.ui_values
     const md = 12/Object.keys(model_counts).length
     const models = model_counts.map(m=>{
@@ -75,8 +73,8 @@ class About extends React.PureComponent {
       pie: ignore_pie || {},
       bar: ignore_bar || {},
     }
-    const { pie, bar } = this.state.stats.count_charts
-    const {scores = {}} = this.state.stats
+    const { pie, bar } = this.props.stats.count_charts
+    const {scores = {}} = this.props.stats
     const charts = [...Object.values(pie), ...Object.values(bar), ...Object.values(scores)].sort((a,b)=>a.priority-b.priority)
     const { nav, preferred_name } = this.props.ui_values
     return charts.map(k => {
