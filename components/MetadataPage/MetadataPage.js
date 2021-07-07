@@ -193,13 +193,18 @@ export default class MetadataPage extends React.PureComponent {
 				}
 			}
 			if (fields.length > 0){
-				const value_count = await this.props.resolver.aggregate(
+				const field_promise = fields.map(async (f)=> this.props.resolver.aggregate(
 					`/${this.state.entry_object.model}/${this.state.entry_object.id}/${this.state.entry_object.child_model}/value_count`, 
 					{
 						where,
-						fields,
-						limit: 20,
-					})
+						fields: [f],
+						limit: f.startsWith("meta.") ? 30: undefined,
+					}))
+				const fulfilled = await Promise.all(field_promise)
+				const value_count = fulfilled.reduce((acc, c)=>({
+					...acc,
+					...c
+				}), {})
 				const filters = {}
 				for (const [field, values] of Object.entries(value_count)){
 					if (field === "library"){
