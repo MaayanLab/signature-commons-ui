@@ -49,6 +49,7 @@ export const InfoCard = ({
                     </CardMedia>
                     {LeftComponents.map((comp, i)=>{
                       const {component, props} = comp
+                      if (component === null) return null
                       return <div style={{marginTop: 5}} key={i}>{component(props)}</div>
                     })}
                   </Grid>: null
@@ -194,6 +195,7 @@ export const InfoCard = ({
               <Grid container>
                 {RightComponents.map((comp, i)=>{
                     const {component, props} = comp
+                    if (component === null) return null
                     return <Grid key={i} item xs={12} align="center" {...props.GridProps}>{component(props)}</Grid>
                   })}
               </Grid>
@@ -202,6 +204,7 @@ export const InfoCard = ({
         </CardContent>
         {BottomComponents.map((comp, i)=>{
           const {component, props} = comp
+          if (component === null) return null
           return <div key={i}>{component(props)}</div>
         })}
       </Card>
