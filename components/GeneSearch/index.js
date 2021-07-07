@@ -139,12 +139,12 @@ export const GeneSearch = (props) => {
 		},
 		{
 			label: "Metadata Search",
-			sublabel: "Find signatures where a single gene was perturbed",
+			sublabel: "Find signatures where a single gene was perturbed.",
 			value: "metadata"
 		},
 		{
 			label: "Up or Down-Regulate My Gene",
-			sublabel: "Find L1000 Signatures that maximally up or down-regulate the queried gene",
+			sublabel: "Find L1000 Signatures that maximally up or down-regulate the queried gene.",
 			value: "regulate"
 		},
 	]
@@ -189,10 +189,17 @@ export const GeneSearch = (props) => {
 			const {nav, preferred_name} = ui_values
 			const uid = await get_gene_id({gene, resolver, schemas})
 			const metapage = `/${preferred_name.entities}/${uid}`
-			console.log(metapage)
-			history.push({
-				pathname: metapage,
-			  })
+			if ((nav.MetadataSearch.props.metadata_page.entities || {}).query !== undefined) {
+				history.push({
+					pathname: metapage,
+					search: nav.MetadataSearch.props.metadata_page.entities.query
+				})
+			} else {
+				history.push({
+					pathname: metapage
+				})
+			}
+			
 		}
 		if (gene!==null){
 			if (radio === "coexpression") coexpression()
