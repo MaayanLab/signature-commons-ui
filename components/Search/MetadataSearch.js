@@ -111,7 +111,7 @@ export default class MetadataSearch extends React.PureComponent {
 			const filter_fields = {}
 			const fields = []
 			const {lib_id_to_name, resource_id_to_name} = this.props.resource_libraries
-			for (const prop of this.state.filter_props[this.props.model]){
+			for (const prop of this.state.filter_props[this.props.model] || []){
 				if (prop.type === "filter"){
 					const checked = {}
 					const filters = query.filters || {}
