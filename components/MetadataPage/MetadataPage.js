@@ -372,7 +372,7 @@ export default class MetadataPage extends React.PureComponent {
 		} else {
 			// if (this.state.childTab !== undefined && this.state.childTab !== this.state.entry_object.child_model) children_name = `${this.state.childTab} ${children_name}`
 			label = `There are ${count} ${children_name} that contains ${entry_name}`
-			if (this.state.childTab !== undefined && this.state.childTab !== this.state.entry_object.child_model) {
+			if (this.state.childTab !== null && this.state.childTab !== undefined && this.state.childTab !== this.state.entry_object.child_model) {
 				const vowelRegex = '^[aieouAIEOU].*'
 				let article = "a"
 				if(this.state.childTab.match(vowelRegex)){
