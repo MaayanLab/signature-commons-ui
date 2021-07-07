@@ -1,12 +1,49 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import React, {useState} from 'react';
+import dynamic from 'next/dynamic'
 import PropTypes from 'prop-types'
 
+import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from '@material-ui/core/styles';
+
+const Box = dynamic(()=>import('@material-ui/core/Box'));
+const Button = dynamic(()=>import('@material-ui/core/Button'));
+const Typography = dynamic(()=>import('@material-ui/core/Typography'));
+const Menu = dynamic(()=>import('@material-ui/core/Menu'));
+const CircularProgress = dynamic(()=>import('@material-ui/core/CircularProgress'));
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+	  display: 'flex',
+	  alignItems: 'center',
+	},
+	wrapper: {
+	  margin: theme.spacing(1),
+	  position: 'relative',
+	},
+	button: {
+		'&:hover': {
+			backgroundColor: '#fff',
+			boxShadow: 'none',
+		  },
+		  '&:active': {
+			backgroundColor: '#fff',
+			boxShadow: 'none',
+		  },
+	  },
+	buttonProgress: {
+	  position: 'absolute',
+	  top: '50%',
+	  left: '50%',
+	  marginTop: -12,
+	  marginLeft: -12,
+	},
+  }));
 export default function Options(props) {
-	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [anchorEl, setAnchorEl] = useState(null);
+
+	const [loading, setLoading] = useState(false);
+
+	const {options} = props
   
 	const handleClick = (event) => {
 	  setAnchorEl(event.currentTarget);
@@ -15,12 +52,15 @@ export default function Options(props) {
 	const handleClose = () => {
 	  setAnchorEl(null);
 	};
+
+	const classes = useStyles()
   
 	return (
-	  <div>
-		<Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+	  <Box className={classes.wrapper}>
+		<Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} className={classes.button}>
 			<span className="mdi mdi-24px mdi-dots-vertical"></span>
 		</Button>
+		{loading && <CircularProgress size={24} className={classes.buttonProgress} />}
 		<Menu
 		  id="simple-menu"
 		  anchorEl={anchorEl}
@@ -28,34 +68,43 @@ export default function Options(props) {
 		  open={Boolean(anchorEl)}
 		  onClose={handleClose}
 		>
-		  {props.options.map(option=>{
-			  if (option.href!==undefined) {
+		  {options.map(option=>{
+			  const { icon, href, src, alt, label, onClick } = option
+			  if (href!==undefined) {
 				return (
-					<MenuItem key={option.label} component="a" href={option.href}>
-						<span className={`mdi mdi-24px ${option.icon || 'mdi-apps-box'}`}></span>
+					<MenuItem key={label} component="a" href={href}>
+						{icon===undefined ? 
+							<img style={{width: 25, height: "auto"}} src={src} alt={alt}/>:
+							<span className={`mdi mdi-24px ${icon || 'mdi-apps-box'}`}/>
+						}
 							&nbsp;
 						<Typography style={{ fontSize: 15, textTransform: "capitalize" }} variant="caption" display="block">
-							{option.label}
+							{label}
 						</Typography>
 					</MenuItem>
 				) 
 			  } else {
 				  return (
-					<MenuItem key={option.label} onClick={()=>{
-						option.onClick()
+					<MenuItem key={label} onClick={async ()=>{
 						handleClose()
+						setLoading(true)
+						if (onClick !== undefined) await onClick()
+						setLoading(false)
 					}}>
-						<span className={`mdi mdi-24px ${option.icon || 'mdi-apps-box'}`}></span>
+						{icon===undefined ? 
+							<img style={{width: 25, height: "auto"}} src={src} alt={alt}/>:
+							<span className={`mdi mdi-24px ${icon || 'mdi-apps-box'}`}/>
+						}
 							&nbsp;
 						<Typography style={{ fontSize: 15, textTransform: "capitalize" }} variant="caption" display="block">
-							{option.label}
+							{label}
 						</Typography>
 					</MenuItem>
 					)
 			  }
 		  })}
 		</Menu>
-	  </div>
+	  </Box>
 	);
   }
 
