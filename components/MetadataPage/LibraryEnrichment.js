@@ -125,8 +125,8 @@ class LibraryEnrichment extends React.PureComponent {
 		let barColor
 		if (entries[0].direction === undefined || ["up", "reversers", "-"].indexOf(entries[0].direction) > -1) {
 			const {main, dark} = this.props.theme.palette.primaryVisualization
-			const col = Color(main)
-			barColor =dark
+			// const col = Color(main)
+			barColor = main
 		} else {
 			const {main, dark} = this.props.theme.palette.secondaryVisualization
 			const col = Color(main)
@@ -212,7 +212,7 @@ class LibraryEnrichment extends React.PureComponent {
 			if (col === undefined) {
 				col = color
 			}else {
-				col = color.lighten((((firstVal - value)/(diff||1))))
+				col = color.lighten((((firstVal - value)/((diff*1.5)||1))))
 			}
 			const d = {
 				name: e.info.name.text,
