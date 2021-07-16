@@ -29,6 +29,7 @@ export default class MetadataPage extends React.PureComponent {
 			query: {skip:0, limit:10},
 			filters: {},
 			paginate: false,
+			estimate: true,
 			childTab: null,
 			childTabs: null,
 		}
@@ -67,14 +68,18 @@ export default class MetadataPage extends React.PureComponent {
 			this.setState({
 				childTab
 			},()=>{
-				// const {limit, skip, ...rest } = this.state.query
+				const {limit, skip, ...rest } = this.state.query
 				const query = {
-					...this.state.query,
+					...rest,
 					direction: childTab
 				}
 				this.props.history.push({
 					pathname: this.props.location.pathname,
 					search: `?query=${JSON.stringify(query)}`,
+					state: {
+						estimate: this.state.estimate,
+						direction: childTab
+					}
 				  })
 			})
 		}
@@ -113,10 +118,11 @@ export default class MetadataPage extends React.PureComponent {
 				const dir = this.state.childTab === this.state.entry_object.child_model ? "-": this.state.childTab
 				q.where = {
 					...(q.where || {}),
-					direction: direction || dir
+					direction: (this.props.location.state || {}).direction
 				}
 			}
-			const {count: children_count, ...children_object} = await this.state.entry_object.children({...q})
+			const {count: c, ...children_object} = await this.state.entry_object.children({...q}, false, false, this.state.estimate)
+			const children_count = this.state.estimate ? c: this.state.children_count
 			// const children_results = children_object[this.state.entry_object.child_model]
 			const children = {}
 			for (const[k,v] of Object.entries(children_object)){
@@ -135,7 +141,6 @@ export default class MetadataPage extends React.PureComponent {
 			}
 			
 
-			if (!this.state.paginate) this.get_value_count(where, query)
 			const childTabs = []
 			for (const [k,v] of Object.entries(children_count)){
 				if (v > 0){
@@ -146,6 +151,10 @@ export default class MetadataPage extends React.PureComponent {
 					})
 				}
 			}
+			const childTab = query.direction || (q.where||{}).direction || (childTabs[0] || {}).label
+			if (!this.state.paginate) {
+				this.get_value_count(where, query, childTabs, childTab)
+			}
 			this.setState({
 				children_count,
 				children,
@@ -155,18 +164,47 @@ export default class MetadataPage extends React.PureComponent {
 				query,
 				searching: false,
 				paginate: false,
-				childTab: (q.where||{}).direction || (childTabs[0] || {}).label,
+				// estimate: true,
+				childTab,
 				childTabs
-			})
+			},()=>this.fetch_children_count(q.where || {}))
 		} catch (error) {
 			console.error(error)
 		}
 			
 	}
 
+	fetch_children_count = async (where) => {
+		const {direction, ...rest} = where
+		if (this.state.estimate) {
+			const children_count = await this.state.entry_object.get_children_count(rest)
+			if (children_count)
+				this.setState({
+					children_count,
+					estimate: false
+				})
+		}
+	}
 
-	get_value_count = async (where, query) =>{
+	get_value_count = async (where, query, childTabs, childTab) =>{
 		try {
+			let w = {
+				...where
+			}
+			if (childTabs !== null && childTabs.length > 1) {
+				if (w.and!==undefined) {
+					w.and = [...w.and, {
+						direction: childTab
+					}]
+				} else {
+					w = {
+						and: [where, {
+							direction,
+						}]
+					}
+				}
+			}
+
 			const filter_fields = {}
 			const fields = []
 			const {lib_id_to_name, resource_id_to_name, lib_to_resource} = this.props.resource_libraries
@@ -197,7 +235,7 @@ export default class MetadataPage extends React.PureComponent {
 				const field_promise = fields.map(async (f)=> this.props.resolver.aggregate(
 					`/${this.state.entry_object.model}/${this.state.entry_object.id}/${this.state.entry_object.child_model}/value_count`, 
 					{
-						where,
+						where: w,
 						fields: [f],
 						limit: f.startsWith("meta.") ? 30: undefined,
 					}))
@@ -270,7 +308,10 @@ export default class MetadataPage extends React.PureComponent {
 		this.props.history.push({
 			pathname: this.props.location.pathname,
 			search: `?query=${JSON.stringify(query)}`,
-			})
+			state: {
+				estimate: true
+			}
+		})
 	}
 
 	componentDidMount = () => {
@@ -290,21 +331,23 @@ export default class MetadataPage extends React.PureComponent {
 				searching: true,
 				filters: {},
 				childTab: null,
-				paginate: (this.props.location.state || {}).paginate ? true: false
+				paginate: (this.props.location.state || {}).paginate ? true: false,
+				estimate: true
 			}, ()=>{
 				this.process_entry()
 			})
 		} else if (prev_search !== curr_search){
 			this.setState({
 				searching: true,
-				paginate: (this.props.location.state || {}).paginate ? true: false
+				paginate: (this.props.location.state || {}).paginate ? true: false,
+				estimate: (this.props.location.state || {}).estimate ? true: false
 			}, ()=>{
 				this.process_children()
 			})
 		}
 	}
 
-	paginate = async (limit, skip) => {
+	pagination = async (limit, skip) => {
 		const query = {
 			...this.state.query,
 			limit,
@@ -315,7 +358,8 @@ export default class MetadataPage extends React.PureComponent {
 			pathname: this.props.location.pathname,
 			search: `?query=${JSON.stringify(query)}`,
 			state: {
-				paginate: true
+				paginate: true,
+				estimate: this.state.estimate
 			}
 		  })
 	}
@@ -323,14 +367,14 @@ export default class MetadataPage extends React.PureComponent {
 	handleChangePage = async (event, page) => {
 		const { perPage:limit } = this.state
 		const skip = limit*page
-		await this.paginate(limit, skip)
+		await this.pagination(limit, skip)
 	}
 
 	handleChangeRowsPerPage = async (e) => {
 		const { page } = this.state
 		const limit = e.target.value
 		const skip = limit*page
-		await this.paginate(limit, skip)
+		await this.pagination(limit, skip)
 	}
 
 	onSearch = (search) => {
@@ -345,6 +389,9 @@ export default class MetadataPage extends React.PureComponent {
 			this.props.history.push({
 				pathname: this.props.location.pathname,
 				search: `?query=${JSON.stringify(query)}`,
+				state: {
+					estimate: true
+				}
 			})
 		})
 	}
@@ -382,6 +429,9 @@ export default class MetadataPage extends React.PureComponent {
 				label = label + ` as ${article} ${this.state.childTab} ${this.props.preferred_name_singular[this.state.entry_object.model].toLowerCase()}`
 			}
 			label = label+"."
+		}
+		if (this.state.estimate) {
+			label = <React.Fragment><span className="mdi mdi-loading mdi-spin mdi-24px"/> Loading counts...</React.Fragment>
 		}
 		return(
 			<Grid container spacing={1}>

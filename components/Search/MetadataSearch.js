@@ -21,7 +21,7 @@ export default class MetadataSearch extends React.PureComponent {
 			perPage: 10,
 			query: {skip:0, limit:10},
 			filters: {},
-			paginate: false,
+			preserve_state: false,
 			searching: false,
 			processing: false
 		}
@@ -65,32 +65,15 @@ export default class MetadataSearch extends React.PureComponent {
 						link,
 						this.props.resolver
 					)
-				
-				// e.RightComponents = []
-				// if (e.info.components.options !== undefined) {
-				// 	e.RightComponents.push({
-				// 		component: this.options,
-				// 		props: {...e.info.components.options.props}
-				// 	})
-				// } 
-				// if (e.info.components.insignia !== undefined) {
-				// 	e.RightComponents.push({
-				// 		component: this.insignia,
-				// 		props: {...e.info.components.insignia.props}
-				// 	})
-				// } 
-				// if (e.info.components.download !== undefined) {
-				// 	e.RightComponents.push({
-				// 		component: this.download,
-				// 		props: {...e.info.components.download.props}
-				// 	})
-				// }
 				entries.push(e)
 			}
 
-			const model_tab_props = this.get_model_tab_props(count)
+			// let model_tab_props = this.get_model_tab_props(count)
 			
-			if (!this.state.paginate) this.get_value_count(where, query)
+			if (!this.state.preserve_state){ 
+				this.get_count(where, count)
+				this.get_value_count(where, query)
+			}
 			this.setState({
 				count,
 				entries,
@@ -98,11 +81,26 @@ export default class MetadataSearch extends React.PureComponent {
 				perPage: limit,
 				query,
 				searching: false,
-				paginate: false,
-				model_tab_props,
+				preserve_state: false,
+				// model_tab_props,
 			})	
 		} catch (error) {
 			console.error(error)
+		}
+	}
+
+	get_count = async (where, count) => {
+		if (!this.preserve_state){
+			if (count > 5000 && count < 1000000) {
+				const response = await this.props.resolver.count(
+					`/${this.props.model}/count`, where)
+				count = response.count
+			}
+			const model_tab_props = this.get_model_tab_props(count)
+			this.setState({
+				count,
+				model_tab_props
+			})
 		}
 	}
 
@@ -216,6 +214,9 @@ export default class MetadataSearch extends React.PureComponent {
 			this.props.history.push({
 				pathname: this.props.location.pathname,
 				search: `?query=${JSON.stringify(query)}`,
+				state: {
+					preserve_state: false
+				}
 			})
 		})
 	}
@@ -231,10 +232,13 @@ export default class MetadataSearch extends React.PureComponent {
 		this.props.history.push({
 			pathname: this.props.location.pathname,
 			search: `?query=${JSON.stringify(query)}`,
+			state: {
+				preserve_state: false
+			}
 			})
 	}
 
-	paginate = async (limit, skip) => {
+	pagination = async (limit, skip) => {
 		const query = {
 			...this.state.query,
 			limit,
@@ -245,7 +249,7 @@ export default class MetadataSearch extends React.PureComponent {
 			pathname: this.props.location.pathname,
 			search: `?query=${JSON.stringify(query)}`,
 			state: {
-				paginate: true
+				preserve_state: true
 			}
 		  })
 	}
@@ -253,14 +257,14 @@ export default class MetadataSearch extends React.PureComponent {
 	handleChangePage = async (event, page) => {
 		const { perPage:limit } = this.state
 		const skip = limit*page
-		await this.paginate(limit, skip)
+		await this.pagination(limit, skip)
 	}
 
 	handleChangeRowsPerPage = async (e) => {
 		const { page } = this.state
 		const limit = e.target.value
 		const skip = limit*page
-		await this.paginate(limit, skip)
+		await this.pagination(limit, skip)
 	}
 
 	handleTabChange = (v) => {
@@ -269,6 +273,9 @@ export default class MetadataSearch extends React.PureComponent {
 		this.props.history.push({
 			pathname: v.href,
 			search: `?query=${JSON.stringify(query)}`,
+			state: {
+				preserve_state: false
+			}
 		})
 	}
 
@@ -279,12 +286,14 @@ export default class MetadataSearch extends React.PureComponent {
 			if (preferred_name!==undefined){
 				const endpoint = this.props.nav.MetadataSearch.endpoint
 				let label
-				if (this.props.model === model && count !== null) label = `${preferred_name} (${count})`
-				else label = this.props.preferred_name[model]
+				if (this.props.model === model && count !== null) {
+					label = `${preferred_name} (${count})`
+				}
+				else label = preferred_name
 				model_props.push({
 					label,
-					href: `${endpoint}/${this.props.preferred_name[model]}`,
-					value: this.props.preferred_name[model],
+					href: `${endpoint}/${preferred_name}`,
+					value: preferred_name,
 				})
 			}
 		}
@@ -323,10 +332,6 @@ export default class MetadataSearch extends React.PureComponent {
 		const prev_search = decodeURI(prevProps.location.search)
 		const curr_search = decodeURI(this.props.location.search)
 		if (prevProps.model !== this.props.model || prev_search !== curr_search){
-			// let filters = {}
-			// if ((this.props.location.state || {}).paginate || prevProps.model !== this.props.model) {
-			// 	filters = {...prevProps.filters}
-			// }
 			this.setState(prevState=>{
 				let query = prevState.query
 				let model_tab_props = prevState.model_tab_props
@@ -336,8 +341,8 @@ export default class MetadataSearch extends React.PureComponent {
 				}
 				return {
 					searching: true,
-					paginate: (this.props.location.state || {}).paginate ? true: false,
-					filters: (this.props.location.state || {}).paginate ? prevState.filters: {},
+					preserve_state: (this.props.location.state || {}).preserve_state ? true: false,
+					filters: (this.props.location.state || {}).preserve_state ? prevState.filters: {},
 					homepage: this.props.location.search === "",
 					query,
 					model_tab_props,

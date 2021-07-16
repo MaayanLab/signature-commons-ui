@@ -112,7 +112,7 @@ export class Model {
 		}
 	}
 
-	resolve_children = async (filter) => {
+	resolve_children = async (filter, get_count) => {
 		const {limit, ...rest} = filter
 		if (limit === undefined){ 
 			filter = {
@@ -141,9 +141,10 @@ export class Model {
 				})
 				const field = direction === "-" ? this.child_model: direction
 				this._children[field] = entries
-				this.children_count[field] = count
+				if (get_count)
+					this.children_count[field] = count
 			}else {
-				const child_promise = ['-', 'up', 'down'].map(direction=>{
+				const child_promise = ['-', 'up', 'down'].map(async direction=>{
 					const f = {
 						...filter,
 						where: {
@@ -151,19 +152,24 @@ export class Model {
 							direction
 						}
 					}
-					return this._data_resolver.filter_through({
+					const {entries, count} = await this._data_resolver.filter_through({
 						model: this.model,
 						entry: this,
 						filter: f,
 					})
+					return {
+						entries, count, direction
+					}
 				})
 				const resolved = await Promise.all(child_promise)
 				for (const r of resolved) {
-					const {entries, count} = r
+					const {entries, count, direction} = r
+					const field = direction === "-" ? this.child_model: direction
 					if (count > 0){
-						const dir = (await Object.values(entries)[0].entry())["direction"]
-						const field = dir === "-" ? this.child_model: dir
 						this._children[field] = entries
+						if (get_count)
+							this.children_count[field] = count
+					} else {
 						this.children_count[field] = count
 					}
 				}
@@ -188,8 +194,8 @@ export class Model {
 				filter: filter,
 			})
 			this._children = {[this.child_model]: entries}
-			this.children_count = {[this.child_model]: count}
-			
+			if (get_count)
+				this.children_count = {[this.child_model]: count}
 		}
 	}
 
@@ -227,12 +233,12 @@ export class Model {
 		}
 	}
 
-	children = async (filter={}, crawl=false, preset=true) => {
+	children = async (filter={}, crawl=false, preset=true, get_count=true) => {
 		if (this._preset_children!==null && this._preset_children!==undefined && preset){
 			return this.search_children(filter, crawl)
 		}else{
 			// Proper API Call
-			if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter)
+			if (this._children === undefined || Object.keys(filter).length > 0) await this.resolve_children(filter, get_count)
 			const children = {}
 			for (const [k,v] of Object.entries(this._children)){
 				children[k] = []
@@ -246,6 +252,67 @@ export class Model {
 				...children,
 				count: this.children_count
 			}
+		}
+	}
+
+	get_dir_count = async(where, dir) => {
+		try {
+			const direction = dir === this.child_model ? "-": dir
+			let w = {
+				...where
+			}
+			if (w.and!==undefined) {
+				w.and = [...w.and, {
+					direction,
+				}]
+			} else {
+				w = {
+					and: [where, {
+						direction,
+					}]
+				}
+			}
+			const {count} = await this._data_resolver.count(
+				`/${this.model}/${this._entry.id}/${this.child_model}/count`, w)
+			return {
+				direction: dir,
+				count
+			}	
+		} catch (error) {
+			
+		}
+	}
+
+	get_children_count = async (where, dir=null) => {
+		try {
+			if (this.model === "signatures" || this.model === "entities") {
+				if (dir === null) {
+					const unfulfilled = Object.keys(this.children_count)
+						.filter(dir=>this.children_count[dir] === undefined || 
+							(this.children_count[dir] > 5000 &&
+							this.children_count[dir] < 100000))
+						.map(async dir=>{
+							return await this.get_dir_count(where, dir)					
+					})
+					const fulfilled = await Promise.all(unfulfilled)
+					for (const i of fulfilled) {
+						if (i!==undefined){
+							const {count, direction} = i
+							this.children_count[direction] = count
+						} else return undefined
+					}
+				} else {
+					const {direction, count} = await this.get_dir_count(where, dir)
+					this.children_count[direction] = count
+				}
+			} else if (this.children_count[this.child_model] > 5000 && this.children_count[this.child_model] < 100000){
+				const {count} = await this._data_resolver.count(
+					`/${this.model}/${this._entry.id}/${this.child_model}/count`, where)
+				this.children_count[this.child_model] = count
+			}
+			return this.children_count	
+		} catch (error) {
+			console.error(error)
 		}
 	}
 
