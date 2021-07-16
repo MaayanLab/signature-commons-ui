@@ -33,7 +33,13 @@ const SignatureScatterPlot = (props) => {
 	const [topTerms, setTopTerms] = useState(null)
 	useEffect(() => { 
 		if (topTerms === null && results !== null) {
-			const terms = results.scatter_data.slice(0,5).map(i=>i.primary_value)
+			const terms = []
+			for (const i of results.scatter_data) {
+				if (terms.length === 5) break
+				else {
+					if (terms.indexOf(i.primary_value) === -1) terms.push(i.primary_value)
+				}
+			}
 			setTopTerms(terms)
 		}
 	})
