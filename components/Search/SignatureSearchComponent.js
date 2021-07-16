@@ -114,18 +114,6 @@ const SigForm = (props={}) => {
 		submit
 	} = props
 	let input = TextFieldSuggestProps.input
-	// useEffect(()=>{
-	// 	console.log(reset)
-    //     if (reset) {
-	// 		const i = resetInput()
-	// 		const input_length = Object.values(input).reduce((acc,i)=>acc+Object.keys(i).length, 0)
-	// 		if (input_length > 0){
-	// 			input = i
-	// 		}
-    //     }
-	// 	// setResetter(false)
-    // },[reset])
-	// console.log(input)
 	return(
 		<Grid container>
 			{/* Search Components */}
