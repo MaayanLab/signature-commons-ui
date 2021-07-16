@@ -215,49 +215,26 @@ export class DataResolver {
 	}
 
 	aggregate = async (endpoint, filter) => {
-		try {
-			filter = empty_cleaner(filter) || {}
-			const { response: aggregate } = await fetch_meta({
-				endpoint,
-				body: {
-				filter,
-				},
-				signal: this._controller.signal,
-			})
-			return aggregate	
-		} catch (error) {
-			console.error(error)
-		}
+		filter = empty_cleaner(filter) || {}
+		const { response: aggregate } = await fetch_meta({
+			endpoint,
+			body: {
+			  filter,
+			},
+			signal: this._controller.signal,
+		  })
+		return aggregate
 	}
 
 	aggregate_post = async ({endpoint, filter}) => {
-		try {
-			const { response: aggregate } = await fetch_meta_post({
-				endpoint,
-				body: {
-				filter,
-				},
-				signal: this._controller.signal,
-			})
-			return aggregate
-		} catch (error) {
-			console.error(error)
-		}
-	}
-
-	count = async (endpoint, where) => {
-		try {
-			const { response } = await fetch_meta({
-				endpoint,
-				body: {
-				  where,
-				},
-				signal: this._controller.signal,
-			  })
-			return response
-		} catch (error) {
-			console.error(error)
-		}
+		const { response: aggregate } = await fetch_meta_post({
+			endpoint,
+			body: {
+			  filter,
+			},
+			signal: this._controller.signal,
+		  })
+		return aggregate
 	}
 
 	// Data API
