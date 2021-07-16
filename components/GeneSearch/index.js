@@ -167,15 +167,21 @@ export const GeneSearch = (props) => {
 	
 	useEffect(()=>{
 		const coexpression = async () => {
-			setMessage("Fetching coexpressed genes...")
-			const coexpressed_genes = await get_coexpressed_genes({gene})
-			setMessage("Resolving gene names...")
-			const {input, query} = await resolve_genes({coexpressed_genes, schemas, resolver})
-			setMessage("Performing Enrichment Analysis...")
-			const enrichment_id = await enrichment({resolver, input, query})
-			history.push({
-				pathname: `${location.pathname}/${enrichment_id}`
-			})
+			try {
+				resolver.abort_controller()
+				resolver.controller()
+				setMessage("Fetching coexpressed genes...")
+				const coexpressed_genes = await get_coexpressed_genes({gene})
+				setMessage("Resolving gene names...")
+				const {input, query} = await resolve_genes({coexpressed_genes, schemas, resolver})
+				setMessage("Performing Enrichment Analysis...")
+				const enrichment_id = await enrichment({resolver, input, query})
+				history.push({
+					pathname: `${location.pathname}/${enrichment_id}`
+				})	
+			} catch (error) {
+				console.error(error)
+			}
 		}
 		const metadata_search = () => {
 			const {nav, preferred_name} = ui_values
@@ -186,21 +192,27 @@ export const GeneSearch = (props) => {
 			  })
 		}
 		const gene_page = async () => {
-			const {nav, preferred_name} = ui_values
-			const uid = await get_gene_id({gene, resolver, schemas})
-			const metapage = `/${preferred_name.entities}/${uid}`
-			if ((nav.MetadataSearch.props.metadata_page.entities || {}).query !== undefined) {
-				history.push({
-					pathname: metapage,
-					search: nav.MetadataSearch.props.metadata_page.entities.query
-				})
-			} else {
-				history.push({
-					pathname: metapage
-				})
+			try {
+				resolver.abort_controller()
+				resolver.controller()
+				const {nav, preferred_name} = ui_values
+				const uid = await get_gene_id({gene, resolver, schemas})
+				const metapage = `/${preferred_name.entities}/${uid}`
+				if ((nav.MetadataSearch.props.metadata_page.entities || {}).query !== undefined) {
+					history.push({
+						pathname: metapage,
+						search: nav.MetadataSearch.props.metadata_page.entities.query
+					})
+				} else {
+					history.push({
+						pathname: metapage
+					})
+				}
+			} catch (error) {
+				console.error(error)
 			}
-			
 		}
+		resolver.abort_controller()
 		if (gene!==null){
 			if (radio === "coexpression") coexpression()
 			else if (radio === "metadata") metadata_search()
