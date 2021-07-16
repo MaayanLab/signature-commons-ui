@@ -2,6 +2,18 @@ import {findMatchedSchema} from './objectMatch'
 import {makeTemplate} from './makeTemplate'
 import {DataResolver} from '../../connector'
 
+export const initialize_resource_and_libraries = async(resolver) => {
+	const unfulfilled = [
+		async()=>resolver.filter_metadata({
+			model: "resources"
+		}),
+		async()=>resolver.filter_metadata({
+			model: "libraries"
+		})
+	]
+	await Promise.all(unfulfilled)
+}
+
 export const getLibToResource = async(resolver) => {
 	const lib_counts = await resolver.aggregate(
 		`/signatures/value_count`, 
@@ -47,8 +59,8 @@ export const getResourcesAndLibraries = async (schemas, resolver=null) => {
 			{
 				fields: ["resource"]
 			})
-		const library_entries = Object.keys(lib_counts.library)
-		const resource_entries = Object.keys(res_counts.resource)
+		const library_entries = Object.keys((lib_counts || {}).library || {})
+		const resource_entries = Object.keys((res_counts || {}).resource || {})
 		const {resolved_entries} = await resolver.resolve_entries({
 			model: "libraries",
 			entries: library_entries
@@ -64,7 +76,6 @@ export const getResourcesAndLibraries = async (schemas, resolver=null) => {
 		const resource_name_to_id = {}
 		const resource_to_lib = {}
 		const lib_to_resource = {}
-
 		for (const [id, res] of Object.entries(resolved_resources)){
 			const entry = await res.entry()
 			const resourceschema = findMatchedSchema(entry, schemas)
