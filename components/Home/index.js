@@ -10,7 +10,7 @@ import { base_url as meta_url } from '../../util/fetch/meta'
 import { base_url as data_url } from '../../util/fetch/data'
 import '../../styles/swagger.scss'
 import Lazy from '../Lazy'
-import { getResourcesAndLibraries } from '../../util/ui/getResourcesAndLibraries'
+import { initialize_resource_and_libraries } from '../../util/ui/getResourcesAndLibraries'
 
 const Box = dynamic(()=>import('@material-ui/core/Box'))
 const Grid = dynamic(()=>import('@material-ui/core/Grid'))
@@ -289,8 +289,8 @@ class Home extends React.PureComponent {
     const schemas = this.props.schemas
     const {metadata_resolver, enrichment_resolver} = this.state
     const unresolved_promises = [
-      getResourcesAndLibraries(schemas, metadata_resolver),
-      getResourcesAndLibraries(schemas, enrichment_resolver)
+      initialize_resource_and_libraries(schemas, metadata_resolver),
+      initialize_resource_and_libraries(schemas, enrichment_resolver)
     ]
     await Promise.all(unresolved_promises)
 
