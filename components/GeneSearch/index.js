@@ -130,7 +130,7 @@ export const GeneSearch = (props) => {
 		ui_values,
 	} = props
 
-	const examples = ["STAT3", "MAPK1", "ZNF830"]
+	const examples = ["STAT3", "MAPK1", "ACE2"]
 	const radio_values = [
 		{
 			label: "Gene Co-Expression Signature Search",
