@@ -17,47 +17,51 @@ const TablePagination = dynamic(()=>import('@material-ui/core/TablePagination'))
 const ResultsTab = dynamic(()=> import('../SearchComponents/ResultsTab'));
 
 const get_entries = async ({resolver, search, limit=10, skip, model, schemas, sorted, fields}) => {
-	const where = build_where({search})
-	let filter = {
-		where,
-		limit,
-		skip
-	}
-	if (sorted !== null) {
-		filter = {
-			...filter,
-			where: {
-				...(filter.where || {}),
-				[sorted.field]: {neq: null}
-			},
-			order: [`${sorted.field} ${sorted.order}`]
+	try {
+		const where = build_where({search})
+		let filter = {
+			where,
+			limit,
+			skip
 		}
-	}
-	if (fields.length > 0 ){
-		if (Object.keys(filter.where || {}).length>0){
-			filter.where = {
-				and: [
-					{...filter.where},
-					{or: [...fields]}
-				]
-			}
-		} else {
-			filter.where = {
-				or: [...fields]
+		if (sorted !== null) {
+			filter = {
+				...filter,
+				where: {
+					...(filter.where || {}),
+					[sorted.field]: {neq: null}
+				},
+				order: [`${sorted.field} ${sorted.order}`]
 			}
 		}
-		
-	}
-	const { entries: resolved_entries, count } = await resolver.filter_metadata({model, filter})
-	const entries = []
-	for (const e of Object.values(resolved_entries)) {
-		const ent = model === "signatures" ? await e.serialize(true, false): await e.entry()
-		const entry = labelGenerator(ent, schemas, undefined, resolver)
-		if (entry.info.components.download) {
-			entries.push(entry)
+		if (fields.length > 0 ){
+			if (Object.keys(filter.where || {}).length>0){
+				filter.where = {
+					and: [
+						{...filter.where},
+						{or: [...fields]}
+					]
+				}
+			} else {
+				filter.where = {
+					or: [...fields]
+				}
+			}
+			
 		}
+		const { entries: resolved_entries, count } = await resolver.filter_metadata({model, filter})
+		const entries = []
+		for (const e of Object.values(resolved_entries)) {
+			const ent = model === "signatures" ? await e.serialize(true, false): await e.entry()
+			const entry = labelGenerator(ent, schemas, undefined, resolver)
+			if (entry.info.components.download) {
+				entries.push(entry)
+			}
+		}
+		return {entries, count}
+	} catch (error) {
+		console.error(error)
 	}
-	return {entries, count}
 }
 
 const sort_icons = {
@@ -113,18 +117,22 @@ const DownloadList = ({
 	
 	useEffect( () => {
 		const r = async () => {
-			const {entries: results , count} = await get_entries({
-				resolver,
-				model, 
-				search,
-				limit,
-				skip,
-				schemas,
-				sorted, 
-				fields: nonnull_field
-			})
-			setCount(count)
-			setEntries(results)
+			try {
+				const {entries: results , count} = await get_entries({
+					resolver,
+					model, 
+					search,
+					limit,
+					skip,
+					schemas,
+					sorted, 
+					fields: nonnull_field
+				})
+				setCount(count)
+				setEntries(results)
+			} catch (error) {
+				console.error(error)
+			}
 		}
 		r()
 	}, [search, limit, skip, sorted]);

@@ -3,6 +3,7 @@ import {makeTemplate} from './makeTemplate'
 import {DataResolver} from '../../connector'
 
 export const initialize_resource_and_libraries = async(resolver) => {
+	resolver.controller()
 	const unfulfilled = [
 		async()=>resolver.filter_metadata({
 			model: "resources"

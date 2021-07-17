@@ -289,8 +289,8 @@ class Home extends React.PureComponent {
     const schemas = this.props.schemas
     const {metadata_resolver, enrichment_resolver} = this.state
     const unresolved_promises = [
-      initialize_resource_and_libraries(schemas, metadata_resolver),
-      initialize_resource_and_libraries(schemas, enrichment_resolver)
+      initialize_resource_and_libraries(metadata_resolver),
+      initialize_resource_and_libraries(enrichment_resolver)
     ]
     await Promise.all(unresolved_promises)
 
