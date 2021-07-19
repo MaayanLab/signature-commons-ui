@@ -217,7 +217,7 @@ class LibraryEnrichment extends React.PureComponent {
 			const d = {
 				name: e.info.name.text,
 				value: entry.direction === "reversers" && this.props.expanded ? -value: value,
-				color: value > -Math.log(0.05) ? col.hex(): inactiveColor,
+				color: value > -Math.log(0.05) || this.state.order_field !== 'p-value' ? col.hex(): inactiveColor,
 				actual_value: entry.scores[this.state.order_field],
 				id: entry.id,
 				direction: entry.direction,
