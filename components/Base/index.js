@@ -55,6 +55,16 @@ const Base = (props) => {
     log()
   }, [ga_code, pathname]);
 
+  const {nav} = ui_values
+  const endpoints = []
+  for (const i of Object.values(nav)) {
+    if (i.type === "iframe"){
+      endpoints.push(i.endpoint)
+    }
+  }
+  let maxWidth = width==="xl" ? "lg": "md"
+  if (endpoints.indexOf(pathname) > -1) maxWidth = "xl"
+
   return (
     <div className="root">
       <Head>
@@ -94,7 +104,7 @@ const Base = (props) => {
         ui_values={ui_values}
       />
       <main style={{ backgroundColor: theme.palette.background.main }} {...ui_values.background_props}>
-        <Container className={classes.container} maxWidth={width==="xl" ? "lg": "md"}>
+        <Container className={classes.container} maxWidth={maxWidth}>
           {children}
         </Container>
       </main>
